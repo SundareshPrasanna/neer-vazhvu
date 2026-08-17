@@ -181,6 +181,18 @@ export const UNWATCHED: Record<string, string> = {
   // feeds are now registry entries (wrd-pravah-dam-feed, bmc-dm-floodspots,
   // detection 'continuous' - registered for lineage, never polled); freshness
   // stays owned by check-data-freshness.ts (EXTRA_FEEDS).
+  // Kolkata (city 7). Its OSM layers, localities and rainfall-intensity are
+  // NOT allowlisted: they carry NVDM envelopes citing osm-overpass and
+  // open-meteo-archive, and the L2 gate requires the cited registry entry to
+  // name the artifact back, so they are on the watched track with every other
+  // city's equivalents. Allowlisting them would have asserted "no upstream"
+  // about files that plainly have one.
+  "public/data/rainfall-recent-kolkata.json": "daily feed: owned by check-data-freshness.ts",
+  // Curated compilations from named, dated sources, graded V/N/C per entry.
+  // There is no single upstream to watch - Kolkata has no restoration register.
+  "public/data/restoration-projects-kolkata.json": "curated compilation from named court/news sources, graded per entry",
+  "public/data/water-bodies-flagship-kolkata.json": "curated compilation, graded V/N/C per entry",
+  "public/data/facts-kolkata.json": "derived: compiled from sources already covered upstream",
 
   // Kabini deep dive (Paani Cauvery Phase 2, Aug 2026). These layers came as a
   // dated, closed partner delivery (Paani Earth's Cauvery GeoPackages) - there

@@ -10,6 +10,13 @@ import { MissingReservoirCard } from "./missing-data-card";
 interface ReservoirCardsProps {
   reservoirs: ReservoirSummary[];
   onReservoirClick?: (reservoir: ReservoirSummary) => void;
+  /** Whether the city actually impounds water. Every city here used to, so
+   *  this section was titled "Reservoir Status" unconditionally. Kolkata is
+   *  the first that impounds nothing - it abstracts run-of-river from the
+   *  Hooghly at Palta and pumps tube wells - and titling four intakes
+   *  "Reservoir Status" asserts storage the city does not have. Defaults to
+   *  true so every existing city renders unchanged. */
+  impounds?: boolean;
 }
 
 function getBarColor(pct: number): string {
@@ -19,12 +26,16 @@ function getBarColor(pct: number): string {
   return "bg-red-500";
 }
 
-export function ReservoirCards({ reservoirs, onReservoirClick }: ReservoirCardsProps) {
+export function ReservoirCards({
+  reservoirs,
+  onReservoirClick,
+  impounds = true,
+}: ReservoirCardsProps) {
   const { t } = useLanguage();
   return (
     <div>
       <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
-        {t("dash.reservoir_status")}
+        {t(impounds ? "dash.reservoir_status" : "dash.water_sources")}
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
         {reservoirs.map((r) => {

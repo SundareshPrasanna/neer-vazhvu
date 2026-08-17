@@ -194,7 +194,11 @@ export function RiverPanel({
     stable:    { tKey: "rivers.stable",    className: "text-slate-500 dark:text-slate-400" },
   } as const;
 
-  const formatStretch = (stretch: string): string => {
+  // `stretch` is optional in practice: it is a Chennai-era descriptor and not
+  // every city's station feed carries one (WBPCB publishes none for Kolkata).
+  // Guard rather than crash the whole panel on a missing label.
+  const formatStretch = (stretch?: string | null): string => {
+    if (!stretch) return "";
     const normalized = stretch.trim().toLowerCase();
     if (normalized === "upper") return t("rivers.upper");
     if (normalized === "middle") return t("rivers.middle");

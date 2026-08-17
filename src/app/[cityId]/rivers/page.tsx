@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import fs from "node:fs";
 import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { isFeatureSupportedForCity } from "@/lib/cities/routing";
 import { basinsForCity, tryGetBasinManifest, type BasinInventory } from "@/lib/basins";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
@@ -34,6 +35,8 @@ const RIVERS_META_DESC: Record<string, string> = {
     "River-system map for Bengaluru - Vrishabhavathi, Arkavathi and the Cauvery lifeline, with pollution status from official monitoring.",
   mumbai:
     "River-system map for Mumbai - Mithi, Dahisar, Poisar, Oshiwara and the regional Ulhas, with MPCB water-quality status.",
+  kolkata:
+    "River-system map for Kolkata - the Hooghly, the Adi Ganga through south Kolkata, the Bidyadhari and the Saraswati, with WBPCB tidal-paired water-quality status.",
   delhi:
     "River-system map for Delhi - the Yamuna's 22-km city stretch, the Munak carrier, the Najafgarh and Shahdara drains, with DPCC monthly water-quality status.",
 };
@@ -56,6 +59,71 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 // project_madurai_scope_decision.md - Periyar (Kerala feeder) and the Vaigai
 // downstream stretch through Sivagangai/Ramanathapuram are in scope.
 const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
+  // Kolkata's channels are TIDAL, which is why WBPCB samples each Adi Ganga
+  // point separately at high and low tide - a distinction no other city on this
+  // platform has. Station lists below are WBPCB EMIS stations, not CPCB NWMP.
+  kolkata: {
+    hooghly: {
+      display_name: "Hooghly",
+      display_name_bn: "\u09b9\u09c1\u0997\u09b2\u09bf",
+      length_km_geom: 140,
+      description:
+        "The distributary of the Ganga that Kolkata was built on, and the source of essentially all its drinking water. KMC abstracts at Palta, about 22 km north in Barrackpore, and at Garden Reach downstream - run-of-river, with no impounded storage anywhere in the system. The river is tidal this far inland, so quality readings swing with the tide.",
+      upstream_terminus: "Farakka Barrage feeder canal (via the Bhagirathi)",
+      downstream_terminus: "Bay of Bengal, ~130 km downstream",
+      feeds: "Palta (Indira Gandhi WTP), Garden Reach, Jorabagan, Watgunge; bulk sales to Bidhannagar and Budge Budge",
+      status: "Comparatively healthy at the city's intakes - DO 5.6-6.3 mg/l, BOD ~2.1-2.2, faecal coliform 46,000-48,000 MPN/100ml (WBPCB, Jul 2026). The pollution story is not the mainstem, it is the Adi Ganga.",
+      cpcb_nwmp_stations: ["Ganga at Palta (intake)", "Ganga at Dakshineswar", "Ganga at Garden Reach"],
+      color: "stroke-blue-600",
+    },
+    "adi-ganga": {
+      display_name: "Adi Ganga",
+      display_name_bn: "\u0986\u09a6\u09bf \u0997\u0999\u09cd\u0997\u09be",
+      length_km_geom: 39,
+      description:
+        "The original course of the Ganga, running through south Kolkata past Kalighat, now largely an engineered channel also known as Tolly's Nullah. WBPCB samples it at six points, each SEPARATELY at high tide and low tide - the only tidal station pairing on this platform, and the correct way to measure a channel that reverses twice a day.",
+      upstream_terminus: "Hooghly offtake at Hastings",
+      downstream_terminus: "Rejoins the tidal creek system towards the Sundarbans",
+      feeds: "Nothing - it is a drainage and sewage channel, not a supply source",
+      status:
+        "Dead. Dissolved oxygen NIL at every monitored point in the latest round, faecal coliform 3.4 to 11 million MPN/100ml, water recorded by WBPCB's own observers as 'Blackish' and 'Pungent'. Low tide is consistently worse than high: at Bansdroni, BOD 14.53 against 10.75 and faecal coliform 8.4m against 4.9m on the same day.",
+      cpcb_nwmp_stations: [
+        "Bansdroni (high + low tide)",
+        "Jirat Bridge (high + low tide)",
+        "Kalighat (high + low tide)",
+        "Karunamoyee (high + low tide)",
+        "Kudghat (high + low tide)",
+        "Sahid Kshudiram (high + low tide)",
+      ],
+      color: "stroke-red-600",
+    },
+    bidyadhari: {
+      display_name: "Bidyadhari",
+      display_name_bn: "\u09ac\u09bf\u09a6\u09cd\u09af\u09be\u09a7\u09b0\u09c0",
+      length_km_geom: 38,
+      description:
+        "The channel that drains the East Kolkata Wetlands eastward towards the Sundarbans. It carried Kolkata's drainage until it silted up in the early twentieth century - the failure that created the wetland fishery system now treating 910 MLD of the city's sewage.",
+      upstream_terminus: "East Kolkata Wetlands outfall",
+      downstream_terminus: "Raimangal estuary / Sundarbans",
+      feeds: "Wetland fisheries; no drinking-water abstraction",
+      status: "No public WBPCB series at the city end; monitored upstream at Haroa Bridge in North 24 Parganas.",
+      cpcb_nwmp_stations: ["U/S of Bidyadhari river at Haroa Bridge"],
+      color: "stroke-amber-600",
+    },
+    saraswati: {
+      display_name: "Saraswati",
+      display_name_bn: "\u09b8\u09b0\u09b8\u09cd\u09ac\u09a4\u09c0",
+      length_km_geom: 67,
+      description:
+        "A former principal channel of the Ganga west of the Hooghly, now a much-reduced watercourse through Howrah and Hooghly districts. Included as basin context: it is part of the deltaic braid the city sits in, not a Kolkata supply or drainage arm.",
+      upstream_terminus: "Hooghly offtake near Tribeni",
+      downstream_terminus: "Rejoins the Hooghly near Sankrail",
+      feeds: "No Kolkata abstraction",
+      status: "No dedicated WBPCB station on this reach; shown for basin context. The line renders in two pieces with a 10.6 km break: through that stretch OpenStreetMap maps the channel not as the Saraswati but as the 'Kana' (Bengali for blind or dead) and as unnamed 'khal' ditches. We do not join them, because that would assert an identity the map itself does not make - the break is where the river stopped being called a river.",
+      cpcb_nwmp_stations: [],
+      color: "stroke-slate-500",
+    },
+  },
   madurai: {
     vaigai: {
       display_name: "Vaigai",
@@ -483,6 +551,17 @@ export default async function CityRiversPage({ params }: PageProps) {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
+
+  // Cities whose FEATURE_AVAILABILITY set omits "rivers" 404 here, the same
+  // gate my-ward uses. Without it this page fell through to the generic
+  // not-yet-available state, which tells the reader the page "hasn't shipped
+  // yet" and lists what is needed to ship it - true for a city awaiting a
+  // data layer, FALSE for one that has no river at all. Gurugram is the
+  // first: its NWMP stations are all lakes and borewells, and its surface
+  // water leaves as drain flow into the Najafgarh jheel. Promising a page
+  // that can never exist is the same defect as Delhi's storage chart
+  // promising to "fill in automatically" for a city that impounds nothing.
+  if (!isFeatureSupportedForCity("/rivers", cityId)) notFound();
 
   // Renderer is selected by declared data-layout variant, not a city-id
   // branch in render code (see multi-city-component-discipline.md rule 3).

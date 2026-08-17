@@ -1,0 +1,192 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/sewage-balance",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "kmc-district-environment-plan",
+        "title": "KMC District Environment Plan 2021: sewage generated and treated, STP inventory",
+        "publisher": "Kolkata Municipal Corporation",
+        "license": "KMC statutory filing under the NGT District Environment Plan process, cited with attribution"
+      },
+      {
+        "id": "keiip-kmcsharp-reports",
+        "title": "KEIIP / KMC SHARP programme reports: STP packages, capacities and completion dates",
+        "publisher": "KEIIP / KMC SHARP (Kolkata Municipal Corporation, financed by ADB)",
+        "license": "ADB-disclosed safeguard documents, cited with attribution"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-07-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py",
+    "note": "The East Kolkata Wetlands treat roughly 65% of the city's sewage, about five times what all five STPs manage combined, and lie OUTSIDE KMC. Transcription is self-validating: the producer re-derives the balance and fails on mismatch."
+  },
+  "place_id": "kolkata",
+  "generated_at": "2026-07-26",
+  "source": {
+    "publisher": "Kolkata Municipal Corporation",
+    "document": "District Environment Plan 2021 - Kolkata",
+    "url": "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf",
+    "document_date": "2021-12-01",
+    "filed_under": "NGT-mandated District Environment Plan process"
+  },
+  "balance": {
+    "total_generated_mld": 1400,
+    "treated_ekw_fisheries_mld": 910,
+    "treated_stps_mld": 179,
+    "existing_stp_count": 5,
+    "total_treatment_capacity_mld": 1089,
+    "untreated_or_partial_mld": 311,
+    "untreated_pct_stated": 22.21,
+    "sewage_into_lakes_mld": 0
+  },
+  "ekw_share_pct": 65.0,
+  "ekw_vs_stp_ratio": 5.1,
+  "upcoming_stps": [
+    {
+      "name": "Near WBSETCL, Joka",
+      "capacity_mld": 45,
+      "programme": "KEIIP",
+      "stage": "under_construction",
+      "status_text": "Work in progress (17%)",
+      "completion_pct": 17,
+      "timeline_text": "March, 2022",
+      "due": "2022-03-31",
+      "lat": 22.4496,
+      "lng": 88.2982
+    },
+    {
+      "name": "At Bank Plot, M.G Road",
+      "capacity_mld": 40,
+      "programme": "KEIIP",
+      "stage": "under_construction",
+      "status_text": "Work in progress (14%)",
+      "completion_pct": 14,
+      "timeline_text": "March, 2022",
+      "due": "2022-03-31",
+      "lat": 22.4583,
+      "lng": 88.313
+    },
+    {
+      "name": "Rajpur-Sonarpur, Rania",
+      "capacity_mld": 23,
+      "programme": "KEIIP",
+      "stage": "tendered",
+      "status_text": "Tendering process completed. Agreement done. Work Order to be issued after Election.",
+      "completion_pct": null,
+      "timeline_text": "24 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.4492,
+      "lng": 88.3504
+    },
+    {
+      "name": "Police Telecom Department Land, near Wireless Park",
+      "capacity_mld": 15.3,
+      "programme": "Tollys Nullah",
+      "stage": "tendered",
+      "status_text": "Tender process in progress. Technical bid submitted.",
+      "completion_pct": null,
+      "timeline_text": "30 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.48039,
+      "lng": 88.34874
+    },
+    {
+      "name": "Near Golf Garden, Sukhapukur",
+      "capacity_mld": 5.06,
+      "programme": "Tollys Nullah",
+      "stage": "tendered",
+      "status_text": "Tender process in progress.",
+      "completion_pct": null,
+      "timeline_text": "30 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.49851,
+      "lng": 88.35096
+    },
+    {
+      "name": "Near Kavi Nazrul Metro Station, Birji Road",
+      "capacity_mld": 5.7,
+      "programme": "Tollys Nullah",
+      "stage": "tendered",
+      "status_text": "Tender process in progress.",
+      "completion_pct": null,
+      "timeline_text": "30 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.46576,
+      "lng": 88.38884
+    },
+    {
+      "name": "Proposed STP for Borough-XII (Wards 108, 109 part, 110)",
+      "capacity_mld": 70,
+      "programme": "KEIIP",
+      "stage": "proposed",
+      "status_text": "To be finalized based on implementation of future loan or from own resources of KMC",
+      "completion_pct": null,
+      "timeline_text": "Not yet finalized",
+      "due": null,
+      "lat": null,
+      "lng": null,
+      "update_2026": {
+        "as_of": "2026-02-24",
+        "capacity_mld": 41,
+        "site": "Anandapur, Ward 108, Borough XII (adjacent to the existing Anandapur pumping station)",
+        "technology": "Sequencing batch reactor (SBR)",
+        "programme": "KMC SHARP (ADB project 56287-001), package KMC SHARP/OCB/SD 04/2025-26",
+        "land": "3.781 acres available, 2.66 acres allocated; KMDA-owned, currently a non-operational oxidation pond",
+        "effluent_to": "Lead Channel D-D1, to NGT effluent standards",
+        "schedule": "Bids invited March 2026; 3.5-year design-and-construction period, then 15 years O&M",
+        "site_moved_from": "Originally sited at Hossainpur in the SAME ward under the same package, with a draft IEE disclosed via ADB in 2024. Relocated after legal litigation made that land parcel unavailable; the new site is within 2.5 km.",
+        "note_on_double_counting": "The 'Hossainpur 41 MLD STP' and the 'Anandapur 41 MLD STP' in ADB's document library are the SAME plant, relocated - not two plants. Counting both would invent 41 MLD of capacity.",
+        "source_url": "https://www.keiip.in/kmcsharp_report.html",
+        "source_label": "KMC/ADB, Updated Initial Environmental Examination, 24 Feb 2026"
+      }
+    },
+    {
+      "name": "STP Near L.S 10",
+      "capacity_mld": 16,
+      "programme": "MWWP",
+      "stage": "proposed",
+      "status_text": "Draft DPR submitted to NMCG. Draft Bidding Document under evaluation by Technical Review Committee.",
+      "completion_pct": null,
+      "timeline_text": "52 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.51841,
+      "lng": 88.32479
+    },
+    {
+      "name": "STP Near Surinaam Ghat, Dhankheti Nikashi",
+      "capacity_mld": 25,
+      "programme": "MWWP",
+      "stage": "proposed",
+      "status_text": "Draft DPR submitted to NMCG.",
+      "completion_pct": null,
+      "timeline_text": "52 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.55041,
+      "lng": 88.29222
+    },
+    {
+      "name": "STP Near Bhanga Khal, Gardenreach area",
+      "capacity_mld": 35,
+      "programme": "MWWP",
+      "stage": "proposed",
+      "status_text": "Draft DPR submitted to NMCG.",
+      "completion_pct": null,
+      "timeline_text": "52 months from the date of issuance of work order",
+      "due": null,
+      "lat": 22.54118,
+      "lng": 88.25155
+    }
+  ],
+  "upcoming_total_mld": 280.06,
+  "residual_gap_mld": 30.94,
+  "notes": [
+    "The East Kolkata Wetlands lie outside KMC, in North and South 24 Parganas. The city's largest sewage treatment asset is not inside the city.",
+    "Even if every upcoming STP is built, 280.06 MLD of new capacity against 311 MLD currently untreated leaves a residual gap of 30.94 MLD - and that assumes the wetlands keep treating 910 MLD, which the plan takes as given.",
+    "KMC's Environment Plan leaves the entire industrial-wastewater section blank, naming WBPCB as the responsible agency. That is the corporation declaring a gap in its own statutory plan."
+  ]
+}

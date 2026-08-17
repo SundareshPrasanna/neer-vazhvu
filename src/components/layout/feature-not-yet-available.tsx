@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { PlaceConfig } from "@/lib/cities";
+import { isFeatureSupportedForCity } from "@/lib/cities/routing";
 
 export type FeatureScope =
   | "city-admin"
@@ -47,6 +48,22 @@ export function FeatureNotYetAvailable({
   parityVerdict,
   relatedLinks,
 }: FeatureNotYetAvailableProps) {
+  // Callers hardcode their cross-links, and for most cities every target is
+  // live so nothing showed. Gurugram is the first city where they are not:
+  // its flood-risk page offered a "Groundwater stress map" and its
+  // climate-risk page offered "Flood risk", both of which are themselves
+  // not-yet-available pages. A heading that says "What's live now" must not
+  // link to something that is not.
+  //
+  // Filtered here rather than in the six callers so no future caller has to
+  // remember. The city home is always kept - it is live by definition for any
+  // registered city.
+  const liveLinks = (relatedLinks ?? []).filter((link) => {
+    const feature = link.href.replace(`/${config.cityId}`, "");
+    if (!feature || feature === "/") return true;
+    return isFeatureSupportedForCity(feature, config.cityId);
+  });
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -89,13 +106,13 @@ export function FeatureNotYetAvailable({
         </Card>
       )}
 
-      {relatedLinks && relatedLinks.length > 0 && (
+      {liveLinks.length > 0 && (
         <div>
           <div className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-2">
             What&apos;s live now for {config.displayName}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {relatedLinks.map((link) => (
+            {liveLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

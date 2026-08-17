@@ -128,6 +128,13 @@ export interface DashboardSectionsConfig {
    *  balance; Chennai today (TNGCC+CEEW 2026). Links to the climate-risk
    *  surface. */
   weapBalance?: boolean;
+  /** Sewage-balance card: where a city's sewage actually goes, against what
+   *  it generates. Needs `<cityId>-sewage-balance.json`. Kolkata is the first
+   *  city with one, and the reason the card exists: 65% of its sewage is
+   *  treated by a wetland OUTSIDE the corporation's boundary, which no
+   *  supply-side surface can express. Generic - any city that publishes a
+   *  generated-vs-treated balance can turn this on. */
+  sewageBalance?: boolean;
 }
 
 /**
@@ -172,6 +179,50 @@ export interface FactsConfig {
  */
 export interface FloodViewConfig {
   variant?: 'interactive' | 'bangalore' | 'narrative';
+}
+
+/**
+ * The drainage design standard a city's storm-water network was built to,
+ * plus its citation. Consumed by the `drainage-capacity` hero, which asks how
+ * often measured rainfall intensity beats it.
+ *
+ * This exists because for some cities the honest headline is not "how much
+ * water is left" but "how much water the city cannot get rid of". Kolkata has
+ * no impounded storage at all, so the days-left runway is undefined there;
+ * what it does have is a published, falsifiable engineering promise that the
+ * sky routinely breaks.
+ */
+export interface DrainageCapacityConfig {
+  /** The design standard, in mm of rainfall per hour. Must be one of the
+   *  thresholds on the ladder precomputed by
+   *  neer-vazhvu-api/scripts/fetch_rainfall_intensity.py, since the hero's
+   *  slider selects from that ladder rather than recomputing client-side. */
+  standardMmPerHour: number;
+
+  /** Where the standard is published. Rendered under the hero: this number is
+   *  a design property quoted from a document, not a measurement, and readers
+   *  must be able to go check it. */
+  standardSource: { publisher: string; document: string; year: number; url?: string };
+
+  /** WHAT the standard actually governs, as the grammatical subject of "___
+   *  were built to carry N mm of rain an hour". Defaults to "<City>'s drains",
+   *  which is almost always broader than the source claims.
+   *
+   *  Set it wherever the citation scopes itself. Kolkata's source says "the
+   *  main sewer network / brick sewer ... was designed to discharge a rainfall
+   *  of 6 mm. per hour" - a statement about a specific 180 km trunk network,
+   *  not about every drain in the city. Rendering the default there would have
+   *  the hero assert something its own citation does not. */
+  standardAppliesTo?: string;
+
+  /** What the network is, in one clause ("180 km of century-old brick sewer,
+   *  mostly combined"). Gives the standard its physical meaning. */
+  networkNote?: string;
+
+  /** Optional deep-link to the city's live waterlogging/flood register, which
+   *  is the independent check on the modelled exceedance: reanalysis says the
+   *  standard was beaten, the register says where the street actually flooded. */
+  registerLink?: { label: string; href: string };
 }
 
 /**
@@ -331,15 +382,27 @@ export interface BasePlaceConfig {
    *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
   hasTreatmentDischarge?: boolean;
 
-  /** Which KIND of tanker data this city has. The two are not
-   *  interchangeable and must not share a renderer:
+  /** Which KIND of tanker data this city has. The three are not
+   *  interchangeable and must not share a renderer - they answer different
+   *  questions off different evidence:
    *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
-   *    what households pay a private market. Reads
+   *    what households pay a private market. Sampled, demand-side. Reads
    *    `<cityId>-tanker-survey.json`.
    *  - `utility-ledger` (Hyderabad): the utility's own booking/delivery
    *    record, because HMWSSB runs the fleet itself. No prices exist in it.
-   *    Reads `<cityId>-tankers.json`. */
-  tankerDataKind?: 'household-survey' | 'utility-ledger';
+   *    Reads `<cityId>-tankers.json`.
+   *  - `utility-sales-ledger` (Gurugram): the utility's own SALES record -
+   *    every tanker load GMDA sold, from which dispensing point, of which
+   *    water grade, to which named buyer, at which tariff. A census of
+   *    priced transactions. There is no delivery confirmation to measure
+   *    because a booking here IS a collection, and no ward or section unit
+   *    because the analytical dimensions are station, water type and buyer.
+   *    Reads `<cityId>-tanker-sales.json`.
+   *
+   *  Adding a fourth kind is cheaper than bending one of these: forcing a
+   *  city through the wrong panel means making its required fields optional
+   *  and gutting its copy, which damages the city the panel was written for. */
+  tankerDataKind?: 'household-survey' | 'utility-ledger' | 'utility-sales-ledger';
 
   /** One-line description of what this city's tanker page actually shows.
    *  The shape of tanker data differs fundamentally by city - Bangalore has
@@ -442,11 +505,36 @@ export interface BasePlaceConfig {
    *    (Cauvery stages, transmission distance, NRW, IISc stress wards,
    *    Stage V under-delivery) from `<cityId>-supply-overview.json`.
    *    Honest for any pumped-from-far city (Delhi/Mumbai future fits).
+   *  - `drainage-capacity`: Kolkata-style story for cities whose water
+   *    emergency is drainage, not scarcity. Compares the drainage
+   *    system's stated design standard (mm of rain per hour) against
+   *    measured hourly rainfall intensity, from
+   *    `rainfall-intensity-{cityId}.json`. The only hero that needs no
+   *    impounded storage at all, so it is the honest choice for
+   *    run-of-river cities where `days-left` is undefined rather than
+   *    merely awkward. Requires `drainageCapacity`.
    *  - `none`: suppress hero entirely (cities with no useful summary
    *    yet). Reservoir cards + history chart still render below.
    *
    *  Defaults to `days-left` for back-compat with Chennai. */
-  heroMode?: 'days-left' | 'allocation' | 'cauvery-pumping' | 'none';
+  heroMode?:
+    | 'days-left'
+    | 'allocation'
+    | 'cauvery-pumping'
+    | 'drainage-capacity'
+    | 'none';
+
+  /** Drainage design standard for the `drainage-capacity` hero.
+   *  Required when heroMode === 'drainage-capacity'; ignored otherwise.
+   *
+   *  The standard is CONFIG, not a constant in the component, for two
+   *  reasons. It varies by city (Kolkata's British-era sewers are rated
+   *  6 mm/h; modern Indian storm-water codes use 12-25 mm/h), and
+   *  Kolkata's own figure comes from a 2009 document describing
+   *  Victorian brick sewers - if a rehabilitated stretch turns out to
+   *  carry a different rating, that is a config edit and a re-cited
+   *  source, not a code change. */
+  drainageCapacity?: DrainageCapacityConfig;
 
   /** When the days-left runway is ALREADY published by the source (e.g. BMC's
    *  Mumbai-lakes feed states "days of supply left"), set this so the shared
@@ -497,6 +585,14 @@ export interface BasePlaceConfig {
    *  produced the corresponding PMTiles. */
   hasCascadeOverlay?: boolean;
 
+  /** Why this city has NO catchment view, shown on the water-bodies page in
+   *  place of the missing toggle. Without it a city that cannot support
+   *  catchment delineation just silently lacks a view mode, which reads as an
+   *  oversight rather than a decision. Set it wherever `hasCascadeOverlay` is
+   *  false for a REASON (Kolkata: 11 m of relief across 40 km of delta);
+   *  omit it where the layer is merely not built yet. */
+  catchmentsGapNote?: string;
+
   /** Basin Atlas surfaces hosted by this city. Each id must have a manifest
    *  in src/lib/basins/ and ingested data under public/data/basins/<id>/.
    *  Drives the /<city>/basins/<id> route guard and any basin nav entry.
@@ -519,6 +615,12 @@ export interface BasePlaceConfig {
    *  only when this is 'region' and `corporations` is present, so flat
    *  city -> ward behaviour is the untouched default. */
   placeKind?: PlaceKind;
+
+  /** One-line framing for the regional-water-system card. Required in
+   *  practice for any `region` place: the card's default copy used to be
+   *  Mumbai's ("nine corporations drawing from one contested source pool"),
+   *  which leaked onto Kolkata verbatim. Omit and a neutral line is used. */
+  regionIntro?: string;
 
   /** The municipal corporations of a `region` place, in display order.
    *  Present iff placeKind === 'region'. Absent for every `city` (whose

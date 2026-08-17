@@ -1,0 +1,70 @@
+# Weekly capture of KMC's Weekly Drainage Activity Chart - the register of
+# waterlogging pockets the Sewerage & Drainage Department sent de-silting
+# machines to, with a borough/ward attribution on every row.
+#
+# THIS ONE IS AN ARCHIVE, NOT JUST A REFRESH. KMC publishes the chart at a
+# fixed URL and OVERWRITES it in place every week: there is no upstream history
+# at all. If we miss a week, that week is gone from the public record. So the
+# weekly pull is the only thing creating a Kolkata waterlogging time series,
+# which makes the schedule load-bearing rather than a convenience.
+#
+# Scheduled for Monday morning IST: the chart covers Monday-to-Sunday and is
+# published at the start of its period (the 20-26 Jul edition carried a PDF
+# creation date of 20 Jul), so a Monday pull catches the new edition. Runs
+# again on Sunday as a safety net in case the Monday edition landed late.
+#
+# Artifact-commit pattern (like bmc-floodspots-refresh.yml): the parsed JSON is
+# committed back to the branch and Vercel picks it up. The scraper exits
+# non-zero when it parses zero rows, so a layout change or a truncated download
+# fails loudly instead of silently emptying the register.
+name: KMC Drainage Register Refresh
+
+on:
+  schedule:
+    - cron: '45 4 * * 1'   # Mondays 04:45 UTC = 10:15 IST (new edition)
+    - cron: '45 4 * * 0'   # Sundays 04:45 UTC = 10:15 IST (late-edition catch)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # pdftotext lives in poppler-utils; the scraper itself is stdlib-only.
+      - name: Install poppler-utils
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Fetch KMC weekly drainage register
+        run: |
+          for attempt in 1 2 3; do
+            if python neer-vazhvu-api/scripts/scrape_kmc_drainage_register.py; then
+              exit 0
+            fi
+            echo "attempt $attempt failed; retrying in 60s"
+            sleep 60
+          done
+          echo "kmcgov.in unreachable or layout changed after 3 attempts; keeping last week's register"
+          exit 0
+
+      - name: Commit refreshed register
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/kolkata-waterlogging-register.json
+          if git diff --staged --quiet; then
+            echo "No register change to commit"
+            exit 0
+          fi
+          git commit -m "KMC drainage register refresh ($(date -u +%Y-%m-%d))"
+          git pull --rebase origin main
+          git push

@@ -32,40 +32,29 @@ jobs:
         run: npx tsx scripts/check-upstream-editions.ts --check
 
       - name: Alert on new editions / failed checks
-        if: steps.editions.outcome == 'failure'
+        # Always runs so the issue can CLOSE itself once every detection is
+        # accepted, rather than lingering as a permanent open tab.
+        if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const today = new Date().toISOString().slice(0, 10);
-            const title = `Headwaters: upstream editions - ${today}`;
+            const { rollingAlert } = require('./.github/workflows/lib/rolling-alert.js');
+            const keys = fs.existsSync('editions-report-keys.json')
+              ? JSON.parse(fs.readFileSync('editions-report-keys.json', 'utf-8'))
+              : ['editions-report-keys.json missing - the detector itself errored'];
             const report = fs.existsSync('editions-report.md')
               ? fs.readFileSync('editions-report.md', 'utf-8')
               : 'editions-report.md missing - the detector itself errored; see the run log.';
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'headwaters',
-              state: 'open',
+            await rollingAlert({
+              github, context,
+              title: 'Headwaters: upstream editions',
+              labels: ['headwaters', 'edition-alert'],
+              report, keys,
+              footer: [
+                'Handling a NEW EDITION: run the refresh method listed above (data',
+                'updates are human-reviewed), then `--accept <id>` and commit the',
+                'registry. Handling a CHECK FAILURE: some sites block runner IPs but',
+                'work from residential IPs - retry locally before changing the entry.',
+              ].join('\n'),
             });
-            const existing = issues.find(i => i.title === title);
-            if (!existing) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                labels: ['headwaters', 'edition-alert'],
-                body: [
-                  report,
-                  '',
-                  `**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-                  '',
-                  'Handling a NEW EDITION: run the refresh method listed above (data',
-                  'updates are human-reviewed), then `--accept <id>` and commit the',
-                  'registry. Handling a CHECK FAILURE: some sites block runner IPs but',
-                  'work from residential IPs - retry locally before changing the entry.',
-                  '',
-                  'This issue is created once per run day while detections remain open.',
-                ].join('\n'),
-              });
-            }

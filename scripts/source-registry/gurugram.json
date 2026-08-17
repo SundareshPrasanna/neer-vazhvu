@@ -1,0 +1,81 @@
+{
+  "_doc": "Headwaters source registry - Gurugram episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Build plan: docs/specs/gurugram-onboarding.md.\n\nLICENCE POSTURE FOR THE WHOLE SCOPE: gmda.gov.in carries 'Copyright (c) 2017. Gurugram Metropolitan Development Authority All rights reserved' and states NO reuse, reproduction or redistribution policy anywhere on /terms-conditions.html or /disclaimer.html (both read verbatim 2026-08-14). That is restrictive-by-default, the same posture as DPCC in delhi.json. Consequence, and it is a design constraint rather than a footnote: every artifact built from a GMDA source in this scope is a DERIVED AGGREGATE - counts, sums, shares - never a republication of upstream rows. The tanker MIS delivery-address column in particular is not republished in any form.\n\nDELIBERATELY NOT REGISTERED YET: the GMDA daily WTP quality reports and the HSPCB STP/CETP monitoring workbooks. Both are verified live and written up in docs/specs/gurugram-onboarding.md section 10, but neither has a repo artifact yet, and this registry rejects a watch with no lineage on purpose - an alert nothing depends on is not actionable. They land here as their artifacts do.",
+  "sources": [
+    {
+      "id": "gmda-tanker-mis",
+      "scope": "gurugram",
+      "publisher": "Gurugram Metropolitan Development Authority",
+      "url": "https://www.gmda.gov.in/onlineservices/water-tanker.html",
+      "license": "restrictive, permission required: gmda.gov.in asserts 'All rights reserved' and publishes no reuse or redistribution policy - derived aggregates only, no republication of upstream rows",
+      "type": "file",
+      "cadence": "annual (series stopped after 2021)",
+      "tier": 1,
+      "detection": {
+        "method": "url-template",
+        "urlTemplate": "https://www.gmda.gov.in/static/report/Water%20Tanker%20MIS%20Report%20{YYYY}.xlsx",
+        "templateFrom": 2019,
+        "expectContentType": "application/xlsx"
+      },
+      "dependsOn": [
+        "public/data/gurugram-tanker-sales.json"
+      ],
+      "refreshMethod": "cd neer-vazhvu-api && python3 scripts/build_gurugram_tankers.py --out ../public/data/gurugram-tanker-sales.json",
+      "notes": "GMDA's own bulk-water tanker booking ledger, published as a per-year XLSX at a static path that no index page links to. Verified 2026-08-14: 2019 (12,337 bookings), 2020 (9,741) and 2021 (7,208) all resolve and parse - 29,286 bookings, 1,722,822,000 litres, Rs 8.72 crore, 36 continuous months. Per booking: timestamp, dispensing station, water type, named buyer, delivery address, tanker size, amount paid, litres. No other city on the platform has tanker data at transaction resolution.\n\nTHE SERIES STOPPED AFTER 2021, and a new year appearing here is exactly the event this watch exists for.\n\nTHE SOFT-404 TRAP, and the reason detection pins expectContentType: 2022 through 2026 do not 404. They 302 to a 38,291-byte HTML error page served as 200. A status-only probe therefore reports an edition for every year it tries, forever, and reports it silently - it looks like a healthy source rather than a broken detector. Real editions answer Content-Type: application/xlsx; the error page answers text/html. That header is the only field that separates them. Support for expectContentType was added to scripts/check-upstream-editions.ts for this entry.\n\nSECOND TRAP, for whoever next reads these numbers: absolute bookings fall 12,337 -> 7,208 across the three years, but 2020 and 2021 are COVID years in a construction-driven market, so that decline must not be published as reduced tanker dependence. What survives the confound is compositional, because it is a ratio measured inside the same disrupted period - non-potable share 29.7% -> 42.2% -> 51.2%, against tariffs stable to the decimal across all three years (potable Rs 70.5/kL, recycle Rs 30.0/kL, CETP-treated Rs 8.0/kL).",
+      "lastSeen": {
+        "apiDate": "2021 https://www.gmda.gov.in/static/report/Water%20Tanker%20MIS%20Report%202021.xlsx",
+        "acceptedOn": "2026-08-14"
+      }
+    },
+    {
+      "id": "gmda-onemap-arcgis",
+      "scope": "gurugram",
+      "publisher": "Gurugram Metropolitan Development Authority (OneMap GGM)",
+      "url": "https://onemapdepts.gmda.gov.in/server/rest/services?f=json",
+      "license": "restrictive, permission required: no licence or access-constraint statement is served with the ArcGIS REST directory, and the parent gmda.gov.in asserts 'All rights reserved' - open in the ACCESS sense, unlicensed in the REUSE sense",
+      "legacyTLS": true,
+      "type": "api",
+      "cadence": "irregular (per-layer; no published revision feed)",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "currentVersion"
+      },
+      "dependsOn": [
+        "public/data/gurugram-supply-overview.json",
+        "public/geojson/gurugram-drainage.geojson",
+        "public/geojson/gurugram-wards-2026.geojson",
+        "public/geojson/gurugram-water-bodies-current.geojson"
+      ],
+      "refreshMethod": "cd neer-vazhvu-api && python3 scripts/harvest_arcgis_rest.py --city gurugram && python3 scripts/build_gurugram_supply.py --out ../public/data/gurugram-supply-overview.json",
+      "notes": "ArcGIS Server 11.2 with a fully open, unauthenticated REST directory, 32 folders. Verified 2026-08-14: service listing, layer metadata, query with where=1=1 and outFields=*, returnCountOnly, and f=geojson returning real coordinates all work with no token. The important contrast with Surat's IGiS portal, where WFS is disabled and only rendered tiles plus attributes are available: here the vectors are downloadable.\n\nHARVESTED TODAY (harvest_arcgis_rest.py pins a feature count per layer, so an upstream change fails the run rather than silently rewriting a layer): MCG wards 36, the NGT water-body register 824, and the GMUC drain legs.\n\nNOT HARVESTED YET, deliberately - each lands with the surface that consumes it rather than accumulating files nothing renders: Tubewell 524, Master Water Supply Network 122, WTP Location (which publishes Chandu Budhera at 300 and Basai at 272 MLD - PRIMARY capacity figures that disagree with the widely-quoted press 400/270 and should be preferred), STP Location, Watershed_Gurugram 10, the 117 GMUC waterlogging sites, and onemap/Boundary_GMDA's MCG limit vintages 1985/1996/2008/2010/2015/2020.\n\nTLS QUIRK: this host does not implement RFC 5746 secure renegotiation, so Python fails with UNSAFE_LEGACY_RENEGOTIATION_DISABLED while curl succeeds. The harvester sets OP_LEGACY_SERVER_CONNECT and asserts that certificate verification and hostname checking stay ON. This is NOT the same as the insecureTLS entries for cgwb.gov.in, which serves an incomplete cert chain; that flag weakens verification and this does not. Do not conflate them.\n\nTRAP on the water-body vintages: raw layer counts are WB 1956 (ROR) 640, WB 1976 (SoI) 519, WB 2012 (WorldView) 824 - the count RISES at the end, because three survey methods have three inclusion criteria and satellite picks up construction pits a revenue record never listed. Do not publish a count comparison. What IS defensible is the per-feature in_ror_1956 / in_soi_1976 / in_worldview_2012 / in_drone / in_google_earth flags carried on the 824-row register, because that cross-attribution is GMDA's own. Even then it only describes the 2012-known population: a body that existed in 1956 and had vanished by 2012 is not a row there at all.\n\nSecond trap: Jalshakti/IOT_Water_Sensor_ggm looks like live SCADA telemetry (level, flow rate, totalizer, pressure, capacity per tank) but all 44 records carry one frozen timestamp of 16 Jan 2023 11:27-11:28. It is a single snapshot, not a feed. Verify twice before publishing that as a claim about the institution.\n\nGMDA_Utility_Network/Utility_Network_Water_V2 is the only auth-gated service found, and nothing blocks on it since Wet_Infrastructure_caching carries the network openly. The same server also hosts FMDA (Faridabad), HARSAC, HaryanaRoads, TCP_Haryana, HSVP and Gatishakti, so the harvester is reusable well beyond this city.\n\nALSO FEEDS THE SUPPLY HERO (build_gurugram_supply.py). The WTP Location layer publishes Chandu Budhera at 300 MLD and Basai at 272 - 572 MLD installed - where press coverage consistently says 400 + 270 = 670 and describes a fifth Chandu Budhera unit reaching 500 MLD by March 2026. Both cannot be current. We publish GMDA's own asset register and state the disagreement on the page, because the layer carries NO revision date and may predate that unit. The same layer mixes boosting stations (2 x 11 MLD) in with the plants; they re-pressurise treated water and are excluded from the treatment total rather than double-counted.",
+      "lastSeen": {
+        "apiDate": "11.2",
+        "acceptedOn": "2026-08-14"
+      }
+    },
+    {
+      "id": "ingres-groundwater-haryana",
+      "scope": "gurugram",
+      "publisher": "IN-GRES (CGWB + Haryana state groundwater department), IIT Hyderabad",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "Government of India assessment portal, cited with attribution",
+      "type": "api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-gurugram.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city gurugram)",
+      "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15, verified against Tamil Nadu: 2024-2025 returns 38 districts, 2025-2026 returns the empty total. 2024-2025 is current; there is no newer edition. When 2025-2026 starts returning districts it re-bases groundwater for every city at once. IIT-Hyderabad hosted, so OUTSIDE the NICNET gate that blocks CPCB/CGWA. This is the source that closes Gurugram's signature issue: four assessment years to 2024-25, and unlike the WRIS LEVEL series (37 stations, stops June 2020, no telemetry for this district at all) it is current.\n\nTHE NUMBERS. Gurugram district extracts 194.59% of annual recharge, over_exploited - the primary source for the '~195%' the research drop asserted without one. Block level is worse and more specific: GURGAON_URBAN 326.26%, PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39, GURGAON (rural) 106.91 - all five over_exploited. Haryana state total 136.75%. Neighbours carried for context: Rewari and Faridabad over_exploited, Palwal critical, Nuh (Mewat) semi_critical, Jhajjar safe.\n\nSTATE UUID TRAP - do not repeat it. Haryana is 648a95f6-9249-4c92-8ae4-a9d93eb7c898, obtained BY ASKING THE API: a COUNTRY-level call (locname=INDIA, loctype=COUNTRY, locuuid=parentuuid=INDIA_UUID) returns all 38 states with their uuids in one request. Do NOT source it from the Angular bundle the way West Bengal's was. That table (STATEUUIDLAYERNAME) is GIS-layer-scoped, INCOMPLETE - 27 of 36 states, Haryana absent - and main.js carries a SECOND table of the same shape (HR:{ST_CENSUS:6,name:'HARYANA',UUID:...}) in a different namespace. The decoy uuid is well-formed and returns an empty list for every year, which is indistinguishable from 'this state publishes nothing'. Only running West Bengal as a control through the same code proved the code was fine and the id was wrong.\n\nNAMING: IN-GRES still spells the district GURGAON, the pre-2016 name, where India-WRIS and LGD both say GURUGRAM. Third portal, third vocabulary - enumerate per portal.\n\nPayload gotchas inherited from the WB entry: lowercase keys, locname with NO spaces, view lowercase 'admin', parentuuid REQUIRED as the discriminator.",
+      "lastSeen": {
+        "edition": "2024-2025",
+        "acceptedOn": "2026-08-15",
+        "reviewedOn": "2026-08-15"
+      }
+    }
+  ]
+}

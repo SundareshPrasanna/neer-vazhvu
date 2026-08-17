@@ -1,0 +1,243 @@
+{
+  "_doc": "Headwaters source registry - Kolkata / KMA episodic sources. Schema + design notes: docs/specs/headwaters.md (local).",
+  "sources": [
+    {
+      "id": "kmc-weekly-drainage-register",
+      "scope": "kolkata",
+      "publisher": "Kolkata Municipal Corporation, Sewerage & Drainage Department",
+      "url": "https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf",
+      "license": "KMC publication, cited with attribution",
+      "type": "file",
+      "cadence": "weekly",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash",
+        "staleAfterDays": 10
+      },
+      "dependsOn": [
+        "public/data/kolkata-waterlogging-register.json"
+      ],
+      "refreshMethod": "automated (.github/workflows/kmc-drainage-refresh.yml, Mondays 10:15 IST + Sunday catch-up)",
+      "notes": "content-hash is implemented as of 2026-08-15 (byte hash of the response body); before that this entry reported a false link-set failure weekly. KMC OVERWRITES this file in place every week - there is no upstream archive, so a missed week is permanently lost from the public record. That makes the weekly job the only thing building a Kolkata waterlogging time series, and stale-by-Monday a real alert rather than a nicety. Parser is layout-sensitive (pdftotext -layout, 2+ space column split, vertically-centred date cell); the scraper exits non-zero on a zero-row parse so a layout change fails loudly. 2026-07-20 edition: 329 rows, 66 pockets, 53 wards, 15 boroughs."
+    },
+    {
+      "id": "wbpcb-emis-water-quality",
+      "scope": "kolkata",
+      "publisher": "West Bengal Pollution Control Board",
+      "url": "http://emis.wbpcb.gov.in/waterquality/showwqprevdatachoosedist.do",
+      "license": "WBPCB citizen data portal, cited with attribution",
+      "type": "page",
+      "cadence": "quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/river-quality-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/scrape_wbpcb_emis.py --districts 013,001)",
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. Cannot be machine-watched: EMIS is a POST-driven form; there is no addressable page whose change means 'new quarter'. Carries a 90-day review cadence instead, which escalates to REVIEW-DUE when it lapses. Plain HTTP, NO login on the citizen path - note the /waterquality/ root IS a login page, so do not generalise the block from the sibling path. 28 Kolkata stations including the Adi Ganga at six points, each sampled separately at HIGH TIDE and LOW TIDE; ~50 samples per station from 2014 to 2026, roughly quarterly. 24 Parganas(N) carries Ganga at Palta, Kolkata's own intake. BUILT 2026-07-26: 41 stations, 3,209 samples, 2010-2026. Station names are inconsistent in WBPCB's own list ('Adi Ganga' vs 'Adi ganga'), which splits tidal pairs if not canonicalised."
+    },
+    {
+      "id": "kmc-district-environment-plan",
+      "scope": "kolkata",
+      "publisher": "Kolkata Municipal Corporation",
+      "url": "https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf",
+      "license": "KMC statutory filing under the NGT District Environment Plan process, cited with attribution",
+      "type": "file",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/kolkata-sewage-balance.json",
+        "public/data/commitments-kolkata.json",
+        "public/data/facts-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py - transcription validated against the document's own printed totals)",
+      "notes": "content-hash is implemented as of 2026-08-15 (byte hash of the response body); before that this entry reported a false link-set failure weekly. Carries the platform's strongest sewage finding: 910 of 1,400 MLD treated by the East Kolkata Wetlands, 5.1x all five STPs combined, and the EKW lies outside KMC. Also the 10-plant upcoming-STP table (280.06 MLD, 9 with coordinates) and a blank industrial-wastewater section - KMC declaring a gap in its own statutory plan. A new edition would supersede a 2021 document; worth watching even though the cadence is irregular."
+    },
+    {
+      "id": "kmc-water-distribution-page",
+      "scope": "kolkata",
+      "publisher": "Kolkata Municipal Corporation, Water Supply Department",
+      "url": "http://www.kmc-wd.com/",
+      "license": "KMC publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "src/lib/cities/kolkata.ts",
+        "public/data/allocations-kolkata.json",
+        "public/data/facts-kolkata.json"
+      ],
+      "refreshMethod": "manual - BLOCKED on reconciliation, see notes",
+      "notes": "content-hash is implemented as of 2026-08-15 (byte hash of the response body); before that this entry reported a false link-set failure weekly. DO NOT PUBLISH A TOTAL FROM THIS PAGE. Plants listed sum to 2,214.7 MLD plus ~110 MLD tube wells = 2,324.7 MLD, while the SAME page describes a target of ~1,900 MLD generation in 2025 and a requirement of ~1,660 MLD. The page is labelled '(DRAFT)' and footered '(c) 2013', and refers to 2025 in the future tense. Either the plant figures are post-expansion design capacities or the page mixes vintages. Reconcile against KMC budget statements (OpenCity kmc-budget-statement, 16 PDFs) before any capacity total enters the product. Watched so we notice if KMC ever republishes it."
+    },
+    {
+      "id": "ekwma-management-authority",
+      "scope": "kolkata",
+      "publisher": "East Kolkata Wetlands Management Authority",
+      "url": "http://ekwma.in/ek/index.php",
+      "license": "West Bengal government publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "management[_% ]?plan|action[_% ]?plan|biodiversity|order|fir|charge[_% ]?sheet"
+      },
+      "dependsOn": [
+        "public/data/facts-kolkata.json",
+        "public/data/water-bodies-flagship-kolkata.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Counterpart figures to KMC's balance: 12,500 hectares, 254 sewage-fed fisheries, 37 mouzas (30 full, 7 part) across South and North 24 Parganas, constituted under the East Kolkata Wetlands (Conservation and Management) Act, 2006. Publishes an Integrated Management Plan 2021-2026, Supreme Court / Calcutta HC / NGT orders, and FIR-status and charge-sheet pages - an encroachment-enforcement record structurally parallel to HYDRAA's in Hyderabad. The FIR page rendered no HTML table on probe; format still to determine."
+    },
+    {
+      "id": "ingres-groundwater-westbengal",
+      "scope": "kolkata",
+      "publisher": "IN-GRES (CGWB + West Bengal state groundwater department), IIT Hyderabad",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "Government of India assessment portal, cited with attribution",
+      "type": "api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata)",
+      "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15: West Bengal is on the same 2024-2025 assessment as every other state; the portal is one national release, not per-state.",
+      "lastSeen": {
+        "edition": "2024-2025",
+        "acceptedOn": "2026-08-15",
+        "reviewedOn": "2026-08-15"
+      }
+    },
+    {
+      "id": "indiawris-gwl-kolkata",
+      "scope": "kolkata",
+      "publisher": "Central Ground Water Board via India-WRIS",
+      "url": "https://indiawris.gov.in/wris/",
+      "license": "Government of India, cited with attribution",
+      "type": "api",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/kolkata-cgwb-stations.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_cgwb_stations.py --city kolkata --kma)",
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. India-WRIS is a live service with no editions; it is a freshness question (P5-1), tracked by check-data-freshness.ts against the table its readings land in, not an edition watch. 703 wells across the six KMA districts. THREE TRAPS, each producing a plausible-but-wrong network rather than an error: (1) page to exhaustion - Kolkata reads as 3 stations unpaged, 23 paged; (2) sign convention is PER STATION - telemetric wells report depth negative, and a naive v<0 reject drops all their readings and reports the city groundwater-dead; (3) take lat/lng from ANY row, not the latest - WRIS nulls them often and keying off the newest row collapsed Nadia from 205 wells to 39. Howrah stale since 2023-04-30 and Hooghly since 2022-11-30 - render stale, never interpolate."
+    },
+    {
+      "id": "imd-gridded-rainfall-kolkata",
+      "scope": "kolkata",
+      "publisher": "India Meteorological Department (0.25-degree gridded)",
+      "url": "https://www.imdpune.gov.in/",
+      "license": "IMD gridded product via imdlib, cited with attribution",
+      "type": "file",
+      "cadence": "quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 200
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-kolkata.json",
+        "public/data/rainfall-recent-kolkata.json"
+      ],
+      "refreshMethod": "automated (.github/workflows/imd-rainfall-refresh.yml, quarterly) + daily Open-Meteo provisional fill",
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. Cannot be machine-watched: IMD Pune publishes gridded updates without a dated listing; the check is 'has the covered period moved'. Carries a 200-day review cadence instead, which escalates to REVIEW-DUE when it lapses. 56 years, 1970-2025, long-term annual mean 1,659.3 mm at grid point 22.5/88.25. NOT the city centre: Kolkata is deltaic and cells near 22.57/88.36 are classified as water by IMD, returning NaN. Validate any new grid point on two years before a full pull."
+    },
+    {
+      "id": "opencity-kolkata-ward-kml",
+      "scope": "kolkata",
+      "publisher": "OpenCity Urban Data Portal",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=e1c4f558-eff2-44c3-b703-d9d6ea45c577",
+      "license": "OpenCity, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/kolkata-wards-2022.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_wards.py)",
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. Now watches CKAN metadata_modified. WATCH THIS ONE FOR WARDS 142-144. It carries only 1-141; the three missing wards are 18.93 km2 = 9.2% of Kolkata and block every ward-keyed surface. Every other route is exhausted (OSM has zero Kolkata ward relations at any admin_level; KMC's own ward pages 404; nothing on GitHub or DataMeet), so a new edition of THIS file is the most likely way the gap ever closes."
+    },
+    {
+      "id": "opencity-kolkata-water-census",
+      "scope": "kolkata",
+      "publisher": "Ministry of Jal Shakti / Government of West Bengal, digitised by OpenCity",
+      "url": "https://data.opencity.in/api/3/action/package_show?id=kolkata-water-bodies-census-data",
+      "license": "Government of India census, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "api-date",
+        "datePath": "result.metadata_modified"
+      },
+      "dependsOn": [
+        "public/geojson/kolkata-water-bodies-census.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_water_census.py)",
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. Now watches CKAN metadata_modified. 3,051 enumerated water bodies - the ONLY modern per-water-body register Kolkata has, and it is not KMC's (whose working inventory is a 1993 tank list). 48% of census points have no OSM water polygon within 150 m."
+    },
+    {
+      "id": "kmc-water-body-inventory-survey",
+      "scope": "kolkata",
+      "publisher": "KMC Environment Dept with WB Dept of Science & Technology (Boroughs I-X) and Jadavpur University (XI-XVI)",
+      "url": "https://www.kmcgov.in/",
+      "license": "KMC, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/water-bodies-lost-kolkata.json",
+        "public/geojson/kolkata-water-bodies-census.geojson"
+      ],
+      "refreshMethod": "WATCH - not yet published",
+      "notes": "DETECTION CORRECTED 2026-08-15. This entry shipped with a method name the checker does not implement, so it fell through to the link-set branch and reported 'linkPattern matched 0 links' every week - which reads as an upstream fault and was ours. Cannot be machine-watched: No listing page; the survey surfaces as an announcement or a tender document. Carries a 180-day review cadence instead, which escalates to REVIEW-DUE when it lapses. THE MOST CONSEQUENTIAL PENDING SOURCE FOR KOLKATA. KMC has commissioned a fresh borough-by-borough water-body inventory to replace the departmental tank list compiled in 1993 plus a 2004 NRSA aerial map. Until it lands, every official Kolkata pond count rests on a 33-year-old document and the published counts for 2006 alone range from 3,873 to 8,731. When this publishes it supersedes the 1993 baseline and re-bases the lost-water-bodies work."
+    },
+    {
+      "id": "keiip-kmcsharp-reports",
+      "scope": "kolkata",
+      "publisher": "KEIIP / KMC SHARP (Kolkata Municipal Corporation, financed by ADB)",
+      "url": "https://www.keiip.in/kmcsharp_report.html",
+      "license": "ADB-disclosed safeguard documents, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "semiannual",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "IEE|SEMR|SSEMP|rp-en|sddr|iee-en"
+      },
+      "dependsOn": [
+        "public/data/kolkata-sewage-balance.json",
+        "public/data/commitments-kolkata.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py after reading the new IEE)",
+      "notes": "THE live source for Kolkata's sewerage programme, and now the Commitments Register's verification calendar: ADB disclosure obligations force a Semi Annual Environment Monitoring Report carrying package number, named contractor, contractual completion date and % physical progress. Jul-Dec 2025 SEMR: 5 packages awarded, commenced 15.10.2025, ALL AT 0.0% PHYSICAL PROGRESS at 31.12.2025 - that is the baseline the next report moves or does not. GOTCHA: the 41 MLD STP appears under BOTH Hossainpur and Anandapur - same plant, relocated after litigation, same ward, same package SD 04. Counting both invents 41 MLD. The safeguard documents do NOT carry the storm-water design standard in mm/hour; SD04/SD05A show 'DPR under finalization', and that DPR is what would settle the 6 mm/h hero gate. The Julpia/Kabardanga IEE is also the only source that characterises WARDS 142/143 - created 2012, Borough XVI, ~573 ha of Ward 142 across two catchments, draining via Keorapukur canal into Tolly Nullah (the Adi Ganga). Still no polygons."
+    }
+  ]
+}

@@ -50,7 +50,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
         arr.sort((a, b) => b.priority_score - a.priority_score);
         break;
       case "area":
-        arr.sort((a, b) => b.area_ha - a.area_ha);
+        arr.sort((a, b) => (b.area_ha ?? -1) - (a.area_ha ?? -1));
         break;
       case "name":
         arr.sort((a, b) => {
@@ -63,10 +63,18 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
     return arr;
   }, [data, sortBy, language]);
 
-  // Show only critical + high by default
-  const displayed = showAll
-    ? sorted
-    : sorted.filter((wb) => wb.priority_level === "critical" || wb.priority_level === "high");
+  // Show only critical + high by default, because in most cities that is the
+  // actionable shortlist and the full register is long.
+  //
+  // But fall back to the whole list when that shortlist is EMPTY. Hyderabad
+  // scores nothing critical or high - its worst body, Mir Alam Tank, sits at
+  // 52 - so the default filter rendered an empty table reading "0 / 14
+  // scored", which looks broken rather than like a city doing comparatively
+  // well. A table that knows it has 14 rows must never show zero.
+  const urgent = sorted.filter(
+    (wb) => wb.priority_level === "critical" || wb.priority_level === "high",
+  );
+  const displayed = showAll || urgent.length === 0 ? sorted : urgent;
 
   const getName = (wb: ScoredWaterBody) => {
     if (language === "ta") {
@@ -124,7 +132,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
                     {wb.water_type}
                   </td>
                   <td className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 text-right font-mono tabular-nums">
-                    {wb.area_ha.toLocaleString()}
+                    {wb.area_ha != null ? wb.area_ha.toLocaleString() : "-"}
                   </td>
                   <td className="px-4 py-2 text-sm text-right font-bold font-mono tabular-nums" style={{ color }}>
                     {wb.priority_score}
@@ -159,7 +167,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
                       </span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      {wb.water_type} - {wb.area_ha.toLocaleString()} ha
+                      {wb.water_type}{wb.area_ha != null ? ` - ${wb.area_ha.toLocaleString()} ha` : ""}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

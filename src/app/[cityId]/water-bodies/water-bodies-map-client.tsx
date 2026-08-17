@@ -50,6 +50,7 @@ interface ClientProps {
   /** Whether the cascade reconstruction overlay is available for this
    *  city (PMTiles produced by `scripts/run_cascade.py` exist). */
   hasCascadeOverlay?: boolean;
+  catchmentsGapNote?: string;
 }
 
 function MapLoading() {
@@ -83,6 +84,7 @@ export default function WaterBodiesMapClient({
   reducedCount,
   namedOsmCount,
   hasCascadeOverlay = false,
+  catchmentsGapNote,
 }: ClientProps) {
   useLockBodyScroll();
   const { t } = useLanguage();
@@ -287,6 +289,7 @@ export default function WaterBodiesMapClient({
             value={viewMode}
             onChange={handleViewModeChange}
             catchmentsAvailable={hasCascadeOverlay}
+            catchmentsGapNote={catchmentsGapNote}
           />
         </div>
       </div>

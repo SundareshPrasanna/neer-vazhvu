@@ -1,0 +1,84 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "gurugram"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "gmda-onemap-arcgis",
+        "title": "GMDA OneMap asset register (ArcGIS REST)",
+        "publisher": "Gurugram Metropolitan Development Authority (OneMap GGM)",
+        "license": "restrictive, permission required: no licence or access-constraint statement is served with the ArcGIS REST directory, and the parent gmda.gov.in asserts 'All rights reserved' - open in the ACCESS sense, unlicensed in the REUSE sense"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-08-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_gurugram_supply.py",
+    "note": "Capacities and asset counts read from the publisher's own GIS at build time rather than transcribed. Carries no demand figure: none is primary-sourced, so no supply-minus-demand gap is computed."
+  },
+  "_note": "Structural at-a-glance facts for Gurugram's urban water supply. Gurugram has no river and impounds nothing: its water arrives by canal from the Yamuna, from municipal tubewells, and by tanker. Capacities here are read at build time from GMDA's own GIS asset register rather than transcribed, so they cannot drift from what the authority publishes.",
+  "hero_copy": {
+    "headline": "Canal water, a dark-zone aquifer, and a tanker market in between",
+    "body": "Gurugram has no river. It impounds nothing, and it treats no water it owns: the Yamuna arrives by canal through the Kakroi headworks and the NCR channel, is treated at Chandu Budhera and Basai, and is pushed out through GMDA's network. Everything the pipes do not reach comes out of the ground - the Central Ground Water Authority declared this a dark zone in 2008, and the district now extracts 194.59% of what recharges it - or arrives on a tanker. That is the whole system: a canal, an over-drawn aquifer, and a priced market covering the gap between them.",
+    "wtp_label": "GMDA treatment capacity",
+    "wtp_sub": "Chandu Budhera 300 + Basai 272, as GMDA's own asset register publishes them. Press reports 670 MLD; see the caveats below.",
+    "footer": "Capacities and asset counts are read from GMDA's OneMap asset register at build time. No demand figure is shown because none is primary-sourced, so no supply-minus-demand gap is computed."
+  },
+  "_data_provenance_caveats": [
+    "TREATMENT CAPACITY IS CONTESTED, and this page shows GMDA's own figure rather than the widely-quoted one. GMDA's OneMap asset register publishes 572 MLD installed (Chandu Budhera 300, Basai 272). Press coverage consistently reports 670 MLD (400 + 270) and describes a fifth unit at Chandu Budhera raising Chandu Budhera to 500 MLD by March 2026. Both cannot be current. We publish the authority's own asset register and flag that it carries no revision date, so it may predate that fifth unit.",
+    "NO DEMAND FIGURE, AND THEREFORE NO DEFICIT. The '675-700 MLD peak demand' that circulates has no primary source we could reach - GMDA's Final Development Plan and Social Infrastructure Development Plan are scanned PDFs with no text layer, and no GMDA page publishes a demand series. Supply minus demand is precisely the number that would be quoted back at us, so it is absent rather than estimated.",
+    "The tubewell count is GMDA's mapped municipal fleet. It is NOT the number of borewells in Gurugram: private and unauthorised extraction is the larger share and is unmapped, which is part of why the district sits at 194.59% of recharge."
+  ],
+  "supply_chain": [
+    "Yamuna at the Kakroi headworks",
+    "NCR channel / Gurugram Water Supply Channel",
+    "Chandu Budhera and Basai water treatment plants",
+    "GMDA master water supply network and boosting stations",
+    "MCG distribution, underground tanks, and municipal tubewells"
+  ],
+  "current_supply_mix_mld": [
+    {
+      "source": "Yamuna, via the NCR channel and the Gurugram Water Supply Channel",
+      "scheme": "Chandu Budhera Water Treatment Plant",
+      "mld": 300,
+      "annual_mcft": null,
+      "supplies": "GMDA bulk supply to MCG and the sectors",
+      "note": "Capacity as published in GMDA's own OneMap asset register (Wet_Infrastructure_caching / WTP Location). The layer carries no revision date.",
+      "_provenance": "GMDA_ONEMAP"
+    },
+    {
+      "source": "Yamuna, via the NCR channel and the Gurugram Water Supply Channel",
+      "scheme": "Basai Water Treatment Plant",
+      "mld": 272,
+      "annual_mcft": null,
+      "supplies": "GMDA bulk supply to MCG and the sectors",
+      "note": "Capacity as published in GMDA's own OneMap asset register (Wet_Infrastructure_caching / WTP Location). The layer carries no revision date.",
+      "_provenance": "GMDA_ONEMAP"
+    }
+  ],
+  "current_supply_total_mld": 572,
+  "_supply_total_note": "572 MLD = the sum of the two treatment plants' capacities as GMDA's asset register publishes them. Boosting stations (2 mapped, 22 MLD combined) are excluded: they re-pressurise treated water rather than treating it, so counting them would double-count the same litres.",
+  "groundwater": {
+    "_note": "Gurugram has been a Central Ground Water Authority dark zone since 2008. The assessment, not the level record, is the current picture: India-WRIS levels for this district stop in June 2020 and there is no telemetry.",
+    "official_label": "IN-GRES dynamic assessment, 2024-25 (CGWB + Haryana)",
+    "official_note": "Gurugram district extracts 194.59% of its annual recharge and is categorised over-exploited. All five assessment blocks are over-exploited; the built city (GURGAON_URBAN) is worst at 326.26%. Haryana as a whole is 136.75%.",
+    "municipal_tubewells": 524,
+    "municipal_tubewells_note": "Tubewells mapped in GMDA's asset register. The layer publishes no per-well capacity, so no groundwater MLD is derived from it."
+  },
+  "distribution": {
+    "underground_tanks": 95,
+    "master_network_segments": 122,
+    "note": "Counts from GMDA's OneMap asset register. Segment count is a network-extent measure, not a length in km."
+  },
+  "_sources": [
+    {
+      "id": "gmda-onemap-arcgis",
+      "title": "GMDA OneMap asset register - WTP Location, Tubewell, UGT, Master Water Supply Network",
+      "publisher": "Gurugram Metropolitan Development Authority (OneMap GGM)",
+      "url": "https://onemapdepts.gmda.gov.in/server/rest/services/Wet_Infrastructure_caching/MapServer"
+    }
+  ]
+}

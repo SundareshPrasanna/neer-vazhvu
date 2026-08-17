@@ -130,6 +130,43 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "allocations",
     "commitments",
   ]),
+  // Kolkata V1 target set (preview-gated until cutover). Drainage-and-sewage
+  // first, which is what the city's data actually supports.
+  // No `cascades` (not a cascade geography), no `shoreline` (the riverbank /
+  // estuary variant is a different surface and is unbuilt), no `tanker`
+  // (KMC runs a municipal tanker service with published per-trip rates but
+  // publishes no volumes). `my-ward` is OFF until wards 142-144 are recovered
+  // and a ward-name/borough join exists - the KML carries bare numbers only.
+  kolkata: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ]),
+  // Gurugram preview set, deliberately small. Only the surfaces with data
+  // behind them are listed: the tanker sales ledger, the water-body register
+  // and the ward map. No `groundwater` - the signature issue is the thinnest
+  // data (37 WRIS stations ending June 2020, no telemetry) and an empty
+  // groundwater page on a dark-zone city would read as a bug rather than as
+  // the gap it is. No `rivers`, because Gurugram has no river. Features fill
+  // in as their artifacts land; this set drives nav while the city is
+  // preview-gated (NEXT_PUBLIC_PREVIEW_CITIES=gurugram).
+  gurugram: new Set([
+    "",
+    "about",
+    "origins",
+    "groundwater",
+    "water-bodies",
+    "my-ward",
+    "tanker",
+  ]),
 };
 
 /**
