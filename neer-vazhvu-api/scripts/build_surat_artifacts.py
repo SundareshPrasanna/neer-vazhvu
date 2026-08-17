@@ -43,7 +43,6 @@ import argparse
 import csv
 import json
 import re
-import sys
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
@@ -1016,13 +1015,20 @@ def main() -> int:
     root = Path(args.root).resolve()
 
     print("Surat artifacts")
-    print("  groundwater:"); build_groundwater(drop, root)
-    print("  water bodies:"); build_water_bodies(drop, root)
-    print("  river quality:"); build_river_quality(root)
-    print("  supply:"); build_supply(drop, root)
-    print("  rivers:"); build_rivers(root, offline=Path("/tmp/surat_osm.json"))
-    print("  facts:"); build_facts(root)
-    print("  commitments:"); build_commitments(root)
+    print("  groundwater:")
+    build_groundwater(drop, root)
+    print("  water bodies:")
+    build_water_bodies(drop, root)
+    print("  river quality:")
+    build_river_quality(root)
+    print("  supply:")
+    build_supply(drop, root)
+    print("  rivers:")
+    build_rivers(root, offline=Path("/tmp/surat_osm.json"))
+    print("  facts:")
+    build_facts(root)
+    print("  commitments:")
+    build_commitments(root)
     return 0
 
 

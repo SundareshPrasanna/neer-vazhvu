@@ -193,6 +193,21 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/restoration-projects-kolkata.json": "curated compilation from named court/news sources, graded per entry",
   "public/data/water-bodies-flagship-kolkata.json": "curated compilation, graded V/N/C per entry",
   "public/data/facts-kolkata.json": "derived: compiled from sources already covered upstream",
+
+  // Kabini deep dive (Paani Cauvery Phase 2, Aug 2026). These layers came as a
+  // dated, closed partner delivery (Paani Earth's Cauvery GeoPackages) - there
+  // is no edition to watch on a one-time handover. The living underlying
+  // publishers (KGIS, India-WRIS command areas, CWC dam register, the district
+  // DEP pages) are queued for registry entries in the deep-dive maintenance
+  // model (docs/specs/deep-dive-maintenance-model.md); when that lands these
+  // move to the watched track like the Mumbai artifacts above.
+  "public/data/basins/kabini/pressures-industrial.geojson": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
+  "public/data/basins/kabini/forests.geojson": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
+  "public/data/basins/kabini/protected-areas.geojson": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
+  "public/data/basins/kabini/command-areas.geojson": "closed partner delivery (Paani Aug 2026); India-WRIS command-area registration queued in the maintenance model",
+  "public/data/basins/kabini/infrastructure.geojson": "closed partner delivery (Paani Aug 2026); CWC dam register registration queued in the maintenance model",
+  "public/data/basins/kabini/monitoring-points.geojson": "closed partner delivery (Paani Aug 2026); station registry rides WRIS - registration queued in the maintenance model",
+  "public/data/basins/kabini/gaps.json": "authored from three closed DEP editions (2021/2022); district DEP pages queued for Headwaters registration in the maintenance model",
 };
 
 function walk(dir: string, root: string, out: string[]): void {

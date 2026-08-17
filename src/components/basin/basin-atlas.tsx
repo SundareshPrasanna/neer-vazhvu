@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomControl, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -22,6 +23,8 @@ import {
   DEP_STATUS_LABEL,
   DEP_THEME_ORDER,
   depThemeTitle,
+  prsMapColor,
+  withEpochAccents,
 } from "@/lib/basins/panel-labels";
 import type {
   BasinFloor,
@@ -38,6 +41,13 @@ import {
   type ReviewedMprSeries,
 } from "@/lib/basins/reviewed-mpr";
 import "leaflet/dist/leaflet.css";
+
+// Station-readings panel (contract v1): loaded on demand so recharts only
+// ships when a readings-enabled station is actually clicked.
+const StationReadingsPanel = dynamic(
+  () => import("@/components/basin/station-readings-panel").then((m) => m.StationReadingsPanel),
+  { ssr: false, loading: () => <p className="text-xs text-slate-400">Loading readings…</p> },
+);
 
 interface Props {
   cityId: string;
@@ -275,10 +285,28 @@ export interface PrsTab {
   /** "categories" tabs: narrative sub-themes. */
   categories?: PrsCategory[];
 }
+/** One CPCB survey edition of the stretch: how long it was and which BOD-based
+ *  priority band it fell in. */
+export interface PrsEpoch {
+  year: number;
+  length_km: number;
+  priority: string;
+  /** Where the length comes from when it is not our own mapping (a board's
+   *  action plan, say), or any caveat that belongs beside the bar. */
+  note?: string;
+  /** This edition's extent is not drawn on the map - no geometry, or geometry
+   *  too partial to draw honestly. The panel says so rather than implying the
+   *  reader is looking at the whole of it. */
+  notMapped?: boolean;
+}
 export interface PrsData {
   river: string;
   stretchName: string;
-  comparison: { y2020: { length_km: number; priority: string }; y2025: { length_km: number; priority: string } };
+  /** Survey editions, oldest first. Two on the Arkavathi (2020, 2025), three
+   *  on rivers CPCB has reclassified more often. The status bars, the map
+   *  legend and the growth toggle all derive from this list, so adding an
+   *  edition is a data change. */
+  epochs: PrsEpoch[];
   /** Legacy lead paragraph. Superseded by statusLine + statusFacts (Paani
    *  Phase-1 review asked for structured facts over prose); rendered only
    *  when statusFacts is absent. */
@@ -910,11 +938,41 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // point, which must be offered even while the stretch itself is hidden
   // (the layer is default-off per Paani's Phase-1 review).
   const hasPrsStory = manifest.layers.some((l) => l.prs) && prsData !== null;
-  // The growth toggle is only meaningful when the PRS layer is on the map AND
-  // there is more than one survey year to compare.
-  const prsVisible =
-    manifest.layers.some((l) => l.prs && shouldRender(l)) &&
-    (data["prs"]?.features?.length ?? 0) > 1;
+  // The survey editions actually drawn on the map, oldest first. A basin can
+  // ship fewer of these than its panel reports - an edition whose geometry is
+  // missing or too partial to draw is told in the panel, not sketched here.
+  const prsEpochsOnMap = useMemo(() => {
+    const byYear = new Map<number, string>();
+    for (const f of data["prs"]?.features ?? []) {
+      const p = (f.properties ?? {}) as Record<string, unknown>;
+      const year = Number(p.year);
+      if (Number.isFinite(year)) byYear.set(year, String(p.priority ?? ""));
+    }
+    return [...byYear.entries()]
+      .map(([year, priority]) => ({ year, priority }))
+      .sort((a, b) => a.year - b.year);
+  }, [data]);
+  const prsYearsOnMap = useMemo(() => prsEpochsOnMap.map((e) => e.year), [prsEpochsOnMap]);
+  // The stretch is on the map (so it needs a legend); the growth toggle needs
+  // more than one edition drawn to compare.
+  const prsVisible = manifest.layers.some((l) => l.prs && shouldRender(l)) && prsEpochsOnMap.length > 0;
+  const prsGrowthAvailable = prsVisible && prsEpochsOnMap.length > 1;
+  // Legend rows for the stretch, matching the map's colours and draw order.
+  const prsLegend = useMemo(() => {
+    if (!prsEpochsOnMap.length) return [];
+    const newest = prsEpochsOnMap.length - 1;
+    const label = (e: { year: number; priority: string }, i: number) => {
+      const band = e.priority ? ` (Priority ${e.priority})` : "";
+      if (!showGrowth || prsEpochsOnMap.length === 1) return `polluted stretch, ${e.year}${band}`;
+      return i === newest ? `added by ${e.year} → now Priority ${e.priority}` : `polluted by ${e.year}${band}`;
+    };
+    const rows = prsEpochsOnMap.map((e, i) => ({
+      color: prsMapColor(newest - i),
+      weight: showGrowth ? 4 + (newest - i) * 4 : 4,
+      label: label(e, i),
+    }));
+    return showGrowth ? rows : rows.slice(newest);
+  }, [prsEpochsOnMap, showGrowth]);
 
   // Derived insight (Madhuri's CAG ask): when the pressures layer is shown,
   // how many industrial areas have no CETP nearby - computed live from the data.
@@ -947,15 +1005,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       // The PDF legend = the on-map legend + the PRS-year entries (which the
       // map shows in their own inline box next to the growth toggle).
       const items = buildLegendItems(visibleLayers, elevationLegend);
-      if (prsVisible) {
-        if (showGrowth) {
-          items.push(
-            { sym: "line", color: "#f97316", label: "Polluted by 2020 (Priority III)" },
-            { sym: "line", color: "#dc2626", label: "Added by 2025 - now Priority I" },
-          );
-        } else {
-          items.push({ sym: "line", color: "#dc2626", label: "Polluted stretch, 2025 (Priority I)" });
-        }
+      for (const row of prsLegend) {
+        items.push({ sym: "line", color: row.color, label: row.label.replace(/^./, (c) => c.toUpperCase()) });
       }
       // Share URL: the ON set spelled out explicitly (not the defaults-elided
       // form the address bar uses), so the embed page restores this exact view
@@ -1229,13 +1280,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.kindFilter) {
               feats = feats.filter((f) => (f.properties as Record<string, unknown>)?.kind === l.kindFilter);
             }
-            // PRS: by default only the latest year's stretch is shown; the
-            // growth toggle reveals the earlier year too. Sort so the EARLIER
-            // (2020) line draws on top of the later (2025) one, so the segments
-            // left red are exactly the 2020->2025 growth.
+            // PRS: by default only the latest edition's stretch is shown; the
+            // growth toggle reveals the earlier ones too. Sort so EARLIER
+            // lines draw on top of later ones, leaving each newer band showing
+            // only where the stretch extended.
             if (l.prs) {
-              const years = feats.map((f) => Number((f.properties as Record<string, unknown>)?.year));
-              const maxYear = years.length ? Math.max(...years) : 0;
+              const maxYear = prsYearsOnMap.at(-1) ?? 0;
               feats = feats
                 .filter((f) => showGrowth || Number((f.properties as Record<string, unknown>)?.year) === maxYear)
                 .slice()
@@ -1325,7 +1375,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 <GeoJSON
                   key={`${l.family}-${selectedRiverId}-${tiles.isDark}${l.prs ? `-${showGrowth}` : ""}`}
                   data={fcScoped}
-                  style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded, l.prs && showGrowth)}
+                  style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded, l.prs && showGrowth, prsYearsOnMap)}
                   interactive={l.family === "rivers" || !!l.prs}
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     if (l.prs) {
@@ -1553,7 +1603,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 Explore the polluted stretch →
               </button>
             )}
-            {prsVisible && (
+            {prsGrowthAvailable && (
             <button
               onClick={() => setShowGrowth((v) => !v)}
               aria-pressed={showGrowth}
@@ -1568,14 +1618,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             )}
             {prsVisible && (
             <div className="flex flex-col items-end gap-1 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-600 dark:text-slate-300 shadow">
-              {showGrowth ? (
-                <>
-                  <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[3px] rounded" style={{ backgroundColor: "#f97316" }} />polluted by 2020 (Priority III)</span>
-                  <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[2px] rounded" style={{ backgroundColor: "#dc2626" }} />added by 2025 → now Priority I</span>
-                </>
-              ) : (
-                <span className="flex items-center gap-1.5"><span className="inline-block w-4 h-[2px] rounded" style={{ backgroundColor: "#dc2626" }} />polluted stretch, 2025 (Priority I)</span>
-              )}
+              {prsLegend.map((row) => (
+                <span key={row.label} className="flex items-center gap-1.5">
+                  <span className="inline-block w-4 rounded" style={{ backgroundColor: row.color, height: Math.max(2, row.weight / 2) }} />
+                  {row.label}
+                </span>
+              ))}
             </div>
             )}
           </div>
@@ -1657,7 +1705,14 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 onBack={gapFromPrs ? () => { setSelectedGapUnit(null); setGapFromPrs(false); setSelectedPrs(true); } : undefined}
               />
             ) : selectedFeature ? (
-              renderFeatureDetail?.({
+              layerByFamily[selectedFeature.family]?.readings && selectedFeature.props.hasReadings ? (
+                <StationReadingsPanel
+                  basinId={manifest.basinId}
+                  stationKey={String(selectedFeature.props.stationKey)}
+                  name={selectedFeature.props.name != null ? String(selectedFeature.props.name) : undefined}
+                  onClose={() => setSelectedFeature(null)}
+                />
+              ) : renderFeatureDetail?.({
                 family: selectedFeature.family,
                 props: selectedFeature.props,
                 onClose: () => setSelectedFeature(null),
@@ -1839,17 +1894,15 @@ function shedStyle(feat: Feature | undefined, selectedSheds: Set<string>, faded:
   };
 }
 
-function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinManifest, selectedRiverId: string | null, faded: boolean, showGrowth = false): PathOptions {
+function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinManifest, selectedRiverId: string | null, faded: boolean, showGrowth = false, prsYears: number[] = []): PathOptions {
   if (l.prs) {
     const yr = Number((feat?.properties as Record<string, unknown>)?.year);
-    const isLatest = yr >= 2025;
-    if (showGrowth) {
-      // Growth view: the 2020 reach is drawn LAST (on top) as a thick orange
-      // line that fully covers the red beneath it on the shared length; the
-      // 2025 red therefore only shows where the stretch EXTENDED - the growth.
-      return isLatest
-        ? { color: "#dc2626", weight: 4, opacity: 0.95 }
-        : { color: "#f97316", weight: 8, opacity: 1 };
+    if (showGrowth && prsYears.length > 1) {
+      // Growth view: each older reach is drawn LAST (on top) and thicker, so
+      // it fully covers the newer line beneath it on the length they share.
+      // A newer band therefore shows only where the stretch EXTENDED.
+      const fromNewest = Math.max(prsYears.length - 1 - prsYears.indexOf(yr), 0);
+      return { color: prsMapColor(fromNewest), weight: 4 + fromNewest * 4, opacity: fromNewest ? 1 : 0.95 };
     }
     // Default: just the current (latest) stretch, red.
     return { color: "#dc2626", weight: 5, opacity: faded ? 0.5 : 0.95 };
@@ -2162,11 +2215,8 @@ function PRSPanel({
   const unit = openTab?.units?.find((u) => u.key === subKey) ?? openTab?.units?.[0];
   const cat = openTab?.categories?.find((c) => c.key === subKey) ?? openTab?.categories?.[0];
   const openAreaFn = (t: PrsTab) => { setOpenArea(t.key); setSubKey(firstSubKey(t)); };
-  const maxKm = Math.max(prs.comparison.y2020.length_km, prs.comparison.y2025.length_km) || 1;
-  const rows = [
-    { year: "2020", ...prs.comparison.y2020, accent: "#fb7185" },
-    { year: "2025", ...prs.comparison.y2025, accent: "#b91c1c" },
-  ];
+  const maxKm = Math.max(...prs.epochs.map((e) => e.length_km), 0) || 1;
+  const rows = withEpochAccents(prs.epochs);
   const badgeTone: Record<string, string> = {
     bad: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
     warn: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
@@ -2262,14 +2312,24 @@ function PRSPanel({
         )}
         {openTab.categories && cat && (
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-3">
-            {cat.level && (
-              <span className="inline-block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">Reported at: {cat.level}</span>
+            {(cat.level || cat.noData) && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                {cat.level && (
+                  <span className="inline-block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">Reported at: {cat.level}</span>
+                )}
+                {/* The honest gap is a marker, not a replacement: an author who
+                    can say WHAT is missing keeps saying it below. */}
+                {cat.noData && (
+                  <span className="inline-block text-[9px] uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/50 rounded px-1.5 py-0.5">No known public data</span>
+                )}
+              </div>
             )}
-            {cat.noData ? (
-              <p className="text-[13px] text-slate-500 dark:text-slate-400">No known public data yet for {cat.label} along this stretch.</p>
-            ) : (
-              <>
-                {cat.body && <p className="text-[13px] font-medium text-slate-700 dark:text-slate-200 leading-relaxed">{cat.body}</p>}
+            <>
+                {cat.body ? (
+                  <p className="text-[13px] font-medium text-slate-700 dark:text-slate-200 leading-relaxed">{cat.body}</p>
+                ) : cat.noData ? (
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400">No known public data yet for {cat.label} along this stretch.</p>
+                ) : null}
                 {cat.points && cat.points.length > 0 && (
                   <ul className="space-y-2.5">
                     {cat.points.map((p, i) => {
@@ -2304,8 +2364,7 @@ function PRSPanel({
                     {cat.link.label} ↗
                   </a>
                 )}
-              </>
-            )}
+            </>
           </div>
         )}
         {openTab.source && <p className="text-[10px] text-slate-400">Source: {openTab.source}</p>}
@@ -2369,13 +2428,21 @@ function PRSPanel({
         <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1.5">Current status</div>
         <div className="space-y-2">
           {rows.map((r) => (
-            <div key={r.year} className="flex items-center gap-2">
-              <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
-              <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+            <div key={r.year}>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono text-slate-500 w-9 shrink-0">{r.year}</span>
+                <div className="flex-1 h-4 rounded-sm bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                  <div className="h-full rounded-sm" style={{ width: `${(r.length_km / maxKm) * 100}%`, backgroundColor: r.accent }} />
+                </div>
+                <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>P{r.priority}</span>
               </div>
-              <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 w-14 text-right shrink-0">{r.length_km} km</span>
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${priorityClass(r.priority)}`}>P{r.priority}</span>
+              {r.note && (
+                <p className="mt-0.5 ml-11 text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                  {r.notMapped && <span className="font-medium">Not drawn on the map. </span>}
+                  {r.note}
+                </p>
+              )}
             </div>
           ))}
         </div>

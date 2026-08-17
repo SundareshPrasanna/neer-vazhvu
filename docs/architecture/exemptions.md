@@ -10,10 +10,10 @@ This exists because a platform that treats data gaps as first-class has to be ab
 | Kind | Entries |
 |---|---|
 | Suppressed freshness checks | 1 |
-| Artifacts with no registered upstream | 76 |
+| Artifacts with no registered upstream | 83 |
 | Routes a city deliberately does not ship | 38 |
 | Absences the product states on the page | 23 |
-| **Total** | **138** |
+| **Total** | **145** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -100,6 +100,13 @@ Shipped data with no Headwaters upstream to watch for new editions. Usually corr
 | mumbai | public/geojson/mumbai-coastal-transects.geojson | our own MNDWI/GEE computation, coastal-shoreline-refresh.yml annual (P5-1) |
 | mumbai | public/geojson/mumbai-flood-2005-hotspots.geojson | closed series: 26/7/2005 reference layer |
 | mumbai | public/geojson/mumbai-water-bodies-lost.geojson | archival |
+| platform | public/data/basins/kabini/command-areas.geojson | closed partner delivery (Paani Aug 2026); India-WRIS command-area registration queued in the maintenance model |
+| platform | public/data/basins/kabini/forests.geojson | closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model |
+| platform | public/data/basins/kabini/gaps.json | authored from three closed DEP editions (2021/2022); district DEP pages queued for Headwaters registration in the maintenance model |
+| platform | public/data/basins/kabini/infrastructure.geojson | closed partner delivery (Paani Aug 2026); CWC dam register registration queued in the maintenance model |
+| platform | public/data/basins/kabini/monitoring-points.geojson | closed partner delivery (Paani Aug 2026); station registry rides WRIS - registration queued in the maintenance model |
+| platform | public/data/basins/kabini/pressures-industrial.geojson | closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model |
+| platform | public/data/basins/kabini/protected-areas.geojson | closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model |
 | platform | public/data/cascade | covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings |
 | platform | public/data/cooum-sewage-inlets.json | closed series: Nethaji Mariappan et al. 2017, single study |
 | platform | public/data/gee-phase1-water-body-targets.json | our own GEE target manifest, not an upstream |
