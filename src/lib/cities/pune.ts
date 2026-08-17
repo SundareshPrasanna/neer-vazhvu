@@ -254,7 +254,7 @@ export const PUNE: CityConfig = {
   // single dot.
   reservoirHistoryDefaultRange: 'all',
   reservoirHistoryNote:
-    'Daily storage comes from the Maharashtra WRD Pravah bulletin, which publishes only a latest report and no archive. Our own record starts at onboarding; each run also back-fills the same date a year earlier from the bulletin’s own comparison column, so the window widens from both ends. CWC’s weekly bulletins carry Khadakwasla and Panshet back to 2015 and are the backfill route for those two.',
+    'Daily storage comes from the Maharashtra WRD Pravah bulletin, which publishes only a latest report and no archive. Our own record starts at onboarding; each run also back-fills the same date a year earlier from the bulletin’s own comparison column, so the window widens from both ends. CWC’s weekly bulletins carry Khadakwasla and Panshet back to 2015 and are wired as a backfill for those two, so their series runs a decade deeper than the other five. Warasgaon, Temghar, Pavana and Bhama Askhed are absent from those bulletins entirely, so the four-dam chain total still begins at onboarding.',
 
   // NARRATIVE, not interactive. Pune's flooding is drainage-driven and the
   // hazard layers the interactive variant defaults to do not exist for this

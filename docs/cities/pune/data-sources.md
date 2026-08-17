@@ -115,14 +115,42 @@ and Tansa at 106% of live capacity in Mumbai's history. Last year's live storage
 as a volume - only as column 11's percentage - so it is reconstructed as `ly_pct x live_cap`. Fixed
 in PR #275; the residual Mumbai DB rows are tracked in issue #276.
 
-### Backfill route
+### Backfill routes - one wired, one still open
 
-Pravah's dated URLs 404, so there is no archive on that endpoint. A **separate dated archive does
-exist** and is the backfill path:
+**WIRED: CWC weekly Reservoir Storage Bulletin**, via
+`neer-vazhvu-api/scripts/backfill_cwc_reservoirs.py --city pune`. This is the existing Mumbai
+backfill producer made multi-city rather than a second script: one bulletin covers all of India, so
+`--city` is a filter on what comes out of each PDF, not a different fetch.
+
+**It reaches two of Pune's seven dams, and which two is not a choice.** Verified against the
+01.05.2025 bulletin: **KHADAKVASLA is data row 1** and **PANSHET is row 23**, with `TANAJISAGAR`
+wrapped onto the following line - the wrap case the parser already handled for Upper Vaitarna.
+**Warasgaon, Temghar, Pavana and Bhama Askhed are not in the bulletin at all**: Bhama Askhed appears
+only in a percentage bullet list rather than as a storage row, and the other three do not appear in
+any form. So this deepens two of the four Khadakwasla-chain dams and cannot reach the other two; the
+chain *total* stays a Pravah-era series.
+
+Note the spelling, which is the trap: CWC writes **KHADAKVASLA**, Pravah writes Khadakwasla, and
+India-WRIS writes Khadakwasala_1. The match table is keyed on what CWC prints.
+
+**The two taken cross-check cleanly, which is the point of taking them.** CWC's capacity-at-FRL is
+56.0 Mcum for Khadakwasla against Pravah's 55.91 (0.16% apart) and 302.0 Mcum for Panshet against
+301.61 (0.13%). Two independent central and state publications agreeing to a fifth of a percent is
+a check on both.
+
+**Mulshi is excluded deliberately even though it IS a data row** (row 16). It is Tata hydro rather
+than a PMC source, and it fails the agreement test the other two pass: CWC gives it 572 Mcum against
+Pravah's 522.76, **9.4% apart** - the same unexplained class of disagreement already recorded for
+Pavana. Backfilling a dam nobody drinks from, on a capacity two sources disagree about, would add
+noise rather than history.
+
+**STILL OPEN: the WRD dated Marathi archive.** Pravah's own dated URLs 404, but a separate dated
+archive exists at
 `https://wrd.maharashtra.gov.in/Upload/PDF/Today's-Storage-ReportMarathi-DD-MM-YYYY.pdf`
 (apostrophe URL-encoded). Verified against the archive-fallback trap - the 01-08-2026 file carries
 its own header date and different values, so the archive is genuine. Marathi only; the English
-filename 404s. Not yet wired.
+filename 404s. This is the route that would reach **all seven** dams at **daily** rather than weekly
+resolution, and it is the one worth doing next. Not yet wired.
 
 Names: three government sources spell one dam three ways - Pravah "Khadakwasla", CWC "KHADAKVASLA",
 India-WRIS "Khadakwasala_1". Pravah prints "Warasgaon" where secondary writing says Varasgaon.

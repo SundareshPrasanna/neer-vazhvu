@@ -158,14 +158,15 @@ In rough order of value per unit of work:
 
 1. **Ward + locality seeding.** Makes `/pune/my-ward` function and closes the localities row.
 2. **Commitments**, once each attribution is primary-verified.
-3. **CWC weekly backfill** for Khadakwasla and Panshet, which would give the reservoir chart a
-   decade instead of starting at onboarding. The dated WRD archive route is documented in
-   `data-sources.md` §2 and not yet wired.
+3. **The WRD dated Marathi archive**, which is now the only remaining reservoir-history route and
+   the better one: it would reach **all seven** dams at **daily** resolution, where the CWC
+   bulletins reach two of seven weekly. Documented in `data-sources.md` §2 and not yet wired.
 
 **Done since this scorecard was first written:** the tanker producer *and* its panel (item 1 in the
-original list, now two XHigh rows), `facts-pune.json` (item 3, now the Medium row above), and the
-water-bodies bbox correction below, and the nalla layer (item 4) now rendering on a flood-risk page
-that was being withheld for the wrong reason.
+original list, now two XHigh rows), `facts-pune.json` (item 3), the nalla layer (item 4) now
+rendering on a flood-risk page that was being withheld for the wrong reason, the **CWC weekly
+backfill** (item 6, wired as `--city pune` on the existing Mumbai producer rather than a second
+script), and the water-bodies bbox correction below.
 
 ---
 

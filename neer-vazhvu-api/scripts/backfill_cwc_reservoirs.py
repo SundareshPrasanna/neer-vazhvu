@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 """
-Backfill weekly live-storage history for Mumbai's two CWC-monitored source
-dams - Bhatsa and Upper Vaitarna - from the Central Water Commission's weekly
-"Reservoir Storage Bulletin" PDFs (cwc.gov.in/reservoirs-storage-bulletin).
+Backfill weekly live-storage history for the CWC-monitored source dams of a
+city, from the Central Water Commission's weekly "Reservoir Storage Bulletin"
+PDFs (cwc.gov.in/reservoirs-storage-bulletin).
+
+  --city mumbai  Bhatsa, Upper Vaitarna
+  --city pune    Khadakwasla, Panshet
 
 Why: the Pravah daily feed (scrape_pravah_dams.py) only started for us in
 July 2026 and its same-date-last-year column reaches back one year at best.
-The CWC bulletins list both dams weekly from 16 Apr 2015 to 8 May 2025 (the
+The CWC bulletins list these dams weekly from 16 Apr 2015 to 8 May 2025 (the
 listing stops there), which is ~10 years of history the reservoir charts
 otherwise lack.
+
+ONE BULLETIN COVERS ALL OF INDIA, so --city is a filter on what we take out of
+each PDF rather than a different fetch. See DAMS_BY_CITY for which dams each
+city gets and, more importantly, which it does not: four of Pune's seven are
+absent from the bulletin entirely, and Mulshi is excluded on purpose despite
+being present.
 
 Mechanics:
   - The listing paginates (?page=0..~21, ~25 bulletins/page) and the PDF file
@@ -36,7 +45,8 @@ Mechanics:
 Run:
   cd neer-vazhvu-api
   python3 scripts/backfill_cwc_reservoirs.py --cache /tmp/cwc_cache --out cwc.json
-  python3 scripts/backfill_cwc_reservoirs.py --cache /tmp/cwc_cache --supabase
+  python3 scripts/backfill_cwc_reservoirs.py --cache /tmp/cwc_cache --city pune --out pune.json
+  python3 scripts/backfill_cwc_reservoirs.py --cache /tmp/cwc_cache --city pune --supabase
   python3 scripts/backfill_cwc_reservoirs.py --test-pdf some_bulletin.pdf
 """
 
@@ -56,11 +66,48 @@ LISTING_URL = "https://cwc.gov.in/reservoirs-storage-bulletin"
 MCUM_PER_TMC = 28.3168
 TMC_PER_BCM = 1000.0 / MCUM_PER_TMC  # 35.3147
 
-# name-match tokens -> (source_code, FRL sanity anchor in metres)
-DAMS = {
-    "bhatsa": ("bhatsa", 142.07),
-    "upper vaitarna": ("upper_vaitarna", 603.50),
+# city -> { CWC name-match token: (source_code, FRL sanity anchor in metres) }
+#
+# The token is matched against the bulletin's own spelling, which is not the
+# operator's. CWC writes KHADAKVASLA where Maharashtra WRD's Pravah bulletin
+# writes Khadakwasla and India-WRIS writes Khadakwasala_1 - three government
+# spellings of one dam - so this table is keyed on what CWC prints.
+#
+# PUNE GETS TWO OF ITS SEVEN DAMS, and which two is not a choice. Verified
+# against the 01.05.2025 bulletin: KHADAKVASLA is data row 1 and PANSHET is row
+# 23 with TANAJISAGAR wrapped onto the following line (the wrap case the parser
+# below already handles). WARASGAON, TEMGHAR, PAVANA AND BHAMA ASKHED ARE NOT IN
+# THE BULLETIN AT ALL - Bhama Askhed appears only in a percentage bullet list,
+# not as a storage row, and the other three do not appear in any form. So this
+# backfill deepens two of the four Khadakwasla-chain dams and cannot reach the
+# other two; the chain total stays a Pravah-era series.
+#
+# MULSHI IS DELIBERATELY EXCLUDED even though it IS a data row (row 16), for the
+# same reason it is context-only in the city config: it is Tata hydro, not a PMC
+# source. It also fails the agreement test that Khadakwasla and Panshet pass -
+# CWC gives it 572 Mcum of capacity against Pravah's 522.76, 9.4% apart, which is
+# the same unexplained NRLD-versus-Pravah class of disagreement already recorded
+# for Pavana. Backfilling a dam nobody drinks from on a capacity two sources
+# disagree about would add noise, not history.
+#
+# The two that ARE taken agree closely, which is the check worth having: CWC's
+# capacity-at-FRL is 56.0 Mcum for Khadakwasla against Pravah's 55.91 (0.16%) and
+# 302.0 Mcum for Panshet against 301.61 (0.13%).
+DAMS_BY_CITY = {
+    "mumbai": {
+        "bhatsa": ("bhatsa", 142.07),
+        "upper vaitarna": ("upper_vaitarna", 603.50),
+    },
+    "pune": {
+        "khadakvasla": ("khadakwasla", 582.47),
+        "panshet": ("panshet", 636.27),
+    },
 }
+
+# Set from --city in main(). Module-level because the row parser is a pure
+# function over it and threading a dict through every call site would be a
+# larger change than this backfill warrants.
+DAMS: dict[str, tuple[str, float]] = DAMS_BY_CITY["mumbai"]
 
 _NUM = r"\d+(?:\.\d+)?"
 # numeric signature: FRL, level, cap_frl_bcm, live_bcm, date, current_pct ...
@@ -238,7 +285,19 @@ def main() -> int:
         help="insert MISSING (city,source,date) rows into reservoir_daily_v2; "
         "never overwrites existing (Pravah-owned) rows",
     )
+    ap.add_argument(
+        "--city",
+        default="mumbai",
+        choices=sorted(DAMS_BY_CITY),
+        help="which city's dams to pull from the bulletins (default mumbai)",
+    )
     args = ap.parse_args()
+
+    # Selects the dam table the row parser matches against, and the city_id any
+    # Supabase write is scoped to. One bulletin covers all of India, so the city
+    # is a filter on what we take out of it rather than a different fetch.
+    global DAMS
+    DAMS = DAMS_BY_CITY[args.city]
 
     if args.test_pdf:
         readings, warn = parse_pdf(args.test_pdf, None)
@@ -313,11 +372,11 @@ def main() -> int:
             os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_KEY"]
         )
         existing = set()
-        for sc in ("bhatsa", "upper_vaitarna"):
+        for sc in sorted({v[0] for v in DAMS.values()}):
             res = (
                 sb.table("reservoir_daily_v2")
                 .select("source_code,date")
-                .eq("city_id", "mumbai")
+                .eq("city_id", args.city)
                 .eq("source_code", sc)
                 .limit(10000)
                 .execute()
@@ -325,7 +384,7 @@ def main() -> int:
             existing |= {(r["source_code"], r["date"]) for r in res.data}
         payload = [
             {
-                "city_id": "mumbai",
+                "city_id": args.city,
                 "source_code": r["source_code"],
                 "date": r["date"],
                 "storage_tmc": r["storage_tmc"],
