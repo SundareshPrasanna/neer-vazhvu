@@ -284,7 +284,9 @@ def build_water_bodies(drop: Path, root: Path) -> int:
             kml = cand
             break
     if kml is None:
-        print("  SKIP water bodies: no Gujarat KML in drop (the wb_hp.* files are Himachal Pradesh)")
+        print(
+            "  SKIP water bodies: no Gujarat KML in drop (the wb_hp.* files are Himachal Pradesh)"
+        )
         return 0
 
     raw = kml.open(encoding="utf-8", errors="replace").read()
@@ -360,7 +362,11 @@ def build_water_bodies(drop: Path, root: Path) -> int:
         "type": "FeatureCollection",
         "features": features,
     }
-    write(root / "public/geojson/surat-water-bodies-current.geojson", payload, compact=True)
+    write(
+        root / "public/geojson/surat-water-bodies-current.geojson",
+        payload,
+        compact=True,
+    )
     print(f"    {len(features)} polygons ({in_city} in city, {named} named)")
     return len(features)
 
@@ -518,11 +524,13 @@ def build_supply(drop: Path, root: Path) -> None:
     if d52.exists():
         with d52.open(newline="", encoding="utf-8", errors="replace") as fh:
             for row in csv.DictReader(fh):
+
                 def _i(key):
                     try:
                         return int(float(row[key]))
                     except (TypeError, ValueError, KeyError):
                         return None
+
                 coverage.append(
                     {
                         "year": row["Year"],
@@ -539,7 +547,9 @@ def build_supply(drop: Path, root: Path) -> None:
     payload = {
         **envelope(
             "data-root/supply-overview",
-            registry_sources(root, ["ogd-surat-water-supply", "smc-hydraulic-scenario"]),
+            registry_sources(
+                root, ["ogd-surat-water-supply", "smc-hydraulic-scenario"]
+            ),
             "manual",
             "Monthly total supply and property-connection coverage from the Smart Cities "
             "Mission open-data releases for Surat, plus SMC's own infrastructure "
@@ -651,7 +661,6 @@ def build_supply(drop: Path, root: Path) -> None:
     }
     write(root / "public/data/surat-supply-overview.json", payload)
     print(f"    {len(monthly)} monthly points, {len(coverage)} coverage years")
-
 
 
 # ---------------------------------------------------------------- rivers/OSM
@@ -890,8 +899,13 @@ def build_facts(root: Path) -> int:
             "data-root/facts",
             registry_sources(
                 root,
-                ["smc-reuse-programme", "ogd-surat-water-supply", "cpcb-nwmp-2022",
-                 "smc-wardwise-area-population", "wris-groundwater-gujarat"],
+                [
+                    "smc-reuse-programme",
+                    "ogd-surat-water-supply",
+                    "cpcb-nwmp-2022",
+                    "smc-wardwise-area-population",
+                    "wris-groundwater-gujarat",
+                ],
             ),
             "manual",
             "Hand-compiled from primary sources, each fact carrying its own citation. "

@@ -49,6 +49,7 @@ import json
 import re
 import sys
 import urllib.request
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -86,13 +87,37 @@ _KHADI_HEAD = re.compile(
 # and the value. Matching the bare label-then-digits fails on the live page.
 _TAGS = r"(?:\s|<[^>]*>)*"
 _FRL = re.compile(
-    rf"Ukai{_TAGS}Full{_TAGS}Reservoir{_TAGS}Level{_TAGS}-{_TAGS}(\d+(?:\.\d+)?){_TAGS}ft", re.I
+    rf"Ukai{_TAGS}Full{_TAGS}Reservoir{_TAGS}Level{_TAGS}-{_TAGS}(\d+(?:\.\d+)?){_TAGS}ft",
+    re.I,
 )
 _OVERFLOW = re.compile(
     rf"Causeway{_TAGS}overflow{_TAGS}at{_TAGS}(\d+(?:\.\d+)?){_TAGS}mt", re.I
 )
 _CAUSEWAY_STATE = re.compile(r"Causeway\s+is\s*<[^>]*>\s*([A-Z]+)", re.I)
-_LAST_UPDATED = re.compile(r"Last\s+Updated\s+on\s*<[^>]*>\s*([0-9\-]+\s+[0-9:]+\s*[AP]M)", re.I)
+_LAST_UPDATED = re.compile(
+    r"Last\s+Updated\s+on\s*<[^>]*>\s*([0-9\-]+\s+[0-9:]+\s*[AP]M)", re.I
+)
+
+
+def _registry_license(source_id: str) -> str:
+    """Read a licence string from the Headwaters registry, which owns it.
+
+    Producers must never restate a licence inline: the registry is corrected
+    from time to time (the encumbrance classifier has an audited vocabulary),
+    and an inline copy silently keeps the old wording in every artifact this
+    script has ever written.
+    """
+    registry = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "source-registry"
+        / "surat.json"
+    )
+    sources = json.loads(registry.read_text())["sources"]
+    for source in sources:
+        if source["id"] == source_id:
+            return source["license"]
+    raise KeyError(f"{source_id} is not in {registry}")
 
 
 def _envelope(dataset: str, how: str) -> dict[str, Any]:
@@ -114,10 +139,10 @@ def _envelope(dataset: str, how: str) -> dict[str, Any]:
                     "id": "smc-flood-chain",
                     "title": "SMC live rainfall, Ukai dam, weir-cum-causeway and khadi water levels",
                     "publisher": "Surat Municipal Corporation",
-                    "license": (
-                        "Public government website; no explicit open licence asserted. "
-                        "Used as a public record of the corporation's own operational readings."
-                    ),
+                    # READ from the registry, never restated. A copy here drifts
+                    # the moment the registry is corrected, and the encumbrance
+                    # audit then reports two different licences for one source.
+                    "license": _registry_license("smc-flood-chain"),
                     "url": SMC_URL,
                 }
             ],
@@ -144,7 +169,11 @@ def _pane(html: str, pane_id: str) -> str:
     start = html.find(f'id="{pane_id}"')
     if start < 0:
         return ""
-    others = [p for p in (PANE_UKAI, PANE_WEIR, PANE_RAIN, PANE_TOTAL, PANE_KHADI) if p != pane_id]
+    others = [
+        p
+        for p in (PANE_UKAI, PANE_WEIR, PANE_RAIN, PANE_TOTAL, PANE_KHADI)
+        if p != pane_id
+    ]
     end = len(html)
     for other in others:
         idx = html.find(f'id="{other}"', start + 1)
@@ -392,7 +421,9 @@ def build(html: str) -> dict[str, Any]:
             "outflowCusec": (latest_ukai or {}).get("outflowCusec"),
             "headroomFt": (
                 round(frl - latest_ukai["levelFt"], 2)
-                if frl is not None and latest_ukai and latest_ukai.get("levelFt") is not None
+                if frl is not None
+                and latest_ukai
+                and latest_ukai.get("levelFt") is not None
                 else None
             ),
             "observedAt": (latest_ukai or {}).get("observedAt"),
@@ -405,7 +436,9 @@ def build(html: str) -> dict[str, Any]:
             "outflowCusec": (latest_weir or {}).get("outflowCusec"),
             "headroomM": (
                 round(overflow - latest_weir["levelM"], 2)
-                if overflow is not None and latest_weir and latest_weir.get("levelM") is not None
+                if overflow is not None
+                and latest_weir
+                and latest_weir.get("levelM") is not None
                 else None
             ),
             "causewayState": causeway_state,
@@ -416,7 +449,9 @@ def build(html: str) -> dict[str, Any]:
             "zonesMm": (latest_zone or {}).get("zonesMm", {}),
             "observedAt": (latest_zone or {}).get("observedAt"),
             "seasonTotalMm": (total_rain[0]["totalMm"] if total_rain else None),
-            "seasonTotalObservedAt": (total_rain[0]["observedAt"] if total_rain else None),
+            "seasonTotalObservedAt": (
+                total_rain[0]["observedAt"] if total_rain else None
+            ),
         },
         "window": {
             "ukai": ukai,
@@ -428,7 +463,9 @@ def build(html: str) -> dict[str, Any]:
     }
 
 
-def merge_history(existing: dict[str, Any] | None, snapshot: dict[str, Any]) -> dict[str, Any]:
+def merge_history(
+    existing: dict[str, Any] | None, snapshot: dict[str, Any]
+) -> dict[str, Any]:
     """Append the scraped window to the durable series, keyed by timestamp.
 
     Idempotent: re-running on the same day adds nothing new. This is what turns
@@ -480,7 +517,10 @@ def main() -> int:
     snapshot = build(html)
 
     if snapshot["ukai"]["levelFt"] is None and not snapshot["khadis"]:
-        print("ERROR: parsed neither a dam level nor any khadi - page shape changed", file=sys.stderr)
+        print(
+            "ERROR: parsed neither a dam level nor any khadi - page shape changed",
+            file=sys.stderr,
+        )
         return 1
 
     with open(args.out, "w", encoding="utf-8") as fh:
@@ -502,10 +542,16 @@ def main() -> int:
         print(f"wrote {args.history} ({counts})")
 
     u, w = snapshot["ukai"], snapshot["weir"]
-    print(f"  Ukai {u['levelFt']} ft (FRL {u['fullReservoirLevelFt']}), outflow {u['outflowCusec']} cusec")
-    print(f"  Weir {w['levelM']} m (overflow {w['overflowLevelM']}), causeway {w['causewayState']}")
+    print(
+        f"  Ukai {u['levelFt']} ft (FRL {u['fullReservoirLevelFt']}), outflow {u['outflowCusec']} cusec"
+    )
+    print(
+        f"  Weir {w['levelM']} m (overflow {w['overflowLevelM']}), causeway {w['causewayState']}"
+    )
     for k in snapshot["khadis"]:
-        print(f"  {k['name']}: {k['levelM']} m, danger {k['dangerLevelM']} m, headroom {k['headroomM']} m")
+        print(
+            f"  {k['name']}: {k['levelM']} m, danger {k['dangerLevelM']} m, headroom {k['headroomM']} m"
+        )
     return 0
 
 
