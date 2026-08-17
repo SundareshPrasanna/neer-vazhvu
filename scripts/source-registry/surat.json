@@ -100,7 +100,9 @@
       "detection": {
         "method": "content-hash"
       },
-      "dependsOn": [],
+      "dependsOn": [
+        "public/data/facts-surat.json"
+      ],
       "refreshMethod": "manual",
       "notes": "134 ward rows with area and census population 1961-2011, showing the city growing from 8 km2 (12 wards) to 462.149 km2 across six annexations including the June 2020 extension. The spine of the Origins narrative."
     },
@@ -117,7 +119,8 @@
         "method": "content-hash"
       },
       "dependsOn": [
-        "public/data/surat-supply-overview.json"
+        "public/data/surat-supply-overview.json",
+        "public/data/facts-surat.json"
       ],
       "refreshMethod": "manual download",
       "notes": "Three releases. D53 monthly total supply Jan-2018 to Dec-2021 (48 real points) and D52 property connection coverage 2018-19 to 2020-21 are usable. D42 gives per-sub-ward CAPACITY across 233 sub-wards, 8 zones, 1,342 MLD. DO NOT PUBLISH the derived columns: D53's 'Losses including NRW' is exactly 20.0000% of total on all 48 rows while 'actual supplied' equals total (self-contradictory), and D42's 'domestic consumption' is exactly 0.750000 x capacity on all 233 rows. Both are assumptions presented as measurements."
@@ -136,7 +139,8 @@
         "linkPattern": "nwmp-data-\\d{4}"
       },
       "dependsOn": [
-        "public/data/river-quality-surat.json"
+        "public/data/river-quality-surat.json",
+        "public/data/facts-surat.json"
       ],
       "refreshMethod": "manual; same extraction pipeline as the Hyderabad Musi rebuild",
       "notes": "2022 edition holds 7 Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira), plus Mindhola at Sachin, Purna, Masma Khadi creek, Moticher and Olpad ponds, and 8 NWMP groundwater stations in the industrial belt. Only one edition ingested; CPCB publishes annually and a 6-edition backfill runs on the same pipeline."
@@ -172,10 +176,29 @@
         "method": "content-hash"
       },
       "dependsOn": [
-        "public/data/surat-cgwb-stations.json"
+        "public/data/surat-cgwb-stations.json",
+        "public/data/facts-surat.json"
       ],
       "refreshMethod": "manual export, filtered to District == SURAT",
       "notes": "About 65 Surat-district stations, ~6,500 readings, 1970-2026. THREE TRAPS: the export filenames misstate their own date ranges (the file named 1991_2020 holds Aug-Dec 2020; 2026_2030 holds Jan-May 2026), the Block column is '-' for every Surat row so block joins are impossible from this export, and telemetry sign convention is mixed - apply the per-station sign rule before rendering."
+    },
+    {
+      "id": "osm-surat-waterways",
+      "scope": "surat",
+      "publisher": "OpenStreetMap contributors",
+      "url": "https://www.openstreetmap.org/copyright",
+      "license": "Open Database License (ODbL) 1.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/surat-rivers.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_surat_artifacts.py (Overpass query)",
+      "notes": "Named river and stream ways in the Surat box. GAP: OSM names none of the five khadis SMC monitors against published danger levels, so the creeks central to the flood chain have no geometry. SMC's GIS holds a creek layer but serves WMS only, with WFS disabled, so its geometry cannot be redistributed."
     }
   ]
 }
