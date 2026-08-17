@@ -708,6 +708,10 @@ def build_rivers(root: Path, offline: Path | None = None) -> int:
             {
                 "type": "Feature",
                 "properties": {
+                    # river_id is the join key the rivers page uses to look up
+                    # each river's narrative (RIVER_INFO_BY_CITY). Without it
+                    # the map renders zero rivers even with geometry present.
+                    "river_id": re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-"),
                     "name": name,
                     "waterway": "river",
                     "segments": len(lines),
