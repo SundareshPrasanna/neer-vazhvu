@@ -178,8 +178,15 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
     "Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register.",
   "pune:facts":
     "Needs a facts-pune.json. The numbers are verified and sitting in pune-supply-overview.json and river-quality-pune.json already; the compilation is the work.",
-  "pune:origins":
-    "Not written. The material is strong - the 12 July 1961 Panshet breach that flooded half the city and has no official death toll by the state's own admission, through the Khadakwasla chain to the 2025 entitlement remittal - but Origins is narrative work and gets its own pass.",
+  // RETIRED 2026-08-17, same day it was written. The removal condition was
+  // "Origins is narrative work and gets its own pass", and the pass happened
+  // in the same PR rather than a later one. Kept as a comment rather than
+  // deleted because a retired exemption is the record that the gap closed
+  // rather than being quietly dropped. src/content/story-pune-en.tsx ships
+  // ten chapters on the sources listed in its header, with a CC0 Rijksmuseum
+  // hero and a 1911 survey plate; the 1961 Panshet death toll is stated as
+  // having no official figure, per the state's own current disaster plan,
+  // rather than substituting the number that circulates.
   "pune:lake-restoration":
     "No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere.",
   "pune:cascades":

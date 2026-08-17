@@ -10071,6 +10071,42 @@
    "flags": []
   },
   {
+   "path": "public/data/gw-stations-pune.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "gw-stations",
+   "bytes": 129610,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_finding",
+     "coverage",
+     "dataset",
+     "fetched_at",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "stations",
+     "summary"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_gw_stations.py"
+   ],
+   "headwaters_sources": [
+    "wris-telemetry-pune"
+   ],
+   "licenses": [
+    "Government of India / Government of Maharashtra data portal, cited with attribution; published here only as derived aggregates, never as republished rows"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/gw-stations.json",
    "family": "data-root",
    "scope": "chennai",
@@ -10129,6 +10165,7 @@
    },
    "consumers": [],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
     "scripts/fetch-wris-groundwater-bangalore.ts"
    ],
    "headwaters_sources": [
@@ -10166,6 +10203,7 @@
    "consumers": [],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
     "scripts/nvdm_envelope_delhi.py"
    ],
    "headwaters_sources": [
@@ -10207,7 +10245,9 @@
    "consumers": [
     "src/content/story-gurugram-en.tsx"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
+   ],
    "headwaters_sources": [
     "ingres-groundwater-haryana"
    ],
@@ -10242,7 +10282,8 @@
    },
    "consumers": [],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py"
+    "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py",
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-telangana"
@@ -10281,7 +10322,9 @@
     ]
    },
    "consumers": [],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
+   ],
    "headwaters_sources": [
     "ingres-groundwater-westbengal"
    ],
@@ -10315,6 +10358,7 @@
    },
    "consumers": [],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
     "scripts/compute-madurai-derived-facts.ts",
     "scripts/fetch-wris-groundwater-madurai.ts",
     "scripts/nvdm_envelope_madurai.py"
@@ -10324,6 +10368,51 @@
    ],
    "licenses": [
     "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/gwr-blocks-pune.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "gwr-blocks",
+   "bytes": 43842,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_unit",
+     "assessment_years",
+     "blocks",
+     "dataset",
+     "district",
+     "generated_at",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/content/story-pune-en.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_pune_geography.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-maharashtra"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -10931,6 +11020,47 @@
    ],
    "accountability": "watched",
    "accountability_reason": "scheduled rebuild: imd-rainfall-refresh.yml (P5-1)",
+   "flags": []
+  },
+  {
+   "path": "public/data/imd-rainfall-monthly-pune.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 56288,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rainfall-pune"
+   ],
+   "licenses": [
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -11592,7 +11722,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 4564,
+   "bytes": 5104,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11611,6 +11741,7 @@
     "src/components/dashboard/regional-water-system.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/scrape_pravah_dams.py",
     "scripts/check-data-freshness.ts"
    ],
    "headwaters_sources": [
@@ -11781,6 +11912,96 @@
    ],
    "licenses": [
     "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/pune-dam-storage.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "dam-storage",
+   "bytes": 4298,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_fetched",
+     "_note",
+     "_source",
+     "_source_url",
+     "dams",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/content/story-pune-en.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/scrape_pravah_dams.py"
+   ],
+   "headwaters_sources": [
+    "wrd-pravah-pune-dams"
+   ],
+   "licenses": [
+    "public government daily bulletin, served without terms of use - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/pune-supply-overview.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "supply-overview",
+   "bytes": 16322,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "_sources",
+     "_supply_total_note",
+     "_view_overrides",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
+     "dataset",
+     "distribution",
+     "entitlement",
+     "equitable_supply_project",
+     "groundwater",
+     "hero_copy",
+     "nvdm",
+     "provenance",
+     "scope",
+     "service_levels",
+     "sewage",
+     "supply_chain",
+     "water_budget_2025_26",
+     "wtps_summary"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/content/story-pune-en.tsx",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/pune.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_supply.py",
+    "scripts/lib/exemptions.ts"
+   ],
+   "headwaters_sources": [
+    "pmc-esr"
+   ],
+   "licenses": [
+    "public government report published by the corporation; cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -12136,6 +12357,51 @@
    ],
    "accountability": "watched",
    "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-pune.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "rainfall-recent",
+   "bytes": 15276,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "imd-gridded-rainfall-pune",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution",
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -18766,6 +19032,56 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-pune.json",
+   "family": "data-root",
+   "scope": "pune",
+   "dataset": "river-quality",
+   "bytes": 18990,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_edition_trap",
+     "_gradient",
+     "_headline",
+     "_not_included",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "national_context_2024",
+     "nvdm",
+     "priority_bands_mg_l",
+     "provenance",
+     "rivers",
+     "scope",
+     "source",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/page.tsx",
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/content/story-pune-en.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/hooks/use-ward-profile.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_river_quality.py",
+    "scripts/lib/exemptions.ts",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-polluted-river-stretches"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality.json",
    "family": "data-root",
    "scope": "chennai",
@@ -22164,6 +22480,203 @@
    "flags": []
   },
   {
+   "path": "public/geojson/pune-gwr-blocks.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "gwr-blocks",
+   "bytes": 1209531,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 14,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "agwd_tot",
+     "block",
+     "class",
+     "editions",
+     "ext_id",
+     "na_gwa",
+     "sgw_dev_pe"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_geography.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-maharashtra"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/pune-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "rivers",
+   "bytes": 68918,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 8,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "length_km",
+     "name",
+     "name_mr",
+     "osm_segments",
+     "river_id",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/cascade/cascade-methodology-section.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "neer-vazhvu-api/scripts/build_pune_geography.py",
+    "neer-vazhvu-api/scripts/build_pune_river_quality.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-pune-water"
+   ],
+   "licenses": [
+    "Open Database License (ODbL) v1.0 - share-alike, (c) OpenStreetMap contributors"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/pune-stps.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "stps",
+   "bytes": 6196,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 20,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "capacity_mld",
+     "commissioned",
+     "name",
+     "status",
+     "technology",
+     "ward_office"
+    ]
+   },
+   "consumers": [
+    "src/content/story-pune-en.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_geography.py"
+   ],
+   "headwaters_sources": [
+    "opencity-pune-stps"
+   ],
+   "licenses": [
+    "Public Domain per OpenCity CKAN metadata (no upstream dedication)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/pune-wards-2025.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "wards-2025",
+   "bytes": 128326,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 41,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "ward_name",
+     "ward_no"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_geography.py",
+    "neer-vazhvu-api/scripts/build_pune_gw_stations.py"
+   ],
+   "headwaters_sources": [
+    "opencity-pune-wards"
+   ],
+   "licenses": [
+    "Public Domain per OpenCity CKAN metadata (no upstream dedication)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/pune-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "water-bodies-current",
+   "bytes": 625830,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 484,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "name",
+     "name_mr",
+     "natural",
+     "osm_id",
+     "water"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_pune_geography.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-pune-water"
+   ],
+   "licenses": [
+    "Open Database License (ODbL) v1.0 - share-alike, (c) OpenStreetMap contributors"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/geojson/rich-bodies/agara-buffer-1000m.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
@@ -24955,6 +25468,18 @@
   },
   {
    "family": "data-root",
+   "dataset": "dam-storage",
+   "files": 1,
+   "scopes": [
+    "pune"
+   ],
+   "bytes": 4298,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
    "dataset": "dpcc-monthly-wq",
    "files": 1,
    "scopes": [
@@ -25064,20 +25589,21 @@
   {
    "family": "data-root",
    "dataset": "gw-stations",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "chennai",
-    "madurai"
+    "madurai",
+    "pune"
    ],
-   "bytes": 56075,
-   "schema_variants": 2,
+   "bytes": 185685,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -25085,10 +25611,11 @@
     "gurugram",
     "hyderabad",
     "kolkata",
-    "madurai"
+    "madurai",
+    "pune"
    ],
-   "bytes": 168913,
-   "schema_variants": 5,
+   "bytes": 212755,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
@@ -25107,7 +25634,7 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -25115,9 +25642,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 370696,
+   "bytes": 426984,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -25209,7 +25737,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 4564,
+   "bytes": 5104,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -25229,7 +25757,7 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -25237,9 +25765,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 107015,
+   "bytes": 122291,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -25307,7 +25836,7 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -25315,10 +25844,11 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 1421732,
-   "schema_variants": 6,
+   "bytes": 1440722,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
@@ -25349,17 +25879,18 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "gurugram",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 108300,
-   "schema_variants": 6,
+   "bytes": 124622,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
@@ -25712,16 +26243,17 @@
   {
    "family": "geojson-layers",
    "dataset": "gwr-blocks",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
-    "madurai"
+    "madurai",
+    "pune"
    ],
-   "bytes": 7346778,
-   "schema_variants": 2,
+   "bytes": 8556309,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -25777,7 +26309,7 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -25785,10 +26317,11 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 2673943,
-   "schema_variants": 6,
+   "bytes": 2742861,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
@@ -25819,14 +26352,15 @@
   {
    "family": "geojson-layers",
    "dataset": "stps",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "bangalore"
+    "bangalore",
+    "pune"
    ],
-   "bytes": 16238,
-   "schema_variants": 1,
+   "bytes": 22434,
+   "schema_variants": 2,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "geojson-layers",
@@ -25930,12 +26464,13 @@
   {
    "family": "geojson-layers",
    "dataset": "wards-2025",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "bangalore"
+    "bangalore",
+    "pune"
    ],
-   "bytes": 3715185,
-   "schema_variants": 1,
+   "bytes": 3843511,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -25968,7 +26503,7 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -25977,10 +26512,11 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "pune"
    ],
-   "bytes": 32755207,
-   "schema_variants": 8,
+   "bytes": 33381037,
+   "schema_variants": 9,
    "registered": true,
    "has_consumer": true
   },

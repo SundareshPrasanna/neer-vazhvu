@@ -185,11 +185,19 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // `tanker` - PMC publishes a genuine daily tanker register (409 XLSX files
   //   since 25 Apr 2026, per filling point, with ward, society and vehicle
   //   number). Real killer dataset, producer not written yet.
-  // `lake-restoration`, `facts`, `origins`, `allocations`, `commitments` -
-  //   no artifacts built.
+  // `lake-restoration`, `facts`, `allocations`, `commitments` - no artifacts
+  //   built.
   // `cascades` - the cascade pipeline has not been run for Pune district.
   // `shoreline` - landlocked.
-  pune: new Set(["", "about", "groundwater", "water-bodies", "rivers", "my-ward"]),
+  pune: new Set([
+    "",
+    "about",
+    "origins",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "my-ward",
+  ]),
 };
 
 /**
