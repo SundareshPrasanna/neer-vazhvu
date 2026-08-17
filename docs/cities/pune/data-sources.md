@@ -328,18 +328,63 @@ OSM has no PCMC corporation polygon at all. This is why Pune is a `city` and not
 
 ### Water bodies and rivers - OSM, and that is a finding
 
-**Source:** OpenStreetMap via Overpass, bbox `18.38,73.65,18.72,74.05` (PMC + PCMC, wider than the
-ward envelope because Khadakwasla sits west of it).
-**Outputs:** `public/geojson/pune-water-bodies-current.geojson` (484 polygons, 64 named),
-`public/geojson/pune-rivers.geojson` (8 rivers).
+**Source:** OpenStreetMap via Overpass, bbox `18.3,73.4,18.95,74.05` (PMC + PCMC, wider than the ward
+envelope because the dams the city drinks from sit well west of it).
+**Outputs:** `public/geojson/pune-water-bodies-current.geojson` (791 polygons, 84 named, after
+excluding 7 counted non-water-bodies), `public/geojson/pune-rivers.geojson` (8 rivers).
 **Licence:** ODbL v1.0 - **share-alike**, so these are build fixtures, not part of the licence-clean
 reference corpus.
+
+**THE FETCH BBOX MUST STAY EQUAL TO `pune.bbox` IN `src/lib/cities/pune.ts`.** It did not. The fetch
+box was `18.38,73.65,18.72,74.05` against a map frame of `18.3,73.4,18.95,74.05`, so the producer
+covered about a third of what the reader can pan over. Everything west of 73.65 fell outside it, which
+meant **Panshet, Warasgaon, Temghar, Pawana, Mulshi and Bhama Askhed were all absent from the layer** -
+every reservoir Pune drinks from except Khadakwasla, missing from the city's own water-body map while
+the dashboard's reservoir cards named them. Correcting it took the layer 484 -> 791 polygons and
+64 -> 84 named, and added Andhra, Bushi, Gunjavani, Valvan, Shirota, Tungarli, Uksan, Kasarsai and
+Tata besides.
+
+The producer now **fails loudly if any of the six source reservoirs is absent**, and the guard carries
+both spellings of two of them: OSM writes *Varasgaon* and *Pavana* where the WRD bulletin writes
+Warasgaon and Pawana, and the first version of that check reported a false gap on exactly that. Same
+trap as MAVAL/Mawal in IN-GRES.
+
+Seven features are excluded and **counted on the artifact** rather than silently dropped: 3 swimming
+pools caught by `water=pool`, plus a gym pool, a service reservoir ("PCMC Water Tank"), a
+rainwater-harvesting sump and one pool carrying only `natural=water`. The tag test alone does not
+catch the last four - three of them carry `water=reservoir`, the same tag Khadakwasla and Panshet
+carry - so there is a name test too, kept narrow because **talav is a real water body here**. Ganesh
+Talav and Lakaki Talav are lakes and a broader match for "tank" would delete them.
 
 **PMC publishes no lake or tank layer at all.** Its only water-body file is `Pune River Map`: 12
 polygons of river *channel*, three with a null REMARK and one with AREA=0. Katraj, Pashan,
 Jambhulwadi, Manas and Bund Garden are all in OSM and in none of the PMC datasets probed.
 
-Rivers are **merged from 38 OSM segments into one MultiLineString per river**. Shipping the raw
+**And no open vector lake register exists for Maharashtra**, which is why OSM is the source rather
+than a preference. MRSAC, the state remote-sensing centre that would be the analogue of the open TNGIS
+GeoServer behind Chennai's 70k tanks, does not resolve publicly: `mahagis.mrsac.gov.in` has no DNS
+record and `mrsac.maharashtra.gov.in` times out. Bhuvan answers a WFS request with
+`ServiceUnavailable: Service WFS is disabled` on both `bhuvan-vec1` and `bhuvan-vec2`, raster only.
+
+The **First Census of Water Bodies (2018-19, Ministry of Jal Shakti)** does cover Maharashtra, and is
+worth recording as a probed-and-rejected source rather than an unexplored one. 3,680 point records for
+Pune district with area, depth, ownership and use. It is **not** a substitute for this layer on two
+counts. Coverage: only **10 of the 3,680 sit inside PMC** and 45 in the district are urban at all - it
+is a *minor irrigation* census that counts rural tanks and is effectively blind inside the city.
+Enumeration: the condition columns are unfilled defaults - **3,679 of 3,680 "not encroached"**, 3,676
+of 3,680 with use "Ground water recharge", 3,680 of 3,680 in use with none defunct, 3,679 of 3,680
+man-made, and ownership 3,618 "State WRD" plus 62 "Co-operative" with no panchayat, municipal or
+private row anywhere. Chennai's cut of the *same* census carries populated encroachment percentages
+and original-versus-present storage, so this is a per-state enumeration difference. Publishing "3,680
+water bodies in Pune" as coverage would be laundering an empty form.
+
+If it is ever loaded, it belongs as a district irrigation-tank layer with that finding attached, and
+note the licence fork: the copy carrying point geometry is OpenCity's, labelled Creative Commons
+**Non-Commercial** (the encumbered bucket). data.gov.in is the better-licensed route and the one
+Chennai already uses via `neer-vazhvu-api/app/scrapers/data_gov_in.py`, and it needs an API key the
+repo does not currently hold.
+
+Rivers are **merged from 44 OSM segments into one MultiLineString per river**. Shipping the raw
 segments made React log a duplicate-key error per collision and the page header read "38 rivers".
 `river_id` match order is load-bearing: "Mutha Right Bank Canal" contains "mutha" and was being
 drawn as the river Mutha until the canal was tested first (20 segments mislabelled).

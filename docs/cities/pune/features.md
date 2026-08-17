@@ -18,7 +18,7 @@ exactly that.
 |---|---|---|
 | `/pune` | `heroMode: 'cauvery-pumping'` | Supply-overview hero on PMC's own water budget, six reservoir cards, rainfall history |
 | `/pune/groundwater` | shared block choropleth | 14 talukas x 6 IN-GRES editions + 120 telemetry station points |
-| `/pune/water-bodies` | shared map | 484 OSM polygons, 64 named |
+| `/pune/water-bodies` | shared map | 791 OSM polygons, 84 named (7 pools/tanks excluded and counted) |
 | `/pune/rivers` | shared `RiversClient` | 8 rivers with CPCB priority class and 2024 BOD per station |
 | `/pune/my-ward` | shared | 41 named prabhags (needs ward/locality seeding to work) |
 | `/pune/about` | shared + Pune section | Supply chain, what we track, what we do not |

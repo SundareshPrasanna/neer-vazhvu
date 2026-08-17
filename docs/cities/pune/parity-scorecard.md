@@ -17,7 +17,7 @@
 
 **Headline: 7 of 15 routes live. 0 empty states, 0 console errors, 0 crashes on the 7 that ship.**
 
-6 XHigh · 4 High · 5 Medium · 7 Low · 2 N/A
+7 XHigh · 4 High · 5 Medium · 7 Low · 2 N/A
 
 The honest one-line summary: **Pune's depth is in its groundwater and its supply governance, and its
 thinness is in physical asset geometry.** Where a central regulator or the corporation's own report
@@ -31,6 +31,7 @@ either absent or too dense to render.
 
 | Feature | Chennai | Pune | Multiple |
 |---|---|---|---|
+| **Tanker delivery records** | household survey (sample) | **57,370 individual deliveries** | platform-first: nobody else here has a per-delivery municipal register |
 | **Groundwater telemetry stations** | 49 | **120** | **2.4x** |
 | **Groundwater readings retained** | metadata only | **306,231** (6-hourly, 2022-2026) | platform-first at this density |
 | **Rivers with narrative + quality** | 4 | **7** | 1.8x |
@@ -38,7 +39,14 @@ either absent or too dense to render.
 | **River geometry features** | 4 | **8** | 2x |
 | **Reservoir sources tracked** | 4 | **6** | 1.5x |
 
-Two of these need the caveat spelled out, because a bigger number is not automatically better:
+Three of these need the caveat spelled out, because a bigger number is not automatically better:
+
+- **The tanker register is four months long, not a history.** PMC began publishing these
+  spreadsheets on 17 April 2026, so the series starts there and there is no earlier archive on the
+  endpoint. It also publishes **counts only** here: 54,235 of the source rows carry a street address
+  and 26,326 a phone number, and none of that is republished. That is deliberately stricter than
+  Gurugram's ledger, which names its buyers, because Gurugram's buyers are companies and Pune's are
+  private housing societies.
 
 - **The 120 groundwater stations are mostly not in the city.** Exactly one stands inside the PMC
   ward boundary (Shivajinagar), tested point-in-polygon. The other 119 instrument the eastern
@@ -79,7 +87,7 @@ observatory normal. See `data-sources.md` §7.
 | Feature | Chennai | Pune | Why thinner |
 |---|---|---|---|
 | River quality **readings** | 51 | 20 | Pune's per-station series is **one year** (CPCB's 2024 annexure). The 2018, 2022 and 2022-23 values exist and ship, but at *stretch* level rather than per station, so they are carried as river attributes not station readings. Chennai has multi-year per-station min-max from the NWMP tables. |
-| Water-body polygons | 1,636 | 484 | Different bounding boxes and a genuinely smaller lake population. Pune's are OSM-only because **PMC publishes no lake layer at all** - its one water-body file is 12 river-channel polygons. |
+| Water-body polygons | 1,636 | 791 | **Same source as Chennai.** Chennai's 1,636 is also OpenStreetMap, from `scripts/fetch-water-bodies-osm.ts` - so this is not a source-quality gap, and the residual difference is real: Chennai is eri tank country and Pune is canal command below four dams. Was 484 until the fetch bbox was corrected (see below). PMC itself publishes no lake layer at all; its one water-body file is 12 river-channel polygons. |
 | Sewage-treatment inventory | 4,188 sewerage features | 20 STP points | Chennai ships CMWSSB's network geometry. Pune ships the plants, with capacity, technology and status, and the 11 proposed sum to exactly the 396 MLD JICA publishes. Different kind of object, not a thinner version of the same one. |
 | Ward geometry | 200 wards | 41 prabhags | **Not a deficiency.** Pune has 41 electoral prabhags; that is the actual 2025 delimitation. All 41 are named, which took a join against PMC's own election results because the boundary file carries no names. |
 | Wards vintage confidence | one delimitation | four on one dataset page | Pune's ward source ships 76 (2012), 41 (2017), 58 (a 2022 draft that never polled) and 41 (2025). Establishing which was current, and refusing the silent-but-wrong 2017 name join, was most of the work. |
@@ -90,7 +98,7 @@ observatory normal. See `data-sources.md` §7.
 
 | Feature | Chennai | Pune | Ours to fix? |
 |---|---|---|---|
-| **Tanker** | household survey | none shipped | **Yes, and it is the biggest opportunity on the platform right now.** PMC publishes a daily tanker register through an open JSON:API: 409 XLSX files since 25 Apr 2026, per filling point, with prabhag, recipient society, address, vehicle number and scheduled vs on-demand trips. Ramtekadi logged 424 deliveries in one day, in the monsoon. Producer not written. |
+| **Tanker page** | household survey | **data ships, renderer does not** | Partly, and deliberately. `pune-tankers.json` now carries PMC's own delivery register (see the XHigh table above). What is missing is a panel: the existing `utility-ledger` renderer is HMWSSB-shaped - bookings against deliveries, a fulfilment rate, divisions and sections - and Pune's register has no bookings and no fulfilment rate. `types.ts` says a fifth `tankerDataKind` is cheaper than bending an existing one, so this waits for its own panel rather than gutting Hyderabad's copy. |
 | **Localities** | 519 | 0 | Yes. Needs a locality gazetteer; `/pune/my-ward` also needs ward + locality seeding in the DB before it functions. |
 | **Facts** | dynamic pipeline | none | Yes, and cheap - the verified numbers already sit in `pune-supply-overview.json` and `river-quality-pune.json`. The compilation is the work. |
 | **Commitments** | register | none | Yes. The dated commitments are citable and sharp (JICA loan signed 13 Jan 2016 for a May 2023 completion, now targeting 2026; the 24x7 project's slide from Dec 2024 to "12-14 months" as of Aug 2026), but each needs primary-source verification of attribution first. |
@@ -142,8 +150,8 @@ Three things Pune ships that have no Chennai equivalent and are not captured by 
 
 In rough order of value per unit of work:
 
-1. **The tanker producer.** Turns a Low into a probable XHigh - no other city on the platform has a
-   per-delivery municipal register at that resolution, and it is sitting behind an open API.
+1. **A fifth `tankerDataKind` and its panel.** The data is shipped; only the renderer is missing, and
+   it is the single highest-value surface this city could add.
 2. **Ward + locality seeding.** Makes `/pune/my-ward` function and closes the localities row.
 3. **`facts-pune.json`.** Cheap; the numbers are already verified and in-repo.
 4. **The nalla layer** (3,075 features) for a renderable drainage surface.
@@ -151,3 +159,66 @@ In rough order of value per unit of work:
 6. **CWC weekly backfill** for Khadakwasla and Panshet, which would give the reservoir chart a
    decade instead of starting at onboarding. The dated WRD archive route is documented in
    `data-sources.md` §2 and not yet wired.
+
+**Done since this scorecard was first written:** the tanker producer (item 1 in the original list,
+now the XHigh row above) and the water-bodies bbox correction below.
+
+---
+
+## The correction this audit produced
+
+Writing the water-bodies row is what caught the defect. The row read "484 polygons, different
+bounding boxes" and treated the gap against Chennai as a fact about the two cities. Two checks broke
+that reading:
+
+1. **Chennai's layer is the same source.** 1,636 polygons from OpenStreetMap via
+   `scripts/fetch-water-bodies-osm.ts`, ODbL. There was no source-quality difference to explain.
+2. **The Pune fetch bbox was smaller than the Pune map.** `build_pune_geography.py` queried Overpass
+   at `18.38,73.65-18.72,74.05` while `pune.bbox` in the city config is
+   `18.3,73.4-18.95,74.05` - roughly a third of the frame the reader can pan over.
+
+Everything west of 73.65 was outside the query, which meant **Panshet, Warasgaon, Temghar, Pawana,
+Mulshi and Bhama Askhed were all absent from the layer** - every reservoir Pune drinks from except
+Khadakwasla, missing from the city's own water-body map while the dashboard's reservoir cards named
+them by name. Correcting the bbox took the layer from 484 to **791 polygons** and 64 to 84 named,
+and pulled in Andhra, Bushi, Gunjavani, Valvan, Shirota, Tungarli, Uksan, Kasarsai and Tata besides.
+
+Two things now guard it. The producer **fails loudly if any of the six source reservoirs is absent**,
+because a bbox is exactly the kind of parameter that narrows by accident and still produces a
+plausible-looking map. And that guard carries both spellings of two of them: OSM writes *Varasgaon*
+and *Pavana* where the WRD bulletin writes Warasgaon and Pawana, and the first version of the check
+reported a false gap on precisely that. Same trap as MAVAL/Mawal in IN-GRES.
+
+Seven features were also removed, and counted on the artifact rather than silently dropped: three
+swimming pools, a gym pool, a service reservoir, a rainwater-harvesting sump, and one pool carrying
+no water tag at all. The name match is narrow deliberately - *talav* is a real water body here, and
+a broader match for "tank" would have deleted Ganesh Talav and Lakaki Talav.
+
+### And what going beyond OSM would actually buy
+
+Asked directly whether OSM is enough, the answer is that it is not a register, and for Maharashtra no
+open register exists:
+
+| Route | Result |
+|---|---|
+| **MRSAC / MahaGIS** - the state remote-sensing centre, Maharashtra's analogue of the open TNGIS GeoServer that gives Chennai 70k tanks | Does not resolve publicly. `mahagis.mrsac.gov.in` has no DNS record; `mrsac.maharashtra.gov.in` times out. |
+| **Bhuvan / NRSC vector** | Answers a WFS request `ServiceUnavailable: Service WFS is disabled`, on both `bhuvan-vec1` and `bhuvan-vec2`. Raster tiles only. Same class of dead end as PCMC's WMTS. |
+| **First Census of Water Bodies (2018-19, Ministry of Jal Shakti)** | **Exists for Maharashtra and is not a substitute.** See below. |
+
+The census is the one real find, and it fails on enumeration quality rather than on access. 3,680
+records for Pune district, each a point with area, depth, ownership and use. But:
+
+- **Only 10 of the 3,680 are inside PMC**, and 45 in the whole district are urban. It is a *minor
+  irrigation* census: it counts rural tanks, and it is effectively blind inside the city.
+- **The condition columns are unfilled defaults.** 3,679 of 3,680 "not encroached"; 3,676 of 3,680
+  with use "Ground water recharge"; 3,680 of 3,680 in use, none defunct; 3,679 of 3,680 man-made;
+  ownership 3,618 "State WRD" and 62 "Co-operative", with no panchayat, municipal or private row
+  anywhere. Chennai's cut of the same census carries populated encroachment percentages and
+  original-versus-present storage, so this is a per-state enumeration difference, not a schema one.
+
+So it belongs here as a **district irrigation-tank layer with a documented enumeration-quality
+finding**, not as city water-body coverage, and publishing "3,680 water bodies in Pune" as a
+coverage improvement would be laundering an empty form. One licence note if it is ever loaded: the
+copy with point geometry is OpenCity's, labelled Creative Commons **Non-Commercial**, which is the
+encumbered bucket. The better-licensed route is data.gov.in, which is where Chennai's cut comes from
+and which carries the fuller schema, and that needs an API key the repo does not have.

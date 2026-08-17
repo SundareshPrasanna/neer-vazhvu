@@ -264,12 +264,35 @@ export function PunePageDescriptions({ cityId, cityName }: Props) {
           <Link href={`/${cityId}/water-bodies`} className={A}>
             The water-bodies map
           </Link>{" "}
-          draws 484 polygons, 64 of them named, from OpenStreetMap. That source
+          draws 791 polygons, 84 of them named, from OpenStreetMap. That source
           choice is itself a finding: <strong>PMC publishes no lake or tank
           layer at all</strong>. Its only water-body file is twelve polygons of
           river channel. Katraj, Pashan, Jambhulwadi and Bund Garden are in
           OpenStreetMap and in none of the municipal datasets we could reach.
         </p>
+        <p className={P}>
+          Seven features that OpenStreetMap tags as water are excluded, and the
+          count above is after that: three swimming pools, a gym pool, a service
+          reservoir, a rainwater-harvesting sump and one pool carrying no water
+          tag at all. The exclusion is kept narrow on purpose, because{" "}
+          <em>talav</em> is a real water body here - Ganesh Talav and Lakaki
+          Talav are lakes, and a broader match for &ldquo;tank&rdquo; would have
+          deleted them.
+        </p>
+        <Gap title="OpenStreetMap is not a register, and no register exists">
+          <p className={P}>
+            Maharashtra publishes no open vector lake layer. MRSAC, the state
+            remote-sensing centre that would be the equivalent of Tamil Nadu&apos;s
+            open GeoServer, does not resolve publicly; Bhuvan answers a vector
+            request with <em>Service WFS is disabled</em> and serves raster tiles
+            only. The Government of India&apos;s First Census of Water Bodies does
+            cover Maharashtra and enumerates 3,680 in Pune <em>district</em>, but
+            only ten of those fall inside PMC, and its condition columns are
+            near-uniformly unfilled defaults - 3,679 of 3,680 recorded as not
+            encroached. It is a rural minor-irrigation tank census, and it is not
+            a substitute for this layer.
+          </p>
+        </Gap>
         <p className={P}>
           <Link href={`/${cityId}/my-ward`} className={A}>
             Ward boundaries

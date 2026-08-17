@@ -92,9 +92,39 @@ STP_KML = (
 
 OVERPASS = "https://overpass-api.de/api/interpreter"
 # PMC + PCMC. Wider than the PMC ward envelope on purpose: the water system
-# does not stop at the corporation boundary, and Khadakwasla reservoir sits
-# west of it.
-BBOX = "18.38,73.65,18.72,74.05"
+# does not stop at the corporation boundary, and the dams the city drinks from
+# sit well west of it.
+#
+# THIS MUST STAY EQUAL TO pune.bbox IN src/lib/cities/pune.ts. It did not, and
+# that was a defect rather than a tuning choice: the fetch box was
+# 18.38,73.65-18.72,74.05 while the map displays 18.3,73.4-18.95,74.05, so the
+# producer covered about a third of the frame the reader can pan over.
+# Everything west of 73.65 fell outside it, which meant PANSHET, WARASGAON,
+# TEMGHAR, PAWANA, MULSHI AND BHAMA ASKHED were all absent - every reservoir
+# Pune drinks from except Khadakwasla itself, missing from the city's own
+# water-body map while the dashboard's reservoir cards named them.
+BBOX = "18.3,73.4,18.95,74.05"
+
+# Tagged as water in OSM, not a water body in any sense this platform means.
+# Swimming pools are the clear case; the rest is plumbing - a service
+# reservoir, a rainwater-harvesting sump - that happens to hold water.
+#
+# The name test is here because THE TAG TEST ALONE DOES NOT CATCH THEM. Three
+# pools carry water=pool and are caught cheaply, but "Planet Millennium
+# Swimming Pool" carries only natural=water, and "PCMC Water Tank",
+# "water tank" and "Rainwater Harvesting" all carry water=reservoir - the same
+# tag Khadakwasla and Panshet carry, so dropping that tag class is not an
+# option. Kept deliberately narrow for one reason: TALAV IS A REAL WATER BODY.
+# Ganesh Talav, Lakaki Talav and Macchi Garden Talav are lakes, and a broader
+# "tank" match would delete them.
+POOL_WATER_TAGS = {"pool", "swimming_pool"}
+NOT_A_WATER_BODY_NAME = (
+    "swimming pool",
+    "jym",
+    "gym",
+    "rainwater harvesting",
+    "water tank",
+)
 
 OSM_LICENSE = (
     "Open Database License (ODbL) v1.0, (c) OpenStreetMap contributors - share-alike"
@@ -278,17 +308,42 @@ def build_wards() -> int:
 
 
 def build_water_bodies_and_rivers() -> int:
+    # water=* is queried alongside natural=water because the two are not
+    # coextensive in OSM: a tank tagged only water=pond and no natural=water
+    # is invisible to the natural-only query. At the old narrow bbox this
+    # clause added nothing (487 elements either way, so the earlier 484 was
+    # not losing features to the tag set) - it is the bbox that was losing
+    # them. Kept anyway so the query stops depending on that coincidence.
     q = f"""[out:json][timeout:280];
 (
   way["natural"="water"]({BBOX});
   relation["natural"="water"]({BBOX});
+  way["water"]({BBOX});
+  relation["water"]({BBOX});
   way["landuse"="reservoir"]({BBOX});
+  relation["landuse"="reservoir"]({BBOX});
 );
 out geom;"""
     data = _overpass(q)
     feats = []
+    seen: set[str] = set()
+    dropped_pool = 0
+    dropped_plumbing = 0
     for el in data.get("elements", []):
         tags = el.get("tags", {})
+        # The union query can return the same way from two clauses.
+        key = f"{el['type']}/{el['id']}"
+        if key in seen:
+            continue
+        seen.add(key)
+        water_tag = (tags.get("water") or "").strip().lower()
+        name = (tags.get("name") or "").strip()
+        if water_tag in POOL_WATER_TAGS:
+            dropped_pool += 1
+            continue
+        if any(bad in name.lower() for bad in NOT_A_WATER_BODY_NAME):
+            dropped_plumbing += 1
+            continue
         if el["type"] == "way":
             geom = el.get("geometry") or []
             if len(geom) < 4:
@@ -332,6 +387,31 @@ out geom;"""
             }
         )
     named = sum(1 for f in feats if f["properties"]["name"])
+    # The city's own sources must be present. They were not: at the old bbox
+    # only Khadakwasla was in the layer. Asserted rather than trusted, because
+    # a bbox is exactly the kind of parameter that gets narrowed by accident
+    # and produces a plausible-looking map with the reservoirs cut off.
+    # Each entry is the set of spellings that count as present. OSM spells two
+    # of these differently from the WRD bulletin the reservoir cards use -
+    # VARASGAON for Warasgaon and PAVANA for Pawana - so a single-spelling
+    # check reports a false gap. Same trap as MAVAL/Mawal in IN-GRES.
+    have = " | ".join((f["properties"].get("name") or "").lower() for f in feats)
+    required = (
+        ("khadakwasla",),
+        ("panshet",),
+        ("warasgaon", "varasgaon"),
+        ("temghar",),
+        ("pawana", "pavana"),
+        ("mulshi",),
+        ("bhama",),
+    )
+    missing = [alts[0] for alts in required if not any(a in have for a in alts)]
+    if missing:
+        print(
+            f"WARNING water bodies: Khadakwasla chain dams absent from the layer: "
+            f"{', '.join(missing)}. Check BBOX against pune.bbox.",
+            file=sys.stderr,
+        )
     out = {
         **_envelope(
             "water-bodies-current",
@@ -345,11 +425,34 @@ out geom;"""
         ),
         "type": "FeatureCollection",
         "_source": f"OpenStreetMap via Overpass, bbox {BBOX}",
+        "_excluded": {
+            "swimming_pools_by_tag": dropped_pool,
+            "plumbing_by_name": dropped_plumbing,
+            "_note": (
+                "Counted, not silently dropped. water=pool is a swimming pool; "
+                "the name-matched set is a service reservoir, a rainwater "
+                "harvesting sump and pools tagged only natural=water. The "
+                "match is narrow on purpose - talav is a real water body here, "
+                "so Ganesh Talav and Lakaki Talav must survive it."
+            ),
+        },
+        "_coverage_note": (
+            "OSM is not a register. It is the only machine-readable lake layer "
+            "that exists for this city, and it under-counts small rural tanks "
+            "outside the built-up area. The Government of India's First Census "
+            "of Water Bodies enumerates 3,680 in Pune DISTRICT, but only 10 "
+            "inside PMC and 45 urban statewide-district-wide, and its attribute "
+            "columns are near-uniformly unfilled defaults (3,679 of 3,680 "
+            "'not encroached'), so it is not a substitute for this layer. "
+            "Maharashtra publishes no open vector lake register: MRSAC does not "
+            "resolve publicly and Bhuvan answers 'Service WFS is disabled'."
+        ),
         "features": feats,
     }
     write_artifact(GEO_DIR / "pune-water-bodies-current.geojson", out, indent=None)
     print(
-        f"water bodies: {len(feats)} polygons, {named} named "
+        f"water bodies: {len(feats)} polygons, {named} named, "
+        f"dropped {dropped_pool} pools + {dropped_plumbing} plumbing "
         f"-> pune-water-bodies-current.geojson",
         file=sys.stderr,
     )
