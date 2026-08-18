@@ -14,6 +14,7 @@ import type {
 } from "@/lib/waterways/types";
 import { ExplorerView } from "./explorer-view";
 import { StoryView } from "./story-view";
+import { MethodsPanel } from "./methods-panel";
 
 /**
  * Root client shell: own chrome (site Header/Footer suppress on
@@ -152,11 +153,13 @@ export function WaterwayContent({
         )}
       </main>
 
+      <MethodsPanel claimCount={claims.length} />
+
       <footer className="border-t border-border py-6">
         <div className="mx-auto max-w-6xl px-4 text-xs leading-relaxed text-muted-foreground">
           <p>
             {claims.length} sourced claims power this page; every number
-            carries its receipt. Base map data © OpenStreetMap contributors
+            carries its receipt (<a href="#methods" className="underline hover:text-foreground">methods and uncertainty</a>). Base map data © OpenStreetMap contributors
             (ODbL). Satellite imagery contains modified Copernicus Sentinel
             data (2026). Assembled by Neer Vazhvu, August 2026.
           </p>
