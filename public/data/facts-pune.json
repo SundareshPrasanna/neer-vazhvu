@@ -1,0 +1,334 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "pune"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "pmc-esr",
+        "title": "PMC Draft Environment Status Report 2025-26, chapter 5",
+        "publisher": "Pune Municipal Corporation, Environment Department",
+        "license": "public government report published by the corporation; cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES dynamic groundwater assessment, Pune district talukas",
+        "publisher": "CGWB and State groundwater departments, via IIT Hyderabad",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "cpcb-polluted-river-stretches",
+        "title": "CPCB Polluted River Stretches (Updated Version), October 2025",
+        "publisher": "Central Pollution Control Board",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "wrd-pravah-pune-dams",
+        "title": "Maharashtra WRD Pravah daily dam-safety bulletin",
+        "publisher": "Water Resources Department, Government of Maharashtra",
+        "license": "public government daily bulletin, served without terms of use - cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "pmc-tanker-register",
+        "title": "PMC daily tanker delivery registers",
+        "publisher": "Pune Municipal Corporation, Water Supply Department",
+        "license": "published openly by the corporation through its own JSON:API without stated terms; cited with attribution. Published here ONLY as counts - the source rows carry recipient society names, street addresses and phone numbers, and none of that is republished",
+        "role": "input"
+      },
+      {
+        "id": "wris-telemetry-pune",
+        "title": "India-WRIS / NWDP groundwater level telemetry (6-hourly), Maharashtra - Pune district cut",
+        "publisher": "Maharashtra Groundwater Surveys and Development Agency, via India-WRIS / NWDP",
+        "license": "Government of India / Government of Maharashtra data portal, cited with attribution; published here only as derived aggregates, never as republished rows",
+        "role": "input"
+      },
+      {
+        "id": "osm-pune-water",
+        "title": "OpenStreetMap water bodies, Pune",
+        "publisher": "OpenStreetMap contributors",
+        "license": "Open Database License (ODbL) v1.0 - share-alike, (c) OpenStreetMap contributors",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-08-17",
+    "produced_by": "neer-vazhvu-api/scripts/build_pune_facts.py",
+    "note": "22 facts, every figure READ FROM A SHIPPED ARTIFACT rather than transcribed a second time, so a card cannot disagree with the dashboard it came from. Deliberately absent: any per-capita supply figure presented as delivered water (PMC's own accounts exclude groundwater and tankers, so the denominator is wrong for the claim), and any measured annual draw (none published since 2017-18, and the two published figures for that year differ by 4.15 TMC). Each appears as a gap fact instead."
+  },
+  "place_id": "pune",
+  "generated_at": "2026-08-17",
+  "note": "Compiled from primary government sources only, and derived from the artifacts those sources already produced in this repo. Every card carries its own source URL and vintage. Two headline numbers a reader would expect are absent on purpose: a litres-per-capita figure and a measured annual draw. Both are recorded as gaps.",
+  "facts": [
+    {
+      "id": "shortfall-smaller-than-leak",
+      "tier": 2,
+      "category": "Supply",
+      "title": "The shortfall is smaller than the leak",
+      "value": "4.67",
+      "unit": "TMC/yr short, against 6.73 TMC lost to leaks",
+      "interpretation": "PMC's own water budget asks for 21.03 TMC a year against a sanctioned 16.36 TMC, a shortfall of 4.67 TMC. The same budget books 6.73 TMC to non-revenue water, at 32%. The leak is larger than the gap it is used to justify: close the losses and net demand is 14.31 TMC, comfortably inside the existing entitlement. Both halves of this comparison are on the same page of the same corporation report.",
+      "data_date": "2025-26",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "four-hours-a-day",
+      "tier": 2,
+      "category": "Supply",
+      "title": "4 hours of water a day, against its own 24-hour benchmark",
+      "value": "4",
+      "unit": "hours of supply per day",
+      "interpretation": "PMC reports an average supply duration of 4 hours against a service-level benchmark of 24 that it sets for itself. The figure has not moved: the 4-hour number is reprinted unchanged in every edition from 2021-22 onward, through a 24x7 supply project that has been running the whole time.",
+      "data_date": "2025-26",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "slb-table-reprinted-four-years",
+      "tier": 2,
+      "category": "Transparency",
+      "title": "The same service-level table, four years running",
+      "value": "4",
+      "unit": "consecutive years reporting identical figures",
+      "interpretation": "PMC's service-level benchmark table is identical across the 2021-22, 2022-23, 2023-24 and 2024-25 editions of its Environment Status Report: coverage 98%, supply duration 4 hours, non-revenue water 35%, per-capita 250 LPCD, metered connections 30%, collection efficiency 88%. Six indicators, four years, no movement in any of them. This is one observation reprinted, not a four-year trend, and the surfaces here present it as one.",
+      "data_date": "2024-25",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "entitlement-never-settled",
+      "tier": 3,
+      "category": "Governance",
+      "title": "Nine years, two regulatory orders, still no entitlement",
+      "value": "16.36",
+      "unit": "TMC/yr total authorisation, and it is contested",
+      "interpretation": "PMC's total authorisation is 16.36 TMC. The number that circulates instead, 11.5 TMC, is the Khadakwasla-only reservation and comparing it against total lifting compares one reservoir's share against every source the city draws on. The entitlement itself has never been fixed: a PDRO set it at 8.19 TMC in October 2017; MWRRA set that aside in December 2018 and deemed 11.5 TMC an entitlement, finding Khadakwasla's farmers deprived of their share; PMC appealed, and in May 2025 MWRRA found the issuing officer was not the competent authority and remitted the matter. The city has been drawing water throughout.",
+      "data_date": "2025-05-19",
+      "source_url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2025/11/85.pdf",
+      "source_label": "MWRRA Order 01/2025, on appeal from Order 19/2018"
+    },
+    {
+      "id": "no-measured-draw-since-2017-18",
+      "tier": 2,
+      "category": "Gap",
+      "title": "No measured annual draw published since 2017-18",
+      "value": "8",
+      "unit": "years since the last published measurement",
+      "interpretation": "The last year for which an actual annual draw was published is 2017-18, and for that year the utility and the regulator disagree by 4.15 TMC: PMC's affidavit says 14.56 TMC, the state water department's says 18.71. Everything since is installed lifting capacity, not measured delivery. This is why no allocation ledger is published for Pune: the ledger's primitive is entitled-against-received, and the received column would be eight years old and contested.",
+      "data_date": "2017-18",
+      "source_url": "http://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-14-of-2018.pdf",
+      "source_label": "MWRRA Order 19/2018 (Case 14 of 2018), affidavits of PMC and WRD"
+    },
+    {
+      "id": "wtp-capacity",
+      "tier": 4,
+      "category": "Infrastructure",
+      "title": "Treatment capacity, across a plant count the report cannot agree on",
+      "value": "1,854",
+      "unit": "MLD installed water treatment capacity",
+      "interpretation": "1,854 MLD across the plants PMC lists. The count is genuinely unclear in the source: the report's text says 17 plants while its own table carries 18 rows, and the previous edition said 15 plants totalling 1,914 MLD. The capacities here are the table's, and the discrepancy is flagged rather than resolved.",
+      "data_date": "2025-26",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "tanks-built-versus-commissioned",
+      "tier": 2,
+      "category": "Governance",
+      "title": "67 storage tanks built, 35 actually commissioned",
+      "value": "35",
+      "unit": "of 82 planned tanks in service",
+      "interpretation": "Pune's equitable (24x7) water supply project reports 85% physical progress and Rs 1,557.89 crore spent of a sanctioned Rs 2,818.46 crore. Of 82 storage tanks, 67 are built but only 35 are commissioned, and the gap between those two is the honest measure of what has reached anybody. No PMC source claims continuous 24-hour supply anywhere in the city.",
+      "data_date": "2025-26",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "sewage-untreated",
+      "tier": 2,
+      "category": "Sewage",
+      "title": "Half the city's sewage reaches the river untreated",
+      "value": "503",
+      "unit": "MLD untreated into the Mula-Mutha",
+      "interpretation": "Pune generates 980 MLD of sewage against 477 MLD of operating treatment capacity across 9 plants, leaving 503 MLD - 51% of what the city produces - going into the Mula-Mutha untreated. The JICA-funded programme now under construction adds 396 MLD, which would still not close the gap. The untreated figure is a subtraction from PMC's own two numbers, not a figure PMC states.",
+      "data_date": "2025-26",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "pmc-publishes-no-groundwater-number",
+      "tier": 2,
+      "category": "Gap",
+      "title": "PMC's supply accounts exclude groundwater entirely, and say so",
+      "value": "0",
+      "unit": "MLD of groundwater in the corporation's accounts",
+      "interpretation": "PMC publishes no groundwater figure at all, and is explicit about it: its supply accounts state that they do not include groundwater sources such as borewells, private tanker supply, or other alternative sources. So every per-capita and coverage number the corporation publishes describes only the piped system, in a city where the corporation itself dispatches tankers daily. The omission is recorded here rather than filled with an estimate.",
+      "data_date": "2025-26",
+      "source_url": "https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf",
+      "source_label": "PMC, Draft Environment Status Report 2025-26"
+    },
+    {
+      "id": "khadakwasla-chain-today",
+      "tier": 1,
+      "category": "Reservoirs",
+      "title": "Water in the four dams Pune drinks from",
+      "value": "100",
+      "unit": "% of live capacity",
+      "interpretation": "Khadakwasla, Panshet, Warasgaon and Temghar together hold 825.66 Mcum against a live capacity of 825.66 Mcum, 100% full, on 2026-08-17. On the same date a year earlier the chain was at 89.4%. Read the chain rather than any single dam: Khadakwasla is the smallest of the four and the one the city actually draws from, refilled from the three upstream.",
+      "data_date": "2026-08-17",
+      "source_url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
+      "source_label": "Maharashtra WRD, Pravah daily dam-safety bulletin"
+    },
+    {
+      "id": "khadakwasla-chain-capacity",
+      "tier": 4,
+      "category": "Reservoirs",
+      "title": "The whole city runs on 29 TMC of storage",
+      "value": "29.16",
+      "unit": "TMC of live storage across four dams",
+      "interpretation": "825.66 Mcum, 29.16 TMC, across Khadakwasla, Panshet, Warasgaon and Temghar. That total is not taken on trust from one publisher: it is computed from the state irrigation department's daily bulletin and it independently reproduces the 29.15 TMC PMC publishes in its own report, while CWC's National Register of Large Dams agrees to the cubic metre on Panshet and Warasgaon. And the complex is an IRRIGATION project, not a municipal one: PMC's drinking provision in the original project planning was 8.3 TMC.",
+      "data_date": "2026-08-17",
+      "source_url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
+      "source_label": "Maharashtra WRD, Pravah daily dam-safety bulletin, cross-checked against CWC NRLD-2019 and PMC's ESR"
+    },
+    {
+      "id": "shirur-critical-inside-a-safe-district",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "A CRITICAL taluka inside a district that reads SAFE",
+      "value": "95.71",
+      "unit": "% of extractable groundwater already drawn, Shirur taluka",
+      "interpretation": "Shirur is categorised CRITICAL and stands at 95.71% of its extractable resource. Pune district as a whole reads 63.73% and is categorised SAFE. Publishing the district figure alone would state the opposite of what the talukas inside it show, which is why this city's assessment is drilled to taluka rather than left at district level - and Shirur has been CRITICAL in all 6 published editions, never below 94%. It is also an irrigation story rather than a city one: 92.9% of that extraction is agriculture.",
+      "data_date": "2025-2026",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES (CGWB and State groundwater departments), 2025-2026 assessment"
+    },
+    {
+      "id": "rainfall-gradient-across-one-district",
+      "tier": 2,
+      "category": "Rainfall",
+      "title": "A 4.7x rainfall gradient inside one district",
+      "value": "2,182 to 468",
+      "unit": "mm, wettest to driest taluka, same year",
+      "interpretation": "Velhe receives 2,182 mm and Indapur 468 mm in the same assessment year, in the same district. This is not an inference from a rainfall grid: it is the per-taluka figure carried in the groundwater assessment itself. The structural fact about water here is which end is which - the wet end is where the city's dams sit, and the dry end is where their canals go. It also means a quarter-degree rainfall grid cell is a real decision for Pune rather than a rounding error.",
+      "data_date": "2025-2026",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES (CGWB and State groundwater departments), 2025-2026 assessment"
+    },
+    {
+      "id": "telemetry-density-is-not-urban",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "120 groundwater monitors in the district, one inside the city",
+      "value": "1",
+      "unit": "of 120 telemetry stations inside city limits",
+      "interpretation": "Pune district carries 120 telemetric groundwater stations returning readings every six hours, and 306,231 valid readings are retained here. Tested point-in-polygon against the 41 prabhags, exactly 1 of them stands inside the corporation: Shivaji Nagar_1. The rest instrument the eastern irrigation belt. A bounding box would have said nine, which is why no per-ward urban depth surface is drawn for this city: the density is real and it is somewhere else.",
+      "data_date": "2026-05-30",
+      "source_url": "https://nwdp.nwic.gov.in/dataset/ground-water-level-telemetry-6-hourly-maharashtra",
+      "source_label": "India-WRIS / NWDP groundwater level telemetry, Maharashtra"
+    },
+    {
+      "id": "mula-bopodi-worst-in-india-top-ten",
+      "tier": 2,
+      "category": "Rivers",
+      "title": "One of six readings in India above 100 mg/L, in a stretch CPCB calls improved",
+      "value": "102.5",
+      "unit": "mg/L BOD, Mula at Harrison Bridge",
+      "interpretation": "CPCB measured 102.5 mg/L of biochemical oxygen demand on the Mula in 2024. It is one of only 6 readings above 100 mg/L among the 756 locations tabulated nationally, and it is worse than the worst station on the Delhi Yamuna (85) and worse than the Mithi at Mahim (80). In the same report CPCB records this stretch as IMPROVED, moving it from Priority I to Priority II. The class and the reading are different vintages from one document and are not merged here; both are shown.",
+      "data_date": "2024",
+      "source_url": "https://cpcb.gov.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTc3N18xNzYwNjgxNDA4X21lZGlhcGhvdG80MzkyLnBkZg==",
+      "source_label": "CPCB Polluted River Stretches (Updated Version), October 2025"
+    },
+    {
+      "id": "mutha-does-not-arrive-polluted",
+      "tier": 2,
+      "category": "Rivers",
+      "title": "The river does not arrive polluted. It leaves that way",
+      "value": "4.1 to 50.2",
+      "unit": "mg/L BOD across roughly 15 km",
+      "interpretation": "The Mutha leaves Khadakwasla dam at 4.1 mg/L of BOD and reads 50.2 mg/L at Veer Savarkar Bhavan, about fifteen kilometres downstream. Nothing upstream of the city explains that: the water enters clean and the city is what happens to it. It is the same arithmetic as the sewage balance, measured in the river instead of at the plants.",
+      "data_date": "2024",
+      "source_url": "https://cpcb.gov.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTc3N18xNzYwNjgxNDA4X21lZGlhcGhvdG80MzkyLnBkZg==",
+      "source_label": "CPCB Polluted River Stretches (Updated Version), October 2025"
+    },
+    {
+      "id": "mula-priority-history",
+      "tier": 3,
+      "category": "Rivers",
+      "title": "Eight years of CPCB priority classes, and no year off the list",
+      "value": "2018: I -> 2022: II -> 2025: II",
+      "unit": "CPCB priority class, Mula",
+      "interpretation": "The Mula has appeared in every CPCB polluted-stretch assessment since 2018, moving from Priority I to Priority II and staying there. A move down the priority bands is a smaller exceedance, not a clean river: Priority II still means 20.1 to 30 mg/L of BOD, against 3 mg/L for water fit to bathe in.",
+      "data_date": "2025-10",
+      "source_url": "https://cpcb.gov.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTc3N18xNzYwNjgxNDA4X21lZGlhcGhvdG80MzkyLnBkZg==",
+      "source_label": "CPCB Polluted River Stretches (Updated Version), October 2025"
+    },
+    {
+      "id": "tanker-register-on-demand-share",
+      "tier": 1,
+      "category": "Supply",
+      "title": "Most municipal tanker water in Pune is unscheduled",
+      "value": "58.4",
+      "unit": "% of tanker trips booked on demand, not scheduled",
+      "interpretation": "PMC publishes a spreadsheet per tanker filling point per working day, one row per tanker sent. Across 57,370 deliveries from 7 filling points and 1,956 distinct vehicles, 58.4% of trips are on demand rather than scheduled. A scheduled tanker route is a known supply gap being serviced; an on-demand majority is a system responding to failures it has not planned for. Counts only: the source rows carry recipient addresses and phone numbers and none of that is republished.",
+      "data_date": "2026-08-03",
+      "source_url": "https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker",
+      "source_label": "PMC, daily tanker delivery registers"
+    },
+    {
+      "id": "tankers-to-the-area-pmc-excluded",
+      "tier": 2,
+      "category": "Governance",
+      "title": "PMC still runs tankers to the area it removed from the corporation",
+      "value": "2,083",
+      "unit": "deliveries booked to 'NAGAR PARISHAD'",
+      "interpretation": "2,083 deliveries, 6.9% of everything with a ward attached, are booked in PMC's own register to 'NAGAR PARISHAD' rather than to a prabhag. That is Uruli Devachi and Fursungi, the area taken out of the corporation in 2024 to form its own council. The tankers did not stop at the new boundary. Kept as its own bucket here rather than coerced into a ward number.",
+      "data_date": "2026-08-03",
+      "source_url": "https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker",
+      "source_label": "PMC, daily tanker delivery registers"
+    },
+    {
+      "id": "busiest-tanker-day",
+      "tier": 4,
+      "category": "Supply",
+      "title": "One filling point can dispatch a tanker every two minutes",
+      "value": "723",
+      "unit": "deliveries in a single day, city-wide, on 2026-04-25",
+      "interpretation": "The busiest recorded day is 2026-04-25, with 723 deliveries. Ramtekadi is the busiest point, averaging 267.9 deliveries on the days it reports. The register begins on 2026-04-17, which is when PMC began publishing it and not when tanker supply began - there is no earlier archive on the endpoint, so read this as a four-month window rather than a history.",
+      "data_date": "2026-04-25",
+      "source_url": "https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker",
+      "source_label": "PMC, daily tanker delivery registers"
+    },
+    {
+      "id": "flood-lines-are-518-scanned-sheets",
+      "tier": 2,
+      "category": "Flood",
+      "title": "Pune's flood lines exist, as 518 scanned map sheets and no vector file",
+      "value": "518",
+      "unit": "scanned PDF map sheets, zero machine-readable flood lines",
+      "interpretation": "Maharashtra's water resources department publishes Pune's red (100-year) and blue (25-year) flood lines as scanned PDF map sheets. There are 518 of them and no shapefile, GeoJSON or KML; text extraction returns no characters at all from the Mutha sheets. So the city's own statutory flood boundary cannot be put on a map or joined to anything. The flood record itself is well documented - the Panshet breach of 12 July 1961, the Ambil Odha flash flood of 2019, July and August 2024, August 2025 - but there is nothing to draw. This is the single largest capability gap against Chennai here, and it is a publishing decision rather than a data engineering task.",
+      "data_date": "2026-08",
+      "source_url": "https://wrd.maharashtra.gov.in/Site/1315/Flood-Line-Maps",
+      "source_label": "Maharashtra Water Resources Department, flood line maps"
+    },
+    {
+      "id": "no-lake-register-exists",
+      "tier": 2,
+      "category": "Water bodies",
+      "title": "No authority publishes a lake register for this city",
+      "value": "791",
+      "unit": "water bodies mapped, all from OpenStreetMap",
+      "interpretation": "791 lake, tank and reservoir polygons, and every one of them comes from OpenStreetMap, because no government layer exists to use instead. PMC's only water-body file is twelve polygons of river channel. MRSAC, the state remote-sensing centre that would be the equivalent of Tamil Nadu's open GeoServer, does not resolve publicly. Bhuvan answers a request for vector data with 'Service WFS is disabled'. The national water bodies census does cover Maharashtra but enumerates only ten inside the corporation, and records 3,679 of its 3,680 district entries as un-encroached, which is an unfilled form rather than a measurement. Katraj, Pashan, Jambhulwadi and Bund Garden are in OpenStreetMap and in no municipal dataset reachable.",
+      "data_date": "2026-08",
+      "source_url": "https://www.openstreetmap.org/copyright",
+      "source_label": "OpenStreetMap contributors (ODbL 1.0), and the absence of any register"
+    }
+  ]
+}

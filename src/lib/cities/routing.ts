@@ -167,6 +167,44 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "my-ward",
     "tanker",
   ]),
+  // Pune preview set. Only surfaces with real artifacts behind them.
+  //
+  // `groundwater` is in and is the strongest layer: 14 talukas x 6 IN-GRES
+  // editions, reproducing CGWB's National Compilation 2025 exactly, with
+  // Shirur critical at 95.71% inside a district that reads SAFE at 63.73%.
+  // `rivers` is in because Pune has five and CPCB rates four of those
+  // stretches Priority I or II. `my-ward` is in because all 41 prabhags of
+  // the 2025 delimitation carry names. `facts` is in because facts-pune.json
+  // ships 22 cards, every figure of which is READ from an artifact already in
+  // the repo rather than transcribed again, so a quoted card cannot drift from
+  // the dashboard it came from. `tanker` is in on the fourth tankerDataKind,
+  // `delivery-register`, added rather than bending Hyderabad's utility-ledger
+  // panel: PMC's register is a DISPATCH record with no bookings in it, so the
+  // fulfilment rate that page is built on does not exist here.
+  //
+  // `flood-risk` is in on the NARRATIVE variant, which needs no hazard
+  // polygons. It was off on the reasoning that WRD publishes Pune's flood lines
+  // as 518 scanned PDF sheets so the hazard layer does not exist - true, but
+  // that was an argument about the INTERACTIVE variant. The narrative stack
+  // carries the event register plus PMC's 1,014 km nalla network, and the
+  // flood-line absence ships as a data gap on the page.
+  //
+  // NOT in, each for a stated reason rather than pending work:
+  // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
+  // `cascades` - the cascade pipeline has not been run for Pune district.
+  // `shoreline` - landlocked.
+  pune: new Set([
+    "",
+    "about",
+    "origins",
+    "facts",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "tanker",
+    "my-ward",
+  ]),
 };
 
 /**

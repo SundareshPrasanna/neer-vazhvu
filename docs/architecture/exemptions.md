@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 83 |
-| Routes a city deliberately does not ship | 31 |
-| Absences the product states on the page | 20 |
-| **Total** | **135** |
+| Routes a city deliberately does not ship | 37 |
+| Absences the product states on the page | 21 |
+| **Total** | **142** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -154,6 +154,12 @@ Derived by diffing each city against the union of every route any city ships, so
 | mumbai | climate-risk | Not built for this city. |
 | mumbai | my-ward | UNRECORDED: Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route. |
 | mumbai | tanker | Not built for this city. |
+| pune | allocations | The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger. |
+| pune | cascades | The cascade pipeline has not been run for Pune district. Backlog, not refusal. |
+| pune | climate-risk | Not built for this city. |
+| pune | commitments | Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register. |
+| pune | lake-restoration | No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere. |
+| pune | shoreline | Landlocked. |
 
 ## Absences the product states on the page
 
@@ -181,4 +187,5 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | kolkata | water source: KMC deep tube wells | No public tube-well register or daily draw. The ~110 MLD figure is a single line on KMC's water-distribution page. |
 | kolkata | water-bodies catchment atlas | Kolkata has no catchment view, and that is a deliberate omission rather than a missing dataset. Catchments are delineated by tracing water downhill across a 30 m elevation model - which needs a hill. Kolkata has about 11 metres of fall across 40 kilometres of delta, against 43 m in Chennai and 338 m in Mumbai, the cities where this view ships. At that gradient the method would draw confident-looking boundaries that the ground does not support, and in any case most of Kolkata's runoff travels through a combined sewer network rather than over the surface. We would rather show no catchments than invent them. |
 | mumbai | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| pune | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 

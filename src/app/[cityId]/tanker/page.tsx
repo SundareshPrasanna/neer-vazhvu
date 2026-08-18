@@ -14,6 +14,8 @@ import { IIScStressWardsMap } from "@/components/dashboard/iisc-stress-wards-map
 import { TankerPageHeader, TankerPageFooter } from "@/components/dashboard/tanker-page-chrome";
 import { TankerLedgerPanel } from "@/components/dashboard/tanker-ledger-panel";
 import { TankerSalesPanel } from "@/components/dashboard/tanker-sales-panel";
+import { TankerDeliveryRegisterPanel } from "@/components/dashboard/tanker-delivery-register-panel";
+import type { TankerDeliveryRegister } from "@/components/dashboard/tanker-delivery-register-panel";
 import { BillingLedgerPanel } from "@/components/dashboard/billing-ledger-panel";
 import type { BillingLedger } from "@/components/dashboard/billing-ledger-panel";
 import type { TankerLedger } from "@/components/dashboard/tanker-ledger-panel";
@@ -52,10 +54,52 @@ export default async function CityTankerPage({ params }: PageProps) {
     "household-survey": `${cityId}-tanker-survey.json`,
     "utility-ledger": `${cityId}-tankers.json`,
     "utility-sales-ledger": `${cityId}-tanker-sales.json`,
+    // Same filename as utility-ledger on purpose: it is the city's tanker
+    // artifact either way. The KIND, not the path, picks the renderer, because
+    // what differs is inside the file - a booking ledger with a fulfilment
+    // rate, or a dispatch register that has no bookings to fulfil.
+    "delivery-register": `${cityId}-tankers.json`,
   };
   const dataPath = join(process.cwd(), "public", "data", FILE_FOR_KIND[kind]);
   if (!existsSync(dataPath)) {
     notFound();
+  }
+
+  if (kind === "delivery-register") {
+    const register = JSON.parse(
+      await readFile(dataPath, "utf-8"),
+    ) as TankerDeliveryRegister;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <nav className="text-xs text-slate-500 dark:text-slate-400">
+          <Link
+            href={`/${cityId}`}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            ← {config.displayName} dashboard
+          </Link>
+        </nav>
+
+        <header className="space-y-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            {config.displayName} tanker dispatch
+          </h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
+            {config.displayName}&apos;s corporation runs the tanker fleet itself
+            and publishes what it sent: one spreadsheet per filling point per
+            working day, one row per tanker. This is neither a booking system
+            nor a household survey, so it does not show what anyone asked for or
+            what anyone paid - it shows what the fleet actually did, and whether
+            each trip was on a rota or a response.
+          </p>
+        </header>
+
+        <TankerDeliveryRegisterPanel
+          register={register}
+          cityDisplayName={config.displayName}
+        />
+      </div>
+    );
   }
 
   if (kind === "utility-sales-ledger") {

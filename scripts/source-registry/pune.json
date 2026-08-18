@@ -1,0 +1,276 @@
+{
+  "_doc": "Headwaters source registry - Pune episodic sources. Schema + design notes: docs/specs/headwaters.md (local). Build plan: docs/specs/pune-onboarding.md.\n\nLICENCE POSTURE FOR THE WHOLE SCOPE. Three different postures sit in this one scope and they are not interchangeable.\n\n(1) IN-GRES publishes no terms of use anywhere on the portal - no disclaimer, no copyright line, no licence page. It is a Government of India assessment portal and is cited with attribution, which is what every other city's IN-GRES entry records; nothing stronger has been established about redistribution.\n\n(2) Maharashtra WRD's Pravah dam-safety bulletin is a public government daily bulletin served without terms. Mumbai already depends on it (scripts/source-registry/mumbai.json), so this scope adds Pune's dams to an existing dependency rather than a new posture.\n\n(3) The India-WRIS / NWDP telemetry CSVs arrived as a bulk export in a research drop rather than through the API. Their provenance is recorded on the artifact, and what is published from them is a DERIVED AGGREGATE - per-station monthly means, spans and counts - never a republication of the 6-hourly rows.\n\nDELIBERATELY NOT REGISTERED YET: PMC's water-supply operations portal (amrmeter.online) is login-walled, so there is nothing to watch; the MPCB OCEMS portal and the MPCB water-quality reports land here as their artifacts do. This registry rejects a watch with no lineage on purpose - an alert nothing depends on is not actionable.",
+  "sources": [
+    {
+      "id": "ingres-groundwater-maharashtra",
+      "scope": "pune",
+      "publisher": "IN-GRES (CGWB + Maharashtra Groundwater Surveys and Development Agency), IIT Hyderabad",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+      "type": "api",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-pune.json",
+        "public/geojson/pune-gwr-blocks.geojson",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_ingres_gwr.py --city pune)",
+      "notes": "CORRECTS A CROSS-CITY BASELINE. The gurugram.json entry for this same upstream records, as of 2026-08-15, that '2024-2025 is current; there is no newer edition', verified against Tamil Nadu and Haryana. That is true of those states and FALSE as a national statement. Re-probed 2026-08-17: MAHARASHTRA 2025-2026 returns 36 districts (state stage 50.85%), while HARYANA and WESTBENGAL 2025-2026 both still return the empty 'total' row. EDITIONS LAND PER STATE, NOT NATIONALLY. Anything that watches one state and infers the national edition will be wrong for the others. The 2025-2026 Maharashtra rows carry approvalLevel=4 and verificStatus=1, the same as the finalised 2023-2024 and 2024-2025 editions, so it is a published edition and not a draft.\n\nTHIS CITY DRILLS BELOW THE DISTRICT, and it is the first one that does. Pune district totals 63.23% and is categorised SAFE, while Shirur taluka inside it is at 95.71% and has been CRITICAL in all six published editions. Emitting the district figure alone would state the opposite of the finding.\n\nREQUEST SHAPE FOR THE SUB-DISTRICT DRILL - this cost real time, do not 'simplify' it. The discriminator is parentuuid, NOT loctype. Pune's children come back from locname=PUNE, loctype=DISTRICT, locuuid=<Pune uuid>, parentuuid=<MAHARASHTRA uuid>: you name the location you are standing on and the parent you came from. Setting parentuuid to Pune's own uuid - the obvious guess, and exactly what the state-level call does with INDIA_UUID - returns ZERO rows with HTTP 200, which reads as 'this district publishes no block assessment' rather than as a malformed request. loctype values TEHSIL, BLOCK, TALUK and 'ASSESSMENT UNIT' all return zero rows too, so a reader debugging by trying plausible level names finds nothing and concludes the data does not exist.\n\nUUIDS. Maharashtra e7b3f02d-2497-4bcd-9e20-baa4b621822b, Pune district 471dff0a-9b41-46f2-890d-179b2408ca4d. Both obtained BY ASKING THE API, not from the Angular bundle: a COUNTRY-level call returns all 38 states with their locationUUIDs, and a STATE-level call returns its districts with theirs. The bundle route is the documented trap (see gurugram.json).\n\nEDITIONS: 2019-2020, 2021-2022, 2022-2023, 2023-2024, 2024-2025, 2025-2026. 2020-2021 returns a lone empty 'total' row - a real gap in the series, not a fetch failure. Pune City becomes its own assessment unit only in 2023-2024; before that it is inside Haveli.\n\nSPELLING: the portal upper-cases every unit name before 2023-2024 and title-cases after, and spells MAVAL as 'Mawal' in the 2025-2026 edition only. Both are normalised in the producer; keyed on the raw string, a taluka splits into two or three blocks with short histories.",
+      "lastSeen": {
+        "edition": "2025-2026",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "wrd-pravah-pune-dams",
+      "scope": "pune",
+      "publisher": "Water Resources Department, Government of Maharashtra (Pravah dam-safety bulletin)",
+      "url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
+      "license": "public government daily bulletin, served without terms of use - cited with attribution",
+      "type": "file",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/pune-dam-storage.json",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "cron .github/workflows/pravah-dam-refresh.yml (neer-vazhvu-api/scripts/scrape_pravah_dams.py --city pune)",
+      "notes": "SAME UPSTREAM AS mumbai.json's Pravah entry - one daily all-Maharashtra PDF, now read for a second city. The bulletin's 'Pune' revenue region carries 35 major dams including the whole Khadakwasla chain (Khadakwasla, Panshet, Warasgaon, Temghar), Pawana (PCMC's source) and Bhama Askhed (PMC's eastern scheme).\n\nCROSS-VALIDATED AGAINST TWO INDEPENDENT REGISTERS, which is why these capacities are trusted. CWC's weekly Reservoir Storage Bulletin and CWC's National Register of Large Dams 2019 agree with Pravah to under 1% on every dam all three carry: Khadakwasla live 55.91 Mcum vs CWC 0.056 BCM, Panshet 301.61 vs 0.302 and NRLD-2019's 301,610,000 m3 exactly, Warasgaon 363.13 vs NRLD 363,130,000 m3, Bhama Askhed 217.10 vs 0.217, Chaskaman 214.50 vs 0.215, Dimbhe 353.75 vs 0.354. The Khadakwasla chain's live total, 825.66 Mcum = 29.158 TMC, independently reproduces the 29.15 TMC / 825.43 MCM that PMC publishes in its own ESR 2025-26.\n\nTWO REGISTER ERRORS FOUND, recorded so nobody re-derives from them: NRLD-2019's Khadakwasla row is 10x high (860,000,000 m3 gross against a true 85.91 Mcum - a stray zero), and NRLD-2023 is a SCANNED OCR document whose Chaskaman and Bhama Askhed rows are 1000x low (0.242 and 0.230 against 241.69 and 230.47). Pravah and NRLD also disagree on Pavana (Pravah live 240.97 vs NRLD-2019 274.32) with no published explanation; Pravah is preferred as the operator's own current figure.\n\nNAMES: three government sources spell one dam three ways - Pravah 'Khadakwasla', CWC 'KHADAKVASLA', India-WRIS 'Khadakwasala_1'. Pravah prints 'Warasgaon' where secondary writing says Varasgaon. Match on the substring the bulletin actually prints. Official register names differ again: Panshet is Tanajisagar and Warasgaon is Vir Baji Pasalkar in NRLD-2019.\n\nPARSER TRAP, fixed 2026-08-17: column 9 is TODAY'S GROSS storage, not last year's live. It had been captured as last-year-live and upserted into reservoir_daily_v2 dated a year back, which put Modaksagar at 159% and Tansa at 106% of live capacity in Mumbai's history. Last year's live storage is never printed as a volume - only as column 11's percentage - so it is reconstructed as ly_pct x live_cap.\n\nNO ARCHIVE on this endpoint (dated URLs 404), which is why the same-date-last-year column is worth reconstructing. A SEPARATE dated archive DOES exist and is worth wiring for backfill: https://wrd.maharashtra.gov.in/Upload/PDF/Today's-Storage-ReportMarathi-DD-MM-YYYY.pdf (apostrophe URL-encoded) serves genuine per-date PDFs - verified against the archive-fallback trap by confirming the 01-08-2026 file carries its own header date and different values. Marathi only; the English filename 404s.",
+      "lastSeen": {
+        "edition": "2026-08-17",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "opencity-pune-wards",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, via OpenCity",
+      "url": "https://data.opencity.in/dataset/pune-wards-info",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+      "type": "file",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/geojson/pune-wards-2025.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_geography.py --layer wards)",
+      "notes": "THE VINTAGE IS THE WHOLE PROBLEM. This one dataset page carries SEVEN ward files spanning four delimitations, and PMC has two unrelated ward systems on top of that: 15 ADMINISTRATIVE ward offices in 5 DMC zones (what PMC's operational records key to - the STP layer has a Ward_Offic column) and ELECTORAL prabhags, redrawn at 76 (2012), 41 (2017), 58 (a 2022 draft that never went to poll) and 41 (2025).\n\nWE USE THE 2025 DELIMITATION, 41 prabhags, drafted 22 Aug 2025 on Census 2011 per Supreme Court guidelines and used for the 2026 PMC election. Confirmed current by OpenCity's own pmc-election-results CSV: 165 seat rows across exactly those 41 numbers (40 four-member wards + Ambegaon-Katraj with five).\n\nTHE JOIN THAT MUST NOT BE ATTEMPTED. The 2025 KML has NO ward names - its only attribute is `qwr`, a float ward number - so names are joined from the election-results CSV, 41 of 41. Do NOT join the 2025 polygons to the 2017 name list instead: both files have exactly 41 features so the join SUCCEEDS SILENTLY, and the first two names even agree (2017 ward 1 Kalas-Dhanori, 2025 ward 1 Kalas-Dhanori-Lohegaon). It is a fresh delimitation with different boundaries and numbering, and it is wrong from ward 3 onward.\n\nEXAMINED AND REJECTED: 'PMC Electoral Wards 2012' (76 features) and 'PMC Prabhag Boundary' (72 features). Both carry the modern 15 ward-office names, which post-date the 2021 village mergers, alongside 2017 prabhag names; ward_no runs 1-75 across 76 features and prabhag_id 1-66 across 72. Neither matches any single delimitation and both disagree with their own feature counts. No defensible vintage could be established.\n\nNO PCMC EQUIVALENT EXISTS. Pimpri-Chinchwad has no OpenCity dataset, its GeoServer at gis.pcmcindia.gov.in is login-walled (WFS/WMS GetCapabilities 403, REST 401; the open WMTS exposes five raster basemaps and no vector layer), and OSM carries no PCMC corporation polygon at all. That is a named gap, not a pending fetch.",
+      "lastSeen": {
+        "edition": "2025 delimitation (41 prabhags)",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "opencity-pune-stps",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, via OpenCity",
+      "url": "https://data.opencity.in/dataset/pune-sewage-treatment-plants",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+      "type": "file",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/geojson/pune-stps.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_geography.py --layer stps)",
+      "notes": "20 polygons: 9 existing plants and 11 proposed, each with capacity, technology and status. THE PROPOSED SET IS THE JICA MULA-MUTHA PROGRAMME and its capacities sum to 396 MLD, exactly the figure PMC and JICA both publish independently - which is a check on the layer rather than a coincidence. MPCB's '416 MLD' is this 396 plus the Pune Cantonment Board's 20 MLD.\n\nThe 9 existing plants total 477 MLD, matching PMC's ESR 2025-26 and MPCB. A '567 MLD' figure also circulates and reconciles cleanly: it includes the 90 MLD Old Naidu plant (commissioned Nov 1988), which CPCB's inventory marks Non-Operational and MPCB's table shows with no inflow.\n\nDATA QUALITY: Year_of_Co and Utilized_C are '-' on 19 of 20 rows and are emitted as null, never as a false zero. The single populated row attaches Old Naidu's 1988 commissioning date to New Naidu.",
+      "lastSeen": {
+        "edition": "2026-08-17",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "osm-pune-water",
+      "scope": "pune",
+      "publisher": "OpenStreetMap contributors",
+      "url": "https://overpass-api.de/api/interpreter",
+      "license": "Open Database License (ODbL) v1.0 - share-alike, (c) OpenStreetMap contributors",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/geojson/pune-water-bodies-current.geojson",
+        "public/geojson/pune-rivers.geojson",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_geography.py --layer water)",
+      "notes": "OSM IS THE SOURCE BECAUSE PMC PUBLISHES NO LAKE LAYER, and that is a finding worth stating rather than a fallback worth hiding. PMC's only water-body file is 'Pune River Map': 12 polygons of river CHANNEL, three with a null REMARK and one with AREA=0. It is not a lake register and not a routable network. Katraj, Pashan, Jambhulwadi, Manas and Bund Garden are all in OSM and in none of the PMC datasets probed.\n\nbbox 18.38,73.65,18.72,74.05 covers PMC + PCMC and is deliberately wider than the PMC ward envelope: the water system does not stop at the corporation boundary and Khadakwasla reservoir sits west of it.\n\nSHARE-ALIKE. ODbL is a copyleft licence, so anything derived from these layers carries the same obligation. They are build fixtures, not part of the licence-clean reference corpus. BBOX TRAP, fixed 2026-08-17: the Overpass fetch box in build_pune_geography.py was 18.38,73.65-18.72,74.05 while pune.bbox in the city config is 18.3,73.4-18.95,74.05, so the producer covered about a third of the frame the map displays. Everything west of 73.65 was outside the query and PANSHET, WARASGAON, TEMGHAR, PAWANA, MULSHI AND BHAMA ASKHED were all absent - every reservoir Pune drinks from except Khadakwasla, missing from the city's own water-body layer while the dashboard's reservoir cards named them. 484 -> 791 polygons, 64 -> 84 named. THE FETCH BBOX MUST STAY EQUAL TO pune.bbox; the producer now fails loudly if any of the six source reservoirs is absent, and that guard carries both spellings of two of them because OSM writes Varasgaon and Pavana where the WRD bulletin writes Warasgaon and Pawana (same trap as MAVAL/Mawal in IN-GRES). Seven features are excluded and counted on the artifact: 3 swimming pools by water=pool, plus a gym pool, a service reservoir and a rainwater-harvesting sump that all carry water=reservoir - the same tag Khadakwasla carries, so the tag class cannot be dropped - and one pool tagged only natural=water. The name match is narrow on purpose: TALAV IS A REAL WATER BODY here and a broader 'tank' match would delete Ganesh Talav and Lakaki Talav. AND OSM IS THE SOURCE BECAUSE NO OPEN VECTOR LAKE REGISTER EXISTS FOR MAHARASHTRA - probed 2026-08-17: MRSAC/MahaGIS, the analogue of the open TNGIS GeoServer behind Chennai's 70k tanks, does not resolve publicly (mahagis.mrsac.gov.in has no DNS record, mrsac.maharashtra.gov.in times out); Bhuvan answers WFS with 'ServiceUnavailable: Service WFS is disabled' on both vec1 and vec2, raster only. Note Chennai's 1,636-polygon layer is the SAME source (scripts/fetch-water-bodies-osm.ts), so the count gap against Chennai was never a source-quality difference. THE FIRST CENSUS OF WATER BODIES WAS PROBED AS THE NON-OSM ALTERNATIVE AND REJECTED (2026-08-17). Not registered as a source because it feeds nothing: 3,680 point records for Pune district at data.gov.in/catalog/first-census-water-bodies-data, with water spread area, depth, ownership, use, nature and an encroachment flag. It fails on two counts, neither of them access. COVERAGE: only 10 of the 3,680 sit inside PUNE (M CORP.) and 45 district-wide are urban at all - it is a MINOR IRRIGATION census counting rural tanks, effectively blind inside the city where OSM finds hundreds. ENUMERATION: the condition columns are unfilled defaults - 3,679 of 3,680 'not encroached', 3,676 of 3,680 use 'Ground water recharge', 3,680 of 3,680 in use with none defunct, 3,679 of 3,680 man-made, ownership 3,618 'State WRD/State Irrigation' plus 62 'Co-operative' with no panchayat, municipal or private row anywhere. Chennai's cut of the SAME census carries POPULATED encroachment percentages and original-versus-present storage (chennai.json water-bodies-census, 305 records), so this is a per-state enumeration difference, not a schema one, and publishing '3,680 water bodies in Pune' as coverage would launder an empty form. If it is ever loaded it belongs as a DISTRICT IRRIGATION-TANK layer with that finding attached. Two further traps: the OpenCity KML that carries the point geometry is labelled 'Creative Commons Non-Commercial (Any)' (the encumbered bucket) while data.gov.in is the better-licensed route Chennai already uses via neer-vazhvu-api/app/scrapers/data_gov_in.py and needs an API key this repo lacks; and the KML's village fields disagree with each other on the same row (village 'ADIVARE' against village_nwic 'Panchale Kh'), so neither is a trustworthy join key.",
+      "lastSeen": {
+        "edition": "2026-08-17",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "pmc-esr",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, Environment Department",
+      "url": "https://webadmin.pmc.gov.in/en/jsonapi/node/reports_and_dpr",
+      "license": "public government report published by the corporation; cited with attribution",
+      "type": "file",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/pune-supply-overview.json",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_supply.py)",
+      "notes": "PMC's annual Environment Status Report is the primary source for essentially every supply number this city publishes: the water budget, the sanctioned quota, NRW, the service-level benchmarks, the WTP inventory, the sewage balance and the 24x7 project's progress. Editions back to 1995-96 are exposed.\n\nACCESS: www.pmc.gov.in is a JS shell and returns a 404-shaped page for everything; go to webadmin.pmc.gov.in, which is an open Drupal JSON:API with no auth. Two asymmetries bite: `next` links are emitted as http:// and must be rewritten to https or they hang, and NODE pages need /index.php in the path while FILE paths must NOT have it. Current edition (draft, Marathi, text-extractable): https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf\n\nDATA-INTEGRITY FINDING, and it changes how the series may be used: PMC REPUBLISHED AN IDENTICAL SERVICE-LEVEL-BENCHMARK TABLE for four consecutive years. 2021-22, 2022-23, 2023-24 and 2024-25 all read coverage 98%, supply duration 4 hours, NRW 35%, per-capita 250 LPCD, metered 30%, collection efficiency 88%. Only 2025-26 moves (NRW 32%, per-capita 199.86, metered 72%). Treat 2021-25 as ONE observation, never as a four-year trend.\n\nA SECOND INTERNAL INCONSISTENCY: the 2025-26 text says '17 water treatment plants' while listing 18 rows totalling 1,854 MLD, and the 2024-25 edition says 15 plants totalling 1,914 MLD. Flagged, not resolved.",
+      "lastSeen": {
+        "edition": "2025-26 (draft, published 6 Aug 2026)",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "cpcb-polluted-river-stretches",
+      "scope": "pune",
+      "publisher": "Central Pollution Control Board",
+      "url": "https://cpcb.gov.in/reports-3/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "file",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/river-quality-pune.json",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_river_quality.py)",
+      "notes": "CPCB's polluted-river-stretch assessment. Editions 2015, 2018, 2022 and October 2025 (the 'Updated Version', on 2022-23 monitoring). Maharashtra has 54 polluted stretches, more than any other state; seven of them are in or around Pune.\n\nTHE SELF-CONTRADICTION IS THE STORY AND IT IS INSIDE ONE DOCUMENT. The 2025 report classifies the Mula as IMPROVED (Priority I -> II) on 2022-23 data. Annexure XIV of the same report gives 2024 BOD at the same stations, and station 2194 - 'River Mula at Harrison Bridge near Mula-Pawana Sangam, Village Bopodi, Taluka Haveli, District Pune' - reads 102.5 mg/L. Verified by reading the PDF text directly, not from a summary.\n\nRANKED NATIONALLY FROM THE SAME ANNEXURE: 756 locations tabulated, only 6 above 100 mg/L, and the Mula is one of them. It is above the worst Delhi Yamuna station (85.0, stn 1812) and above the Mithi at Mahim (80.0, stn 2168). The five higher are 160.0 and 120.0 (Tamil Nadu), 150.0 (Bhella), 142.0 (Ghaggar, Punjab) and 116.0 (Yamuna).\n\nTHE GRADIENT, same table: Mutha at Khadakwasla dam 4.1 mg/L, Deccan Bridge 32.5, Sangam 35.0, Veer Savarkar Bhavan 50.2. The river enters Pune clean.\n\nEDITION TRAP - do not read the 2015 edition's numeric column as BOD. It is STRETCH LENGTH IN KM (Indrayani 96, Mula-Mutha 15, Mutha 12, Pawana 12, Bhima 200). Only 2018 onward are comparable.\n\nTWO VINTAGES, NEVER AVERAGED: priority class rests on 2022-23 monitoring; the 2024 BOD is a later measurement that has not been used to re-classify anything.",
+      "lastSeen": {
+        "edition": "October 2025 (Updated Version)",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "wris-telemetry-pune",
+      "scope": "pune",
+      "publisher": "Maharashtra Groundwater Surveys and Development Agency, via India-WRIS / National Water Data Portal",
+      "url": "https://nwdp.nwic.gov.in/dataset/ground-water-level-telemetry-6-hourly-maharashtra",
+      "license": "Government of India / Government of Maharashtra data portal, cited with attribution; published here only as derived aggregates, never as republished rows",
+      "type": "file",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/gw-stations-pune.json",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_gw_stations.py --csv-dir <export dir>)",
+      "notes": "Arrived as a BULK CSV EXPORT in a research drop, not through the API - India-WRIS is unreachable from CI runners and was unreachable from three separate agent hosts this session (TCP connect to 164.100.85.36:443 times out), consistent with the known geo-blocking. Provenance is recorded on the artifact accordingly.\n\nDENSITY IS REAL AND IT IS IN THE WRONG PLACE. 120 stations across Pune district, 319,345 six-hourly readings, span 12 Sep 2022 to 30 May 2026 - and exactly ONE station stands inside the PMC ward boundary: Shivaji Nagar_1. Tested point-in-polygon, not by bounding box - the bbox answer is nine, and six of those are rural stations in Purandhar, Haveli and Maval that merely fall inside the rectangle. The other 119 are outside the city, most instrumenting the eastern irrigation belt around Baramati, Indapur, Purandhar and Daund. That is the finding, and it is why groundwaterViews.depth is FALSE for Pune.\n\nTHE FILENAME LIES ABOUT THE DATE RANGE, the same trap recorded for Surat and Gurugram: gwl_tel_6_hourly_maharashtra-gw_mh_1991_2020.csv holds 20 Pune rows from Nov-Dec 1999 and nothing else. Real coverage starts Sep 2022. Re-derive coverage from the data, never from the name.\n\nSIGN CONVENTION - CHECKED, NOT ASSUMED. reference_wris_groundwater_levels_api records that WRIS sign is PER STATION and that a global rule cost Kolkata 9,115 readings. Verified for this export: 96.99% of readings negative, 2.68% positive, 0.34% exactly zero, and ZERO of the 120 stations predominantly positive. Uniformly negative-convention, so a global rule is safe HERE and must be re-checked for the next state.\n\nSENTINEL VALUES, 2.2% of the export: exactly +1.0 appears 3,465 times and -1.0 3,490 times, a symmetry no water table produces, against real readings carrying two or three decimals. Whole stations flatline on them - Medad 75.8% sentinel, Nazare Supe 48.9%, Pansarewadi 20.4%. Positive outliers are junk too (clusters at +41, +43, +50 and a lone +162.37 m). All rejected, with per-station counts kept on the artifact.\n\nRIVER TELEMETRY FROM THE SAME DROP IS NOT WIRED, and the reason is a gap worth stating: the 15 Pune river-level stations stop on 18 Dec 2024 (only three Tata dam gauges continue into 2026), and four of them - including Dattawadi, the only gauge inside Pune city - have an 84-to-96 day hole running 29 May to 22 Aug 2024, so the in-city gauge MISSED THE 25 JULY 2024 FLOOD entirely. Nighoje on the Indrayani did capture it, peaking at 568.92 m on 25 Jul against a 563.02 m median. Pimpale Gurav is unusable: it flatlines at exactly 555.16 m for ten consecutive days and then jumps 18 m. Sentinels here are -99.99/-100, and Khadakwasla_1 carries a 941.4 m spike against a ~586 m FRL.",
+      "lastSeen": {
+        "edition": "export to 2026-05-30",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "imd-gridded-rainfall-pune",
+      "scope": "pune",
+      "publisher": "India Meteorological Department",
+      "url": "https://imdlib.readthedocs.io/en/latest/",
+      "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+      "type": "api",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-pune.json",
+        "public/data/rainfall-recent-pune.json"
+      ],
+      "refreshMethod": "cron .github/workflows/imd-rainfall-refresh.yml (neer-vazhvu-api/scripts/generate_imd_rainfall.py --city pune)",
+      "notes": "THE GRID CELL IS A REAL DECISION HERE, not a default. Pune district carries a 4.7x west-east rainfall gradient - IN-GRES puts Velhe at 2,182 mm and Indapur at 468 mm in the same year - so a quarter-degree is not a rounding error.\n\nThe nearer-LOOKING cell at 18.5/73.75 sits 11 km west of the city centre, up the gradient toward the Ghats, and returns a 1,099.8 mm long-term mean. IMD's OWN Pune (Shivajinagar) observatory normal is 841.2 mm (Climatological Tables 1991-2020, station index 43063). That cell is 31% high.\n\nThe cell actually used, 18.5/74.0, returns 805.3 mm - within 4.3% of the observatory. Both were generated and compared before choosing; the reasoning is recorded in CITY_DEFAULTS in the producer.\n\nrainfall-recent-pune.json is the PROVISIONAL fill on top of this base and must use the SAME grid point, or the provisional months do not continue the series they fill.",
+      "lastSeen": {
+        "edition": "1970-2025",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "pmc-tanker-register",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, Water Supply Department",
+      "url": "https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker",
+      "license": "published openly by the corporation through its own JSON:API without stated terms; cited with attribution. Published here ONLY as counts - the source rows carry recipient society names, street addresses and phone numbers, and none of that is republished",
+      "type": "api",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/pune-tankers.json",
+        "public/data/facts-pune.json"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_tankers.py)",
+      "notes": "THE KILLER DATASET FOR THIS CITY. PMC publishes, every working day, one spreadsheet per tanker filling point listing the deliveries made from it - one row per tanker sent. Not a booking system, not a survey: the corporation's own operational record. 409 registers as of 17 Aug 2026, 56,514 delivery rows, 46+ distinct days, 1,408 distinct vehicles. No other city on this platform has tanker data at this resolution.\n\nPRIVACY POSTURE, and it differs from Gurugram's deliberately. 54,235 of the rows carry a street address and 26,326 carry a phone number. NONE of that is republished, and neither are the recipient names. Gurugram's ledger names its buyers (DLF, Shapoorji Pallonji, Tata Projects) because those are COMPANIES buying water at a published tariff and naming them is reporting on a market. Pune's recipients are private housing societies; naming one with its address publishes where identifiable residents do not have water. Counts only.\n\nACCESS: www.pmc.gov.in is a JS shell. Use webadmin.pmc.gov.in, an open Drupal JSON:API with no auth. `links.next` is emitted as http:// and HANGS rather than redirecting - rewrite to https on every page.\n\nFIVE PARSING TRAPS, all of which corrupt silently rather than erroring:\n(1) THE DATE IS IN DEVANAGARI NUMERALS - 'दिनांक:२८-५-२०२६' is 28-05-2026. A Latin-digit regex finds nothing and the file reads as undated. Prabhag values carry the same ('४' for ward 4).\n(2) THE PRABHAG COLUMN IS HALF-POPULATED AND DIRTY - 52% of rows have one, values include '4', '४', '4.0', ',4', '-' and the non-numeric 'NAGAR PARISHAD'. So the per-prabhag table is a PARTIAL attribution and must never be presented as a full ward ranking.\n(3) THE FILLING POINT IS IN THE NODE TITLE, not the sheet, and titles are hand-typed: 'bund', 'BUND GAREDN', 'RAMTEKADI TENAKAR POINT', 'SNDT-13-07-2026'. Normalised against a known-points table; unmatched titles are counted on the artifact rather than binned.\n(4) THE HEADER ROW IS NOT AT A FIXED INDEX - found by looking for the Marathi column labels. 11 of 409 files have no findable header and are counted as unparsed, never assumed empty.\n(5) SPARSE CELLS - xlsx omits empty cells, so a positional read shifts every column left. Cell refs are decoded to column indices.\n\nA FINDING IN THE WARD COLUMN: 'NAGAR PARISHAD' is PMC still running tankers to Uruli Devachi and Fursungi, the area it EXCLUDED from the corporation in 2024 to form a separate nagar parishad. Carried as its own bucket.\n\nDO NOT USE node/water_tanker_information - the STRUCTURED sibling feed is broken: 289 rows, 126 of them dated 2027-2035, 10 vehicles, one source well. Report as a data-quality finding, never as data. The upstream feeds_feed is 403.",
+      "lastSeen": {
+        "edition": "2026-08-03",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    },
+    {
+      "id": "opencity-pune-swd",
+      "scope": "pune",
+      "publisher": "Pune Municipal Corporation, via OpenCity",
+      "url": "https://data.opencity.in/dataset/pune-stormwater-drains",
+      "license": "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
+      "type": "file",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/geojson/pune-drainage.geojson"
+      ],
+      "refreshMethod": "manual (neer-vazhvu-api/scripts/build_pune_geography.py --layer drainage)",
+      "notes": "PMC's storm-water drainage page, and FIVE RESOURCES OF WHICH ONE IS TAKEN. Taken: the Pune Nalla Map, 3,075 LineStrings totalling about 1,010 km of OPEN storm-water drain, attributes id/objectid/phase/st_length_ (Phase-I 2,858 segments, Phase-II 217). A nalla is where Pune actually floods - the 2019 Ambil Odha flash flood most directly - so this is the layer worth rendering. NOT taken, each for a stated reason: the SWD map KMZ is the BURIED PIPE register at 141,341 segments, far too dense for a web map and answering a maintenance question rather than a flooding one; the two SWD chamber KMLs are point assets with no attribute worth surfacing (and both carry NO resource-level licence, unlike the three that do); and the Pune River Map on this same page is the 12-polygon river-CHANNEL file already recorded under osm-pune-water as the reason OSM carries this city's water bodies. THE LAYER CHECKS ITSELF, which is the reason to prefer it over a redraw: PMC ships a per-segment st_length_ computed in its own projected CRS, so summing our own geodesic lengths against theirs TESTS the geometry instead of trusting it - they agree to 0.34% (1,013.3 km computed against 1,009.9 km stated), and the producer FAILS outside a 5% band, which is what would catch a dropped coordinate or a CRS mislabel. KNOWN GAP: NOT ONE OF THE 3,075 SEGMENTS IS NAMED, so Ambil Odha, Nagzari and Bhairoba nalla cannot be picked out of this layer even though they are what the flood reporting is about; naming them would need a separate join that does not exist publicly. Same OpenCity 406-without-an-Accept-header trap as the other entries here.",
+      "lastSeen": {
+        "edition": "2025-12-08",
+        "acceptedOn": "2026-08-17",
+        "reviewedOn": "2026-08-17"
+      }
+    }
+  ]
+}

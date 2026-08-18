@@ -18,6 +18,7 @@ export const CITY_ACCENT: Record<string, string> = {
   delhi: "from-rose-500 to-red-600",
   kolkata: "from-fuchsia-500 to-pink-600",
   gurugram: "from-lime-500 to-emerald-600",
+  pune: "from-sky-500 to-cyan-700",
 };
 
 export const DEFAULT_ACCENT = "from-slate-500 to-slate-600";
@@ -137,6 +138,34 @@ function KolkataHowrah() {
   );
 }
 
+// Shaniwar Wada's Delhi Darwaja - the fortified gate with its five arches and
+// the two bastions either side. Chosen over Aga Khan Palace or the Sinhagad
+// silhouette because it is the one outline a Punekar recognises at 200x80 px,
+// and because the fort's own water story (the Katraj lake aqueduct that fed it)
+// is the city's oldest piece of water infrastructure.
+function PuneShaniwarWada() {
+  return (
+    <g {...strokeProps}>
+      {/* ground */}
+      <line x1="34" y1="66" x2="166" y2="66" />
+      {/* curtain wall */}
+      <path d="M46 66 V40 H154 V66" />
+      {/* crenellation along the top */}
+      <path
+        d="M46 40 V34 H54 V40 M62 40 V34 H70 V40 M78 40 V34 H86 V40 M94 40 V34 H102 V40 M110 40 V34 H118 V40 M126 40 V34 H134 V40 M142 40 V34 H150 V40"
+        opacity={0.75}
+      />
+      {/* bastions either side of the gate */}
+      <path d="M62 66 V30 H74 V66" />
+      <path d="M126 66 V30 H138 V66" />
+      {/* the gateway arch */}
+      <path d="M88 66 V52 A12 12 0 0 1 112 52 V66" />
+      {/* spiked door detail */}
+      <line x1="100" y1="52" x2="100" y2="66" opacity={0.5} />
+    </g>
+  );
+}
+
 const LANDMARKS: Record<string, () => React.JSX.Element> = {
   chennai: ChennaiLighthouse,
   madurai: MaduraiGopuram,
@@ -144,6 +173,7 @@ const LANDMARKS: Record<string, () => React.JSX.Element> = {
   mumbai: MumbaiGateway,
   delhi: DelhiIndiaGate,
   kolkata: KolkataHowrah,
+  pune: PuneShaniwarWada,
 };
 
 /** Generic skyline fallback for any city without bespoke art. */
