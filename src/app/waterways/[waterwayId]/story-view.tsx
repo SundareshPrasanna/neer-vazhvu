@@ -102,8 +102,8 @@ function ChapterVisual({
       />
       <figcaption className="mt-1 text-[11px] text-muted-foreground">
         Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
-        are a single clear scene (15 Jul 2026); segment views are a Jun–Aug
-        2026 composite. Contains modified Copernicus Sentinel data (2026).
+        are a single clear scene (15 Jul 2026), about 8 km across; segment
+        views are a Jun–Aug 2026 composite. Contains modified Copernicus Sentinel data (2026).
       </figcaption>
     </figure>
   );
@@ -128,15 +128,15 @@ function ChapterVisual({
         </div>
       );
     case "ennore":
-      return chip("site-ennore-junction.png", "The Ennore creek junction from orbit");
+      return chip("site-ennore-junction.jpg", "The Ennore creek junction from orbit");
     case "squeeze":
       return <WidthProfileChart waterwayId={manifest.waterwayId} />;
     case "okkiyam":
-      return chip("site-okkiyam-maduvu.png", "The Okkiyam Maduvu confluence area from orbit");
+      return chip("site-okkiyam-maduvu.jpg", "The Okkiyam Maduvu confluence area from orbit");
     case "estuary":
-      return chip("site-muttukadu.png", "The Muttukadu backwater from orbit");
+      return chip("site-muttukadu.jpg", "The Muttukadu backwater from orbit");
     case "ribbon":
-      return chip("seg-km64-66.png", "The vegetation-choked southern canal from orbit");
+      return chip("seg-km64-66.jpg", "The vegetation-choked southern canal from orbit");
     case "paper":
       return <TimelineView timeline={timeline} />;
     case "pilot":

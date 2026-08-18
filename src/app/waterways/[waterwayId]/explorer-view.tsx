@@ -205,7 +205,7 @@ export function ExplorerView({
                 <Image
                   key={c}
                   src={`/data/waterways/${manifest.waterwayId}/chips/${c}`}
-                  alt={`Satellite view, ${sel.name} (${c.replace(".png", "")})`}
+                  alt={`Satellite view, ${sel.name} (${c.replace(".jpg", "")})`}
                   width={560}
                   height={420}
                   loading="lazy"
@@ -215,7 +215,8 @@ export function ExplorerView({
               ))}
             </div>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              Site views: single clear scene, 15 Jul 2026; segment views:
+              Displayed at native resolution. Site views: single clear scene,
+              15 Jul 2026, ~8 km across; segment views:
               Jun–Aug 2026 composite. Contains modified Copernicus Sentinel
               data (2026).
             </p>
