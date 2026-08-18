@@ -261,16 +261,20 @@ export function ExplorerView({
             </h3>
             <div className="mt-2 grid gap-3 sm:grid-cols-2">
               {sel.chips.map((c) => (
-                <Image
-                  key={c}
-                  src={`/data/waterways/${manifest.waterwayId}/chips/${c}`}
-                  alt={`Satellite view, ${sel.name} (${c.replace(".jpg", "")})`}
-                  width={560}
-                  height={420}
-                  loading="lazy"
-                  unoptimized
-                  className="w-full rounded-lg border border-border"
-                />
+                <div key={c} className="relative">
+                  <Image
+                    src={`/data/waterways/${manifest.waterwayId}/chips/${c}`}
+                    alt={`Satellite view, ${sel.name} (${c.replace(".jpg", "")})`}
+                    width={560}
+                    height={420}
+                    loading="lazy"
+                    unoptimized
+                    className="w-full rounded-lg border border-border"
+                  />
+                  <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+                    Jun–Aug 2026
+                  </span>
+                </div>
               ))}
             </div>
             <p className="mt-1 text-[11px] text-muted-foreground">

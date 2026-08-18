@@ -95,15 +95,20 @@ function ChapterVisual({
 }) {
   const chip = (name: string, alt: string) => (
     <figure>
-      <Image
-        src={`/data/waterways/${manifest.waterwayId}/chips/${name}`}
-        alt={alt}
-        width={1100}
-        height={800}
-        loading="lazy"
-        unoptimized
-        className="w-full rounded-xl border border-border"
-      />
+      <div className="relative">
+        <Image
+          src={`/data/waterways/${manifest.waterwayId}/chips/${name}`}
+          alt={alt}
+          width={1100}
+          height={800}
+          loading="lazy"
+          unoptimized
+          className="w-full rounded-xl border border-border"
+        />
+        <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+          Sentinel-2 · Jun–Aug 2026
+        </span>
+      </div>
       <figcaption className="mt-1 text-[11px] text-muted-foreground">
         Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
         are a clearest-pixel composite (Jun–Aug 2026), about 8 km across;
