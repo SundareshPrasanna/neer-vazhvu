@@ -198,7 +198,7 @@ export function ExplorerView({
         {sel.chips.length > 0 && (
           <>
             <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              From orbit (Sentinel-2, Jun–Aug 2026)
+              From orbit (Sentinel-2, 10 m per pixel)
             </h3>
             <div className="mt-2 grid gap-3 sm:grid-cols-2">
               {sel.chips.map((c) => (
@@ -215,7 +215,9 @@ export function ExplorerView({
               ))}
             </div>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              Contains modified Copernicus Sentinel data (2026).
+              Site views: single clear scene, 15 Jul 2026; segment views:
+              Jun–Aug 2026 composite. Contains modified Copernicus Sentinel
+              data (2026).
             </p>
           </>
         )}

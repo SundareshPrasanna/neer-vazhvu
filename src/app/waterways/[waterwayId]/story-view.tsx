@@ -100,8 +100,9 @@ function ChapterVisual({
         className="w-full rounded-xl border border-border"
       />
       <figcaption className="mt-1 text-[11px] text-muted-foreground">
-        Sentinel-2, Jun–Aug 2026 composite. Contains modified Copernicus
-        Sentinel data (2026).
+        Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
+        are a single clear scene (15 Jul 2026); segment views are a Jun–Aug
+        2026 composite. Contains modified Copernicus Sentinel data (2026).
       </figcaption>
     </figure>
   );
