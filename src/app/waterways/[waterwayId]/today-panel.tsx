@@ -93,7 +93,7 @@ export function TodayPanel({ today }: { today: WaterwayToday }) {
         <ConditionRibbon today={today} />
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {today.tiles.map((t) => (
           <div key={t.claim_id} className="rounded-lg border border-border p-3">
             <div className="text-xl font-semibold tabular-nums text-foreground">

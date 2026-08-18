@@ -63,6 +63,11 @@ export interface WaterwayReach {
     eff_width_m_recent: number | null;
   };
   transects: WaterwayTransect[];
+  built_edge: {
+    buildings_50m: number;
+    rooftop_m2_50m: number;
+    buildings_100m: number;
+  } | null;
   facts: WaterwayFact[];
   chips: string[];
 }

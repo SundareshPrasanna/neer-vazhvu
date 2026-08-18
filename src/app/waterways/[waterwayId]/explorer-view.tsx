@@ -141,7 +141,7 @@ export function ExplorerView({
           {sel.verdict}
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <Metric
             label="median width"
             value={sel.width.median_m != null ? `${Math.round(sel.width.median_m)} m` : "n/a"}
@@ -176,6 +176,19 @@ export function ExplorerView({
                 : "n/a"
             }
             hint="10 m pixels undercount narrow water"
+          />
+          <Metric
+            label="built edge"
+            value={
+              sel.built_edge
+                ? sel.built_edge.buildings_50m.toLocaleString("en-IN")
+                : "n/a"
+            }
+            hint={
+              sel.built_edge
+                ? `buildings within 50 m (${sel.built_edge.buildings_100m.toLocaleString("en-IN")} within 100 m)`
+                : undefined
+            }
           />
         </div>
 
@@ -215,6 +228,7 @@ export function ExplorerView({
               ))}
             </div>
             <p className="mt-1 text-[11px] text-muted-foreground">
+              Building footprints: Google Open Buildings v3 (CC BY-4.0).
               Displayed at native resolution. Site views: single clear scene,
               15 Jul 2026, ~8 km across; segment views:
               Jun–Aug 2026 composite. Contains modified Copernicus Sentinel

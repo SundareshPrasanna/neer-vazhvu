@@ -40,6 +40,8 @@ if not (RESEARCH / "data" / "widths.csv").exists():
         "scripts/build_buckingham_canal_geometry.py + the satellite script.")
 cur = json.loads(CURATION.read_text())
 widths = list(csv.DictReader(open(RESEARCH / "data" / "widths.csv")))
+built = {int(r["reach_id"]): r for r in
+         csv.DictReader(open(RESEARCH / "data" / "built-edge.csv"))}
 sat = {int(r["km"]): r for r in
        csv.DictReader(open(RESEARCH / "data" / "reaches-satellite.csv"))}
 
@@ -87,6 +89,11 @@ for r in cur["reaches"]:
                       "water_frac_recent": avg("water_frac_recent"),
                       "eff_width_m_recent": avg("eff_width_m_recent")},
         "transects": strip,
+        "built_edge": {
+            "buildings_50m": int(built[r["id"]]["buildings_50m"]),
+            "rooftop_m2_50m": int(built[r["id"]]["rooftop_m2_50m"]),
+            "buildings_100m": int(built[r["id"]]["buildings_100m"]),
+        } if r["id"] in built else None,
         "facts": facts,
         "chips": r["chips"],
     })
@@ -145,6 +152,8 @@ for value, label, source, date, flag in [
      "Neer Vazhvu Sentinel-2 analysis, Jun-Aug 2026", "2026-08-18", "inferred"),
     ("7 of 18", "reaches with enough open water for a suspended-sediment reading; the Adyar crossing reads highest",
      "Neer Vazhvu Sentinel-2 NDTI analysis", "2026-08-18", "inferred"),
+    ("2,239 vs 0", "buildings within 50 m of the centerline: the Okkiyam belt reach vs the southern ribbon - the built edge in one contrast",
+     "Google Open Buildings v3 (2023 release, confidence >= 0.7); Neer Vazhvu proximity analysis", "2026-08-18", "inferred"),
 ]:
     cid = claim(f"{value} - {label}", source, date, flag, "today")
     today_tiles.append({"value": value, "label": label, "source": source,
