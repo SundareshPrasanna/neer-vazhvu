@@ -21,7 +21,7 @@ function M({ title, children }: { title: string; children: React.ReactNode }) {
 
 export function MethodsPanel({ claimCount }: { claimCount: number }) {
   return (
-    <section id="methods" className="mx-auto max-w-5xl scroll-mt-24 px-4 pb-16">
+    <section id="methods" className="mx-auto max-w-5xl scroll-mt-36 px-4 pb-16">
       <details className="group rounded-xl border border-border bg-card">
         <summary className="cursor-pointer select-none px-5 py-4 text-base font-semibold text-foreground marker:content-none [&::-webkit-details-marker]:hidden">
           <span className="mr-2 inline-block transition-transform group-open:rotate-90">

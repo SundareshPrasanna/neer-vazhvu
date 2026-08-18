@@ -217,7 +217,7 @@ export function StoryView({
       {/* Chapter rail (desktop) */}
       <nav
         aria-label="Chapters"
-        className="sticky top-24 hidden h-fit shrink-0 self-start md:block"
+        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
       >
         <ol className="space-y-3 border-l border-border pl-4">
           {chapters.map((ch, i) => (
@@ -256,7 +256,7 @@ export function StoryView({
               ref={(el) => {
                 refs.current[i] = el;
               }}
-              className="scroll-mt-24"
+              className="scroll-mt-36"
             >
               <div className="font-mono text-xs uppercase tracking-widest text-primary">
                 {i === 0

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import type {
   WaterwayChapter,
   WaterwayClaim,
@@ -17,10 +16,12 @@ import { StoryView } from "./story-view";
 import { MethodsPanel } from "./methods-panel";
 
 /**
- * Root client shell: own chrome (site Header/Footer suppress on
- * /waterways), the Story | Explorer toggle, and hash-synced deep links
- * (#story, #explorer, #reach-N) so chapters and reaches can hand the
- * reader to each other without losing position (DECISIONS.md W1/W2).
+ * Root client shell. The site Header renders its minimal (landing-page)
+ * variant above this - brand ribbon + theme toggle, no per-city nav -
+ * and this bar sits under it (sticky top-16): waterway title, the
+ * Story | Explorer toggle, and hash-synced deep links (#story,
+ * #explorer, #reach-N) so chapters and reaches can hand the reader to
+ * each other without losing position (DECISIONS.md W1/W2).
  */
 type Mode = "story" | "explorer";
 
@@ -85,16 +86,10 @@ export function WaterwayContent({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Own chrome */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+      {/* Waterway bar, under the site's minimal header (h-16). */}
+      <header className="sticky top-16 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
-            <Link
-              href="/"
-              className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-foreground"
-            >
-              Neer Vazhvu
-            </Link>
             <h1 className="truncate text-base font-semibold leading-tight">
               {manifest.displayName}
               <span className="ml-2 hidden text-sm font-normal text-muted-foreground sm:inline">
@@ -103,9 +98,13 @@ export function WaterwayContent({
             </h1>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <span className="hidden rounded-full bg-amber-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 sm:inline">
-              preview
-            </span>
+            {/* Pre-release marker: tied to the manifest so it disappears
+                by itself when the waterway is enabled for the public site. */}
+            {!manifest.enabled && (
+              <span className="hidden rounded-full bg-amber-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 sm:inline">
+                preview
+              </span>
+            )}
             <div
               role="tablist"
               aria-label="View"

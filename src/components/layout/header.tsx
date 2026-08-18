@@ -180,8 +180,6 @@ export function Header() {
   // never run conditionally.
   const pathname = usePathname();
   if (pathname.startsWith("/embed")) return null;
-  // Waterway pages carry their own chrome (src/app/waterways/).
-  if (pathname.startsWith("/waterways")) return null;
   return <SiteHeader />;
 }
 
@@ -222,11 +220,12 @@ function SiteHeader() {
       (i) => rewriteNavHref(i.href, cityId) === pathname,
     );
 
-  // The root path "/" is the project landing page, not a city. Render a
-  // minimal header there: brand + city switcher + toggles, with no
-  // per-city feature nav (Dashboard/Groundwater/... only make sense inside
-  // a city).
-  if (pathname === "/") {
+  // The root path "/" is the project landing page, not a city, and
+  // /waterways/* pages span city boundaries. Render a minimal header on
+  // both: brand + theme toggle, with no per-city feature nav
+  // (Dashboard/Groundwater/... only make sense inside a city, and
+  // parsePath would silently resolve these routes to Chennai).
+  if (pathname === "/" || pathname.startsWith("/waterways")) {
     return (
       <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
