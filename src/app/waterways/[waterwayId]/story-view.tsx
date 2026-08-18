@@ -74,12 +74,15 @@ const CHAPTER_BODY: Record<string, string> = {
     "Seventeen years of groundwork have converged; below is that record, " +
     "dated and sourced.",
   pilot:
-    "The strongest complement to this investment is knowledge that keeps " +
-    "pace with it. The monthly water-quality series is ready to be " +
-    "resumed, the canal is ready for its first dedicated gauge, and this " +
-    "week's samples are with the lab. This page is the baseline; a pilot " +
-    "is the machinery that keeps it alive: levels, oxygen, mouth state, " +
-    "bathymetry, and ground-truth on every reach.",
+    "Neer Vazhvu built this page from public records and open satellites; " +
+    "keeping it current needs instruments on the water. The list is short " +
+    "and standard: levels and flow at the reaches that decide floods, " +
+    "dissolved oxygen where the monthly record stopped in 2023, the state " +
+    "of the mouths through the seasons, a boat-run depth profile - the " +
+    "first since 2014 - and ground-truth under the vegetation the " +
+    "satellite flags. This is the measurement layer Neer Vazhvu proposes " +
+    "to operate alongside the institutions doing the restoration; the " +
+    "page you are reading is its first deliverable.",
 };
 
 function ChapterVisual({
