@@ -7,19 +7,13 @@ import { SourceChip } from "./claim-chip";
  * The paper canal: seventeen years of sanctions, orders and tenders as a
  * vertical ledger. States facts and dates; grades nobody (DECISIONS.md W6).
  */
-const STATUS_STYLE: Record<string, string> = {
-  standing: "bg-muted text-muted-foreground",
-  partial: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  "dropped/stalled": "bg-red-500/10 text-red-700 dark:text-red-400",
-  "dropped Nov 2024": "bg-red-500/10 text-red-700 dark:text-red-400",
-  event: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
-  finding: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
-  ongoing: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  sanctioned: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  "deadlines lapsed": "bg-red-500/10 text-red-700 dark:text-red-400",
-  "in motion": "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  "open window": "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-};
+const ACTIVE = new Set(["ongoing", "sanctioned", "in motion", "window open"]);
+
+function statusCls(status: string): string {
+  return ACTIVE.has(status)
+    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+    : "bg-muted text-muted-foreground";
+}
 
 export function TimelineView({
   timeline,
@@ -44,7 +38,7 @@ export function TimelineView({
               </span>
             )}
             <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_STYLE[t.status] ?? "bg-muted text-muted-foreground"}`}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusCls(t.status)}`}
             >
               {t.status}
             </span>

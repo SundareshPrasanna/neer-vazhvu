@@ -33,47 +33,48 @@ const CHAPTER_BODY: Record<string, string> = {
     "source.",
   ennore:
     "The canal enters Chennai through its heaviest industry: two power " +
-    "stations, a refinery belt, a port. On the regulator's current " +
-    "consent books, none of it may discharge process effluent into the " +
-    "canal. The measured record keeps disagreeing, and this week it " +
-    "disagreed in dead fish.",
+    "stations, a refinery belt, a port. The consent regime has steadily " +
+    "moved routine industrial discharge off the canal, and TNPCB's " +
+    "investigation of this month's fish kill is under way. Continuous " +
+    "measurement alongside the regulator's is how such questions get " +
+    "answered quickly.",
   squeeze:
-    "Through the city the canal threads under the MRTS railway, built " +
-    "along and over it from the 1980s on a corridor chosen because no " +
-    "other was economically available. The court order that demands the " +
-    "canal's restoration exempts the railway's pillars. What remains is " +
-    "the narrowest water on the alignment, holding the city's worst " +
-    "monitoring numbers.",
+    "Through the city the canal threads under the MRTS railway, routed " +
+    "along it in the 1980s after a Planning Commission working group " +
+    "found no other corridor economically available. The reach now holds " +
+    "the alignment's narrowest water, and therefore the clearest case " +
+    "for the measured baseline that restoration planning needs.",
   okkiyam:
-    "South Chennai drains through one channel into this canal. When it " +
-    "is open, the marsh breathes with the tide and flamingos winter " +
-    "there. In 2026 construction squeezed it to less than a bus length, " +
-    "and the system answered: hyacinth, sewage backup, and a wintering " +
-    "ground with no flamingos for the first half of the year.",
+    "South Chennai drains through one channel into this canal; the marsh " +
+    "behind it breathes with the tide through the same gate. CMRL has " +
+    "invested in widening the vent-way at this crossing, and 2026 field " +
+    "reports tracked a construction-phase constriction alongside - the " +
+    "kind of change a live baseline registers as it happens.",
   estuary:
     "Below the city the canal widens into backwaters the tide still " +
     "reaches, and everything changes: birds in the dozens of species, " +
-    "working fishers, a boat house, brackish water too salty for " +
-    "hyacinth. The whole system hangs on mouths that sand shuts for " +
-    "most of the year.",
+    "working fishers, a boat house, brackish water that stays naturally " +
+    "clear of hyacinth. The system hangs on mouths that sand closes for " +
+    "most of the year, and mouth management already has a budget line.",
   ribbon:
-    "The last stretch is the canal as the city forgot it: no railway, " +
-    "no walls, banks intact, and a channel so overgrown it reads from " +
-    "orbit as a green ribbon. It is simultaneously the least damaged " +
-    "and least tended water on the alignment, and its neighbouring " +
-    "wetland is now proposed as a reservoir.",
+    "The last stretch is the canal at its most complete: banks intact, " +
+    "no structures for eleven kilometres, a channel running green with " +
+    "vegetation. It is the least altered water on the alignment, and the " +
+    "readiest canvas for the restoration the current programmes " +
+    "envision.",
   paper:
-    "The canal has never lacked paperwork. It has a national-waterway " +
-    "designation, a High Court restoration order, audits, a dropped " +
-    "detailed project report, an umbrella sanction, and a live tender. " +
-    "What it lacks is one agency that both owns it and holds a funded " +
-    "mandate for it.",
+    "The canal's record shows sustained intent: a national-waterway " +
+    "designation, a High Court mandate, detailed project reports, an " +
+    "umbrella sanction for the three waterways, and now the Urban " +
+    "Challenge Fund window with a water-metro study in procurement. " +
+    "Seventeen years of groundwork have converged; below is that record, " +
+    "dated and sourced.",
   pilot:
-    "The state's plans for the canal now outrun its knowledge of it. " +
-    "The best monthly water-quality series stopped in 2023. No gauge " +
-    "sits on the canal. The fish-kill samples of this week await a lab. " +
-    "This page is what a measured baseline looks like; a pilot is the " +
-    "machinery that keeps it alive: levels, oxygen, mouth state, " +
+    "The strongest complement to this investment is knowledge that keeps " +
+    "pace with it. The monthly water-quality series is ready to be " +
+    "resumed, the canal is ready for its first dedicated gauge, and this " +
+    "week's samples are with the lab. This page is the baseline; a pilot " +
+    "is the machinery that keeps it alive: levels, oxygen, mouth state, " +
     "bathymetry, and ground-truth on every reach.",
 };
 
@@ -143,7 +144,7 @@ function ChapterVisual({
         <ul className="space-y-2 rounded-xl border border-border bg-card p-4 text-sm text-foreground/90">
           {[
             "Water level and flow at the reaches that decide floods",
-            "Dissolved oxygen where the monitoring record went dark",
+            "Dissolved oxygen, resuming the monthly record",
             "Mouth state at Ennore, Adyar and Muttukadu, continuously",
             "A boat-run bathymetry transect: the first depth profile since 2014",
             "Ground-truth on the vegetation the satellite flags",
