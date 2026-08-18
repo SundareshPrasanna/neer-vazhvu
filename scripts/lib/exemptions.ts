@@ -233,6 +233,8 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // hero and a 1911 survey plate; the 1961 Panshet death toll is stated as
   // having no official figure, per the state's own current disaster plan,
   // rather than substituting the number that circulates.
+  "pune:my-ward":
+    "The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker.",
   "pune:lake-restoration":
     "No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere.",
   "pune:cascades":

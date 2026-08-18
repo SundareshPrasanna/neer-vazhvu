@@ -15,7 +15,7 @@
 | **Low** | Minimal or absent. Reason stated; several are not ours to fix |
 | **N/A** | Structurally inapplicable. **Not a deficiency** - a difference in the city |
 
-**Headline: 10 of 15 routes live. 0 empty states, 0 console errors, 0 crashes on the 10 that ship.**
+**Headline: 9 of 15 routes live. 0 empty states, 0 console errors, 0 crashes on the 9 that ship.**
 
 8 XHigh · 5 High · 7 Medium · 4 Low · 2 N/A
 
@@ -101,7 +101,7 @@ observatory normal. See `data-sources.md` §7.
 
 | Feature | Chennai | Pune | Ours to fix? |
 |---|---|---|---|
-| **Localities** | 519 | 0 | Yes. Needs a locality gazetteer; `/pune/my-ward` also needs ward + locality seeding in the DB before it functions. |
+| **Localities and `/my-ward`** | 519 localities, 200 wards | 0 | Yes, and it cost the route. The 41 prabhags ship as named geometry, but no ward rows exist in the database - `/api/wards?city=pune` 404s - so `/pune/my-ward` was turned OFF at cutover rather than shipped as a heading over nothing. Kolkata is off for the same reason. Needs a seeding producer; the geometry is not the blocker. |
 | **Commitments** | register | none | Yes. The dated commitments are citable and sharp (JICA loan signed 13 Jan 2016 for a May 2023 completion, now targeting 2026; the 24x7 project's slide from Dec 2024 to "12-14 months" as of Aug 2026), but each needs primary-source verification of attribution first. |
 | **Allocations** | ledger | none | **Partly not ours.** The instrument chain is unusually well documented, but the ledger's primitive is entitled-vs-*received* and **no measured annual draw has been published since 2017-18** - a year for which PMC and the state water department disagree by 4.15 TMC. A ledger whose received column is eight years old and contested is worse than none. |
 | **Lake restoration** | priority scoring | none | Partly. No restoration register exists, and no official register of Pune's *lost* water bodies exists either. |
@@ -156,7 +156,7 @@ Three things Pune ships that have no Chennai equivalent and are not captured by 
 
 In rough order of value per unit of work:
 
-1. **Ward + locality seeding.** Makes `/pune/my-ward` function and closes the localities row.
+1. **Ward + locality seeding.** Turns `/pune/my-ward` back on and closes the localities row. Now the top item: it is the only route withheld for something the repo already half-has.
 2. **Commitments**, once each attribution is primary-verified.
 3. **The WRD dated Marathi archive**, which is now the only remaining reservoir-history route and
    the better one: it would reach **all seven** dams at **daily** resolution, where the CWC
