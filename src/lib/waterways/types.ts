@@ -146,3 +146,19 @@ export interface WaterwayToday {
   turbidity: { reach_id: number; ndti: number | null; water_ha: number }[];
   silt: WaterwayFact[];
 }
+
+export interface WaterwayWidthLedger {
+  note: string;
+  source: string;
+  date: string;
+  flag: WaterwayClaim["flag"];
+  today_line: string;
+  claim_id?: string;
+  rows: {
+    stretch: string;
+    orig_min: number;
+    orig_max: number;
+    hsctc_min: number;
+    hsctc_max: number;
+  }[];
+}

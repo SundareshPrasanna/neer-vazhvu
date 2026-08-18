@@ -197,8 +197,17 @@ prov = {
     "banned_claims_note": "See curation.banned_claims; enforced by scripts/verify_waterway_buckingham.py",
 }
 
+wl = cur.get("width_ledger")
+if wl:
+    wl = dict(wl)
+    wl["claim_id"] = claim(
+        "Cooum-Adyar width ledger, 14 stretches: original survey vs HSCTC "
+        "(~2012) widths", wl["source"], wl["date"], wl["flag"],
+        "width-ledger")
+
 (OUT / "reaches.json").write_text(json.dumps(
-    {"_provenance": prov, "identity": identity, "reaches": reaches_out}))
+    {"_provenance": prov, "identity": identity, "reaches": reaches_out,
+     "width_ledger": wl}))
 (OUT / "chapters.json").write_text(json.dumps(
     {"_provenance": prov, "chapters": chapters_out}))
 (OUT / "timeline.json").write_text(json.dumps(

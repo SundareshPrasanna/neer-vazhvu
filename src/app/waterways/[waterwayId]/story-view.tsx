@@ -9,10 +9,12 @@ import type {
   WaterwayReach,
   WaterwayTimelineEntry,
   WaterwayToday,
+  WaterwayWidthLedger,
 } from "@/lib/waterways/types";
 import { FactLine, SourceChip } from "./claim-chip";
 import { TimelineView } from "./timeline-view";
 import { TodayPanel } from "./today-panel";
+import { WidthLedger } from "./width-ledger";
 import { WidthProfileChart } from "./width-profile-chart";
 
 /**
@@ -170,6 +172,7 @@ export function StoryView({
   reaches,
   timeline,
   today,
+  widthLedger,
   onExplore,
 }: {
   manifest: WaterwayManifest;
@@ -178,6 +181,7 @@ export function StoryView({
   reaches: WaterwayReach[];
   timeline: WaterwayTimelineEntry[];
   today: WaterwayToday;
+  widthLedger: WaterwayWidthLedger | null;
   onExplore: (reachId: number) => void;
 }) {
   const [active, setActive] = useState(0);
@@ -271,6 +275,9 @@ export function StoryView({
                   timeline={timeline}
                 />
                 {ch.key === "open" && <TodayPanel today={today} />}
+                {ch.key === "squeeze" && widthLedger && (
+                  <WidthLedger ledger={widthLedger} />
+                )}
               </div>
 
               {chapterFacts.length > 0 && (
