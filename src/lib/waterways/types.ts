@@ -84,7 +84,10 @@ export interface WaterwayReach {
     rooftop_m2_50m: number;
     buildings_100m: number;
   } | null;
-  photos: { file: string; author: string; licence: string; year: string }[];
+  /** One attribution string per photo: "author, year · licence terms".
+   *  Not a `licence` field: in an enveloped artifact that key names the
+   *  artifact's own licence (registry-checked); these are display credits. */
+  photos: { file: string; credit: string }[];
   facts: WaterwayFact[];
   chips: string[];
 }

@@ -243,7 +243,7 @@ export function ExplorerView({
                 <figure key={ph.file}>
                   <Image
                     src={`/data/waterways/${manifest.waterwayId}/photos/${ph.file}`}
-                    alt={`Ground photograph, ${sel.name} (${ph.year})`}
+                    alt={`Ground photograph, ${sel.name} (${ph.credit})`}
                     width={900}
                     height={620}
                     loading="lazy"
@@ -251,7 +251,7 @@ export function ExplorerView({
                     className="w-full rounded-lg border border-border"
                   />
                   <figcaption className="mt-1 text-[11px] text-muted-foreground">
-                    {ph.author}, {ph.year} · {ph.licence} · Wikimedia Commons
+                    {ph.credit} · Wikimedia Commons
                   </figcaption>
                 </figure>
               ))}

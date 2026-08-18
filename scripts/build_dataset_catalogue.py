@@ -155,6 +155,10 @@ def detect_scope_and_stem(rel: Path, rich_slugs: dict[str, str]) -> tuple[str, s
         i = parts.index("corridors")
         sub = parts[i + 2 : -1]
         return parts[i + 1], ("/".join(sub) if sub else stem_full)
+    if "waterways" in parts:
+        i = parts.index("waterways")
+        sub = parts[i + 2 : -1]
+        return parts[i + 1], ("/".join(sub) if sub else stem_full)
     if "rich-bodies" in parts:
         for slug, city in sorted(rich_slugs.items(), key=lambda kv: -len(kv[0])):
             if stem_full == slug or stem_full.startswith(slug + "-"):

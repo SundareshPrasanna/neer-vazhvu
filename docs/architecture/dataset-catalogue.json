@@ -19883,9 +19883,9 @@
   {
    "path": "public/data/waterways/buckingham-canal/centerline.geojson",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "centerline",
-   "bytes": 18053,
+   "bytes": 18702,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -19907,25 +19907,31 @@
     "scripts/build_buckingham_canal_geometry.py",
     "scripts/build_waterway_buckingham.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/waterways/buckingham-canal/chapters.json",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "chapters",
-   "bytes": 4469,
+   "bytes": 5067,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
-     "chapters"
+     "chapters",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -19939,21 +19945,23 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/waterways/buckingham-canal/claims.json",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "claims",
-   "bytes": 39025,
+   "bytes": 39455,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
-     "claims"
+     "claims",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -19968,22 +19976,24 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/waterways/buckingham-canal/reaches.json",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "reaches",
-   "bytes": 66657,
+   "bytes": 67643,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
+     "dataset",
      "identity",
+     "nvdm",
+     "provenance",
      "reaches",
+     "scope",
      "width_ledger"
     ]
    },
@@ -19995,24 +20005,34 @@
     "scripts/build_waterway_buckingham.py",
     "scripts/verify_waterway_buckingham.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "google-open-buildings",
+    "osm-overpass",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/waterways/buckingham-canal/timeline.json",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "timeline",
-   "bytes": 3777,
+   "bytes": 4375,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "timeline"
     ]
    },
@@ -20027,20 +20047,22 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/waterways/buckingham-canal/today.json",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "today",
-   "bytes": 12139,
+   "bytes": 13280,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
      "today"
     ]
    },
@@ -20051,25 +20073,35 @@
     "scripts/audit_waterway_numbers.py",
     "scripts/build_waterway_buckingham.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "google-open-buildings",
+    "osm-overpass",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/data/waterways/buckingham-canal/width-profile.json",
    "family": "waterways",
-   "scope": "unknown",
+   "scope": "buckingham-canal",
    "dataset": "width-profile",
-   "bytes": 15990,
+   "bytes": 16605,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
-     "profile"
+     "dataset",
+     "nvdm",
+     "profile",
+     "provenance",
+     "scope"
     ]
    },
    "consumers": [
@@ -20078,13 +20110,15 @@
    "producer_refs": [
     "scripts/build_waterway_buckingham.py"
    ],
-   "headwaters_sources": [],
-   "licenses": [],
-   "accountability": "allowlisted",
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
    "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
-   "flags": [
-    "unknown-scope"
-   ]
+   "flags": []
   },
   {
    "path": "public/geojson/bangalore-corporations-2025.geojson",
@@ -27016,9 +27050,9 @@
    "dataset": "centerline",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 18053,
+   "bytes": 18702,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -27028,9 +27062,9 @@
    "dataset": "chapters",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 4469,
+   "bytes": 5067,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27040,9 +27074,9 @@
    "dataset": "claims",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 39025,
+   "bytes": 39455,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27052,9 +27086,9 @@
    "dataset": "reaches",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 66657,
+   "bytes": 67643,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27064,9 +27098,9 @@
    "dataset": "timeline",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 3777,
+   "bytes": 4375,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27076,9 +27110,9 @@
    "dataset": "today",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 12139,
+   "bytes": 13280,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27088,9 +27122,9 @@
    "dataset": "width-profile",
    "files": 1,
    "scopes": [
-    "unknown"
+    "buckingham-canal"
    ],
-   "bytes": 15990,
+   "bytes": 16605,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

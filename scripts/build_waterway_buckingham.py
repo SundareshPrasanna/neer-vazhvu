@@ -24,9 +24,12 @@ Companion gate: scripts/verify_waterway_buckingham.py (run after).
 import csv
 import json
 import shutil
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from registry_license import registry_license  # noqa: E402
 RESEARCH = ROOT / "docs" / "research" / "buckingham-canal"
 OUT = ROOT / "public" / "data" / "waterways" / "buckingham-canal"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -169,8 +172,13 @@ for r in cur["reaches"]:
             "rooftop_m2_50m": int(built[r["id"]]["rooftop_m2_50m"]),
             "buildings_100m": int(built[r["id"]]["buildings_100m"]),
         } if r["id"] in built else None,
-        "photos": [{"file": ph["file"], "author": ph["author"],
-                    "licence": ph["licence"], "year": ph["year"]}
+        # One attribution string per photo (author, year, licence terms).
+        # Deliberately NOT a `licence` field: in an enveloped artifact that
+        # key asserts the artifact's own licence and is checked against the
+        # registry (check-generator-drift.py); these are per-photo Commons
+        # credits, rendered verbatim.
+        "photos": [{"file": ph["file"],
+                    "credit": f"{ph['author']}, {ph['year']} · {ph['licence']}"}
                    for ph in photos_by_reach.get(r["id"], [])],
         "facts": facts,
         "chips": r["chips"],
@@ -271,6 +279,62 @@ for c in used:
         print(f"WARN missing chip {c}")
 
 # ---------------- write ----------------
+# NVDM v1 envelope (L2 gate): identity + provenance ride on every artifact.
+# Source ids join the Headwaters registry (scripts/source-registry/platform.json,
+# dependsOn names each file); licences mirror the registry, which owns them.
+_SRC_OSM = {
+    "id": "osm-overpass",
+    "role": "input",
+    "title": "OpenStreetMap waterway and water-surface geometry (Overpass API)",
+    "publisher": "OpenStreetMap contributors",
+    "url": "https://overpass-api.de/",
+    "license": registry_license("osm-overpass"),
+    "retrieved": "2026-08-18",
+}
+_SRC_S2 = {
+    "id": "sentinel-2-l2a",
+    "role": "input",
+    "title": "Sentinel-2 L2A surface reflectance composites (Google Earth Engine)",
+    "publisher": "ESA Copernicus",
+    "url": "https://dataspace.copernicus.eu/",
+    "license": registry_license("sentinel-2-l2a"),
+    "retrieved": "2026-08-18",
+}
+_SRC_GOB = {
+    "id": "google-open-buildings",
+    "role": "input",
+    "title": "Google Open Buildings v3 footprints",
+    "publisher": "Google Research",
+    "url": "https://sites.research.google/open-buildings/",
+    "license": registry_license("google-open-buildings"),
+    "retrieved": "2026-08-18",
+}
+
+
+# Each write site below spells out the four envelope keys as literals -
+# the ward-profiles pattern scripts/check-generator-drift.py recognizes as
+# "this call writes a complete envelope of its own".
+_SCOPE = {"kind": "waterway", "id": "buckingham-canal"}
+
+
+def prov_env(sources: list, method: str, note: str) -> dict:
+    return {
+        "sources": sources,
+        "method": method,
+        "produced_at": "2026-08-18",
+        "produced_by": "scripts/build_waterway_buckingham.py",
+        "note": note,
+    }
+
+
+_EDITORIAL_NOTE = (
+    "Editorial compilation: every fact referenced here carries its own "
+    "source, date and flag in the claim register (claims.json), curated in "
+    "docs/waterways/buckingham-canal/waterway-curation.json and gated by "
+    "scripts/verify_waterway_buckingham.py + scripts/audit_waterway_numbers.py. "
+    "Empty sources by design - per-claim citations carry accountability."
+)
+
 prov = {
     "built": "2026-08-18",
     "method": "scripts/build_waterway_buckingham.py",
@@ -290,19 +354,56 @@ if wl:
         "(~2012) widths", wl["source"], wl["date"], wl["flag"],
         "width-ledger")
 
-(OUT / "reaches.json").write_text(json.dumps(
-    {"_provenance": prov, "identity": identity, "reaches": reaches_out,
-     "width_ledger": wl}))
-(OUT / "chapters.json").write_text(json.dumps(
-    {"_provenance": prov, "chapters": chapters_out}))
-(OUT / "timeline.json").write_text(json.dumps(
-    {"_provenance": prov, "timeline": timeline_out}))
-(OUT / "claims.json").write_text(json.dumps(
-    {"_provenance": prov, "claims": claims}))
-(OUT / "today.json").write_text(json.dumps({"_provenance": prov, "today": today}))
-(OUT / "width-profile.json").write_text(json.dumps(
-    {"_provenance": prov, "profile": profile}))
-shutil.copy(RESEARCH / "data" / "centerline.geojson", OUT / "centerline.geojson")
+reaches_doc = {"nvdm": "1.0", "dataset": "waterways/reaches", "scope": _SCOPE,
+ "provenance": prov_env(
+     [_SRC_OSM, _SRC_S2, _SRC_GOB], "mixed",
+     "Measured layers (OSM transect widths, Sentinel-2 composites, "
+     "Open Buildings counts) merged with curated per-reach facts; "
+     "curated facts carry per-claim citations (see claims.json)."),
+ "_provenance": prov, "identity": identity, "reaches": reaches_out,
+ "width_ledger": wl}
+(OUT / "reaches.json").write_text(json.dumps(reaches_doc))
+chapters_doc = {"nvdm": "1.0", "dataset": "waterways/chapters", "scope": _SCOPE,
+ "provenance": prov_env([], "manual", _EDITORIAL_NOTE),
+ "_provenance": prov, "chapters": chapters_out}
+(OUT / "chapters.json").write_text(json.dumps(chapters_doc))
+timeline_doc = {"nvdm": "1.0", "dataset": "waterways/timeline", "scope": _SCOPE,
+ "provenance": prov_env([], "manual", _EDITORIAL_NOTE),
+ "_provenance": prov, "timeline": timeline_out}
+(OUT / "timeline.json").write_text(json.dumps(timeline_doc))
+claims_doc = {"nvdm": "1.0", "dataset": "waterways/claims", "scope": _SCOPE,
+ "provenance": prov_env(
+     [], "manual",
+     "Claim-dataset compilation: each record names its source, "
+     "date and flag (verified / our analysis / as asserted); "
+     "empty sources by design - per-record citations carry "
+     "accountability."),
+ "_provenance": prov, "claims": claims}
+(OUT / "claims.json").write_text(json.dumps(claims_doc))
+today_doc = {"nvdm": "1.0", "dataset": "waterways/today", "scope": _SCOPE,
+ "provenance": prov_env(
+     [_SRC_S2, _SRC_GOB, _SRC_OSM], "mixed",
+     "Current-season snapshot: Sentinel-2 Jun-Aug 2026 composite "
+     "metrics, Open Buildings edge counts, OSM water polygons."),
+ "_provenance": prov, "today": today}
+(OUT / "today.json").write_text(json.dumps(today_doc))
+width_profile_doc = {"nvdm": "1.0", "dataset": "waterways/width-profile", "scope": _SCOPE,
+ "provenance": prov_env(
+     [_SRC_OSM], "derived",
+     "373 perpendicular transects every 200 m across the OSM "
+     "water-surface polygons; see reaches.json confidence tiers."),
+ "_provenance": prov, "profile": profile}
+(OUT / "width-profile.json").write_text(json.dumps(width_profile_doc))
+_cl = json.loads((RESEARCH / "data" / "centerline.geojson").read_text())
+centerline_doc = {"type": _cl["type"],
+ "nvdm": "1.0", "dataset": "waterways/centerline", "scope": _SCOPE,
+ "provenance": prov_env(
+     [_SRC_OSM], "api",
+     "Chained OSM canal centerline, km 0 at the Ennore creek "
+     "crossing; ~1.4 km bridged at the Basin Bridge / Cooum "
+     "junction where OSM has no continuous channel."),
+ "features": _cl["features"]}
+(OUT / "centerline.geojson").write_text(json.dumps(centerline_doc))
 
 n_facts = sum(len(r["facts"]) for r in reaches_out)
 size_mb = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file()) / 1e6
