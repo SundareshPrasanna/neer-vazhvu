@@ -25,31 +25,48 @@ function TransectStrip({ reach }: { reach: WaterwayReach }) {
       role="img"
       aria-label={`Measured widths along ${reach.name}`}
     >
-      {pts.map((p) =>
-        p.w == null ? (
-          <circle
-            key={p.km}
-            cx={x(p.km)}
-            cy={H - 4}
-            r={1.5}
-            className="fill-muted-foreground/40"
-          />
-        ) : (
-          <rect
-            key={p.km}
-            x={x(p.km) - 2}
-            y={H - 4 - Math.min(p.w, cap) * ((H - 8) / cap)}
-            width={4}
-            height={Math.min(p.w, cap) * ((H - 8) / cap)}
-            rx={1}
-            className={
-              p.flag === "OPEN_WATER"
-                ? "fill-sky-400/50"
-                : "fill-primary/70"
-            }
-          />
-        ),
-      )}
+      {pts.map((p) => {
+        const label =
+          p.w == null
+            ? `km ${p.km}: not measurable from mapped water here`
+            : p.flag === "OPEN_WATER"
+              ? `km ${p.km}: opens into backwater (${Math.round(p.w)} m across)`
+              : `km ${p.km}: ${Math.round(p.w)} m wide`;
+        return (
+          <g key={p.km} className="cursor-help">
+            <title>{label}</title>
+            {/* full-height invisible hit area so thin bars are hoverable */}
+            <rect
+              x={x(p.km) - 4}
+              y={0}
+              width={8}
+              height={H}
+              fill="transparent"
+            />
+            {p.w == null ? (
+              <circle
+                cx={x(p.km)}
+                cy={H - 4}
+                r={1.5}
+                className="fill-muted-foreground/40"
+              />
+            ) : (
+              <rect
+                x={x(p.km) - 2}
+                y={H - 4 - Math.min(p.w, cap) * ((H - 8) / cap)}
+                width={4}
+                height={Math.min(p.w, cap) * ((H - 8) / cap)}
+                rx={1}
+                className={
+                  p.flag === "OPEN_WATER"
+                    ? "fill-sky-400/50"
+                    : "fill-primary/70"
+                }
+              />
+            )}
+          </g>
+        );
+      })}
     </svg>
   );
 }
