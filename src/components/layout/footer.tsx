@@ -29,6 +29,11 @@ const CITY_FOOTER_SOURCES: Record<
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  pune: [
+    { label: "PMC", href: "https://webadmin.pmc.gov.in/en/jsonapi/node/reports_and_dpr" },
+    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+  ],
   mumbai: [
     { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
     { label: "MPCB", href: "https://mpcb.gov.in/" },

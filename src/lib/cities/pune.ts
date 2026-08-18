@@ -322,9 +322,16 @@ export const PUNE: CityConfig = {
   availableLanguages: ['en'],
   upcomingLanguages: ['mr'],
 
-  // Preview-gated. The data layers are real and the producers are wired, but
-  // the reservoir series needs its first ingestion run and the narrative
-  // surfaces (Origins, commitments, allocations) are not written yet. Flip
-  // this to true, and the `cities` row with it, at cutover.
-  enabled: false,
+  // LIVE since 2026-08-18. This flag is the ONLY functional gate on the city:
+  // [cityId]/layout.tsx reads it, and the `enabled` column on the cities row is
+  // read by no code at all (see 045_pune_enable.sql, which flips it anyway so a
+  // fresh rebuild is honest about a city that is live).
+  //
+  // The three conditions this comment used to list as blockers are met: the
+  // reservoir series had its first ingestion run (12 rows, and no row above
+  // 105% of live capacity - the issue #276 signature), and Origins shipped in
+  // #275 with ten chapters. Commitments and allocations are still unwritten
+  // and are recorded as route-off exemptions with their reasons, which is a
+  // declared absence rather than a reason to withhold the whole city.
+  enabled: true,
 };

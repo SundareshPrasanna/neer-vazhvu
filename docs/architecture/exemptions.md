@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 83 |
-| Routes a city deliberately does not ship | 37 |
+| Routes a city deliberately does not ship | 38 |
 | Absences the product states on the page | 21 |
-| **Total** | **142** |
+| **Total** | **143** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -159,6 +159,7 @@ Derived by diffing each city against the union of every route any city ships, so
 | pune | climate-risk | Not built for this city. |
 | pune | commitments | Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register. |
 | pune | lake-restoration | No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere. |
+| pune | my-ward | The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker. |
 | pune | shoreline | Landlocked. |
 
 ## Absences the product states on the page

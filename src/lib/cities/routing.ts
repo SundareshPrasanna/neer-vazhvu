@@ -173,8 +173,7 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // editions, reproducing CGWB's National Compilation 2025 exactly, with
   // Shirur critical at 95.71% inside a district that reads SAFE at 63.73%.
   // `rivers` is in because Pune has five and CPCB rates four of those
-  // stretches Priority I or II. `my-ward` is in because all 41 prabhags of
-  // the 2025 delimitation carry names. `facts` is in because facts-pune.json
+  // stretches Priority I or II. `facts` is in because facts-pune.json
   // ships 22 cards, every figure of which is READ from an artifact already in
   // the repo rather than transcribed again, so a quoted card cannot drift from
   // the dashboard it came from. `tanker` is in on the fourth tankerDataKind,
@@ -190,6 +189,12 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // flood-line absence ships as a data gap on the page.
   //
   // NOT in, each for a stated reason rather than pending work:
+  // `my-ward` - the 41 prabhags exist as NAMED GEOMETRY in the repo, but no
+  //   ward rows exist in the database, so /api/wards?city=pune 404s and the
+  //   page renders a heading over nothing. Turned off at cutover rather than
+  //   shipped empty: a live-and-empty page is issue #279, filed against
+  //   Gurugram during this same onboarding. Kolkata is off for the same
+  //   reason. Returns with the ward seeding, not with a better endpoint.
   // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
   // `cascades` - the cascade pipeline has not been run for Pune district.
   // `shoreline` - landlocked.
@@ -203,7 +208,6 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "rivers",
     "flood-risk",
     "tanker",
-    "my-ward",
   ]),
 };
 
