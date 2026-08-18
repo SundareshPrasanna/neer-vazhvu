@@ -72,6 +72,10 @@ export const SOURCE_TYPE_COLORS: Record<string, string> = {
   tannery:           "#7c2d12", // brown
   textile_dyeing:    "#be185d", // pink
   sewage_outfall:    "#0f172a", // slate-900
+  // Surat additions: the city's industrial water runs both directions, so the
+  // plant that cleans effluent and the plant that sells it back are distinct.
+  cetp:              "#b91c1c", // red-700  - common effluent treatment
+  ttp:               "#0d9488", // teal-600 - tertiary treatment for reuse
 };
 
 export const SOURCE_TYPE_LABELS: Record<string, string> = {
@@ -84,6 +88,8 @@ export const SOURCE_TYPE_LABELS: Record<string, string> = {
   tannery:           "Tannery",
   textile_dyeing:    "Textile Dyeing",
   sewage_outfall:    "Sewage Outfall",
+  cetp:              "Common Effluent Treatment Plant",
+  ttp:               "Tertiary Treatment (reuse)",
 };
 
 /** Lookup with a friendly fallback for new types. */

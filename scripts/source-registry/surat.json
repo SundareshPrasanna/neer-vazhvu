@@ -67,7 +67,8 @@
       },
       "dependsOn": [
         "public/data/commitments-surat.json",
-        "public/data/facts-surat.json"
+        "public/data/facts-surat.json",
+        "public/data/industrial-sources-surat.json"
       ],
       "refreshMethod": "manual re-extraction on a new edition",
       "notes": "Dated 8 Mar 2024. SMC's own figures for 11 STPs (1,726.50 MLD), 3 TTPs (164 MLD in, 115 MLD out, 249 industrial units), 330 MLD total reuse itemised across 11 uses, Rs 496.23 Cr cumulative revenue to Jan-2024, tariff Rs 18.20/KL (2014) to Rs 36.2/KL, and dated targets of 70% by 2030 and 100% by 2035. PREFER THESE over press figures, which report Rs 340 Cr / Rs 140 Cr annually and disagree with the corporation."
@@ -141,8 +142,9 @@
         "linkPattern": "nwmp-data-\\d{4}"
       },
       "dependsOn": [
-        "public/data/river-quality-surat.json",
-        "public/data/facts-surat.json"
+        "public/data/facts-surat.json",
+        "public/data/industrial-sources-surat.json",
+        "public/data/river-quality-surat.json"
       ],
       "refreshMethod": "manual; same extraction pipeline as the Hyderabad Musi rebuild",
       "notes": "Annual national NWMP compilation. SIX editions ingested (2019-2024) giving 45 station-years: seven Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira) plus the Mindhola at Sachin from 2022. LAYOUT VARIES BY EDITION: major-river tables lead each row with the station code, while the 2022 medium/minor table trails it, so the extractor also matches on a unique name keyword. Editions are sometimes served truncated by CPCB and must be re-downloaded, not skipped."
@@ -202,6 +204,25 @@
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_surat_artifacts.py (Overpass query)",
       "notes": "Named river and stream ways in the Surat box. GAP: OSM names none of the five khadis SMC monitors against published danger levels, so the creeks central to the flood chain have no geometry. SMC's GIS holds a creek layer but serves WMS only, with WFS disabled, so its geometry cannot be redistributed."
+    },
+    {
+      "id": "gemi-cetp-discharge",
+      "scope": "surat",
+      "publisher": "Gujarat Environment Management Institute (Forest and Environment Department, Government of Gujarat)",
+      "url": "https://gemi.gujarat.gov.in/uploads/Assets/project-report/dischargepointmonitoringofcetpsofpandesarasachinsuratdistrict06182024044708225.pdf",
+      "license": "Gujarat government publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/cetp-compliance-surat.json",
+        "public/data/industrial-sources-surat.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/extract_gemi_cetp_compliance.py on a new GEMI edition",
+      "notes": "Discharge Point Monitoring of CETPs of Pandesara and Sachin, Surat District, monitoring period April 2022 to March 2023. Twelve monthly grab samples per plant analysed in GEMI's own lab against the discharge norms in each plant's GPCB Consolidated Consent & Authorization - a compliance record rather than a dashboard. USE THE PER-SAMPLE TABLES (6 and 9) ONLY: the report's summary tables (5 and 8) disagree with them by ~1000x on total chromium and nickel, almost certainly ug/L mislabelled as mg/L. Stamped 'all rights reserved', so figures are extracted and the document is cited at its own URL, never mirrored. Covers only Pandesara and Sachin; Palsana, Kadodara and the Eco Textile Park are not in this edition."
     }
   ]
 }

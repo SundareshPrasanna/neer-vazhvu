@@ -8459,6 +8459,38 @@
    "flags": []
   },
   {
+   "path": "public/data/cetp-compliance-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "cetp-compliance",
+   "bytes": 94291,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "cetps",
+     "dataset",
+     "monitoring_period",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/extract_gemi_cetp_compliance.py"
+   ],
+   "headwaters_sources": [
+    "gemi-cetp-discharge"
+   ],
+   "licenses": [
+    "Gujarat government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/chennai-localities.json",
    "family": "data-root",
    "scope": "chennai",
@@ -11239,6 +11271,44 @@
     "ODbL 1.0",
     "government publication, cited with attribution",
     "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/industrial-sources-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "industrial-sources",
+   "bytes": 7849,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_gap",
+     "_note",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
+     "sources"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "cpcb-nwmp",
+    "gemi-cetp-discharge",
+    "smc-reuse-programme"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Gujarat government publication, cited with attribution",
+    "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -25381,6 +25451,18 @@
   },
   {
    "family": "data-root",
+   "dataset": "cetp-compliance",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 94291,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "data-root",
    "dataset": "cetp-evidence-manifest",
    "files": 1,
    "scopes": [
@@ -25662,16 +25744,17 @@
   {
    "family": "data-root",
    "dataset": "industrial-sources",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 89988,
-   "schema_variants": 4,
+   "bytes": 97837,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
