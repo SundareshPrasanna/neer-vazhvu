@@ -109,7 +109,6 @@ export function ExplorerView({
 }) {
   const sel = reaches.find((r) => r.id === selectedId) ?? reaches[0];
   const veg = sel.satellite.veg_frac_recent;
-  const vegDry = sel.satellite.veg_frac_dry;
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-16 md:grid-cols-[260px_1fr]">

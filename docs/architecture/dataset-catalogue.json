@@ -11774,7 +11774,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 5104,
+   "bytes": 5105,
    "schema": {
     "kind": "object",
     "keys": [
@@ -19881,6 +19881,209 @@
    "flags": []
   },
   {
+   "path": "public/data/waterways/buckingham-canal/centerline.geojson",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "centerline",
+   "bytes": 18053,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "chainage_zero",
+     "length_km",
+     "name",
+     "source"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "scripts/build_buckingham_canal_geometry.py",
+    "scripts/build_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/waterways/buckingham-canal/chapters.json",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "chapters",
+   "bytes": 4469,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_provenance",
+     "chapters"
+    ]
+   },
+   "consumers": [
+    "src/app/waterways/[waterwayId]/page.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_waterway_buckingham.py",
+    "scripts/verify_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/waterways/buckingham-canal/claims.json",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "claims",
+   "bytes": 39025,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_provenance",
+     "claims"
+    ]
+   },
+   "consumers": [
+    "src/app/waterways/[waterwayId]/page.tsx"
+   ],
+   "producer_refs": [
+    "scripts/audit_waterway_numbers.py",
+    "scripts/build_waterway_buckingham.py",
+    "scripts/verify_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/waterways/buckingham-canal/reaches.json",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "reaches",
+   "bytes": 66657,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_provenance",
+     "identity",
+     "reaches",
+     "width_ledger"
+    ]
+   },
+   "consumers": [
+    "src/app/waterways/[waterwayId]/page.tsx"
+   ],
+   "producer_refs": [
+    "scripts/audit_waterway_numbers.py",
+    "scripts/build_waterway_buckingham.py",
+    "scripts/verify_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/waterways/buckingham-canal/timeline.json",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "timeline",
+   "bytes": 3777,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_provenance",
+     "timeline"
+    ]
+   },
+   "consumers": [
+    "src/app/waterways/[waterwayId]/page.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_waterway_buckingham.py",
+    "scripts/verify_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/waterways/buckingham-canal/today.json",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "today",
+   "bytes": 12139,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_provenance",
+     "today"
+    ]
+   },
+   "consumers": [
+    "src/app/waterways/[waterwayId]/page.tsx"
+   ],
+   "producer_refs": [
+    "scripts/audit_waterway_numbers.py",
+    "scripts/build_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
+   "path": "public/data/waterways/buckingham-canal/width-profile.json",
+   "family": "waterways",
+   "scope": "unknown",
+   "dataset": "width-profile",
+   "bytes": 15990,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_provenance",
+     "profile"
+    ]
+   },
+   "consumers": [
+    "src/app/waterways/[waterwayId]/width-profile-chart.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_waterway_buckingham.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
+   "flags": [
+    "unknown-scope"
+   ]
+  },
+  {
    "path": "public/geojson/bangalore-corporations-2025.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
@@ -25880,7 +26083,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 5104,
+   "bytes": 5105,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26801,6 +27004,90 @@
     "chennai"
    ],
    "bytes": 56021,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "waterways",
+   "dataset": "centerline",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 18053,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "waterways",
+   "dataset": "chapters",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 4469,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "waterways",
+   "dataset": "claims",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 39025,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "waterways",
+   "dataset": "reaches",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 66657,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "waterways",
+   "dataset": "timeline",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 3777,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "waterways",
+   "dataset": "today",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 12139,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "waterways",
+   "dataset": "width-profile",
+   "files": 1,
+   "scopes": [
+    "unknown"
+   ],
+   "bytes": 15990,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

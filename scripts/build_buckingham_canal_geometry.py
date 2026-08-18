@@ -183,7 +183,6 @@ def transect_width(pt, direction, polys):
         return ((p[0] - lon0) * kx, (p[1] - lat0) * ky)
 
     intervals = []
-    srcs = set()
     for poly in polys:
         ts = []
         for ring in poly["rings"]:
