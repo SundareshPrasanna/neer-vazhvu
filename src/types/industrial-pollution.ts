@@ -52,6 +52,9 @@ export interface PollutionSource {
   ngt_orders?: string[];
   ngt_orders_ta?: string[];
   incidents?: IncidentRecord[];
+  /** Join key into cetp-compliance-<cityId>.json, where a city publishes a
+   *  consent-compliance record for this facility (Surat today). */
+  cetp_id?: string;
   source: string;
 }
 
