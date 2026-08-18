@@ -197,8 +197,11 @@ Rs 140 Cr annually). The deck's figures are used and cited; the press figures ar
   rejuvenation, but publishes no project list, dates, budgets or per-body status.
 - **No allocation instrument.** No published drinking-water entitlement from Ukai or the Tapi was
   found, so the ledger has no entitled half to render.
-- **Origins unwritten.** The spine is identified (8 km2 and 12 wards in 1961 to 462.149 km2 and 134
-  wards today, across six annexations, the most recent June 2020) but the long-read is not drafted.
+- **The flood-chain scraper is not scheduled.** This registry entry claims a daily launchd refresh
+  and there is no such job: `refresh-blocked-feeds.sh` runs six scrapers and none of them is this
+  one. It matters more here than anywhere else on the platform, because the source keeps a rolling
+  ~10-reading window with no archive - the captured history currently spans 16-17 August only, and
+  every unscheduled day is lost permanently. Wiring it is the single most urgent outstanding task.
 - **Industrial effluent not ingested.** GPCB's OCEMS dashboard and the Gujarat Environment
   Management Institute's discharge-point monitoring for the Pandesara and Sachin CETPs are both
   identified and neither is built.
