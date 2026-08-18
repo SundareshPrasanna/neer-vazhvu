@@ -61,11 +61,11 @@ const CHAPTER_BODY: Record<string, string> = {
     "clear of hyacinth. The system hangs on mouths that sand closes for " +
     "most of the year, and mouth management already has a budget line.",
   ribbon:
-    "The last stretch is the canal at its most complete: banks intact, " +
-    "no structures for eleven kilometres, a channel running green with " +
-    "vegetation. It is the least altered water on the alignment, and the " +
-    "readiest canvas for the restoration the current programmes " +
-    "envision.",
+    "The last stretch is the canal at its most complete: banks " +
+    "un-encroached (though unprotected), no structures for eleven " +
+    "kilometres, a channel running green with vegetation. It is the " +
+    "least altered water on the alignment, and the readiest canvas for " +
+    "the restoration the current programmes envision.",
   paper:
     "The canal's record shows sustained intent: a national-waterway " +
     "designation, a High Court mandate, detailed project reports, an " +

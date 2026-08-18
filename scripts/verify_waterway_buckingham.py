@@ -46,7 +46,9 @@ for s in ("1,280 KLD", "1280 KLD"):
         errors.append(f'banned: "{s}" (2010-vintage CPCL figure) appears')
 for c in claims:
     blob = (c["text"] + " " + c["source"]).lower()
-    if "hindu" in blob and ("width" in blob or "143" in blob):
+    # "The Hindu" as a source of the width table is the banned attribution;
+    # match the paper's name, not the substring (Hindusthan Samachar is fine).
+    if "the hindu" in blob and ("width" in blob or "143" in blob):
         errors.append(f"{c['id']}: width table attributed to The Hindu")
     if "242.73" in c["text"]:
         t = c["text"].lower()
