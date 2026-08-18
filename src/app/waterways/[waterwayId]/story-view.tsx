@@ -106,8 +106,8 @@ function ChapterVisual({
       />
       <figcaption className="mt-1 text-[11px] text-muted-foreground">
         Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
-        are a single clear scene (15 Jul 2026), about 8 km across; segment
-        views are a Jun–Aug 2026 composite. Contains modified Copernicus Sentinel data (2026).
+        are a clearest-pixel composite (Jun–Aug 2026), about 8 km across;
+        segment views are a median composite of the same window. Contains modified Copernicus Sentinel data (2026).
       </figcaption>
     </figure>
   );

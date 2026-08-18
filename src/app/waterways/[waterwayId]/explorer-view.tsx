@@ -272,8 +272,8 @@ export function ExplorerView({
             </div>
             <p className="mt-1 text-[11px] text-muted-foreground">
               Building footprints: Google Open Buildings v3 (CC BY-4.0).
-              Displayed at native resolution. Site views: single clear scene,
-              15 Jul 2026, ~8 km across; segment views:
+              Displayed at native resolution. Site views: clearest-pixel
+              composite, ~8 km across; segment views:
               Jun–Aug 2026 composite. Contains modified Copernicus Sentinel
               data (2026).
             </p>

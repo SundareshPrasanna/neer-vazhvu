@@ -168,7 +168,7 @@ for value, label, source, date, flag in [
                         "date": date, "flag": flag, "claim_id": cid})
 
 today = {
-    "as_of": "Sentinel-2 window 1 Jun - 18 Aug 2026; site scenes 15 Jul 2026",
+    "as_of": "Sentinel-2 window 1 Jun - 18 Aug 2026 (clearest-pixel composites)",
     "tiles": today_tiles,
     "strip": runs,
     "veg_by_reach": [{"reach_id": k, "veg_ha": v} for k, v in sorted(veg_area.items())],
