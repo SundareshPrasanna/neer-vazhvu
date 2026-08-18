@@ -60,7 +60,7 @@ The Madurai documents follow this principle throughout. The Chennai documents pr
 
 A contributor cheat-sheet for what each city has covered. If you're adding a new city, this is your checklist - replicate the green column items first, then file the red column as known gaps to track.
 
-> **This table is stale by two cities: it predates both Delhi and Kolkata.** Rather than half-fill
+> **This table is stale by five cities: it predates Delhi, Hyderabad, Kolkata, Gurugram and Pune.** Rather than half-fill
 > thirty rows, the modern and more rigorous version of this comparison lives at
 > [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md), which grades
 > every feature XHigh / High / Medium / Low / N-A against Chennai with the reason recorded wherever
