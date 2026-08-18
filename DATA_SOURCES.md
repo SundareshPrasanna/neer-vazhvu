@@ -13,9 +13,9 @@ The detailed source-by-source breakdown lives in per-city files. Each file docum
 - [docs/cities/kolkata/data-sources.md](docs/cities/kolkata/data-sources.md) - Kolkata/KMA (WBPCB EMIS water quality with tidal station pairs, KMC's weekly waterlogging register, KMC District Environment Plan 2021 sewage balance, IN-GRES + India-WRIS groundwater, Open-Meteo hourly rainfall intensity, KMC-SHARP/ADB safeguard disclosures, 1st Census of Water Bodies, etc.)
 - [docs/cities/mumbai/data-sources.md](docs/cities/mumbai/data-sources.md) - Mumbai/MMR (Maharashtra WRD Pravah daily reservoir bulletin, CWC weekly bulletins 2015-2025 backfill, BMC ESR/Climate Budget/RTI manuals, Praja Foundation RTI ward tables, MPCB water-quality series, WRD red/blue flood-line sheets, allocation instruments incl. WRD GRs + STEM board minutes, etc.)
 
-Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), [docs/cities/delhi/features.md](docs/cities/delhi/features.md), and [docs/cities/kolkata/features.md](docs/cities/kolkata/features.md). Kolkata additionally ships a graded parity scorecard against Chennai at [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md) - every feature scored XHigh/High/Medium/Low/N-A with the reason recorded wherever parity is not reachable.
+Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), [docs/cities/delhi/features.md](docs/cities/delhi/features.md), [docs/cities/kolkata/features.md](docs/cities/kolkata/features.md). Kolkata additionally ships a graded parity scorecard against Chennai at [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md) - every feature scored XHigh/High/Medium/Low/N-A with the reason recorded wherever parity is not reachable.
 
-When adding a seventh city, copy the Kolkata, Delhi or Mumbai folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
+When adding a ninth city, copy the Kolkata, Delhi or Mumbai folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
 
 ## Documentation principle: record what the source refuses to say
 
@@ -59,7 +59,7 @@ The Madurai documents follow this principle throughout. The Chennai documents pr
 
 A contributor cheat-sheet for what each city has covered. If you're adding a new city, this is your checklist - replicate the green column items first, then file the red column as known gaps to track.
 
-> **This table is stale by two cities: it predates both Delhi and Kolkata.** Rather than half-fill
+> **This table is stale by four cities: it predates Delhi, Hyderabad, Kolkata and Gurugram.** Rather than half-fill
 > thirty rows, the modern and more rigorous version of this comparison lives at
 > [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md), which grades
 > every feature XHigh / High / Medium / Low / N-A against Chennai with the reason recorded wherever
