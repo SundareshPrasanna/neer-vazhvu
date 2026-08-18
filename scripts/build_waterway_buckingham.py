@@ -224,7 +224,7 @@ for value, label, source, date, flag in [
      "Neer Vazhvu Sentinel-2 analysis, Jun-Aug 2026", "2026-08-18", "inferred"),
     ("7 of 18", "reaches with enough open water for a suspended-sediment reading; the Adyar crossing reads highest",
      "Neer Vazhvu Sentinel-2 NDTI analysis", "2026-08-18", "inferred"),
-    ("6,238", "buildings stand within 50 m of the canal - three in four of them along the 18 km between Triplicane and the Okkiyam confluence; the southern third runs nearly clear",
+    ("6,238", "buildings within 50 m of the centerline (15,182 within 100 m) - three in four along the 18 km between Triplicane and the Okkiyam confluence. A deliberately conservative count: measured from the centerline, not the canal's recorded boundary",
      "Google Open Buildings v3 (2023 release, confidence >= 0.7); Neer Vazhvu proximity analysis", "2026-08-18", "inferred"),
 ]:
     cid = claim(f"{value} - {label}", source, date, flag, "today")
