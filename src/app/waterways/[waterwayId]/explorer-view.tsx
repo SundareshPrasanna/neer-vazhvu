@@ -134,8 +134,8 @@ export function ExplorerView({
                 {r.name}
               </span>
               {r.width.median_m != null && (
-                <span className="font-mono text-xs text-muted-foreground">
-                  {Math.round(r.width.median_m)} m
+                <span className="shrink-0 whitespace-nowrap font-mono text-xs text-muted-foreground">
+                  {Math.round(r.width.median_m)}&nbsp;m
                 </span>
               )}
             </div>
