@@ -178,11 +178,15 @@ export function ExplorerView({
             }
           />
           <Metric
-            label="corridor vegetation"
-            value={veg != null ? `${Math.round(veg * 100)}%` : "n/a"}
+            label="vegetation on the water"
+            value={
+              sel.satellite.veg_on_water_frac != null
+                ? `${Math.round(sel.satellite.veg_on_water_frac * 100)}%`
+                : "n/a"
+            }
             hint={
-              vegDry != null && veg != null
-                ? `${Math.round(vegDry * 100)}% in Jan–Apr`
+              sel.satellite.veg_on_water_frac != null
+                ? `share of the mapped water surface under floating or emergent growth${veg != null ? ` · corridor incl. banks: ${Math.round(veg * 100)}%` : ""}`
                 : undefined
             }
           />

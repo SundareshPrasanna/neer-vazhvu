@@ -71,6 +71,8 @@ export interface WaterwayReach {
     programmes: string[];
   } | null;
   satellite: {
+    veg_on_water_frac: number | null;
+    mapped_water_ha: number | null;
     veg_frac_dry: number | null;
     veg_frac_recent: number | null;
     water_frac_recent: number | null;

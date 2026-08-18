@@ -52,6 +52,10 @@ for e in osm_meta.get("elements", []):
         way_year[f"{e['type']}/{e['id']}"] = int(e["timestamp"][:4])
 veg_ha_by_reach = {int(r["reach_id"]): float(r["veg_ha"]) for r in
                    csv.DictReader(open(RESEARCH / "data" / "current-veg-area.csv"))}
+veg_on_water = {int(r["reach_id"]): {
+    "frac": float(r["veg_on_water_frac"]) if r["veg_on_water_frac"] else None,
+    "mapped_water_ha": float(r["mapped_water_ha"])}
+    for r in csv.DictReader(open(RESEARCH / "data" / "current-veg-on-water.csv"))}
 
 
 def width_confidence(rows_all, ok_rows):
@@ -153,7 +157,9 @@ for r in cur["reaches"]:
                   "confidence": confidence},
         "veg_ha": veg_ha_by_reach.get(r["id"]),
         "works": works,
-        "satellite": {"veg_frac_dry": avg("veg_frac_dry"),
+        "satellite": {"veg_on_water_frac": veg_on_water.get(r["id"], {}).get("frac"),
+                      "mapped_water_ha": veg_on_water.get(r["id"], {}).get("mapped_water_ha"),
+                      "veg_frac_dry": avg("veg_frac_dry"),
                       "veg_frac_recent": avg("veg_frac_recent"),
                       "water_frac_recent": avg("water_frac_recent"),
                       "eff_width_m_recent": avg("eff_width_m_recent")},
