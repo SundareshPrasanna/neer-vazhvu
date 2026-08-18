@@ -165,12 +165,12 @@ def extract_year(pdf_path: Path, wanted: dict) -> dict[str, dict] | None:
         # Column order as printed by CPCB: temperature, dissolved oxygen, pH,
         # conductivity, BOD, nitrate, then the coliform counts.
         found[code] = {
-            "temperature_c": pair(vals, 0),
-            "dissolved_oxygen_mgl": pair(vals, 1),
+            "temperature_c": pair(vals, 0),  # noqa: platform names below
+            "do_mgl": pair(vals, 1),
             "ph": pair(vals, 2),
-            "conductivity_umhos_cm": pair(vals, 3),
+            "conductivity_us": pair(vals, 3),
             "bod_mgl": pair(vals, 4),
-            "nitrate_n_mgl": pair(vals, 5),
+            "nitrate_mgl": pair(vals, 5),
         }
 
     # Fallback for the trailing-code layout: find the keyword line, then take
@@ -185,12 +185,12 @@ def extract_year(pdf_path: Path, wanted: dict) -> dict[str, dict] | None:
                 vals = numbers(probe)
                 if len(vals) >= 12:
                     found[code] = {
-                        "temperature_c": pair(vals, 0),
-                        "dissolved_oxygen_mgl": pair(vals, 1),
+                        "temperature_c": pair(vals, 0),  # noqa: platform names below
+                        "do_mgl": pair(vals, 1),
                         "ph": pair(vals, 2),
-                        "conductivity_umhos_cm": pair(vals, 3),
+                        "conductivity_us": pair(vals, 3),
                         "bod_mgl": pair(vals, 4),
-                        "nitrate_n_mgl": pair(vals, 5),
+                        "nitrate_mgl": pair(vals, 5),
                     }
                     break
             if code in found:

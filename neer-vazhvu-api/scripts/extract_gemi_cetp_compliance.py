@@ -104,7 +104,12 @@ def parse_norm(raw: str) -> dict | None:
     raw = raw.strip()
     m = _RANGE.match(raw)
     if m:
-        return {"kind": "range", "min": float(m.group(1)), "max": float(m.group(2)), "text": raw}
+        return {
+            "kind": "range",
+            "min": float(m.group(1)),
+            "max": float(m.group(2)),
+            "text": raw,
+        }
     m = _CEIL.match(raw)
     if m:
         unit = m.group(2)
@@ -165,12 +170,18 @@ def parse_table(lines: list[str], start: int) -> tuple[list[str], list[dict]]:
                 raw,
             )
             if m2:
-                idx = lines.index(raw, start) if raw in lines[start : start + 60] else None
+                idx = (
+                    lines.index(raw, start)
+                    if raw in lines[start : start + 60]
+                    else None
+                )
                 name = ""
                 if idx:
                     above = lines[idx - 1].strip()
                     below = lines[idx + 1].strip() if idx + 1 < len(lines) else ""
-                    parts = [w for w in (above, below) if w and not re.search(r"[\d/]", w)]
+                    parts = [
+                        w for w in (above, below) if w and not re.search(r"[\d/]", w)
+                    ]
                     name = " ".join(parts)
                 if name:
                     norm = parse_norm(m2.group(2))
@@ -236,13 +247,17 @@ def build(txt: Path, root: Path) -> dict:
                 if cell is None:
                     continue
                 if cell.upper() == "BDL":
-                    samples.append({"date": dt, "below_detection_limit": True, "exceeds": False})
+                    samples.append(
+                        {"date": dt, "below_detection_limit": True, "exceeds": False}
+                    )
                     continue
                 try:
                     val = float(cell)
                 except ValueError:
                     continue
-                samples.append({"date": dt, "value": val, "exceeds": breaches(val, r["norm"])})
+                samples.append(
+                    {"date": dt, "value": val, "exceeds": breaches(val, r["norm"])}
+                )
             if samples:
                 n_ex = sum(1 for s in samples if s["exceeds"])
                 parameters.append(
@@ -262,7 +277,9 @@ def build(txt: Path, root: Path) -> dict:
                 "sample_dates": dates,
                 "parameters": parameters,
                 "total_exceedances": sum(p["exceedances"] for p in parameters),
-                "parameters_ever_breached": sum(1 for p in parameters if p["exceedances"]),
+                "parameters_ever_breached": sum(
+                    1 for p in parameters if p["exceedances"]
+                ),
             }
         )
 
@@ -301,7 +318,11 @@ def build(txt: Path, root: Path) -> dict:
             "limit, not a generic standard. An exceedance is a plant discharging outside "
             "the licence it holds."
         ),
-        "monitoring_period": {"from": "2022-04", "to": "2023-03", "samples_per_plant": 12},
+        "monitoring_period": {
+            "from": "2022-04",
+            "to": "2023-03",
+            "samples_per_plant": 12,
+        },
         "cetps": plants,
     }
 
@@ -314,7 +335,9 @@ def main() -> int:
     args = ap.parse_args()
     root = Path(args.root).resolve()
     payload = build(Path(args.txt), root)
-    out = Path(args.out) if args.out else root / "public/data/cetp-compliance-surat.json"
+    out = (
+        Path(args.out) if args.out else root / "public/data/cetp-compliance-surat.json"
+    )
     write_artifact(out, payload)
     for p in payload["cetps"]:
         print(

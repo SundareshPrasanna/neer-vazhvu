@@ -181,6 +181,47 @@ and 100% with zero liquid discharge by 2035.
 **Press coverage of this programme disagrees with the corporation** (reporting Rs 340 Cr and
 Rs 140 Cr annually). The deck's figures are used and cited; the press figures are not.
 
+## Industrial effluent - a compliance record, not a dashboard
+
+The obvious source is telemetry and it is a dead end twice over. **GPCB's own OCEMS dashboard**
+(`gpcboms.gpcb.gov.in`) resolves and accepts TCP on 80 and 443, then never completes a TLS
+handshake. And CPCB's national OCEMS API, already decoded on this platform for Arkavathi, returns
+**100% NA values with no coordinates**.
+
+What exists instead is better. **GEMI** - an autonomous institute of the Gujarat Forest and
+Environment Department - sampled both Surat CETPs monthly for a year and tabulated every result
+against the discharge norm in that plant's own GPCB Consolidated Consent & Authorization. Twelve
+dated samples per parameter, each of which either meets the plant's licence or does not.
+
+| CETP | Capacity | Discharges to | Results outside its own consent |
+|---|---|---|---|
+| Pandesara Infrastructure Ltd | 100 MLD | **Bhedvad creek** | 54 across 11 parameters |
+| Sachin Infra Environment Ltd | 50 MLD | Unn creek | 41 across 10 parameters |
+
+**Bhedvad is one of the five khadis SMC publishes a danger level for**, and which the dashboard
+already renders live. The creek the corporation watches for flooding is the creek receiving 100 MLD
+of textile effluent.
+
+Colour exceeded on all twelve samples at both plants. On **20 February 2023** a single Pandesara
+sample came in at pH 1.55 against a 6.5-8.5 consent range, with 12,240 mg/L dissolved solids
+against a 2,100 limit, 614 mg/L COD against 250 and 3,316 mg/L sulphate against 1,000.
+
+Two extraction rules, both load-bearing:
+
+- **The report's summary tables are not used.** Tables 5 and 8 disagree with the report's own
+  per-sample tables by roughly a thousandfold on two metals - Table 8 gives Sachin's total chromium
+  as 11.33 mg/L and nickel as 15.07 mg/L, while Table 9's samples for the same plant and period run
+  0.005-0.027 mg/L. Almost certainly ug/L mislabelled as mg/L. Only the per-sample tables are read.
+- **Exceedance is recomputed, not read.** The original marks breaches with a highlight that text
+  extraction cannot see, so each value is compared to its norm here.
+
+The document is stamped "all rights reserved", so figures are extracted and it is cited at its own
+URL, never mirrored.
+
+**Not covered:** Palsana GIDC, Kadodara GIDC and the Eco Textile Park. They appear alongside
+Pandesara and Sachin in the 600 MLD deep-sea disposal project, but GEMI's edition monitors only
+these two CETPs. A GPCB Action Taken Report to the NGT (OA 18/2024) is a further lead, unread.
+
 ## Named gaps
 
 - **No ward geometry.** Three competing ward schemes, none downloadable. Closes when SMC enables

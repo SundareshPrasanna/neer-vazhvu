@@ -803,8 +803,29 @@ def build_rivers(root: Path, offline: Path | None = None) -> int:
         name = (el.get("tags") or {}).get("name") or "Unnamed watercourse"
         by_name[name].append([[round(p["lon"], 6), round(p["lat"], 6)] for p in geom])
 
+    def haversine_km(a, b):
+        from math import asin, cos, radians, sin, sqrt
+
+        lon1, lat1, lon2, lat2 = map(radians, (a[0], a[1], b[0], b[1]))
+        h = (
+            sin((lat2 - lat1) / 2) ** 2
+            + cos(lat1) * cos(lat2) * sin((lon2 - lon1) / 2) ** 2
+        )
+        return 2 * 6371.0088 * asin(sqrt(h))
+
     features = []
     for name, lines in sorted(by_name.items()):
+        # MAPPED length, not the river's true length. OSM coverage in this box
+        # is partial, so this is how much of the watercourse we hold, which is
+        # the honest thing for a map legend to report.
+        mapped_km = round(
+            sum(
+                haversine_km(ln[i], ln[i + 1])
+                for ln in lines
+                for i in range(len(ln) - 1)
+            ),
+            1,
+        )
         features.append(
             {
                 "type": "Feature",
@@ -816,6 +837,8 @@ def build_rivers(root: Path, offline: Path | None = None) -> int:
                     "name": name,
                     "waterway": "river",
                     "segments": len(lines),
+                    "length_km": mapped_km,
+                    "_length_note": "Length of the OSM geometry held here, not the river's full course.",
                 },
                 "geometry": {"type": "MultiLineString", "coordinates": lines},
             }
