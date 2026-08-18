@@ -33,10 +33,10 @@ export function WidthLedger({ ledger }: { ledger: WaterwayWidthLedger }) {
               <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 pr-3 font-semibold">Stretch</th>
                 <th className="py-2 pr-3 text-right font-semibold">
-                  Survey width (m)
+                  Recorded in the survey era (m)
                 </th>
                 <th className="py-2 pr-3 text-right font-semibold">
-                  HSCTC ~2012 (m)
+                  Found in ~2012 (m)
                 </th>
                 <th className="py-2 text-right font-semibold">
                   Measured 2026 (m)

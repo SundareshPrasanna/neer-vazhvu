@@ -42,6 +42,11 @@ cur = json.loads(CURATION.read_text())
 widths = list(csv.DictReader(open(RESEARCH / "data" / "widths.csv")))
 built = {int(r["reach_id"]): r for r in
          csv.DictReader(open(RESEARCH / "data" / "built-edge.csv"))}
+photos_meta = json.loads(
+    (RESEARCH / "figures" / "photos" / "photos.json").read_text())
+photos_by_reach = {}
+for ph in photos_meta:
+    photos_by_reach.setdefault(ph["reach"], []).append(ph)
 sat = {int(r["km"]): r for r in
        csv.DictReader(open(RESEARCH / "data" / "reaches-satellite.csv"))}
 
@@ -94,6 +99,9 @@ for r in cur["reaches"]:
             "rooftop_m2_50m": int(built[r["id"]]["rooftop_m2_50m"]),
             "buildings_100m": int(built[r["id"]]["buildings_100m"]),
         } if r["id"] in built else None,
+        "photos": [{"file": ph["file"], "author": ph["author"],
+                    "licence": ph["licence"], "year": ph["year"]}
+                   for ph in photos_by_reach.get(r["id"], [])],
         "facts": facts,
         "chips": r["chips"],
     })
@@ -173,6 +181,13 @@ today = {
 profile = [{"km": float(w["chainage_km"]),
             "w": float(w["width_m"]) if w["width_m"] else None,
             "flag": w["flag"]} for w in widths]
+
+# ---------------- ground photos ----------------
+(OUT / "photos").mkdir(exist_ok=True)
+for ph in photos_meta:
+    src = RESEARCH / "figures" / "photos" / ph["file"]
+    if src.exists():
+        shutil.copy(src, OUT / "photos" / ph["file"])
 
 # ---------------- chips ----------------
 used = sorted({c for r in cur["reaches"] for c in r["chips"]})

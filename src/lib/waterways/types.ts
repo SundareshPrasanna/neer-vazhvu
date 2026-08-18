@@ -68,6 +68,7 @@ export interface WaterwayReach {
     rooftop_m2_50m: number;
     buildings_100m: number;
   } | null;
+  photos: { file: string; author: string; licence: string; year: string }[];
   facts: WaterwayFact[];
   chips: string[];
 }

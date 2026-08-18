@@ -225,6 +225,32 @@ export function ExplorerView({
           ))}
         </ul>
 
+        {sel.photos.length > 0 && (
+          <>
+            <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              From the ground
+            </h3>
+            <div className="mt-2 grid gap-3 sm:grid-cols-2">
+              {sel.photos.map((ph) => (
+                <figure key={ph.file}>
+                  <Image
+                    src={`/data/waterways/${manifest.waterwayId}/photos/${ph.file}`}
+                    alt={`Ground photograph, ${sel.name} (${ph.year})`}
+                    width={900}
+                    height={620}
+                    loading="lazy"
+                    unoptimized
+                    className="w-full rounded-lg border border-border"
+                  />
+                  <figcaption className="mt-1 text-[11px] text-muted-foreground">
+                    {ph.author}, {ph.year} · {ph.licence} · Wikimedia Commons
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </>
+        )}
+
         {sel.chips.length > 0 && (
           <>
             <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
