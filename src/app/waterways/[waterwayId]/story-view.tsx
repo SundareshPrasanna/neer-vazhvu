@@ -39,7 +39,7 @@ const CHAPTER_BODY: Record<string, string> = {
     "The canal enters Chennai through its heaviest industry: two power " +
     "stations, a refinery belt, a port. The consent regime has steadily " +
     "moved routine industrial discharge off the canal, and TNPCB's " +
-    "investigation of this month's fish kill is under way. Continuous " +
+    "investigation of the August 2026 fish kill is under way. Continuous " +
     "measurement alongside the regulator's is how such questions get " +
     "answered quickly.",
   squeeze:
