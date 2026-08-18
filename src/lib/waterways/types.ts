@@ -122,3 +122,22 @@ export interface WaterwayManifest {
   /** Preview gate: page 404s in production unless enabled. */
   enabled: boolean;
 }
+
+export interface WaterwayTodayTile {
+  value: string;
+  label: string;
+  source: string;
+  date: string;
+  flag: WaterwayClaim["flag"];
+  claim_id: string;
+}
+
+export interface WaterwayToday {
+  as_of: string;
+  tiles: WaterwayTodayTile[];
+  strip: { state: string; from: number; to: number }[];
+  veg_by_reach: { reach_id: number; veg_ha: number }[];
+  top_veg_reaches: { reach_id: number; veg_ha: number }[];
+  turbidity: { reach_id: number; ndti: number | null; water_ha: number }[];
+  silt: WaterwayFact[];
+}

@@ -99,8 +99,12 @@ export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
               fillOpacity={0.07}
             />
             <Tooltip
-              formatter={(v: number) =>
-                v >= DISPLAY_CAP_M ? ["open water", "width"] : [`${v} m`, "width"]
+              formatter={(v) =>
+                typeof v === "number"
+                  ? v >= DISPLAY_CAP_M
+                    ? ["open water", "width"]
+                    : [`${v} m`, "width"]
+                  : ["-", "width"]
               }
               labelFormatter={(km) => `km ${km}`}
             />

@@ -8,9 +8,11 @@ import type {
   WaterwayManifest,
   WaterwayReach,
   WaterwayTimelineEntry,
+  WaterwayToday,
 } from "@/lib/waterways/types";
 import { FactLine, SourceChip } from "./claim-chip";
 import { TimelineView } from "./timeline-view";
+import { TodayPanel } from "./today-panel";
 import { WidthProfileChart } from "./width-profile-chart";
 
 /**
@@ -167,6 +169,7 @@ export function StoryView({
   chapters,
   reaches,
   timeline,
+  today,
   onExplore,
 }: {
   manifest: WaterwayManifest;
@@ -174,6 +177,7 @@ export function StoryView({
   chapters: WaterwayChapter[];
   reaches: WaterwayReach[];
   timeline: WaterwayTimelineEntry[];
+  today: WaterwayToday;
   onExplore: (reachId: number) => void;
 }) {
   const [active, setActive] = useState(0);
@@ -266,6 +270,7 @@ export function StoryView({
                   identity={identity}
                   timeline={timeline}
                 />
+                {ch.key === "open" && <TodayPanel today={today} />}
               </div>
 
               {chapterFacts.length > 0 && (

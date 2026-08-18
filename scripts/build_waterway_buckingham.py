@@ -113,6 +113,53 @@ for s in identity["headline_stats"]:
     s["claim_id"] = claim(f"{s['value']} - {s['label']}", s["source"],
                           s["date"], s["flag"], "identity")
 
+# ---------------- today.json (current snapshot) ----------------
+surface = list(csv.DictReader(open(RESEARCH / "data" / "current-surface.csv")))
+runs = []
+for row in surface:
+    st = row["state"]
+    if runs and runs[-1]["state"] == st:
+        runs[-1]["to"] = float(row["km"])
+    else:
+        runs.append({"state": st, "from": float(row["km"]),
+                     "to": float(row["km"])})
+veg_area = {int(r["reach_id"]): float(r["veg_ha"]) for r in
+            csv.DictReader(open(RESEARCH / "data" / "current-veg-area.csv"))}
+turb = {int(r["reach_id"]): {"ndti": float(r["ndti_mean"]) if r["ndti_mean"] else None,
+                             "water_ha": float(r["water_ha"])}
+        for r in csv.DictReader(open(RESEARCH / "data" / "current-turbidity.csv"))}
+total_veg = round(sum(veg_area.values()))
+total_water = round(sum(t["water_ha"] for t in turb.values()))
+top_veg = sorted(veg_area.items(), key=lambda kv: -kv[1])[:5]
+
+silt_facts = []
+for f in cur.get("silt_ledger", []):
+    cid = claim(f["text"], f["source"], f["date"], f["flag"], "silt-ledger")
+    silt_facts.append({**f, "claim_id": cid})
+
+today_tiles = []
+for value, label, source, date, flag in [
+    (f"{total_veg} ha", "vegetation on the corridor this window (weed mats, reeds and bank growth together)",
+     "Neer Vazhvu Sentinel-2 analysis, Jun-Aug 2026", "2026-08-18", "inferred"),
+    (f"~{total_water} ha", "open water visible from orbit, concentrated at the Ennore, Muttukadu and Kelambakkam reaches",
+     "Neer Vazhvu Sentinel-2 analysis, Jun-Aug 2026", "2026-08-18", "inferred"),
+    ("7 of 18", "reaches with enough open water for a suspended-sediment reading; the Adyar crossing reads highest",
+     "Neer Vazhvu Sentinel-2 NDTI analysis", "2026-08-18", "inferred"),
+]:
+    cid = claim(f"{value} - {label}", source, date, flag, "today")
+    today_tiles.append({"value": value, "label": label, "source": source,
+                        "date": date, "flag": flag, "claim_id": cid})
+
+today = {
+    "as_of": "Sentinel-2 window 1 Jun - 18 Aug 2026; site scenes 15 Jul 2026",
+    "tiles": today_tiles,
+    "strip": runs,
+    "veg_by_reach": [{"reach_id": k, "veg_ha": v} for k, v in sorted(veg_area.items())],
+    "top_veg_reaches": [{"reach_id": k, "veg_ha": v} for k, v in top_veg],
+    "turbidity": [{"reach_id": k, **v} for k, v in sorted(turb.items())],
+    "silt": silt_facts,
+}
+
 # ---------------- width profile (full chainage) ----------------
 profile = [{"km": float(w["chainage_km"]),
             "w": float(w["width_m"]) if w["width_m"] else None,
@@ -149,6 +196,7 @@ prov = {
     {"_provenance": prov, "timeline": timeline_out}))
 (OUT / "claims.json").write_text(json.dumps(
     {"_provenance": prov, "claims": claims}))
+(OUT / "today.json").write_text(json.dumps({"_provenance": prov, "today": today}))
 (OUT / "width-profile.json").write_text(json.dumps(
     {"_provenance": prov, "profile": profile}))
 shutil.copy(RESEARCH / "data" / "centerline.geojson", OUT / "centerline.geojson")

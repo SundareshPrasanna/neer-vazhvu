@@ -5,6 +5,7 @@ import path from "node:path";
 import { tryGetWaterwayManifest } from "@/lib/waterways";
 import type {
   WaterwayChapter,
+  WaterwayToday,
   WaterwayClaim,
   WaterwayIdentity,
   WaterwayReach,
@@ -60,9 +61,11 @@ export default async function WaterwayPage({ params }: PageProps) {
     waterwayId, "timeline.json");
   const claimsFile = loadJson<{ claims: WaterwayClaim[] }>(
     waterwayId, "claims.json");
+  const todayFile = loadJson<{ today: WaterwayToday }>(
+    waterwayId, "today.json");
 
   // A waterway without its measured reaches has nothing honest to show.
-  if (!reachesFile || !chaptersFile || !timelineFile || !claimsFile) notFound();
+  if (!reachesFile || !chaptersFile || !timelineFile || !claimsFile || !todayFile) notFound();
 
   return (
     <WaterwayContent
@@ -72,6 +75,7 @@ export default async function WaterwayPage({ params }: PageProps) {
       chapters={chaptersFile.chapters}
       timeline={timelineFile.timeline}
       claims={claimsFile.claims}
+      today={todayFile.today}
     />
   );
 }

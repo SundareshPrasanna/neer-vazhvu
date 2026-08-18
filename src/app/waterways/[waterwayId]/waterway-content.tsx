@@ -9,6 +9,7 @@ import type {
   WaterwayManifest,
   WaterwayReach,
   WaterwayTimelineEntry,
+  WaterwayToday,
 } from "@/lib/waterways/types";
 import { ExplorerView } from "./explorer-view";
 import { StoryView } from "./story-view";
@@ -28,6 +29,7 @@ export function WaterwayContent({
   chapters,
   timeline,
   claims,
+  today,
 }: {
   manifest: WaterwayManifest;
   identity: WaterwayIdentity;
@@ -35,6 +37,7 @@ export function WaterwayContent({
   chapters: WaterwayChapter[];
   timeline: WaterwayTimelineEntry[];
   claims: WaterwayClaim[];
+  today: WaterwayToday;
 }) {
   const [mode, setMode] = useState<Mode>("story");
   const [selectedReach, setSelectedReach] = useState<number>(reaches[0]?.id ?? 1);
@@ -132,6 +135,7 @@ export function WaterwayContent({
             chapters={chapters}
             reaches={reaches}
             timeline={timeline}
+            today={today}
             onExplore={goExplorer}
           />
         ) : (
