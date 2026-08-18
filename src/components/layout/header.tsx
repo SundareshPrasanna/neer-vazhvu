@@ -180,6 +180,8 @@ export function Header() {
   // never run conditionally.
   const pathname = usePathname();
   if (pathname.startsWith("/embed")) return null;
+  // Waterway pages carry their own chrome (src/app/waterways/).
+  if (pathname.startsWith("/waterways")) return null;
   return <SiteHeader />;
 }
 

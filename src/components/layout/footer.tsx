@@ -69,6 +69,8 @@ export function Footer() {
 
   // /embed/* (third-party iframe namespace) carries its own credit bar.
   if (pathname.startsWith("/embed")) return null;
+  // Waterway pages carry their own chrome (src/app/waterways/).
+  if (pathname.startsWith("/waterways")) return null;
   if (FULL_SCREEN_PAGES.some((p) => pathname === p || pathname.endsWith(p))) {
     return null;
   }

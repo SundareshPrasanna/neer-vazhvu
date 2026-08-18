@@ -1,0 +1,55 @@
+# Buckingham Canal waterway page: editorial constitution and decisions
+
+The Waterway page type's first pilot. Pattern parent: the Industrial
+Corridor pilot (docs/corridors/sriperumbudur/DECISIONS.md): a waterway is
+data, not code - one manifest + a data build; onboarding the Cooum or the
+Vaigai later is a new manifest and build, never a new component.
+
+Research base (local-only, gitignored like all research corpora):
+docs/research/buckingham-canal/ - dossier.md, sections 01-07,
+data-vintages.md, measured data, Sentinel-2 chips, primary-source PDFs.
+The tracked editorial layer is `waterway-curation.json` here; the build is
+`scripts/build_waterway_buckingham.py`; the publication gate is
+`scripts/verify_waterway_buckingham.py`. Full product spec (local):
+docs/specs/buckingham-canal-story-build.md.
+
+## Decisions
+
+- **W1 Two modes, one URL.** A Story (8 chapters, Ennore to Mahabalipuram,
+  scroll = chainage) and a Reach Explorer (18 reaches, the diligence
+  atlas). Toggle at top; chapters and reaches deep-link both ways.
+- **W2 Progressive disclosure governs.** Four depth levels, one click
+  apart: verdicts (L0) -> in-context detail expanders (L1) -> reach
+  explorer (L2) -> per-claim source chips (L3). No table renders on the
+  Story's first paint; density only arrives by the reader's click.
+- **W3 Every number wears its receipt.** All rendered facts come from
+  claims.json (source + date + flag: verified / inferred / asserted).
+  Verified = checked against the cited document; inferred = our
+  synthesis/measurement interpretation, said so; asserted = a named
+  party's claim (e.g. the fish-kill attribution is the campaign's until
+  TNPCB rules).
+- **W4 Corrected figures are BANNED at build time.** The verify gate
+  fails on: the unverified "7.51 km" widening figure; the 2010-vintage
+  "CPCL 1,280 KLD to canal" as current; the width table attributed to
+  The Hindu (real source: HSCTC feasibility ~2012); "242.73 MLD" without
+  its all-water-bodies qualifier.
+- **W5 Capacity figures are attributed, never averaged.** Three
+  incompatible families exist (IIT-M bankfull 42.5 m3/s; the
+  5,600-to-2,850-cusec pair; the 3,500/9,000-cusec planning figures).
+- **W6 No scorecards.** The governance chapter states custody facts and
+  dated events; it grades nobody (infrastructure-not-publisher rule).
+- **W7 Width semantics.** Measured widths are WATER SURFACE from OSM
+  polygons (2026 snapshot), stated as such; revenue (poramboke) width is
+  a named gap pending WRD records. The Ennore reaches (km 0-13) are not
+  separable from the creek complex in OSM; satellite effective width is
+  the working source there.
+- **W8 Licences.** Page images: our Sentinel-2 chips (Copernicus
+  attribution) and Wikimedia Commons CC BY-SA/CC0 photos with per-image
+  credit. Suzhal Arivom photos only with written permission; news photos
+  linked, never embedded. OSM derivatives carry ODbL attribution.
+- **W9 Preview-first.** The page ships preview-gated for TWIC before any
+  public cutover; public/data here rides the branch until the corpus
+  release chain runs at cutover (second-repo rule).
+- **W10 Watch items that must update the page before public cutover:**
+  TNPCB fish-kill lab results (pending 18 Aug 2026); CMRL Water Metro RFP
+  content (live 19 Aug 2026); Ashok Leyland consent status.
