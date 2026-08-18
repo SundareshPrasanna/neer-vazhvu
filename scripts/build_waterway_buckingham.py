@@ -44,6 +44,44 @@ built = {int(r["reach_id"]): r for r in
          csv.DictReader(open(RESEARCH / "data" / "built-edge.csv"))}
 photos_meta = json.loads(
     (RESEARCH / "figures" / "photos" / "photos.json").read_text())
+osm_meta = json.loads(
+    (RESEARCH / "data" / "osm-water-meta.json").read_text())
+way_year = {}
+for e in osm_meta.get("elements", []):
+    if "timestamp" in e:
+        way_year[f"{e['type']}/{e['id']}"] = int(e["timestamp"][:4])
+veg_ha_by_reach = {int(r["reach_id"]): float(r["veg_ha"]) for r in
+                   csv.DictReader(open(RESEARCH / "data" / "current-veg-area.csv"))}
+
+
+def width_confidence(rows_all, ok_rows):
+    """Tier the reach's width measurement (DECISIONS W7 addendum):
+    A = well-covered recent tracing with low transect-to-transect jitter;
+    B = measured but sparse or older tracing; C = not channel-measurable."""
+    import statistics
+    share = len(ok_rows) / len(rows_all) if rows_all else 0.0
+    if len(ok_rows) < 3:
+        return {"tier": "C", "share_measured": round(share, 2),
+                "jitter_pct": None, "tracing_years": None}
+    ws = sorted(w for _, w, _ in ok_rows)
+    med = ws[len(ws) // 2]
+    diffs = [abs(ok_rows[i + 1][1] - ok_rows[i][1]) / med * 100
+             for i in range(len(ok_rows) - 1)
+             if ok_rows[i + 1][0] - ok_rows[i][0] < 0.35]
+    jitter = statistics.median(diffs) if diffs else None
+    years = [way_year[w] for _, _, ids in ok_rows
+             for w in ids.split(";") if w in way_year]
+    vintage = f"{min(years)}-{max(years)}" if years else None
+    vin_ok = bool(years) and statistics.median(years) >= 2021
+    if share >= 0.7 and vin_ok and (jitter or 99) <= 25:
+        tier = "A"
+    elif share >= 0.4:
+        tier = "B"
+    else:
+        tier = "C"
+    return {"tier": tier, "share_measured": round(share, 2),
+            "jitter_pct": round(jitter) if jitter is not None else None,
+            "tracing_years": vintage}
 photos_by_reach = {}
 for ph in photos_meta:
     photos_by_reach.setdefault(ph["reach"], []).append(ph)
@@ -76,6 +114,29 @@ for r in cur["reaches"]:
         vs = [float(sat[k][f]) for k in kms if sat[k][f] != ""]
         return round(sum(vs) / len(vs), 2) if vs else None
 
+    ok_rows = [(float(w["chainage_km"]), float(w["width_m"]),
+                w["osm_water_ids"]) for w in rows
+               if w["width_m"] and w["flag"] == "OK"]
+    confidence = width_confidence(rows, ok_rows)
+
+    works_cur = cur.get("works", {}).get(str(r["id"]))
+    works = None
+    if works_cur:
+        def _wf(items, ctx):
+            out2 = []
+            for t, src, dt, fl in items:
+                cid = claim(t, src, dt, fl, f"works:{ctx}:{r['id']}")
+                out2.append({"text": t, "source": src, "date": dt,
+                             "flag": fl, "claim_id": cid})
+            return out2
+        works = {
+            "channel": _wf(works_cur.get("channel", []), "channel"),
+            "interception": _wf(works_cur.get("interception", []), "intercept"),
+            "constraints": _wf(works_cur.get("constraints", []), "constraint"),
+            "surveys": works_cur.get("surveys", []),
+            "programmes": works_cur.get("programmes", []),
+        }
+
     facts = []
     for f in r["facts"]:
         cid = claim(f["text"], f["source"], f["date"], f["flag"],
@@ -88,7 +149,10 @@ for r in cur["reaches"]:
         "width": {"median_m": ok[len(ok) // 2] if ok else None,
                   "min_m": ok[0] if ok else None,
                   "max_m": ok[-1] if ok else None,
-                  "n_measured": len(ok)},
+                  "n_measured": len(ok),
+                  "confidence": confidence},
+        "veg_ha": veg_ha_by_reach.get(r["id"]),
+        "works": works,
         "satellite": {"veg_frac_dry": avg("veg_frac_dry"),
                       "veg_frac_recent": avg("veg_frac_recent"),
                       "water_frac_recent": avg("water_frac_recent"),

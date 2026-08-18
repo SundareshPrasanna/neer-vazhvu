@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { WaterwayManifest, WaterwayReach } from "@/lib/waterways/types";
 import { FactLine } from "./claim-chip";
+import { WorksLens } from "./works-lens";
 
 /**
  * The Reach Explorer: depth level L2. Eighteen reaches, one selected at a
@@ -164,8 +165,8 @@ export function ExplorerView({
             value={sel.width.median_m != null ? `${Math.round(sel.width.median_m)} m` : "n/a"}
             hint={
               sel.width.n_measured
-                ? `${sel.width.n_measured} transects`
-                : "not separable in OSM"
+                ? `${sel.width.n_measured} transects · confidence ${sel.width.confidence.tier}${sel.width.confidence.tracing_years ? ` (traced ${sel.width.confidence.tracing_years})` : ""}`
+                : "not separable in OSM · confidence C"
             }
           />
           <Metric
@@ -215,6 +216,8 @@ export function ExplorerView({
           </div>
           <TransectStrip reach={sel} />
         </div>
+
+        <WorksLens reach={sel} />
 
         <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           What the record says

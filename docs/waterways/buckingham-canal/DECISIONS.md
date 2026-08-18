@@ -61,6 +61,17 @@ docs/specs/buckingham-canal-story-build.md.
 - **W9 Preview-first.** The page ships preview-gated for TWIC before any
   public cutover; public/data here rides the branch until the corpus
   release chain runs at cutover (second-repo rule).
+- **W11 The works lens.** Per reach: quantities on record, documented
+  inflows, interface counts, constraints, survey tasks, and programmes
+  touching the reach - framed strictly as "what any DPR must establish",
+  with claim chips on sourced lines. It contains NO cost estimates, NO
+  reach rankings (scorecard rule), and no "should" sentences.
+  Width-confidence tiers (W7 addendum) render beside every median:
+  A = >=70% of transects measured, tracing median-year >=2021, adjacent-
+  transect jitter <=25%; B = measured but sparse or older tracing;
+  C = not channel-measurable (creek complexes, junctions, open water).
+  Jitter, not IQR, is the noise proxy: large IQR on reaches that open
+  into backwaters is real physical variation.
 - **W10 Watch items that must update the page before public cutover:**
   TNPCB fish-kill lab results (pending 18 Aug 2026); CMRL Water Metro RFP
   content (live 19 Aug 2026); Ashok Leyland consent status.

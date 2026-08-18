@@ -55,7 +55,21 @@ export interface WaterwayReach {
     min_m: number | null;
     max_m: number | null;
     n_measured: number;
+    confidence: {
+      tier: "A" | "B" | "C";
+      share_measured: number;
+      jitter_pct: number | null;
+      tracing_years: string | null;
+    };
   };
+  veg_ha: number | null;
+  works: {
+    channel: WaterwayFact[];
+    interception: WaterwayFact[];
+    constraints: WaterwayFact[];
+    surveys: string[];
+    programmes: string[];
+  } | null;
   satellite: {
     veg_frac_dry: number | null;
     veg_frac_recent: number | null;
