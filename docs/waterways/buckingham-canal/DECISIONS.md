@@ -43,6 +43,17 @@ docs/specs/buckingham-canal-story-build.md.
   a named gap pending WRD records. The Ennore reaches (km 0-13) are not
   separable from the creek complex in OSM; satellite effective width is
   the working source there.
+  Vintage (verified via Overpass meta, 18 Aug 2026): the 50 water
+  features within 150 m of the canal were last edited 2011-2026, 37 of
+  50 in 2021 or later; the canal/river-tagged polygons carry edits
+  2018 - Mar 2026, many at v2-v11 (actively maintained). Last-edit is
+  an upper bound on tracing age; OSM does not record the imagery date.
+  Confirmation ladder: (1) cross-checked against IWAI 2014 and HSCTC
+  ~2012 patterns (consistent); (2) satellite corroborates order of
+  magnitude on wide channel reaches (~0.7x, the expected mixed-pixel
+  undercount) but cannot certify tracing; (3) spot-QA against current
+  sub-metre imagery is a listed curation task; (4) drone/DGPS survey is
+  the pilot's definitive instrument.
 - **W8 Licences.** Page images: our Sentinel-2 chips (Copernicus
   attribution) and Wikimedia Commons CC BY-SA/CC0 photos with per-image
   credit. Suzhal Arivom photos only with written permission; news photos

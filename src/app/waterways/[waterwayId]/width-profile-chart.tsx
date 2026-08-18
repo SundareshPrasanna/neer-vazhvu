@@ -95,8 +95,14 @@ export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
             <ReferenceArea
               x1={20.5}
               x2={32}
-              fill="#dc2626"
-              fillOpacity={0.07}
+              fill="#94a3b8"
+              fillOpacity={0.18}
+              label={{
+                value: "MRTS reach",
+                position: "insideTop",
+                fontSize: 10,
+                fill: "#94a3b8",
+              }}
             />
             <Tooltip
               formatter={(v) =>
@@ -123,7 +129,8 @@ export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
       </div>
       <figcaption className="mt-1 text-xs text-muted-foreground">
         Water-surface width every 200 m, measured from OpenStreetMap water
-        polygons (2026 snapshot). Shaded band: the MRTS city reach. Readings
+        polygons (contributor-traced; the polygons carry edits from 2018 to
+        March 2026, most since 2022; snapshot Jul 2026). Shaded band: the MRTS city reach (km 20.5\u201332). Readings
         above {DISPLAY_CAP_M} m (backwaters) are capped for display; gaps are
         unmeasured, not zero.
       </figcaption>
