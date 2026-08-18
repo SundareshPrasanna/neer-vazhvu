@@ -28,15 +28,18 @@ export function WidthLedger({ ledger }: { ledger: WaterwayWidthLedger }) {
           {ledger.note}
         </p>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-sm">
+          <table className="w-full min-w-[600px] text-sm">
             <thead>
               <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 pr-3 font-semibold">Stretch</th>
                 <th className="py-2 pr-3 text-right font-semibold">
                   Survey width (m)
                 </th>
-                <th className="py-2 text-right font-semibold">
+                <th className="py-2 pr-3 text-right font-semibold">
                   HSCTC ~2012 (m)
+                </th>
+                <th className="py-2 text-right font-semibold">
+                  Measured 2026 (m)
                 </th>
               </tr>
             </thead>
@@ -47,8 +50,15 @@ export function WidthLedger({ ledger }: { ledger: WaterwayWidthLedger }) {
                   <td className="py-1.5 pr-3 text-right font-mono tabular-nums text-foreground/80">
                     {r.orig_min}&#8211;{r.orig_max}
                   </td>
-                  <td className="py-1.5 text-right font-mono tabular-nums text-foreground/80">
+                  <td className="py-1.5 pr-3 text-right font-mono tabular-nums text-foreground/80">
                     {r.hsctc_min}&#8211;{r.hsctc_max}
+                  </td>
+                  <td className="py-1.5 text-right font-mono tabular-nums font-semibold text-foreground">
+                    {r.m2026_min != null && r.m2026_max != null
+                      ? r.m2026_min === r.m2026_max
+                        ? r.m2026_min
+                        : `${r.m2026_min}\u2013${r.m2026_max}`
+                      : "\u2013"}
                   </td>
                 </tr>
               ))}

@@ -160,5 +160,7 @@ export interface WaterwayWidthLedger {
     orig_max: number;
     hsctc_min: number;
     hsctc_max: number;
+    m2026_min?: number | null;
+    m2026_max?: number | null;
   }[];
 }
