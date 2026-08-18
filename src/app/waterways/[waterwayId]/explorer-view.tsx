@@ -199,7 +199,9 @@ export function ExplorerView({
             label="built edge"
             value={
               sel.built_edge
-                ? sel.built_edge.buildings_50m.toLocaleString("en-IN")
+                ? sel.built_edge.buildings_50m > 0
+                  ? sel.built_edge.buildings_50m.toLocaleString("en-IN")
+                  : "none mapped"
                 : "n/a"
             }
             hint={
