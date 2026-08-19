@@ -7,8 +7,10 @@ import type { WaterwayManifest } from "./types";
  * docs/waterways/cooum/waterway-curation.json; decisions:
  * docs/waterways/cooum/DECISIONS.md (C1-C7).
  *
- * Ships preview-gated (enabled: false); surfaces on preview builds via
- * NEXT_PUBLIC_PREVIEW_WATERWAYS=cooum.
+ * Enabled for production 19 Aug 2026, same-day as the preview review:
+ * facts-only voice (DECISIONS C8), two freshness rounds folded (C9),
+ * corpus release data#23. Joins nav registry-driven: with two Chennai
+ * waterways the Explore entry now lands on the /waterways index.
  */
 export const COOUM: WaterwayManifest = {
   waterwayId: "cooum",
@@ -26,5 +28,5 @@ export const COOUM: WaterwayManifest = {
     "Chainage runs west to east: km 0 at the origin junction near " +
     "Satharai, km 62.8 at the Bay of Bengal mouth.",
   cityIds: ["chennai"],
-  enabled: false,
+  enabled: true,
 };
