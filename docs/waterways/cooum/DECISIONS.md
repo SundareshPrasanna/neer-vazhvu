@@ -79,6 +79,16 @@ the government-voice rules apply at maximum strength.
   progressive disclosure); the literary register goes. This supersedes
   the journalism-voice house style wherever a surface is
   government-facing.
+- **C9 The Rs 604.75 / Rs 604.77 crore trap (freshness sweep, 19 Aug
+  2026).** Rs 604.75 crore is the ICRERP amount DISBURSED per the MAWS
+  Policy Note 2025-26; Rs 604.77 crore is the amount SANCTIONED for the
+  60 short-term sub-projects by G.O.(Ms) No.9 of 13 Jan 2015. Two
+  different instruments two lakh apart - never substitute one for the
+  other. Same sweep superseded three shipped positions: the October 2024
+  completion horizon (2025-26 note: "expected to be completed soon"),
+  the training walls' 40%-of-June-2023 (95% in WRD PN 2024-25, complete
+  in PN 2025-26), and "no package ledger newer than 30.06.2021" (CRRT
+  status report of 01.02.2024 in O.A. 299/2013 with connected matters).
 - **C7 Basin Bridge handoff.** The canal page and this page hand off to
   each other at the Cooum-canal junction (canal reach 6, km 16.9-19.2 of
   the canal chainage); shared sources are cited identically, never
