@@ -31,7 +31,7 @@
         "public/data/surat-flood-chain.json",
         "public/data/surat-flood-chain-history.json"
       ],
-      "refreshMethod": "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py (daily, launchd noon IST)",
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py, wired into the local launchd job (12:00 IST) as of 2026-08-19. That job runs only committed main code, so the step is GUARDED and skips until this branch merges; until then the archive is extended by hand.",
       "notes": "Five tables: Ukai dam level/inflow/outflow, weir-cum-causeway level/outflow, zone-wise rainfall, season total, and five khadis each with a published Danger Level. SMC attributes the dam and weir rows to the Irrigation Dept / Collector Office. ROLLING WINDOW: history exists only from the first scrape and can never be backfilled."
     },
     {

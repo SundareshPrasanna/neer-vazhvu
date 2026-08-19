@@ -238,11 +238,13 @@ these two CETPs. A GPCB Action Taken Report to the NGT (OA 18/2024) is a further
   rejuvenation, but publishes no project list, dates, budgets or per-body status.
 - **No allocation instrument.** No published drinking-water entitlement from Ukai or the Tapi was
   found, so the ledger has no entitled half to render.
-- **The flood-chain scraper is not scheduled.** This registry entry claims a daily launchd refresh
-  and there is no such job: `refresh-blocked-feeds.sh` runs six scrapers and none of them is this
-  one. It matters more here than anywhere else on the platform, because the source keeps a rolling
-  ~10-reading window with no archive - the captured history currently spans 16-17 August only, and
-  every unscheduled day is lost permanently. Wiring it is the single most urgent outstanding task.
+- **The flood-chain scraper is wired but inert until this branch merges.** It is now a step in the
+  local launchd job (12:00 IST), alongside BBMB, which is the same class of source: a rolling window
+  with no archive, where a missed day cannot be recovered. The step is deliberately guarded, because
+  that job hard-resets its clone to `origin/main` and runs only committed main code - the scraper is
+  not on main yet, and Surat artifacts must not be committed to main ahead of the PR, where there is
+  no `surat` scope or registry for the gates to accept them. It starts working the day #274 lands,
+  with no further edit. Until then the archive is extended by hand and anything missed is gone.
 - **Industrial effluent not ingested.** GPCB's OCEMS dashboard and the Gujarat Environment
   Management Institute's discharge-point monitoring for the Pandesara and Sachin CETPs are both
   identified and neither is built.
