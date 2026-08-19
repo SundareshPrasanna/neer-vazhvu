@@ -967,6 +967,7 @@
     "source": "HSCTC (Chennai High Speed Circular Transportation Corridors) feasibility report, c. 2012, via Wikipedia (table added 25 Aug 2013)",
     "date": "2012",
     "flag": "verified",
+    "claim_text": "Cooum-Adyar width ledger, 14 stretches: original survey vs HSCTC (~2012) widths",
     "today_line": "2026 measurements: Neer Vazhvu transects at 200 m spacing from OpenStreetMap water polygons; across all these reaches the median is 18 m with a 9 m minimum.",
     "rows": [
       {
@@ -1094,6 +1095,39 @@
         "hsctc_max": 28,
         "m2026_min": 9,
         "m2026_max": 195
+      }
+    ]
+  },
+  "today": {
+    "as_of": "Sentinel-2 window 1 Jun - 18 Aug 2026 (clearest-pixel composites)",
+    "tiles": [
+      {
+        "value_template": "{total_veg} ha",
+        "label_template": "vegetation on the corridor this window (weed mats, reeds and bank growth together)",
+        "source": "Neer Vazhvu Sentinel-2 analysis, Jun-Aug 2026",
+        "date": "2026-08-18",
+        "flag": "inferred"
+      },
+      {
+        "value_template": "~{total_water} ha",
+        "label_template": "open water visible from orbit, concentrated at the Ennore, Muttukadu and Kelambakkam reaches",
+        "source": "Neer Vazhvu Sentinel-2 analysis, Jun-Aug 2026",
+        "date": "2026-08-18",
+        "flag": "inferred"
+      },
+      {
+        "value_template": "{n_ndti} of {n_reaches}",
+        "label_template": "reaches with enough open water for a suspended-sediment reading; the Adyar crossing reads highest",
+        "source": "Neer Vazhvu Sentinel-2 NDTI analysis",
+        "date": "2026-08-18",
+        "flag": "inferred"
+      },
+      {
+        "value_template": "{built_50}",
+        "label_template": "buildings within 50 m of the centerline ({built_100} within 100 m) - three in four along the 18 km between Triplicane and the Okkiyam confluence. A deliberately conservative count: measured from the centerline, not the canal's recorded boundary",
+        "source": "Google Open Buildings v3 (2023 release, confidence >= 0.7); Neer Vazhvu proximity analysis",
+        "date": "2026-08-18",
+        "flag": "inferred"
       }
     ]
   },
