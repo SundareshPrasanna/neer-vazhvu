@@ -112,11 +112,11 @@ export const ARKAVATHI: BasinManifest = {
     // Water family - all mid-tone so they hold contrast on both the light OSM
     // base and the darkened (dark-mode) base; separated by hue + form.
     { family: "rivers", label: "Rivers", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
-    // The polluted river stretch (CPCB/NGT), 2020 vs 2025. Default-OFF per
+    // The polluted river stretch (CPCB/NGT), 2018 vs 2025. Default-OFF per
     // Paani's Phase-1 review: the stretch renders only while the PRS panel is
     // open ("Explore the polluted stretch") or when toggled on explicitly.
     // Clicking either line opens the PRS panel (prs.json). Crimson line,
-    // distinct from the blue water family; the component weights 2025 over 2020.
+    // distinct from the blue water family; the component weights 2025 over 2018.
     { family: "prs", label: "Polluted stretch (PRS)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: false, prs: true },
     // KSPCB's Dec 2020 inspection speaks of 16 polluting drains, but the
     // June-2020 MPR itemises only 15 (Paani find) and E-176 lacks
@@ -173,7 +173,7 @@ export const ARKAVATHI: BasinManifest = {
   },
   credits: [
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
-    "Polluted river stretch (2020, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
+    "Polluted river stretch (2018, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
     "Polluting drains: KSPCB's Dec 2020 inspection (NGT OA 673/2018) speaks of 16 storm-water drains on the PRS, but the June-2020 MPR itemises only 15 - the same count mapped here (Paani Earth, per-drain BOD; E-176 at Kelagina kote, Kanakapura also lacks coordinates in the source). The 16th drain is unaccounted in the public record - and the August-2025 MPR still reports \"16 drains identified and monitored\" while its own solid-waste table counts 17.",
     "Pollution evidence: Arkavathi Horata Samithi and RTI filings; Paani Earth x ICCW (IIT Madras) 7-site pollution study, Feb-Mar 2024 (lab analyses and report hosted on paani.earth).",
