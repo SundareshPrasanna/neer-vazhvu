@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
-"""Buckingham Canal insights v2: three derived layers for the waterway page.
+"""Waterway insights (generic; --waterway <id>): three derived layers.
+
+Generalized 19 Aug 2026 from the Buckingham Canal pilot when the Cooum
+became waterway 2. Per-waterway parameters (reach table, mouths, calendar
+range) live in <repo>/scripts/waterways/<id>.json.
 
 A. THE BUILT EDGE (rooftops): Google Open Buildings v3 footprints within
    50 m and 100 m of the centerline, per reach: building count + rooftop
    area. Neutral framing by design: "the built edge", never "encroachment"
    (that word belongs to WRD's registers, not our satellite proxy).
 B. THE VEGETATION CALENDAR: monthly corridor vegetation fraction
-   (NDVI > 0.35) per reach, Jan 2019 - Aug 2026: the hyacinth/weed
-   seasonality record, with the 2026 Okkiyam anomaly visible in context.
+   (NDVI > threshold) per reach across the configured years: the
+   hyacinth/weed seasonality record.
 C. MOUTH-STATE CLIMATOLOGY: JRC Global Surface Water monthly history
-   (1984-2021) sampled at the four sea mouths: how often each mouth has
-   been open, by calendar month - the sand-bar calendar.
+   (1984-2021) sampled at the configured sea mouths: how often each mouth
+   has been open, by calendar month - the sand-bar calendar.
 
-Outputs -> docs/research/buckingham-canal/data/:
+Outputs -> <research_dir>/data/:
    built-edge.csv, vegetation-calendar.csv, mouth-climatology.csv
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import os
@@ -31,36 +36,7 @@ from dotenv import load_dotenv  # noqa: E402
 load_dotenv(API_ROOT / ".env")
 import ee  # noqa: E402
 
-BASE = API_ROOT.parent / "docs" / "research" / "buckingham-canal"
-DATA = BASE / "data"
-
-REACHES = [  # id, km_start, km_end (dossier master table)
-    (1, 0, 2.0),
-    (2, 2.0, 5.1),
-    (3, 5.1, 8.5),
-    (4, 8.5, 14.3),
-    (5, 14.3, 16.9),
-    (6, 16.9, 19.2),
-    (7, 19.2, 20.5),
-    (8, 20.5, 23.3),
-    (9, 23.3, 27.2),
-    (10, 27.2, 29.1),
-    (11, 29.1, 32.0),
-    (12, 32.0, 38.5),
-    (13, 38.5, 44.3),
-    (14, 44.3, 51.7),
-    (15, 51.7, 54.4),
-    (16, 54.4, 62.2),
-    (17, 62.2, 73.3),
-    (18, 73.3, 74.5),
-]
-MOUTHS = {
-    "ennore-creek": (80.3290, 13.2260),
-    "cooum": (80.2910, 13.0700),
-    "adyar": (80.2775, 13.0125),
-    "muttukadu-kovalam": (80.2540, 12.7910),
-}
-NDVI_VEG = 0.35
+REPO = API_ROOT.parent
 
 
 def init_ee():
@@ -68,19 +44,19 @@ def init_ee():
     ee.Initialize(creds, project=os.environ.get("GEE_CLOUD_PROJECT"))
 
 
-def reach_lines():
-    pts = json.loads((DATA / "centerline.geojson").read_text())["features"][0][
+def reach_lines(data: Path, reaches_km):
+    pts = json.loads((data / "centerline.geojson").read_text())["features"][0][
         "geometry"
     ]["coordinates"]
     out = []
-    for rid, a, b in REACHES:
+    for rid, a, b in reaches_km:
         seg = pts[int(a * 10) : int(b * 10) + 1]
         if len(seg) >= 2:
             out.append((rid, ee.Geometry.LineString(seg)))
     return out
 
 
-def built_edge(lines):
+def built_edge(data: Path, lines):
     fc = ee.FeatureCollection("GOOGLE/Research/open-buildings/v3/polygons")
     rows = []
     for rid, line in lines:
@@ -95,13 +71,13 @@ def built_edge(lines):
             row[f"rooftop_m2_{dist}m"] = round(float(d["area"] or 0))
         rows.append(row)
         print(f"built-edge reach {rid}: {row}", flush=True)
-    with open(DATA / "built-edge.csv", "w", newline="") as f:
+    with open(data / "built-edge.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
 
 
-def veg_calendar(lines):
+def veg_calendar(data: Path, lines, cal, ndvi_veg):
     def mask(img):
         scl = img.select("SCL")
         good = (
@@ -118,13 +94,13 @@ def veg_calendar(lines):
         .map(mask)
     )
     rows = []
-    for year in range(2019, 2027):
+    for year in range(cal["start_year"], cal["end_year"] + 1):
         for month in range(1, 13):
-            if year == 2026 and month > 8:
+            if year == cal["end_year"] and month > cal["end_month"]:
                 break
             start = ee.Date.fromYMD(year, month, 1)
             m = col.filterDate(start, start.advance(1, "month")).median()
-            veg = m.normalizedDifference(["B8", "B4"]).gt(NDVI_VEG)
+            veg = m.normalizedDifference(["B8", "B4"]).gt(ndvi_veg)
             stats = (
                 veg.rename("veg").reduceRegions(zones, ee.Reducer.mean(), 10).getInfo()
             )
@@ -141,16 +117,16 @@ def veg_calendar(lines):
                     }
                 )
             print(f"veg calendar {year}-{month:02d}", flush=True)
-    with open(DATA / "vegetation-calendar.csv", "w", newline="") as f:
+    with open(data / "vegetation-calendar.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["year", "month", "reach_id", "veg_frac"])
         w.writeheader()
         w.writerows(rows)
 
 
-def mouth_climatology():
+def mouth_climatology(data: Path, mouths):
     hist = ee.ImageCollection("JRC/GSW1_4/MonthlyHistory")
     rows = []
-    for name, (lon, lat) in MOUTHS.items():
+    for name, (lon, lat) in mouths.items():
         pt = ee.Geometry.Point([lon, lat]).buffer(120)
 
         def per_img(img):
@@ -183,19 +159,28 @@ def mouth_climatology():
                 }
             )
         print(f"mouth {name} done", flush=True)
-    with open(DATA / "mouth-climatology.csv", "w", newline="") as f:
+    with open(data / "mouth-climatology.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["mouth", "month", "n_years", "share_open"])
         w.writeheader()
         w.writerows(rows)
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--waterway", required=True)
+    args = ap.parse_args()
+    cfg = json.loads(
+        (REPO / "scripts" / "waterways" / f"{args.waterway}.json").read_text()
+    )
+    data = REPO / cfg["research_dir"] / "data"
+    reaches_km = [tuple(r) for r in cfg["reaches_km"]]
+
     init_ee()
-    lines = reach_lines()
+    lines = reach_lines(data, reaches_km)
     print(f"{len(lines)} reach geometries")
-    built_edge(lines)
-    mouth_climatology()
-    veg_calendar(lines)
+    built_edge(data, lines)
+    mouth_climatology(data, cfg["mouths"])
+    veg_calendar(data, lines, cfg["veg_calendar"], cfg["satellite"]["ndvi_veg"])
     print("all insights written")
 
 

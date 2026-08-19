@@ -29,12 +29,6 @@ import { WidthProfileChart } from "./width-profile-chart";
  */
 
 const CHAPTER_BODY: Record<string, string> = {
-  open:
-    "This page walks the canal end to end, north to south, the way the " +
-    "water does. Everything on it is measured or cited: widths from 373 " +
-    "transects, the satellite record from this summer, and the paper " +
-    "trail from the government's own documents. Click any number for its " +
-    "source.",
   ennore:
     "The canal enters Chennai through its heaviest industry: two power " +
     "stations, a refinery belt, a port. The consent regime has steadily " +
@@ -43,7 +37,7 @@ const CHAPTER_BODY: Record<string, string> = {
     "measurement alongside the regulator's is how such questions get " +
     "answered quickly.",
   squeeze:
-    "Through the city the canal threads under the MRTS railway, routed " +
+    "Through the city the canal runs under the MRTS railway, routed " +
     "along it in the 1980s after a Planning Commission working group " +
     "found no other corridor economically available. The reach now holds " +
     "the alignment's narrowest water, and therefore the clearest case " +
@@ -51,8 +45,8 @@ const CHAPTER_BODY: Record<string, string> = {
   okkiyam:
     "South Chennai drains through one channel into this canal; the marsh " +
     "behind it breathes with the tide through the same gate. CMRL has " +
-    "invested in widening the vent-way at this crossing, and 2026 field " +
-    "reports tracked a construction-phase constriction alongside - the " +
+    "invested in widening the water opening at this crossing, and 2026 field " +
+    "reports tracked a construction-phase narrowing alongside - the " +
     "kind of change a live baseline registers as it happens.",
   estuary:
     "Below the city the canal widens into backwaters the tide still " +
@@ -64,14 +58,14 @@ const CHAPTER_BODY: Record<string, string> = {
     "The last stretch is the canal at its most complete: banks " +
     "un-encroached (though unprotected), no structures for eleven " +
     "kilometres, a channel running green with vegetation. It is the " +
-    "least altered water on the alignment, and the readiest canvas for " +
-    "the restoration the current programmes envision.",
+    "least altered water on the alignment, and the easiest place to begin " +
+    "the restoration the current programmes plan.",
   paper:
     "The canal's record shows sustained intent: a national-waterway " +
     "designation, a High Court mandate, detailed project reports, an " +
     "umbrella sanction for the three waterways, and now the Urban " +
     "Challenge Fund window with a water-metro study in procurement. " +
-    "Seventeen years of groundwork have converged; below is that record, " +
+    "Seventeen years of groundwork have come together; below is that record, " +
     "dated and sourced.",
   pilot:
     "Neer Vazhvu built this page from public records and open satellites; " +
@@ -79,7 +73,7 @@ const CHAPTER_BODY: Record<string, string> = {
     "and standard: levels and flow at the reaches that decide floods, " +
     "dissolved oxygen where the monthly record stopped in 2023, the state " +
     "of the mouths through the seasons, a boat-run depth profile - the " +
-    "first since 2014 - and ground-truth under the vegetation the " +
+    "first since 2014 - and field checks under the vegetation the " +
     "satellite flags. This is the measurement layer Neer Vazhvu proposes " +
     "to operate alongside the institutions doing the restoration; the " +
     "page you are reading is its first deliverable.",
@@ -158,8 +152,8 @@ function ChapterVisual({
             "Water level and flow at the reaches that decide floods",
             "Dissolved oxygen, resuming the monthly record",
             "Mouth state at Ennore, Adyar and Muttukadu, continuously",
-            "A boat-run bathymetry transect: the first depth profile since 2014",
-            "Ground-truth on the vegetation the satellite flags",
+            "A boat-run depth survey: the first since 2014",
+            "Field checks on the vegetation the satellite flags",
           ].map((x) => (
             <li key={x} className="flex gap-2">
               <span aria-hidden className="text-primary">■</span>
