@@ -141,20 +141,40 @@ def write(path: Path, payload: dict, compact: bool = False) -> None:
 # ---------------------------------------------------------------- groundwater
 
 
-def build_groundwater(drop: Path, root: Path) -> int:
-    """India-WRIS Gujarat exports -> Surat point stations.
+# Sentinels and the plausibility ceiling, matching
+# neer-vazhvu-api/scripts/build_cgwb_stations.py. Values that are placeholders
+# rather than measurements, and a depth beyond which a reading is a data error.
+GW_SENTINELS = {99.0, 999.0, 9999.0, -999.0}
+MAX_PLAUSIBLE_DEPTH_M = 120.0
 
-    Rendered as click-through markers rather than an interpolated surface:
-    about 65 stations across a 462 km2 city and its district is nowhere near
-    dense enough to manufacture per-zone precision, which is the same call
-    Madurai made at 4 stations.
+
+def build_groundwater(drop: Path, root: Path) -> int:
+    """India-WRIS Gujarat exports -> Surat point stations, in the CANONICAL shape.
+
+    The output must match what the shared groundwater map reads:
+    `readings: [{year, month, depth_m_bgl}]` and `block` on the well. An
+    earlier revision of this function invented `{date, level_m}` and the map
+    crashed on `depth.toFixed(2)` with depth undefined - the second time on
+    this branch that inventing a field name broke a page.
+
+    SIGN CONVENTION IS PER STATION, and the rule here is lifted from
+    build_cgwb_stations.py rather than re-derived: WRIS mixes conventions
+    inside one district, with manual wells reporting depth below ground as
+    POSITIVE and telemetric piezometers as NEGATIVE. A station whose readings
+    are overwhelmingly negative (>90%) is flipped; mixed-sign stations are left
+    alone and their out-of-range values fall away against the ceiling.
+
+    The CSV drop is used rather than the live API on purpose: it reaches back
+    to 1970 where the API window starts at 2010, and the API timed out when
+    tried. Same publisher, more history.
     """
     gw = drop / "Groundwater"
     if not gw.is_dir():
         print("  SKIP groundwater: drop folder absent")
         return 0
 
-    stations: dict[str, dict] = {}
+    raw: dict[str, list] = defaultdict(list)
+    meta: dict[str, dict] = {}
     files_meta = []
 
     for csv_path in sorted(gw.glob("*.csv")):
@@ -171,37 +191,36 @@ def build_groundwater(drop: Path, root: Path) -> int:
             for row in reader:
                 if (row.get("District") or "").strip().upper() != "SURAT":
                     continue
+                name = (row.get("Station") or "").strip()
+                iso = _iso_date((row.get("Data Acquisition Time") or "").strip())
+                if not name or not iso:
+                    continue
                 try:
+                    value = float(row[value_col])
                     lat = float(row["Latitude"])
                     lng = float(row["Longitude"])
                 except (TypeError, ValueError, KeyError):
                     continue
-                name = (row.get("Station") or "").strip()
-                if not name:
+                if value in GW_SENTINELS:
                     continue
-                raw_dt = (row.get("Data Acquisition Time") or "").strip()
-                iso = _iso_date(raw_dt)
-                if not iso:
-                    continue
-                try:
-                    value = float(row[value_col])
-                except (TypeError, ValueError):
-                    continue
-                st = stations.setdefault(
+                raw[name].append((iso, value))
+                meta.setdefault(
                     name,
                     {
-                        "name": name,
-                        "station_code": name,
-                        "tehsil": (row.get("Tehsil") or "").strip() or None,
                         "lat": round(lat, 5),
                         "lng": round(lng, 5),
+                        # The WRIS export leaves Block as '-' for every Surat
+                        # row, so tehsil is the finest real unit available and
+                        # `block` carries it rather than a literal dash.
+                        "block": (row.get("Tehsil") or "").strip() or None,
+                        "tehsil": (row.get("Tehsil") or "").strip() or None,
+                        "district": "Surat",
                         "agency": (row.get("Agency") or "").strip() or None,
-                        "readings": [],
+                        "acquisition": kind,
                     },
                 )
-                st["readings"].append({"date": iso, "level_m": value, "series": kind})
-                dates.append(iso)
                 rows += 1
+                dates.append(iso)
         if rows:
             files_meta.append(
                 {
@@ -214,15 +233,57 @@ def build_groundwater(drop: Path, root: Path) -> int:
                 }
             )
 
-    if not stations:
+    if not raw:
         print("  SKIP groundwater: no Surat rows found")
         return 0
 
-    for st in stations.values():
-        st["readings"].sort(key=lambda r: r["date"])
+    flipped: list[str] = []
+    wells = []
+    for name, obs in raw.items():
+        vals = [v for _, v in obs]
+        flip = sum(1 for v in vals if v < 0) > 0.9 * len(vals)
+        if flip:
+            flipped.append(name)
+        monthly: dict[tuple[int, int], list[float]] = defaultdict(list)
+        for iso, v in obs:
+            depth = -v if flip else v
+            if depth < 0 or depth > MAX_PLAUSIBLE_DEPTH_M:
+                continue
+            y, m = int(iso[:4]), int(iso[5:7])
+            monthly[(y, m)].append(depth)
+        if not monthly:
+            continue
+        readings = [
+            {
+                "year": y,
+                "month": m,
+                "depth_m_bgl": round(sum(v) / len(v), 2),
+                "n_obs": len(v),
+            }
+            for (y, m), v in sorted(monthly.items())
+        ]
+        depths = [r["depth_m_bgl"] for r in readings]
+        wells.append(
+            {
+                "name": name,
+                "station_code": name,
+                **meta[name],
+                "sign_convention": "negative-down (flipped)"
+                if flip
+                else "positive-down",
+                "readings": readings,
+                "depth_min_m_bgl": round(min(depths), 2),
+                "depth_max_m_bgl": round(max(depths), 2),
+                "depth_latest_m_bgl": depths[-1],
+                "latest_reading": f"{readings[-1]['year']}-{readings[-1]['month']:02d}",
+                "raw_observations": len(obs),
+            }
+        )
+    wells.sort(key=lambda w: w["name"])
 
-    wells = sorted(stations.values(), key=lambda s: s["name"])
-    all_dates = [r["date"] for s in wells for r in s["readings"]]
+    total_readings = sum(len(w["readings"]) for w in wells)
+    first = min(f["actual_coverage"]["from"] for f in files_meta)
+    last = max(f["actual_coverage"]["to"] for f in files_meta)
 
     payload = {
         **envelope(
@@ -230,15 +291,21 @@ def build_groundwater(drop: Path, root: Path) -> int:
             registry_sources(root, ["wris-groundwater-gujarat"]),
             "manual",
             "India-WRIS Gujarat groundwater-level exports filtered to District == SURAT, "
-            "grouped by station. Coverage is derived from the readings, not from the "
-            "export filenames, which misstate their own ranges.",
+            "grouped by station and averaged per month into the canonical "
+            "{year, month, depth_m_bgl} shape. Coverage is derived from the readings, not "
+            "from the export filenames, which misstate their own ranges.",
             produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
+            note=(
+                f"{len(flipped)} of {len(wells)} stations report depth as negative and were "
+                "flipped per the rule in build_cgwb_stations.py; the convention is recorded "
+                "per well rather than applied globally."
+            ),
         ),
         "_note": (
-            "Point stations, not an interpolated surface. About 65 stations across the "
-            "city and its district cannot support per-zone depth precision, so the "
-            "groundwater page renders these as click-through markers and leaves the "
-            "depth and risk choropleths off."
+            "Point stations, not an interpolated surface. About 90 stations across the city "
+            "and its district cannot support per-zone depth precision, so the groundwater "
+            "page renders these as click-through markers and leaves the depth and risk "
+            "choropleths off."
         ),
         "district": "Surat",
         "well_type": "Observation wells (manual quarterly and telemetry)",
@@ -246,22 +313,19 @@ def build_groundwater(drop: Path, root: Path) -> int:
         "source_label": "India-WRIS (National Water Informatics Centre)",
         "source_url": "https://indiawris.gov.in/Dataset/Ground%20Water%20Level",
         "coverage": {
-            "from": min(all_dates),
-            "to": max(all_dates),
+            "from": first,
+            "to": last,
             "stations": len(wells),
-            "readings": len(all_dates),
+            "readings": total_readings,
         },
-        "_sign_convention_note": (
-            "Telemetry values arrive with mixed sign (both above and below datum) in the "
-            "source export. Consumers must apply the per-station sign rule before "
-            "rendering a depth; raw values are carried here unaltered so the correction "
-            "stays visible rather than baked in."
-        ),
         "_source_files": files_meta,
         "wells": wells,
     }
     write(root / "public/data/surat-cgwb-stations.json", payload)
-    print(f"    {len(wells)} stations, {len(all_dates):,} readings")
+    print(
+        f"    {len(wells)} stations, {total_readings:,} monthly readings, "
+        f"{len(flipped)} sign-flipped"
+    )
     return len(wells)
 
 

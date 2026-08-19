@@ -60,6 +60,15 @@ CTX.verify_mode = ssl.CERT_NONE
 START, END = "2010-01-01", date.today().isoformat()
 
 CITIES = {
+    "surat": {
+        "state": "GUJARAT",
+        "core_districts": ["SURAT"],
+        # Surat has no metropolitan grouping to widen into; the district IS the
+        # scope the groundwater surface claims, and it already reaches past the
+        # municipal line to Olpad, Choryasi and the Hazira coast where the
+        # salinity story lives.
+        "kma_districts": ["SURAT"],
+    },
     "kolkata": {
         "state": "WEST BENGAL",
         # The city's own district first; the rest of KMA gives the regional

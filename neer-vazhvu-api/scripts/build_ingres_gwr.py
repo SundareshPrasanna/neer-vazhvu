@@ -81,6 +81,9 @@ STATE_UUIDS = {
     "WESTBENGAL": "68ecabb4-0ea5-4909-b8e3-20bbaa7b91e8",
     "HARYANA": "648a95f6-9249-4c92-8ae4-a9d93eb7c898",
     "MAHARASHTRA": "e7b3f02d-2497-4bcd-9e20-baa4b621822b",
+    # Gujarat's came from the COUNTRY-level call this file recommends above,
+    # not from either bundle table.
+    "GUJARAT": "8fd29251-6e20-4f33-9a96-f47cab45eb13",
 }
 
 # Scope kinds must agree with schemas/nvdm/scopes.json or the artifact fails
@@ -88,6 +91,30 @@ STATE_UUIDS = {
 SCOPE_KIND = {"kolkata": "region"}
 
 CITIES = {
+    "surat": {
+        "state": "GUJARAT",
+        "state_label": "Gujarat",
+        "source_id": "ingres-groundwater-gujarat",
+        # District spellings are enumerated empirically per the playbook, not
+        # assumed to match India-WRIS. Surat's own district plus the coastal
+        # and industrial neighbours the city's water actually reaches: Tapi
+        # holds Ukai, Navsari and Bharuch share the estuarine belt.
+        "districts": {
+            "SURAT": "Surat",
+            "TAPI": "Tapi",
+            "NAVSARI": "Navsari",
+            "BHARUCH": "Bharuch",
+        },
+        "notes": [
+            "Surat's coastal talukas sit on the same saline belt that made Kolkata "
+            "district unassessable on extraction. Any unit returned as 'salinity' is a "
+            "poor-quality category rather than a stage-of-extraction band and carries no "
+            "extraction figures; that is a finding, not a missing file.",
+            "Tapi district is included because Ukai dam - the control on Surat's entire "
+            "supply and its flood risk - sits there, so the recharge picture upstream is "
+            "part of the city's story rather than a neighbouring curiosity.",
+        ],
+    },
     "kolkata": {
         "state": "WESTBENGAL",
         "state_label": "West Bengal",

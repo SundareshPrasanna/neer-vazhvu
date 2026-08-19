@@ -172,8 +172,17 @@ export const SURAT: CityConfig = {
   ],
 
   groundwaterViews: {
-    // Block assessment comes from IN-GRES, which covers Surat district's
-    // talukas. Turned on once the ingres artifact lands.
+    // ON, backed by IN-GRES: four districts (Surat, Tapi, Navsari, Bharuch)
+    // across four assessment years. Note the granularity honestly - these are
+    // DISTRICTS, not the taluka blocks Chennai shows, which is the same
+    // coarseness Kolkata ships. Tapi is in scope because Ukai sits there, so
+    // the recharge picture upstream belongs to Surat's story.
+    //
+    // This was briefly set true with nothing behind it, which titled the page
+    // "CGWB block exploitation (GWR)" and drew an exploitation legend - in
+    // percent - over markers coloured by DEPTH in metres. Two quantities under
+    // one key. The rule at the top of GroundwaterViewsConfig is
+    // honest-data-or-off; that is what breaking it looks like.
     exploitation: true,
     // OFF: about 65 stations across a 462 km2 city plus its district. IDW
     // interpolation to zone level would manufacture precision the network
@@ -183,6 +192,8 @@ export const SURAT: CityConfig = {
     // The India-WRIS point network rendered as click-through markers, which is
     // the honest way to show a sparse but deep record (1970-2026).
     cgwbStations: true,
+    gapNote:
+      "Surat's groundwater assessment is at DISTRICT level, not the taluka blocks Chennai shows - four districts across four assessment years, from IN-GRES. Per-well depth from the 94 India-WRIS stations is real and is drawn as points; a per-zone depth surface interpolated from those points across a 462 sq km city and its district would not be, so that view stays off.",
   },
 
   // No dynamic fact pipeline yet: Surat ships the static snapshot.

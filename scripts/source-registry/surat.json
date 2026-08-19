@@ -223,6 +223,25 @@
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/extract_gemi_cetp_compliance.py on a new GEMI edition",
       "notes": "Discharge Point Monitoring of CETPs of Pandesara and Sachin, Surat District, monitoring period April 2022 to March 2023. Twelve monthly grab samples per plant analysed in GEMI's own lab against the discharge norms in each plant's GPCB Consolidated Consent & Authorization - a compliance record rather than a dashboard. USE THE PER-SAMPLE TABLES (6 and 9) ONLY: the report's summary tables (5 and 8) disagree with them by ~1000x on total chromium and nickel, almost certainly ug/L mislabelled as mg/L. Stamped 'all rights reserved', so figures are extracted and the document is cited at its own URL, never mirrored. Covers only Pandesara and Sachin; Palsana, Kadodara and the Eco Textile Park are not in this edition."
+    },
+    {
+      "id": "ingres-groundwater-gujarat",
+      "scope": "surat",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-surat.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city surat",
+      "notes": "Dynamic Ground Water Resources for Surat, Tapi, Navsari and Bharuch districts across four assessment years. IN-GRES is ONE upstream serving every state; this entry is the Gujarat cut. Gujarat's state UUID was taken from the COUNTRY-level API call rather than the Angular bundle's GIS-layer table, which is incomplete and carries a second same-shaped table in a different namespace that returns well-formed empty results. Tapi district is in scope because Ukai - the control on Surat's supply and its flood risk - sits there. Watch for units returned as 'salinity': that is a poor-quality category, not a stage-of-extraction band, and such units carry no extraction figures at all."
     }
   ]
 }

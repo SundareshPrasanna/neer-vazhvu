@@ -429,6 +429,12 @@ export function WardMap({
             const latest = sorted[sorted.length - 1];
             if (!latest) return null;
             const depth = latest.depth_m_bgl;
+            // A reading that carries no usable depth is SKIPPED, not rendered
+            // with a crash. `depth.toFixed(2)` took the whole groundwater page
+            // down when a producer emitted readings in a shape this map does
+            // not read; the artifact was wrong, but one bad well should cost
+            // that well, not the page.
+            if (typeof depth !== "number" || Number.isNaN(depth)) return null;
             const isSelected = selectedCgwbStationName === s.name;
             const fillColor = getGroundwaterColor(depth);
             return (
