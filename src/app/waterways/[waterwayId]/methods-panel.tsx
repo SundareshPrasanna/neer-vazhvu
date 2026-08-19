@@ -44,30 +44,30 @@ export function MethodsPanel({ claimCount }: { claimCount: number }) {
               Every 200 m we cast a perpendicular line and measure the
               water-surface polygon traced by OpenStreetMap contributors
               (edits 2018&ndash;Mar 2026, most since 2022). This is water
-              surface at the tracing moment &mdash; not the canal&apos;s
-              recorded land, and it moves with season. Individual transects:
+              surface at the tracing moment, not the canal&apos;s recorded
+              land, and it moves with season. Individual transects:
               treat as &plusmn;15&ndash;25% on narrow reaches; per-reach
               medians are robust. Each reach carries a confidence tier:
               A = &ge;70% measured, tracing mostly 2021+, adjacent-transect
               jitter &le;25%; B = measured but sparse or older tracing;
               C = not channel-measurable (creek complexes, junctions).
               Wide spreads on reaches that open into backwaters are real
-              variation, not error &mdash; jitter is the noise measure.
+              variation, not error; jitter is the noise measure.
             </p>
           </M>
           <M title="Satellite metrics (Sentinel-2, 10 m pixels)">
             <p>
               Cloud-masked median composites: Jan&ndash;Apr and
               Jun&ndash;Aug 2026. Vegetation = NDVI &gt; 0.35; open water =
-              NDWI &gt; 0. <strong>Vegetation on the water</strong> is
-              computed strictly inside the mapped water polygons (floating
-              plus emergent growth); <strong>corridor</strong> figures also
-              include ~8 m of bank each side and read higher. Threshold
+              NDWI &gt; 0. <strong>Vegetation on the water</strong>{" "}
+              is computed strictly inside the mapped water polygons (floating
+              plus emergent growth); <strong>corridor</strong>{" "}
+              figures also include ~8 m of bank each side and read higher. Threshold
               choice moves fractions by roughly &plusmn;5&ndash;10 percentage
               points; 10 m pixels undercount water in channels narrower than
               ~30 m. The suspended-sediment reading (NDTI) is a relative
               index over open water, not a mg/L measurement. Site images are
-              clearest-pixel composites; segment images are medians &mdash;
+              clearest-pixel composites; segment images are medians, and
               each is dated on the image.
             </p>
           </M>
@@ -79,18 +79,18 @@ export function MethodsPanel({ claimCount }: { claimCount: number }) {
               the canal&apos;s recorded boundary; the confidence filter trims
               small structures; three years of construction post-date the
               data. Counts are robust to these; a &quot;none mapped&quot;
-              reads exactly that &mdash; nothing in the dataset, not proof
-              of nothing on the ground.
+              reads exactly that: nothing in the dataset, not proof of
+              nothing on the ground.
             </p>
           </M>
           <M title="Cited facts and their flags">
             <p>
               {claimCount} claims power this page, each carrying source,
-              date and a flag: <em>verified</em> = checked against the cited
+              date and a flag: <em>verified</em>{" "}= checked against the cited
               document (many held as local primary copies: IWAI 2014, CAG
               2017 and 2020, the Madras HC order, TNPCB consent orders,
-              CPCB monitoring PDFs); <em>our analysis</em> = derived by
-              Neer Vazhvu with the method stated; <em>as asserted</em> = a
+              CPCB monitoring PDFs); <em>our analysis</em>{" "}= derived by
+              Neer Vazhvu with the method stated; <em>as asserted</em>{" "}= a
               named party&apos;s claim, reported, not endorsed. Corrected
               figures are barred from the page by a build-time gate, and
               corrections are recorded, never silently swapped.
@@ -98,7 +98,7 @@ export function MethodsPanel({ claimCount }: { claimCount: number }) {
           </M>
           <M title="What this page deliberately does not compute">
             <p>
-              Depth, silt volume and flow &mdash; no satellite can measure
+              Depth, silt volume and flow: no satellite can measure
               them in water this turbid and narrow (the last public depth
               survey is from 2014), and we would rather show a gap than an
               estimate without an instrument. They are the first work of the
