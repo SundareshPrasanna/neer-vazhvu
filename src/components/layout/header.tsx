@@ -9,6 +9,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { LanguageToggle } from "./language-toggle";
 import { CitySwitcher } from "./city-switcher";
 import { parsePath, rewriteNavHref, isFeatureSupportedForCity } from "@/lib/cities/routing";
+import { waterwayNavHref } from "@/lib/waterways";
 
 const TOP_NAV = [
   { href: "/origins", key: "nav.story" },
@@ -167,6 +168,18 @@ function ExploreDropdown({
               </Link>
             );
           })}
+          {/* Registry-driven, no city hardcoding: appears only for cities
+              with a visible waterway; new waterways (Adyar, Cooum, ...)
+              join by manifest, never by editing this list. */}
+          {waterwayNavHref(cityId) && (
+            <Link
+              href={waterwayNavHref(cityId)!}
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2.5 text-sm transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              {t("nav.waterways")}
+            </Link>
+          )}
         </div>
       )}
     </div>
@@ -220,11 +233,12 @@ function SiteHeader() {
       (i) => rewriteNavHref(i.href, cityId) === pathname,
     );
 
-  // The root path "/" is the project landing page, not a city. Render a
-  // minimal header there: brand + city switcher + toggles, with no
-  // per-city feature nav (Dashboard/Groundwater/... only make sense inside
-  // a city).
-  if (pathname === "/") {
+  // The root path "/" is the project landing page, not a city, and
+  // /waterways/* pages span city boundaries. Render a minimal header on
+  // both: brand + theme toggle, with no per-city feature nav
+  // (Dashboard/Groundwater/... only make sense inside a city, and
+  // parsePath would silently resolve these routes to Chennai).
+  if (pathname === "/" || pathname.startsWith("/waterways")) {
     return (
       <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -407,6 +421,16 @@ function SiteHeader() {
                     </Link>
                   );
                 })}
+                {/* Same registry-driven entry as the desktop dropdown. */}
+                {waterwayNavHref(cityId) && (
+                  <Link
+                    href={waterwayNavHref(cityId)!}
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-2.5 rounded-md text-sm transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    {t("nav.waterways")}
+                  </Link>
+                )}
               </div>
             )}
 

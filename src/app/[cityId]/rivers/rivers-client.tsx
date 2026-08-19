@@ -6,6 +6,7 @@ import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
 import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
+import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { measureWorst } from "@/lib/rivers/measure";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
@@ -494,6 +495,7 @@ export default function RiversClient({
         <span className="font-semibold text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">
           {cityDisplayName} - {scopeLabel}
         </span>
+        <WaterwayLinks cityId={cityId} />
         {showHeaderStats && (
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers

@@ -10,10 +10,10 @@ This exists because a platform that treats data gaps as first-class has to be ab
 | Kind | Entries |
 |---|---|
 | Suppressed freshness checks | 1 |
-| Artifacts with no registered upstream | 83 |
+| Artifacts with no registered upstream | 84 |
 | Routes a city deliberately does not ship | 38 |
 | Absences the product states on the page | 21 |
-| **Total** | **143** |
+| **Total** | **144** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -115,6 +115,7 @@ Shipped data with no Headwaters upstream to watch for new editions. Usually corr
 | platform | public/data/restoration-priority.json | derived: scored from water-bodies + river layers already covered |
 | platform | public/data/rich-bodies | covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a |
 | platform | public/data/ward-profiles.json | derived join over covered ward-level layers |
+| platform | public/data/waterways | covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py) |
 | platform | public/geojson/rich-bodies | covered by the platform-scope GEE entries |
 
 ## Routes a city deliberately does not ship
