@@ -144,6 +144,10 @@ export interface WaterwayManifest {
   zoom: number;
   /** Chainage direction note rendered in the explorer. */
   chainageNote: string;
+  /** Cities whose nav and rivers surfaces link this waterway. Every
+   *  surface derives from the registry through this field - adding a
+   *  waterway (Adyar, Cooum, ...) must never require touching nav code. */
+  cityIds: string[];
   /** Preview gate: page 404s in production unless enabled. */
   enabled: boolean;
 }

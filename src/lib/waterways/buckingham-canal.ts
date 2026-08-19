@@ -25,5 +25,6 @@ export const BUCKINGHAM_CANAL: WaterwayManifest = {
   chainageNote:
     "Chainage runs north to south: km 0 at the Ennore creek crossing, " +
     "km 74.5 at Mahabalipuram.",
+  cityIds: ["chennai"],
   enabled: true,
 };

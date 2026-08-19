@@ -115,7 +115,7 @@ export function ExplorerView({
       {/* Reach rail */}
       <nav
         aria-label="Reaches"
-        className="flex gap-2 overflow-x-auto md:sticky md:top-16 md:block md:max-h-[80vh] md:space-y-1 md:self-start md:overflow-y-auto md:overflow-x-visible"
+        className="flex gap-2 overflow-x-auto md:sticky md:top-36 md:block md:max-h-[70vh] md:space-y-1 md:self-start md:overflow-y-auto md:overflow-x-visible"
       >
         {reaches.map((r) => (
           <button
@@ -242,7 +242,7 @@ export function ExplorerView({
               {sel.photos.map((ph) => (
                 <figure key={ph.file}>
                   <Image
-                    src={`/data/waterways/${manifest.waterwayId}/photos/${ph.file}`}
+                    src={`/images/waterways/${manifest.waterwayId}/photos/${ph.file}`}
                     alt={`Ground photograph, ${sel.name} (${ph.credit})`}
                     width={900}
                     height={620}
@@ -268,7 +268,7 @@ export function ExplorerView({
               {sel.chips.map((c) => (
                 <div key={c} className="relative">
                   <Image
-                    src={`/data/waterways/${manifest.waterwayId}/chips/${c}`}
+                    src={`/images/waterways/${manifest.waterwayId}/chips/${c}`}
                     alt={`Satellite view, ${sel.name} (${c.replace(".jpg", "")})`}
                     width={560}
                     height={420}

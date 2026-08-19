@@ -9,6 +9,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { LanguageToggle } from "./language-toggle";
 import { CitySwitcher } from "./city-switcher";
 import { parsePath, rewriteNavHref, isFeatureSupportedForCity } from "@/lib/cities/routing";
+import { waterwayNavHref } from "@/lib/waterways";
 
 const TOP_NAV = [
   { href: "/origins", key: "nav.story" },
@@ -167,6 +168,18 @@ function ExploreDropdown({
               </Link>
             );
           })}
+          {/* Registry-driven, no city hardcoding: appears only for cities
+              with a visible waterway; new waterways (Adyar, Cooum, ...)
+              join by manifest, never by editing this list. */}
+          {waterwayNavHref(cityId) && (
+            <Link
+              href={waterwayNavHref(cityId)!}
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2.5 text-sm transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              {t("nav.waterways")}
+            </Link>
+          )}
         </div>
       )}
     </div>
@@ -408,6 +421,16 @@ function SiteHeader() {
                     </Link>
                   );
                 })}
+                {/* Same registry-driven entry as the desktop dropdown. */}
+                {waterwayNavHref(cityId) && (
+                  <Link
+                    href={waterwayNavHref(cityId)!}
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-2.5 rounded-md text-sm transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    {t("nav.waterways")}
+                  </Link>
+                )}
               </div>
             )}
 

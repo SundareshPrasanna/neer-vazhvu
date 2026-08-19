@@ -8,7 +8,8 @@ Inputs:
   docs/research/buckingham-canal/data/centerline.geojson
   docs/research/buckingham-canal/figures/chips/*.png
 
-Outputs (public/data/waterways/buckingham-canal/):
+Outputs (public/data/waterways/buckingham-canal/ - corpus-managed json;
+         imagery to public/images/waterways/buckingham-canal/):
   reaches.json      - 18 reaches: verdicts, facts (sourced), width stats,
                       per-km satellite metrics, transect strip, chips
   chapters.json     - the 8 story chapters with resolved reach refs
@@ -16,7 +17,7 @@ Outputs (public/data/waterways/buckingham-canal/):
   claims.json       - every rendered fact/stat with source+date+flag
   width-profile.json- full-chainage width series for the long-profile chart
   centerline.geojson- copy
-  chips/            - only the chips the page references
+  chips/ + photos/  - to public/images/ (outside the corpus trees)
 
 Companion gate: scripts/verify_waterway_buckingham.py (run after).
 """
@@ -33,7 +34,11 @@ from registry_license import registry_license  # noqa: E402
 RESEARCH = ROOT / "docs" / "research" / "buckingham-canal"
 OUT = ROOT / "public" / "data" / "waterways" / "buckingham-canal"
 OUT.mkdir(parents=True, exist_ok=True)
-(OUT / "chips").mkdir(exist_ok=True)
+# Imagery lives OUTSIDE the corpus-managed trees (the corpus is json/geojson
+# by contract and fetch-corpus.sh replaces public/data wholesale); the house
+# pattern is public/images/ (story imagery precedent).
+IMG = ROOT / "public" / "images" / "waterways" / "buckingham-canal"
+(IMG / "chips").mkdir(parents=True, exist_ok=True)
 
 CURATION = ROOT / "docs" / "waterways" / "buckingham-canal" / "waterway-curation.json"
 if not (RESEARCH / "data" / "widths.csv").exists():
@@ -261,11 +266,11 @@ profile = [{"km": float(w["chainage_km"]),
             "flag": w["flag"]} for w in widths]
 
 # ---------------- ground photos ----------------
-(OUT / "photos").mkdir(exist_ok=True)
+(IMG / "photos").mkdir(exist_ok=True)
 for ph in photos_meta:
     src = RESEARCH / "figures" / "photos" / ph["file"]
     if src.exists():
-        shutil.copy(src, OUT / "photos" / ph["file"])
+        shutil.copy(src, IMG / "photos" / ph["file"])
 
 # ---------------- chips ----------------
 used = sorted({c for r in cur["reaches"] for c in r["chips"]})
@@ -273,7 +278,7 @@ copied = 0
 for c in used:
     src = RESEARCH / "figures" / "chips" / c
     if src.exists():
-        shutil.copy(src, OUT / "chips" / c)
+        shutil.copy(src, IMG / "chips" / c)
         copied += 1
     else:
         print(f"WARN missing chip {c}")
@@ -406,7 +411,7 @@ centerline_doc = {"type": _cl["type"],
 (OUT / "centerline.geojson").write_text(json.dumps(centerline_doc))
 
 n_facts = sum(len(r["facts"]) for r in reaches_out)
-size_mb = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file()) / 1e6
+size_mb = sum(f.stat().st_size for d in (OUT, IMG) for f in d.rglob("*") if f.is_file()) / 1e6
 print(f"reaches: {len(reaches_out)}  chapters: {len(chapters_out)}  "
       f"facts: {n_facts}  claims: {len(claims)}  chips: {copied}  "
       f"total: {size_mb:.1f} MB")

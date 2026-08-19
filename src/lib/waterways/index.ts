@@ -30,3 +30,19 @@ export function tryGetWaterwayManifest(id: string): WaterwayManifest | null {
 export function listWaterways(): WaterwayManifest[] {
   return Object.values(REGISTRY).filter(isVisible);
 }
+
+/** Visible waterways a city's nav and rivers surfaces should link. */
+export function listWaterwaysForCity(cityId: string): WaterwayManifest[] {
+  return listWaterways().filter((m) => m.cityIds.includes(cityId));
+}
+
+/**
+ * Where a city's "Waterways" nav entry lands: straight at the page while
+ * the city has exactly one, the /waterways index once it has more. The
+ * entry itself never changes when Adyar or Cooum join the registry.
+ */
+export function waterwayNavHref(cityId: string): string | null {
+  const ws = listWaterwaysForCity(cityId);
+  if (ws.length === 0) return null;
+  return ws.length === 1 ? `/waterways/${ws[0].waterwayId}` : "/waterways";
+}

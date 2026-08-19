@@ -100,7 +100,7 @@ function ChapterVisual({
     <figure>
       <div className="relative">
         <Image
-          src={`/data/waterways/${manifest.waterwayId}/chips/${name}`}
+          src={`/images/waterways/${manifest.waterwayId}/chips/${name}`}
           alt={alt}
           width={1100}
           height={800}

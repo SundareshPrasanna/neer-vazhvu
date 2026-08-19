@@ -20,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "public" / "data" / "waterways" / "buckingham-canal"
+IMG = ROOT / "public" / "images" / "waterways" / "buckingham-canal"
 errors = []
 
 reaches = json.loads((OUT / "reaches.json").read_text())
@@ -67,13 +68,13 @@ if abs(rs[-1]["km"][1] - 74.5) > 0.11:
 
 for r in rs:
     for chip in r["chips"]:
-        if not (OUT / "chips" / chip).exists():
+        if not (IMG / "chips" / chip).exists():
             errors.append(f"reach {r['id']}: missing chip {chip}")
     for f in r["facts"]:
         if not f.get("claim_id"):
             errors.append(f"reach {r['id']}: fact without claim_id")
 
-size_mb = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file()) / 1e6
+size_mb = sum(f.stat().st_size for d in (OUT, IMG) for f in d.rglob("*") if f.is_file()) / 1e6
 if size_mb > 8.0:
     errors.append(f"data dir {size_mb:.1f} MB exceeds 8 MB budget")
 
