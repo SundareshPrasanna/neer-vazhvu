@@ -70,6 +70,15 @@ the government-voice rules apply at maximum strength.
   May 2026; the CCWW annual report (last edition 2022-23) frames as a
   series ready to be resumed, and the NWMP annuals as the long baseline.
   Monitoring-currency ranking per the canal pattern.
+- **C8 Facts-only voice (Sundaresh, 19 Aug 2026, preview round).** This
+  page is read by the government agencies it describes. Every rendered
+  editorial string - chapter titles and verdicts, reach verdicts, stat
+  and tile labels, ledger notes - states facts with attribution and
+  nothing else: no metaphor, no personification, no rhetorical framing,
+  no editorial adjectives. The causal structure stays (verdict-first,
+  progressive disclosure); the literary register goes. This supersedes
+  the journalism-voice house style wherever a surface is
+  government-facing.
 - **C7 Basin Bridge handoff.** The canal page and this page hand off to
   each other at the Cooum-canal junction (canal reach 6, km 16.9-19.2 of
   the canal chainage); shared sources are cited identically, never

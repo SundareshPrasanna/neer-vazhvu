@@ -16,15 +16,15 @@ export const COOUM: WaterwayManifest = {
   shortName: "Cooum",
   stateCode: "TN",
   description:
-    "Satharai to the Marina, 62.8 km, measured reach by reach: widths, " +
-    "satellite record, the live monthly pollution series, the consent " +
-    "register and the restoration programme's paper trail, every number " +
-    "with its source.",
+    "Satharai to the Bay of Bengal, 62.8 km, measured reach by reach: " +
+    "widths, satellite record, the monthly water-quality series, the " +
+    "consent register and the restoration programme's documents, every " +
+    "number with its source.",
   center: [13.085, 80.065],
   zoom: 11,
   chainageNote:
-    "Chainage runs west to east, the water's own direction: km 0 at the " +
-    "origin junction near Satharai, km 62.8 at the Bay of Bengal mouth.",
+    "Chainage runs west to east: km 0 at the origin junction near " +
+    "Satharai, km 62.8 at the Bay of Bengal mouth.",
   cityIds: ["chennai"],
   enabled: false,
 };

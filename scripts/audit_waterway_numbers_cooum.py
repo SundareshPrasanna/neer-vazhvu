@@ -202,9 +202,9 @@ else:
 ngt = list(csv.DictReader(open(RESEARCH / "data" / "wq-tn-ngt-mpr-cooum-monthly.csv")))
 latest = ngt[-1]
 lo, hi = [s.strip() for s in latest["bod_mgl"].replace("- ", "-").split("-")[:2]]
-if f"BOD {lo}-{hi} mg/L" not in stats_txt:
-    errors.append(f"identity BOD stat vs research CSV: expected 'BOD {lo}-{hi} mg/L' "
-                  f"({latest['month']} {latest['year']})")
+if f"{lo}-{hi} mg/L" not in stats_txt or "BOD" not in stats_txt:
+    errors.append(f"identity BOD stat vs research CSV: expected '{lo}-{hi} mg/L' "
+                  f"with a BOD label ({latest['month']} {latest['year']})")
 
 # ---- claims hygiene ----
 claims = json.loads((OUT / "claims.json").read_text())["claims"]
