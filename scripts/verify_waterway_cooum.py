@@ -54,6 +54,14 @@ CUMEC = re.compile(r"(19,?500|22,?000)[^.]{0,40}(m3/s|m³|cumec|cubic metre)")
 if CUMEC.search(all_text):
     errors.append("banned: 19,500/22,000 rendered as cubic metres per second")
 
+# 12,000 cusecs belongs to Okkiyam Maduvu (DIPR PR 446, 27.07.2026), not the
+# Cooum; it may appear only alongside that attribution.
+for m in re.finditer(r"12,?000\s*cusec", all_text):
+    ctx = all_text[max(0, m.start() - 200):m.end() + 200]
+    if "Okkiyam" not in ctx:
+        errors.append("banned: 12,000 cusecs as a Cooum figure "
+                      "(it is Okkiyam Maduvu's)")
+
 for c in claims:
     blob = c["text"] + " " + c["source"]
     if "345 mg" in blob and "2021" not in blob:
