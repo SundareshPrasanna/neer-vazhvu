@@ -165,7 +165,8 @@ def extract_year(pdf_path: Path, wanted: dict) -> dict[str, dict] | None:
         # Column order as printed by CPCB: temperature, dissolved oxygen, pH,
         # conductivity, BOD, nitrate, then the coliform counts.
         found[code] = {
-            "temperature_c": pair(vals, 0),  # noqa: platform names below
+            # Field names below are the SHARED rivers client's, not CPCB's.
+            "temperature_c": pair(vals, 0),
             "do_mgl": pair(vals, 1),
             "ph": pair(vals, 2),
             "conductivity_us": pair(vals, 3),
@@ -185,7 +186,8 @@ def extract_year(pdf_path: Path, wanted: dict) -> dict[str, dict] | None:
                 vals = numbers(probe)
                 if len(vals) >= 12:
                     found[code] = {
-                        "temperature_c": pair(vals, 0),  # noqa: platform names below
+                        # Field names below are the SHARED rivers client's, not CPCB's.
+                        "temperature_c": pair(vals, 0),
                         "do_mgl": pair(vals, 1),
                         "ph": pair(vals, 2),
                         "conductivity_us": pair(vals, 3),

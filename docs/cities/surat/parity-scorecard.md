@@ -24,7 +24,7 @@
 | Dashboard | 822w | 846w | 0.97 | Renders, hero live |
 | Rivers | 376w | 105w | **3.58** | 2 rivers, 8 stations, 6 editions, 2 CETPs with consent compliance |
 | Commitments | 145w | n/a | - | Renders, 3 dated commitments |
-| Flood risk | 87w | 102w | 0.85 | Renders |
+| Flood risk | 803w | 102w | **7.87** | Narrative variant: 4 external feeds, 7 named gaps, no map because no hazard model is published |
 | Facts | 250w | 407w | 0.61 | Renders, 7 facts |
 | About | 120w | 208w | 0.58 | Renders |
 | Groundwater | 13w | 23w | 0.57 | Renders (both are map-only shells) |
@@ -41,6 +41,7 @@
 | **Published operational danger levels** | none | **5 khadis, each with its own D.L.** |
 | **Reuse ledger** | none | **330 MLD reused, Rs 496.23 Cr cumulative, tariff history, 249 industrial buyers** |
 | **Hero mode** | days-left | **flood-headroom (5th mode, built generic)** |
+| **Stated flood gaps** | 0 | **7**, including the two that killed the interactive route |
 
 Four of these are platform firsts. Each was built generic, so other cities inherit them.
 
@@ -105,3 +106,24 @@ Four bugs found by walking the routes, all affecting future cities rather than S
 6. **A shipped artifact had no consumer.** `cetp-compliance-surat.json` sat in the catalogue with
    `has_consumer: false` until it was wired into the rivers panel. The catalogue already tracks
    this; nothing fails on it.
+7. **The shared flood map loaded ward geometry with no city argument.** `getWardGeoJSON()` bare
+   takes its Chennai default, so `flood-risk-map.tsx` put Chennai's 200 wards on any other city's
+   flood map - and since `FitToBounds` fits to that layer, it dragged the viewport to Chennai even
+   though `center` was correctly derived from the registry. Same class as the recurring per-city
+   map fallback; now derived from `wardsGeoJsonPathFor(cityId)`.
+8. **`useWardLookup` had the same bug, silently.** It resolved every city's lat/lng against
+   Chennai's ward polygons, so the flood and water-body detail panels returned no ward for any city
+   but Chennai and would have returned a *wrong* ward had the bounding boxes overlapped. Now reads
+   the city from the route.
+
+9. **The groundwater `exploitation` flag was never checked against its data.** Its two siblings
+   already gated on data having loaded (`depth` on interpolated wards, `risk` on the risk file);
+   this one gated on the config flag alone. IN-GRES assesses some states at district level only, so
+   Surat, Kolkata and Gurugram all shipped `blocks: []` and all three titled the page "CGWB block
+   exploitation (GWR)" under a four-class percent legend - over depth-in-metres markers for Surat
+   and Kolkata, and over an empty basemap for Gurugram, which has no other layer at all. Now gated;
+   Gurugram routes to its named-gap state with the numbers in prose.
+
+**The route sweep did not catch either of these.** Both pages loaded, neither crashed, and the
+scorecard above graded the flood route "Renders" at 0.85 of Chennai. Rendering the wrong city's
+geometry is invisible to a load-and-count pass; it took a screenshot to see it.

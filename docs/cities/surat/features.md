@@ -15,7 +15,7 @@ Surat is registered `enabled: false` and reachable only behind
 | Defining risk | Arrival, not scarcity | Flood is the dashboard, not a sub-page |
 | Threshold data | Published by the operator alongside every reading | Headroom is stated as a subtraction, never modelled |
 | Analytical unit | 9 zones | Ward surfaces off; zones carry live data and an official 2024 denominator |
-| Groundwater | 94 stations over a district, 1970-2026 | Points, not an interpolated surface |
+| Groundwater | 94 stations over a district, 1970-2026 | Points, not an interpolated surface; IN-GRES is district-level so there is no block choropleth |
 | Water bodies | 3,418 polygons (SAC atlas + OSM), 44 named | Basic map; no census, ranking, lost or cascade layers |
 | Language | Gujarati | `gu` added to `LanguageCode`, carried in `upcomingLanguages` |
 
@@ -72,10 +72,27 @@ monitored khadis, so the creeks central to the flood chain have no line on the m
 
 ## Groundwater
 
-94 India-WRIS stations, 6,563 readings, 1970-2026, rendered as click-through points.
-`groundwaterViews.depth` and `.risk` are **off**: 94 stations across a district cannot support a
-per-zone depth surface, the same call Madurai made at four. Raw telemetry values are carried
-unaltered so the mixed-sign correction stays visible.
+94 India-WRIS stations, 6,563 readings, 1970-2026, rendered as click-through points. The page
+titles itself **CGWB Year Book stations**, which is what it is. `groundwaterViews.depth` and
+`.risk` are **off**: 94 stations across a district cannot support a per-zone depth surface, the
+same call Madurai made at four. Raw telemetry values are carried unaltered so the mixed-sign
+correction stays visible.
+
+**No block-exploitation choropleth, and the reason generalises.** IN-GRES assesses Gujarat at
+DISTRICT level, so `gwr-blocks-surat.json` carries a `districts` payload and an empty `blocks`
+array, and no district-boundary layer is published to draw it on. The finding is that there is no
+finding: all four districts (Surat, Tapi, Navsari, Bharuch) return **safe** in all four assessment
+years, which is unusual on this platform and is the point - Surat's water problem is flood and
+effluent, not extraction.
+
+Until this branch the `exploitation` flag was trusted without checking that any block had loaded,
+so three shipped cities titled their page "CGWB block exploitation (GWR)" and drew a four-class
+**percent** legend over something else entirely: Surat over markers coloured by **depth in metres**,
+Kolkata likewise, and Gurugram over a bare basemap with nothing on it at all. The toggle, the
+legend and the title now gate on `blocks.length > 0`, the same way `depth` already gated on
+interpolated wards and `risk` on the risk file. Gurugram, which has no other layer either, now
+routes to its named-gap state carrying the numbers in words - 194.59% district extraction,
+326.26% at GURGAON\_URBAN - rather than implying a map it does not have.
 
 ## Water bodies
 
@@ -90,8 +107,25 @@ kanmoi or kere system.
 
 ## Flood risk
 
-The corporation's own depth-classed footprint of the 2006 inundation, plus the live khadi network.
-The discharge figures are absent for the reason Origins gives.
+**No map, and that is the finding.** Surat publishes no modelled inundation - no return-period
+zones, no depth extents, no waterlogging register, no storm-water network geometry, and no ward
+file to hang any of it on. The route is therefore the narrative variant: external monitoring
+sources to watch during an event, and seven named gaps.
+
+The live chain is not repeated here because it is already the dashboard hero. That is where the
+readings and the corporation's own trigger levels are rendered, and they are read from
+`surat-flood-chain.json` at render rather than restated in config, so the two cannot drift apart.
+
+The event list is empty on purpose. August 2006 is Surat's defining flood and every figure for it
+currently traces to news coverage or advocacy reporting, so it is held out under the
+defensible-numbers rule. Origins gives the same reason for the absent discharge figures.
+
+An earlier cut of `surat.ts` declared the interactive renderer and this file claimed "the
+corporation's own depth-classed footprint of the 2006 inundation". Neither existed. Eight layers
+404ed, the page rendered an empty basemap under a five-class hazard legend, and - because the
+shared flood map loaded ward geometry with no city argument - it drew Chennai's 200 wards and fitted
+the viewport to Chennai. Recorded because the claim survived a route sweep that only checked for
+crashes.
 
 ## Facts and Commitments
 

@@ -463,6 +463,18 @@ def build_water_bodies(drop: Path, root: Path, osm_path: Path | None = None) -> 
         )
         return 0
 
+    # A NAMED-BUT-MISSING cache is an error, not an empty list. This ran once
+    # with /tmp/surat_osm_wb.json already reaped and rebuilt the layer 17
+    # polygons and 10 names smaller, with no warning and an exit code of 0 -
+    # the diff was a single line because the GeoJSON is written minified. Fail
+    # instead: re-fetch the drop, do not ship a quietly shorter layer.
+    if osm_path is not None and not osm_path.is_file():
+        raise SystemExit(
+            f"  water bodies: OSM cache {osm_path} is missing. It carries the "
+            f"OSM-only bodies and the recovered names, so rebuilding without it "
+            f"SILENTLY SHRINKS the layer. Re-fetch it, or pass osm_path=None to "
+            f"mean the atlas alone on purpose."
+        )
     osm = osm_names(osm_path) if osm_path else []
     osm_polys = osm_polygons(osm_path) if osm_path else []
     raw = kml.open(encoding="utf-8", errors="replace").read()
@@ -1099,12 +1111,45 @@ def build_facts(root: Path) -> int:
 
 
 def build_commitments(root: Path) -> int:
-    """The commitments register.
+    """The commitments register, in the shape commitments-client.tsx reads.
 
-    Surat qualifies for this surface on the strength of one programme: the
-    reuse targets are dated, institutionally owned, and published by the
-    institution that has to meet them, which is exactly the register's shape.
+    That contract is not optional and it is not guessable: every entry needs a
+    `commitment_source` object with label/url/date (the client dereferences
+    `.url` unconditionally), a `due`, a `status_history`, and a `status` drawn
+    from a CLOSED vocabulary - delivered | on-track | slipped | overdue |
+    stalled | unverified. An earlier revision here invented `status: "stated"`
+    with `source_label`/`source_url` beside it, and the page threw
+    "Cannot read properties of undefined (reading 'url')" the moment a card was
+    clicked.
+
+    Every one of these is `unverified`: publicly stated by the corporation with
+    a date, and not independently checked by anyone. That is exactly what the
+    status means, and it is the honest label for a promise whose progress
+    nobody has audited.
     """
+    SRC = {
+        "label": (
+            "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful "
+            "Model', presented 8 March 2024"
+        ),
+        "url": (
+            "https://cdn.cseindia.org/attachments/0.84371800_1709877539_"
+            "surat-municipal-corporation.pdf"
+        ),
+        "date": "2024-03-08",
+    }
+
+    def stated(note: str) -> list[dict]:
+        return [
+            {
+                "date": "2024-03-08",
+                "status": "unverified",
+                "note": note,
+                "source_label": SRC["label"],
+                "source_url": SRC["url"],
+            }
+        ]
+
     commitments = [
         {
             "id": "surat-reuse-70-by-2030",
@@ -1117,10 +1162,15 @@ def build_commitments(root: Path) -> int:
                 "1,018 MLD it currently collects and treats, 70% is roughly 713 MLD "
                 "against the 330 MLD reused today."
             ),
-            "status": "stated",
-            "target_date": "2030",
-            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024, slide 'Way Forward'",
-            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+            "due": "2030",
+            "commitment_source": SRC,
+            "status": "unverified",
+            "status_history": stated(
+                "Target published on the 'Way Forward' slide, against a stated present "
+                "level of more than 30% reuse. No independent verification of progress."
+            ),
+            "next_check": "2027-03-01",
+            "revised_due": None,
         },
         {
             "id": "surat-reuse-100-by-2035",
@@ -1134,10 +1184,16 @@ def build_commitments(root: Path) -> int:
                 "140 MLD to industries at Kadodara and Palsana from the "
                 "Varachha-Valak-Kamrej plant."
             ),
-            "status": "stated",
-            "target_date": "2035",
-            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024, slide 'Way Forward'",
-            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+            "due": "2035",
+            "commitment_source": SRC,
+            "status": "unverified",
+            "status_history": stated(
+                "Target published on the same slide, with 490 MLD of named projects "
+                "listed as the route to it. None of those projects has a separately "
+                "published commissioning date."
+            ),
+            "next_check": "2027-03-01",
+            "revised_due": None,
         },
         {
             "id": "surat-sewerage-100-by-2033",
@@ -1152,10 +1208,16 @@ def build_commitments(root: Path) -> int:
                 "extension in June 2020', which took the corporation to 462.149 sq km. "
                 "The denominator moved after the percentage was calculated."
             ),
-            "status": "stated",
-            "target_date": "2033",
-            "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024, slides 'Sewerage System' and 'Sewerage Scenario'",
-            "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+            "due": "2033",
+            "commitment_source": SRC,
+            "status": "unverified",
+            "status_history": stated(
+                "Commitment published on the 'Sewerage System' slide. The coverage "
+                "percentages beside it are explicitly pre-June-2020 and so predate the "
+                "extension that enlarged the area they are a percentage of."
+            ),
+            "next_check": "2027-03-01",
+            "revised_due": None,
         },
     ]
 
@@ -1164,8 +1226,8 @@ def build_commitments(root: Path) -> int:
             "data-root/commitments",
             registry_sources(root, ["smc-reuse-programme"]),
             "manual",
-            "Transcribed from the corporation's own dated presentation. Each entry "
-            "names the institution, the target date and the slide it came from.",
+            "Transcribed from the corporation's own dated presentation. Each entry names "
+            "the institution, the target date and the slide it came from.",
             produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
         ),
         "place_id": CITY,
@@ -1178,11 +1240,19 @@ def build_commitments(root: Path) -> int:
             "itself to, and it has bound itself twice, at 2030 and 2035."
         ),
         "status_legend": {
-            "stated": "Publicly stated by the institution, with a date. Not independently verified as on track.",
+            "unverified": (
+                "Publicly stated by the institution, with a date. Nobody has independently "
+                "checked progress against it, and this site has not either."
+            ),
         },
         "update_model": (
             "History is kept, never overwritten. A status changes only against a dated "
             "citation."
+        ),
+        "sources_note": (
+            "All three are from Surat Municipal Corporation's own presentation of 8 March "
+            "2024, hosted by CSE India. Where press coverage of this programme disagrees "
+            "with the corporation about the corporation's figures, the document is used."
         ),
         "commitments": commitments,
     }

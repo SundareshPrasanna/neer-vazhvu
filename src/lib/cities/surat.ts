@@ -178,11 +178,23 @@ export const SURAT: CityConfig = {
     // coarseness Kolkata ships. Tapi is in scope because Ukai sits there, so
     // the recharge picture upstream belongs to Surat's story.
     //
-    // This was briefly set true with nothing behind it, which titled the page
-    // "CGWB block exploitation (GWR)" and drew an exploitation legend - in
+    // WHAT THIS ACTUALLY RENDERS: a station map, not a choropleth. IN-GRES
+    // assesses Gujarat at district level, so gwr-blocks-surat.json carries a
+    // `districts` payload and an EMPTY `blocks` array, and there is no
+    // published district-boundary layer to draw it on either. Left true
+    // because the flag means "offer the canonical view where its data exists"
+    // and the render path now enforces that half: with no blocks the title
+    // reads "CGWB Year Book stations", the percent legend does not draw, and
+    // the toggle does not appear.
+    //
+    // Before that gate existed this page drew an exploitation legend - in
     // percent - over markers coloured by DEPTH in metres. Two quantities under
-    // one key. The rule at the top of GroundwaterViewsConfig is
-    // honest-data-or-off; that is what breaking it looks like.
+    // one key. Gurugram, which has the same district-level IN-GRES shape and
+    // no station layer, drew the same legend over a bare basemap.
+    //
+    // THE FINDING IS THAT THERE IS NO FINDING. All four districts return SAFE
+    // in all four assessment years. That is unusual on this platform and it is
+    // the point: Surat's water problem is flood and effluent, not extraction.
     exploitation: true,
     // OFF: about 65 stations across a 462 km2 city plus its district. IDW
     // interpolation to zone level would manufacture precision the network
@@ -199,9 +211,22 @@ export const SURAT: CityConfig = {
   // No dynamic fact pipeline yet: Surat ships the static snapshot.
   facts: {},
 
-  // The interactive renderer, driven by the 2006 inundation footprint,
-  // waterlogging spots and the live khadi network.
-  flood: { variant: 'interactive' },
+  // NARRATIVE, NOT INTERACTIVE, and the correction is worth recording because
+  // the first cut of this file said 'interactive' and claimed a 2006
+  // inundation footprint that was never built. The interactive renderer wants
+  // modelled hazard zones, per-event hotspots, and drainage and sewerage
+  // geometry. Surat publishes none of the five: no return-period zones, no
+  // depth extents, no waterlogging register, no storm-water network, and no
+  // ward file to hang them on. Every one of those layers 404ed, so the route
+  // rendered an empty basemap with a five-class legend for hazard classes that
+  // do not exist - and, until the ward loader was fixed, Chennai's 200 wards
+  // on top of it.
+  //
+  // What Surat DOES have is the live chain, and that is already the dashboard
+  // hero (see floodChain below). This route carries what the hero cannot: the
+  // external feeds to watch during an event, and the honest list of what is
+  // missing.
+  flood: {},
 
   waterBodies: {
     // No census join: Gujarat publishes no Surat water-body census equivalent

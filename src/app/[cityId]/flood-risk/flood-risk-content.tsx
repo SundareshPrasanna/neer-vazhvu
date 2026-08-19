@@ -196,6 +196,12 @@ export function FloodRiskContent({
         </Card>
       )}
 
+      {/* A city can legitimately have NO event list. Surat's defining flood is
+          August 2006 and every figure for it currently traces to news or
+          advocacy reporting, so it is held out under the defensible-numbers
+          rule rather than printed. Rendering the card anyway produced a
+          heading that read "Recent events - 0" over nothing. */}
+      {cfg.historical_events.length > 0 && (
       <Card>
         <CardContent className="space-y-3">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -219,6 +225,7 @@ export function FloodRiskContent({
           </div>
         </CardContent>
       </Card>
+      )}
 
       <Card>
         <CardContent className="space-y-3">

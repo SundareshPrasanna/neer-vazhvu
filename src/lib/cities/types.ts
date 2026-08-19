@@ -71,7 +71,16 @@ export interface WaterSourceConfig {
 export interface GroundwaterViewsConfig {
   /** Block-level CGWB exploitation (GWR%) choropleth. The canonical
    *  authoritative map for any city; available wherever gwr-blocks data
-   *  exists. Default true. */
+   *  exists. Default true.
+   *
+   *  "Wherever the data exists" is now ENFORCED at render, not just meant:
+   *  the toggle, the legend and the page title all gate on the loaded
+   *  `blocks` array being non-empty, the same way `depth` gates on
+   *  interpolated wards and `risk` on the risk file. IN-GRES publishes some
+   *  states at DISTRICT level only (Gujarat, Haryana), and those cities'
+   *  gwr-blocks artifacts carry a `districts` payload with `blocks: []` -
+   *  so a bare `true` here used to title the page "CGWB block exploitation
+   *  (GWR)" and draw a percent legend over an empty map. */
   exploitation?: boolean;
   /** Per-ward IDW-interpolated depth choropleth from sparse stations.
    *  Honest only when ward-survey data is dense (Chennai: OpenCity
