@@ -6,8 +6,10 @@ import type { WaterwayManifest } from "./types";
  * docs/research/buckingham-canal/ (local); editorial layer:
  * docs/waterways/buckingham-canal/waterway-curation.json.
  *
- * `enabled: false` until the TWIC preview review passes (DECISIONS.md W9);
- * preview builds surface it via NEXT_PUBLIC_PREVIEW_WATERWAYS.
+ * Enabled for production 19 Aug 2026 (DECISIONS.md W9: the TWIC preview
+ * round closed same-day; ships unlinked - no nav entry yet). Pre-release
+ * waterways stay `enabled: false` and surface on preview builds via
+ * NEXT_PUBLIC_PREVIEW_WATERWAYS.
  */
 export const BUCKINGHAM_CANAL: WaterwayManifest = {
   waterwayId: "buckingham-canal",
@@ -23,5 +25,5 @@ export const BUCKINGHAM_CANAL: WaterwayManifest = {
   chainageNote:
     "Chainage runs north to south: km 0 at the Ennore creek crossing, " +
     "km 74.5 at Mahabalipuram.",
-  enabled: false,
+  enabled: true,
 };

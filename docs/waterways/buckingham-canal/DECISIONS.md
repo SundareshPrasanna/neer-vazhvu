@@ -60,7 +60,9 @@ docs/specs/buckingham-canal-story-build.md.
   linked, never embedded. OSM derivatives carry ODbL attribution.
 - **W9 Preview-first.** The page ships preview-gated for TWIC before any
   public cutover; public/data here rides the branch until the corpus
-  release chain runs at cutover (second-repo rule).
+  release chain runs at cutover (second-repo rule). CLOSED 19 Aug 2026:
+  Sundaresh called the cutover same-day - `enabled: true`, corpus release
+  cut, page ships unlinked (no nav entry; that is a separate decision).
 - **W11 The works lens.** Per reach: quantities on record, documented
   inflows, interface counts, constraints, survey tasks, and programmes
   touching the reach - framed strictly as "what any DPR must establish",
