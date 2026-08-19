@@ -1,10 +1,12 @@
 import type { WaterwayManifest } from "./types";
 import { BUCKINGHAM_CANAL } from "./buckingham-canal";
+import { COOUM } from "./cooum";
 
 export type { WaterwayManifest } from "./types";
 
 const REGISTRY: Record<string, WaterwayManifest> = {
   [BUCKINGHAM_CANAL.waterwayId]: BUCKINGHAM_CANAL,
+  [COOUM.waterwayId]: COOUM,
 };
 
 /**

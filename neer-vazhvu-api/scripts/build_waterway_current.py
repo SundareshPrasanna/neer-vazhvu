@@ -51,10 +51,66 @@ import ee  # noqa: E402
 REPO = API_ROOT.parent
 
 
+def closed_water_rings(osm: dict) -> list:
+    """OSM water polygons as closed rings. Way polygons close themselves;
+    a multipolygon relation's outer members are open fragments that only
+    close when stitched end-to-end, so stitch them (inner holes are
+    ignored - islands read as water surface, stated in the method note)."""
+
+    def key(pt):
+        return (round(pt[0], 7), round(pt[1], 7))
+
+    rings = []
+    pend = []
+    for e in osm["elements"]:
+        if e["type"] == "way" and "geometry" in e:
+            ring = [[p["lon"], p["lat"]] for p in e["geometry"]]
+            if len(ring) >= 4 and ring[0] == ring[-1]:
+                rings.append(ring)
+        elif e["type"] == "relation":
+            for m in e.get("members", []):
+                if m.get("type") != "way" or "geometry" not in m:
+                    continue
+                if m.get("role") not in ("outer", ""):
+                    continue
+                seg = [[p["lon"], p["lat"]] for p in m["geometry"]]
+                if len(seg) >= 4 and seg[0] == seg[-1]:
+                    rings.append(seg)
+                elif len(seg) >= 2:
+                    pend.append(seg)
+    while pend:
+        chain = pend.pop()
+        progressed = True
+        while progressed and key(chain[0]) != key(chain[-1]):
+            progressed = False
+            for i, seg in enumerate(pend):
+                if key(seg[0]) == key(chain[-1]):
+                    chain = chain + seg[1:]
+                    pend.pop(i)
+                    progressed = True
+                    break
+                if key(seg[-1]) == key(chain[-1]):
+                    chain = chain + seg[-2::-1]
+                    pend.pop(i)
+                    progressed = True
+                    break
+        if len(chain) >= 4 and key(chain[0]) == key(chain[-1]):
+            rings.append(chain)
+        else:
+            print(f"  WARN unclosed relation fragment dropped ({len(chain)} pts)")
+    return rings
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--waterway", required=True)
+    ap.add_argument(
+        "--stages",
+        default="surface,veg,turbidity,vow",
+        help="comma list: surface,veg,turbidity,vow",
+    )
     args = ap.parse_args()
+    stages = set(args.stages.split(","))
     cfg = json.loads(
         (REPO / "scripts" / "waterways" / f"{args.waterway}.json").read_text()
     )
@@ -102,42 +158,46 @@ def main():
     veg = ndvi.gt(ndvi_veg)
 
     # A. Surface state at 100 m points (mean over a 25 m disc)
-    feats = [
-        ee.Feature(ee.Geometry.Point(p).buffer(25), {"i": i}) for i, p in enumerate(pts)
-    ]
-    stack = water.rename("water").addBands(veg.rename("veg"))
-    rows = []
-    CHUNK = 250
-    for s in range(0, len(feats), CHUNK):
-        fc = ee.FeatureCollection(feats[s : s + CHUNK])
-        res = stack.reduceRegions(fc, ee.Reducer.mean(), 10).getInfo()
-        for f in res["features"]:
-            p = f["properties"]
-            i = p["i"]
-            w = p.get("water")
-            v = p.get("veg")
-            if w is None:
-                state = "no-data"
-            elif w >= 0.35:
-                state = "open-water"
-            elif v is not None and v >= 0.5:
-                state = "vegetated"
-            else:
-                state = "mixed"
-            rows.append(
-                {
-                    "km": round(i * 0.1, 1),
-                    "state": state,
-                    "water_frac": round(w, 2) if w is not None else "",
-                    "veg_frac": round(v, 2) if v is not None else "",
-                }
+    if "surface" in stages:
+        feats = [
+            ee.Feature(ee.Geometry.Point(p).buffer(25), {"i": i})
+            for i, p in enumerate(pts)
+        ]
+        stack = water.rename("water").addBands(veg.rename("veg"))
+        rows = []
+        CHUNK = 250
+        for s in range(0, len(feats), CHUNK):
+            fc = ee.FeatureCollection(feats[s : s + CHUNK])
+            res = stack.reduceRegions(fc, ee.Reducer.mean(), 10).getInfo()
+            for f in res["features"]:
+                p = f["properties"]
+                i = p["i"]
+                w = p.get("water")
+                v = p.get("veg")
+                if w is None:
+                    state = "no-data"
+                elif w >= 0.35:
+                    state = "open-water"
+                elif v is not None and v >= 0.5:
+                    state = "vegetated"
+                else:
+                    state = "mixed"
+                rows.append(
+                    {
+                        "km": round(i * 0.1, 1),
+                        "state": state,
+                        "water_frac": round(w, 2) if w is not None else "",
+                        "veg_frac": round(v, 2) if v is not None else "",
+                    }
+                )
+            print(
+                f"surface points {min(s + CHUNK, len(feats))}/{len(feats)}", flush=True
             )
-        print(f"surface points {min(s + CHUNK, len(feats))}/{len(feats)}", flush=True)
-    rows.sort(key=lambda r: r["km"])
-    with open(data / "current-surface.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["km", "state", "water_frac", "veg_frac"])
-        w.writeheader()
-        w.writerows(rows)
+        rows.sort(key=lambda r: r["km"])
+        with open(data / "current-surface.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["km", "state", "water_frac", "veg_frac"])
+            w.writeheader()
+            w.writerows(rows)
 
     # Reach zones within the measured corridor
     zones = []
@@ -153,106 +213,99 @@ def main():
     zone_fc = ee.FeatureCollection(zones)
 
     # B. Vegetation load per reach, hectares
-    varea = veg.multiply(ee.Image.pixelArea()).rename("veg_m2")
-    res = varea.reduceRegions(zone_fc, ee.Reducer.sum(), 10).getInfo()
-    out = []
-    for f in res["features"]:
-        p = f["properties"]
-        out.append(
-            {"reach_id": p["reach_id"], "veg_ha": round((p.get("sum") or 0) / 10000, 1)}
-        )
-    out.sort(key=lambda r: r["reach_id"])
-    with open(data / "current-veg-area.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["reach_id", "veg_ha"])
-        w.writeheader()
-        w.writerows(out)
-    total = sum(r["veg_ha"] for r in out)
-    print(f"total corridor vegetation: {total:.0f} ha", flush=True)
+    if "veg" in stages:
+        varea = veg.multiply(ee.Image.pixelArea()).rename("veg_m2")
+        res = varea.reduceRegions(zone_fc, ee.Reducer.sum(), 10).getInfo()
+        out = []
+        for f in res["features"]:
+            p = f["properties"]
+            out.append(
+                {
+                    "reach_id": p["reach_id"],
+                    "veg_ha": round((p.get("sum") or 0) / 10000, 1),
+                }
+            )
+        out.sort(key=lambda r: r["reach_id"])
+        with open(data / "current-veg-area.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["reach_id", "veg_ha"])
+            w.writeheader()
+            w.writerows(out)
+        total = sum(r["veg_ha"] for r in out)
+        print(f"total corridor vegetation: {total:.0f} ha", flush=True)
 
     # C. Turbidity per reach: mean NDTI over water pixels + water area
-    ndti_water = ndti.updateMask(water).rename("ndti")
-    wat_area = water.multiply(ee.Image.pixelArea()).rename("water_m2")
-    res_t = (
-        ndti_water.addBands(wat_area)
-        .reduceRegions(
-            zone_fc,
-            ee.Reducer.mean()
-            .setOutputs(["ndti_mean"])
-            .combine(ee.Reducer.sum().setOutputs(["water_m2"]), sharedInputs=False),
-            10,
-        )
-        .getInfo()
-    )
-    trows = []
-    for f in res_t["features"]:
-        p = f["properties"]
-        water_ha = round((p.get("water_m2") or 0) / 10000, 1)
-        nd = p.get("ndti_mean")
-        trows.append(
-            {
-                "reach_id": p["reach_id"],
-                "ndti_mean": round(nd, 3)
-                if nd is not None and water_ha >= min_water_ha
-                else "",
-                "water_ha": water_ha,
-            }
-        )
-    trows.sort(key=lambda r: r["reach_id"])
-    with open(data / "current-turbidity.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["reach_id", "ndti_mean", "water_ha"])
-        w.writeheader()
-        w.writerows(trows)
-    print("wrote current-turbidity.csv", flush=True)
-
-    # D. Vegetation on the mapped water surface (OSM polygons, outer rings)
-    osm = json.loads((data / "osm-water-polygons.json").read_text())
-    polys = []
-    for e in osm["elements"]:
-        if e["type"] == "way" and "geometry" in e:
-            ring = [[p["lon"], p["lat"]] for p in e["geometry"]]
-            if len(ring) >= 4 and ring[0] == ring[-1]:
-                polys.append(ring)
-        elif e["type"] == "relation":
-            for m in e.get("members", []):
-                if m.get("type") != "way" or "geometry" not in m:
-                    continue
-                if m.get("role") not in ("outer", ""):
-                    continue
-                ring = [[p["lon"], p["lat"]] for p in m["geometry"]]
-                if len(ring) >= 4 and ring[0] == ring[-1]:
-                    polys.append(ring)
-    water_geom = ee.Geometry.MultiPolygon([[r] for r in polys], None, False)
-    vrows = []
-    for rid, a, b in reaches_km:
-        seg = pts[int(a * 10) : int(b * 10) + 1]
-        if len(seg) < 2:
-            continue
-        zone = ee.Geometry.LineString(seg).buffer(half_by_km[rid])
-        inter = water_geom.intersection(zone, 1)
-        stats = (
-            veg.rename("veg")
-            .reduceRegion(ee.Reducer.mean(), inter, 10, maxPixels=1e9)
-            .combine(ee.Dictionary({"area": inter.area(1)}))
+    if "turbidity" in stages:
+        ndti_water = ndti.updateMask(water).rename("ndti")
+        wat_area = water.multiply(ee.Image.pixelArea()).rename("water_m2")
+        res_t = (
+            ndti_water.addBands(wat_area)
+            .reduceRegions(
+                zone_fc,
+                ee.Reducer.mean()
+                .setOutputs(["ndti_mean"])
+                .combine(ee.Reducer.sum().setOutputs(["water_m2"]), sharedInputs=False),
+                10,
+            )
             .getInfo()
         )
-        mapped_ha = round((stats.get("area") or 0) / 10000, 1)
-        frac = stats.get("veg")
-        vrows.append(
-            {
-                "reach_id": rid,
-                "veg_on_water_frac": round(frac, 3)
-                if frac is not None and mapped_ha >= 0.5
-                else "",
-                "mapped_water_ha": mapped_ha,
-            }
-        )
-        print(f"veg-on-water reach {rid}: {vrows[-1]}", flush=True)
-    with open(data / "current-veg-on-water.csv", "w", newline="") as f:
-        w = csv.DictWriter(
-            f, fieldnames=["reach_id", "veg_on_water_frac", "mapped_water_ha"]
-        )
-        w.writeheader()
-        w.writerows(vrows)
+        trows = []
+        for f in res_t["features"]:
+            p = f["properties"]
+            water_ha = round((p.get("water_m2") or 0) / 10000, 1)
+            nd = p.get("ndti_mean")
+            trows.append(
+                {
+                    "reach_id": p["reach_id"],
+                    "ndti_mean": round(nd, 3)
+                    if nd is not None and water_ha >= min_water_ha
+                    else "",
+                    "water_ha": water_ha,
+                }
+            )
+        trows.sort(key=lambda r: r["reach_id"])
+        with open(data / "current-turbidity.csv", "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["reach_id", "ndti_mean", "water_ha"])
+            w.writeheader()
+            w.writerows(trows)
+        print("wrote current-turbidity.csv", flush=True)
+
+    # D. Vegetation on the mapped water surface (OSM polygons, stitched rings)
+    if "vow" in stages:
+        osm = json.loads((data / "osm-water-polygons.json").read_text())
+        polys = closed_water_rings(osm)
+        print(f"veg-on-water: {len(polys)} closed water rings", flush=True)
+        water_geom = ee.Geometry.MultiPolygon([[r] for r in polys], None, False)
+        vrows = []
+        for rid, a, b in reaches_km:
+            seg = pts[int(a * 10) : int(b * 10) + 1]
+            if len(seg) < 2:
+                continue
+            zone = ee.Geometry.LineString(seg).buffer(half_by_km[rid])
+            inter = water_geom.intersection(zone, 1)
+            stats = (
+                veg.rename("veg")
+                .reduceRegion(ee.Reducer.mean(), inter, 10, maxPixels=1e9)
+                .combine(ee.Dictionary({"area": inter.area(1)}))
+                .getInfo()
+            )
+            mapped_ha = round((stats.get("area") or 0) / 10000, 1)
+            frac = stats.get("veg")
+            vrows.append(
+                {
+                    "reach_id": rid,
+                    "veg_on_water_frac": round(frac, 3)
+                    if frac is not None and mapped_ha >= 0.5
+                    else "",
+                    "mapped_water_ha": mapped_ha,
+                }
+            )
+            print(f"veg-on-water reach {rid}: {vrows[-1]}", flush=True)
+        with open(data / "current-veg-on-water.csv", "w", newline="") as f:
+            w = csv.DictWriter(
+                f, fieldnames=["reach_id", "veg_on_water_frac", "mapped_water_ha"]
+            )
+            w.writeheader()
+            w.writerows(vrows)
     print("done")
 
 
