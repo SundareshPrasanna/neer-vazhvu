@@ -256,6 +256,8 @@ def main():
         return img, date.getInfo()
 
     for name, site in sat["sites"].items():
+        if name.startswith("_"):  # config-level notes, not sites
+            continue
         best = nearest_point(pts, site)
         half = site["half_m"]
         region = ee.Geometry.Point(best).buffer(half).bounds()

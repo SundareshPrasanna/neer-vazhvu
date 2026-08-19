@@ -1,0 +1,98 @@
+{
+  "_doc": "Cooum river (waterway 2) pipeline config. Extent decision on record 19 Aug 2026: the FULL river as OSM maps it - one way (202505379) in relation 11901885, 62.9 km from the origin junction near Satharai (lon 79.843) to the Bay of Bengal mouth (lon 80.291). WRD's IAMWARM DPR gives the river 65 km from that origin ('72 km' in early notes is WRD's distance from the city to Kesavaram anicut, not river length; 32 km is the ICRERP restoration reach, Paruthipattu to the mouth). Chainage 0 at the upstream origin, increasing to the mouth.",
+  "id": "cooum",
+  "research_dir": "docs/research/cooum",
+  "curation": "docs/waterways/cooum/waterway-curation.json",
+  "geometry": {
+    "inputs": [
+      { "file": "osm-cooum-centerline.json", "keep_tags": null }
+    ],
+    "clip": { "axis": "lon", "min": 79.84, "max": 80.3 },
+    "chain": { "axis": "lon", "chainage_zero_at": "min", "gap_m": 1200.0, "progress_tol_deg": 0.002 },
+    "sample_m": 100.0,
+    "transect_every_m": 200.0,
+    "half_transect_m": 500.0,
+    "open_water_m": 400.0,
+    "feature": {
+      "name": "Cooum River (Satharai origin - Chennai mouth)",
+      "source": "OpenStreetMap via Overpass, ODbL, snapshot 2026-08",
+      "chainage_zero": "Upstream origin end near Satharai (lon 79.843), where the Kesavaram surplus course joins"
+    }
+  },
+  "fetch": {
+    "mirror": "https://overpass.kumi.systems/api/interpreter",
+    "queries": {
+      "osm-cooum-centerline.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"];out geom;",
+      "osm-water-polygons.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out geom;",
+      "osm-water-meta.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out meta;"
+    }
+  },
+  "satellite": {
+    "windows": { "dry": ["2026-01-15", "2026-04-30"], "recent": ["2026-06-01", "2026-08-19"] },
+    "ndvi_veg": 0.35,
+    "default_half_w": 25,
+    "margin": 8,
+    "chip_every_km": 2,
+    "chip_buffer_m": 350,
+    "min_water_ha_for_ndti": 1.0,
+    "sites": {
+      "_doc": "Anchors are centerline points at chainages converted from WRD mouth-based chainages (hyd-headworks.csv): Aranvoyal 45.33 km, Korattur 40.95 km, Paruthipattu ~27.3 km, Chetpet tidal head ~9.4 km from the mouth; our chainage total is 62.8 km. Verify anicut positions against the rendered chips at curation.",
+      "origin-satharai": { "lon": 79.8434, "lat": 13.0551, "half_m": 900 },
+      "aranvoyal-anicut": { "lon": 79.9724, "lat": 13.1008, "half_m": 900 },
+      "korattur-anicut": { "lon": 80.0108, "lat": 13.0911, "half_m": 900 },
+      "paruthipattu-icrerp-head": { "lon": 80.11, "lat": 13.0829, "half_m": 900 },
+      "maduravoyal": { "lon": 80.1651, "lat": 13.0663, "half_m": 700 },
+      "koyambedu": { "lon": 80.1926, "lat": 13.0733, "half_m": 700 },
+      "chetpet-tidal-head": { "lon": 80.2353, "lat": 13.0668, "half_m": 700 },
+      "napier-mouth": { "lon": 80.2913, "lat": 13.0668, "half_m": 900 }
+    }
+  },
+  "reaches_km": [],
+  "mouths": {
+    "cooum": [80.2913, 13.0668]
+  },
+  "veg_calendar": { "start_year": 2019, "end_year": 2026, "end_month": 8 },
+  "build": {
+    "produced_by": "scripts/build_waterway.py --waterway cooum",
+    "produced_at": "2026-08-19",
+    "retrieved": "2026-08-19",
+    "research_base": "docs/research/cooum/ (dossier.md, sections, data-vintages.md)",
+    "attribution": {
+      "osm": "Centerline and width measurement derived from OpenStreetMap (ODbL).",
+      "sentinel": "Chips and corridor metrics contain modified Copernicus Sentinel data (2026)."
+    },
+    "banned_claims_note": "See curation.banned_claims; enforced by scripts/verify_waterway_cooum.py",
+    "editorial_note": "Editorial compilation: every fact referenced here carries its own source, date and flag in the claim register (claims.json), curated in docs/waterways/cooum/waterway-curation.json and gated by scripts/verify_waterway_cooum.py + the numeric audit. Empty sources by design - per-claim citations carry accountability.",
+    "synthesis_source": "Neer Vazhvu synthesis of the sourced dossier",
+    "synthesis_date": "2026-08-19",
+    "notes": {
+      "reaches": "Measured layers (OSM transect widths, Sentinel-2 composites, Open Buildings counts) merged with curated per-reach facts; curated facts carry per-claim citations (see claims.json).",
+      "today": "Current-season snapshot: Sentinel-2 Jun-Aug 2026 composite metrics, Open Buildings edge counts, OSM water polygons.",
+      "width_profile": "Perpendicular transects every 200 m across the OSM water-surface polygons; see reaches.json confidence tiers.",
+      "centerline": "OSM river centerline (relation 11901885), km 0 at the upstream origin near Satharai, increasing to the Bay of Bengal mouth."
+    },
+    "source_meta": {
+      "osm-overpass": {
+        "title": "OpenStreetMap waterway and water-surface geometry (Overpass API)",
+        "publisher": "OpenStreetMap contributors",
+        "url": "https://overpass-api.de/"
+      },
+      "sentinel-2-l2a": {
+        "title": "Sentinel-2 L2A surface reflectance composites (Google Earth Engine)",
+        "publisher": "ESA Copernicus",
+        "url": "https://dataspace.copernicus.eu/"
+      },
+      "google-open-buildings": {
+        "title": "Google Open Buildings v3 footprints",
+        "publisher": "Google Research",
+        "url": "https://sites.research.google/open-buildings/"
+      }
+    },
+    "doc_sources": {
+      "reaches": ["osm-overpass", "sentinel-2-l2a", "google-open-buildings"],
+      "today": ["sentinel-2-l2a", "google-open-buildings", "osm-overpass"],
+      "width_profile": ["osm-overpass"],
+      "centerline": ["osm-overpass"]
+    }
+  }
+}
