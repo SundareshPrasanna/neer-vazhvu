@@ -89,6 +89,28 @@ the government-voice rules apply at maximum strength.
   the training walls' 40%-of-June-2023 (95% in WRD PN 2024-25, complete
   in PN 2025-26), and "no package ledger newer than 30.06.2021" (CRRT
   status report of 01.02.2024 in O.A. 299/2013 with connected matters).
+- **C10 50 m densification (Sundaresh, 19 Aug 2026 evening).** Transects
+  and the condition strip move from 200 m / 100 m to 50 m on both
+  waterway pages. Tested before shipping: global medians are unchanged
+  (the OSM polygons, not our sampling, are the accuracy ceiling) but the
+  minima and sub-200 m features are real gains. 50 m is the source
+  floor: the traced banks place a vertex every 22 m (median) here and
+  80% of bank length lies on straight segments longer than 50 m, so
+  finer sampling would only re-read drawn edges; Sentinel-2's 10 m
+  pixels floor the vegetation strip at ~50 m for the same reason.
+  Confidence-tier jitter is now defined at ~200 m separation whatever
+  the sampling density, so densification cannot inflate tiers. Finer
+  chaining also corrects the measured length to 62.9 km. True
+  finer-than-50 m confidence needs better sources, named in the works
+  lens: WRD's completed DGPS demarcation of Reach-I, and field survey.
+- **C11 Methods are data (Sundaresh, 19 Aug 2026: "our approach should
+  be visible someplace so that they understand what we did and they
+  themselves can validate if required").** The methods panel's sections
+  live in this file's `methods` array and ship inside reaches.json, so
+  every waterway describes its own method, sources, limits and how to
+  reproduce the numbers - including the audit script's name. The shared
+  component renders whatever the data says; no waterway ever shows
+  another's method text.
 - **C7 Basin Bridge handoff.** The canal page and this page hand off to
   each other at the Cooum-canal junction (canal reach 6, km 16.9-19.2 of
   the canal chainage); shared sources are cited identically, never

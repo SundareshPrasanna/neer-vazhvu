@@ -14,6 +14,16 @@ The tracked editorial layer is `waterway-curation.json` here; the build is
 docs/specs/buckingham-canal-story-build.md.
 
 ## Decisions
+- **W12 50 m densification + methods-as-data (19 Aug 2026 evening, with
+  the Cooum).** Transects move from 200 m to 50 m (1,492 cast, 1,012
+  measured; global median unchanged at 33 m; the MRTS minimum resolves
+  to 6.5 m) and the condition strip from 100 m to 50 m. Tier jitter is
+  now defined at ~200 m separation so densification cannot inflate
+  confidence. The methods panel is data (curation `methods` array,
+  served in reaches.json): this page's method text is its own, and the
+  Cooum's is its own. Rationale and source-resolution measurements:
+  docs/waterways/cooum/DECISIONS.md C10.
+
 
 - **W1 Two modes, one URL.** A Story (8 chapters, Ennore to Mahabalipuram,
   scroll = chainage) and a Reach Explorer (18 reaches, the diligence

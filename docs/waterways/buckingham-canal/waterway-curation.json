@@ -20,9 +20,9 @@
       },
       {
         "value": "33 m",
-        "label": "median water-surface width today (253 transects)",
+        "label": "median water-surface width today (1,012 transects every 50 m)",
         "source": "Neer Vazhvu transect measurement, OSM water polygons",
-        "date": "2026-08-18",
+        "date": "2026-08-19",
         "flag": "verified"
       },
       {
@@ -733,7 +733,7 @@
       "key": "open",
       "title": "A canal that carries everything except boats",
       "km": null,
-      "verdict": "Built 1806-1882 to carry salt, firewood and dried fish into Madras, the Buckingham Canal today is Chennai's flood carrier and the spine of the city's eastern waterways: 74.5 km, measured here end to end, two hundred metres at a time.",
+      "verdict": "Built 1806-1882 to carry salt, firewood and dried fish into Madras, the Buckingham Canal today is Chennai's flood carrier and the spine of the city's eastern waterways: 74.5 km, measured here end to end, fifty metres at a time.",
       "reach_ids": []
     },
     {
@@ -984,7 +984,7 @@
     "date": "2012",
     "flag": "verified",
     "claim_text": "Cooum-Adyar width ledger, 14 stretches: original survey vs HSCTC (~2012) widths",
-    "today_line": "2026 measurements: Neer Vazhvu transects at 200 m spacing from OpenStreetMap water polygons; across all these reaches the median is 18 m with a 9 m minimum.",
+    "today_line": "2026 measurements: Neer Vazhvu transects at 50 m spacing from OpenStreetMap water polygons; across all these reaches the median is 18 m with a 6.5 m minimum.",
     "rows": [
       {
         "stretch": "Adyar River - Greenways Road",
@@ -1658,5 +1658,31 @@
         "Water-metro DPR corridor"
       ]
     }
-  }
+  },
+  "methods": [
+    {
+      "title": "Length and chainage",
+      "body": "The 74.5 km alignment is chained from OpenStreetMap's canal geometry (ODbL, snapshot August 2026), km 0 at the Ennore creek crossing, resampled every 50 m. OSM has no continuous canal through the Basin Bridge / Cooum junction; a roughly 1.4 km straight bridge spans it, so chainage there is approximate. Whole-length uncertainty: about plus or minus 1-2%."
+    },
+    {
+      "title": "Widths (the 1,492 transects)",
+      "body": "Every 50 m of chainage we cast a perpendicular line and measure the water-surface polygon traced by OpenStreetMap contributors (edits 2018 to 2026, most since 2022). 1,012 transects return a measurement. 50 m sampling sits close to the resolution of the source itself: the traced bank lines place a vertex every 36 m at the median, so sampling much finer would only re-read straight drawn edges. Width is water surface at the tracing moment, not the canal's recorded land, and it moves with season. Individual transects: treat as plus or minus 15-25% on narrow reaches; per-reach medians are robust. Each reach carries a confidence tier: A = at least 70% measured, tracing mostly 2021 or later, and width jitter at 200 m separation of 25% or less; B = measured but sparse or older tracing; C = not channel-measurable (creek complexes, junctions). Jitter is always evaluated at about 200 m separation, whatever the sampling density, so denser sampling cannot inflate a tier. Wide spreads on reaches that open into backwaters are real variation, not error."
+    },
+    {
+      "title": "Satellite metrics (Sentinel-2, 10 m pixels)",
+      "body": "Cloud-masked median composites: January-April and June-August 2026. Vegetation = NDVI above 0.35; open water = NDWI above 0. Vegetation on the water is computed strictly inside the mapped water polygons (floating plus emergent growth); corridor figures also include about 8 m of bank each side and read higher. The condition strip reads a 25 m disc every 50 m of chainage; with 10 m pixels, 50 m is the honest floor for this. Threshold choice moves fractions by roughly 5-10 percentage points; 10 m pixels undercount water in channels narrower than about 30 m. The suspended-sediment reading (NDTI) is a relative index over open water, not a mg/L measurement. Site images are clearest-pixel composites; segment images are medians; each is dated on the image."
+    },
+    {
+      "title": "The built edge",
+      "body": "Google Open Buildings v3 footprints (2023 release, confidence at least 0.7) counted within 50 m and 100 m of the centerline. Deliberately conservative: measured from the centerline, not the canal's recorded boundary; the confidence filter trims small structures; three years of construction post-date the data. A 'none mapped' reads exactly that: nothing in the dataset, not proof of nothing on the ground."
+    },
+    {
+      "title": "Check the numbers yourself",
+      "body": "Every input is public: OpenStreetMap (ODbL, snapshot date stated), Copernicus Sentinel-2, Google Open Buildings, and the cited government documents - many held as local primary copies (IWAI 2014, CAG 2017 and 2020, the Madras HC order, the WRD and MAWS Policy Notes, TNPCB consent orders, CPCB monitoring PDFs). Every derived number on this page is recomputed independently from the raw inputs before publication by a published audit script (scripts/audit_waterway_numbers.py in the Neer Vazhvu repository), and the claim register (claims.json) carries a per-number citation a reader can pull and compare."
+    },
+    {
+      "title": "What this page deliberately does not compute",
+      "body": "Depth, silt volume and flow: no satellite can measure them in water this turbid and narrow (the last public depth survey is from 2014), and we would rather show a gap than an estimate without an instrument. They are the first work of the measurement layer this page proposes: level and flow gauging to the index-velocity standard, a boat-run depth survey, and field checks under the vegetation the satellite flags."
+    }
+  ]
 }

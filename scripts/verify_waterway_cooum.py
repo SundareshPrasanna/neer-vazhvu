@@ -13,7 +13,7 @@ Fails (exit 1) if:
       * "345 mg" as a reading without its 2021 vintage in the same claim
       * an outfall count of 118 without its 2014 vintage in the same claim
       * the sewage-inlet data attributed to Arappor (it is PWD via NEPT 2017)
-  - reach km ranges do not tile 0..62.8 contiguously
+  - reach km ranges do not tile 0..62.9 contiguously
   - a referenced chip or photo is missing
   - the data directory exceeds 8 MB
 """
@@ -80,8 +80,8 @@ if abs(rs[0]["km"][0] - 0.0) > 0.01:
 for a, b in zip(rs, rs[1:]):
     if abs(a["km"][1] - b["km"][0]) > 0.01:
         errors.append(f"reach gap/overlap at km {a['km'][1]} -> {b['km'][0]}")
-if abs(rs[-1]["km"][1] - 62.8) > 0.11:
-    errors.append(f"reach tiling ends at {rs[-1]['km'][1]}, expected 62.8")
+if abs(rs[-1]["km"][1] - 62.9) > 0.11:
+    errors.append(f"reach tiling ends at {rs[-1]['km'][1]}, expected 62.9")
 
 for r in rs:
     for chip in r["chips"]:
@@ -104,5 +104,5 @@ if errors:
         print(" -", e)
     sys.exit(1)
 print(f"OK: {len(claims)} claims sourced+dated+flagged, "
-      f"{len(rs)} reaches tiled 0-62.8 km, chips and photos present, "
+      f"{len(rs)} reaches tiled 0-62.9 km, chips and photos present, "
       f"{size_mb:.1f} MB <= 8 MB")

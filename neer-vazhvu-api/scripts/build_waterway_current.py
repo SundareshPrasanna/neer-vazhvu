@@ -127,6 +127,8 @@ def main():
     pts = json.loads((data / "centerline.geojson").read_text())["features"][0][
         "geometry"
     ]["coordinates"]
+    sample_m = cfg["geometry"]["sample_m"]
+    ppk = round(1000 / sample_m)  # centerline points per km
     widths = list(csv.DictReader(open(data / "widths.csv")))
     half_by_km = {}
     for rid, a, b in reaches_km:
@@ -184,7 +186,7 @@ def main():
                     state = "mixed"
                 rows.append(
                     {
-                        "km": round(i * 0.1, 1),
+                        "km": round(i * sample_m / 1000, 2),
                         "state": state,
                         "water_frac": round(w, 2) if w is not None else "",
                         "veg_frac": round(v, 2) if v is not None else "",
@@ -202,7 +204,7 @@ def main():
     # Reach zones within the measured corridor
     zones = []
     for rid, a, b in reaches_km:
-        seg = pts[int(a * 10) : int(b * 10) + 1]
+        seg = pts[int(a * ppk) : int(b * ppk) + 1]
         if len(seg) >= 2:
             zones.append(
                 ee.Feature(
@@ -277,7 +279,7 @@ def main():
         water_geom = ee.Geometry.MultiPolygon([[r] for r in polys], None, False)
         vrows = []
         for rid, a, b in reaches_km:
-            seg = pts[int(a * 10) : int(b * 10) + 1]
+            seg = pts[int(a * ppk) : int(b * ppk) + 1]
             if len(seg) < 2:
                 continue
             zone = ee.Geometry.LineString(seg).buffer(half_by_km[rid])

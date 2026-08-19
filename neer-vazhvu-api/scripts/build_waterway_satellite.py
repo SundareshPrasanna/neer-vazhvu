@@ -77,15 +77,16 @@ def s2_median(start, end, region):
     )
 
 
-def load_reaches(data: Path, default_half_w: float, margin: float):
+def load_reaches(data: Path, default_half_w: float, margin: float, sample_m: float):
     rows = list(csv.DictReader(open(data / "widths.csv")))
     pts = json.loads((data / "centerline.geojson").read_text())["features"][0][
         "geometry"
     ]["coordinates"]
-    n_km = math.ceil((len(pts) - 1) * 100 / 1000)
+    ppk = round(1000 / sample_m)  # centerline points per km
+    n_km = math.ceil((len(pts) - 1) * sample_m / 1000)
     reaches = []
     for k in range(n_km):
-        seg = pts[k * 10 : k * 10 + 11]
+        seg = pts[k * ppk : k * ppk + ppk + 1]
         if len(seg) < 2:
             continue
         ws = [
@@ -125,9 +126,15 @@ def nearest_point(pts, site: dict):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--waterway", required=True)
+    ap.add_argument(
+        "--skip-chips",
+        action="store_true",
+        help="metrics only; keep the shipped imagery baseline",
+    )
     args = ap.parse_args()
     cfg = load_cfg(args.waterway)
     sat = cfg["satellite"]
+    sample_m = cfg["geometry"]["sample_m"]
     base = REPO / cfg["research_dir"]
     data = base / "data"
     chips = base / "figures" / "chips"
@@ -137,7 +144,7 @@ def main():
     ndvi_veg = sat["ndvi_veg"]
 
     init_ee()
-    reaches, pts = load_reaches(data, sat["default_half_w"], sat["margin"])
+    reaches, pts = load_reaches(data, sat["default_half_w"], sat["margin"], sample_m)
     print(f"reaches: {len(reaches)}")
 
     feats = []
@@ -150,7 +157,7 @@ def main():
                 {
                     "km": r["km"],
                     "half_w": r["half_w"],
-                    "len_m": 100 * (len(r["coords"]) - 1),
+                    "len_m": sample_m * (len(r["coords"]) - 1),
                 },
             )
         )
@@ -216,6 +223,9 @@ def main():
         w.writeheader()
         w.writerows(rows)
     print("wrote reaches-satellite.csv")
+    if args.skip_chips:
+        print("chips skipped (--skip-chips): imagery baseline unchanged")
+        return
 
     # ---------- chips ----------
     img = s2_median(*recent, whole)

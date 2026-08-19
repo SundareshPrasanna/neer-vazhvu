@@ -5,12 +5,24 @@
   "curation": "docs/waterways/cooum/waterway-curation.json",
   "geometry": {
     "inputs": [
-      { "file": "osm-cooum-centerline.json", "keep_tags": null }
+      {
+        "file": "osm-cooum-centerline.json",
+        "keep_tags": null
+      }
     ],
-    "clip": { "axis": "lon", "min": 79.84, "max": 80.3 },
-    "chain": { "axis": "lon", "chainage_zero_at": "min", "gap_m": 1200.0, "progress_tol_deg": 0.002 },
-    "sample_m": 100.0,
-    "transect_every_m": 200.0,
+    "clip": {
+      "axis": "lon",
+      "min": 79.84,
+      "max": 80.3
+    },
+    "chain": {
+      "axis": "lon",
+      "chainage_zero_at": "min",
+      "gap_m": 1200.0,
+      "progress_tol_deg": 0.002
+    },
+    "sample_m": 50.0,
+    "transect_every_m": 50.0,
     "half_transect_m": 500.0,
     "open_water_m": 400.0,
     "feature": {
@@ -28,7 +40,16 @@
     }
   },
   "satellite": {
-    "windows": { "dry": ["2026-01-15", "2026-04-30"], "recent": ["2026-06-01", "2026-08-19"] },
+    "windows": {
+      "dry": [
+        "2026-01-15",
+        "2026-04-30"
+      ],
+      "recent": [
+        "2026-06-01",
+        "2026-08-19"
+      ]
+    },
     "ndvi_veg": 0.35,
     "default_half_w": 25,
     "margin": 8,
@@ -37,26 +58,126 @@
     "min_water_ha_for_ndti": 1.0,
     "sites": {
       "_doc": "Anchors are centerline points at chainages converted from WRD mouth-based chainages (hyd-headworks.csv): Aranvoyal 45.33 km, Korattur 40.95 km, Paruthipattu ~27.3 km, Chetpet tidal head ~9.4 km from the mouth; our chainage total is 62.8 km. Verify anicut positions against the rendered chips at curation.",
-      "origin-satharai": { "lon": 79.8434, "lat": 13.0551, "half_m": 900 },
-      "aranvoyal-anicut": { "lon": 79.9724, "lat": 13.1008, "half_m": 900 },
-      "korattur-anicut": { "lon": 80.0108, "lat": 13.0911, "half_m": 900 },
-      "paruthipattu-icrerp-head": { "lon": 80.0762, "lat": 13.0984, "half_m": 900 },
-      "maduravoyal": { "lon": 80.1651, "lat": 13.0663, "half_m": 700 },
-      "koyambedu": { "lon": 80.1926, "lat": 13.0733, "half_m": 700 },
-      "chetpet-tidal-head": { "lon": 80.2353, "lat": 13.0668, "half_m": 700 },
-      "napier-mouth": { "lon": 80.2913, "lat": 13.0668, "half_m": 900 }
+      "origin-satharai": {
+        "lon": 79.8434,
+        "lat": 13.0551,
+        "half_m": 900
+      },
+      "aranvoyal-anicut": {
+        "lon": 79.9724,
+        "lat": 13.1008,
+        "half_m": 900
+      },
+      "korattur-anicut": {
+        "lon": 80.0108,
+        "lat": 13.0911,
+        "half_m": 900
+      },
+      "paruthipattu-icrerp-head": {
+        "lon": 80.0762,
+        "lat": 13.0984,
+        "half_m": 900
+      },
+      "maduravoyal": {
+        "lon": 80.1651,
+        "lat": 13.0663,
+        "half_m": 700
+      },
+      "koyambedu": {
+        "lon": 80.1926,
+        "lat": 13.0733,
+        "half_m": 700
+      },
+      "chetpet-tidal-head": {
+        "lon": 80.2353,
+        "lat": 13.0668,
+        "half_m": 700
+      },
+      "napier-mouth": {
+        "lon": 80.2913,
+        "lat": 13.0668,
+        "half_m": 900
+      }
     }
   },
   "reaches_km": [
-    [1, 0, 5.0], [2, 5.0, 10.0], [3, 10.0, 17.5], [4, 17.5, 22.0],
-    [5, 22.0, 26.0], [6, 26.0, 31.0], [7, 31.0, 39.0], [8, 39.0, 43.5],
-    [9, 43.5, 47.5], [10, 47.5, 53.4], [11, 53.4, 58.0], [12, 58.0, 61.9],
-    [13, 61.9, 62.8]
+    [
+      1,
+      0,
+      5.0
+    ],
+    [
+      2,
+      5.0,
+      10.0
+    ],
+    [
+      3,
+      10.0,
+      17.5
+    ],
+    [
+      4,
+      17.5,
+      22.0
+    ],
+    [
+      5,
+      22.0,
+      26.0
+    ],
+    [
+      6,
+      26.0,
+      31.0
+    ],
+    [
+      7,
+      31.0,
+      39.0
+    ],
+    [
+      8,
+      39.0,
+      43.5
+    ],
+    [
+      9,
+      43.5,
+      47.5
+    ],
+    [
+      10,
+      47.5,
+      53.4
+    ],
+    [
+      11,
+      53.4,
+      58.0
+    ],
+    [
+      12,
+      58.0,
+      61.9
+    ],
+    [
+      13,
+      61.9,
+      62.8
+    ]
   ],
   "mouths": {
-    "cooum": [80.2913, 13.0668]
+    "cooum": [
+      80.2913,
+      13.0668
+    ]
   },
-  "veg_calendar": { "start_year": 2019, "end_year": 2026, "end_month": 8 },
+  "veg_calendar": {
+    "start_year": 2019,
+    "end_year": 2026,
+    "end_month": 8
+  },
   "build": {
     "produced_by": "scripts/build_waterway.py --waterway cooum",
     "produced_at": "2026-08-19",
@@ -73,7 +194,7 @@
     "notes": {
       "reaches": "Measured layers (OSM transect widths, Sentinel-2 composites, Open Buildings counts) merged with curated per-reach facts; curated facts carry per-claim citations (see claims.json).",
       "today": "Current-season snapshot: Sentinel-2 Jun-Aug 2026 composite metrics, Open Buildings edge counts, OSM water polygons.",
-      "width_profile": "Perpendicular transects every 200 m across the OSM water-surface polygons; see reaches.json confidence tiers.",
+      "width_profile": "1,258 perpendicular transects every 50 m across the OSM water-surface polygons; see reaches.json confidence tiers.",
       "centerline": "OSM river centerline (relation 11901885), km 0 at the upstream origin near Satharai, increasing to the Bay of Bengal mouth."
     },
     "source_meta": {
@@ -94,10 +215,22 @@
       }
     },
     "doc_sources": {
-      "reaches": ["osm-overpass", "sentinel-2-l2a", "google-open-buildings"],
-      "today": ["sentinel-2-l2a", "google-open-buildings", "osm-overpass"],
-      "width_profile": ["osm-overpass"],
-      "centerline": ["osm-overpass"]
+      "reaches": [
+        "osm-overpass",
+        "sentinel-2-l2a",
+        "google-open-buildings"
+      ],
+      "today": [
+        "sentinel-2-l2a",
+        "google-open-buildings",
+        "osm-overpass"
+      ],
+      "width_profile": [
+        "osm-overpass"
+      ],
+      "centerline": [
+        "osm-overpass"
+      ]
     }
   }
 }

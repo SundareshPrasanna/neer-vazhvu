@@ -44,13 +44,14 @@ def init_ee():
     ee.Initialize(creds, project=os.environ.get("GEE_CLOUD_PROJECT"))
 
 
-def reach_lines(data: Path, reaches_km):
+def reach_lines(data: Path, reaches_km, sample_m: float):
     pts = json.loads((data / "centerline.geojson").read_text())["features"][0][
         "geometry"
     ]["coordinates"]
+    ppk = round(1000 / sample_m)  # centerline points per km
     out = []
     for rid, a, b in reaches_km:
-        seg = pts[int(a * 10) : int(b * 10) + 1]
+        seg = pts[int(a * ppk) : int(b * ppk) + 1]
         if len(seg) >= 2:
             out.append((rid, ee.Geometry.LineString(seg)))
     return out
@@ -176,7 +177,7 @@ def main():
     reaches_km = [tuple(r) for r in cfg["reaches_km"]]
 
     init_ee()
-    lines = reach_lines(data, reaches_km)
+    lines = reach_lines(data, reaches_km, cfg["geometry"]["sample_m"])
     print(f"{len(lines)} reach geometries")
     built_edge(data, lines)
     mouth_climatology(data, cfg["mouths"])

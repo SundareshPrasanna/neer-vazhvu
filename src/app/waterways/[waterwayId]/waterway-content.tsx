@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type {
+  WaterwayMethodsSection,
   WaterwayChapter,
   WaterwayClaim,
   WaterwayIdentity,
@@ -34,6 +35,7 @@ export function WaterwayContent({
   claims,
   today,
   widthLedger,
+  methods,
 }: {
   manifest: WaterwayManifest;
   identity: WaterwayIdentity;
@@ -43,6 +45,7 @@ export function WaterwayContent({
   claims: WaterwayClaim[];
   today: WaterwayToday;
   widthLedger: WaterwayWidthLedger | null;
+  methods: WaterwayMethodsSection[];
 }) {
   const [mode, setMode] = useState<Mode>("story");
   const [selectedReach, setSelectedReach] = useState<number>(reaches[0]?.id ?? 1);
@@ -152,7 +155,7 @@ export function WaterwayContent({
         )}
       </main>
 
-      <MethodsPanel claimCount={claims.length} />
+      <MethodsPanel claimCount={claims.length} methods={methods} />
 
       <footer className="border-t border-border py-6">
         <div className="mx-auto max-w-6xl px-4 text-xs leading-relaxed text-muted-foreground">

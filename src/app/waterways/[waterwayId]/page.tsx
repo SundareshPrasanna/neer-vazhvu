@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { tryGetWaterwayManifest } from "@/lib/waterways";
 import type {
+  WaterwayMethodsSection,
   WaterwayChapter,
   WaterwayToday,
   WaterwayWidthLedger,
@@ -56,6 +57,7 @@ export default async function WaterwayPage({ params }: PageProps) {
     identity: WaterwayIdentity;
     reaches: WaterwayReach[];
     width_ledger: WaterwayWidthLedger | null;
+    methods?: WaterwayMethodsSection[];
   }>(waterwayId, "reaches.json");
   const chaptersFile = loadJson<{ chapters: WaterwayChapter[] }>(
     waterwayId, "chapters.json");
@@ -79,6 +81,7 @@ export default async function WaterwayPage({ params }: PageProps) {
       claims={claimsFile.claims}
       today={todayFile.today}
       widthLedger={reachesFile.width_ledger ?? null}
+      methods={reachesFile.methods ?? []}
     />
   );
 }
