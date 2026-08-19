@@ -43,6 +43,20 @@ jobs:
       # capacity) into reservoir_daily_v2 - Pravah is the OFFICIAL daily
       # source; BMC itself publishes no public bulletin (its HE portal is a
       # closed SAP iView) and no reliable machine-readable mirror exists.
+      #
+      # HEALTH WARNING: THIS STEP HAS NEVER SUCCEEDED FROM A GITHUB RUNNER.
+      # mwrdpravah.in times out from runner IPs on every attempt, so each run
+      # ends "Pravah unreachable after 3 attempts; keeping yesterday's
+      # snapshot" and exits 0 - a GREEN NO-OP. The refresh that actually lands
+      # is the local launchd job (~/.local/neervazhvu-ops/refresh-blocked-feeds.sh,
+      # 12:00 IST, residential IP), whose commits read "local scheduled job".
+      #
+      # #285 added a SECOND Pravah step here for Pune, which doubled the retry
+      # budget from ~7.5 min to ~15 and pushed the job past timeout-minutes: 15
+      # - 2026-08-19 was CANCELLED. That step has been removed and Pune added
+      # to the local job instead. DO NOT ADD A THIRD CITY HERE: this workflow
+      # cannot reach the feed, and every city added to it costs another 7.5
+      # minutes of timeouts before the cap kills the run.
       - name: Scrape Pravah dam storage
         working-directory: neer-vazhvu-api
         env:
@@ -59,53 +73,24 @@ jobs:
           echo "Pravah unreachable after 3 attempts; keeping yesterday's snapshot"
           exit 0
 
-      # Pune off the SAME daily bulletin - one PDF covers all of Maharashtra, so
-      # this is a second parse of a document already fetched above rather than a
-      # second source. Upserts the six PMC/PCMC dams into reservoir_daily_v2
-      # (Mulshi is Tata's hydro and the city's db_filter drops it), plus the
-      # same six dated a year back from the bulletin's own
-      # same-date-last-year column, so the series grows at both ends.
-      #
-      # Kept as its own step, not folded into the loop above: a Pune failure
-      # must not discard Mumbai's successful snapshot, and vice versa.
-      - name: Scrape Pravah dam storage (Pune)
-        working-directory: neer-vazhvu-api
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: |
-          for attempt in 1 2 3; do
-            if python scripts/scrape_pravah_dams.py --city pune --out ../public/data/pune-dam-storage.json --supabase; then
-              exit 0
-            fi
-            echo "attempt $attempt failed; retrying in 60s"
-            sleep 60
-          done
-          echo "Pravah unreachable after 3 attempts; keeping yesterday's snapshot"
-          exit 0
-
       - name: Commit refreshed snapshot
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Refresh gate: files enveloped at HEAD must still certify L2
           # (report mode below cannot fail; this can - round-2 review)
-          # Both snapshots, or Pune's is refreshed on disk in CI and never
-          # committed - the database would move daily while the repo copy sat
-          # stale, which is the kind of drift nothing reports.
           bash scripts/nvdm-refresh-gate.sh public/data/mmr-dam-storage.json
-          bash scripts/nvdm-refresh-gate.sh public/data/pune-dam-storage.json
           # NVDM conformance before publishing (review 2026-07-30: direct
           # pushes bypass the PR gate - so the gate runs here instead;
           # any failure aborts before commit)
           python3 scripts/build_dataset_catalogue.py
           python3 scripts/validate_nvdm.py
           python3 scripts/validate_nvdm.py --selftest
-          git add public/data/mmr-dam-storage.json public/data/pune-dam-storage.json docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
+          git add public/data/mmr-dam-storage.json docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
           if git diff --staged --quiet; then
             echo "No storage change to commit"
             exit 0
           fi
-          git commit -m "Pravah dam storage refresh, Mumbai + Pune ($(date -u +%Y-%m-%d))"
+          git commit -m "Pravah dam storage refresh ($(date -u +%Y-%m-%d))"
           git pull --rebase origin main
           git push
