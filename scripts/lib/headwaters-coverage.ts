@@ -68,6 +68,7 @@ export const UNWATCHED: Record<string, string> = {
   "public/data/rich-bodies": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
   "public/geojson/rich-bodies": "covered by the platform-scope GEE entries",
   "public/data/cascade": "covered by the platform-scope entries fabdem-dem / hydrosheds-basins / osm-overpass / google-dynamic-world / sentinel-2-l2a / overture-buildings",
+  "public/data/waterways": "covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py)",
 
   // Curated compilations (NVDM Madurai pilot, 2026-07-30). Each record carries
   // its own citation; the upstreams are episodic news/court/report documents

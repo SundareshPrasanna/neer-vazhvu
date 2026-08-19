@@ -28,6 +28,14 @@ const WARDS_VINTAGE: Record<string, string> = {
   // delimitation year: the layer carries ward_no and a zone code but no
   // delimitation date, and GMDA publishes none alongside it.
   gurugram: "2026",
+  // Pune uses the 41 ELECTORAL prabhags of the 2025 delimitation (drafted
+  // 22 Aug 2025 on Census 2011 per Supreme Court guidelines, used for the
+  // 2026 PMC election), NOT the 15 administrative ward offices. OpenCity
+  // carries four delimitations on one dataset page - 76 (2012), 41 (2017),
+  // a 58-ward 2022 draft that never went to poll, and this one - and the
+  // 2017 file has the SAME feature count as this one, so a join across
+  // vintages succeeds silently and is wrong from ward 3 onward.
+  pune: "2025",
 };
 
 const DEFAULT_VINTAGE = "2022";

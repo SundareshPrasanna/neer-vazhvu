@@ -33,8 +33,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+from registry_license import registry_license  # noqa: E402
 
 import numpy as np
+
+# Per-city NVDM envelope source ids. write_artifact is preserve-if-present, so
+# cities whose artifact was enveloped by a per-city injector keep what they
+# have; this only takes effect on a city writing the file for the first time.
+ENVELOPE_SOURCE_ID = {"pune": "imd-gridded-rainfall-pune"}
 
 START_YEAR = 1970
 NORMAL_END = 2020  # long-term normal computed over START_YEAR-NORMAL_END
@@ -67,6 +73,20 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "88.36 E, but the Hooghly and the deltaic channels mean several nearby "
         "0.25-deg cells are classified as water by IMD; 22.5/88.25 sits on land "
         "west of the river and covers the KMC plain",
+    ),
+    "pune": (
+        18.5,
+        74.0,
+        "Pune grid point EAST of the city centre (18.52 N, 73.86 E), and the "
+        "choice matters more here than anywhere else on the platform. Pune "
+        "district carries a 4.7x west-east rainfall gradient - IN-GRES puts "
+        "Velhe at 2,182 mm and Indapur at 468 mm in the same year - so a "
+        "quarter-degree is not a rounding error. The nearer-looking cell at "
+        "18.5/73.75 sits 11 km west, up the gradient toward the Ghats, and "
+        "returns a 1,099.8 mm long-term mean against IMD's OWN Pune "
+        "(Shivajinagar) observatory normal of 841.2 mm - 31% high. This cell "
+        "returns 805.3 mm, within 4.3% of the observatory. Validated against "
+        "IMD Climatological Tables 1991-2020, station index 43063.",
     ),
     "delhi": (
         28.5,
@@ -226,7 +246,41 @@ def main() -> None:
         ]
         monthly_means.append(round(sum(month_vals) / max(1, len(month_vals)), 1))
 
+    # NVDM envelope, emitted by the producer for cities that have a registered
+    # source id here. write_artifact is preserve-if-present, so the cities
+    # enveloped earlier by a per-city injector keep exactly what they have.
+    envelope = {}
+    src_id = ENVELOPE_SOURCE_ID.get(city_id)
+    if src_id:
+        envelope = {
+            "nvdm": "1.0",
+            "dataset": "data-root/imd-rainfall-monthly",
+            "scope": {"kind": "city", "id": city_id},
+            "provenance": {
+                "sources": [
+                    {
+                        "id": src_id,
+                        "title": (
+                            f"IMD 0.25-degree gridded daily rainfall, "
+                            f"{city_id} grid point ({grid_lat}, {grid_lng})"
+                        ),
+                        "publisher": "India Meteorological Department",
+                        "license": registry_license(src_id),
+                    }
+                ],
+                "method": "api",
+                "produced_at": date.today().isoformat(),
+                "produced_by": "neer-vazhvu-api/scripts/generate_imd_rainfall.py",
+                "note": (
+                    "Downloaded with imdlib and aggregated to monthly totals. "
+                    "Grid-point selection is a real decision where the local "
+                    "rainfall gradient is steep - see CITY_DEFAULTS."
+                ),
+            },
+        }
+
     result = {
+        **envelope,
         "source": "IMD Gridded Rainfall (0.25 deg resolution)",
         "grid_point": {"lat": grid_lat, "lon": grid_lng},
         "note": note,

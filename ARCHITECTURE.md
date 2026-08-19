@@ -1,6 +1,6 @@
 # Architecture
 
-> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata and Gurugram live, Surat onboarding; multi-city by design; Mumbai is the first region place - the 9-corporation MMR, Delhi the first city with no ingestible daily supply feed, Kolkata the first with no impounded storage at all, which is why it needed a fourth hero mode, and Surat the first whose publisher supplies the thresholds as well as the readings, which is why it needed a fifth).
+> Technical overview of Neer Vazhvu - Urban Water Intelligence platform (Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram and Pune live, Surat onboarding; multi-city by design; Mumbai is the first region place - the 9-corporation MMR, Delhi the first city with no ingestible daily supply feed, Kolkata the second region place and the first city with no impounded storage at all, which is why it needed a fourth hero mode, and Surat the first whose publisher supplies the thresholds as well as the readings, which is why it needed a fifth).
 
 ## System Overview
 
@@ -95,7 +95,7 @@ graph TB
 
 ## Multi-city architecture
 
-Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Surat and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
+Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune, Surat and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
 
 - **`heroMode`** (`days-left` | `allocation` | `cauvery-pumping` | `drainage-capacity` | `flood-headroom` | `none`) — picks the dashboard hero variant.
     - Chennai (`days-left`): divides total CMWSSB-reservoir storage by urban demand. Works because Chennai's reservoirs ARE the urban supply.

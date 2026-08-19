@@ -1,0 +1,682 @@
+{
+ "nvdm": "1.0",
+ "dataset": "data-root/river-quality",
+ "scope": {
+  "kind": "city",
+  "id": "pune"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "cpcb-polluted-river-stretches",
+    "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (Updated Version), October 2025 - Table 3.17 and Annexure XIV",
+    "publisher": "Central Pollution Control Board",
+    "license": "Government of India publication, cited with attribution"
+   }
+  ],
+  "method": "pdf-extract",
+  "produced_at": "2026-08-17",
+  "produced_by": "neer-vazhvu-api/scripts/build_pune_river_quality.py",
+  "conventions": {
+   "two_vintages": "PRIORITY CLASS rests on 2022-23 monitoring and is CPCB's formal classification. The 2024 BOD figures come from Annexure XIV of the same report and have NOT been used to re-classify anything. The two are never averaged or presented as one series.",
+   "bod_units": "mg/L. CPCB's bathing-water criterion is 3 mg/L."
+  }
+ },
+ "last_updated": "2025-10",
+ "data_year_range": [
+  2018,
+  2024
+ ],
+ "source": "CPCB Polluted River Stretches assessment, October 2025 (2022-23 monitoring), with 2024 BOD from the same report's Annexure XIV",
+ "source_url": "https://cpcb.gov.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTc3N18xNzYwNjgxNDA4X21lZGlhcGhvdG80MzkyLnBkZg==",
+ "source_label": "CPCB Polluted River Stretches (Updated Version), October 2025",
+ "_headline": "CPCB records the Mula as improved, from Priority I to Priority II. In an annexure to the same report it records the Mula at Bopodi at 102.5 mg/L of BOD in 2024 - the sixth-highest reading among 756 locations nationally, higher than the worst Delhi Yamuna station (85.0) and higher than the Mithi at Mahim (80.0).",
+ "_gradient": "The Mutha leaves Khadakwasla dam at 4.1 mg/L and reads 50.2 mg/L at Veer Savarkar Bhavan, about fifteen kilometres downstream. The river does not arrive polluted.",
+ "priority_bands_mg_l": {
+  "I": "above 30",
+  "II": "20.1 to 30",
+  "III": "10.1 to 20",
+  "IV": "6.1 to 10",
+  "V": "3.1 to 6"
+ },
+ "rivers": [
+  {
+   "id": "mula",
+   "name": "Mula",
+   "name_ta": "",
+   "length_km": 57.2,
+   "overall_status": "dead",
+   "cpcb_class": "Priority II (BOD 20.1 to 30 mg/L)",
+   "description": "Comes down from Mulshi and takes the Pavana at Bopodi. CPCB measured 102.5 mg/L there in 2024 - the sixth-highest of 756 locations in India - in a report that classifies this stretch as improved.",
+   "notes": "CPCB priority history: I (2018) -> II (2022) -> II (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 102.5 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "2194",
+     "name": "Harrison Bridge, Mula-Pawana Sangam, Bopodi",
+     "lat": null,
+     "lng": null,
+     "stretch": "Bopodi (Harrison Bridge) to Aundh Gaon",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 102.5,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2193",
+     "name": "Aundh Bridge, Aundhgaon",
+     "lat": null,
+     "lng": null,
+     "stretch": "Bopodi (Harrison Bridge) to Aundh Gaon",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 25.6,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "I",
+    "2022": "II",
+    "2025": "II"
+   },
+   "bod_2018_range_mg_l": [
+    33,
+    35
+   ],
+   "bod_2022_max_mg_l": 28.0,
+   "bod_2022_23_max_mg_l": 25
+  },
+  {
+   "id": "mutha",
+   "name": "Mutha",
+   "name_ta": "",
+   "length_km": 34.9,
+   "overall_status": "dead",
+   "cpcb_class": "Priority II (BOD 20.1 to 30 mg/L)",
+   "description": "Pune's own river, and the one the city drinks. It leaves Khadakwasla at 4.1 mg/L of BOD and reads 50.2 mg/L about fifteen kilometres downstream at Veer Savarkar Bhavan.",
+   "notes": "CPCB priority history: I (2018) -> I (2022) -> II (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 50.2 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "2678",
+     "name": "Veer Savarkar Bhavan, Pune M.C.",
+     "lat": null,
+     "lng": null,
+     "stretch": "Khadakwasla Dam to Sangam Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 50.2,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2191",
+     "name": "Sangam Bridge / Ganapathyghat, Shivajinagar",
+     "lat": null,
+     "lng": null,
+     "stretch": "Khadakwasla Dam to Sangam Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 35.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2679",
+     "name": "Deccan Bridge",
+     "lat": null,
+     "lng": null,
+     "stretch": "Khadakwasla Dam to Sangam Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 32.5,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2680",
+     "name": "Khadakwasla Dam",
+     "lat": null,
+     "lng": null,
+     "stretch": "Khadakwasla Dam to Sangam Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 4.1,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "I",
+    "2022": "I",
+    "2025": "II"
+   },
+   "bod_2018_range_mg_l": [
+    5.0,
+    42.5
+   ],
+   "bod_2022_max_mg_l": 50.0,
+   "bod_2022_23_max_mg_l": 30
+  },
+  {
+   "id": "pavana",
+   "name": "Pawana",
+   "name_ta": "",
+   "length_km": 58.1,
+   "overall_status": "severely_degraded",
+   "cpcb_class": "Priority II (BOD 20.1 to 30 mg/L)",
+   "description": "Pimpri-Chinchwad's water supply and its effluent drain in one channel: 7.4 mg/L at the Ravet intake, 36.0 at Kasarwadi.",
+   "notes": "CPCB priority history: II (2018) -> II (2022) -> II (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 36.0 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "2690",
+     "name": "Kasarwadi",
+     "lat": null,
+     "lng": null,
+     "stretch": "Sangavigaon to Dapodi Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 36.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2691",
+     "name": "Dapodi Bridge, Pawana-Mula Sangam",
+     "lat": null,
+     "lng": null,
+     "stretch": "Sangavigaon to Dapodi Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 33.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2196",
+     "name": "Sangavigaon",
+     "lat": null,
+     "lng": null,
+     "stretch": "Sangavigaon to Dapodi Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 30.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2694",
+     "name": "Pimprigaon",
+     "lat": null,
+     "lng": null,
+     "stretch": "Sangavigaon to Dapodi Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 28.3,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2693",
+     "name": "Chinchwadgaon",
+     "lat": null,
+     "lng": null,
+     "stretch": "Sangavigaon to Dapodi Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 17.6,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2692",
+     "name": "Ravet Weir",
+     "lat": null,
+     "lng": null,
+     "stretch": "Sangavigaon to Dapodi Bridge",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 7.4,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "II",
+    "2022": "II",
+    "2025": "II"
+   },
+   "bod_2018_range_mg_l": [
+    15.5,
+    24
+   ],
+   "bod_2022_max_mg_l": 26.0,
+   "bod_2022_23_max_mg_l": 27
+  },
+  {
+   "id": "bhima",
+   "name": "Bhima",
+   "name_ta": "",
+   "length_km": 73.6,
+   "overall_status": "severely_degraded",
+   "cpcb_class": "Priority II (BOD 20.1 to 30 mg/L)",
+   "description": "The Krishna tributary everything above drains into. CPCB's own label for its first Pune station reads 'River Bhima at Pune (Mutha River)'.",
+   "notes": "CPCB priority history: II (2018) -> I (2022) -> II (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 34.0 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "1190",
+     "name": "Downstream Bundgarden, Yerwada",
+     "lat": null,
+     "lng": null,
+     "stretch": "Upstream Vithalwadi to Takli",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 34.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "1189",
+     "name": "Upstream Vithalwadi, Shankar Mandir (labelled 'Mutha River')",
+     "lat": null,
+     "lng": null,
+     "stretch": "Upstream Vithalwadi to Takli",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 32.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "II",
+    "2022": "I",
+    "2025": "II"
+   },
+   "bod_2018_range_mg_l": [
+    8.0,
+    22.0
+   ],
+   "bod_2022_max_mg_l": 38.0,
+   "bod_2022_23_max_mg_l": 27
+  },
+  {
+   "id": "mula-mutha",
+   "name": "Mula-Mutha",
+   "name_ta": "",
+   "length_km": 36.0,
+   "overall_status": "degraded",
+   "cpcb_class": "Priority II (BOD 20.1 to 30 mg/L)",
+   "description": "The combined river below the Sangam, and the one the JICA pollution-abatement programme is named for. PMC generates 980 MLD of sewage against 477 MLD of operating treatment capacity.",
+   "notes": "CPCB priority history: II (2018) -> II (2022) -> II (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 22.0 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "2192",
+     "name": "Mundhawa Bridge",
+     "lat": null,
+     "lng": null,
+     "stretch": "Mundhawa Bridge to downstream of Theur",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 22.0,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2677",
+     "name": "Downstream of Theur",
+     "lat": null,
+     "lng": null,
+     "stretch": "Mundhawa Bridge to downstream of Theur",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 18.4,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "II",
+    "2022": "II",
+    "2025": "II"
+   },
+   "bod_2018_range_mg_l": [
+    14,
+    22
+   ],
+   "bod_2022_max_mg_l": 22.0,
+   "bod_2022_23_max_mg_l": 21
+  },
+  {
+   "id": "indrayani",
+   "name": "Indrayani",
+   "name_ta": "",
+   "length_km": 61.4,
+   "overall_status": "degraded",
+   "cpcb_class": "Priority III (BOD 10.1 to 20 mg/L)",
+   "description": "The pilgrimage river past Dehu and Alandi, and the one that periodically runs under white foam at the ghats. MPCB blames detergent, PCMC blames industry, and neither has published a surfactant measurement.",
+   "notes": "CPCB priority history: II (2018) -> III (2022) -> III (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 16.1 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "2197",
+     "name": "Alandigaon",
+     "lat": null,
+     "lng": null,
+     "stretch": "Upstream Moshigaon to downstream Alandigaon",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 16.1,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2668",
+     "name": "Downstream Moshi",
+     "lat": null,
+     "lng": null,
+     "stretch": "Upstream Moshigaon to downstream Alandigaon",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 13.2,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    },
+    {
+     "id": "2669",
+     "name": "Upstream Moshigaon",
+     "lat": null,
+     "lng": null,
+     "stretch": "Upstream Moshigaon to downstream Alandigaon",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 13.2,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "II",
+    "2022": "III",
+    "2025": "III"
+   },
+   "bod_2018_range_mg_l": [
+    12.5,
+    22
+   ],
+   "bod_2022_max_mg_l": 15.5,
+   "bod_2022_23_max_mg_l": 11
+  },
+  {
+   "id": "ghod",
+   "name": "Ghod",
+   "name_ta": "",
+   "length_km": 0.0,
+   "overall_status": "degraded",
+   "cpcb_class": "Priority IV (BOD 6.1 to 10 mg/L)",
+   "description": "A Bhima tributary, monitored at Shirur - the district's one critical groundwater taluka.",
+   "notes": "CPCB priority history: III (2018) -> III (2022) -> IV (2025, on 2022-23 monitoring). Worst measured BOD in 2024: 14.4 mg/L. The class and the 2024 reading are different vintages from the same report and are not merged.",
+   "stations": [
+    {
+     "id": "2665",
+     "name": "Shirur",
+     "lat": null,
+     "lng": null,
+     "stretch": "At Shirur",
+     "readings": [
+      {
+       "year": 2024,
+       "do_mgl": null,
+       "bod_mgl": 14.4,
+       "ph": null,
+       "conductivity_us": null,
+       "cod_mgl": null,
+       "fecal_coliform_mpn": null,
+       "tds_mgl": null,
+       "nitrate_mgl": null,
+       "chromium_mgl": null,
+       "lead_mgl": null,
+       "cadmium_mgl": null
+      }
+     ]
+    }
+   ],
+   "cpcb_priority_history": {
+    "2018": "III",
+    "2022": "III",
+    "2025": "IV"
+   },
+   "bod_2018_range_mg_l": [
+    10.2,
+    10.2
+   ],
+   "bod_2022_max_mg_l": 11.5,
+   "bod_2022_23_max_mg_l": 9.7
+  }
+ ],
+ "national_context_2024": {
+  "locations_tabulated": 756,
+  "locations_above_100_mg_l": 6,
+  "worst_delhi_yamuna": {
+   "station": 1812,
+   "bod": 85.0,
+   "name": "Yamuna, Delhi"
+  },
+  "mithi_at_mahim": {
+   "station": 2168,
+   "bod": 80.0,
+   "name": "Mithi, Mumbai"
+  },
+  "_note": "Counted from the annexure itself. The five readings above the Mula's 102.5 are 160.0 and 120.0 (Tamil Nadu), 150.0 (Bhella), 142.0 (Ghaggar, Punjab) and 116.0 (Yamuna)."
+ },
+ "_edition_trap": "The 2015 edition of this assessment carries STRETCH LENGTH IN KM in the column where later editions carry BOD (Indrayani 96, Mula-Mutha 15, Mutha 12, Pawana 12, Bhima 200). Read as BOD those numbers are wrong and alarming. Only 2018 onward are comparable.",
+ "_not_included": "Per-station COD is collected by MPCB and not published. No surfactant or detergent measurement exists for the Indrayani, which matters because MPCB's attribution of the Alandi foaming to detergent is a position rather than a measurement, and PCMC attributes it to Chakan/Dehu/Talegaon industry instead."
+}

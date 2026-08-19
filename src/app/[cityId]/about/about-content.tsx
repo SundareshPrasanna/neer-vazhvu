@@ -30,11 +30,15 @@ const HyderabadPageDescriptions = dynamic(() =>
   import("./hyderabad-page-descriptions").then((mod) => mod.HyderabadPageDescriptions),
 );
 
+const KolkataPageDescriptions = dynamic(() =>
+  import("./kolkata-page-descriptions").then((mod) => mod.KolkataPageDescriptions),
+);
+
 const SuratPageDescriptions = dynamic(() =>
   import("./surat-page-descriptions").then((mod) => mod.SuratPageDescriptions),
 );
-const KolkataPageDescriptions = dynamic(() =>
-  import("./kolkata-page-descriptions").then((mod) => mod.KolkataPageDescriptions),
+const PunePageDescriptions = dynamic(() =>
+  import("./pune-page-descriptions").then((mod) => mod.PunePageDescriptions),
 );
 
 const ChennaiPageDescriptions = dynamic(() =>
@@ -197,6 +201,7 @@ export function CityAboutContent({
   const isDelhi = config.cityId === "delhi";
   const isHyderabad = config.cityId === "hyderabad";
   const isKolkata = config.cityId === "kolkata";
+  const isPune = config.cityId === "pune";
   const isSurat = config.cityId === "surat";
 
   return (
@@ -568,11 +573,15 @@ export function CityAboutContent({
             <KolkataPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
+          {isPune && (
+            <PunePageDescriptions cityId={config.cityId} cityName={cityName} />
+          )}
+
           {isSurat && (
             <SuratPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
-          {!isMadurai && !isBangalore && !isMumbai && !isChennai && !isDelhi && !isHyderabad && !isKolkata && !isSurat && (
+          {!isMadurai && !isBangalore && !isMumbai && !isChennai && !isDelhi && !isHyderabad && !isKolkata && !isPune && !isSurat && (
             <p className="text-slate-600 dark:text-slate-400">
               Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/chennai/about" className="text-blue-600 dark:text-blue-400 hover:underline">/chennai/about</Link>) for the canonical methodology pattern.
             </p>

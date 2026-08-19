@@ -26,6 +26,7 @@ import type { SewageInletData } from "@/components/rivers/combined-rivers-map";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
+import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { computeRiverStatus } from "@/lib/utils/river-classification";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
@@ -189,6 +190,7 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
         <span className="font-semibold text-slate-700 dark:text-slate-300">
           {qualityData.rivers.length} {t("rivers_page.rivers")} - {pollutionData.sources.length} {t("rivers_page.poll_sources")}
         </span>
+        <WaterwayLinks cityId={cityId} />
         {cooum && cooumLatestDO !== undefined && cooumLatestDO !== null && (
           <span className="text-slate-500 dark:text-slate-400">
             {t("rivers_page.cooum_do")}{" "}

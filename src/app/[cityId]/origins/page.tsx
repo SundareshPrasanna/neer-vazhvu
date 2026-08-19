@@ -9,6 +9,7 @@ import { DelhiStory } from "@/content/story-delhi";
 import { HyderabadStory } from "@/content/story-hyderabad";
 import { KolkataStory } from "@/content/story-kolkata";
 import { GurugramStory } from "@/content/story-gurugram";
+import { PuneStory } from "@/content/story-pune";
 import { SuratStory } from "@/content/story-surat";
 import { ComingSoonStory } from "@/components/story/coming-soon";
 
@@ -38,6 +39,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
               ? "The city that built itself around a pond - and the wetland that takes what it throws away"
             : cityId === "gurugram"
               ? "The city that outgrew its water in twelve years"
+            : cityId === "pune"
+              ? "The city that dammed one river four times and still counts four hours"
             : cityId === "surat"
               ? "The city the river made, unmade, and made again"
               : `${config.displayName} water story`;
@@ -89,6 +92,10 @@ export default async function CityStoryPage({ params }: PageProps) {
 
   if (cityId === "gurugram") {
     return <GurugramStory />;
+  }
+
+  if (cityId === "pune") {
+    return <PuneStory />;
   }
 
   if (cityId === "surat") {

@@ -10,10 +10,10 @@ This exists because a platform that treats data gaps as first-class has to be ab
 | Kind | Entries |
 |---|---|
 | Suppressed freshness checks | 1 |
-| Artifacts with no registered upstream | 83 |
-| Routes a city deliberately does not ship | 38 |
-| Absences the product states on the page | 23 |
-| **Total** | **145** |
+| Artifacts with no registered upstream | 84 |
+| Routes a city deliberately does not ship | 45 |
+| Absences the product states on the page | 24 |
+| **Total** | **154** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -115,6 +115,7 @@ Shipped data with no Headwaters upstream to watch for new editions. Usually corr
 | platform | public/data/restoration-priority.json | derived: scored from water-bodies + river layers already covered |
 | platform | public/data/rich-bodies | covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a |
 | platform | public/data/ward-profiles.json | derived join over covered ward-level layers |
+| platform | public/data/waterways | covered by the platform-scope entries osm-overpass / sentinel-2-l2a / google-open-buildings / jrc-global-surface-water; curated editorial facts carry per-claim citations (docs/waterways/*/waterway-curation.json) and the family has its own publication gates (scripts/verify_waterway_buckingham.py, scripts/audit_waterway_numbers.py) |
 | platform | public/geojson/rich-bodies | covered by the platform-scope GEE entries |
 
 ## Routes a city deliberately does not ship
@@ -154,6 +155,13 @@ Derived by diffing each city against the union of every route any city ships, so
 | mumbai | climate-risk | Not built for this city. |
 | mumbai | my-ward | UNRECORDED: Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route. |
 | mumbai | tanker | Not built for this city. |
+| pune | allocations | The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger. |
+| pune | cascades | The cascade pipeline has not been run for Pune district. Backlog, not refusal. |
+| pune | climate-risk | Not built for this city. |
+| pune | commitments | Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register. |
+| pune | lake-restoration | No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere. |
+| pune | my-ward | The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker. |
+| pune | shoreline | Landlocked. |
 | surat | allocations | Surat has no published drinking-water entitlement to render. The research pass found infrastructure and treatment capacities but no sanctioned allocation instrument from Ukai or the Tapi - the ledger's whole subject is entitled-versus-received, and the entitled half does not exist in public. |
 | surat | cascades | Not a cascade geography. Tank cascades are chained systems where each tank's surplus feeds the next; Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. Rendering a cascade here would assert an inheritance the city does not have. |
 | surat | climate-risk | Buildable but not built. Chennai's sub-basin risk comes from HydroBASINS level 12, a global product that covers the lower Tapi as well, so this is a backlog item rather than a refusal. |
@@ -188,6 +196,7 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | kolkata | water source: KMC deep tube wells | No public tube-well register or daily draw. The ~110 MLD figure is a single line on KMC's water-distribution page. |
 | kolkata | water-bodies catchment atlas | Kolkata has no catchment view, and that is a deliberate omission rather than a missing dataset. Catchments are delineated by tracing water downhill across a 30 m elevation model - which needs a hill. Kolkata has about 11 metres of fall across 40 kilometres of delta, against 43 m in Chennai and 338 m in Mumbai, the cities where this view ships. At that gradient the method would draw confident-looking boundaries that the ground does not support, and in any case most of Kolkata's runoff travels through a combined sewer network rather than over the surface. We would rather show no catchments than invent them. |
 | mumbai | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| pune | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | surat | storage history chart | Surat has no storage history and will not grow one. The city impounds nothing: it abstracts from a weir pond on the Tapi, which is a river reach rather than a reservoir, and the dam upstream belongs to the state irrigation department, which publishes a level but no volume and no Surat share. Level over a full-reservoir mark is not a quantity of water, so there is nothing here to chart. What Surat does have is the live flood chain at the top of this page. |
 | surat | UI language: gu | Advertised as coming soon and rendered as a disabled chip. The gu dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | surat | water-bodies catchment atlas | Surat has no cascade view, and that is a judgement about the city rather than a missing dataset. The cascade layer reconstructs chained tank systems - the Tamil kanmoi networks and the Bengaluru kere chains, where each tank's surplus was engineered to feed the next over centuries. Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. The algorithm would find downhill neighbours here because it always does, and drawing them as a cascade would assert an inheritance the city does not have. |

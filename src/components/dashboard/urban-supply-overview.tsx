@@ -202,6 +202,14 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
             {t("supply_overview.chain_label")}
           </h3>
+          {/* Optional-chained deliberately. `supply_chain` and `_sources`
+           *  were the only two arrays in this component mapped unguarded,
+           *  and a city whose supply-overview JSON omits either took the
+           *  WHOLE dashboard down with "This page couldn't load" - not a
+           *  blank section, the entire page including the hero and the
+           *  reservoir cards. Found while onboarding Pune. A missing
+           *  optional block must render nothing; it must never be able to
+           *  break the page around it. */}
           <div className="flex flex-wrap items-stretch gap-1.5 text-[11px]">
             {(data.supply_chain ?? []).map((step, i) => (
               <span key={i} className="flex items-center gap-1.5">

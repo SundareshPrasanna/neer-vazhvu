@@ -167,12 +167,56 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "my-ward",
     "tanker",
   ]),
-  // Surat V1 target set. No `cascades` (no tank-cascade heritage), no
-  // `my-ward` (zone is the analytical unit and ward geometry is unresolved),
-  // no `allocations` (no published entitlement instrument found), no
-  // `shoreline` (the surface still reads Chennai coastal data), no `tanker`
-  // (99% piped coverage; no tanker economy established). Fills in across
-  // M1-M3 while the city is preview-gated.
+  // Pune preview set. Only surfaces with real artifacts behind them.
+  //
+  // `groundwater` is in and is the strongest layer: 14 talukas x 6 IN-GRES
+  // editions, reproducing CGWB's National Compilation 2025 exactly, with
+  // Shirur critical at 95.71% inside a district that reads SAFE at 63.73%.
+  // `rivers` is in because Pune has five and CPCB rates four of those
+  // stretches Priority I or II. `facts` is in because facts-pune.json
+  // ships 22 cards, every figure of which is READ from an artifact already in
+  // the repo rather than transcribed again, so a quoted card cannot drift from
+  // the dashboard it came from. `tanker` is in on the fourth tankerDataKind,
+  // `delivery-register`, added rather than bending Hyderabad's utility-ledger
+  // panel: PMC's register is a DISPATCH record with no bookings in it, so the
+  // fulfilment rate that page is built on does not exist here.
+  //
+  // `flood-risk` is in on the NARRATIVE variant, which needs no hazard
+  // polygons. It was off on the reasoning that WRD publishes Pune's flood lines
+  // as 518 scanned PDF sheets so the hazard layer does not exist - true, but
+  // that was an argument about the INTERACTIVE variant. The narrative stack
+  // carries the event register plus PMC's 1,014 km nalla network, and the
+  // flood-line absence ships as a data gap on the page.
+  //
+  // NOT in, each for a stated reason rather than pending work:
+  // `my-ward` - the 41 prabhags exist as NAMED GEOMETRY in the repo, but no
+  //   ward rows exist in the database, so /api/wards?city=pune 404s and the
+  //   page renders a heading over nothing. Turned off at cutover rather than
+  //   shipped empty: a live-and-empty page is issue #279, filed against
+  //   Gurugram during this same onboarding. Kolkata is off for the same
+  //   reason. Returns with the ward seeding, not with a better endpoint.
+  // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
+  // `cascades` - the cascade pipeline has not been run for Pune district.
+  // `shoreline` - landlocked.
+  pune: new Set([
+    "",
+    "about",
+    "origins",
+    "facts",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "tanker",
+  ]),
+  // Surat V1 target set. No `cascades` (not a cascade geography), no `my-ward`
+  // (zone is the analytical unit and all three ward schemes lack downloadable
+  // geometry - WFS is disabled on SMC's own GIS), no `allocations` (no
+  // published entitlement instrument exists), no `shoreline` (genuinely
+  // coastal, but the surface still reads Chennai coastal data), no `tanker`
+  // (95% piped coverage; tanker-served properties are NA in every year of the
+  // open data). Every omission carries a written reason in
+  // scripts/lib/exemptions.ts.
   surat: new Set([
     "",
     "about",

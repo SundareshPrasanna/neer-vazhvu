@@ -89,7 +89,9 @@
         "method": "page-hash"
       },
       "dependsOn": [
-        "public/data/rich-bodies"
+        "public/data/rich-bodies",
+        "public/data/waterways/buckingham-canal/reaches.json",
+        "public/data/waterways/buckingham-canal/today.json"
       ],
       "refreshMethod": "scripts/verify_rich_body_open_buildings.py",
       "notes": "Google Open Buildings v3 is one of the two independent building-footprint sources in the rich-body encroachment verification; Overture is the other, and the artifacts deliberately compare them side by side. A version bump on either changes the verification result, which is why both are registered.",
@@ -173,7 +175,11 @@
         "public/geojson/kolkata-rivers.geojson",
         "public/geojson/kolkata-water-bodies-current.geojson",
         "public/geojson/kolkata-drainage.geojson",
-        "public/data/kolkata-localities.json"
+        "public/data/kolkata-localities.json",
+        "public/data/waterways/buckingham-canal/centerline.geojson",
+        "public/data/waterways/buckingham-canal/width-profile.json",
+        "public/data/waterways/buckingham-canal/reaches.json",
+        "public/data/waterways/buckingham-canal/today.json"
       ],
       "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
       "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
@@ -216,7 +222,9 @@
         "public/data/restoration-priority-madurai.json",
         "public/data/restoration-priority-madurai-legacy.json",
         "public/geojson/chennai-coastal-transects.geojson",
-        "public/geojson/mumbai-coastal-transects.geojson"
+        "public/geojson/mumbai-coastal-transects.geojson",
+        "public/data/waterways/buckingham-canal/reaches.json",
+        "public/data/waterways/buckingham-canal/today.json"
       ],
       "refreshMethod": "neer-vazhvu-api/app/cascade/channels.py + gee imagery chips",
       "notes": "Continuous acquisition; channel evidence + rich-body imagery. Registered 2026-07-30 for NVDM lineage."
@@ -298,6 +306,7 @@
         "public/data/imd-rainfall-monthly-hyderabad.json",
         "public/data/rainfall-recent-hyderabad.json",
         "public/data/rainfall-recent-kolkata.json",
+        "public/data/rainfall-recent-pune.json",
         "public/data/imd-rainfall-monthly-surat.json",
         "public/data/rainfall-recent-surat.json"
       ],
@@ -324,6 +333,7 @@
         "public/data/rainfall-recent-mumbai.json",
         "public/data/rainfall-recent-hyderabad.json",
         "public/data/rainfall-recent-kolkata.json",
+        "public/data/rainfall-recent-pune.json",
         "public/data/rainfall-intensity-kolkata.json",
         "public/data/rainfall-recent-surat.json"
       ],

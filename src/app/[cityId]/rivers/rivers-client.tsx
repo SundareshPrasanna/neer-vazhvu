@@ -6,6 +6,7 @@ import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
 import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
+import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { measureWorst } from "@/lib/rivers/measure";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
@@ -135,6 +136,8 @@ export interface RiverInfo {
    *  overrides come with Hyderabad's translation pass. */
   display_name_te?: string;
   display_name_bn?: string;
+  /** Native-script name shown under the English name (Marathi cities). */
+  display_name_mr?: string;
 }
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
@@ -533,6 +536,7 @@ export default function RiversClient({
         <span className="font-semibold text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">
           {cityDisplayName} - {scopeLabel}
         </span>
+        <WaterwayLinks cityId={cityId} />
         {showHeaderStats && (
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers
@@ -911,12 +915,14 @@ function RiverInfoOnlyPanel({
           {(info.display_name_ta ||
             info.display_name_hi ||
             info.display_name_te ||
-            info.display_name_bn) && (
+            info.display_name_bn ||
+            info.display_name_mr) && (
             <span className="text-sm text-slate-500 dark:text-slate-400">
               {info.display_name_ta ||
                 info.display_name_hi ||
                 info.display_name_te ||
-                info.display_name_bn}
+                info.display_name_bn ||
+                info.display_name_mr}
             </span>
           )}
         </div>

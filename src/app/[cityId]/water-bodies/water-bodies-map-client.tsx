@@ -44,11 +44,11 @@ interface ClientProps {
   mapCenter: [number, number];
   mapZoom?: number;
   /** Stats bar values from the server; nulls render as dashes. */
-  /** Counts from the city's lost-water-bodies study. Optional: a city can
-   *  have mapped current bodies long before anyone has researched which ones
-   *  vanished, and hiding the whole map until then serves no one. */
-  fullyLostCount?: number;
-  reducedCount?: number;
+  /** Null where the city has no lost-bodies register. The overlay is
+   *  optional; the current-polygon map is not, so these legend chips render
+   *  only when the register exists rather than showing a false zero. */
+  fullyLostCount: number | null;
+  reducedCount: number | null;
   namedOsmCount: number | null;
   /** Whether the cascade reconstruction overlay is available for this
    *  city (PMTiles produced by `scripts/run_cascade.py` exist). */
@@ -251,7 +251,7 @@ export default function WaterBodiesMapClient({
                 </span>
               </div>
             )}
-            {fullyLostCount != null && (
+            {fullyLostCount !== null && (
               <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
                 <span className="w-3 h-3 rounded-sm bg-red-500 opacity-70" />
                 <span className="text-xs text-slate-600 dark:text-slate-400">
@@ -259,7 +259,7 @@ export default function WaterBodiesMapClient({
                 </span>
               </div>
             )}
-            {reducedCount != null && (
+            {reducedCount !== null && (
               <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
                 <span className="w-3 h-3 rounded-sm bg-orange-500 opacity-70" />
                 <span className="text-xs text-slate-600 dark:text-slate-400">
