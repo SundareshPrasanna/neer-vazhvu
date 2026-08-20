@@ -173,6 +173,7 @@ export function ExplorerView({
   const nEstimated = sel.transects.filter(
     (t) => t.flag === "SPECTRAL" || t.flag === "OFFSET"
   ).length;
+  const nSpectral = sel.transects.filter((t) => t.flag === "SPECTRAL").length;
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-16 md:grid-cols-[260px_1fr]">
@@ -273,7 +274,11 @@ export function ExplorerView({
                 ? `${Math.round(sel.satellite.water_frac_recent * 100)}%`
                 : "n/a"
             }
-            hint="10 m pixels undercount narrow water"
+            hint={
+              nSpectral
+                ? `10 m pixels undercount narrow water; the spectral test finds a dark channel on ${nSpectral} transects here (see the strip)`
+                : "10 m pixels undercount narrow water"
+            }
           />
           <Metric
             label="built edge"
