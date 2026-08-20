@@ -60,8 +60,15 @@ for r in reaches["reaches"]:
     share = len(okr) / len(rows) if rows else 0
     if len(okr) >= 3:
         med = exp["median_m"]
-        diffs = [abs(okr[i+1][1] - okr[i][1]) / med * 100 for i in range(len(okr) - 1)
-                 if okr[i+1][0] - okr[i][0] < 0.35]
+        diffs = []
+        for i in range(len(okr)):
+            for j in range(i + 1, len(okr)):
+                gap = okr[j][0] - okr[i][0]
+                if gap < 0.15:
+                    continue
+                if gap < 0.35:
+                    diffs.append(abs(okr[j][1] - okr[i][1]) / med * 100)
+                break
         jit = statistics.median(diffs) if diffs else None
         yrs = [way_year[w] for _, _, ids in okr for w in ids.split(";") if w in way_year]
         vin_ok = bool(yrs) and statistics.median(yrs) >= 2021
@@ -94,19 +101,55 @@ for r in reaches["reaches"]:
 all_ok = sorted(float(w["width_m"]) for w in widths if w["width_m"] and w["flag"] == "OK")
 ident = reaches["identity"]
 stats_txt = json.dumps(ident)
-if len(all_ok) != 253:
-    errors.append(f"global OK transects: {len(all_ok)} (page claims 253)")
+if len(all_ok) != 1012:
+    errors.append(f"global OK transects: {len(all_ok)} (page claims 1,012)")
 gmed = all_ok[len(all_ok) // 2]
 if not close(gmed, 33, 0.6):
     errors.append(f"global median width {gmed} vs claimed 33 m")
-if "253 transects" not in stats_txt:
-    errors.append("identity stat no longer cites 253 transects")
+if "1,012 transects" not in stats_txt:
+    errors.append("identity stat no longer cites 1,012 transects")
 n_rows = len(widths)
-if n_rows != 373:
-    errors.append(f"transect count {n_rows} != 373")
+if n_rows != 1492:
+    errors.append(f"transect count {n_rows} != 1492")
 last_km = float(widths[-1]["chainage_km"])
-if not close(last_km, 74.4, 0.15):
-    errors.append(f"chainage end {last_km} vs 74.4-74.5")
+if not close(last_km, 74.55, 0.15):
+    errors.append(f"chainage end {last_km} vs 74.55")
+
+# ---- estimated widths: gate, correction and counts ----
+smeta = json.loads((RESEARCH / "data" / "widths-spectral-meta.json").read_text())
+cal = smeta["calibration"]
+assert cal["detect_rate"] >= 0.5 and cal["median_abs_diff_m"] <= 20, \
+    "spectral calibration no longer passes the ship gate - rebuild decision needed"
+bias = cal["median_bias_m"] or 0
+scsv = {r["chainage_km"]: float(r["w_spectral_m"])
+        for r in csv.DictReader(open(RESEARCH / "data" / "widths-spectral.csv"))
+        if r["w_spectral_m"]}
+wflags = {r["chainage_km"]: r["flag"] for r in widths}
+exp_spectral = {k: round(v - bias, 1) for k, v in scsv.items()
+                if wflags.get(k) in ("NO_POLYGON", "CENTER_DRY")}
+got = {}
+for r in reaches["reaches"]:
+    for t in r["transects"]:
+        if t["flag"] == "SPECTRAL":
+            got[f"{t['km']:.2f}" if str(t["km"]).count(".") != 1 else str(t["km"])] = t["w"]
+# normalize keys via float compare
+gotf = {round(float(k), 2): v for k, v in got.items()}
+expf = {round(float(k), 2): v for k, v in exp_spectral.items()}
+if len(gotf) != len(expf):
+    errors.append(f"spectral transects shipped {len(gotf)} vs expected {len(expf)}")
+for k, v in expf.items():
+    if k in gotf and abs(gotf[k] - v) > 0.051:
+        errors.append(f"spectral value at km {k}: {gotf[k]} vs {v}")
+n_offset = sum(1 for r in widths if r["flag"] == "OFFSET")
+n_offset_ship = sum(1 for r in reaches["reaches"] for t in r["transects"]
+                    if t["flag"] == "OFFSET")
+if n_offset != n_offset_ship:
+    errors.append(f"offset transects: shipped {n_offset_ship} vs csv {n_offset}")
+mtxt2 = json.dumps(reaches.get("methods", []))
+for needle in (str(cal["detected"]), f"{cal['median_abs_diff_m']:.1f} m",
+               f"{abs(bias):.1f} m", str(smeta["estimated"])):
+    if needle not in mtxt2:
+        errors.append(f"methods estimated-widths numbers drifted: expected '{needle}'")
 
 # ---- today tiles ----
 tot_veg = round(sum(vegha.values()))
@@ -131,8 +174,8 @@ strip = today["strip"]
 if strip[0]["from"] > 0.01 or abs(strip[-1]["to"] - last_km) > 0.15:
     errors.append("condition strip does not span full chainage")
 cov = sum(1 for s2 in surface)
-if cov != 746:
-    notes.append(f"surface points {cov} (expected 746)")
+if cov != 1492:
+    notes.append(f"surface points {cov} (expected 1492)")
 
 # ---- width ledger vs canonical HSCTC table ----
 CANON = {

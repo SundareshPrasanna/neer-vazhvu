@@ -1,0 +1,264 @@
+{
+  "_doc": "Per-waterway pipeline config. Consumed by scripts/build_waterway_geometry.py, scripts/build_waterway.py, scripts/fetch_waterway_osm.py and the three neer-vazhvu-api/scripts/build_waterway_*.py satellite scripts. Extracted 19 Aug 2026 when the Cooum became waterway 2; every value here reproduces the Buckingham Canal build byte-for-byte (gates: verify_waterway_buckingham.py + audit_waterway_numbers.py).",
+  "id": "buckingham-canal",
+  "research_dir": "docs/research/buckingham-canal",
+  "curation": "docs/waterways/buckingham-canal/waterway-curation.json",
+  "geometry": {
+    "_doc": "Chainage 0 at the Ennore end (max lat), increasing south. gap_m bridges the Basin Bridge / Cooum junction (~1.4 km) where OSM has no continuous canal way.",
+    "inputs": [
+      {
+        "file": "osm-canal-centerline.json",
+        "keep_tags": null
+      },
+      {
+        "file": "osm-north-waterways.json",
+        "keep_tags": {
+          "waterway": "canal"
+        }
+      }
+    ],
+    "clip": {
+      "axis": "lat",
+      "min": 12.615,
+      "max": 13.245
+    },
+    "chain": {
+      "axis": "lat",
+      "chainage_zero_at": "max",
+      "gap_m": 1600.0,
+      "progress_tol_deg": 0.001
+    },
+    "sample_m": 50.0,
+    "transect_every_m": 50.0,
+    "half_transect_m": 500.0,
+    "open_water_m": 400.0,
+    "feature": {
+      "name": "Buckingham Canal (Ennore - Mahabalipuram)",
+      "source": "OpenStreetMap via Overpass, ODbL, snapshot 2026-08",
+      "chainage_zero": "Ennore creek junction end (lat 13.245)"
+    }
+  },
+  "fetch": null,
+  "fetch_note": "Canal OSM inputs are the manually fetched Aug 2026 snapshot (pre-generalization); refetching would move the geometry baseline, so no fetch block exists here. New waterways carry one (see cooum.json).",
+  "satellite": {
+    "windows": {
+      "dry": [
+        "2026-01-15",
+        "2026-04-30"
+      ],
+      "recent": [
+        "2026-06-01",
+        "2026-08-18"
+      ]
+    },
+    "ndvi_veg": 0.35,
+    "default_half_w": 25,
+    "margin": 8,
+    "chip_every_km": 2,
+    "chip_buffer_m": 350,
+    "sites": {
+      "ennore-junction": {
+        "lat": 13.24,
+        "half_m": 900
+      },
+      "basin-bridge": {
+        "lat": 13.095,
+        "half_m": 700
+      },
+      "mrts-mylapore": {
+        "lat": 13.035,
+        "half_m": 700
+      },
+      "adyar-crossing": {
+        "lat": 13.008,
+        "half_m": 700
+      },
+      "okkiyam-maduvu": {
+        "lat": 12.945,
+        "half_m": 900
+      },
+      "muttukadu": {
+        "lat": 12.805,
+        "half_m": 1400
+      },
+      "kovalam-inlet": {
+        "lat": 12.785,
+        "half_m": 900
+      },
+      "mahabalipuram-end": {
+        "lat": 12.63,
+        "half_m": 900
+      }
+    }
+  },
+  "reaches_km": [
+    [
+      1,
+      0,
+      2.0
+    ],
+    [
+      2,
+      2.0,
+      5.1
+    ],
+    [
+      3,
+      5.1,
+      8.5
+    ],
+    [
+      4,
+      8.5,
+      14.3
+    ],
+    [
+      5,
+      14.3,
+      16.9
+    ],
+    [
+      6,
+      16.9,
+      19.2
+    ],
+    [
+      7,
+      19.2,
+      20.5
+    ],
+    [
+      8,
+      20.5,
+      23.3
+    ],
+    [
+      9,
+      23.3,
+      27.2
+    ],
+    [
+      10,
+      27.2,
+      29.1
+    ],
+    [
+      11,
+      29.1,
+      32.0
+    ],
+    [
+      12,
+      32.0,
+      38.5
+    ],
+    [
+      13,
+      38.5,
+      44.3
+    ],
+    [
+      14,
+      44.3,
+      51.7
+    ],
+    [
+      15,
+      51.7,
+      54.4
+    ],
+    [
+      16,
+      54.4,
+      62.2
+    ],
+    [
+      17,
+      62.2,
+      73.3
+    ],
+    [
+      18,
+      73.3,
+      74.5
+    ]
+  ],
+  "mouths": {
+    "ennore-creek": [
+      80.329,
+      13.226
+    ],
+    "cooum": [
+      80.291,
+      13.07
+    ],
+    "adyar": [
+      80.2775,
+      13.0125
+    ],
+    "muttukadu-kovalam": [
+      80.254,
+      12.791
+    ]
+  },
+  "veg_calendar": {
+    "start_year": 2019,
+    "end_year": 2026,
+    "end_month": 8
+  },
+  "build": {
+    "produced_by": "scripts/build_waterway_buckingham.py",
+    "produced_at": "2026-08-18",
+    "retrieved": "2026-08-18",
+    "research_base": "docs/research/buckingham-canal/ (dossier.md, sections 01-07, data-vintages.md)",
+    "attribution": {
+      "osm": "Centerline and width measurement derived from OpenStreetMap (ODbL).",
+      "sentinel": "Chips and corridor metrics contain modified Copernicus Sentinel data (2026)."
+    },
+    "banned_claims_note": "See curation.banned_claims; enforced by scripts/verify_waterway_buckingham.py",
+    "editorial_note": "Editorial compilation: every fact referenced here carries its own source, date and flag in the claim register (claims.json), curated in docs/waterways/buckingham-canal/waterway-curation.json and gated by scripts/verify_waterway_buckingham.py + scripts/audit_waterway_numbers.py. Empty sources by design - per-claim citations carry accountability.",
+    "synthesis_source": "Neer Vazhvu synthesis of the sourced dossier",
+    "synthesis_date": "2026-08-18",
+    "notes": {
+      "reaches": "Measured layers (OSM transect widths, Sentinel-2 composites, Open Buildings counts) merged with curated per-reach facts; curated facts carry per-claim citations (see claims.json).",
+      "today": "Current-season snapshot: Sentinel-2 Jun-Aug 2026 composite metrics, Open Buildings edge counts, OSM water polygons.",
+      "width_profile": "1,492 perpendicular transects every 50 m across the OSM water-surface polygons; see reaches.json confidence tiers.",
+      "centerline": "Chained OSM canal centerline, km 0 at the Ennore creek crossing; ~1.4 km bridged at the Basin Bridge / Cooum junction where OSM has no continuous channel."
+    },
+    "source_meta": {
+      "osm-overpass": {
+        "title": "OpenStreetMap waterway and water-surface geometry (Overpass API)",
+        "publisher": "OpenStreetMap contributors",
+        "url": "https://overpass-api.de/"
+      },
+      "sentinel-2-l2a": {
+        "title": "Sentinel-2 L2A surface reflectance composites (Google Earth Engine)",
+        "publisher": "ESA Copernicus",
+        "url": "https://dataspace.copernicus.eu/"
+      },
+      "google-open-buildings": {
+        "title": "Google Open Buildings v3 footprints",
+        "publisher": "Google Research",
+        "url": "https://sites.research.google/open-buildings/"
+      }
+    },
+    "doc_sources": {
+      "reaches": [
+        "osm-overpass",
+        "sentinel-2-l2a",
+        "google-open-buildings"
+      ],
+      "today": [
+        "sentinel-2-l2a",
+        "google-open-buildings",
+        "osm-overpass"
+      ],
+      "width_profile": [
+        "osm-overpass"
+      ],
+      "centerline": [
+        "osm-overpass"
+      ]
+    }
+  }
+}

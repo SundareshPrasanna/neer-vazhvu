@@ -1,20 +1,29 @@
 #!/usr/bin/env python3
-"""Buckingham Canal (Ennore - Mahabalipuram): Sentinel-2 baseline.
+"""Waterway Sentinel-2 baseline (generic; --waterway <id>).
+
+Generalized 19 Aug 2026 from the Buckingham Canal pilot when the Cooum
+became waterway 2. Per-waterway parameters (seasonal windows, marquee
+sites, chip cadence) live in <repo>/scripts/waterways/<id>.json.
 
 Consumes the OSM-derived centerline + widths from
-scripts/build_buckingham_canal_geometry.py (main repo) and produces, per
-1-km reach of the 74.5 km Ennore->Mahabalipuram alignment:
+scripts/build_waterway_geometry.py (main repo) and produces, per 1-km
+reach of the alignment:
 
   - effective water width (NDWI water area / reach length), two seasons
-  - corridor vegetation fraction (NDVI > 0.35), two seasons - a FLOATING
-    + EMERGENT vegetation proxy (hyacinth screening, not a species call;
-    banks within the corridor contaminate it and the chips are the check)
-  - a true-color chip per 2-km segment + marquee sites
+  - corridor vegetation fraction (NDVI > threshold), two seasons - a
+    FLOATING + EMERGENT vegetation proxy (hyacinth screening, not a
+    species call; banks within the corridor contaminate it and the chips
+    are the check)
+  - a true-color chip per chip_every_km segment + marquee sites
 
-Seasons: DRY = 2026-01-15..2026-04-30 (post-NE-monsoon, typical hyacinth
-peak), RECENT = 2026-06-01..2026-08-18. Cloud-masked S2 SR median.
+Cloud-masked S2 SR median composites (SCL classes 3/8/9/10/11 dropped).
 
-Outputs under docs/research/buckingham-canal/:
+NOTE: composites are windowed but Earth Engine collections are not
+frozen; rerunning for an already-shipped waterway can move its numbers.
+The Buckingham Canal baseline is the shipped Aug 2026 run - regenerate
+only with intent.
+
+Outputs under <research_dir>/:
   data/reaches-satellite.csv
   figures/chips/seg-km{A:02d}-{B:02d}.png
   figures/chips/site-{name}.png
@@ -22,6 +31,7 @@ Outputs under docs/research/buckingham-canal/:
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import math
@@ -38,27 +48,10 @@ load_dotenv(API_ROOT / ".env")
 import ee  # noqa: E402
 
 REPO = API_ROOT.parent
-BASE = REPO / "docs" / "research" / "buckingham-canal"
-DATA = BASE / "data"
-CHIPS = BASE / "figures" / "chips"
-CHIPS.mkdir(parents=True, exist_ok=True)
 
-DRY = ("2026-01-15", "2026-04-30")
-RECENT = ("2026-06-01", "2026-08-18")
-NDVI_VEG = 0.35
-DEFAULT_HALF_W = 25  # m, reaches with no OSM width
-MARGIN = 8  # m beyond measured half-width
 
-SITES = {  # marquee chips: name -> (lat_anchor, half_size_m)
-    "ennore-junction": (13.2400, 900),
-    "basin-bridge": (13.0950, 700),
-    "mrts-mylapore": (13.0350, 700),
-    "adyar-crossing": (13.0080, 700),
-    "okkiyam-maduvu": (12.9450, 900),
-    "muttukadu": (12.8050, 1400),
-    "kovalam-inlet": (12.7850, 900),
-    "mahabalipuram-end": (12.6300, 900),
-}
+def load_cfg(waterway: str) -> dict:
+    return json.loads((REPO / "scripts" / "waterways" / f"{waterway}.json").read_text())
 
 
 def init_ee():
@@ -84,15 +77,16 @@ def s2_median(start, end, region):
     )
 
 
-def load_reaches():
-    rows = list(csv.DictReader(open(DATA / "widths.csv")))
-    pts = json.loads((DATA / "centerline.geojson").read_text())["features"][0][
+def load_reaches(data: Path, default_half_w: float, margin: float, sample_m: float):
+    rows = list(csv.DictReader(open(data / "widths.csv")))
+    pts = json.loads((data / "centerline.geojson").read_text())["features"][0][
         "geometry"
     ]["coordinates"]
-    n_km = math.ceil((len(pts) - 1) * 100 / 1000)
+    ppk = round(1000 / sample_m)  # centerline points per km
+    n_km = math.ceil((len(pts) - 1) * sample_m / 1000)
     reaches = []
     for k in range(n_km):
-        seg = pts[k * 10 : k * 10 + 11]
+        seg = pts[k * ppk : k * ppk + ppk + 1]
         if len(seg) < 2:
             continue
         ws = [
@@ -103,7 +97,7 @@ def load_reaches():
             and r["flag"] == "OK"
         ]
         ws.sort()
-        half = (ws[len(ws) // 2] / 2 + MARGIN) if ws else DEFAULT_HALF_W
+        half = (ws[len(ws) // 2] / 2 + margin) if ws else default_half_w
         half = max(15, min(110, half))
         reaches.append(
             {
@@ -116,9 +110,41 @@ def load_reaches():
     return reaches, pts
 
 
+def nearest_point(pts, site: dict):
+    """Marquee-site anchor: lat-only anchors match by latitude (the canal's
+    north-south convention); anchors carrying lon match in 2D."""
+    if "lon" in site:
+        lat0 = site["lat"]
+        kx = math.cos(math.radians(lat0))
+        return min(
+            pts,
+            key=lambda c: ((c[0] - site["lon"]) * kx) ** 2 + (c[1] - lat0) ** 2,
+        )
+    return min(pts, key=lambda c: abs(c[1] - site["lat"]))
+
+
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--waterway", required=True)
+    ap.add_argument(
+        "--skip-chips",
+        action="store_true",
+        help="metrics only; keep the shipped imagery baseline",
+    )
+    args = ap.parse_args()
+    cfg = load_cfg(args.waterway)
+    sat = cfg["satellite"]
+    sample_m = cfg["geometry"]["sample_m"]
+    base = REPO / cfg["research_dir"]
+    data = base / "data"
+    chips = base / "figures" / "chips"
+    chips.mkdir(parents=True, exist_ok=True)
+    dry = tuple(sat["windows"]["dry"])
+    recent = tuple(sat["windows"]["recent"])
+    ndvi_veg = sat["ndvi_veg"]
+
     init_ee()
-    reaches, pts = load_reaches()
+    reaches, pts = load_reaches(data, sat["default_half_w"], sat["margin"], sample_m)
     print(f"reaches: {len(reaches)}")
 
     feats = []
@@ -131,7 +157,7 @@ def main():
                 {
                     "km": r["km"],
                     "half_w": r["half_w"],
-                    "len_m": 100 * (len(r["coords"]) - 1),
+                    "len_m": sample_m * (len(r["coords"]) - 1),
                 },
             )
         )
@@ -147,12 +173,12 @@ def main():
         for r in reaches
     }
 
-    for tag, (a, b) in {"dry": DRY, "recent": RECENT}.items():
+    for tag, (a, b) in {"dry": dry, "recent": recent}.items():
         img = s2_median(a, b, whole)
         ndwi = img.normalizedDifference(["B3", "B8"]).rename("ndwi")
         ndvi = img.normalizedDifference(["B8", "B4"]).rename("ndvi")
         water = ndwi.gt(0.0)
-        veg = ndvi.gt(NDVI_VEG)
+        veg = ndvi.gt(ndvi_veg)
         stack = (
             water.rename("water")
             .addBands(veg.rename("veg"))
@@ -192,14 +218,17 @@ def main():
 
     rows = [out[k] for k in sorted(out)]
     fields = list(rows[0].keys())
-    with open(DATA / "reaches-satellite.csv", "w", newline="") as f:
+    with open(data / "reaches-satellite.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)
     print("wrote reaches-satellite.csv")
+    if args.skip_chips:
+        print("chips skipped (--skip-chips): imagery baseline unchanged")
+        return
 
     # ---------- chips ----------
-    img = s2_median(*RECENT, whole)
+    img = s2_median(*recent, whole)
     vis = {"bands": ["B4", "B3", "B2"], "min": 0, "max": 2800, "gamma": 1.15}
 
     def save_thumb(region, path, dim=900):
@@ -209,13 +238,14 @@ def main():
         with urllib.request.urlopen(url, timeout=120) as resp:
             path.write_bytes(resp.read())
 
-    for k0 in range(0, len(reaches), 2):
-        ks = [r for r in reaches if k0 <= r["km"] < k0 + 2]
+    every = sat["chip_every_km"]
+    for k0 in range(0, len(reaches), every):
+        ks = [r for r in reaches if k0 <= r["km"] < k0 + every]
         if not ks:
             continue
         coords = [c for r in ks for c in r["coords"]]
-        region = ee.Geometry.LineString(coords).buffer(350).bounds()
-        p = CHIPS / f"seg-km{k0:02d}-{min(k0 + 2, len(reaches)):02d}.png"
+        region = ee.Geometry.LineString(coords).buffer(sat["chip_buffer_m"]).bounds()
+        p = chips / f"seg-km{k0:02d}-{min(k0 + every, len(reaches)):02d}.png"
         try:
             save_thumb(region, p)
             print("chip", p.name)
@@ -227,7 +257,7 @@ def main():
     def clearest_scene(region):
         col = (
             ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-            .filterDate(*RECENT)
+            .filterDate(*recent)
             .filterBounds(region)
             .sort("CLOUDY_PIXEL_PERCENTAGE")
         )
@@ -235,10 +265,13 @@ def main():
         date = ee.Date(img.get("system:time_start")).format("YYYY-MM-dd")
         return img, date.getInfo()
 
-    for name, (lat, half) in SITES.items():
-        best = min(pts, key=lambda c: abs(c[1] - lat))
+    for name, site in sat["sites"].items():
+        if name.startswith("_"):  # config-level notes, not sites
+            continue
+        best = nearest_point(pts, site)
+        half = site["half_m"]
         region = ee.Geometry.Point(best).buffer(half).bounds()
-        p = CHIPS / f"site-{name}.png"
+        p = chips / f"site-{name}.png"
         try:
             scene, date = clearest_scene(region)
             dim = min(600, max(220, int(half * 2 / 10) * 2))

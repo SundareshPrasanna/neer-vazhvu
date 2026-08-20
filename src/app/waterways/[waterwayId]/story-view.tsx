@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type {
+  WaterwayLocatorAnchor,
   WaterwayChapter,
   WaterwayIdentity,
   WaterwayManifest,
@@ -12,6 +13,7 @@ import type {
   WaterwayWidthLedger,
 } from "@/lib/waterways/types";
 import { FactLine, SourceChip } from "./claim-chip";
+import { LocatorMap } from "./locator-map";
 import { TimelineView } from "./timeline-view";
 import { TodayPanel } from "./today-panel";
 import { WidthLedger } from "./width-ledger";
@@ -29,12 +31,6 @@ import { WidthProfileChart } from "./width-profile-chart";
  */
 
 const CHAPTER_BODY: Record<string, string> = {
-  open:
-    "This page walks the canal end to end, north to south, the way the " +
-    "water does. Everything on it is measured or cited: widths from 373 " +
-    "transects, the satellite record from this summer, and the paper " +
-    "trail from the government's own documents. Click any number for its " +
-    "source.",
   ennore:
     "The canal enters Chennai through its heaviest industry: two power " +
     "stations, a refinery belt, a port. The consent regime has steadily " +
@@ -43,7 +39,7 @@ const CHAPTER_BODY: Record<string, string> = {
     "measurement alongside the regulator's is how such questions get " +
     "answered quickly.",
   squeeze:
-    "Through the city the canal threads under the MRTS railway, routed " +
+    "Through the city the canal runs under the MRTS railway, routed " +
     "along it in the 1980s after a Planning Commission working group " +
     "found no other corridor economically available. The reach now holds " +
     "the alignment's narrowest water, and therefore the clearest case " +
@@ -51,8 +47,8 @@ const CHAPTER_BODY: Record<string, string> = {
   okkiyam:
     "South Chennai drains through one channel into this canal; the marsh " +
     "behind it breathes with the tide through the same gate. CMRL has " +
-    "invested in widening the vent-way at this crossing, and 2026 field " +
-    "reports tracked a construction-phase constriction alongside - the " +
+    "invested in widening the water opening at this crossing, and 2026 field " +
+    "reports tracked a construction-phase narrowing alongside - the " +
     "kind of change a live baseline registers as it happens.",
   estuary:
     "Below the city the canal widens into backwaters the tide still " +
@@ -64,14 +60,14 @@ const CHAPTER_BODY: Record<string, string> = {
     "The last stretch is the canal at its most complete: banks " +
     "un-encroached (though unprotected), no structures for eleven " +
     "kilometres, a channel running green with vegetation. It is the " +
-    "least altered water on the alignment, and the readiest canvas for " +
-    "the restoration the current programmes envision.",
+    "least altered water on the alignment, and the easiest place to begin " +
+    "the restoration the current programmes plan.",
   paper:
     "The canal's record shows sustained intent: a national-waterway " +
     "designation, a High Court mandate, detailed project reports, an " +
     "umbrella sanction for the three waterways, and now the Urban " +
     "Challenge Fund window with a water-metro study in procurement. " +
-    "Seventeen years of groundwork have converged; below is that record, " +
+    "Seventeen years of groundwork have come together; below is that record, " +
     "dated and sourced.",
   pilot:
     "Neer Vazhvu built this page from public records and open satellites; " +
@@ -79,7 +75,7 @@ const CHAPTER_BODY: Record<string, string> = {
     "and standard: levels and flow at the reaches that decide floods, " +
     "dissolved oxygen where the monthly record stopped in 2023, the state " +
     "of the mouths through the seasons, a boat-run depth profile - the " +
-    "first since 2014 - and ground-truth under the vegetation the " +
+    "first since 2014 - and field checks under the vegetation the " +
     "satellite flags. This is the measurement layer Neer Vazhvu proposes " +
     "to operate alongside the institutions doing the restoration; the " +
     "page you are reading is its first deliverable.",
@@ -142,7 +138,12 @@ function ChapterVisual({
     case "ennore":
       return chip("site-ennore-junction.jpg", "The Ennore creek junction from orbit");
     case "squeeze":
-      return <WidthProfileChart waterwayId={manifest.waterwayId} />;
+      return (
+        <WidthProfileChart
+          waterwayId={manifest.waterwayId}
+          xLabel="km from Ennore"
+        />
+      );
     case "okkiyam":
       return chip("site-okkiyam-maduvu.jpg", "The Okkiyam Maduvu confluence area from orbit");
     case "estuary":
@@ -158,8 +159,8 @@ function ChapterVisual({
             "Water level and flow at the reaches that decide floods",
             "Dissolved oxygen, resuming the monthly record",
             "Mouth state at Ennore, Adyar and Muttukadu, continuously",
-            "A boat-run bathymetry transect: the first depth profile since 2014",
-            "Ground-truth on the vegetation the satellite flags",
+            "A boat-run depth survey: the first since 2014",
+            "Field checks on the vegetation the satellite flags",
           ].map((x) => (
             <li key={x} className="flex gap-2">
               <span aria-hidden className="text-primary">■</span>
@@ -181,6 +182,7 @@ export function StoryView({
   timeline,
   today,
   widthLedger,
+  locatorAnchors,
   onExplore,
 }: {
   manifest: WaterwayManifest;
@@ -190,11 +192,15 @@ export function StoryView({
   timeline: WaterwayTimelineEntry[];
   today: WaterwayToday;
   widthLedger: WaterwayWidthLedger | null;
+  locatorAnchors: WaterwayLocatorAnchor[];
   onExplore: (reachId: number) => void;
 }) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLElement | null)[]>([]);
-  const byId = new Map(reaches.map((r) => [r.id, r]));
+  const byId = useMemo(
+    () => new Map(reaches.map((r) => [r.id, r])),
+    [reaches]
+  );
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -212,37 +218,11 @@ export function StoryView({
     return () => obs.disconnect();
   }, []);
 
-  return (
-    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
-      {/* Chapter rail (desktop) */}
-      <nav
-        aria-label="Chapters"
-        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
-      >
-        <ol className="space-y-3 border-l border-border pl-4">
-          {chapters.map((ch, i) => (
-            <li key={ch.key}>
-              <a
-                href={`#ch-${ch.key}`}
-                className={`block max-w-36 text-xs leading-snug transition-colors ${
-                  active === i
-                    ? "font-semibold text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {ch.km && (
-                  <span className="block font-mono text-[10px] opacity-70">
-                    km {ch.km[0]}–{ch.km[1]}
-                  </span>
-                )}
-                {ch.title}
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-
-      {/* Chapters */}
+  // The observer's setActive fires at every chapter crossing; memoizing
+  // the sections keeps that re-render to the rail alone (the chapters
+  // hold the profile chart, locators and receipt lists - a heavy tree).
+  const sections = useMemo(
+    () => (
       <div className="min-w-0 flex-1 space-y-20 pt-4">
         {chapters.map((ch, i) => {
           const chapterFacts = ch.reach_ids
@@ -258,16 +238,29 @@ export function StoryView({
               }}
               className="scroll-mt-36"
             >
-              <div className="font-mono text-xs uppercase tracking-widest text-primary">
-                {i === 0
-                  ? identity.scope
-                  : ch.km
-                    ? `km ${ch.km[0]} – ${ch.km[1]}`
-                    : "the whole canal"}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-mono text-xs uppercase tracking-widest text-primary">
+                    {i === 0
+                      ? identity.scope
+                      : ch.km
+                        ? `km ${ch.km[0]} – ${ch.km[1]}`
+                        : "end to end"}
+                  </div>
+                  <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+                    {ch.title}
+                  </h2>
+                </div>
+                {ch.km && (
+                  <div className="hidden sm:block">
+                    <LocatorMap
+                      waterwayId={manifest.waterwayId}
+                      span={ch.km}
+                      anchors={locatorAnchors}
+                    />
+                  </div>
+                )}
               </div>
-              <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-                {ch.title}
-              </h2>
               <p className="mt-3 max-w-2xl text-lg leading-relaxed text-foreground">
                 {ch.verdict}
               </p>
@@ -322,6 +315,42 @@ export function StoryView({
           );
         })}
       </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byId, chapters, reaches, timeline, today, widthLedger, locatorAnchors, manifest, identity, onExplore]
+  );
+
+  return (
+    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
+      {/* Chapter rail (desktop) */}
+      <nav
+        aria-label="Chapters"
+        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
+      >
+        <ol className="space-y-3 border-l border-border pl-4">
+          {chapters.map((ch, i) => (
+            <li key={ch.key}>
+              <a
+                href={`#ch-${ch.key}`}
+                className={`block max-w-36 text-xs leading-snug transition-colors ${
+                  active === i
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ch.km && (
+                  <span className="block font-mono text-[10px] opacity-70">
+                    km {ch.km[0]}–{ch.km[1]}
+                  </span>
+                )}
+                {ch.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {sections}
     </div>
   );
 }

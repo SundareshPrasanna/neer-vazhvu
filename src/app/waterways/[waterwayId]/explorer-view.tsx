@@ -1,7 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import type { WaterwayManifest, WaterwayReach } from "@/lib/waterways/types";
+import type {
+  WaterwayLocatorAnchor,
+  WaterwayManifest,
+  WaterwayReach,
+} from "@/lib/waterways/types";
+import { LocatorMap } from "./locator-map";
 import { FactLine } from "./claim-chip";
 import { WorksLens } from "./works-lens";
 
@@ -13,62 +19,115 @@ import { WorksLens } from "./works-lens";
  */
 function TransectStrip({ reach }: { reach: WaterwayReach }) {
   const pts = reach.transects;
+  const [hi, setHi] = useState<number | null>(null);
   if (!pts.length) return null;
   const [a, b] = reach.km;
   const W = 560;
   const H = 56;
   const cap = 160;
   const x = (km: number) => ((km - a) / Math.max(b - a, 0.001)) * W;
+  const barW = Math.max(1.5, Math.min(4, (W / pts.length) * 0.55));
+  const pick = (e: React.PointerEvent<SVGSVGElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const vx = ((e.clientX - r.left) / r.width) * W;
+    let best = 0;
+    let bd = Infinity;
+    pts.forEach((p, i) => {
+      const d = Math.abs(x(p.km) - vx);
+      if (d < bd) {
+        bd = d;
+        best = i;
+      }
+    });
+    setHi(best);
+  };
+  const h = hi != null ? pts[hi] : null;
+  const label = h
+    ? h.w == null
+      ? `km ${h.km} - no traced water surface in OSM here`
+      : h.flag === "OPEN_WATER"
+        ? `km ${h.km} - opens into backwater (${Math.round(h.w)} m across)`
+        : h.flag === "SPECTRAL"
+          ? `km ${h.km} - about ${Math.round(h.w)} m, spectral estimate (Sentinel-2), low confidence`
+          : h.flag === "OFFSET"
+            ? `km ${h.km} - ${Math.round(h.w)} m, mapped water sits offset from the drawn centreline, low confidence`
+            : `km ${h.km} - ${Math.round(h.w)} m wide`
+    : "move along the strip to read each transect";
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="h-14 w-full"
-      role="img"
-      aria-label={`Measured widths along ${reach.name}`}
-    >
-      {pts.map((p) => {
-        const label =
-          p.w == null
-            ? `km ${p.km}: not measurable from mapped water here`
-            : p.flag === "OPEN_WATER"
-              ? `km ${p.km}: opens into backwater (${Math.round(p.w)} m across)`
-              : `km ${p.km}: ${Math.round(p.w)} m wide`;
-        return (
-          <g key={p.km} className="cursor-help">
-            <title>{label}</title>
-            {/* full-height invisible hit area so thin bars are hoverable */}
-            <rect
-              x={x(p.km) - 4}
-              y={0}
-              width={8}
-              height={H}
-              fill="transparent"
+    <div>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="h-14 w-full touch-none"
+        role="img"
+        aria-label={`Measured widths along ${reach.name}`}
+        onPointerMove={pick}
+        onPointerDown={pick}
+        onPointerLeave={() => setHi(null)}
+      >
+        {h && (
+          <line
+            x1={x(h.km)}
+            x2={x(h.km)}
+            y1={0}
+            y2={H}
+            strokeWidth={1}
+            className="stroke-muted-foreground/50"
+          />
+        )}
+        {pts.map((p, i) => {
+          const active = i === hi;
+          return p.w == null ? (
+            <circle
+              key={p.km}
+              cx={x(p.km)}
+              cy={H - 4}
+              r={active ? 2.5 : 1.5}
+              className={
+                active ? "fill-muted-foreground" : "fill-muted-foreground/40"
+              }
             />
-            {p.w == null ? (
-              <circle
-                cx={x(p.km)}
-                cy={H - 4}
-                r={1.5}
-                className="fill-muted-foreground/40"
-              />
-            ) : (
-              <rect
-                x={x(p.km) - 2}
-                y={H - 4 - Math.min(p.w, cap) * ((H - 8) / cap)}
-                width={4}
-                height={Math.min(p.w, cap) * ((H - 8) / cap)}
-                rx={1}
-                className={
-                  p.flag === "OPEN_WATER"
+          ) : p.flag === "SPECTRAL" ? (
+            <rect
+              key={p.km}
+              x={x(p.km) - barW / 2}
+              y={H - 4 - Math.min(p.w, cap) * ((H - 8) / cap)}
+              width={barW}
+              height={Math.min(p.w, cap) * ((H - 8) / cap)}
+              rx={0.8}
+              fill="none"
+              strokeWidth={1}
+              className={
+                active ? "stroke-primary" : "stroke-primary/50"
+              }
+            />
+          ) : (
+            <rect
+              key={p.km}
+              x={x(p.km) - barW / 2}
+              y={H - 4 - Math.min(p.w, cap) * ((H - 8) / cap)}
+              width={barW}
+              height={Math.min(p.w, cap) * ((H - 8) / cap)}
+              rx={0.8}
+              className={
+                active
+                  ? "fill-primary"
+                  : p.flag === "OPEN_WATER"
                     ? "fill-sky-400/50"
-                    : "fill-primary/70"
-                }
-              />
-            )}
-          </g>
-        );
-      })}
-    </svg>
+                    : p.flag === "OFFSET"
+                      ? "fill-primary/40"
+                      : "fill-primary/70"
+              }
+            />
+          );
+        })}
+      </svg>
+      <div
+        aria-live="polite"
+        className="mt-1 font-mono text-[11px] text-muted-foreground"
+      >
+        {label}
+      </div>
+    </div>
   );
 }
 
@@ -99,16 +158,22 @@ function Metric({
 export function ExplorerView({
   manifest,
   reaches,
+  locatorAnchors,
   selectedId,
   onSelect,
 }: {
   manifest: WaterwayManifest;
   reaches: WaterwayReach[];
+  locatorAnchors: WaterwayLocatorAnchor[];
   selectedId: number;
   onSelect: (id: number) => void;
 }) {
   const sel = reaches.find((r) => r.id === selectedId) ?? reaches[0];
   const veg = sel.satellite.veg_frac_recent;
+  const nEstimated = sel.transects.filter(
+    (t) => t.flag === "SPECTRAL" || t.flag === "OFFSET"
+  ).length;
+  const nSpectral = sel.transects.filter((t) => t.flag === "SPECTRAL").length;
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-16 md:grid-cols-[260px_1fr]">
@@ -148,15 +213,26 @@ export function ExplorerView({
 
       {/* Detail panel */}
       <section aria-live="polite">
-        <div className="font-mono text-xs text-muted-foreground">
-          km {sel.km[0]}–{sel.km[1]} · {manifest.chainageNote}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="font-mono text-xs text-muted-foreground">
+              km {sel.km[0]}–{sel.km[1]} · {manifest.chainageNote}
+            </div>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+              {sel.name}
+            </h2>
+            <p className="mt-2 max-w-2xl text-base leading-relaxed text-foreground/90">
+              {sel.verdict}
+            </p>
+          </div>
+          <div className="hidden sm:block">
+            <LocatorMap
+              waterwayId={manifest.waterwayId}
+              span={sel.km}
+              anchors={locatorAnchors}
+            />
+          </div>
         </div>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-          {sel.name}
-        </h2>
-        <p className="mt-2 max-w-2xl text-base leading-relaxed text-foreground/90">
-          {sel.verdict}
-        </p>
 
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <Metric
@@ -164,8 +240,10 @@ export function ExplorerView({
             value={sel.width.median_m != null ? `${Math.round(sel.width.median_m)} m` : "n/a"}
             hint={
               sel.width.n_measured
-                ? `${sel.width.n_measured} transects · confidence ${sel.width.confidence.tier}${sel.width.confidence.tracing_years ? ` (traced ${sel.width.confidence.tracing_years})` : ""}`
-                : "not separable in OSM · confidence C"
+                ? `${sel.width.n_measured} transects · confidence ${sel.width.confidence.tier}${sel.width.confidence.tracing_years ? ` (traced ${sel.width.confidence.tracing_years})` : ""}${nEstimated ? ` · +${nEstimated} estimated` : ""}`
+                : nEstimated
+                  ? `not separable in OSM · ${nEstimated} estimated transects (low confidence)`
+                  : "not separable in OSM · confidence C"
             }
           />
           <Metric
@@ -196,7 +274,11 @@ export function ExplorerView({
                 ? `${Math.round(sel.satellite.water_frac_recent * 100)}%`
                 : "n/a"
             }
-            hint="10 m pixels undercount narrow water"
+            hint={
+              nSpectral
+                ? `10 m pixels undercount narrow water; the spectral test finds a dark channel on ${nSpectral} transects here (see the strip)`
+                : "10 m pixels undercount narrow water"
+            }
           />
           <Metric
             label="built edge"
@@ -217,7 +299,7 @@ export function ExplorerView({
 
         <div className="mt-4 rounded-lg border border-border bg-card p-3">
           <div className="mb-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Measured width along the reach (dots = unmeasured)
+            Width along the reach (solid = measured, hollow = estimated, dots = unmeasured)
           </div>
           <TransectStrip reach={sel} />
         </div>

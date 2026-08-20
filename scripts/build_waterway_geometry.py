@@ -1,40 +1,43 @@
 #!/usr/bin/env python3
-"""Buckingham Canal (Ennore -> Mahabalipuram) geometry baseline.
+"""Waterway geometry baseline: chained OSM centerline + transect widths.
 
-Inputs (fetched from Overpass, ODbL, snapshot in data/):
-  docs/research/buckingham-canal/data/osm-canal-centerline.json
-  docs/research/buckingham-canal/data/osm-water-polygons.json
+Generalized 19 Aug 2026 from the Buckingham Canal pilot when the Cooum
+became waterway 2; per-waterway parameters live in
+scripts/waterways/<id>.json (geometry section). Pure python, no geo deps.
+For buckingham-canal this reproduces the pilot's outputs byte-for-byte.
 
-Outputs (docs/research/buckingham-canal/data/):
+Usage: python3 scripts/build_waterway_geometry.py --waterway <id>
+
+Inputs (fetched from Overpass, ODbL, snapshot in the research data dir):
+  <research_dir>/data/<inputs[].file>
+
+Outputs (<research_dir>/data/):
   centerline.geojson   - the clipped, chained centerline with chainage
-  widths.csv           - water-surface width every 200 m of chainage,
-                         measured as the OSM water-polygon interval
-                         containing the centerline on a perpendicular
-                         transect (even-odd rule, pure python)
+  widths.csv           - water-surface width every transect_every_m of
+                         chainage, measured as the OSM water-polygon
+                         interval containing the centerline on a
+                         perpendicular transect (even-odd rule)
   widths-summary.csv   - per-km stats (n, median, min, max, coverage)
 
 Width semantics: WATER SURFACE width as mapped in OSM, not the revenue
-(poramboke) width of the canal land. Reaches where the canal opens into
-a backwater (Muttukadu) rail past the 500 m transect cap and are
-flagged OPEN_WATER. Reaches with no OSM water polygon yield null
-(NO_POLYGON) - to be filled from Sentinel-2 NDWI in the satellite pass.
+(poramboke) width of the channel land. Transects that rail past the
+half_transect_m cap read OPEN_WATER; transects with no OSM water polygon
+yield null (NO_POLYGON) - to be filled from Sentinel-2 NDWI in the
+satellite pass.
 
-Clip window: lat 12.615 (Mahabalipuram) .. 13.245 (Ennore creek
-junction). Chainage 0 at the Ennore end, increasing south.
+Chaining: ways are joined end-to-end starting from the endpoint farthest
+from the chainage-zero end along the configured axis; gaps up to gap_m
+are jumped when the far end of the candidate way progresses toward
+chainage zero (river crossings, locks, unmapped junctions).
 """
 
+import argparse
 import csv
 import json
 import math
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "docs" / "research" / "buckingham-canal" / "data"
-LAT_N, LAT_S = 13.245, 12.615
-SAMPLE_M = 100.0        # centerline resample step
-TRANSECT_EVERY_M = 200.0
-HALF_TRANSECT_M = 500.0  # per side; > this reads as open water
-OPEN_WATER_M = 400.0
 
 R = 6371000.0
 
@@ -50,39 +53,39 @@ def dist_m(a, b):
     return math.hypot((b[0] - a[0]) * kx, (b[1] - a[1]) * ky)
 
 
-def load(path):
-    return json.loads((DATA / path).read_text())
-
-
 # ---------------- centerline chaining ----------------
-def chain_centerline():
-    """Chain named Buckingham ways plus unnamed canal connectors from the
-    north-Chennai fetch; jump gaps up to GAP_M (river crossings, locks)."""
-    GAP_M = 1600.0  # bridges the Basin Bridge / Cooum junction (~1.4 km),
-    # where the canal historically exchanges with the river and OSM has
-    # no continuous canal way; chainage through the jump is approximate.
+def chain_centerline(cfg, data):
+    """Chain the configured OSM ways; jump gaps up to gap_m where the
+    candidate way's far end progresses toward the chainage-zero end."""
+    geo = cfg["geometry"]
+    ch = geo["chain"]
+    ax = 1 if ch["axis"] == "lat" else 0
+    # zsign orients the axis so that "toward chainage zero" is "increasing":
+    # zero at the max end (canal: Ennore, north) keeps the raw axis; zero at
+    # the min end (a river chained from its mouth back to its head) flips it.
+    zsign = 1.0 if ch["chainage_zero_at"] == "max" else -1.0
+    gap_m = ch["gap_m"]
+    tol = ch["progress_tol_deg"]
+
     segs = {}
-    for fname, keep in [
-        ("osm-canal-centerline.json",
-         lambda t: True),  # all named Buckingham ways
-        ("osm-north-waterways.json",
-         lambda t: t.get("waterway") == "canal"),  # connectors + lock
-    ]:
-        d = load(fname)
+    for inp in geo["inputs"]:
+        d = json.loads((data / inp["file"]).read_text())
+        keep_tags = inp["keep_tags"]
         for e in d["elements"]:
             if e["type"] != "way" or "geometry" not in e:
                 continue
-            if not keep(e.get("tags") or {}):
+            tags = e.get("tags") or {}
+            if keep_tags and any(tags.get(k) != v for k, v in keep_tags.items()):
                 continue
             segs[e["id"]] = [(p["lon"], p["lat"]) for p in e["geometry"]]
 
     def key(pt):
         return (round(pt[0], 6), round(pt[1], 6))
 
-    # start: southernmost endpoint among named ways
+    # start: the endpoint farthest from chainage zero along the axis
     all_ends = [(sid, endi, segs[sid][endi]) for sid in segs
                 for endi in (0, -1)]
-    start = min(all_ends, key=lambda t: t[2][1])
+    start = min(all_ends, key=lambda t: zsign * t[2][ax])
     chain = []
     used = set()
     sid, endi = start[0], start[1]
@@ -107,8 +110,8 @@ def chain_centerline():
             if nxt:
                 break
         if nxt is None:
-            # gap-jump: nearest unused endpoint within GAP_M whose far
-            # end continues north
+            # gap-jump: nearest unused endpoint within gap_m whose far
+            # end continues toward chainage zero
             best = None
             for cid in segs:
                 if cid in used:
@@ -116,7 +119,7 @@ def chain_centerline():
                 for ei in (0, -1):
                     d = dist_m(cur, segs[cid][ei])
                     far = segs[cid][-1 if ei == 0 else 0]
-                    if d <= GAP_M and far[1] > cur[1] - 0.001:
+                    if d <= gap_m and zsign * far[ax] > zsign * cur[ax] - tol:
                         if best is None or d < best[2]:
                             best = (cid, ei, d)
             nxt = best
@@ -126,18 +129,25 @@ def chain_centerline():
     return chain
 
 
-def resample(chain):
-    # walk north->south: chain starts at the southernmost end, so flip
-    if chain[0][1] < chain[-1][1]:
+def resample(cfg, chain):
+    geo = cfg["geometry"]
+    ch = geo["chain"]
+    clip = geo["clip"]
+    ax = 1 if ch["axis"] == "lat" else 0
+    zsign = 1.0 if ch["chainage_zero_at"] == "max" else -1.0
+    cax = 1 if clip["axis"] == "lat" else 0
+    sample_m = geo["sample_m"]
+    # walk from chainage zero outward: the chain starts at the far end, flip
+    if zsign * chain[0][ax] < zsign * chain[-1][ax]:
         chain = chain[::-1]
-    # clip by latitude window, keep the contiguous run
-    run = [p for p in chain if LAT_S <= p[1] <= LAT_N]
+    # clip by the axis window, keep the contiguous run
+    run = [p for p in chain if clip["min"] <= p[cax] <= clip["max"]]
     out = [run[0]]
     acc = 0.0
     for a, b in zip(run, run[1:]):
         d = dist_m(a, b)
-        while acc + d >= SAMPLE_M:
-            t = (SAMPLE_M - acc) / d
+        while acc + d >= sample_m:
+            t = (sample_m - acc) / d
             a = (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
             d = dist_m(a, b)
             acc = 0.0
@@ -147,8 +157,8 @@ def resample(chain):
 
 
 # ---------------- water polygons ----------------
-def load_polygons():
-    d = load("osm-water-polygons.json")
+def load_polygons(data):
+    d = json.loads((data / "osm-water-polygons.json").read_text())
     polys = []  # each: list of rings; ring = [(x,y)...]
     for e in d["elements"]:
         tags = e.get("tags") or {}
@@ -170,7 +180,7 @@ def load_polygons():
     return polys
 
 
-def transect_width(pt, direction, polys):
+def transect_width(pt, direction, polys, half_transect_m, open_water_m):
     """Width of the union-of-polygons interval containing t=0 along the
     perpendicular transect at pt. Returns (width_m, flag, srcs)."""
     lon0, lat0 = pt
@@ -188,23 +198,21 @@ def transect_width(pt, direction, polys):
         for ring in poly["rings"]:
             mpts = [to_m(p) for p in ring]
             for a, b in zip(mpts, mpts[1:]):
-                # solve a + s*(b-a) = t*(px,py), s in [0,1]
-                ax, ay = a
+                ax_, ay = a
                 bx, by = b
-                exx, exy = bx - ax, by - ay
+                exx, exy = bx - ax_, by - ay
                 denom = exx * py - exy * px
                 if abs(denom) < 1e-12:
                     continue
-                s = (ax * py - ay * px) / -denom if False else None
                 # standard 2x2 solve: t*p - s*e = a  =>
                 # [px -exx][t]   [ax]
                 # [py -exy][s] = [ay]
                 det = px * (-exy) - py * (-exx)
                 if abs(det) < 1e-12:
                     continue
-                t = (ax * (-exy) - ay * (-exx)) / det
-                s = (px * ay - py * ax) / det
-                if 0.0 <= s < 1.0 and abs(t) <= HALF_TRANSECT_M:
+                t = (ax_ * (-exy) - ay * (-exx)) / det
+                s = (px * ay - py * ax_) / det
+                if 0.0 <= s < 1.0 and abs(t) <= half_transect_m:
                     ts.append(t)
         ts.sort()
         # even-odd: consecutive pairs are inside intervals
@@ -212,7 +220,7 @@ def transect_width(pt, direction, polys):
             intervals.append((ts[i], ts[i + 1], poly))
 
     if not intervals:
-        return None, "NO_POLYGON", []
+        return None, "NO_POLYGON", [], None
     # union of intervals, find the one containing 0
     intervals.sort()
     merged = []
@@ -226,38 +234,61 @@ def transect_width(pt, direction, polys):
         if lo <= 0.0 <= hi:
             w = hi - lo
             flag = "OK"
-            if w >= OPEN_WATER_M or hi >= HALF_TRANSECT_M - 1 or \
-               lo <= -(HALF_TRANSECT_M - 1):
+            if w >= open_water_m or hi >= half_transect_m - 1 or \
+               lo <= -(half_transect_m - 1):
                 flag = "OPEN_WATER"
-            return w, flag, sorted(ids)
-    return None, "CENTER_DRY", []
+            return w, flag, sorted(ids), 0.0
+    # Centre outside every interval: if mapped water sits within SNAP_M of
+    # the centreline, take the nearest interval as an OFFSET reading - the
+    # OSM way and the traced water surface are misregistered, not absent.
+    SNAP_M = 30.0
+    best = None
+    for lo, hi, ids in merged:
+        d = lo if lo > 0 else -hi
+        if 0 < d <= SNAP_M and (best is None or d < best[0]):
+            best = (d, hi - lo, sorted(ids))
+    if best:
+        return best[1], "OFFSET", best[2], round(best[0], 1)
+    return None, "CENTER_DRY", [], None
 
 
 def main():
-    chain = chain_centerline()
-    pts = resample(chain)
-    polys = load_polygons()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--waterway", required=True)
+    args = ap.parse_args()
+    cfg = json.loads(
+        (ROOT / "scripts" / "waterways" / f"{args.waterway}.json").read_text())
+    geo = cfg["geometry"]
+    data = ROOT / cfg["research_dir"] / "data"
+    sample_m = geo["sample_m"]
+    transect_every_m = geo["transect_every_m"]
+    half_transect_m = geo["half_transect_m"]
+    open_water_m = geo["open_water_m"]
+
+    chain = chain_centerline(cfg, data)
+    pts = resample(cfg, chain)
+    polys = load_polygons(data)
     print(f"centerline samples: {len(pts)} "
-          f"({(len(pts) - 1) * SAMPLE_M / 1000:.1f} km), "
+          f"({(len(pts) - 1) * sample_m / 1000:.1f} km), "
           f"polygons: {len(polys)}")
 
     # centerline geojson
     gj = {"type": "FeatureCollection", "features": [{
         "type": "Feature",
         "properties": {
-            "name": "Buckingham Canal (Ennore - Mahabalipuram)",
-            "source": "OpenStreetMap via Overpass, ODbL, snapshot 2026-08",
-            "chainage_zero": "Ennore creek junction end (lat 13.245)",
-            "length_km": round((len(pts) - 1) * SAMPLE_M / 1000, 1),
+            "name": geo["feature"]["name"],
+            "source": geo["feature"]["source"],
+            "chainage_zero": geo["feature"]["chainage_zero"],
+            "length_km": round((len(pts) - 1) * sample_m / 1000, 1),
         },
         "geometry": {"type": "LineString",
                      "coordinates": [[round(x, 6), round(y, 6)]
                                      for x, y in pts]},
     }]}
-    (DATA / "centerline.geojson").write_text(json.dumps(gj))
+    (data / "centerline.geojson").write_text(json.dumps(gj))
 
     rows = []
-    step = int(TRANSECT_EVERY_M // SAMPLE_M)
+    step = int(transect_every_m // sample_m)
     for i in range(0, len(pts), step):
         pt = pts[i]
         j0, j1 = max(0, i - 1), min(len(pts) - 1, i + 1)
@@ -265,15 +296,17 @@ def main():
         dx = (pts[j1][0] - pts[j0][0]) * kx
         dy = (pts[j1][1] - pts[j0][1]) * ky
         n = math.hypot(dx, dy) or 1.0
-        w, flag, srcs = transect_width(pt, (dx / n, dy / n), polys)
+        w, flag, srcs, off = transect_width(pt, (dx / n, dy / n), polys,
+                                            half_transect_m, open_water_m)
         rows.append({
-            "chainage_km": round(i * SAMPLE_M / 1000, 2),
+            "chainage_km": round(i * sample_m / 1000, 2),
             "lat": round(pt[1], 6), "lon": round(pt[0], 6),
             "width_m": round(w, 1) if w is not None else "",
             "flag": flag, "osm_water_ids": ";".join(srcs),
+            "offset_m": off if off is not None else "",
         })
 
-    with open(DATA / "widths.csv", "w", newline="") as f:
+    with open(data / "widths.csv", "w", newline="") as f:
         wtr = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         wtr.writeheader()
         wtr.writerows(rows)
@@ -282,7 +315,7 @@ def main():
     byk = {}
     for r in rows:
         byk.setdefault(int(r["chainage_km"]), []).append(r)
-    with open(DATA / "widths-summary.csv", "w", newline="") as f:
+    with open(data / "widths-summary.csv", "w", newline="") as f:
         wtr = csv.writer(f)
         wtr.writerow(["km", "n_transects", "n_measured", "median_m",
                       "min_m", "max_m", "flags"])
@@ -297,11 +330,12 @@ def main():
     ok = sum(1 for r in rows if r["flag"] == "OK")
     nop = sum(1 for r in rows if r["flag"] == "NO_POLYGON")
     opn = sum(1 for r in rows if r["flag"] == "OPEN_WATER")
+    offn = sum(1 for r in rows if r["flag"] == "OFFSET")
     print(f"transects: {len(rows)}  OK: {ok}  OPEN_WATER: {opn}  "
-          f"NO_POLYGON: {nop}")
+          f"OFFSET: {offn}  NO_POLYGON: {nop}")
     okw = sorted(float(r['width_m']) for r in rows if r['flag'] == 'OK')
     if okw:
-        print(f"canal-water widths (OK only): median "
+        print(f"channel-water widths (OK only): median "
               f"{okw[len(okw)//2]:.0f} m, p10 {okw[len(okw)//10]:.0f} m, "
               f"p90 {okw[9*len(okw)//10]:.0f} m")
 

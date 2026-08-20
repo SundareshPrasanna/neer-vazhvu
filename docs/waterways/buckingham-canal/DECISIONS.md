@@ -14,6 +14,22 @@ The tracked editorial layer is `waterway-curation.json` here; the build is
 docs/specs/buckingham-canal-story-build.md.
 
 ## Decisions
+- **W13 Estimated widths (with the Cooum, 20 Aug 2026).** OFFSET and
+  SPECTRAL estimates fill OSM-blind transects, labelled low-confidence,
+  never merged into measured numbers; rationale and definitions:
+  docs/waterways/cooum/DECISIONS.md C12. On this canal they principally
+  serve ETPS-Manali (centreline/polygon misregistration - 50 of 67
+  transects snap) and Manali-Kodungaiyur (untraced water surface).
+- **W12 50 m densification + methods-as-data (19 Aug 2026 evening, with
+  the Cooum).** Transects move from 200 m to 50 m (1,492 cast, 1,012
+  measured; global median unchanged at 33 m; the MRTS minimum resolves
+  to 6.5 m) and the condition strip from 100 m to 50 m. Tier jitter is
+  now defined at ~200 m separation so densification cannot inflate
+  confidence. The methods panel is data (curation `methods` array,
+  served in reaches.json): this page's method text is its own, and the
+  Cooum's is its own. Rationale and source-resolution measurements:
+  docs/waterways/cooum/DECISIONS.md C10.
+
 
 - **W1 Two modes, one URL.** A Story (8 chapters, Ennore to Mahabalipuram,
   scroll = chainage) and a Reach Explorer (18 reaches, the diligence

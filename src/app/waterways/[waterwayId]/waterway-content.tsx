@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type {
+  WaterwayLocatorAnchor,
+  WaterwayMethodsSection,
   WaterwayChapter,
   WaterwayClaim,
   WaterwayIdentity,
@@ -34,6 +36,8 @@ export function WaterwayContent({
   claims,
   today,
   widthLedger,
+  methods,
+  locatorAnchors,
 }: {
   manifest: WaterwayManifest;
   identity: WaterwayIdentity;
@@ -43,6 +47,8 @@ export function WaterwayContent({
   claims: WaterwayClaim[];
   today: WaterwayToday;
   widthLedger: WaterwayWidthLedger | null;
+  methods: WaterwayMethodsSection[];
+  locatorAnchors: WaterwayLocatorAnchor[];
 }) {
   const [mode, setMode] = useState<Mode>("story");
   const [selectedReach, setSelectedReach] = useState<number>(reaches[0]?.id ?? 1);
@@ -140,19 +146,21 @@ export function WaterwayContent({
             timeline={timeline}
             today={today}
             widthLedger={widthLedger}
+            locatorAnchors={locatorAnchors}
             onExplore={goExplorer}
           />
         ) : (
           <ExplorerView
             manifest={manifest}
             reaches={reaches}
+            locatorAnchors={locatorAnchors}
             selectedId={selectedReach}
             onSelect={selectReach}
           />
         )}
       </main>
 
-      <MethodsPanel claimCount={claims.length} />
+      <MethodsPanel claimCount={claims.length} methods={methods} />
 
       <footer className="border-t border-border py-6">
         <div className="mx-auto max-w-6xl px-4 text-xs leading-relaxed text-muted-foreground">
