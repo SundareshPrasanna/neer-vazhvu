@@ -62,8 +62,15 @@ for r in reaches["reaches"]:
     share = len(okr) / len(rows) if rows else 0
     if len(okr) >= 3:
         med = exp["median_m"]
-        diffs = [abs(okr[i+1][1] - okr[i][1]) / med * 100 for i in range(len(okr) - 1)
-                 if okr[i+1][0] - okr[i][0] < 0.35]
+        diffs = []
+        for i in range(len(okr)):
+            for j in range(i + 1, len(okr)):
+                gap = okr[j][0] - okr[i][0]
+                if gap < 0.15:
+                    continue
+                if gap < 0.35:
+                    diffs.append(abs(okr[j][1] - okr[i][1]) / med * 100)
+                break
         jit = statistics.median(diffs) if diffs else None
         yrs = [way_year[w] for _, _, ids in okr for w in ids.split(";") if w in way_year]
         vin_ok = bool(yrs) and statistics.median(yrs) >= 2021
@@ -95,19 +102,19 @@ for r in reaches["reaches"]:
 all_ok = sorted(float(w["width_m"]) for w in widths if w["width_m"] and w["flag"] == "OK")
 ident = reaches["identity"]
 stats_txt = json.dumps(ident)
-if len(all_ok) != 264:
-    errors.append(f"global OK transects: {len(all_ok)} (page claims 264)")
+if len(all_ok) != 1049:
+    errors.append(f"global OK transects: {len(all_ok)} (page claims 1,049)")
 gmed = all_ok[len(all_ok) // 2]
-if not close(gmed, 71, 0.6):
-    errors.append(f"global median width {gmed} vs claimed 71 m")
-if "264 of 315" not in stats_txt:
-    errors.append("identity stat no longer cites 264 of 315 transects")
+if not close(gmed, 70, 0.6):
+    errors.append(f"global median width {gmed} vs claimed 70 m")
+if "1,049 of 1,258" not in stats_txt:
+    errors.append("identity stat no longer cites 1,049 of 1,258 transects")
 n_rows = len(widths)
-if n_rows != 315:
-    errors.append(f"transect count {n_rows} != 315")
+if n_rows != 1258:
+    errors.append(f"transect count {n_rows} != 1258")
 last_km = float(widths[-1]["chainage_km"])
-if not close(last_km, 62.8, 0.15):
-    errors.append(f"chainage end {last_km} vs 62.8")
+if not close(last_km, 62.85, 0.15):
+    errors.append(f"chainage end {last_km} vs 62.85")
 
 # ---- today tiles ----
 tot_veg = round(sum(vegha.values()))
@@ -129,8 +136,8 @@ if not (0.334 <= share <= 0.45):
 strip = today["strip"]
 if strip[0]["from"] > 0.01 or abs(strip[-1]["to"] - last_km) > 0.15:
     errors.append("condition strip does not span full chainage")
-if len(surface) != 629:
-    notes.append(f"surface points {len(surface)} (expected 629)")
+if len(surface) != 1258:
+    notes.append(f"surface points {len(surface)} (expected 1258)")
 
 # ---- curated facts that quote our own measurements ----
 facts_txt = json.dumps([r["facts"] for r in reaches["reaches"]], ensure_ascii=False)
@@ -205,6 +212,16 @@ lo, hi = [s.strip() for s in latest["bod_mgl"].replace("- ", "-").split("-")[:2]
 if f"{lo}-{hi} mg/L" not in stats_txt or "BOD" not in stats_txt:
     errors.append(f"identity BOD stat vs research CSV: expected '{lo}-{hi} mg/L' "
                   f"with a BOD label ({latest['month']} {latest['year']})")
+
+# ---- methods sections state the real method ----
+methods = reaches.get("methods", [])
+mtxt = json.dumps(methods)
+for needle, label in [("every 50 m", "methods spacing"),
+                      (f"{n_rows:,} transects", "methods transect count"),
+                      ("200 m separation", "methods jitter basis"),
+                      ("audit_waterway_numbers_cooum.py", "methods audit pointer")]:
+    if needle not in mtxt:
+        errors.append(f"methods section missing/changed: {label} expected '{needle}'")
 
 # ---- claims hygiene ----
 claims = json.loads((OUT / "claims.json").read_text())["claims"]

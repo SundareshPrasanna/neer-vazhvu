@@ -171,6 +171,13 @@ export interface WaterwayToday {
   silt: WaterwayFact[];
 }
 
+/** One "how we made this" section, curated per waterway and served with
+ *  the data so readers can understand and reproduce the method. */
+export interface WaterwayMethodsSection {
+  title: string;
+  body: string;
+}
+
 export interface WaterwayWidthLedger {
   note: string;
   source: string;

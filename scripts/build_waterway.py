@@ -58,9 +58,18 @@ def width_confidence(rows_all, ok_rows, way_year):
                 "jitter_pct": None, "tracing_years": None}
     ws = sorted(w for _, w, _ in ok_rows)
     med = ws[len(ws) // 2]
-    diffs = [abs(ok_rows[i + 1][1] - ok_rows[i][1]) / med * 100
-             for i in range(len(ok_rows) - 1)
-             if ok_rows[i + 1][0] - ok_rows[i][0] < 0.35]
+    # Jitter is defined at ~200 m separation whatever the sampling density,
+    # so densifying transects cannot inflate confidence tiers: for each
+    # measured transect, diff against the next one 150-350 m ahead.
+    diffs = []
+    for i in range(len(ok_rows)):
+        for j in range(i + 1, len(ok_rows)):
+            gap = ok_rows[j][0] - ok_rows[i][0]
+            if gap < 0.15:
+                continue
+            if gap < 0.35:
+                diffs.append(abs(ok_rows[j][1] - ok_rows[i][1]) / med * 100)
+            break
     jitter = statistics.median(diffs) if diffs else None
     years = [way_year[w] for _, _, ids in ok_rows
              for w in ids.split(";") if w in way_year]
@@ -365,7 +374,7 @@ def main(waterway=None):
      "provenance": prov_env(
          doc_sources("reaches"), "mixed", bld["notes"]["reaches"]),
      "_provenance": prov, "identity": identity, "reaches": reaches_out,
-     "width_ledger": wl}
+     "width_ledger": wl, "methods": cur.get("methods", [])}
     (OUT / "reaches.json").write_text(json.dumps(reaches_doc))
     chapters_doc = {"nvdm": "1.0", "dataset": "waterways/chapters", "scope": _SCOPE,
      "provenance": prov_env([], "manual", bld["editorial_note"]),
