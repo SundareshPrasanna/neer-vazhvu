@@ -1792,6 +1792,40 @@
    ]
   },
   {
+   "path": "public/data/basins/arkavathi/mpr-reviewed.json",
+   "family": "basins",
+   "scope": "arkavathi",
+   "dataset": "mpr-reviewed",
+   "bytes": 269415,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "editions",
+     "generatedAt",
+     "schema",
+     "schemaVersion",
+     "scope",
+     "sourceFamily",
+     "summary",
+     "surfaceId"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-atlas.tsx",
+    "src/components/basin/basin-pdf-report.tsx"
+   ],
+   "producer_refs": [
+    "scripts/check-basin-pdf-render.tsx"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "unaccounted",
+   "accountability_reason": null,
+   "flags": [
+    "unaccounted"
+   ]
+  },
+  {
    "path": "public/data/basins/arkavathi/pressures-industrial.geojson",
    "family": "basins",
    "scope": "arkavathi",
@@ -2576,7 +2610,7 @@
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "scoreboard",
-   "bytes": 19395,
+   "bytes": 19400,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2958,7 +2992,7 @@
    "family": "basins",
    "scope": "cauvery-tn",
    "dataset": "scoreboard",
-   "bytes": 35705,
+   "bytes": 35727,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12749,7 +12783,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "rainfall-recent",
-   "bytes": 15285,
+   "bytes": 15456,
    "schema": {
     "kind": "object",
     "keys": [
@@ -19600,7 +19634,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain-history",
-   "bytes": 28855,
+   "bytes": 38592,
    "schema": {
     "kind": "object",
     "keys": [
@@ -19634,7 +19668,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain",
-   "bytes": 13731,
+   "bytes": 13727,
    "schema": {
     "kind": "object",
     "keys": [
@@ -19659,7 +19693,8 @@
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
+    "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py",
+    "supabase/migrations/048_surat_enable.sql"
    ],
    "headwaters_sources": [
     "smc-flood-chain"
@@ -26098,6 +26133,18 @@
   },
   {
    "family": "basins",
+   "dataset": "mpr-reviewed",
+   "files": 1,
+   "scopes": [
+    "arkavathi"
+   ],
+   "bytes": 269415,
+   "schema_variants": 1,
+   "registered": false,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "pressures-industrial",
    "files": 2,
    "scopes": [
@@ -26243,7 +26290,7 @@
     "cauvery-ka",
     "cauvery-tn"
    ],
-   "bytes": 55100,
+   "bytes": 55127,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26855,7 +26902,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 13731,
+   "bytes": 13727,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26867,7 +26914,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 28855,
+   "bytes": 38592,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -27097,7 +27144,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 138946,
+   "bytes": 139117,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
