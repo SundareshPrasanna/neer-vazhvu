@@ -110,6 +110,38 @@ def main(waterway=None):
             "scripts/build_waterway_geometry.py + the satellite scripts.")
     cur = json.loads((ROOT / cfg["curation"]).read_text())
     widths = list(csv.DictReader(open(RESEARCH / "data" / "widths.csv")))
+    # Spectral estimates fill OSM-blind transects with their own flag;
+    # they never join measured medians or confidence tiers.
+    spectral = {}
+    spath = RESEARCH / "data" / "widths-spectral.csv"
+    mpath = RESEARCH / "data" / "widths-spectral-meta.json"
+    if spath.exists() and mpath.exists():
+        smeta = json.loads(mpath.read_text())
+        cal = smeta["calibration"]
+        # Quality gate: estimates ship only when the estimator calibrates
+        # against this waterway's OSM-measured transects (detects water on
+        # at least half, agrees within 20 m at the median). The systematic
+        # bias (edge pixels dropping out) is corrected and stated.
+        if cal["detect_rate"] >= 0.5 and cal["median_abs_diff_m"] is not None \
+                and cal["median_abs_diff_m"] <= 20:
+            bias = cal["median_bias_m"] or 0
+            spectral = {
+                r["chainage_km"]: round(float(r["w_spectral_m"]) - bias, 1)
+                for r in csv.DictReader(open(spath))
+                if r["w_spectral_m"]
+            }
+        else:
+            print(f"spectral estimates NOT shipped: calibration "
+                  f"detect_rate={cal['detect_rate']}, "
+                  f"median_abs_diff={cal['median_abs_diff_m']} m "
+                  f"(gate: >=0.5 and <=20 m)")
+    def strip_entry(w):
+        if w["flag"] in ("NO_POLYGON", "CENTER_DRY") and w["chainage_km"] in spectral:
+            return {"km": float(w["chainage_km"]),
+                    "w": spectral[w["chainage_km"]], "flag": "SPECTRAL"}
+        return {"km": float(w["chainage_km"]),
+                "w": float(w["width_m"]) if w["width_m"] else None,
+                "flag": w["flag"]}
     built = {int(r["reach_id"]): r for r in
              csv.DictReader(open(RESEARCH / "data" / "built-edge.csv"))}
     photos_meta = json.loads(
@@ -147,9 +179,7 @@ def main(waterway=None):
         rows = [w for w in widths if a <= float(w["chainage_km"]) < b]
         ok = sorted(float(w["width_m"]) for w in rows
                     if w["width_m"] and w["flag"] == "OK")
-        strip = [{"km": float(w["chainage_km"]),
-                  "w": float(w["width_m"]) if w["width_m"] else None,
-                  "flag": w["flag"]} for w in rows]
+        strip = [strip_entry(w) for w in rows]
         kms = [k for k in sat if a <= k < b]
 
         def avg(f):
@@ -299,9 +329,7 @@ def main(waterway=None):
     }
 
     # ---------------- width profile (full chainage) ----------------
-    profile = [{"km": float(w["chainage_km"]),
-                "w": float(w["width_m"]) if w["width_m"] else None,
-                "flag": w["flag"]} for w in widths]
+    profile = [strip_entry(w) for w in widths]
 
     # ---------------- ground photos ----------------
     (IMG / "photos").mkdir(exist_ok=True)

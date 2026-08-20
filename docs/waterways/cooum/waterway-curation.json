@@ -1320,6 +1320,10 @@
       "body": "Google Open Buildings v3 footprints (2023 release, confidence at least 0.7) counted within 50 m and 100 m of the centerline. Deliberately conservative: measured from the centerline, not the river's recorded boundary; the confidence filter trims small structures; three years of construction post-date the data. A 'none mapped' reads exactly that: nothing in the dataset, not proof of nothing on the ground."
     },
     {
+      "title": "Estimated widths (why this page ships none)",
+      "body": "The canal page fills its OSM-blind transects with labelled spectral estimates; this page deliberately does not. The Cooum's unmeasured stretch (the first seven kilometres) runs dry outside the diversion season - the estimator found water on only 9 of 203 blind transects - and its calibration against this river's OSM-measured transects failed our quality gate (water detected on 62 of 150; median disagreement 37.4 m, driven by weed-covered surfaces the near-infrared test reads as land). An estimate that calibrates this poorly would be a number without meaning, so the dots stay dots. The build applies this gate mechanically: estimates ship only where detection reaches half the measured transects and agreement is within 20 m."
+    },
+    {
       "title": "Check the numbers yourself",
       "body": "Every input is public: OpenStreetMap (ODbL, snapshot date stated), Copernicus Sentinel-2, Google Open Buildings, and the cited government documents - many held as local primary copies (the WRD Cooum sub-basin DPR, the MAWS and WRD Policy Notes, NGT filings, TNPCB consent orders, CPCB monitoring PDFs, the CRZ clearance). Every derived number on this page is recomputed independently from the raw inputs before publication by a published audit script (scripts/audit_waterway_numbers_cooum.py in the Neer Vazhvu repository), and the claim register (claims.json) carries a per-number citation a reader can pull and compare."
     },

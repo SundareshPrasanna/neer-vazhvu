@@ -47,7 +47,11 @@ function TransectStrip({ reach }: { reach: WaterwayReach }) {
       ? `km ${h.km} - no traced water surface in OSM here`
       : h.flag === "OPEN_WATER"
         ? `km ${h.km} - opens into backwater (${Math.round(h.w)} m across)`
-        : `km ${h.km} - ${Math.round(h.w)} m wide`
+        : h.flag === "SPECTRAL"
+          ? `km ${h.km} - about ${Math.round(h.w)} m, spectral estimate (Sentinel-2), low confidence`
+          : h.flag === "OFFSET"
+            ? `km ${h.km} - ${Math.round(h.w)} m, mapped water sits offset from the drawn centreline, low confidence`
+            : `km ${h.km} - ${Math.round(h.w)} m wide`
     : "move along the strip to read each transect";
   return (
     <div>
@@ -82,6 +86,20 @@ function TransectStrip({ reach }: { reach: WaterwayReach }) {
                 active ? "fill-muted-foreground" : "fill-muted-foreground/40"
               }
             />
+          ) : p.flag === "SPECTRAL" ? (
+            <rect
+              key={p.km}
+              x={x(p.km) - barW / 2}
+              y={H - 4 - Math.min(p.w, cap) * ((H - 8) / cap)}
+              width={barW}
+              height={Math.min(p.w, cap) * ((H - 8) / cap)}
+              rx={0.8}
+              fill="none"
+              strokeWidth={1}
+              className={
+                active ? "stroke-primary" : "stroke-primary/50"
+              }
+            />
           ) : (
             <rect
               key={p.km}
@@ -95,7 +113,9 @@ function TransectStrip({ reach }: { reach: WaterwayReach }) {
                   ? "fill-primary"
                   : p.flag === "OPEN_WATER"
                     ? "fill-sky-400/50"
-                    : "fill-primary/70"
+                    : p.flag === "OFFSET"
+                      ? "fill-primary/40"
+                      : "fill-primary/70"
               }
             />
           );
@@ -150,6 +170,9 @@ export function ExplorerView({
 }) {
   const sel = reaches.find((r) => r.id === selectedId) ?? reaches[0];
   const veg = sel.satellite.veg_frac_recent;
+  const nEstimated = sel.transects.filter(
+    (t) => t.flag === "SPECTRAL" || t.flag === "OFFSET"
+  ).length;
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 px-4 pb-16 md:grid-cols-[260px_1fr]">
@@ -216,8 +239,10 @@ export function ExplorerView({
             value={sel.width.median_m != null ? `${Math.round(sel.width.median_m)} m` : "n/a"}
             hint={
               sel.width.n_measured
-                ? `${sel.width.n_measured} transects · confidence ${sel.width.confidence.tier}${sel.width.confidence.tracing_years ? ` (traced ${sel.width.confidence.tracing_years})` : ""}`
-                : "not separable in OSM · confidence C"
+                ? `${sel.width.n_measured} transects · confidence ${sel.width.confidence.tier}${sel.width.confidence.tracing_years ? ` (traced ${sel.width.confidence.tracing_years})` : ""}${nEstimated ? ` · +${nEstimated} estimated` : ""}`
+                : nEstimated
+                  ? `not separable in OSM · ${nEstimated} estimated transects (low confidence)`
+                  : "not separable in OSM · confidence C"
             }
           />
           <Metric
@@ -269,7 +294,7 @@ export function ExplorerView({
 
         <div className="mt-4 rounded-lg border border-border bg-card p-3">
           <div className="mb-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Measured width along the reach (dots = unmeasured)
+            Width along the reach (solid = measured, hollow = estimated, dots = unmeasured)
           </div>
           <TransectStrip reach={sel} />
         </div>

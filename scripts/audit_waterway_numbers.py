@@ -115,6 +115,42 @@ last_km = float(widths[-1]["chainage_km"])
 if not close(last_km, 74.55, 0.15):
     errors.append(f"chainage end {last_km} vs 74.55")
 
+# ---- estimated widths: gate, correction and counts ----
+smeta = json.loads((RESEARCH / "data" / "widths-spectral-meta.json").read_text())
+cal = smeta["calibration"]
+assert cal["detect_rate"] >= 0.5 and cal["median_abs_diff_m"] <= 20, \
+    "spectral calibration no longer passes the ship gate - rebuild decision needed"
+bias = cal["median_bias_m"] or 0
+scsv = {r["chainage_km"]: float(r["w_spectral_m"])
+        for r in csv.DictReader(open(RESEARCH / "data" / "widths-spectral.csv"))
+        if r["w_spectral_m"]}
+wflags = {r["chainage_km"]: r["flag"] for r in widths}
+exp_spectral = {k: round(v - bias, 1) for k, v in scsv.items()
+                if wflags.get(k) in ("NO_POLYGON", "CENTER_DRY")}
+got = {}
+for r in reaches["reaches"]:
+    for t in r["transects"]:
+        if t["flag"] == "SPECTRAL":
+            got[f"{t['km']:.2f}" if str(t["km"]).count(".") != 1 else str(t["km"])] = t["w"]
+# normalize keys via float compare
+gotf = {round(float(k), 2): v for k, v in got.items()}
+expf = {round(float(k), 2): v for k, v in exp_spectral.items()}
+if len(gotf) != len(expf):
+    errors.append(f"spectral transects shipped {len(gotf)} vs expected {len(expf)}")
+for k, v in expf.items():
+    if k in gotf and abs(gotf[k] - v) > 0.051:
+        errors.append(f"spectral value at km {k}: {gotf[k]} vs {v}")
+n_offset = sum(1 for r in widths if r["flag"] == "OFFSET")
+n_offset_ship = sum(1 for r in reaches["reaches"] for t in r["transects"]
+                    if t["flag"] == "OFFSET")
+if n_offset != n_offset_ship:
+    errors.append(f"offset transects: shipped {n_offset_ship} vs csv {n_offset}")
+mtxt2 = json.dumps(reaches.get("methods", []))
+for needle in (str(cal["detected"]), f"{cal['median_abs_diff_m']:.1f} m",
+               f"{abs(bias):.1f} m", str(smeta["estimated"])):
+    if needle not in mtxt2:
+        errors.append(f"methods estimated-widths numbers drifted: expected '{needle}'")
+
 # ---- today tiles ----
 tot_veg = round(sum(vegha.values()))
 tot_water = round(sum(float(t["water_ha"]) for t in turb.values()))
