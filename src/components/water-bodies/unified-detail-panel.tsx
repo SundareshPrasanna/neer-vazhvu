@@ -662,8 +662,21 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
       return () => controller.abort();
     }
 
+    // NOT EVERY WATER BODY HAS AN OSM ID. The satellite context is keyed on
+    // one, and bodies that come from a national atlas rather than OSM do not
+    // carry it - all 3,418 of Surat's are SAC wetland-atlas polygons with an
+    // atlas `id` and no `osm_id` at all. Without this guard the panel fired
+    // `?osm_id=undefined` for every one of them.
     const osmId = selected.props.osm_id;
-    fetch(`/api/water-bodies/gee?osm_id=${selected.props.osm_id}`, {
+    if (osmId == null) {
+      // No setState here on purpose: the derived guard below already requires
+      // a non-null osm_id on BOTH sides, so stale state cannot leak into this
+      // body's panel, and clearing it synchronously in an effect is what
+      // react-hooks/set-state-in-effect exists to stop.
+      return () => controller.abort();
+    }
+
+    fetch(`/api/water-bodies/gee?osm_id=${osmId}`, {
       signal: controller.signal,
     })
       .then(async (response) => {
@@ -692,8 +705,18 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
     return () => controller.abort();
   }, [selected]);
 
+  // THIS CRASHED EVERY ATLAS-SOURCED BODY. The old test was
+  // `satelliteSummaryState?.osmId === selected.props.osm_id`, which reads as a
+  // null-guard and is not one: with no fetch in flight the left side is
+  // `undefined`, and for a body with no OSM id the right side is `undefined`
+  // too, so `undefined === undefined` passed and the next line read `.summary`
+  // off null. Clicking any of Surat's 3,418 water bodies took the page down.
+  // Compare the ids only once both are known to exist.
   const satelliteSummary =
-    selected.kind === "current" && satelliteSummaryState?.osmId === selected.props.osm_id
+    selected.kind === "current" &&
+    satelliteSummaryState != null &&
+    selected.props.osm_id != null &&
+    satelliteSummaryState.osmId === selected.props.osm_id
       ? satelliteSummaryState.summary
       : null;
 

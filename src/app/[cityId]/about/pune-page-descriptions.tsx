@@ -293,11 +293,14 @@ export function PunePageDescriptions({ cityId, cityName }: Props) {
             a substitute for this layer.
           </p>
         </Gap>
+        {/* NOT A LINK. This said "Ward boundaries" as a link to /{cityId}/my-ward,
+            and Pune's my-ward route is deliberately off - the cutover turned it
+            off because no ward rows exist in the database, so the page rendered
+            a heading and nothing else. The geometry this sentence describes is
+            real; the page that would show it is not, so the prose stands on its
+            own rather than pointing at a 404. */}
         <p className={P}>
-          <Link href={`/${cityId}/my-ward`} className={A}>
-            Ward boundaries
-          </Link>{" "}
-          are the 41 electoral prabhags of the 2025 delimitation, used for the
+          Ward boundaries are the 41 electoral prabhags of the 2025 delimitation, used for the
           2026 PMC election. The published boundary file carries no ward names at
           all - only numbers - so the names come from PMC&apos;s own election
           results, joined 41 of 41. PMC separately runs 15 administrative ward
