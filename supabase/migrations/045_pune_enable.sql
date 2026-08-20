@@ -50,6 +50,13 @@
 --                  year's LIVE and put Modaksagar at 159%. The producer fix
 --                  shipped in #275; this confirms Pune never carried it.
 --
+-- SCHEMA GAP CLOSED 2026-08-20. Everything below is kept as the record of what
+-- was true when this migration was written; none of it is true now. The whole
+-- backlog 017-048 was applied and the remote ledger repaired, so
+-- `supabase migration list` shows Local == Remote for all 48 and there is no
+-- longer a reason to avoid `supabase db push`. See docs/architecture/
+-- database-reconciliation-2026-08-20.md.
+--
 -- KNOWN SCHEMA GAP, unchanged and recorded again rather than worked around:
 --   The corporations and source_corporation tables from 029_mmr_corporations.sql
 --   still do not exist in the live database - the remote ledger records only
