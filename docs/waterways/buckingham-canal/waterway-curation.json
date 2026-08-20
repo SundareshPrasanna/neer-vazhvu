@@ -1677,6 +1677,10 @@
       "body": "Google Open Buildings v3 footprints (2023 release, confidence at least 0.7) counted within 50 m and 100 m of the centerline. Deliberately conservative: measured from the centerline, not the canal's recorded boundary; the confidence filter trims small structures; three years of construction post-date the data. A 'none mapped' reads exactly that: nothing in the dataset, not proof of nothing on the ground."
     },
     {
+      "title": "Estimated widths (labelled, never merged)",
+      "body": "Where OpenStreetMap has no traced water surface, two labelled estimates fill the strip and are never merged into measured medians or confidence tiers. OFFSET: mapped water within 30 m of the drawn centreline is taken as the reading with the offset stated (the two OSM layers are misregistered, not absent - 50 transects, mostly ETPS to Manali). SPECTRAL: the width of the Sentinel-2 near-infrared dark run along the transect - water absorbs near-infrared even when dark or turbid, where the NDWI threshold fails. Calibrated against 150 OSM-measured transects on this canal: water detected on 86, agreement within 13.8 m at the median, and a systematic 13.6 m under-read from edge pixels that is corrected and stated here. 241 estimated transects ship, drawn hollow in the strip and marked low confidence in every readout."
+    },
+    {
       "title": "Check the numbers yourself",
       "body": "Every input is public: OpenStreetMap (ODbL, snapshot date stated), Copernicus Sentinel-2, Google Open Buildings, and the cited government documents - many held as local primary copies (IWAI 2014, CAG 2017 and 2020, the Madras HC order, the WRD and MAWS Policy Notes, TNPCB consent orders, CPCB monitoring PDFs). Every derived number on this page is recomputed independently from the raw inputs before publication by a published audit script (scripts/audit_waterway_numbers.py in the Neer Vazhvu repository), and the claim register (claims.json) carries a per-number citation a reader can pull and compare."
     },

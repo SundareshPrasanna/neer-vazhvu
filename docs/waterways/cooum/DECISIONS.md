@@ -111,6 +111,21 @@ the government-voice rules apply at maximum strength.
   reproduce the numbers - including the audit script's name. The shared
   component renders whatever the data says; no waterway ever shows
   another's method text.
+- **C12 Estimated widths, labelled and never merged (Sundaresh, 20 Aug
+  2026: "we need another way to complement our approach to resolve the
+  blind spots. even if it means low confidence measurement, we say it
+  so").** Two complements fill OSM-blind transects, each with its own
+  flag and wording, never joining measured medians or A/B/C tiers:
+  OFFSET (mapped water within 30 m of the drawn centreline - the two OSM
+  layers are misregistered, not absent; the interval's width ships with
+  the offset stated) and SPECTRAL (Sentinel-2 NIR dark-run width - water
+  absorbs near-infrared even when dark or turbid, where the NDWI
+  threshold fails; validated against OSM-measured transects and the
+  agreement stated in the methods panel). The display hierarchy is
+  measured (solid) > estimated (hollow / muted) > unmeasured (dot), and
+  the strip readout names the basis on every point. The durable fix
+  stays on record: trace the missing water surfaces into OpenStreetMap
+  and re-snapshot.
 - **C7 Basin Bridge handoff.** The canal page and this page hand off to
   each other at the Cooum-canal junction (canal reach 6, km 16.9-19.2 of
   the canal chainage); shared sources are cited identically, never

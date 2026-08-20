@@ -220,7 +220,7 @@ def transect_width(pt, direction, polys, half_transect_m, open_water_m):
             intervals.append((ts[i], ts[i + 1], poly))
 
     if not intervals:
-        return None, "NO_POLYGON", []
+        return None, "NO_POLYGON", [], None
     # union of intervals, find the one containing 0
     intervals.sort()
     merged = []
@@ -237,8 +237,19 @@ def transect_width(pt, direction, polys, half_transect_m, open_water_m):
             if w >= open_water_m or hi >= half_transect_m - 1 or \
                lo <= -(half_transect_m - 1):
                 flag = "OPEN_WATER"
-            return w, flag, sorted(ids)
-    return None, "CENTER_DRY", []
+            return w, flag, sorted(ids), 0.0
+    # Centre outside every interval: if mapped water sits within SNAP_M of
+    # the centreline, take the nearest interval as an OFFSET reading - the
+    # OSM way and the traced water surface are misregistered, not absent.
+    SNAP_M = 30.0
+    best = None
+    for lo, hi, ids in merged:
+        d = lo if lo > 0 else -hi
+        if 0 < d <= SNAP_M and (best is None or d < best[0]):
+            best = (d, hi - lo, sorted(ids))
+    if best:
+        return best[1], "OFFSET", best[2], round(best[0], 1)
+    return None, "CENTER_DRY", [], None
 
 
 def main():
@@ -285,13 +296,14 @@ def main():
         dx = (pts[j1][0] - pts[j0][0]) * kx
         dy = (pts[j1][1] - pts[j0][1]) * ky
         n = math.hypot(dx, dy) or 1.0
-        w, flag, srcs = transect_width(pt, (dx / n, dy / n), polys,
-                                       half_transect_m, open_water_m)
+        w, flag, srcs, off = transect_width(pt, (dx / n, dy / n), polys,
+                                            half_transect_m, open_water_m)
         rows.append({
             "chainage_km": round(i * sample_m / 1000, 2),
             "lat": round(pt[1], 6), "lon": round(pt[0], 6),
             "width_m": round(w, 1) if w is not None else "",
             "flag": flag, "osm_water_ids": ";".join(srcs),
+            "offset_m": off if off is not None else "",
         })
 
     with open(data / "widths.csv", "w", newline="") as f:
@@ -318,8 +330,9 @@ def main():
     ok = sum(1 for r in rows if r["flag"] == "OK")
     nop = sum(1 for r in rows if r["flag"] == "NO_POLYGON")
     opn = sum(1 for r in rows if r["flag"] == "OPEN_WATER")
+    offn = sum(1 for r in rows if r["flag"] == "OFFSET")
     print(f"transects: {len(rows)}  OK: {ok}  OPEN_WATER: {opn}  "
-          f"NO_POLYGON: {nop}")
+          f"OFFSET: {offn}  NO_POLYGON: {nop}")
     okw = sorted(float(r['width_m']) for r in rows if r['flag'] == 'OK')
     if okw:
         print(f"channel-water widths (OK only): median "

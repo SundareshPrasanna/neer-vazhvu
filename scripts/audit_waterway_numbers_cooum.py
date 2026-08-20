@@ -223,6 +223,21 @@ for needle, label in [("every 50 m", "methods spacing"),
     if needle not in mtxt:
         errors.append(f"methods section missing/changed: {label} expected '{needle}'")
 
+# ---- estimated widths: the quality gate held (none ship) ----
+n_spec = sum(1 for r in reaches["reaches"] for t in r["transects"]
+             if t["flag"] == "SPECTRAL")
+if n_spec:
+    errors.append(f"{n_spec} spectral transects shipped despite the failed "
+                  "calibration gate")
+smeta_p = RESEARCH / "data" / "widths-spectral-meta.json"
+if smeta_p.exists():
+    scal = json.loads(smeta_p.read_text())["calibration"]
+    mtxt2 = json.dumps(reaches.get("methods", []))
+    for needle in (f"{scal['detected']} of {scal['n']}",
+                   f"{scal['median_abs_diff_m']:.1f} m"):
+        if needle not in mtxt2:
+            errors.append(f"methods no-estimates numbers drifted: expected '{needle}'")
+
 # ---- claims hygiene ----
 claims = json.loads((OUT / "claims.json").read_text())["claims"]
 texts = {}
