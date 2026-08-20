@@ -12,8 +12,8 @@ This exists because a platform that treats data gaps as first-class has to be ab
 | Suppressed freshness checks | 1 |
 | Artifacts with no registered upstream | 84 |
 | Routes a city deliberately does not ship | 45 |
-| Absences the product states on the page | 25 |
-| **Total** | **155** |
+| Absences the product states on the page | 26 |
+| **Total** | **156** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -199,6 +199,7 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | pune | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | surat | storage history chart | Surat has no storage history and will not grow one. The city impounds nothing: it abstracts from a weir pond on the Tapi, which is a river reach rather than a reservoir, and the dam upstream belongs to the state irrigation department, which publishes a level but no volume and no Surat share. Level over a full-reservoir mark is not a quantity of water, so there is nothing here to chart. What Surat does have is the live flood chain at the top of this page. |
 | surat | UI language: gu | Advertised as coming soon and rendered as a disabled chip. The gu dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| surat | water source: Ukai dam (upstream, not SMC-operated) | Ukai is the Gujarat Water Resources Department’s to publish, not SMC’s. SMC republishes its level, inflow and outflow hourly; no storage volume or Surat share is published anywhere. |
 | surat | water source: Weir-cum-causeway (Singanpor) | The weir pond is the city’s actual intake. Level and outflow are published hourly; the impounded volume is not, and the pond is a river reach rather than a reservoir, so no capacity is carried. |
 | surat | water-bodies catchment atlas | Surat has no cascade view, and that is a judgement about the city rather than a missing dataset. The cascade layer reconstructs chained tank systems - the Tamil kanmoi networks and the Bengaluru kere chains, where each tank's surplus was engineered to feed the next over centuries. Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. The algorithm would find downhill neighbours here because it always does, and drawing them as a cascade would assert an inheritance the city does not have. |
 
