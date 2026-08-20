@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -27,7 +27,13 @@ interface ProfilePoint {
 
 const DISPLAY_CAP_M = 160;
 
-export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
+export const WidthProfileChart = memo(function WidthProfileChart({
+  waterwayId,
+  xLabel = "km along the alignment",
+}: {
+  waterwayId: string;
+  xLabel?: string;
+}) {
   const [points, setPoints] = useState<ProfilePoint[] | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -57,7 +63,12 @@ export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
     );
   }
 
-  const data = points.map((p) => ({
+  // Decimate for display: the chart is ~560 px wide, so more than ~500
+  // rendered points is pure DOM weight. Preserve gaps (nulls survive).
+  const step = Math.max(1, Math.ceil(points.length / 500));
+  const shown = points.filter((_, i) => i % step === 0 || i === points.length - 1);
+  const maxKm = Math.ceil(points[points.length - 1].km * 10) / 10;
+  const data = shown.map((p) => ({
     km: p.km,
     w:
       p.w == null
@@ -76,11 +87,11 @@ export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
             <XAxis
               dataKey="km"
               type="number"
-              domain={[0, 74.5]}
+              domain={[0, maxKm]}
               tickCount={8}
               tick={{ fontSize: 11 }}
               label={{
-                value: "km from Ennore",
+                value: xLabel,
                 position: "insideBottomRight",
                 offset: -2,
                 fontSize: 11,
@@ -136,4 +147,4 @@ export function WidthProfileChart({ waterwayId }: { waterwayId: string }) {
       </figcaption>
     </figure>
   );
-}
+});

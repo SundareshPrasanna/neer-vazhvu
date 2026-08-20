@@ -44,7 +44,7 @@ function TransectStrip({ reach }: { reach: WaterwayReach }) {
   const h = hi != null ? pts[hi] : null;
   const label = h
     ? h.w == null
-      ? `km ${h.km} - not measurable from mapped water here`
+      ? `km ${h.km} - no traced water surface in OSM here`
       : h.flag === "OPEN_WATER"
         ? `km ${h.km} - opens into backwater (${Math.round(h.w)} m across)`
         : `km ${h.km} - ${Math.round(h.w)} m wide`

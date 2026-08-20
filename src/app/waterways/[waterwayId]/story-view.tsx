@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type {
   WaterwayLocatorAnchor,
@@ -138,7 +138,12 @@ function ChapterVisual({
     case "ennore":
       return chip("site-ennore-junction.jpg", "The Ennore creek junction from orbit");
     case "squeeze":
-      return <WidthProfileChart waterwayId={manifest.waterwayId} />;
+      return (
+        <WidthProfileChart
+          waterwayId={manifest.waterwayId}
+          xLabel="km from Ennore"
+        />
+      );
     case "okkiyam":
       return chip("site-okkiyam-maduvu.jpg", "The Okkiyam Maduvu confluence area from orbit");
     case "estuary":
@@ -192,7 +197,10 @@ export function StoryView({
 }) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLElement | null)[]>([]);
-  const byId = new Map(reaches.map((r) => [r.id, r]));
+  const byId = useMemo(
+    () => new Map(reaches.map((r) => [r.id, r])),
+    [reaches]
+  );
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -210,37 +218,11 @@ export function StoryView({
     return () => obs.disconnect();
   }, []);
 
-  return (
-    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
-      {/* Chapter rail (desktop) */}
-      <nav
-        aria-label="Chapters"
-        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
-      >
-        <ol className="space-y-3 border-l border-border pl-4">
-          {chapters.map((ch, i) => (
-            <li key={ch.key}>
-              <a
-                href={`#ch-${ch.key}`}
-                className={`block max-w-36 text-xs leading-snug transition-colors ${
-                  active === i
-                    ? "font-semibold text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {ch.km && (
-                  <span className="block font-mono text-[10px] opacity-70">
-                    km {ch.km[0]}–{ch.km[1]}
-                  </span>
-                )}
-                {ch.title}
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-
-      {/* Chapters */}
+  // The observer's setActive fires at every chapter crossing; memoizing
+  // the sections keeps that re-render to the rail alone (the chapters
+  // hold the profile chart, locators and receipt lists - a heavy tree).
+  const sections = useMemo(
+    () => (
       <div className="min-w-0 flex-1 space-y-20 pt-4">
         {chapters.map((ch, i) => {
           const chapterFacts = ch.reach_ids
@@ -333,6 +315,42 @@ export function StoryView({
           );
         })}
       </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byId, chapters, reaches, timeline, today, widthLedger, locatorAnchors, manifest, identity, onExplore]
+  );
+
+  return (
+    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
+      {/* Chapter rail (desktop) */}
+      <nav
+        aria-label="Chapters"
+        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
+      >
+        <ol className="space-y-3 border-l border-border pl-4">
+          {chapters.map((ch, i) => (
+            <li key={ch.key}>
+              <a
+                href={`#ch-${ch.key}`}
+                className={`block max-w-36 text-xs leading-snug transition-colors ${
+                  active === i
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ch.km && (
+                  <span className="block font-mono text-[10px] opacity-70">
+                    km {ch.km[0]}–{ch.km[1]}
+                  </span>
+                )}
+                {ch.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {sections}
     </div>
   );
 }

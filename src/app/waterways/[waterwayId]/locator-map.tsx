@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import type { WaterwayLocatorAnchor } from "@/lib/waterways/types";
 
 /**
@@ -36,7 +36,7 @@ function loadLine(waterwayId: string): Promise<Line> {
   return cache[waterwayId];
 }
 
-export function LocatorMap({
+export const LocatorMap = memo(function LocatorMap({
   waterwayId,
   span,
   anchors,
@@ -150,4 +150,4 @@ export function LocatorMap({
       })}
     </svg>
   );
-}
+});
