@@ -61,15 +61,21 @@ CITIES = {
     # reason as Kolkata and Pune: the provisional months have to continue the
     # series they are filling, not start a parallel one at the city centre.
     "surat": (21.2500, 72.7500),
-    # Gurugram is NOT here yet, deliberately. Its grid point is (28.4360,
-    # 77.0560), the centroid of MCG's 36-ward extent, but this fetcher only
-    # fills provisional months AFTER an IMD authoritative base series, and
-    # imd-rainfall-monthly-gurugram.json does not exist. Adding the city
-    # before that base is generated would fail `--all` - and `--all` is what
-    # the daily rainfall-recent-refresh workflow runs, so the whole job would
-    # go red every day for every city. Add it in the same change as the IMD
-    # backfill, not before. Tracked by the freshness exemption
-    # "gurugram:rainfall-recent".
+    # Gurugram, added 2026-08-20 together with its IMD base series - the
+    # condition the old comment here set, and the reason it was held out: this
+    # fetcher only fills provisional months AFTER an authoritative base, and
+    # `--all` is what the daily workflow runs, so adding a city without one
+    # would have turned that job red every day for every city.
+    #
+    # (28.50, 77.00) is the 0.25-deg grid intersection nearest the centroid of
+    # MCG's 36-ward extent (28.4360, 77.0560), and it is NOT Delhi's cell -
+    # Delhi uses (28.50, 77.25), one cell east, and the two share no annual
+    # total in 56 years. It must match generate_imd_rainfall.py's grid point or
+    # the provisional months would continue a different series from the one
+    # they are filling; see the CITY_DEFAULTS entry there for why this point is
+    # a nearest-intersection default rather than a validated one, and for the
+    # ~40% spread against its neighbours.
+    "gurugram": (28.5000, 77.0000),
 }
 
 API = (

@@ -45,26 +45,19 @@ import { UNWATCHED } from "./headwaters-coverage";
  * temporary with a removal condition; that condition was met. It is recorded
  * here rather than deleted silently because "an exemption we retired" is the
  * evidence that the removal conditions are real.
+ *
+ * Gurugram's `gurugram:rainfall-recent` exemption was REMOVED 2026-08-20 on the
+ * same terms, and it was the last entry in this map - which is now EMPTY, the
+ * steady state this comment asks for. Its removal condition named three things:
+ * generate the IMD base, add the city to CITIES in fetch_recent_rainfall.py,
+ * and delete the entry in the same change. All three are in that change.
+ * The base is 56 years at grid point (28.50, 77.00), long-term mean 715.0 mm.
+ * Read generate_imd_rainfall.py's CITY_DEFAULTS note before trusting that
+ * number to a decimal: the cell is a local maximum, its neighbours return
+ * 512.5 and 534.9 mm, and unlike Pune there is no published IMD observatory
+ * normal for Gurgaon to validate it against.
  */
-export const FRESHNESS_EXEMPTIONS: Record<string, string> = {
-  // TEMPORARY, and the same exemption Kolkata carried for the same reason
-  // (see the note above, which records its retirement). rainfall-recent is a
-  // PROVISIONAL fill layered on top of an IMD authoritative base, so it cannot
-  // exist before imd-rainfall-monthly-gurugram.json does, and generating that
-  // base is a multi-decade gridded download that belongs in its own change
-  // rather than bolted onto the city scaffold.
-  //
-  // Gurugram is deliberately absent from CITIES in fetch_recent_rainfall.py
-  // meanwhile: the daily workflow runs `--all`, which exits non-zero if any
-  // one city fails, so adding the grid point early would turn the whole job
-  // red every day for every city.
-  //
-  // REMOVAL CONDITION: run generate_imd_rainfall.py for the Gurugram grid
-  // point (28.4360, 77.0560), add "gurugram" to CITIES in
-  // fetch_recent_rainfall.py, and delete this entry in the same change.
-  "gurugram:rainfall-recent":
-    "No IMD gridded base series exists for Gurugram yet, and rainfall-recent is the provisional fill on top of one. Retire this by generating imd-rainfall-monthly-gurugram.json and wiring the city into fetch_recent_rainfall.py.",
-};
+export const FRESHNESS_EXEMPTIONS: Record<string, string> = {};
 
 /* ── 2. Reported: declared absences owned by their consumers ────────────── */
 

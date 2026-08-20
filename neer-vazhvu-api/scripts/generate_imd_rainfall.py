@@ -40,7 +40,10 @@ import numpy as np
 # Per-city NVDM envelope source ids. write_artifact is preserve-if-present, so
 # cities whose artifact was enveloped by a per-city injector keep what they
 # have; this only takes effect on a city writing the file for the first time.
-ENVELOPE_SOURCE_ID = {"pune": "imd-gridded-rainfall-pune"}
+ENVELOPE_SOURCE_ID = {
+    "pune": "imd-gridded-rainfall-pune",
+    "gurugram": "imd-gridded-rainfall-gurugram",
+}
 
 START_YEAR = 1970
 NORMAL_END = 2020  # long-term normal computed over START_YEAR-NORMAL_END
@@ -87,6 +90,23 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "(Shivajinagar) observatory normal of 841.2 mm - 31% high. This cell "
         "returns 805.3 mm, within 4.3% of the observatory. Validated against "
         "IMD Climatological Tables 1991-2020, station index 43063.",
+    ),
+    "gurugram": (
+        28.5,
+        77.0,
+        "Gurugram grid point, the 0.25-deg intersection nearest the centroid of "
+        "MCG's 36-ward extent (28.4360, 77.0560). NOT Delhi's cell: Delhi uses "
+        "28.5/77.25, one cell east, and the two series share no annual total in "
+        "56 years. "
+        "SENSITIVITY IS HIGH HERE AND UNRESOLVED. This cell is a local maximum - "
+        "it returns a 715.0 mm normal-period mean against 512.5 mm one cell west "
+        "(28.5/76.75) and 534.9 mm one cell south (28.25/77.0), so the choice "
+        "moves the number by about 40%. Pune resolved the same problem by "
+        "validating against an IMD observatory normal (Climatological Tables "
+        "1991-2020, station index 43063); no equivalent published normal for "
+        "Gurgaon has been located, so this point is the nearest-intersection "
+        "default rather than a validated one. Revisit if an IMD Gurgaon normal "
+        "turns up - the neighbours are already measured above.",
     ),
     "delhi": (
         28.5,

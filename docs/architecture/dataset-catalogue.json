@@ -11065,6 +11065,47 @@
    "flags": []
   },
   {
+   "path": "public/data/imd-rainfall-monthly-gurugram.json",
+   "family": "data-root",
+   "scope": "gurugram",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 32501,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rainfall-gurugram"
+   ],
+   "licenses": [
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/imd-rainfall-monthly-hyderabad.json",
    "family": "data-root",
    "scope": "hyderabad",
@@ -12522,6 +12563,51 @@
    ],
    "accountability": "watched",
    "accountability_reason": "daily feed: owned by check-data-freshness.ts",
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-gurugram.json",
+   "family": "data-root",
+   "scope": "gurugram",
+   "dataset": "rainfall-recent",
+   "bytes": 15457,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "imd-gridded-rainfall-gurugram",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution",
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -26961,11 +27047,12 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "gurugram",
     "hyderabad",
     "kolkata",
     "madurai",
@@ -26973,7 +27060,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 483671,
+   "bytes": 516172,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27086,11 +27173,12 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "gurugram",
     "hyderabad",
     "kolkata",
     "madurai",
@@ -27098,7 +27186,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 139117,
+   "bytes": 154574,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
