@@ -1,7 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import type { WaterwayManifest, WaterwayReach } from "@/lib/waterways/types";
+import type {
+  WaterwayLocatorAnchor,
+  WaterwayManifest,
+  WaterwayReach,
+} from "@/lib/waterways/types";
+import { LocatorMap } from "./locator-map";
 import { FactLine } from "./claim-chip";
 import { WorksLens } from "./works-lens";
 
@@ -99,11 +104,13 @@ function Metric({
 export function ExplorerView({
   manifest,
   reaches,
+  locatorAnchors,
   selectedId,
   onSelect,
 }: {
   manifest: WaterwayManifest;
   reaches: WaterwayReach[];
+  locatorAnchors: WaterwayLocatorAnchor[];
   selectedId: number;
   onSelect: (id: number) => void;
 }) {
@@ -148,15 +155,26 @@ export function ExplorerView({
 
       {/* Detail panel */}
       <section aria-live="polite">
-        <div className="font-mono text-xs text-muted-foreground">
-          km {sel.km[0]}–{sel.km[1]} · {manifest.chainageNote}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="font-mono text-xs text-muted-foreground">
+              km {sel.km[0]}–{sel.km[1]} · {manifest.chainageNote}
+            </div>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+              {sel.name}
+            </h2>
+            <p className="mt-2 max-w-2xl text-base leading-relaxed text-foreground/90">
+              {sel.verdict}
+            </p>
+          </div>
+          <div className="hidden sm:block">
+            <LocatorMap
+              waterwayId={manifest.waterwayId}
+              span={sel.km}
+              anchors={locatorAnchors}
+            />
+          </div>
         </div>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-          {sel.name}
-        </h2>
-        <p className="mt-2 max-w-2xl text-base leading-relaxed text-foreground/90">
-          {sel.verdict}
-        </p>
 
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <Metric

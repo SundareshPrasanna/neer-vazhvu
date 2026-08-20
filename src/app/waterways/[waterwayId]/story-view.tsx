@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type {
+  WaterwayLocatorAnchor,
   WaterwayChapter,
   WaterwayIdentity,
   WaterwayManifest,
@@ -12,6 +13,7 @@ import type {
   WaterwayWidthLedger,
 } from "@/lib/waterways/types";
 import { FactLine, SourceChip } from "./claim-chip";
+import { LocatorMap } from "./locator-map";
 import { TimelineView } from "./timeline-view";
 import { TodayPanel } from "./today-panel";
 import { WidthLedger } from "./width-ledger";
@@ -175,6 +177,7 @@ export function StoryView({
   timeline,
   today,
   widthLedger,
+  locatorAnchors,
   onExplore,
 }: {
   manifest: WaterwayManifest;
@@ -184,6 +187,7 @@ export function StoryView({
   timeline: WaterwayTimelineEntry[];
   today: WaterwayToday;
   widthLedger: WaterwayWidthLedger | null;
+  locatorAnchors: WaterwayLocatorAnchor[];
   onExplore: (reachId: number) => void;
 }) {
   const [active, setActive] = useState(0);
@@ -252,16 +256,29 @@ export function StoryView({
               }}
               className="scroll-mt-36"
             >
-              <div className="font-mono text-xs uppercase tracking-widest text-primary">
-                {i === 0
-                  ? identity.scope
-                  : ch.km
-                    ? `km ${ch.km[0]} – ${ch.km[1]}`
-                    : "the whole canal"}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-mono text-xs uppercase tracking-widest text-primary">
+                    {i === 0
+                      ? identity.scope
+                      : ch.km
+                        ? `km ${ch.km[0]} – ${ch.km[1]}`
+                        : "end to end"}
+                  </div>
+                  <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+                    {ch.title}
+                  </h2>
+                </div>
+                {ch.km && (
+                  <div className="hidden sm:block">
+                    <LocatorMap
+                      waterwayId={manifest.waterwayId}
+                      span={ch.km}
+                      anchors={locatorAnchors}
+                    />
+                  </div>
+                )}
               </div>
-              <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-                {ch.title}
-              </h2>
               <p className="mt-3 max-w-2xl text-lg leading-relaxed text-foreground">
                 {ch.verdict}
               </p>
