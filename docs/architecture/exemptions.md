@@ -9,11 +9,11 @@ This exists because a platform that treats data gaps as first-class has to be ab
 
 | Kind | Entries |
 |---|---|
-| Suppressed freshness checks | 1 |
+| Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 84 |
 | Routes a city deliberately does not ship | 45 |
 | Absences the product states on the page | 26 |
-| **Total** | **156** |
+| **Total** | **155** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -23,9 +23,7 @@ This exists because a platform that treats data gaps as first-class has to be ab
 
 A city skipping a derived staleness check. This is the only kind that suppresses a CI failure, which is why the map is owned by `scripts/lib/exemptions.ts` rather than by the checker. **Empty is the correct steady state.** Every entry should carry the condition that would retire it.
 
-| Scope | Subject | Reason |
-|---|---|---|
-| gurugram | rainfall-recent | No IMD gridded base series exists for Gurugram yet, and rainfall-recent is the provisional fill on top of one. Retire this by generating imd-rainfall-monthly-gurugram.json and wiring the city into fetch_recent_rainfall.py. |
+_None._
 
 ## Artifacts with no registered upstream
 
