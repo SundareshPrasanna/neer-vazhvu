@@ -150,7 +150,14 @@ export const SURAT: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 1,
       isPrimaryDrinkingSource: false,
-      hasPublicFeed: true,
+      // FALSE for the same reason as singanpor_weir below: SMC republishes
+      // Ukai's level hourly, so a feed exists, but it lands in the scraped
+      // flood-chain artifact and never in reservoir_daily_v2. Left true, the
+      // freshness registry derived a `surat:reservoir:ukai` check against that
+      // table and reported "STALE (no date found)" forever, because no date
+      // will ever be found there. 048_surat_enable.sql records the same fact:
+      // no rows, and none expected.
+      hasPublicFeed: false,
       noFeedNote:
         'Ukai is the Gujarat Water Resources Department’s to publish, not SMC’s. SMC republishes its level, inflow and outflow hourly; no storage volume or Surat share is published anywhere.',
     },
