@@ -34,6 +34,11 @@ const CITY_FOOTER_SOURCES: Record<
     { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
     { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
   ],
+  surat: [
+    { label: "Surat Municipal Corporation", href: "https://www.suratmunicipal.gov.in/Home/RainfallInfo" },
+    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
+    { label: "GEMI", href: "https://gemi.gujarat.gov.in/" },
+  ],
   mumbai: [
     { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
     { label: "MPCB", href: "https://mpcb.gov.in/" },
