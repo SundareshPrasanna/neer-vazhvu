@@ -53,15 +53,22 @@
 --                  window with no archive and the artifact is what the
 --                  flood-headroom hero reads.
 --
+-- SCHEMA GAP CLOSED 2026-08-20. Everything below is kept as the record of what
+-- was true when this migration was written; none of it is true now. The whole
+-- backlog 017-048 was applied and the remote ledger repaired, so
+-- `supabase migration list` shows Local == Remote for all 48 and there is no
+-- longer a reason to avoid `supabase db push`. See docs/architecture/
+-- database-reconciliation-2026-08-20.md.
+--
 -- KNOWN SCHEMA GAP, unchanged and recorded again rather than worked around:
 --   The corporations and source_corporation tables from 029_mmr_corporations.sql
 --   still do not exist in the live database. No code queries either table, and
 --   Surat declares no corporations of its own, so it adds nothing to that debt.
 --
--- ALSO NOTED AND NOT TOUCHED: Gurugram has been live since 15 Aug and still has
---   no row in the cities table - 043_gurugram_seed_enabled.sql was never
---   applied. Pre-existing, unrelated to Surat, and harmless for the same reason
---   this migration is cosmetic: no code reads these rows to gate anything.
+-- GURUGRAM, noted here when it was still broken and FIXED 2026-08-20: it had
+--   been live since 15 Aug with no row in the cities table because
+--   043_gurugram_seed_enabled.sql was never applied. Applied now; the table
+--   holds all ten cities.
 --
 -- PREREQUISITE: 046 must already be applied. This raises rather than silently
 -- updating nothing if the row is absent.

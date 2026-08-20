@@ -62,8 +62,22 @@ jobs:
       # the allocation ledger's receipts column and the GO 111 twin-share
       # analysis are all computed from it.
       #
-      # Runs from CI rather than the local India-IP job because bms.hyderabadwater.gov.in
-      # answers from any network; it was never one of the IP-gated hosts.
+      # THAT IS NO LONGER TRUE, corrected 2026-08-20. This used to read "runs from
+      # CI rather than the local India-IP job because bms.hyderabadwater.gov.in
+      # answers from any network; it was never one of the IP-gated hosts". The
+      # runner now dies on the FIRST request - urllib.error.URLError: <urlopen
+      # error timed out> inside HmwssbSession._prime - while the identical
+      # scraper succeeds from a residential India IP on the first try. The host
+      # has joined bbmb.gov.in and India-WRIS in refusing datacenter IPs.
+      #
+      # HMWSSB is now in the local launchd job (refresh-blocked-feeds.sh), which
+      # is what actually keeps these six reservoirs current. This step stays,
+      # continue-on-error, in case runner access returns - the same treatment
+      # the WRIS Madurai step below already carries for the same reason.
+      #
+      # WORTH KNOWING: continue-on-error is why nobody noticed. Six reservoirs
+      # went six days stale behind a green pipeline. The freshness check is what
+      # surfaced it, not this workflow.
       - name: Scrape Hyderabad (HMWSSB) -> Supabase
         id: scrape_hmwssb
         continue-on-error: true
