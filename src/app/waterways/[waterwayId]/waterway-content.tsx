@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type {
+  WaterwayLocatorAnchor,
   WaterwayMethodsSection,
   WaterwayChapter,
   WaterwayClaim,
@@ -36,6 +37,7 @@ export function WaterwayContent({
   today,
   widthLedger,
   methods,
+  locatorAnchors,
 }: {
   manifest: WaterwayManifest;
   identity: WaterwayIdentity;
@@ -46,6 +48,7 @@ export function WaterwayContent({
   today: WaterwayToday;
   widthLedger: WaterwayWidthLedger | null;
   methods: WaterwayMethodsSection[];
+  locatorAnchors: WaterwayLocatorAnchor[];
 }) {
   const [mode, setMode] = useState<Mode>("story");
   const [selectedReach, setSelectedReach] = useState<number>(reaches[0]?.id ?? 1);
@@ -143,12 +146,14 @@ export function WaterwayContent({
             timeline={timeline}
             today={today}
             widthLedger={widthLedger}
+            locatorAnchors={locatorAnchors}
             onExplore={goExplorer}
           />
         ) : (
           <ExplorerView
             manifest={manifest}
             reaches={reaches}
+            locatorAnchors={locatorAnchors}
             selectedId={selectedReach}
             onSelect={selectReach}
           />

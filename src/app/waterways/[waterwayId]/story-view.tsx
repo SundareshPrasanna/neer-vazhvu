@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type {
+  WaterwayLocatorAnchor,
   WaterwayChapter,
   WaterwayIdentity,
   WaterwayManifest,
@@ -12,6 +13,7 @@ import type {
   WaterwayWidthLedger,
 } from "@/lib/waterways/types";
 import { FactLine, SourceChip } from "./claim-chip";
+import { LocatorMap } from "./locator-map";
 import { TimelineView } from "./timeline-view";
 import { TodayPanel } from "./today-panel";
 import { WidthLedger } from "./width-ledger";
@@ -136,7 +138,12 @@ function ChapterVisual({
     case "ennore":
       return chip("site-ennore-junction.jpg", "The Ennore creek junction from orbit");
     case "squeeze":
-      return <WidthProfileChart waterwayId={manifest.waterwayId} />;
+      return (
+        <WidthProfileChart
+          waterwayId={manifest.waterwayId}
+          xLabel="km from Ennore"
+        />
+      );
     case "okkiyam":
       return chip("site-okkiyam-maduvu.jpg", "The Okkiyam Maduvu confluence area from orbit");
     case "estuary":
@@ -175,6 +182,7 @@ export function StoryView({
   timeline,
   today,
   widthLedger,
+  locatorAnchors,
   onExplore,
 }: {
   manifest: WaterwayManifest;
@@ -184,11 +192,15 @@ export function StoryView({
   timeline: WaterwayTimelineEntry[];
   today: WaterwayToday;
   widthLedger: WaterwayWidthLedger | null;
+  locatorAnchors: WaterwayLocatorAnchor[];
   onExplore: (reachId: number) => void;
 }) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLElement | null)[]>([]);
-  const byId = new Map(reaches.map((r) => [r.id, r]));
+  const byId = useMemo(
+    () => new Map(reaches.map((r) => [r.id, r])),
+    [reaches]
+  );
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -206,37 +218,11 @@ export function StoryView({
     return () => obs.disconnect();
   }, []);
 
-  return (
-    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
-      {/* Chapter rail (desktop) */}
-      <nav
-        aria-label="Chapters"
-        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
-      >
-        <ol className="space-y-3 border-l border-border pl-4">
-          {chapters.map((ch, i) => (
-            <li key={ch.key}>
-              <a
-                href={`#ch-${ch.key}`}
-                className={`block max-w-36 text-xs leading-snug transition-colors ${
-                  active === i
-                    ? "font-semibold text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {ch.km && (
-                  <span className="block font-mono text-[10px] opacity-70">
-                    km {ch.km[0]}–{ch.km[1]}
-                  </span>
-                )}
-                {ch.title}
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-
-      {/* Chapters */}
+  // The observer's setActive fires at every chapter crossing; memoizing
+  // the sections keeps that re-render to the rail alone (the chapters
+  // hold the profile chart, locators and receipt lists - a heavy tree).
+  const sections = useMemo(
+    () => (
       <div className="min-w-0 flex-1 space-y-20 pt-4">
         {chapters.map((ch, i) => {
           const chapterFacts = ch.reach_ids
@@ -252,16 +238,29 @@ export function StoryView({
               }}
               className="scroll-mt-36"
             >
-              <div className="font-mono text-xs uppercase tracking-widest text-primary">
-                {i === 0
-                  ? identity.scope
-                  : ch.km
-                    ? `km ${ch.km[0]} – ${ch.km[1]}`
-                    : "the whole canal"}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-mono text-xs uppercase tracking-widest text-primary">
+                    {i === 0
+                      ? identity.scope
+                      : ch.km
+                        ? `km ${ch.km[0]} – ${ch.km[1]}`
+                        : "end to end"}
+                  </div>
+                  <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+                    {ch.title}
+                  </h2>
+                </div>
+                {ch.km && (
+                  <div className="hidden sm:block">
+                    <LocatorMap
+                      waterwayId={manifest.waterwayId}
+                      span={ch.km}
+                      anchors={locatorAnchors}
+                    />
+                  </div>
+                )}
               </div>
-              <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-                {ch.title}
-              </h2>
               <p className="mt-3 max-w-2xl text-lg leading-relaxed text-foreground">
                 {ch.verdict}
               </p>
@@ -316,6 +315,42 @@ export function StoryView({
           );
         })}
       </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byId, chapters, reaches, timeline, today, widthLedger, locatorAnchors, manifest, identity, onExplore]
+  );
+
+  return (
+    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
+      {/* Chapter rail (desktop) */}
+      <nav
+        aria-label="Chapters"
+        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
+      >
+        <ol className="space-y-3 border-l border-border pl-4">
+          {chapters.map((ch, i) => (
+            <li key={ch.key}>
+              <a
+                href={`#ch-${ch.key}`}
+                className={`block max-w-36 text-xs leading-snug transition-colors ${
+                  active === i
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ch.km && (
+                  <span className="block font-mono text-[10px] opacity-70">
+                    km {ch.km[0]}–{ch.km[1]}
+                  </span>
+                )}
+                {ch.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {sections}
     </div>
   );
 }

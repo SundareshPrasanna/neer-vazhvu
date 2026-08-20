@@ -5434,7 +5434,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "bbmb-dam-storage",
-   "bytes": 1264,
+   "bytes": 1262,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11774,7 +11774,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 5104,
+   "bytes": 5103,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11974,7 +11974,7 @@
    "family": "data-root",
    "scope": "pune",
    "dataset": "dam-storage",
-   "bytes": 4298,
+   "bytes": 4299,
    "schema": {
     "kind": "object",
     "keys": [
@@ -19899,7 +19899,9 @@
      "source"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/waterways/[waterwayId]/locator-map.tsx"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_waterway_current.py",
     "neer-vazhvu-api/scripts/build_waterway_insights.py",
@@ -19986,13 +19988,14 @@
    "family": "waterways",
    "scope": "buckingham-canal",
    "dataset": "reaches",
-   "bytes": 119174,
+   "bytes": 119372,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
      "dataset",
      "identity",
+     "locator_anchors",
      "methods",
      "nvdm",
      "provenance",
@@ -20002,6 +20005,7 @@
     ]
    },
    "consumers": [
+    "src/app/waterways/[waterwayId]/locator-map.tsx",
     "src/app/waterways/[waterwayId]/methods-panel.tsx",
     "src/app/waterways/[waterwayId]/page.tsx"
    ],
@@ -20149,7 +20153,9 @@
      "source"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/app/waterways/[waterwayId]/locator-map.tsx"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_waterway_current.py",
     "neer-vazhvu-api/scripts/build_waterway_insights.py",
@@ -20236,13 +20242,14 @@
    "family": "waterways",
    "scope": "cooum",
    "dataset": "reaches",
-   "bytes": 97986,
+   "bytes": 98178,
    "schema": {
     "kind": "object",
     "keys": [
      "_provenance",
      "dataset",
      "identity",
+     "locator_anchors",
      "methods",
      "nvdm",
      "provenance",
@@ -20252,6 +20259,7 @@
     ]
    },
    "consumers": [
+    "src/app/waterways/[waterwayId]/locator-map.tsx",
     "src/app/waterways/[waterwayId]/methods-panel.tsx",
     "src/app/waterways/[waterwayId]/page.tsx"
    ],
@@ -25984,7 +25992,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 1264,
+   "bytes": 1262,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -26115,7 +26123,7 @@
    "scopes": [
     "pune"
    ],
-   "bytes": 4298,
+   "bytes": 4299,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26380,7 +26388,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 5104,
+   "bytes": 5103,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -27316,7 +27324,7 @@
    "bytes": 67326,
    "schema_variants": 1,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "waterways",
@@ -27352,7 +27360,7 @@
     "buckingham-canal",
     "cooum"
    ],
-   "bytes": 217160,
+   "bytes": 217550,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

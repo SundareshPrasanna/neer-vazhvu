@@ -374,7 +374,8 @@ def main(waterway=None):
      "provenance": prov_env(
          doc_sources("reaches"), "mixed", bld["notes"]["reaches"]),
      "_provenance": prov, "identity": identity, "reaches": reaches_out,
-     "width_ledger": wl, "methods": cur.get("methods", [])}
+     "width_ledger": wl, "methods": cur.get("methods", []),
+     "locator_anchors": cur.get("locator_anchors", [])}
     (OUT / "reaches.json").write_text(json.dumps(reaches_doc))
     chapters_doc = {"nvdm": "1.0", "dataset": "waterways/chapters", "scope": _SCOPE,
      "provenance": prov_env([], "manual", bld["editorial_note"]),

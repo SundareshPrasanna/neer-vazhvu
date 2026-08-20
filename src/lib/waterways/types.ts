@@ -178,6 +178,12 @@ export interface WaterwayMethodsSection {
   body: string;
 }
 
+/** A recognizable place pinned to the chainage, for the locator map. */
+export interface WaterwayLocatorAnchor {
+  km: number;
+  label: string;
+}
+
 export interface WaterwayWidthLedger {
   note: string;
   source: string;
