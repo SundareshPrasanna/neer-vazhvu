@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { hasWardRankings } from "@/lib/ward-rankings/cities";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import type { Language } from "@/lib/i18n/translations";
@@ -259,6 +260,10 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
             entry point for everyone else (journalists, residents
             who don't know their ward number, planners) - those
             users had nothing to click before. */}
+        {/* Only where a rankings bundle exists. Gurugram has a my-ward page but
+            no bundle, so this link rendered and /gurugram/my-ward/rankings
+            404ed - the route calls loadWardRankings, gets null, notFound(). */}
+        {hasWardRankings(cityId) && (
         <div className="mt-5">
           <Link
             href={
@@ -271,6 +276,7 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
             Browse all wards ranked &rarr;
           </Link>
         </div>
+        )}
 
         {/* Recent wards */}
         {recentWards.length > 0 && (
