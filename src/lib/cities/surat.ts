@@ -165,7 +165,18 @@ export const SURAT: CityConfig = {
       catchmentAreaSqkm: null,
       displayOrder: 2,
       isPrimaryDrinkingSource: true,
-      hasPublicFeed: true,
+      // FALSE, and the flag's own doc is what decides it: "such sources are
+      // excluded from ingestion-liveness checks: they can never have a
+      // reading". This one can never have a reading. SMC publishes the weir's
+      // level hourly, so a feed plainly exists - but the liveness check asks
+      // whether a DAILY STORAGE reading can land in reservoir_daily_v2, and a
+      // level in metres on a river reach is not one. 048_surat_enable.sql
+      // records the same fact from the database side: no rows, and none
+      // expected. Left true, this put "PREVIEW - waiting for first daily
+      // ingestion" on a live city's dashboard, promising an ingestion that
+      // is not coming. Surat's live state is the flood-headroom hero, which
+      // reads the scraped artifact.
+      hasPublicFeed: false,
       noFeedNote:
         'The weir pond is the city’s actual intake. Level and outflow are published hourly; the impounded volume is not, and the pond is a river reach rather than a reservoir, so no capacity is carried.',
     },
