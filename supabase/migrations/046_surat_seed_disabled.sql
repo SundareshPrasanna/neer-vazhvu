@@ -1,5 +1,5 @@
 -- =============================================================
--- 044_surat_seed_disabled.sql
+-- 046_surat_seed_disabled.sql
 -- Seeds Surat as a registered but disabled standalone CITY (the Delhi
 -- model, not Kolkata's region model).
 --

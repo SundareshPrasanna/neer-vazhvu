@@ -284,5 +284,10 @@ export const SURAT: CityConfig = {
     singanpore: 'singanpor_weir',
   },
 
-  enabled: false,
+  // LIVE 2026-08-20. This flag is the only functional gate on the whole
+  // cutover: [cityId]/layout.tsx reads it, and the `enabled` COLUMN in the
+  // cities table is read by no code at all. 048_surat_enable.sql exists so a
+  // fresh rebuild is honest about a city that is live, not because it switches
+  // anything.
+  enabled: true,
 };

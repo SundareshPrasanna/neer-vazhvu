@@ -4,8 +4,9 @@ What ships for Surat, and what each surface is doing differently from the Chenna
 and their traps live alongside in [data-sources.md](data-sources.md); measured parity is in
 [parity-scorecard.md](parity-scorecard.md).
 
-Surat is registered `enabled: false` and reachable only behind
-`NEXT_PUBLIC_PREVIEW_CITIES=surat` until cutover.
+**Surat went live on 2026-08-20** as city nine, on corpus-2026-08-20-surat-r2. Nine routes;
+`/surat/my-ward` is off, along with six other routes, each with a recorded reason in the
+exemption register.
 
 ## The shape of the city, and what follows from it
 
