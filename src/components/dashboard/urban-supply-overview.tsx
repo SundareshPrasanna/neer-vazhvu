@@ -70,8 +70,14 @@ interface WtpsSummary {
 }
 
 interface SupplyOverviewData {
-  _sources: { name: string; url: string; date: string; extracted: string }[];
-  supply_chain: string[];
+  /** Optional: every field a city may not have published yet is optional so a
+   *  partial overview degrades to a thinner card instead of taking the whole
+   *  dashboard down with it (Surat, review 2026-08-17). */
+  _sources?: { name: string; url: string; date: string; extracted: string }[];
+  /** Optional: a city may publish a supply overview without a chain (Surat
+   *  shipped one before its chain was verified end to end). The renderer
+   *  skips the strip rather than taking the whole dashboard down. */
+  supply_chain?: string[];
   current_supply_mix_mld: SupplyMixItem[];
   current_supply_total_mld: number;
 
@@ -455,7 +461,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
               {t("supply_overview.figures_label")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {data.reference_figures.map((fig) => {
+              {(data.reference_figures ?? []).map((fig) => {
                 const href = fig.src ?? fig.src_external;
                 if (!href) return null;
                 return (

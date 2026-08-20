@@ -340,6 +340,17 @@ export default function CityGroundwaterClient({
   }
   if (semiCount > 0) headlinePhrases.push(`${semiCount} blocks semi-critical`);
 
+  // The exploitation view needs BLOCKS, not just a config flag. The depth and
+  // risk toggles below already gate on their data having loaded; this one did
+  // not, and the two cities whose IN-GRES assessment is DISTRICT-level rather
+  // than block-level both shipped with `exploitation: true` and an empty
+  // `blocks` array. The result was a page titled "CGWB block exploitation
+  // (GWR)" drawing a percent-scale legend over either nothing at all
+  // (Gurugram: no station layer either, so a bare basemap) or over markers
+  // coloured by DEPTH IN METRES (Surat) - two different quantities under one
+  // legend. Gate it the same way as its siblings.
+  const hasExploitation = gwViews.exploitation && blocks.length > 0;
+
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
       {/* Context bar */}
@@ -348,10 +359,12 @@ export default function CityGroundwaterClient({
           {config.displayName} - {
             viewMode === "depth" ? "Ward depth (interpolated)" :
             viewMode === "risk" ? "Ward risk composite (3-factor)" :
-            "CGWB block exploitation (GWR)"
+            hasExploitation ? "CGWB block exploitation (GWR)" :
+            usesCgwbYearbook ? "CGWB Year Book stations" :
+            "Groundwater"
           }
         </span>
-        {viewMode === "exploitation" && headlinePhrases.length > 0 && (
+        {viewMode === "exploitation" && hasExploitation && headlinePhrases.length > 0 && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
             {headlinePhrases.join(" - ")}
           </span>
@@ -411,7 +424,7 @@ export default function CityGroundwaterClient({
                 Risk (composite)
               </button>
             )}
-            {gwViews.exploitation && (
+            {hasExploitation && (
               <button
                 onClick={() => setViewMode("exploitation")}
                 className={`px-2 py-0.5 rounded border ${
@@ -498,7 +511,7 @@ export default function CityGroundwaterClient({
           {/* Legend overlay - IISc view has its own legend baked into
               IIScStressWardsMap, so the GroundwaterLegend (which only
               models depth / risk / exploitation) is hidden for that mode. */}
-          {viewMode !== "iisc" && (
+          {viewMode !== "iisc" && (viewMode !== "exploitation" || hasExploitation) && (
             <div
               className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
                 selectedBlock ? "bottom-[148px] md:bottom-4" : "bottom-2"

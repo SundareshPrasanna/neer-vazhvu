@@ -17,12 +17,15 @@
     "so expected_files is unchanged at 497/114.",
     "2026-08-20: the 50 m measurement grid (data#26, squash 3dcf72a4e07eca7a8016e2ab3340afb6e21a1f44). Modification-only: 12 waterway artifacts re-synced from neer-vazhvu#296, no files added or removed, so expected_files stays 497/114 and this bump moves only the sha. Both waterway pages' transects and condition strips move to 50 m; methods sections ship per waterway in reaches.json.",
     "2026-08-20: the opener-title release (data#28, squash 6412b0bee3c3cafeda8cbc03bfc5d3e59e8667f3). Two chapters.json artifacts re-synced from neer-vazhvu#298; counts stay 497/114 - a sha-only bump. The canal's first line becomes 'From Ennore to Mahabalipuram, fifty metres at a time', the Cooum's 'From Satharai to the sea, fifty metres at a time'.",
-    "2026-08-20: the locator-anchors + labelled-estimates release (data#30, squash 15d251bae82af2a850c59e4c3a0d0b07ad6f9657). Four waterway artifacts re-synced from neer-vazhvu#300 and #301; counts stay 497/114 - a sha-only bump. The canal strips carry 50 OFFSET + 241 calibration-gated spectral estimates; the Cooum ships none by the quality gate, stated in its methods."
+    "2026-08-20: the locator-anchors + labelled-estimates release (data#30, squash 15d251bae82af2a850c59e4c3a0d0b07ad6f9657). Four waterway artifacts re-synced from neer-vazhvu#300 and #301; counts stay 497/114 - a sha-only bump. The canal strips carry 50 OFFSET + 241 calibration-gated spectral estimates; the Cooum ships none by the quality gate, stated in its methods.",
+    "2026-08-20: the Surat release, city nine (data#19 then data#32, tagged corpus-2026-08-20-surat-r2 at 9bba13d1185039fbcc68c11df2f1f2401a2c0c46). The first bump since Pune that ADDS files: 510 under data/ and 116 under geojson/, up from 497/114. Surat's thirteen city artifacts plus the two-artifact industrial layer - GEMI's monitoring of both Surat CETPs against the discharge norms in each plant's own GPCB consent, which is what effluent fell back to after GPCB's live OCEMS turned out unreachable (TCP connects, TLS never completes) and CPCB's national API all-NA.",
+    "PIN r2, NOT r1. corpus-2026-08-20-surat (r1) released the 19 Aug branch content, which predates the fixes the city needed: the commitments artifact that crashed the page, an incompatible cgwb-stations shape, a water-bodies layer 17 polygons short, and no gwr-blocks-surat.json at all. r1 is left in place rather than moved, per the no-moving-tags rule in the data repo's release doc; it is simply not what this file points at.",
+    "SURAT IS NOT LIVE AT THIS COMMIT and this bump does not make it live: the city config still carries enabled:false, so its routes 404 outside preview until the cutover PR flips it."
   ],
   "repo": "github.com/SundareshPrasanna/neer-vazhvu-data",
-  "sha": "15d251bae82af2a850c59e4c3a0d0b07ad6f9657",
+  "sha": "9bba13d1185039fbcc68c11df2f1f2401a2c0c46",
   "expected_files": {
-    "data": 497,
-    "geojson": 114
+    "data": 510,
+    "geojson": 116
   }
 }

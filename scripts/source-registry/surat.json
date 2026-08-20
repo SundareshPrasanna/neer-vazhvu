@@ -1,0 +1,247 @@
+{
+  "_doc": [
+    "Headwaters source registry for Surat (city 9, first Gujarat city).",
+    "The registry OWNS licence strings: NVDM envelopes read them from here via",
+    "registry_license(), so a licence is corrected in one place.",
+    "",
+    "Note what is absent and why. There is no Gujarat state tier to inherit -",
+    "every prior city arrived on top of an already-worked state (TNGIS, KWRIS,",
+    "MPCB, TGPCB, WBPCB). Surat is first contact with GWRDC, GPCB and the",
+    "Gujarat WRD, so all of these entries are new rather than reused.",
+    "",
+    "The flood-chain source is tier 0 and daily because it is the only one on",
+    "this list that cannot be recovered if missed: SMC publishes a rolling",
+    "~10-reading window with no archive, no dated URL and no API."
+  ],
+  "sources": [
+    {
+      "id": "smc-flood-chain",
+      "scope": "surat",
+      "publisher": "Surat Municipal Corporation",
+      "url": "https://www.suratmunicipal.gov.in/Home/RainfallInfo",
+      "license": "Surat Municipal Corporation public feed; no explicit licence stated - cited with attribution as the corporation's own operational record",
+      "type": "page",
+      "cadence": "hourly",
+      "tier": 0,
+      "detection": {
+        "method": "content-hash",
+        "selector": "table.table-customized"
+      },
+      "dependsOn": [
+        "public/data/surat-flood-chain.json",
+        "public/data/surat-flood-chain-history.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py, wired into the local launchd job (12:00 IST) as of 2026-08-19. That job runs only committed main code, so the step is GUARDED and skips until this branch merges; until then the archive is extended by hand.",
+      "notes": "Five tables: Ukai dam level/inflow/outflow, weir-cum-causeway level/outflow, zone-wise rainfall, season total, and five khadis each with a published Danger Level. SMC attributes the dam and weir rows to the Irrigation Dept / Collector Office. ROLLING WINDOW: history exists only from the first scrape and can never be backfilled."
+    },
+    {
+      "id": "smc-gis-wms",
+      "scope": "surat",
+      "publisher": "Surat Municipal Corporation (IGiS / Scanpoint Geomatics)",
+      "url": "https://gis.suratmunicipal.org:8443/cgi-bin/IGiS_Ent_service.exe?IEG_PROJECT=Surat_ws_25",
+      "license": "public Surat Municipal Corporation data; open WMS, GetCapabilities declares no fees and no access constraints, no explicit licence stated - cited with attribution",
+      "type": "api",
+      "cadence": "unknown",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash",
+        "selector": "WMS_Capabilities"
+      },
+      "dependsOn": [
+        "public/data/surat-zones.json"
+      ],
+      "refreshMethod": "manual WMS GetFeatureInfo sweep",
+      "notes": "~390 layers, the richest municipal GIS found on the platform. CONTRACT: GetMap and GetFeatureInfo (application/vnd.ogc.gml) work; WFS is DISABLED (IEG Code 1027) and GML carries gml:Box only, so attributes and rendered tiles are available but vector geometry is NOT. Enabling WFS is the open ask to SMC."
+    },
+    {
+      "id": "smc-reuse-programme",
+      "scope": "surat",
+      "publisher": "Surat Municipal Corporation (hosted by CSE India)",
+      "url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf",
+      "license": "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/commitments-surat.json",
+        "public/data/facts-surat.json",
+        "public/data/industrial-sources-surat.json"
+      ],
+      "refreshMethod": "manual re-extraction on a new edition",
+      "notes": "Dated 8 Mar 2024. SMC's own figures for 11 STPs (1,726.50 MLD), 3 TTPs (164 MLD in, 115 MLD out, 249 industrial units), 330 MLD total reuse itemised across 11 uses, Rs 496.23 Cr cumulative revenue to Jan-2024, tariff Rs 18.20/KL (2014) to Rs 36.2/KL, and dated targets of 70% by 2030 and 100% by 2035. PREFER THESE over press figures, which report Rs 340 Cr / Rs 140 Cr annually and disagree with the corporation."
+    },
+    {
+      "id": "smc-hydraulic-scenario",
+      "scope": "surat",
+      "publisher": "Surat Municipal Corporation, Hydraulic Department",
+      "url": "https://www.suratmunicipal.gov.in/Departments/HydraulicPresentScenario",
+      "license": "Surat Municipal Corporation publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/surat-supply-overview.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "STALE BY ITS OWN LABEL: the page states 980 MLD gross daily supply, 1,300 MLD installed works capacity and 95% piped coverage, all explicitly for 2015. Infrastructure description only; never a current number."
+    },
+    {
+      "id": "smc-wardwise-area-population",
+      "scope": "surat",
+      "publisher": "Surat Municipal Corporation",
+      "url": "https://www.suratmunicipal.gov.in/TheCity/City/Stml2",
+      "license": "Surat Municipal Corporation publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/facts-surat.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "134 ward rows with area and census population 1961-2011, showing the city growing from 8 km2 (12 wards) to 462.149 km2 across six annexations including the June 2020 extension. The spine of the Origins narrative."
+    },
+    {
+      "id": "ogd-surat-water-supply",
+      "scope": "surat",
+      "publisher": "Ministry of Housing and Urban Affairs, Smart Cities Mission (Surat) via data.gov.in",
+      "url": "https://www.data.gov.in/resource/water-supply-surat",
+      "license": "Government Open Data License - India (GODL-India)",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/surat-supply-overview.json",
+        "public/data/facts-surat.json"
+      ],
+      "refreshMethod": "manual download",
+      "notes": "Three releases. D53 monthly total supply Jan-2018 to Dec-2021 (48 real points) and D52 property connection coverage 2018-19 to 2020-21 are usable. D42 gives per-sub-ward CAPACITY across 233 sub-wards, 8 zones, 1,342 MLD. DO NOT PUBLISH the derived columns: D53's 'Losses including NRW' is exactly 20.0000% of total on all 48 rows while 'actual supplied' equals total (self-contradictory), and D42's 'domestic consumption' is exactly 0.750000 x capacity on all 233 rows. Both are assumptions presented as measurements."
+    },
+    {
+      "id": "cpcb-nwmp",
+      "scope": "surat",
+      "publisher": "Central Pollution Control Board",
+      "url": "https://cpcb.gov.in/water-quality-data/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "annual",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "nwmp-data-\\d{4}"
+      },
+      "dependsOn": [
+        "public/data/facts-surat.json",
+        "public/data/industrial-sources-surat.json",
+        "public/data/river-quality-surat.json"
+      ],
+      "refreshMethod": "manual; same extraction pipeline as the Hyderabad Musi rebuild",
+      "notes": "Annual national NWMP compilation. SIX editions ingested (2019-2024) giving 45 station-years: seven Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira) plus the Mindhola at Sachin from 2022. LAYOUT VARIES BY EDITION: major-river tables lead each row with the station code, while the 2022 medium/minor table trails it, so the extractor also matches on a unique name keyword. Editions are sometimes served truncated by CPCB and must be re-downloaded, not skipped."
+    },
+    {
+      "id": "sac-wetland-atlas-gujarat",
+      "scope": "surat",
+      "publisher": "Space Applications Centre (ISRO), National Wetland Atlas hydrological layer",
+      "url": "https://nwdp.nwic.gov.in/dataset/surface-waterbodies",
+      "license": "Government of India publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/surat-water-bodies-current.geojson"
+      ],
+      "refreshMethod": "manual download",
+      "notes": "Gujarat statewide layer; 3,401 polygons fall in the Surat district box, with 17 more contributed by OpenStreetMap where the national-scale atlas missed a body. Carries level_i/level_ii, area_ha, turbidity, aquatic vegetation and wetcode. THIN SEMANTICS: level_iii and l4type are empty for every Surat feature and only 34 carry a name. The wetcode's first two digits ARE decodable and are decoded (1/2 = Inland/Coastal, 1/2 = Natural/Man-made), verified exact against level_i/level_ii across all 18,279 Gujarat features; the leaf digits are not, because no primary SAC code table was obtained and a secondary summary of it contradicted the data."
+    },
+    {
+      "id": "wris-groundwater-gujarat",
+      "scope": "surat",
+      "publisher": "India-WRIS / National Water Informatics Centre",
+      "url": "https://indiawris.gov.in/Dataset/Ground%20Water%20Level",
+      "license": "Government of India publication, cited with attribution",
+      "type": "api",
+      "cadence": "quarterly",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/surat-cgwb-stations.json",
+        "public/data/facts-surat.json"
+      ],
+      "refreshMethod": "manual export, filtered to District == SURAT",
+      "notes": "About 65 Surat-district stations, ~6,500 readings, 1970-2026. THREE TRAPS: the export filenames misstate their own date ranges (the file named 1991_2020 holds Aug-Dec 2020; 2026_2030 holds Jan-May 2026), the Block column is '-' for every Surat row so block joins are impossible from this export, and telemetry sign convention is mixed - apply the per-station sign rule before rendering."
+    },
+    {
+      "id": "osm-surat-waterways",
+      "scope": "surat",
+      "publisher": "OpenStreetMap contributors",
+      "url": "https://www.openstreetmap.org/copyright",
+      "license": "Open Database License (ODbL) 1.0",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/surat-rivers.geojson",
+        "public/geojson/surat-water-bodies-current.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_surat_artifacts.py (Overpass query)",
+      "notes": "Named river and stream ways in the Surat box. GAP: OSM names none of the five khadis SMC monitors against published danger levels, so the creeks central to the flood chain have no geometry. SMC's GIS holds a creek layer but serves WMS only, with WFS disabled, so its geometry cannot be redistributed."
+    },
+    {
+      "id": "gemi-cetp-discharge",
+      "scope": "surat",
+      "publisher": "Gujarat Environment Management Institute (Forest and Environment Department, Government of Gujarat)",
+      "url": "https://gemi.gujarat.gov.in/uploads/Assets/project-report/dischargepointmonitoringofcetpsofpandesarasachinsuratdistrict06182024044708225.pdf",
+      "license": "Gujarat government publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/cetp-compliance-surat.json",
+        "public/data/industrial-sources-surat.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/extract_gemi_cetp_compliance.py on a new GEMI edition",
+      "notes": "Discharge Point Monitoring of CETPs of Pandesara and Sachin, Surat District, monitoring period April 2022 to March 2023. Twelve monthly grab samples per plant analysed in GEMI's own lab against the discharge norms in each plant's GPCB Consolidated Consent & Authorization - a compliance record rather than a dashboard. USE THE PER-SAMPLE TABLES (6 and 9) ONLY: the report's summary tables (5 and 8) disagree with them by ~1000x on total chromium and nickel, almost certainly ug/L mislabelled as mg/L. Stamped 'all rights reserved', so figures are extracted and the document is cited at its own URL, never mirrored. Covers only Pandesara and Sachin; Palsana, Kadodara and the Eco Textile Park are not in this edition."
+    },
+    {
+      "id": "ingres-groundwater-gujarat",
+      "scope": "surat",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-surat.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city surat",
+      "notes": "Dynamic Ground Water Resources for Surat, Tapi, Navsari and Bharuch districts across four assessment years. IN-GRES is ONE upstream serving every state; this entry is the Gujarat cut. Gujarat's state UUID was taken from the COUNTRY-level API call rather than the Angular bundle's GIS-layer table, which is incomplete and carries a second same-shaped table in a different namespace that returns well-formed empty results. Tapi district is in scope because Ukai - the control on Surat's supply and its flood risk - sits there. Watch for units returned as 'salinity': that is a poor-quality category, not a stage-of-extraction band, and such units carry no extraction figures at all."
+    }
+  ]
+}

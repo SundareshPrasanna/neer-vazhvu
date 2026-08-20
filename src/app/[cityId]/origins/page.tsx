@@ -10,6 +10,7 @@ import { HyderabadStory } from "@/content/story-hyderabad";
 import { KolkataStory } from "@/content/story-kolkata";
 import { GurugramStory } from "@/content/story-gurugram";
 import { PuneStory } from "@/content/story-pune";
+import { SuratStory } from "@/content/story-surat";
 import { ComingSoonStory } from "@/components/story/coming-soon";
 
 interface PageProps {
@@ -40,6 +41,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
               ? "The city that outgrew its water in twelve years"
             : cityId === "pune"
               ? "The city that dammed one river four times and still counts four hours"
+            : cityId === "surat"
+              ? "The city the river made, unmade, and made again"
               : `${config.displayName} water story`;
 
   return {
@@ -93,6 +96,10 @@ export default async function CityStoryPage({ params }: PageProps) {
 
   if (cityId === "pune") {
     return <PuneStory />;
+  }
+
+  if (cityId === "surat") {
+    return <SuratStory />;
   }
 
   return <ComingSoonStory cityDisplayName={config.displayName} />;

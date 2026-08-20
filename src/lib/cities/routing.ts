@@ -209,6 +209,25 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
     "flood-risk",
     "tanker",
   ]),
+  // Surat V1 target set. No `cascades` (not a cascade geography), no `my-ward`
+  // (zone is the analytical unit and all three ward schemes lack downloadable
+  // geometry - WFS is disabled on SMC's own GIS), no `allocations` (no
+  // published entitlement instrument exists), no `shoreline` (genuinely
+  // coastal, but the surface still reads Chennai coastal data), no `tanker`
+  // (95% piped coverage; tanker-served properties are NA in every year of the
+  // open data). Every omission carries a written reason in
+  // scripts/lib/exemptions.ts.
+  surat: new Set([
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "facts",
+    "origins",
+    "commitments",
+  ]),
 };
 
 /**

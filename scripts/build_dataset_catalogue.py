@@ -34,6 +34,7 @@ OUT_MD = ROOT / "docs/architecture/dataset-catalogue.md"
 CITY_TOKENS = [
     "chennai", "bangalore", "madurai", "mumbai", "delhi", "hyderabad", "kolkata", "gurugram",
     "pune",
+    "surat",
 ]
 BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers", "kabini"}
 

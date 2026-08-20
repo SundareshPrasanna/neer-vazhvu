@@ -8459,6 +8459,40 @@
    "flags": []
   },
   {
+   "path": "public/data/cetp-compliance-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "cetp-compliance",
+   "bytes": 94291,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "cetps",
+     "dataset",
+     "monitoring_period",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/extract_gemi_cetp_compliance.py"
+   ],
+   "headwaters_sources": [
+    "gemi-cetp-discharge"
+   ],
+   "licenses": [
+    "Gujarat government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/chennai-localities.json",
    "family": "data-root",
    "scope": "chennai",
@@ -8819,6 +8853,46 @@
    "licenses": [
     "Public Domain per OpenCity CKAN metadata (no upstream dedication)",
     "government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/commitments-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "commitments",
+   "bytes": 6365,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources_note",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "smc-reuse-programme"
+   ],
+   "licenses": [
+    "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -9896,6 +9970,49 @@
    "flags": []
   },
   {
+   "path": "public/data/facts-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "facts",
+   "bytes": 8012,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp",
+    "ogd-surat-water-supply",
+    "smc-reuse-programme",
+    "smc-wardwise-area-population",
+    "wris-groundwater-gujarat"
+   ],
+   "licenses": [
+    "Government Open Data License - India (GODL-India)",
+    "Government of India publication, cited with attribution",
+    "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution",
+    "Surat Municipal Corporation publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/flood-lines-mumbai.json",
    "family": "data-root",
    "scope": "mumbai",
@@ -10294,7 +10411,8 @@
     ]
    },
    "consumers": [
-    "src/content/story-gurugram-en.tsx"
+    "src/content/story-gurugram-en.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py"
@@ -10465,6 +10583,48 @@
    ],
    "licenses": [
     "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/gwr-blocks-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "gwr-blocks",
+   "bytes": 8397,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_years",
+     "dataset",
+     "districts",
+     "generated_at",
+     "not_assessed_on_extraction",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note"
+    ]
+   },
+   "consumers": [
+    "src/lib/cities/surat.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-gujarat"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -11116,6 +11276,47 @@
    "flags": []
   },
   {
+   "path": "public/data/imd-rainfall-monthly-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 56687,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain"
+   ],
+   "licenses": [
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/imd-rainfall-monthly.json",
    "family": "data-root",
    "scope": "chennai",
@@ -11298,6 +11499,44 @@
     "ODbL 1.0",
     "government publication, cited with attribution",
     "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/industrial-sources-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "industrial-sources",
+   "bytes": 7906,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_gap",
+     "_note",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
+     "sources"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "cpcb-nwmp",
+    "gemi-cetp-discharge",
+    "smc-reuse-programme"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Gujarat government publication, cited with attribution",
+    "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -12500,6 +12739,49 @@
     "CC BY 4.0",
     "GoI publication, cited with attribution",
     "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "rainfall-recent",
+   "bytes": 15285,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -19183,6 +19465,49 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-surat.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "river-quality",
+   "bytes": 34427,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_coverage",
+     "_note",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "rivers",
+     "scope",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/content/story-surat-en.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/hooks/use-ward-profile.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/extract_cpcb_nwmp_tapi.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality.json",
    "family": "data-root",
    "scope": "chennai",
@@ -19225,6 +19550,210 @@
    "flags": [
     "chennai-legacy-name"
    ]
+  },
+  {
+   "path": "public/data/surat-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "cgwb-stations",
+   "bytes": 363161,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "_source_files",
+     "coverage",
+     "dataset",
+     "depth_unit",
+     "district",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source_label",
+     "source_url",
+     "well_type",
+     "wells"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/types.ts",
+    "src/types/groundwater.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "wris-groundwater-gujarat"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/surat-flood-chain-history.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "flood-chain-history",
+   "bytes": 28855,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_doc",
+     "dataset",
+     "firstObserved",
+     "lastObserved",
+     "nvdm",
+     "provenance",
+     "scope",
+     "series",
+     "stations"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
+   ],
+   "headwaters_sources": [
+    "smc-flood-chain"
+   ],
+   "licenses": [
+    "Surat Municipal Corporation public feed; no explicit licence stated - cited with attribution as the corporation's own operational record"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/surat-flood-chain.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "flood-chain",
+   "bytes": 13731,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_doc",
+     "dataset",
+     "generatedAt",
+     "khadis",
+     "nvdm",
+     "provenance",
+     "rainfall",
+     "scope",
+     "source",
+     "ukai",
+     "weir",
+     "window"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/flood-risk/page.tsx",
+    "src/components/dashboard/flood-headroom-hero.tsx",
+    "src/content/story-surat-en.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/scrape_smc_flood_chain.py"
+   ],
+   "headwaters_sources": [
+    "smc-flood-chain"
+   ],
+   "licenses": [
+    "Surat Municipal Corporation public feed; no explicit licence stated - cited with attribution as the corporation's own operational record"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/surat-supply-overview.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "supply-overview",
+   "bytes": 8850,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_coverage_note",
+     "_excluded_columns_note",
+     "_sources",
+     "_supply_total_note",
+     "_view_overrides",
+     "connection_coverage",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
+     "dataset",
+     "distribution",
+     "infrastructure",
+     "monthly_supply",
+     "nvdm",
+     "provenance",
+     "scope",
+     "supply_chain",
+     "wtps_summary"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+   ],
+   "headwaters_sources": [
+    "ogd-surat-water-supply",
+    "smc-hydraulic-scenario"
+   ],
+   "licenses": [
+    "Government Open Data License - India (GODL-India)",
+    "Surat Municipal Corporation publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/surat-zones.json",
+   "family": "data-root",
+   "scope": "surat",
+   "dataset": "zones",
+   "bytes": 5620,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_cross_checks",
+     "_note",
+     "_vintage_conflict",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "zone_count",
+     "zones"
+    ]
+   },
+   "consumers": [
+    "src/content/story-surat-en.tsx"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "smc-gis-wms"
+   ],
+   "licenses": [
+    "public Surat Municipal Corporation data; open WMS, GetCapabilities declares no fees and no access constraints, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
   },
   {
    "path": "public/data/ward-names.json",
@@ -20444,7 +20973,8 @@
     ]
    },
    "consumers": [
-    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "scripts/compute-bangalore-ward-profiles.ts",
@@ -21168,7 +21698,8 @@
    },
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/components/groundwater/ward-map.tsx"
+    "src/components/groundwater/ward-map.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "scripts/fetch-wris-groundwater.ts"
@@ -21591,7 +22122,8 @@
     ]
    },
    "consumers": [
-    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
@@ -21990,7 +22522,8 @@
     ]
    },
    "consumers": [
-    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py"
@@ -22522,7 +23055,8 @@
     ]
    },
    "consumers": [
-    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "scripts/compute-madurai-ward-profiles.ts",
@@ -23151,7 +23685,8 @@
     ]
    },
    "consumers": [
-    "src/app/[cityId]/groundwater/groundwater-client.tsx"
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_geography.py"
@@ -25123,6 +25658,104 @@
    "flags": []
   },
   {
+   "path": "public/geojson/surat-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "surat",
+   "dataset": "rivers",
+   "bytes": 27218,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "_length_note",
+     "length_km",
+     "name",
+     "river_id",
+     "segments",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/cascade/cascade-methodology-section.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-surat-waterways"
+   ],
+   "licenses": [
+    "Open Database License (ODbL) 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/surat-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "surat",
+   "dataset": "water-bodies-current",
+   "bytes": 3415565,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3418,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "aquatic_vegetation",
+     "area_ha",
+     "category",
+     "id",
+     "in_city_limits",
+     "name",
+     "name_source",
+     "origin",
+     "osm_kind",
+     "setting",
+     "turbidity",
+     "wetcode",
+     "wetcode_classified"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-surat-waterways",
+    "sac-wetland-atlas-gujarat"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Open Database License (ODbL) 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/geojson/tamil-nadu-boundary.geojson",
    "family": "geojson-layers",
    "scope": "tamil-nadu",
@@ -26037,6 +26670,18 @@
   },
   {
    "family": "data-root",
+   "dataset": "cetp-compliance",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 94291,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
    "dataset": "cetp-evidence-manifest",
    "files": 1,
    "scopes": [
@@ -26074,24 +26719,25 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "delhi",
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 3749230,
-   "schema_variants": 6,
+   "bytes": 4112391,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26099,9 +26745,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 181474,
+   "bytes": 187839,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -26185,7 +26832,7 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "delhi",
@@ -26193,12 +26840,37 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 203721,
+   "bytes": 211733,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "flood-chain",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 13731,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "flood-chain-history",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 28855,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
   },
   {
    "family": "data-root",
@@ -26256,7 +26928,7 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26265,9 +26937,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 212755,
+   "bytes": 221152,
    "schema_variants": 6,
    "registered": true,
    "has_consumer": true
@@ -26287,7 +26960,7 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26296,9 +26969,10 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 426984,
+   "bytes": 483671,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26306,16 +26980,17 @@
   {
    "family": "data-root",
    "dataset": "industrial-sources",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "surat"
    ],
-   "bytes": 89988,
-   "schema_variants": 4,
+   "bytes": 97894,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -26410,7 +27085,7 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26419,9 +27094,10 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 123661,
+   "bytes": 138946,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26489,7 +27165,7 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26498,10 +27174,11 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 1440722,
-   "schema_variants": 7,
+   "bytes": 1475149,
+   "schema_variants": 8,
    "registered": true,
    "has_consumer": true
   },
@@ -26532,7 +27209,7 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26540,10 +27217,11 @@
     "gurugram",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 124622,
-   "schema_variants": 7,
+   "bytes": 133472,
+   "schema_variants": 8,
    "registered": true,
    "has_consumer": true
   },
@@ -26715,6 +27393,18 @@
     "kolkata"
    ],
    "bytes": 108801,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "data-root",
+   "dataset": "zones",
+   "files": 1,
+   "scopes": [
+    "surat"
+   ],
+   "bytes": 5620,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -26964,7 +27654,7 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "bangalore",
     "chennai",
@@ -26973,10 +27663,11 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 2762103,
-   "schema_variants": 7,
+   "bytes": 2789321,
+   "schema_variants": 8,
    "registered": true,
    "has_consumer": true
   },
@@ -27158,7 +27849,7 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "bangalore",
     "chennai",
@@ -27168,10 +27859,11 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "pune"
+    "pune",
+    "surat"
    ],
-   "bytes": 35022340,
-   "schema_variants": 9,
+   "bytes": 38437905,
+   "schema_variants": 10,
    "registered": true,
    "has_consumer": true
   },

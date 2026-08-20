@@ -35,6 +35,7 @@ import type {
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
+import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
@@ -125,7 +126,13 @@ export function FloodRiskMap({
       .then(setRiversGeo)
       .catch(console.error);
 
-    getWardGeoJSON()
+    // Ward geometry MUST be derived from the registry. Calling
+    // getWardGeoJSON() bare takes its Chennai default, which put Chennai's
+    // 200 wards on every other city's flood map - and because FitToBounds
+    // below fits to wardsGeo, it also dragged the viewport to Chennai even
+    // though `center` was correct. A city with no ward file resolves to an
+    // empty FeatureCollection, which is the honest state.
+    getWardGeoJSON(wardsGeoJsonPathFor(cityId))
       .then(setWardsGeo)
       .catch(console.error);
 

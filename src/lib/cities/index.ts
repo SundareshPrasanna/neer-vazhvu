@@ -7,6 +7,7 @@ import { KOLKATA } from './kolkata';
 import { MADURAI } from './madurai';
 import { MUMBAI } from './mumbai';
 import { PUNE } from './pune';
+import { SURAT } from './surat';
 import type { PlaceConfig } from './types';
 
 export * from './types';
@@ -20,6 +21,7 @@ export {
   MADURAI,
   MUMBAI,
   PUNE,
+  SURAT,
 };
 
 // Registry contains every known city, enabled or not. Disabled cities
@@ -37,6 +39,7 @@ const REGISTRY: Record<string, PlaceConfig> = {
   [KOLKATA.cityId]: KOLKATA,
   [GURUGRAM.cityId]: GURUGRAM,
   [PUNE.cityId]: PUNE,
+  [SURAT.cityId]: SURAT,
 };
 
 export const DEFAULT_CITY_ID = CHENNAI.cityId;
