@@ -152,20 +152,27 @@ export const GURUGRAM: CityConfig = {
     // aquifer does not stop at the district line, and Jhajjar being safe is
     // what makes the rest legible as a local failure rather than a regional
     // condition.
-    // OFF. This is a correction made from the Surat branch, where the same
-    // failure was found on both cities at once.
+    // BACK ON, 2026-08-21, and the two halves finally meet.
     //
-    // IN-GRES assesses Haryana at DISTRICT level, so gwr-blocks-gurugram.json
-    // carries a `districts` payload and an EMPTY `blocks` array, and no
-    // gurugram-gwr-blocks.geojson exists to draw one on. With depth, risk and
-    // cgwbStations all off for the reasons below, a bare `true` here was the
-    // ONLY thing keeping this route out of its not-yet-available state - so
-    // the page shipped as an empty basemap titled "Gurugram - CGWB block
-    // exploitation (GWR)" under a four-class percent legend, with nothing
-    // drawn on it. Turning it off routes to the named-gap state instead,
-    // which is what the numbers below deserve: they are real and they are
-    // Gurugram's headline, they just have no polygon to sit on.
-    exploitation: false,
+    // This was turned off the day before because gwr-blocks-gurugram.json
+    // carries a `districts` payload with an EMPTY `blocks` array and no
+    // boundary layer existed, so the route was a bare basemap under a
+    // four-class percent legend. That judgement was right about the symptom
+    // and premature about the cause: the values were never missing, they were
+    // filed under a key the map does not read.
+    //
+    // Both halves are now present. gurugram-gwr-blocks.geojson joins GMDA's
+    // district boundaries to the assessment (six features, one per district),
+    // and the client adapts `districts[]` into the GWBlock contract, so the
+    // choropleth colours from real numbers instead of falling through to grey.
+    // The render gate wants DATA AND GEOMETRY, which is why Kolkata and Surat
+    // stay off: they have the districts and no polygons to draw them on.
+    //
+    // What it shows, and it is the city's whole story in one legend: Jhajjar
+    // 49.6% safe, Nuh 72.3%, Palwal 92.0% critical, Rewari 133.2%, Faridabad
+    // 175.4%, Gurugram 194.6% over-exploited. Jhajjar being safe is what makes
+    // the rest legible as a local failure rather than a regional condition.
+    exploitation: true,
     // OFF, and NOT for lack of a pipeline. The India-WRIS LEVEL series for
     // Gurugram is 37 stations that stop in June 2020, and the district has no
     // WRIS telemetry at all - the two Haryana telemetry exports cover 14

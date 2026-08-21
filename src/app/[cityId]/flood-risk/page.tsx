@@ -786,7 +786,7 @@ export default async function CityFloodRiskPage({ params }: PageProps) {
         config={config}
         feature="Flood risk"
         scope="basin-system"
-        parityVerdict="HARD"
+        routeKey="flood-risk"
         whatItShowsForChennai="modeled flood hazard zones (5/10/25/50/100/200-year), 2015 + 2020 hotspots, drainage + sewerage overlays"
         dataGapNote="No flood-config data for this city yet."
         relatedLinks={[

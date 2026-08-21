@@ -59,7 +59,7 @@ export default async function CityLakeRestorationPage({ params }: PageProps) {
         config={config}
         feature="Lake Restoration"
         scope="district-admin"
-        parityVerdict="MEDIUM"
+        routeKey="lake-restoration"
         whatItShowsForChennai="restoration priority scoring across 1,700+ water bodies + lost-tank inventory + active programme tracking"
         dataGapNote="No curated lake-restoration data files for this city yet."
         relatedLinks={[

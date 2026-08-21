@@ -83,7 +83,7 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
         config={config}
         feature="Water bodies"
         scope="district-admin"
-        parityVerdict="EASY"
+        routeKey="water-bodies"
         whatItShowsForChennai="305 census water bodies, current OSM polygons, lost-bodies overlay, restoration priority scoring, and a 12-flagship-lake satellite history"
         dataGapNote="No curated water-body data files for this city yet."
         relatedLinks={[

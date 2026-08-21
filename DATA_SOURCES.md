@@ -13,11 +13,12 @@ The detailed source-by-source breakdown lives in per-city files. Each file docum
 - [docs/cities/kolkata/data-sources.md](docs/cities/kolkata/data-sources.md) - Kolkata/KMA (WBPCB EMIS water quality with tidal station pairs, KMC's weekly waterlogging register, KMC District Environment Plan 2021 sewage balance, IN-GRES + India-WRIS groundwater, Open-Meteo hourly rainfall intensity, KMC-SHARP/ADB safeguard disclosures, 1st Census of Water Bodies, etc.)
 - [docs/cities/surat/data-sources.md](docs/cities/surat/data-sources.md) - Surat (SMC's live flood chain with published danger levels, the SMC IGiS WMS with ~390 layers, India-WRIS groundwater 1970-2026, CPCB NWMP Tapi profile, SAC wetland atlas, Smart Cities Mission supply releases, SMC's own reuse programme deck)
 - [docs/cities/mumbai/data-sources.md](docs/cities/mumbai/data-sources.md) - Mumbai/MMR (Maharashtra WRD Pravah daily reservoir bulletin, CWC weekly bulletins 2015-2025 backfill, BMC ESR/Climate Budget/RTI manuals, Praja Foundation RTI ward tables, MPCB water-quality series, WRD red/blue flood-line sheets, allocation instruments incl. WRD GRs + STEM board minutes, etc.)
+- [docs/cities/hyderabad/data-sources.md](docs/cities/hyderabad/data-sources.md) - Hyderabad (HMWSSB daily reservoir statement incl. its upstream data-entry errors and a silent capacity revision, HMDA gazetted lake register 2,978 lakes, HMWSSB tanker bookings, CGWB wells, TGDPS AWS network, GHMC nalas/canals/waterlogging via OpenCity, Jal Dharohar census, etc.)
+- [docs/cities/gurugram/data-sources.md](docs/cities/gurugram/data-sources.md) - Gurugram (three upstreams only: GMDA's unauthenticated OneMap ArcGIS REST directory behind the 824-body NGT water-body register, 36 ward polygons and the plant register; GMDA's per-year bulk-water tanker MIS, 29,284 priced transactions; and IN-GRES district groundwater. Both GMDA sources are **unlicensed for reuse**, so tanker data ships as aggregates only)
 - [docs/cities/pune/data-sources.md](docs/cities/pune/data-sources.md) - Pune/PMC (PMC's own Environment Status Report 2025-26 via an open Drupal JSON:API, MWRRA entitlement orders 19/2018 + 01/2025, Maharashtra WRD Pravah shared with Mumbai and cross-checked against CWC's NRLD-2019, IN-GRES drilled to TALUKA level - the platform's first sub-district groundwater drill - CPCB polluted river stretches Oct 2025, OpenCity 2025 prabhag delimitation, OSM water bodies, IMD gridded rainfall, etc.)
 
 Per-city *features* live alongside in the same folder: [docs/cities/chennai/features.md](docs/cities/chennai/features.md), [docs/cities/madurai/features.md](docs/cities/madurai/features.md), [docs/cities/bangalore/features.md](docs/cities/bangalore/features.md), [docs/cities/mumbai/features.md](docs/cities/mumbai/features.md), [docs/cities/delhi/features.md](docs/cities/delhi/features.md), [docs/cities/kolkata/features.md](docs/cities/kolkata/features.md), [docs/cities/pune/features.md](docs/cities/pune/features.md), and [docs/cities/surat/features.md](docs/cities/surat/features.md). Kolkata, Pune and Surat additionally ship a graded parity scorecard against Chennai - every feature scored XHigh/High/Medium/Low/N-A with the reason recorded wherever parity is not reachable.
 
-> **This index is itself incomplete, which is worth saying rather than hiding.** Hyderabad and Gurugram are live and have no source entry above. The registry in `src/lib/cities/` is the authoritative roster - this list is hand-maintained prose and it has fallen behind that roster repeatedly.
 
 When adding a city, copy the Surat, Pune, Kolkata or Delhi folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
 
@@ -65,9 +66,10 @@ A contributor cheat-sheet for what each city has covered. If you're adding a new
 
 > **This table is stale by five cities: it predates Delhi, Hyderabad, Kolkata, Gurugram and Pune.** Rather than half-fill
 > thirty rows, the modern and more rigorous version of this comparison lives at
-> [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md), which grades
+> [docs/cities/kolkata/parity-scorecard.md](docs/cities/kolkata/parity-scorecard.md) and
+> [docs/cities/gurugram/parity-scorecard.md](docs/cities/gurugram/parity-scorecard.md), which grade
 > every feature XHigh / High / Medium / Low / N-A against Chennai with the reason recorded wherever
-> parity is not reachable, and separates *structural* N-A (the city cannot have this) from a real
+> parity is not reachable, and separate *structural* N-A (the city cannot have this) from a real
 > gap (we have not built it). Use that shape for the next city; this table stays as the historical
 > four-city snapshot.
 

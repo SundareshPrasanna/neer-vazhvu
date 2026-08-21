@@ -13,6 +13,7 @@ import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { CorporationBoundaries } from "@/components/map/corporation-boundaries";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { districtsAsBlocks } from "@/lib/groundwater/districts-as-blocks";
 import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
@@ -124,9 +125,14 @@ export function WardMap({
       .catch(console.error)
       .finally(() => setBlockGeoResolved(true));
 
+    // Same adapter the groundwater client uses. This component fetches its own
+    // copy of the blocks file rather than taking a prop, so fixing the client
+    // alone left the CHOROPLETH still reading an empty array - Gurugram drew
+    // six polygons in the "no data" grey while the page title and legend, which
+    // read the client's copy, said the data was there.
     fetch(blocksJsonUrl)
       .then((r) => (r.ok ? r.json() : { blocks: [] }))
-      .then((d) => setBlocks(d.blocks ?? []))
+      .then((d) => setBlocks(districtsAsBlocks(d)))
       .catch(console.error);
 
     // Static gw-stations.json is Chennai's fallback metadata bundle;

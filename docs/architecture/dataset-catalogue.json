@@ -698,6 +698,7 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
+    "scripts/lib/exemptions.ts",
     "scripts/nvdm_envelope_bangalore.py",
     "scripts/nvdm_envelope_chennai.py"
    ],
@@ -9359,6 +9360,7 @@
     "scripts/fetch-localities-osm-delhi.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
+    "scripts/lib/exemptions.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_delhi.py"
    ],
@@ -10116,7 +10118,7 @@
    "family": "data-root",
    "scope": "gurugram",
    "dataset": "supply-overview",
-   "bytes": 6462,
+   "bytes": 6840,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10124,6 +10126,7 @@
      "_note",
      "_sources",
      "_supply_total_note",
+     "_view_overrides",
      "current_supply_mix_mld",
      "current_supply_total_mld",
      "dataset",
@@ -10389,7 +10392,7 @@
    "family": "data-root",
    "scope": "gurugram",
    "dataset": "gwr-blocks",
-   "bytes": 13196,
+   "bytes": 15778,
    "schema": {
     "kind": "object",
     "keys": [
@@ -10415,6 +10418,7 @@
     "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py"
    ],
    "headwaters_sources": [
@@ -11994,6 +11998,7 @@
     "scripts/fetch-localities-osm-madurai.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
+    "scripts/lib/exemptions.ts",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_madurai.py"
    ],
@@ -19915,6 +19920,7 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
     "scripts/generate-narratives.ts",
+    "scripts/lib/exemptions.ts",
     "scripts/nvdm_envelope_chennai.py"
    ],
    "headwaters_sources": [
@@ -20372,6 +20378,51 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "archival",
+   "flags": []
+  },
+  {
+   "path": "public/data/water-bodies-lost-gurugram.json",
+   "family": "data-root",
+   "scope": "gurugram",
+   "dataset": "water-bodies-lost",
+   "bytes": 21018,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_location_note",
+     "city_wide_loss",
+     "compiled_at",
+     "dataset",
+     "legal_context",
+     "lost_bodies",
+     "note",
+     "nvdm",
+     "place_id",
+     "primary_source",
+     "primary_source_url",
+     "provenance",
+     "scope",
+     "secondary_sources",
+     "summary"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
+    "src/components/water-bodies/unified-detail-panel.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_lost_water_bodies.py"
+   ],
+   "headwaters_sources": [
+    "gmda-onemap-arcgis"
+   ],
+   "licenses": [
+    "restrictive, permission required: no licence or access-constraint statement is served with the ArcGIS REST directory, and the parent gmda.gov.in asserts 'All rights reserved' - open in the ACCESS sense, unlicensed in the REUSE sense"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -21061,9 +21112,10 @@
    },
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/lib/cities/gurugram.ts"
+    "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/fetch-wris-groundwater-bangalore.ts"
    ],
@@ -21786,9 +21838,10 @@
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/components/groundwater/ward-map.tsx",
-    "src/lib/cities/gurugram.ts"
+    "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "scripts/fetch-wris-groundwater.ts"
    ],
    "headwaters_sources": [
@@ -22210,11 +22263,12 @@
    },
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/lib/cities/gurugram.ts"
+    "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
-    "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py"
+    "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-delhi"
@@ -22471,6 +22525,46 @@
    "flags": []
   },
   {
+   "path": "public/geojson/gurugram-gwr-blocks.geojson",
+   "family": "geojson-layers",
+   "scope": "gurugram",
+   "dataset": "gwr-blocks",
+   "bytes": 962614,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 6,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "assessed_on_extraction",
+     "assessment_year",
+     "block",
+     "class",
+     "sgw_dev_pe"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/groundwater/districts-as-blocks.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py"
+   ],
+   "headwaters_sources": [
+    "gmda-onemap-arcgis",
+    "ingres-groundwater-haryana"
+   ],
+   "licenses": [
+    "Government of India assessment portal, cited with attribution",
+    "restrictive, permission required: no licence or access-constraint statement is served with the ArcGIS REST directory, and the parent gmda.gov.in asserts 'All rights reserved' - open in the ACCESS sense, unlicensed in the REUSE sense"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/geojson/gurugram-wards-2026.geojson",
    "family": "geojson-layers",
    "scope": "gurugram",
@@ -22538,6 +22632,7 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_lost_water_bodies.py",
     "neer-vazhvu-api/scripts/harvest_arcgis_rest.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts"
@@ -22610,9 +22705,10 @@
    },
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/lib/cities/gurugram.ts"
+    "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py"
    ],
    "headwaters_sources": [
@@ -23143,9 +23239,10 @@
    },
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/lib/cities/gurugram.ts"
+    "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/fetch-wris-groundwater-madurai.ts"
    ],
@@ -23773,9 +23870,10 @@
    },
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/lib/cities/gurugram.ts"
+    "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_pune_geography.py"
    ],
    "headwaters_sources": [
@@ -27027,7 +27125,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 221152,
+   "bytes": 223734,
    "schema_variants": 6,
    "registered": true,
    "has_consumer": true
@@ -27309,7 +27407,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 133472,
+   "bytes": 133850,
    "schema_variants": 8,
    "registered": true,
    "has_consumer": true
@@ -27461,15 +27559,16 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-lost",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "delhi",
+    "gurugram",
     "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 35955,
+   "bytes": 56973,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -27677,17 +27776,18 @@
   {
    "family": "geojson-layers",
    "dataset": "gwr-blocks",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
+    "gurugram",
     "hyderabad",
     "madurai",
     "pune"
    ],
-   "bytes": 8556309,
-   "schema_variants": 3,
+   "bytes": 9518923,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },

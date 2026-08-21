@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 84 |
-| Routes a city deliberately does not ship | 45 |
+| Routes a city deliberately does not ship | 46 |
 | Absences the product states on the page | 26 |
-| **Total** | **155** |
+| **Total** | **156** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -136,6 +136,7 @@ Derived by diffing each city against the union of every route any city ships, so
 | gurugram | facts | Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do. |
 | gurugram | flood-risk | Gurugram floods by waterlogging on a paved catchment, not by river. The inputs exist on GMDA OneMap (117 GMUC waterlogging sites, the master storm-water network, natural flow direction) and only the drain legs are harvested so far, so this is a backlog item with a known path rather than a refusal. |
 | gurugram | lake-restoration | Needs a restoration-priority-gurugram.json, which needs a scorer. The water-body register is harvested and carries ownership, area and GMDA's own cross-survey flags, so the inputs are present and the ranking is simply not built. |
+| gurugram | my-ward | TURNED OFF 2026-08-16 after a click-through found the page rendering 296 characters: a heading, a subtitle and a link, with no ward selector, no map and no data. The 36 MCG ward polygons ARE harvested, but nothing is joined to them - /api/wards and /api/localities both 404 for this city, and there is no gurugram-ward-profiles.json. A nav entry leading to an empty page is worse than an absent one. Closes when ward-level data exists to attach to the geometry; the geometry itself is already in the corpus. |
 | gurugram | rivers | Gurugram has no river. Its NWMP monitoring stations are all lakes and borewells, and its surface water leaves the city as drain flow into the Najafgarh jheel and then Delhi's Najafgarh drain. There is nothing to put on a rivers page that would not be an invention. |
 | gurugram | shoreline | Landlocked. |
 | hyderabad | climate-risk | Not built for this city. |

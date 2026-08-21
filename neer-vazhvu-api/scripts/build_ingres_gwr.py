@@ -644,6 +644,15 @@ def main() -> int:
                     "poor_quality": cat.get("poor_quality"),
                     "assessed_on_extraction": cat.get("total")
                     not in (None, "salinity", "poor_quality"),
+                    # THE HEADLINE NUMBER, and it was missing until 2026-08-16.
+                    # The artifact carried the category band but not the
+                    # percentage behind it, so nothing downstream could render a
+                    # graduated choropleth or quote the figure - Gurugram's
+                    # 194.59% existed only in hand-written prose. Absent for a
+                    # salinity-categorised district, which is correct: CGWB does
+                    # not assess those on extraction.
+                    "stage_of_extraction_pct": total_of(r.get("stageOfExtraction")),
+                    "extraction_total_ham": total_of(r.get("gwExtraction")),
                     "total_gw_availability_ham": total_of(r.get("totalGWAvailability")),
                     "static_gw_resource_ham": total_of(r.get("staticGWResource")),
                     "additional_recharge_ham": total_of(r.get("additionalRecharge")),

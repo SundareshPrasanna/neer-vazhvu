@@ -1,0 +1,357 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/water-bodies-lost",
+  "scope": {
+    "kind": "city",
+    "id": "gurugram"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "gmda-onemap-arcgis",
+        "title": "GMDA NGT water-body register, with its own ROR/SoI/WorldView cross-survey flags",
+        "publisher": "Gurugram Metropolitan Development Authority (OneMap GGM)",
+        "license": "restrictive, permission required: no licence or access-constraint statement is served with the ArcGIS REST directory, and the parent gmda.gov.in asserts 'All rights reserved' - open in the ACCESS sense, unlicensed in the REUSE sense",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-08-16",
+    "produced_by": "neer-vazhvu-api/scripts/build_gurugram_lost_water_bodies.py",
+    "note": "Derived by querying the publisher's OWN cross-survey attribution (in the 1956 record of rights, absent from the 2012 WorldView pass) rather than by a spatial join of ours. A floor rather than a total, and a statement about imagery rather than about destruction."
+  },
+  "place_id": "gurugram",
+  "compiled_at": "2026-08-16",
+  "summary": {
+    "fully_lost_count": 1,
+    "severely_reduced_count": 28
+  },
+  "primary_source": "GMDA water-body register compiled for the National Green Tribunal",
+  "primary_source_url": "https://onemapdepts.gmda.gov.in/server/rest/services/Wet_Infrastructure_caching/MapServer",
+  "secondary_sources": [],
+  "city_wide_loss": "29 of the 283 water bodies GMDA can match to a 1956 revenue-record plot were not seen in the 2012 satellite pass. 1 of those are absent from Google Earth as well. The register holds 824 bodies in total across roughly 2,851 acres.",
+  "note": "This is a FLOOR, not a total. GMDA's register is the 2012-known population, so a pond that existed in 1956 and had already gone by 2012 is not a row in it at all. It also is not proof of destruction: a seasonal johad photographed dry, or one under tree cover, is absent from an image for reasons that have nothing to do with being filled. Every entry says 'not seen in 2012 imagery' rather than 'lost' for that reason.",
+  "_location_note": "Coordinates are polygon centroids from GMDA's own register, so they are as accurate as the register's geometry.",
+  "legal_context": "The register exists because of the National Green Tribunal. Ownership is the complication it exposes: most of Gurugram's water bodies are not municipal - gram panchayats hold the largest share and a substantial number are privately held - and only 163 of the 824 sit inside the Municipal Corporation's boundary at all, against 454 inside the wider GMDA area. The body most people would petition is responsible for a fifth of the register.",
+  "lost_bodies": [
+    {
+      "name": "Mohammadpur waterbody 707",
+      "status": "Not seen in 2012 imagery",
+      "side": "Mohammadpur, Gurgaon",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Private. Recorded area 10.42 acres. GMDA remark: Remains of old natural nallah",
+      "lat": 28.423778,
+      "lng": 76.980732,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": true
+    },
+    {
+      "name": "Behrampur waterbody 752",
+      "status": "Not seen in 2012 imagery",
+      "side": "Behrampur, Sohna",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Private. Recorded area 1.85 acres. GMDA remark: Natural waterbody/drain and rain water collection area",
+      "lat": 28.405665,
+      "lng": 77.107797,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Basonda waterbody 654",
+      "status": "Not seen in 2012 imagery",
+      "side": "Basonda, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat_Civil Panchayat Deh. Recorded area 1.70 acres. GMDA remark: Old village pond with temple by the side; Expanded and filled with water from  borewell",
+      "lat": 28.401059,
+      "lng": 76.777823,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Sherpur waterbody 754",
+      "status": "Not seen in 2012 imagery",
+      "side": "Sherpur, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 1.56 acres. GMDA remark: A newly made village pond",
+      "lat": 28.327034,
+      "lng": 76.685266,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Sadhrana waterbody 724",
+      "status": "Not seen in 2012 imagery",
+      "side": "Sadhrana, Gurgaon",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 1.38 acres. GMDA remark: Village pond as per ROR; Presently dry",
+      "lat": 28.455405,
+      "lng": 76.900211,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Tethar waterbody 794",
+      "status": "Not seen in 2012 imagery",
+      "side": "Tethar, Sohna",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 1.34 acres. GMDA remark: Artificial village pond along side road",
+      "lat": 28.301699,
+      "lng": 77.172871,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Milakpur waterbody 777",
+      "status": "Not seen in 2012 imagery",
+      "side": "Milakpur, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass and Google Earth does not show it either. Ownership: Gram Panchayat. Recorded area 1.32 acres. GMDA remark: As per latest Google image, it is a dry water pond",
+      "lat": 28.321822,
+      "lng": 76.738967,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Brijpur rehaniya waterbody 765",
+      "status": "Not seen in 2012 imagery",
+      "side": "Brijpur rehaniya, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 1.06 acres. GMDA remark: Dirty water accumulation along the new dry tank on community land",
+      "lat": 28.310262,
+      "lng": 76.670586,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Harchandpur waterbody 798",
+      "status": "Not seen in 2012 imagery",
+      "side": "Harchandpur, Sohna",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 1.01 acres. GMDA remark: Natural Aravalli pond  surrounded by vegetation",
+      "lat": 28.278683,
+      "lng": 77.14001,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Sultanpur waterbody 728",
+      "status": "Not seen in 2012 imagery",
+      "side": "Sultanpur, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat_Civil Panchayat Deh. Recorded area 0.90 acres. GMDA remark: Village pond",
+      "lat": 28.464433,
+      "lng": 76.866305,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Mangwaki waterbody 700",
+      "status": "Not seen in 2012 imagery",
+      "side": "Mangwaki, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Abadi Deh_Shamlat. Recorded area 0.90 acres. GMDA remark: May be part of an old nallah, surrounded by trees, currently  with dirty water",
+      "lat": 28.355831,
+      "lng": 76.678509,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Ghudana waterbody 675",
+      "status": "Not seen in 2012 imagery",
+      "side": "Ghudana, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.85 acres. GMDA remark: Village pond with rain water; temple by side",
+      "lat": 28.351658,
+      "lng": 76.695873,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Nurgarh waterbody 718",
+      "status": "Not seen in 2012 imagery",
+      "side": "Nurgarh, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.84 acres. GMDA remark: Remains of old nallah filled with dirty water",
+      "lat": 28.360942,
+      "lng": 76.677722,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Pahari waterbody 719",
+      "status": "Not seen in 2012 imagery",
+      "side": "Pahari, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.71 acres. GMDA remark: Village pond as per ROR; Presently dry",
+      "lat": 28.305564,
+      "lng": 76.70872,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Gugana waterbody 676",
+      "status": "Not seen in 2012 imagery",
+      "side": "Gugana, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.71 acres. GMDA remark: Village pond, part of waterbody no. 160, filled with dirty water; Segregation/treatment of waste water required",
+      "lat": 28.423788,
+      "lng": 76.724284,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Badshahpur Tethar waterbody 793",
+      "status": "Not seen in 2012 imagery",
+      "side": "Badshahpur Tethar, Sohna",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.69 acres. GMDA remark: Village pond along the road,  in Aravalli foothills",
+      "lat": 28.294846,
+      "lng": 77.169697,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Kaliawas waterbody 688",
+      "status": "Not seen in 2012 imagery",
+      "side": "Kaliawas, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat_Civil Panchayat Deh. Recorded area 0.68 acres. GMDA remark: Village pond with dirty water; Segregation/treatment of waste water required.",
+      "lat": 28.49014,
+      "lng": 76.891242,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Darapur waterbody 664",
+      "status": "Not seen in 2012 imagery",
+      "side": "Darapur, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.68 acres. GMDA remark: Village pond with dirty water; Segregation/treatment of waste water required",
+      "lat": 28.259455,
+      "lng": 76.774821,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Farukhnagar waterbody 666",
+      "status": "Not seen in 2012 imagery",
+      "side": "Farukhnagar, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Nagar Palika Farukhnagar. Recorded area 0.64 acres. GMDA remark: As per RoR, it is village pond near Shamshan; filled with dirty water; Segregation/treatment of waste water required",
+      "lat": 28.440651,
+      "lng": 76.821383,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Chhilakari waterbody 753",
+      "status": "Not seen in 2012 imagery",
+      "side": "Chhilakari, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.57 acres. GMDA remark: Artificial pond near village pond for dirty water, to prevent contamination of waterbody no. 636",
+      "lat": 28.339593,
+      "lng": 76.67533,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Garoli kalan waterbody 669",
+      "status": "Not seen in 2012 imagery",
+      "side": "Garoli kalan, Gurgaon",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: MCG. Recorded area 0.53 acres. GMDA remark: Village pond with temple by side; Clean water and pucca boundaries",
+      "lat": 28.445668,
+      "lng": 76.974111,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": true
+    },
+    {
+      "name": "Tripari waterbody 732",
+      "status": "Not seen in 2012 imagery",
+      "side": "Tripari, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.52 acres. GMDA remark: Village pond near waterbody no. 18; filled with dirty water; Segregation/treatment of waste water required.",
+      "lat": 28.395235,
+      "lng": 76.775135,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Johlaka waterbody 766",
+      "status": "Not seen in 2012 imagery",
+      "side": "Johlaka, Sohna",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.43 acres. GMDA remark: Artificial pond, maybe connected to canal nearby",
+      "lat": 28.255398,
+      "lng": 77.184375,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Mehaniawas waterbody 702",
+      "status": "Not seen in 2012 imagery",
+      "side": "Mehaniawas, Pataudi",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.43 acres. GMDA remark: Village pond filled with dirty water; Segregation/treatment of waste water required.",
+      "lat": 28.266647,
+      "lng": 76.694572,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Rathiwas waterbody 723",
+      "status": "Not seen in 2012 imagery",
+      "side": "Rathiwas, Manesar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.31 acres. GMDA remark: Village pond with dirty water; Segregation/treatment of waste water required",
+      "lat": 28.261269,
+      "lng": 76.844141,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Ghata waterbody 673",
+      "status": "Not seen in 2012 imagery",
+      "side": "Ghata, Sohna",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: MCG. Recorded area 0.30 acres. GMDA remark: Village pond with dirty water; Board visible saying \"Waterbody developed by ANSAL builware ltd. Under CSR scheme\". Segregation/treatment of waste water required",
+      "lat": 28.421846,
+      "lng": 77.112572,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": true
+    },
+    {
+      "name": "Chandla dungarwas waterbody 661",
+      "status": "Not seen in 2012 imagery",
+      "side": "Chandla dungarwas, Manesar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat_Civil Panchayat Deh. Recorded area 0.23 acres. GMDA remark: Village pond with temple by side; filled with dirty water; Segregation/treatment of waste water required",
+      "lat": 28.295556,
+      "lng": 76.89814,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Bhun Karka waterbody 657",
+      "status": "Not seen in 2012 imagery",
+      "side": "Bhun Karka, Manesar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat_Civil Panchayat Deh. Recorded area 0.20 acres. GMDA remark: Village pond",
+      "lat": 28.277915,
+      "lng": 76.786195,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    },
+    {
+      "name": "Siwari waterbody 727",
+      "status": "Not seen in 2012 imagery",
+      "side": "Siwari, Farukhnagar",
+      "note": "In GMDA's register this body matches a 1956 revenue-record plot but was not seen in the 2012 WorldView pass, though Google Earth does show it. Ownership: Gram Panchayat. Recorded area 0.17 acres. GMDA remark: Village pond with dirty water; Segregation/treatment of waste water required.",
+      "lat": 28.478559,
+      "lng": 76.710828,
+      "location_basis": "Centroid of the polygon in GMDA's NGT water-body register",
+      "location_confidence": "high",
+      "in_mcg_limits": false
+    }
+  ]
+}

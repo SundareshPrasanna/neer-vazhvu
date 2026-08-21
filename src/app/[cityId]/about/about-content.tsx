@@ -34,6 +34,10 @@ const KolkataPageDescriptions = dynamic(() =>
   import("./kolkata-page-descriptions").then((mod) => mod.KolkataPageDescriptions),
 );
 
+const GurugramPageDescriptions = dynamic(() =>
+  import("./gurugram-page-descriptions").then((mod) => mod.GurugramPageDescriptions),
+);
+
 const SuratPageDescriptions = dynamic(() =>
   import("./surat-page-descriptions").then((mod) => mod.SuratPageDescriptions),
 );
@@ -201,6 +205,7 @@ export function CityAboutContent({
   const isDelhi = config.cityId === "delhi";
   const isHyderabad = config.cityId === "hyderabad";
   const isKolkata = config.cityId === "kolkata";
+  const isGurugram = config.cityId === "gurugram";
   const isPune = config.cityId === "pune";
   const isSurat = config.cityId === "surat";
 
@@ -573,6 +578,12 @@ export function CityAboutContent({
             <KolkataPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
+          {isGurugram && (
+            <GurugramPageDescriptions cityId={config.cityId} cityName={cityName} />
+          )}
+
+          
+
           {isPune && (
             <PunePageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
@@ -581,7 +592,9 @@ export function CityAboutContent({
             <SuratPageDescriptions cityId={config.cityId} cityName={cityName} />
           )}
 
-          {!isMadurai && !isBangalore && !isMumbai && !isChennai && !isDelhi && !isHyderabad && !isKolkata && !isPune && !isSurat && (
+          
+
+          {!isMadurai && !isBangalore && !isMumbai && !isChennai && !isDelhi && !isHyderabad && !isKolkata && !isGurugram && !isPune && !isSurat && (
             <p className="text-slate-600 dark:text-slate-400">
               Per-page methodology documentation for {cityName} is pending. See the dedicated Chennai about page (<Link href="/chennai/about" className="text-blue-600 dark:text-blue-400 hover:underline">/chennai/about</Link>) for the canonical methodology pattern.
             </p>

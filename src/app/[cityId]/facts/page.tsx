@@ -166,7 +166,7 @@ export default async function CityFactsPage({ params }: PageProps) {
         config={config}
         feature="Water facts"
         scope="city-admin"
-        parityVerdict="MEDIUM"
+        routeKey="facts"
         whatItShowsForChennai="quotable findings derived from reservoirs, groundwater, rivers, water bodies, and demographics - tagged by category, tier, and source for journalists"
         dataGapNote="No curated facts file for this city yet."
         relatedLinks={[

@@ -133,6 +133,25 @@ def build() -> dict:
             "GMDA's own GIS asset register rather than transcribed, so they cannot drift from "
             "what the authority publishes."
         ),
+        # BOTH blocks are required, and they feed DIFFERENT components.
+        # `_view_overrides` is read by UrbanSupplyOverview (the at-a-glance
+        # panel); `hero_copy` is read by CauveryPumpingHero. Providing only one
+        # leaves the other on its default, and both defaults are another city's:
+        # the panel's subtitle names MMC and an ADB Tamil Nadu programme
+        # (Madurai), and the hero's narrative is Bengaluru's. The first draft of
+        # this artifact shipped with only hero_copy and put Madurai's sourcing
+        # line on Gurugram's dashboard.
+        "_view_overrides": {
+            "subtitle": (
+                "Structural numbers read from GMDA's own OneMap asset register at build time. "
+                "Refreshed whenever the authority updates the register."
+            ),
+            "wtp_label": "GMDA treatment capacity",
+            "demand_caption": (
+                "No demand figure is shown. Every one in circulation for Gurugram is "
+                "press-sourced, so no supply-minus-demand gap is computed here."
+            ),
+        },
         # hero_copy, NOT _view_overrides. The cauvery-pumping hero falls back to
         # the pump.* i18n strings, which carry BANGALORE'S narrative - Cauvery,
         # TK Halli, Kempe Gowda's kere network, the three valleys. Omitting this
