@@ -64,6 +64,10 @@ const CITY_HOOKS: Record<string, string> = {
   // here - a missing hook shows as an Onboarding badge above an empty line.
   // That is exactly how Hyderabad and Mumbai both shipped a blank card, and
   // this map is not derived from the registry, so nothing catches it for you.
+  pune:
+    "Four dams on the Mutha, a water budget where the leak is bigger than the shortfall, groundwater drilled to taluka, and the corporation's own record of every tanker it sent.",
+  surat:
+    "A live flood chain from Ukai to five khadis, six editions of river monitoring, and two CETPs against their own consent.",
   gurugram:
     "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
 };

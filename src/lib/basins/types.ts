@@ -98,6 +98,70 @@ export interface BasinLayer {
    *  dimmed while a gap choropleth is visible so the choropleth stays
    *  readable. Exempt from river scoping - terrain is whole-basin context. */
   elevation?: boolean;
+  /** Readings layer: monitoring stations whose click opens the station-readings
+   *  panel instead of the generic feature panel (see
+   *  docs/specs/flow-stations-contract.md). Features carry `stationKey` +
+   *  `hasReadings`; the panel lazily fetches readings/<stationKey>.json and
+   *  renders whatever series kinds the pack declares. Stations with
+   *  `hasReadings: false` are legal (location-only, honest-gap rendering). */
+  readings?: boolean;
+}
+
+// ── readings/<stationKey>.json (station-readings pack, contract v1) ──────────
+// Produced by scripts/build_basin_flow_readings.py (and siblings). ALL series
+// are precomputed at ingest - the client charts, it never computes. Series
+// with verified: false exist but do not render (the scoreboard.json pattern).
+
+export type ReadingsSeriesKind =
+  | "discharge-monthly"
+  | "discharge-daily"
+  | "climatology-monthly"
+  | "flow-duration"
+  | "annual-water-year"
+  | "gauge-level-monthly"
+  | "wq-param-series"
+  | "wq-class-series";
+
+export interface ReadingsSeriesBase {
+  kind: ReadingsSeriesKind | (string & {});
+  /** Display unit, e.g. "cumec", "m", "mg/L". Class timelines omit it. */
+  unit?: string;
+  label?: string;
+  verified: boolean;
+  /** Note shown under the chart (e.g. cadence, aggregation basis). */
+  note?: string;
+}
+
+/** [isoDateOrMonth, value] - value is a number except wq-class-series ("A".."E"). */
+export type ReadingsPoint = [string, number | string];
+
+export interface ReadingsSeries extends ReadingsSeriesBase {
+  /** Time series kinds. */
+  points?: ReadingsPoint[];
+  /** climatology-monthly: per calendar month 1..12. */
+  months?: { m: number; p25: number; median: number; p75: number }[];
+  /** flow-duration: [exceedance %, value] pairs, ascending exceedance. */
+  exceedance?: [number, number][];
+  /** wq-param-series: the parameter name + the CPCB criterion drawn on the chart. */
+  param?: string;
+  criterion?: number;
+  criterionLabel?: string;
+}
+
+export interface StationReadingsPack {
+  schemaVersion: 1;
+  station: {
+    stationKey: string;
+    name: string;
+    agency: string;
+    siteType?: string;
+    river?: string;
+  };
+  source: { label: string; url?: string; fetched: string; licence?: string };
+  period?: { from: string; to: string; waterYear?: string };
+  series: ReadingsSeries[];
+  /** Optional, defensible-numbers gated - only verified insights render. */
+  insights?: { text: string; verified: boolean; basis?: string }[];
 }
 
 export interface BasinManifest {

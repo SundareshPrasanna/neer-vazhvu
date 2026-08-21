@@ -43,6 +43,20 @@ jobs:
       # capacity) into reservoir_daily_v2 - Pravah is the OFFICIAL daily
       # source; BMC itself publishes no public bulletin (its HE portal is a
       # closed SAP iView) and no reliable machine-readable mirror exists.
+      #
+      # HEALTH WARNING: THIS STEP HAS NEVER SUCCEEDED FROM A GITHUB RUNNER.
+      # mwrdpravah.in times out from runner IPs on every attempt, so each run
+      # ends "Pravah unreachable after 3 attempts; keeping yesterday's
+      # snapshot" and exits 0 - a GREEN NO-OP. The refresh that actually lands
+      # is the local launchd job (~/.local/neervazhvu-ops/refresh-blocked-feeds.sh,
+      # 12:00 IST, residential IP), whose commits read "local scheduled job".
+      #
+      # #285 added a SECOND Pravah step here for Pune, which doubled the retry
+      # budget from ~7.5 min to ~15 and pushed the job past timeout-minutes: 15
+      # - 2026-08-19 was CANCELLED. That step has been removed and Pune added
+      # to the local job instead. DO NOT ADD A THIRD CITY HERE: this workflow
+      # cannot reach the feed, and every city added to it costs another 7.5
+      # minutes of timeouts before the cap kills the run.
       - name: Scrape Pravah dam storage
         working-directory: neer-vazhvu-api
         env:

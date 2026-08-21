@@ -1,0 +1,168 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/industrial-sources",
+  "scope": {
+    "kind": "city",
+    "id": "surat"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "gemi-cetp-discharge",
+        "title": "Discharge Point Monitoring of CETPs of Pandesara and Sachin, Surat District, monitoring period April 2022 to March 2023",
+        "publisher": "Gujarat Environment Management Institute (Forest and Environment Department, Government of Gujarat)",
+        "license": "Gujarat government publication, cited with attribution",
+        "url": "https://gemi.gujarat.gov.in/uploads/Assets/project-report/dischargepointmonitoringofcetpsofpandesarasachinsuratdistrict06182024044708225.pdf"
+      },
+      {
+        "id": "smc-reuse-programme",
+        "title": "Dated 8 Mar 2024",
+        "publisher": "Surat Municipal Corporation (hosted by CSE India)",
+        "license": "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution",
+        "url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf"
+      },
+      {
+        "id": "cpcb-nwmp",
+        "title": "Annual national NWMP compilation",
+        "publisher": "Central Pollution Control Board",
+        "license": "Government of India publication, cited with attribution",
+        "url": "https://cpcb.gov.in/water-quality-data/"
+      }
+    ],
+    "method": "manual",
+    "note": "Hand-compiled point layer for the rivers map. Effluent characterisation comes from GEMI's CETP monitoring, reuse volumes and buyers from SMC's own 2024 reuse document, and receiving-water quality from CPCB NWMP. COORDINATES ARE ESTATE AND PLANT CENTROIDS placed from public mapping, not surveyed outfall positions - they locate the facility, not the discharge point.",
+    "produced_at": "2026-08-18",
+    "produced_by": "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+  },
+  "_note": "Surat's industrial water story runs in both directions and this layer holds both: effluent leaving the textile estates for the creeks, and treated sewage travelling the other way as the industrial water those same estates buy.",
+  "_gap": "Palsana GIDC, Kadodara GIDC and the Eco Textile Park are absent. They are named in the 600 MLD deep-sea disposal project alongside Pandesara and Sachin, but GEMI's monitoring edition covers only these two CETPs, so the others would be points with no measurements behind them.",
+  "last_updated": "2024-03",
+  "sources": [
+    {
+      "id": "pandesara-cetp",
+      "name": "Pandesara CETP (Pandesara Infrastructure Ltd)",
+      "type": "cetp",
+      "lat": 21.147,
+      "lng": 72.833,
+      "operator": "Pandesara Infrastructure Ltd (PIL)",
+      "rivers_affected": [
+        "tapi"
+      ],
+      "pollutants": [
+        "colour",
+        "cod",
+        "bod",
+        "tds",
+        "chlorides",
+        "sulphides",
+        "phenol"
+      ],
+      "capacity_mld": 100,
+      "discharges_to": "Bhedvad creek",
+      "cetp_id": "pandesara",
+      "description": "The larger of Surat's two common effluent treatment plants, taking the wastewater of Pandesara Industrial Estate - a textile cluster of several hundred dyeing and printing houses - and discharging to Bhedvad creek. GEMI's monthly monitoring for April 2022 to March 2023 records 54 results outside the plant's own GPCB consent across 11 parameters. Colour exceeded on all twelve samples. On 20 February 2023 a single sample came in at pH 1.55 against a 6.5-8.5 consent range, with 12,240 mg/L dissolved solids against a 2,100 limit.",
+      "source": "GEMI, Discharge Point Monitoring of CETPs of Pandesara & Sachin, Surat District (Apr 2022-Mar 2023)"
+    },
+    {
+      "id": "sachin-cetp",
+      "name": "Sachin CETP (Sachin Infra Environment Ltd)",
+      "type": "cetp",
+      "lat": 21.081,
+      "lng": 72.879,
+      "operator": "Sachin Infra Environment Ltd (SIEL)",
+      "rivers_affected": [
+        "mindhola"
+      ],
+      "pollutants": [
+        "colour",
+        "cod",
+        "bod",
+        "tds",
+        "phenol",
+        "residual_chlorine"
+      ],
+      "capacity_mld": 50,
+      "discharges_to": "Unn creek",
+      "cetp_id": "sachin",
+      "description": "The Sachin GIDC common effluent treatment plant, discharging to Unn creek. GEMI's monitoring records 41 results outside its GPCB consent across 10 parameters over twelve monthly samples, colour on every one. Total residual chlorine exceeded on eight of twelve.",
+      "source": "GEMI, Discharge Point Monitoring of CETPs of Pandesara & Sachin, Surat District (Apr 2022-Mar 2023)"
+    },
+    {
+      "id": "pandesara-estate",
+      "name": "Pandesara Industrial Estate",
+      "type": "industrial_estate",
+      "lat": 21.15,
+      "lng": 72.828,
+      "operator": "Pandesara Industries Association",
+      "rivers_affected": [
+        "tapi"
+      ],
+      "pollutants": [
+        "dye_effluent",
+        "cod",
+        "colour"
+      ],
+      "description": "A textile cluster merged into the municipal limit in 1986. 178 of its units buy tertiary-treated sewage from SMC as industrial-grade process water, which is the demand side of the city's reuse programme.",
+      "source": "SMC, Reuse of Treated Used Water: A Successful Model (8 Mar 2024)"
+    },
+    {
+      "id": "sachin-gidc",
+      "name": "Sachin GIDC",
+      "type": "industrial_estate",
+      "lat": 21.085,
+      "lng": 72.883,
+      "operator": "Gujarat Industrial Development Corporation",
+      "rivers_affected": [
+        "mindhola"
+      ],
+      "pollutants": [
+        "dye_effluent",
+        "cod",
+        "colour"
+      ],
+      "description": "Textile processing estate south of the city. 71 units of the Sachin Textile Process Industries association take 35 MLD of tertiary-treated water from SMC. CPCB monitors the Mindhola at the state highway bridge here, where BOD runs 2.2-7.0 mg/L against the Tapi's at-or-below-detection through the city.",
+      "source": "SMC reuse document (8 Mar 2024); CPCB NWMP medium/minor rivers, Mindhola at Sachin"
+    },
+    {
+      "id": "bamroli-ttp",
+      "name": "Bamroli tertiary treatment plants",
+      "type": "ttp",
+      "lat": 21.161,
+      "lng": 72.81,
+      "operator": "Surat Municipal Corporation",
+      "rivers_affected": [],
+      "pollutants": [],
+      "description": "Two SMC tertiary plants (40 and 35 MLD) that put treated sewage through ultrafiltration and reverse osmosis and sell it to Pandesara and Sachin as industrial-grade water. The first, from 2014, is the origin of the city's reuse programme.",
+      "source": "SMC, Reuse of Treated Used Water: A Successful Model (8 Mar 2024)"
+    },
+    {
+      "id": "dindoli-ttp",
+      "name": "Dindoli tertiary treatment plant",
+      "type": "ttp",
+      "lat": 21.136,
+      "lng": 72.869,
+      "operator": "Surat Municipal Corporation",
+      "rivers_affected": [],
+      "pollutants": [],
+      "description": "A 40 MLD tertiary plant commissioned 2019-20 under the Smart Cities Mission, replicating Bamroli.",
+      "source": "SMC, Reuse of Treated Used Water: A Successful Model (8 Mar 2024)"
+    },
+    {
+      "id": "hazira-belt",
+      "name": "Hazira industrial belt",
+      "type": "industrial_estate",
+      "lat": 21.1,
+      "lng": 72.65,
+      "operator": "Multiple (ONGC, Reliance, KRIBHCO, AM/NS, NTPC, GSEGL)",
+      "rivers_affected": [
+        "tapi"
+      ],
+      "pollutants": [
+        "thermal",
+        "process_effluent"
+      ],
+      "description": "The heavy-industry cluster at the Tapi mouth. CPCB's station at the ONGC bridge here records conductivity of 1,537-49,720 umhos/cm - seawater - which is the estuary rather than the industry, but it is where the river ends. SMC names these plants as the buyers for a planned 340 MLD extension of its reuse scheme.",
+      "source": "CPCB NWMP 2019-2024, station 2071 (ONGC bridge); SMC reuse document (8 Mar 2024)"
+    }
+  ]
+}

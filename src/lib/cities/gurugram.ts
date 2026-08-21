@@ -152,6 +152,26 @@ export const GURUGRAM: CityConfig = {
     // aquifer does not stop at the district line, and Jhajjar being safe is
     // what makes the rest legible as a local failure rather than a regional
     // condition.
+    // BACK ON, 2026-08-21, and the two halves finally meet.
+    //
+    // This was turned off the day before because gwr-blocks-gurugram.json
+    // carries a `districts` payload with an EMPTY `blocks` array and no
+    // boundary layer existed, so the route was a bare basemap under a
+    // four-class percent legend. That judgement was right about the symptom
+    // and premature about the cause: the values were never missing, they were
+    // filed under a key the map does not read.
+    //
+    // Both halves are now present. gurugram-gwr-blocks.geojson joins GMDA's
+    // district boundaries to the assessment (six features, one per district),
+    // and the client adapts `districts[]` into the GWBlock contract, so the
+    // choropleth colours from real numbers instead of falling through to grey.
+    // The render gate wants DATA AND GEOMETRY, which is why Kolkata and Surat
+    // stay off: they have the districts and no polygons to draw them on.
+    //
+    // What it shows, and it is the city's whole story in one legend: Jhajjar
+    // 49.6% safe, Nuh 72.3%, Palwal 92.0% critical, Rewari 133.2%, Faridabad
+    // 175.4%, Gurugram 194.6% over-exploited. Jhajjar being safe is what makes
+    // the rest legible as a local failure rather than a regional condition.
     exploitation: true,
     // OFF, and NOT for lack of a pipeline. The India-WRIS LEVEL series for
     // Gurugram is 37 stations that stop in June 2020, and the district has no
@@ -164,6 +184,8 @@ export const GURUGRAM: CityConfig = {
     // OFF for the same reason: the point network exists but ends June 2020.
     // Revisit if HWRA or a CGWB Year Book yields a post-2020 series.
     cgwbStations: false,
+    gapNote:
+      "Gurugram's groundwater numbers are not missing - they are the city's headline, and IN-GRES publishes them. The district extracts 194.59% of its annual recharge, and at block level GURGAON_URBAN reaches 326.26%, against a Haryana state figure of 136.75%. What is missing is anything to draw them ON: IN-GRES assesses Haryana at district level, no block-boundary layer is published for the district, and the two per-point alternatives both fail - the India-WRIS level series for Gurugram is 37 stations that stop in June 2020, and the district has no WRIS telemetry at all. A choropleth of one polygon is not a map, so this route carries the finding in words rather than a surface that implies a resolution the data does not have.",
   },
   // OFF because the pipeline has not run here, NOT because Gurugram cannot
   // support it - GMDA's own GIS carries a 10-polygon Watershed_Gurugram layer

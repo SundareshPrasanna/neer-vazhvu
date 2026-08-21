@@ -38,6 +38,13 @@
 --                  rows here; Kolkata needs none, which is why its hero is
 --                  drainage-capacity rather than days-left.
 --
+-- SCHEMA GAP CLOSED 2026-08-20. Everything below is kept as the record of what
+-- was true when this migration was written; none of it is true now. The whole
+-- backlog 017-048 was applied and the remote ledger repaired, so
+-- `supabase migration list` shows Local == Remote for all 48 and there is no
+-- longer a reason to avoid `supabase db push`. See docs/architecture/
+-- database-reconciliation-2026-08-20.md.
+--
 -- KNOWN SCHEMA GAP, recorded rather than worked around:
 --   040 and 041 also INSERT INTO corporations and source_corporation. Those
 --   tables do not exist in the live database: they are DDL from

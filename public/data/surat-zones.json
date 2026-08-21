@@ -1,0 +1,127 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/zones",
+  "scope": {
+    "kind": "city",
+    "id": "surat"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "smc-gis-wms",
+        "title": "SMC GIS zone_boundary layer",
+        "publisher": "Surat Municipal Corporation (IGiS / Scanpoint Geomatics)",
+        "license": "public Surat Municipal Corporation data; open WMS, GetCapabilities declares no fees and no access constraints, no explicit licence stated - cited with attribution",
+        "url": "https://gis.suratmunicipal.org:8443/cgi-bin/IGiS_Ent_service.exe?IEG_PROJECT=Surat_ws_25"
+      }
+    ],
+    "method": "scrape",
+    "note": "WMS GetFeatureInfo sweep over a point grid across the SMC extent, deduplicated by zone_code. GetFeatureInfo returns attributes and a bounding box only - WFS is disabled on this service, so this artifact carries no zone GEOMETRY. Central Zone needed a targeted query: at 8.28 km2 the coarse grid stepped over it.",
+    "produced_at": "2026-08-17",
+    "produced_by": "neer-vazhvu-api/scripts/build_surat_artifacts.py (harvest_zones)"
+  },
+  "_note": "Surat's analytical unit. The zone is the only Surat unit carrying live data (rainfall is reported per zone, every khadi is attributed to one), an official current denominator, and the city's own supply breakdown.",
+  "_cross_checks": {
+    "area_sum_sqkm": 461.64,
+    "area_stated_by_smc_sqkm": 462.149,
+    "area_agreement_note": "The nine zones sum to 461.64 km2 against the 462.149 km2 SMC states on its wardwise area table - a 0.1% difference, which is two independent SMC surfaces agreeing.",
+    "population_2011_sum": 4645384,
+    "population_2011_note": "Sums to 4,645,384, matching the ~4.65 million in the corporation's own 1961-2011 wardwise table.",
+    "population_2024_estimated_sum": 8232085,
+    "population_2024_note": "SMC's own 2024 estimate, not a census figure and not ours. Carried because it is the only current per-zone denominator published."
+  },
+  "_vintage_conflict": "SMC's Zones page and this GIS layer both describe NINE zones (South split into A and B). The live rainfall feed still reports EIGHT, with a single South Zone. Neither surface has been reconciled by the corporation; the flood-chain artifact carries the feed's eight names verbatim rather than remapping them onto these nine.",
+  "zone_count": 9,
+  "zones": [
+    {
+      "zone_code": "CZ",
+      "zone_id": 7,
+      "name": "Central Zone",
+      "area_sqkm": 8.28,
+      "population_census_2011": 408760,
+      "population_estimated_2024": 724364,
+      "households_estimated_2024": 160970,
+      "zone_office_address": "Central Zone Vahivati Bhavan, Gordhandas Chokhawala Marg, Muglisara, Surat-395003"
+    },
+    {
+      "zone_code": "EZ - A",
+      "zone_id": 3,
+      "name": "East Zone - A",
+      "area_sqkm": 23.03,
+      "population_census_2011": 607932,
+      "population_estimated_2024": 1077316,
+      "households_estimated_2024": 239404,
+      "zone_office_address": "East Zone Vahivati Bhavan, Nr. Saifee Society, Opp. Panchwati Wadi,\nLambe Hanuman Road, Surat"
+    },
+    {
+      "zone_code": "EZ - B",
+      "zone_id": 8,
+      "name": "East Zone - B",
+      "area_sqkm": 84.08,
+      "population_census_2011": 558987,
+      "population_estimated_2024": 990581,
+      "households_estimated_2024": 220129,
+      "zone_office_address": "East Zone Vahivati Bhavan, Nr. Saifee Society, Opp. Panchwati Wadi,\nLambe Hanuman Road, Surat"
+    },
+    {
+      "zone_code": "NZ",
+      "zone_id": 1,
+      "name": "North Zone",
+      "area_sqkm": 41.41,
+      "population_census_2011": 706527,
+      "population_estimated_2024": 1252036,
+      "households_estimated_2024": 278230,
+      "zone_office_address": "North Zone Vahivati Bhavan, Behind Gajera school, B/s Ramjikrupa Raw-House, Katargam, Surat"
+    },
+    {
+      "zone_code": "SEZ",
+      "zone_id": 4,
+      "name": "South East Zone",
+      "area_sqkm": 21.84,
+      "population_census_2011": 751746,
+      "population_estimated_2024": 1332169,
+      "households_estimated_2024": 296038,
+      "zone_office_address": "Bh. Vatika Township, Bh. Model Township, Dumbhal, Surat."
+    },
+    {
+      "zone_code": "SWZ",
+      "zone_id": 6,
+      "name": "South West Zone",
+      "area_sqkm": 113.86,
+      "population_census_2011": 351575,
+      "population_estimated_2024": 623026,
+      "households_estimated_2024": 138450,
+      "zone_office_address": "South West Zone Vahivati Bhavan, Municipal Shopping Center, Near Aadarsh Nagar Society, Athwalines, Surat."
+    },
+    {
+      "zone_code": "SZ - A",
+      "zone_id": 5,
+      "name": "South Zone - A",
+      "area_sqkm": 30.71,
+      "population_census_2011": 633467,
+      "population_estimated_2024": 1122567,
+      "households_estimated_2024": 249459,
+      "zone_office_address": "South Zone Vahivati Bhavan, Udhana Main Road, Opp. Satya Nagar, Udhan, Surat\nContact No.: 2278429, 2277043, 2275651"
+    },
+    {
+      "zone_code": "SZ - B",
+      "zone_id": 9,
+      "name": "South Zone - B",
+      "area_sqkm": 53.14,
+      "population_census_2011": 178201,
+      "population_estimated_2024": 315790,
+      "households_estimated_2024": 70176,
+      "zone_office_address": "Beside Swami Narayan Mandir, Gujarat Housing Board, Kanakpur"
+    },
+    {
+      "zone_code": "WZ",
+      "zone_id": 2,
+      "name": "West Zone",
+      "area_sqkm": 85.29,
+      "population_census_2011": 448189,
+      "population_estimated_2024": 794236,
+      "households_estimated_2024": 176497,
+      "zone_office_address": "West Zone Vahivati Bhavan, Bala Saheb Devrash Road, New Rander Road, Tadwadi, Surat."
+    }
+  ]
+}

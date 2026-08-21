@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { isFeatureSupportedForCity } from "@/lib/cities/routing";
 
 /* ── The Commitments Register ───────────────────────────────────────────
    Dated commitments by named institutions, with a verification lifecycle. UX contract (locked with
@@ -10,6 +11,12 @@ import Link from "next/link";
    dates) that expands to the what/history/citations; slipped and overdue
    float to the top. Shared surface: city = commitments-{cityId}.json +
    hasCommitments flag. No cityId branches. */
+
+/* THE ALLOCATION LEDGER IS NOT UNIVERSAL. This register cross-links to it in
+   two places, and both used to render unconditionally - so Surat, which ships
+   commitments but has no published entitlement instrument to build a ledger
+   from, put two links to a 404 on its own page. Gate them on the same
+   FEATURE_AVAILABILITY map the nav uses. */
 
 type CommitmentStatus = "delivered" | "on-track" | "slipped" | "overdue" | "stalled" | "unverified";
 
@@ -140,7 +147,7 @@ function CommitmentRow({ p, cityId, highlight }: { p: TrackedCommitment; cityId:
           )}
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500">
             {p.next_check && <span>Next check: {p.next_check}</span>}
-            {p.ledger_id && (
+            {p.ledger_id && isFeatureSupportedForCity("/allocations", cityId) && (
               <Link href={`/${cityId}/allocations#${p.ledger_id}`} className="text-blue-600 dark:text-blue-400 hover:underline">
                 Who is owed this water? →
               </Link>
@@ -213,10 +220,14 @@ export default function CommitmentsClient({ cityId }: { cityId: string }) {
           <span className="uppercase tracking-wider">Commitments Register</span>
           <span>·</span>
           <span>Updated {data.updated}</span>
-          <span>·</span>
-          <Link href={`/${cityId}/allocations`} className="text-blue-600 dark:text-blue-400 hover:underline">
-            Allocation Ledger →
-          </Link>
+          {isFeatureSupportedForCity("/allocations", cityId) && (
+            <>
+              <span>·</span>
+              <Link href={`/${cityId}/allocations`} className="text-blue-600 dark:text-blue-400 hover:underline">
+                Allocation Ledger →
+              </Link>
+            </>
+          )}
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           {data.headline}

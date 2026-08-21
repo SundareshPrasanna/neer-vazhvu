@@ -1,0 +1,3641 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/cetp-compliance",
+  "scope": {
+    "kind": "city",
+    "id": "surat"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "gemi-cetp-discharge",
+        "title": "Discharge Point Monitoring of CETPs of Pandesara and Sachin, Surat District, monitoring period April 2022 to March 2023",
+        "publisher": "Gujarat Environment Management Institute (Forest and Environment Department, Government of Gujarat)",
+        "license": "Gujarat government publication, cited with attribution",
+        "url": "https://gemi.gujarat.gov.in/uploads/Assets/project-report/dischargepointmonitoringofcetpsofpandesarasachinsuratdistrict06182024044708225.pdf"
+      }
+    ],
+    "method": "pdf-extract",
+    "note": "Per-sample compliance tables only (Table 6 for Pandesara, Table 9 for Sachin). The report's SUMMARY tables are deliberately not used: they disagree with these by roughly a thousandfold on total chromium and nickel, almost certainly ug/L mislabelled as mg/L. Exceedance is recomputed here by comparing each value to its consent norm, because the original marks exceedances with a highlight that text extraction cannot see.",
+    "produced_at": "2026-08-18",
+    "produced_by": "neer-vazhvu-api/scripts/extract_gemi_cetp_compliance.py"
+  },
+  "_note": "Every norm here is the plant's own GPCB Consolidated Consent & Authorization limit, not a generic standard. An exceedance is a plant discharging outside the licence it holds.",
+  "monitoring_period": {
+    "from": "2022-04",
+    "to": "2023-03",
+    "samples_per_plant": 12
+  },
+  "cetps": [
+    {
+      "id": "pandesara",
+      "name": "Pandesara Infrastructure Ltd (PIL)",
+      "short": "Pandesara",
+      "capacity_mld": 100,
+      "estate": "Pandesara Industrial Estate",
+      "receiving_water": "Bhedvad creek",
+      "receiving_water_note": "One of the five khadis Surat Municipal Corporation publishes a danger level for, and which the city dashboard renders live.",
+      "lat": 21.147,
+      "lng": 72.833,
+      "sample_dates": [
+        "2022-04-28",
+        "2022-05-06",
+        "2022-06-08",
+        "2022-07-11",
+        "2022-08-01",
+        "2022-09-02",
+        "2022-10-17",
+        "2022-11-03",
+        "2022-12-08",
+        "2023-01-24",
+        "2023-02-20",
+        "2023-03-14"
+      ],
+      "parameters": [
+        {
+          "parameter": "pH",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "range",
+            "min": 6.5,
+            "max": 8.5,
+            "text": "6.5 to 8.5"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 7.61,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 7.56,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 7.57,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 7.48,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 7.72,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 7.93,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 7.54,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 7.74,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 7.55,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 7.45,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 1.55,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 7.83,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 1
+        },
+        {
+          "parameter": "Temperature",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 40.0,
+            "unit": "°C",
+            "text": "40 °C"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 36.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 38.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 36.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 29.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 32.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 32.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 33.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 31.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 30.0,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Colour",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 100.0,
+            "unit": "Hazen",
+            "text": "100 Hazen"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 500.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 750.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 125.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "value": 250.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-08-01",
+              "value": 400.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-09-02",
+              "value": 250.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-10-17",
+              "value": 750.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 750.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-12-08",
+              "value": 500.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-01-24",
+              "value": 750.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 625.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 375.0,
+              "exceeds": true
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 12
+        },
+        {
+          "parameter": "Chlorides",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1000.0,
+            "unit": "mg/L",
+            "text": "1000 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 1499.53,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 1049.67,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 437.36,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 462.36,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 812.25,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 549.83,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 1624.5,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 1599.5,
+              "exceeds": true
+            },
+            {
+              "date": "2022-12-08",
+              "value": 949.71,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 1324.59,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 1849.43,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 599.81,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 6
+        },
+        {
+          "parameter": "TDS",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 2100.0,
+            "unit": "mg/L",
+            "text": "2100 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 3358.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 2306.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 1132.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 1250.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 2020.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 1190.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 3596.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 3320.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-12-08",
+              "value": 2262.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-01-24",
+              "value": 2984.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 12240.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 1532.0,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 7
+        },
+        {
+          "parameter": "Suspended Solid",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 100.0,
+            "unit": "mg/L",
+            "text": "100 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 126.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 56.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 26.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 46.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 60.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 4.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 68.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 26.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 52.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 62.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 120.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 46.0,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 2
+        },
+        {
+          "parameter": "Ammoniacal Nitrogen",
+          "parameter_as_published": "Ammonical Nitrogen",
+          "norm": {
+            "kind": "ceiling",
+            "max": 50.0,
+            "unit": "mg/L",
+            "text": "50 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 19.04,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 31.64,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 5.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 1.17,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 6.76,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 7.84,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 25.87,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 14.41,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 16.52,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 32.2,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 30.8,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 7.28,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "COD",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 250.0,
+            "unit": "mg/L",
+            "text": "250 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 322.56,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 384.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 95.62,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 115.07,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 164.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 68.54,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 232.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 208.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 141.12,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 469.39,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 614.11,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 130.61,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 4
+        },
+        {
+          "parameter": "BOD",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 30.0,
+            "unit": "mg/L",
+            "text": "30 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 60.48,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 96.15,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 21.68,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 17.27,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 30.74,
+              "exceeds": true
+            },
+            {
+              "date": "2022-09-02",
+              "value": 8.57,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 43.48,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 25.97,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 17.64,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 94.12,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 92.12,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 16.33,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 6
+        },
+        {
+          "parameter": "Oil & Grease",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 10.0,
+            "unit": "mg/L",
+            "text": "10 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Sulphate",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1000.0,
+            "unit": "mg/L",
+            "text": "1000 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 339.7,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 282.8,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 138.4,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 324.1,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 237.4,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 158.6,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 58.78,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 479.8,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 388.1,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 288.5,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 3316.4,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 201.48,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 1
+        },
+        {
+          "parameter": "TKN",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 100.0,
+            "unit": "mg/L",
+            "text": "100 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 42.03,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 35.3,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 10.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 11.76,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 8.82,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 10.36,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 37.27,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 22.13,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 35.86,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 43.71,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 36.13,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 19.61,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Hexavalent Chromium",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 0.1,
+            "unit": "mg/L",
+            "text": "0.1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Sulphides",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 2.0,
+            "unit": "mg/L",
+            "text": "2 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 2.26,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 24.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 3.84,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 2.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 1.12,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 6.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 3.6,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 5
+        },
+        {
+          "parameter": "Phenol",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 2.6,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 3.8,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 1.6,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "value": 1.6,
+              "exceeds": true
+            },
+            {
+              "date": "2022-08-01",
+              "value": 1.7,
+              "exceeds": true
+            },
+            {
+              "date": "2022-09-02",
+              "value": 4.34,
+              "exceeds": true
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.13,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.21,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.736,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.51,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.142,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 6
+        },
+        {
+          "parameter": "Cyanides",
+          "parameter_as_published": "Cyadnides",
+          "norm": {
+            "kind": "ceiling",
+            "max": 0.2,
+            "unit": "mg/L",
+            "text": "0.2 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.022,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.024,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.007,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Cadmium",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Copper",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 3.0,
+            "unit": "mg/L",
+            "text": "3 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.025,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.009,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 0.017,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 0.017,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 0.022,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 0.011,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.024,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.028,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.01,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.028,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.023,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.023,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Lead",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "01 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.0034,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.0056,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 0.0021,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.0022,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.0025,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.0095,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.0032,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Nickel",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 3.0,
+            "unit": "mg/L",
+            "text": "3 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.00686,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.00975,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.009314,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Mercury",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 0.01,
+            "unit": "mg/L",
+            "text": "0.01 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.001571,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.00479,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Total Chromium",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 2.0,
+            "unit": "mg/L",
+            "text": "2 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.0472,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.0472,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Zinc",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 5.0,
+            "unit": "mg/L",
+            "text": "5 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 1.054,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.173,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "TRC",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 3.54,
+              "exceeds": true
+            },
+            {
+              "date": "2022-09-02",
+              "value": 1.77,
+              "exceeds": true
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 74.44,
+              "exceeds": true
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 3.19,
+              "exceeds": true
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 4
+        }
+      ],
+      "total_exceedances": 54,
+      "parameters_ever_breached": 11
+    },
+    {
+      "id": "sachin",
+      "name": "Sachin Infra Environment Ltd (SIEL)",
+      "short": "Sachin",
+      "capacity_mld": 50,
+      "estate": "Sachin GIDC",
+      "receiving_water": "Unn creek",
+      "receiving_water_note": null,
+      "lat": 21.081,
+      "lng": 72.879,
+      "sample_dates": [
+        "2022-04-28",
+        "2022-05-06",
+        "2022-06-08",
+        "2022-07-11",
+        "2022-08-01",
+        "2022-09-02",
+        "2022-10-17",
+        "2022-11-03",
+        "2022-12-08",
+        "2023-01-24",
+        "2023-02-20",
+        "2023-03-14"
+      ],
+      "parameters": [
+        {
+          "parameter": "pH",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "range",
+            "min": 6.5,
+            "max": 8.5,
+            "text": "6.5 to 8.5"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 7.58,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 7.53,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 7.93,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 7.65,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 7.66,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 7.91,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 7.93,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 7.84,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 7.9,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 7.56,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 7.53,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 7.89,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Temperature",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 40.0,
+            "unit": "C",
+            "text": "40 C"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 37.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 39.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 36.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 33.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 31.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 28.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 29.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 30.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 30.0,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Colour",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 100.0,
+            "unit": "Hazen",
+            "text": "100 Hazen"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 375.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 500.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 500.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "value": 300.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-08-01",
+              "value": 200.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-09-02",
+              "value": 350.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-10-17",
+              "value": 375.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 500.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-12-08",
+              "value": 375.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-01-24",
+              "value": 375.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 375.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 375.0,
+              "exceeds": true
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 12
+        },
+        {
+          "parameter": "Chlorides",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1000.0,
+            "unit": "mg/L",
+            "text": "1000 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 874.73,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 924.71,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 874.73,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 799.75,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 359.89,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 749.77,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 649.8,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 599.81,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 824.74,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 1012.19,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 899.72,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 949.71,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 1
+        },
+        {
+          "parameter": "TDS",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 2100.0,
+            "unit": "mg/L",
+            "text": "2100 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 2344.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 2418.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 2068.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 2176.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-08-01",
+              "value": 1050.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 1830.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 2042.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 2086.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 2018.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 2388.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-02-20",
+              "value": 2232.0,
+              "exceeds": true
+            },
+            {
+              "date": "2023-03-14",
+              "value": 2350.0,
+              "exceeds": true
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 6
+        },
+        {
+          "parameter": "Suspended Solid",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 100.0,
+            "unit": "mg/L",
+            "text": "100 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 160.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 22.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 42.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 26.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 16.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 68.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 72.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 66.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 32.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 34.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 80.0,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 80.0,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 1
+        },
+        {
+          "parameter": "Ammoniacal Nitrogen",
+          "parameter_as_published": "Ammonical Nitrogen",
+          "norm": {
+            "kind": "ceiling",
+            "max": 50.0,
+            "unit": "mg/L",
+            "text": "50 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 19.6,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 13.16,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 3.82,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 1.77,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 5.88,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 1.96,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 2.35,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 1.03,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 1.96,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 1.68,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 5.32,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 5.88,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "COD",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 250.0,
+            "unit": "mg/L",
+            "text": "250 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 580.61,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 176.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 139.44,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 123.01,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 76.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 157.25,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 192.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 180.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 149.18,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 122.45,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 141.08,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 163.27,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 1
+        },
+        {
+          "parameter": "BOD",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 30.0,
+            "unit": "mg/L",
+            "text": "30 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 108.69,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 32.97,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 32.46,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "value": 21.54,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 14.24,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 29.47,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 29.98,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 22.52,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 22.39,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 18.38,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 21.16,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 20.41,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 3
+        },
+        {
+          "parameter": "Oil & Grease",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 10.0,
+            "unit": "mg/L",
+            "text": "10 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Sulphate",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1000.0,
+            "unit": "mg/L",
+            "text": "1000 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 355.15,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 293.5,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 347.3,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 114.9,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 150.35,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 227.0,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 25.92,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 366.3,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 297.7,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 185.95,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 156.18,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 212.64,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "TKN",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 100.0,
+            "unit": "mg/L",
+            "text": "100 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 44.83,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 21.85,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 15.3,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 17.65,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 8.23,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 5.6,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 10.09,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 14.57,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 8.15,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 12.82,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 22.41,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Hexavalent Chromium",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 0.1,
+            "unit": "mg/L",
+            "text": "0.1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Sulphides",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 2.0,
+            "unit": "mg/L",
+            "text": "2 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 6.66,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 6.8,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 4.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 1.92,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 1.04,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 1.6,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 3
+        },
+        {
+          "parameter": "Phenol",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 1.9,
+              "exceeds": true
+            },
+            {
+              "date": "2022-05-06",
+              "value": 5.0,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 1.5,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "value": 1.1,
+              "exceeds": true
+            },
+            {
+              "date": "2022-08-01",
+              "value": 0.69,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 5.2,
+              "exceeds": true
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.11,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.11,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.12,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.161,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.092,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 5
+        },
+        {
+          "parameter": "Cyanides",
+          "parameter_as_published": "Cyadnides",
+          "norm": {
+            "kind": "ceiling",
+            "max": 0.2,
+            "unit": "mg/L",
+            "text": "0.2 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.024,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.006,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Cadmium",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Copper",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 3.0,
+            "unit": "mg/L",
+            "text": "3 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.144,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.006,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 0.033,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 0.015,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 0.009,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 0.031,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.048,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.056,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.029,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.021,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.015,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.021,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Lead",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.0038,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.0029,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "value": 0.0019,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 0.002,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.01,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.011,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.0021,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Nickel",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 3.0,
+            "unit": "mg/L",
+            "text": "3 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 0.0119,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 0.00667,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.02219,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.01222,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.01276,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.02456,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.0103,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.0199,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Mercury",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 0.01,
+            "unit": "mg/L",
+            "text": "0.01 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Total Chromium",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 2.0,
+            "unit": "mg/L",
+            "text": "2 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "value": 0.02702,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 0.00643,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "value": 0.00517,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 0.00828,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "value": 0.00841,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 0.01969,
+              "exceeds": false
+            },
+            {
+              "date": "2022-11-03",
+              "value": 0.012371,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "value": 0.00652,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "value": 0.00641,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.00741,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 0.01689,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 0
+        },
+        {
+          "parameter": "Zinc",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 5.0,
+            "unit": "mg/L",
+            "text": "5 mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-06-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-09-02",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-10-17",
+              "value": 5.529,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-12-08",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "value": 0.885,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "below_detection_limit": true,
+              "exceeds": false
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 1
+        },
+        {
+          "parameter": "TRC",
+          "parameter_as_published": null,
+          "norm": {
+            "kind": "ceiling",
+            "max": 1.0,
+            "unit": "mg/L",
+            "text": "1mg/L"
+          },
+          "samples": [
+            {
+              "date": "2022-04-28",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-05-06",
+              "value": 28.35,
+              "exceeds": true
+            },
+            {
+              "date": "2022-06-08",
+              "value": 3.54,
+              "exceeds": true
+            },
+            {
+              "date": "2022-07-11",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2022-08-01",
+              "value": 1.77,
+              "exceeds": true
+            },
+            {
+              "date": "2022-09-02",
+              "value": 1.77,
+              "exceeds": true
+            },
+            {
+              "date": "2022-10-17",
+              "value": 3.54,
+              "exceeds": true
+            },
+            {
+              "date": "2022-11-03",
+              "value": 1.77,
+              "exceeds": true
+            },
+            {
+              "date": "2022-12-08",
+              "value": 7.09,
+              "exceeds": true
+            },
+            {
+              "date": "2023-01-24",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-02-20",
+              "below_detection_limit": true,
+              "exceeds": false
+            },
+            {
+              "date": "2023-03-14",
+              "value": 5.317,
+              "exceeds": true
+            }
+          ],
+          "sampled": 12,
+          "exceedances": 8
+        }
+      ],
+      "total_exceedances": 41,
+      "parameters_ever_breached": 10
+    }
+  ]
+}

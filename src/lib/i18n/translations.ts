@@ -17,7 +17,8 @@ export type LanguageCode =
   | "hi" // Hindi (Delhi, MP, UP, etc.)
   | "te" // Telugu (Andhra, Telangana)
   | "ml" // Malayalam (Kerala)
-  | "bn"; // Bengali (West Bengal)
+  | "bn" // Bengali (West Bengal)
+  | "gu"; // Gujarati (Gujarat)
 
 /** Back-compat alias - many imports still use `Language`. */
 export type Language = LanguageCode;
@@ -36,6 +37,7 @@ export const LANGUAGE_LABELS: Record<
   te: { native: "తెలుగు", english: "Telugu", toggle: "తె" },
   ml: { native: "മലയാളം", english: "Malayalam", toggle: "മ" },
   bn: { native: "বাংলা", english: "Bengali", toggle: "ব" },
+  gu: { native: "ગુજરાતી", english: "Gujarati", toggle: "ગુ" },
 };
 
 /** All language codes the platform recognises. Useful for runtime
@@ -49,6 +51,7 @@ export const ALL_LANGUAGES: readonly LanguageCode[] = [
   "te",
   "ml",
   "bn",
+  "gu",
 ] as const;
 
 export function isLanguageCode(value: unknown): value is LanguageCode {
@@ -453,6 +456,7 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.groundwater":    { en: "Groundwater Map",   ta: "நிலத்தடி நீர் வரைபடம்",     kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
   "nav.water_bodies":   { en: "Water Bodies",      ta: "நீர்நிலைகள்",              kn: "ಜಲಮೂಲಗಳು" },
   "nav.rivers":         { en: "Rivers",            ta: "ஆறுகள்",                  kn: "ನದಿಗಳು" },
+  "nav.waterways":      { en: "Waterways",         ta: "நீர்வழிகள்",               kn: "ಜಲಮಾರ್ಗಗಳು" },
   "nav.coastal":        { en: "Shoreline",         ta: "கடற்கரை",                 kn: "ಕರಾವಳಿ" },
   "nav.climate_risk":   { en: "Climate Risk",      ta: "காலநிலை ஆபத்து" },
   "nav.lake_restoration": { en: "Restoration",     ta: "மறுசீரமைப்பு",            kn: "ಪುನರುಜ್ಜೀವನ" },

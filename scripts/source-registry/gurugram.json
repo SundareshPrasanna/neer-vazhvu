@@ -79,6 +79,31 @@
         "acceptedOn": "2026-08-15",
         "reviewedOn": "2026-08-15"
       }
+    },
+    {
+      "id": "imd-gridded-rainfall-gurugram",
+      "scope": "gurugram",
+      "publisher": "India Meteorological Department",
+      "url": "https://imdlib.readthedocs.io/en/latest/",
+      "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+      "type": "api",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-gurugram.json",
+        "public/data/rainfall-recent-gurugram.json"
+      ],
+      "refreshMethod": "cron .github/workflows/imd-rainfall-refresh.yml (neer-vazhvu-api/scripts/generate_imd_rainfall.py --city gurugram)",
+      "notes": "THE GRID CELL IS UNVALIDATED HERE, and that is the honest state rather than a default quietly taken. (28.50, 77.00) is the 0.25-deg intersection nearest the centroid of MCG's 36-ward extent (28.4360, 77.0560), and it is NOT Delhi's cell - Delhi uses (28.50, 77.25), one cell east, and the two share no annual total in 56 years.\n\nSENSITIVITY IS LARGE. This cell returns a 715.0 mm long-term mean against 512.5 mm one cell west (28.5/76.75) and 534.9 mm one cell south (28.25/77.0). It is a local maximum, so the choice moves the headline number by roughly 40%. All three were generated and compared before choosing.\n\nPune resolved the identical problem by validating against an IMD observatory normal (Climatological Tables 1991-2020, station index 43063). No equivalent published normal for Gurgaon has been located, so this point is the nearest-intersection rule applied honestly, not a validated choice. Revisit if an IMD Gurgaon normal turns up; the neighbouring cells are already measured and recorded above.\n\nrainfall-recent-gurugram.json is the PROVISIONAL fill on top of this base and must use the SAME grid point, or the provisional months do not continue the series they fill.",
+      "lastSeen": {
+        "edition": "1970-2025",
+        "acceptedOn": "2026-08-20",
+        "reviewedOn": "2026-08-20"
+      }
     }
   ]
 }

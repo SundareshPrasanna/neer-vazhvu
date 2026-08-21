@@ -33,8 +33,10 @@ OUT_MD = ROOT / "docs/architecture/dataset-catalogue.md"
 
 CITY_TOKENS = [
     "chennai", "bangalore", "madurai", "mumbai", "delhi", "hyderabad", "kolkata", "gurugram",
+    "pune",
+    "surat",
 ]
-BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers"}
+BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers", "kabini"}
 
 # Chennai-era unprefixed filenames (see src/lib/cities/data-paths.ts).
 CHENNAI_LEGACY = {
@@ -152,6 +154,10 @@ def detect_scope_and_stem(rel: Path, rich_slugs: dict[str, str]) -> tuple[str, s
         return "unknown", stem_full
     if "corridors" in parts:
         i = parts.index("corridors")
+        sub = parts[i + 2 : -1]
+        return parts[i + 1], ("/".join(sub) if sub else stem_full)
+    if "waterways" in parts:
+        i = parts.index("waterways")
         sub = parts[i + 2 : -1]
         return parts[i + 1], ("/".join(sub) if sub else stem_full)
     if "rich-bodies" in parts:

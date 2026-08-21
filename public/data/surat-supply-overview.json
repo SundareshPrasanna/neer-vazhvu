@@ -1,0 +1,302 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "surat"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ogd-surat-water-supply",
+        "title": "Three releases",
+        "publisher": "Ministry of Housing and Urban Affairs, Smart Cities Mission (Surat) via data.gov.in",
+        "license": "Government Open Data License - India (GODL-India)",
+        "url": "https://www.data.gov.in/resource/water-supply-surat"
+      },
+      {
+        "id": "smc-hydraulic-scenario",
+        "title": "STALE BY ITS OWN LABEL: the page states 980 MLD gross daily supply, 1,300 MLD installed works capacity and 95% piped coverage, all explicitly for 2015",
+        "publisher": "Surat Municipal Corporation, Hydraulic Department",
+        "license": "Surat Municipal Corporation publication, cited with attribution",
+        "url": "https://www.suratmunicipal.gov.in/Departments/HydraulicPresentScenario"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-08-19",
+    "note": "Monthly total supply and property-connection coverage from the Smart Cities Mission open-data releases for Surat, plus SMC's own infrastructure description. The releases' derived columns are excluded, not carried.",
+    "produced_by": "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+  },
+  "_excluded_columns_note": "Two columns in the source release are NOT published here because they are constants presented as measurements. 'Losses including NRW' is exactly 20.0000% of total supply on all 48 monthly rows, and the accompanying 'actual supplied' column equals total supply on every row, which contradicts it. The per-sub-ward release's 'domestic consumption' column is exactly 0.750000 x capacity on all 233 rows. Surat publishes no measured non-revenue water and no measured per-ward consumption.",
+  "_view_overrides": {
+    "subtitle": "Structural numbers from SMC's Hydraulic Department and the Smart Cities Mission open-data releases. The corporation's own headline figures are dated 2015; the monthly series runs to December 2021.",
+    "wtp_label": "Installed works capacity"
+  },
+  "_sources": [
+    {
+      "name": "SMC Hydraulic Department, present scenario",
+      "url": "https://www.suratmunicipal.gov.in/Departments/HydraulicPresentScenario",
+      "date": "2015",
+      "extracted": "2026-08-19"
+    },
+    {
+      "name": "Smart Cities Mission (Surat) water supply releases, data.gov.in",
+      "url": "https://www.data.gov.in/resource/water-supply-surat",
+      "date": "2018-2021",
+      "extracted": "2026-08-19"
+    }
+  ],
+  "supply_chain": [
+    "Ukai dam, released by the Gujarat Water Resources Department",
+    "River Tapi, ~100 km downstream",
+    "Weir-cum-causeway at Singanpor (the city's intake)",
+    "Six water works, 1,300 MLD installed (SMC, 2015)",
+    "Nine administrative zones"
+  ],
+  "current_supply_mix_mld": [
+    {
+      "source": "River Tapi at the Singanpor weir-cum-causeway",
+      "scheme": "Run-of-river abstraction from the weir pond, fed by Ukai releases",
+      "mld": 1249.81,
+      "annual_mcft": null,
+      "supplies": "All nine SMC zones",
+      "note": "Surat has one raw-water source. The figure is the last MEASURED month in the national open-data series (December 2021), not a design capacity and not the corporation's 2015 headline of 980 MLD."
+    }
+  ],
+  "current_supply_total_mld": 1250,
+  "_supply_total_note": "December 2021, the final month of the open-data series, rounded. Two other figures circulate and neither is used here as the headline: SMC's Hydraulic page gives 980 MLD gross daily average and 1,300 MLD installed works capacity, both explicitly for 2015.",
+  "wtps_summary": {
+    "fresh_water_wtps_count": 6,
+    "fresh_water_capacity_mld": 1300,
+    "total_installed_capacity_mld": 1300,
+    "average_supply_mld": 980
+  },
+  "distribution": {
+    "_note": "Zone counts come from SMC's own Zones page. Note the vintage conflict the platform records elsewhere: that page lists nine zones (South split into A and B) while the live rainfall feed still reports eight.",
+    "administrative_zones": 9
+  },
+  "infrastructure": {
+    "source_river": "Tapi",
+    "intake": "Weir-cum-causeway at Singanpor",
+    "upstream_control": "Ukai dam, operated by the Gujarat Water Resources Department",
+    "gross_daily_supply_mld_2015": 980,
+    "installed_works_capacity_mld_2015": 1300,
+    "piped_coverage_pct_2015": 95,
+    "_vintage_note": "These four figures are SMC's own and are explicitly dated 2015 on the Hydraulic department page. They describe the system, not today's output. The monthly series below runs to Dec 2021 and is the current record."
+  },
+  "monthly_supply": [
+    {
+      "month": "Jan-18",
+      "total_supply_mld": 1269.48
+    },
+    {
+      "month": "Feb-18",
+      "total_supply_mld": 1080.11
+    },
+    {
+      "month": "Mar-18",
+      "total_supply_mld": 1086.61
+    },
+    {
+      "month": "Apr-18",
+      "total_supply_mld": 1109.08
+    },
+    {
+      "month": "May-18",
+      "total_supply_mld": 1154.01
+    },
+    {
+      "month": "Jun-18",
+      "total_supply_mld": 1163.77
+    },
+    {
+      "month": "Jul-18",
+      "total_supply_mld": 1152.68
+    },
+    {
+      "month": "Aug-18",
+      "total_supply_mld": 1160.58
+    },
+    {
+      "month": "Sep-18",
+      "total_supply_mld": 1187.23
+    },
+    {
+      "month": "Oct-18",
+      "total_supply_mld": 1181.54
+    },
+    {
+      "month": "Nov-18",
+      "total_supply_mld": 1115.67
+    },
+    {
+      "month": "Dec-18",
+      "total_supply_mld": 1102.96
+    },
+    {
+      "month": "Jan-19",
+      "total_supply_mld": 1116.37
+    },
+    {
+      "month": "Feb-19",
+      "total_supply_mld": 1134.27
+    },
+    {
+      "month": "Mar-19",
+      "total_supply_mld": 1154.96
+    },
+    {
+      "month": "Apr-19",
+      "total_supply_mld": 1199.06
+    },
+    {
+      "month": "May-19",
+      "total_supply_mld": 1201.71
+    },
+    {
+      "month": "Jun-19",
+      "total_supply_mld": 1200.75
+    },
+    {
+      "month": "Jul-19",
+      "total_supply_mld": 1192.0
+    },
+    {
+      "month": "Aug-19",
+      "total_supply_mld": 1119.78
+    },
+    {
+      "month": "Sep-19",
+      "total_supply_mld": 1199.01
+    },
+    {
+      "month": "Oct-19",
+      "total_supply_mld": 1116.44
+    },
+    {
+      "month": "Nov-19",
+      "total_supply_mld": 1156.55
+    },
+    {
+      "month": "Dec-19",
+      "total_supply_mld": 1205.85
+    },
+    {
+      "month": "Jan-20",
+      "total_supply_mld": 1204.34
+    },
+    {
+      "month": "Feb-20",
+      "total_supply_mld": 1217.69
+    },
+    {
+      "month": "Mar-20",
+      "total_supply_mld": 1232.88
+    },
+    {
+      "month": "Apr-20",
+      "total_supply_mld": 1234.04
+    },
+    {
+      "month": "May-20",
+      "total_supply_mld": 1221.99
+    },
+    {
+      "month": "Jun-20",
+      "total_supply_mld": 1207.77
+    },
+    {
+      "month": "Jul-20",
+      "total_supply_mld": 1216.51
+    },
+    {
+      "month": "Aug-20",
+      "total_supply_mld": 1183.08
+    },
+    {
+      "month": "Sep-20",
+      "total_supply_mld": 1228.42
+    },
+    {
+      "month": "Oct-20",
+      "total_supply_mld": 1256.79
+    },
+    {
+      "month": "Nov-20",
+      "total_supply_mld": 1275.29
+    },
+    {
+      "month": "Dec-20",
+      "total_supply_mld": 1253.6
+    },
+    {
+      "month": "Jan-21",
+      "total_supply_mld": 1257.96
+    },
+    {
+      "month": "Feb-21",
+      "total_supply_mld": 1242.18
+    },
+    {
+      "month": "Mar-21",
+      "total_supply_mld": 1282.12
+    },
+    {
+      "month": "Apr-21",
+      "total_supply_mld": 1311.6
+    },
+    {
+      "month": "May-21",
+      "total_supply_mld": 1274.57
+    },
+    {
+      "month": "Jun-21",
+      "total_supply_mld": 1311.98
+    },
+    {
+      "month": "Jul-21",
+      "total_supply_mld": 1323.24
+    },
+    {
+      "month": "Aug-21",
+      "total_supply_mld": 1326.45
+    },
+    {
+      "month": "Sep-21",
+      "total_supply_mld": 1320.1
+    },
+    {
+      "month": "Oct-21",
+      "total_supply_mld": 1319.62
+    },
+    {
+      "month": "Nov-21",
+      "total_supply_mld": 1292.12
+    },
+    {
+      "month": "Dec-21",
+      "total_supply_mld": 1249.81
+    }
+  ],
+  "connection_coverage": [
+    {
+      "year": "2018-19",
+      "properties_total": 1384215,
+      "properties_connected": 1357889,
+      "properties_unconnected": 26326
+    },
+    {
+      "year": "2019-20",
+      "properties_total": 1498794,
+      "properties_connected": 1484648,
+      "properties_unconnected": 14146
+    },
+    {
+      "year": "2020-21",
+      "properties_total": 1667209,
+      "properties_connected": 1509817,
+      "properties_unconnected": 157392
+    }
+  ],
+  "_coverage_note": "The 2020-21 jump to 157,392 unconnected properties is real signal rather than a data error: it is the June 2020 city-limit extension arriving, which took SMC from 326 km2 to 462.149 km2."
+}

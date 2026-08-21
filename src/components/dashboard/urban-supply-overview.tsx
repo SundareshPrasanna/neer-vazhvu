@@ -70,8 +70,14 @@ interface WtpsSummary {
 }
 
 interface SupplyOverviewData {
-  _sources: { name: string; url: string; date: string; extracted: string }[];
-  supply_chain: string[];
+  /** Optional: every field a city may not have published yet is optional so a
+   *  partial overview degrades to a thinner card instead of taking the whole
+   *  dashboard down with it (Surat, review 2026-08-17). */
+  _sources?: { name: string; url: string; date: string; extracted: string }[];
+  /** Optional: a city may publish a supply overview without a chain (Surat
+   *  shipped one before its chain was verified end to end). The renderer
+   *  skips the strip rather than taking the whole dashboard down. */
+  supply_chain?: string[];
   current_supply_mix_mld: SupplyMixItem[];
   current_supply_total_mld: number;
 
@@ -203,13 +209,21 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
             {t("supply_overview.chain_label")}
           </h3>
+          {/* Optional-chained deliberately. `supply_chain` and `_sources`
+           *  were the only two arrays in this component mapped unguarded,
+           *  and a city whose supply-overview JSON omits either took the
+           *  WHOLE dashboard down with "This page couldn't load" - not a
+           *  blank section, the entire page including the hero and the
+           *  reservoir cards. Found while onboarding Pune. A missing
+           *  optional block must render nothing; it must never be able to
+           *  break the page around it. */}
           <div className="flex flex-wrap items-stretch gap-1.5 text-[11px]">
-            {data.supply_chain.map((step, i) => (
+            {(data.supply_chain ?? []).map((step, i) => (
               <span key={i} className="flex items-center gap-1.5">
                 <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 max-w-xs leading-snug">
                   {step}
                 </span>
-                {i < data.supply_chain.length - 1 && (
+                {i < (data.supply_chain ?? []).length - 1 && (
                   <span className="text-slate-400 dark:text-slate-500 self-center" aria-hidden="true">→</span>
                 )}
               </span>
@@ -454,7 +468,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
               {t("supply_overview.figures_label")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {data.reference_figures.map((fig) => {
+              {(data.reference_figures ?? []).map((fig) => {
                 const href = fig.src ?? fig.src_external;
                 if (!href) return null;
                 return (
@@ -517,7 +531,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
         {/* Source attribution */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-2 leading-relaxed">
           <span className="font-semibold">{t("supply_overview.sources_label")}:</span>{" "}
-          {data._sources.map((s, i) => (
+          {(data._sources ?? []).map((s, i) => (
             <span key={i}>
               {i > 0 && "; "}
               <a href={s.url} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-600 dark:text-blue-400">

@@ -45,26 +45,19 @@ import { UNWATCHED } from "./headwaters-coverage";
  * temporary with a removal condition; that condition was met. It is recorded
  * here rather than deleted silently because "an exemption we retired" is the
  * evidence that the removal conditions are real.
+ *
+ * Gurugram's `gurugram:rainfall-recent` exemption was REMOVED 2026-08-20 on the
+ * same terms, and it was the last entry in this map - which is now EMPTY, the
+ * steady state this comment asks for. Its removal condition named three things:
+ * generate the IMD base, add the city to CITIES in fetch_recent_rainfall.py,
+ * and delete the entry in the same change. All three are in that change.
+ * The base is 56 years at grid point (28.50, 77.00), long-term mean 715.0 mm.
+ * Read generate_imd_rainfall.py's CITY_DEFAULTS note before trusting that
+ * number to a decimal: the cell is a local maximum, its neighbours return
+ * 512.5 and 534.9 mm, and unlike Pune there is no published IMD observatory
+ * normal for Gurgaon to validate it against.
  */
-export const FRESHNESS_EXEMPTIONS: Record<string, string> = {
-  // TEMPORARY, and the same exemption Kolkata carried for the same reason
-  // (see the note above, which records its retirement). rainfall-recent is a
-  // PROVISIONAL fill layered on top of an IMD authoritative base, so it cannot
-  // exist before imd-rainfall-monthly-gurugram.json does, and generating that
-  // base is a multi-decade gridded download that belongs in its own change
-  // rather than bolted onto the city scaffold.
-  //
-  // Gurugram is deliberately absent from CITIES in fetch_recent_rainfall.py
-  // meanwhile: the daily workflow runs `--all`, which exits non-zero if any
-  // one city fails, so adding the grid point early would turn the whole job
-  // red every day for every city.
-  //
-  // REMOVAL CONDITION: run generate_imd_rainfall.py for the Gurugram grid
-  // point (28.4360, 77.0560), add "gurugram" to CITIES in
-  // fetch_recent_rainfall.py, and delete this entry in the same change.
-  "gurugram:rainfall-recent":
-    "No IMD gridded base series exists for Gurugram yet, and rainfall-recent is the provisional fill on top of one. Retire this by generating imd-rainfall-monthly-gurugram.json and wiring the city into fetch_recent_rainfall.py.",
-};
+export const FRESHNESS_EXEMPTIONS: Record<string, string> = {};
 
 /* ── 2. Reported: declared absences owned by their consumers ────────────── */
 
@@ -121,6 +114,23 @@ function allRoutes(): string[] {
  * than deliberate; those are honest too, just less interesting.
  */
 const ROUTE_OFF_REASONS: Record<string, string> = {
+  // Surat - the analytical unit is the zone, not the ward, and several
+  // omissions follow directly from that.
+  "surat:my-ward":
+    "Ward surfaces are off because \"ward\" in Surat means three incompatible things and none of them has usable geometry. There are 30 electoral wards (120 corporators), about 134 census/administrative wards in SMC's own 1961-2011 area table, and a third scheme inside SMC's GIS ward_boundary layer. That GIS layer is the authoritative one and it serves WMS only - WFS is disabled, so its geometry cannot be downloaded, only rendered. The analytical unit is instead the zone, which does carry live data, an official 2024 population and the city's own supply breakdown. This closes when SMC enables WFS or publishes ward boundaries, not by a better join.",
+  "surat:cascades":
+    "Not a cascade geography. Tank cascades are chained systems where each tank's surplus feeds the next; Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. Rendering a cascade here would assert an inheritance the city does not have.",
+  "surat:shoreline":
+    "Surat is genuinely coastal - Dumas, Hazira, the Tapi estuary - so this is a backlog item rather than a refusal. The shoreline surface currently reads Chennai coastal data and has not been parametrised, and shipping a map of another city's coast would be worse than shipping none.",
+  "surat:tanker":
+    "No tanker economy established. SMC reports 95% piped coverage and the national open-data release records tanker-served properties as NA in every year. There is nothing to chart that would not be invented.",
+  "surat:allocations":
+    "Surat has no published drinking-water entitlement to render. The research pass found infrastructure and treatment capacities but no sanctioned allocation instrument from Ukai or the Tapi - the ledger's whole subject is entitled-versus-received, and the entitled half does not exist in public.",
+  "surat:lake-restoration":
+    "SMC restores lakes and says so - its reuse programme routes 2 MLD of treated water to lake rejuvenation - but publishes no restoration register: no project list, no dates, no budgets, no per-body status. A ranking surface needs a denominator the corporation has not published.",
+  "surat:climate-risk":
+    "Buildable but not built. Chennai's sub-basin risk comes from HydroBASINS level 12, a global product that covers the lower Tapi as well, so this is a backlog item rather than a refusal.",
+
   // Kolkata - every omission is a decision, and each has a reason on the page.
   "kolkata:my-ward":
     "Ward-keyed surfaces are off until KMC wards 142-144 exist as geometry. 141 of 144 are mapped; the missing three are 18.93 km2, 9.2% of the city. KMC publishes no ward geometry through either its own portal or the newer DIGIT one, and OSM has no Kolkata ward relations at any admin_level, so this closes when someone digitises the 2012 delimitation, not by a better endpoint.",
@@ -166,6 +176,83 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
     "Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do.",
   "gurugram:climate-risk":
     "Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. Genuinely buildable and simply not built, so this is backlog rather than refusal.",
+
+  // Pune - preview-gated, city ten. The set is small on purpose: only the
+  // surfaces with real artifacts behind them are on. Two of the absences
+  // below are properties of what Maharashtra publishes rather than backlog.
+  // RETIRED 2026-08-17. The recorded reason was that Maharashtra WRD
+  // publishes Pune's statutory red and blue flood lines as 518 SCANNED PDF map
+  // sheets with no vector form, so the hazard layer does not exist
+  // machine-readable. That is still true and now ships as the first data gap
+  // ON the page - but it was an argument about the INTERACTIVE variant, and
+  // the route was being withheld on it. Pune now renders the NARRATIVE variant,
+  // which needs no hazard polygons: the event register (1961 Panshet with no
+  // official death toll by the state's own admission, the 2019 Ambil Odha
+  // cloudburst, 25 Jul and 4 Aug 2024, 21 Aug 2025) plus PMC's own nalla
+  // network, 3,075 open storm-water channels carrying 1,014 km, which was in
+  // the repo's reach and rendering nowhere.
+  // NARROWED 2026-08-17. The DATA now ships: public/data/pune-tankers.json,
+  // 57,370 delivery rows across 411 published registers, 7 filling points,
+  // 1,956 distinct vehicles, 84,886 trips. What is still missing is a
+  // RENDERER, and that is a deliberate hold rather than laziness.
+  //
+  // src/lib/cities/types.ts states the rule: "Adding a fourth kind is cheaper
+  // than bending one of these: forcing a city through the wrong panel means
+  // making its required fields optional and gutting its copy, which damages
+  // the city the panel was written for." Pune is exactly that case. The
+  // `utility-ledger` panel is HMWSSB-shaped - it renders bookings against
+  // deliveries, a fulfilment rate, and divisions and sections. Pune's register
+  // has none of those: every row IS a delivery so there is nothing to fulfil,
+  // and its units are filling point, prabhag and vehicle. Routing Pune through
+  // that panel would mean making bookings/delivered/fulfilment optional and
+  // rewriting Hyderabad's copy, which damages Hyderabad.
+  //
+  // So this needs a FIFTH kind, `utility-delivery-register`, with its own
+  // panel. Retire this entry when that lands.
+  // RETIRED 2026-08-17. It read "the data ships and the renderer does not ...
+  // retire this when that panel lands", and the panel landed:
+  // src/components/dashboard/tanker-delivery-register-panel.tsx behind the
+  // fourth tankerDataKind, `delivery-register`. Added rather than bending
+  // Hyderabad's utility-ledger panel, whose bookings-against-deliveries
+  // copy and fulfilment rate would have had to be deleted for a city whose
+  // register contains no bookings at all. The panel refuses three things on
+  // purpose: no daily series as the headline (two thirds of rows cannot be
+  // dated), no prabhag ranking (the ward column is filled on 52.8% of rows,
+  // so ordering it would read recording practice as need), and no
+  // recipients at all.
+  "pune:allocations":
+    "The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger.",
+  "pune:commitments":
+    "Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register.",
+  // RETIRED 2026-08-17, same day it was written. It read "needs a
+  // facts-pune.json; the compilation is the work", and the compilation
+  // happened. public/data/facts-pune.json ships 22 facts across all four
+  // tiers, built by neer-vazhvu-api/scripts/build_pune_facts.py, which READS
+  // every figure out of the already-shipped artifacts rather than transcribing
+  // them a second time - so a quoted card cannot drift from the dashboard it
+  // came from. Two numbers a reader would expect are deliberately absent and
+  // ship as gap facts instead: litres-per-capita (PMC's own accounts exclude
+  // groundwater and tankers, so the denominator does not support the claim)
+  // and any measured annual draw (none published since 2017-18, and the two
+  // published figures for that year differ by 4.15 TMC).
+  //
+  // RETIRED 2026-08-17, same day it was written. The removal condition was
+  // "Origins is narrative work and gets its own pass", and the pass happened
+  // in the same PR rather than a later one. Kept as a comment rather than
+  // deleted because a retired exemption is the record that the gap closed
+  // rather than being quietly dropped. src/content/story-pune-en.tsx ships
+  // ten chapters on the sources listed in its header, with a CC0 Rijksmuseum
+  // hero and a 1911 survey plate; the 1961 Panshet death toll is stated as
+  // having no official figure, per the state's own current disaster plan,
+  // rather than substituting the number that circulates.
+  "pune:my-ward":
+    "The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker.",
+  "pune:lake-restoration":
+    "No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere.",
+  "pune:cascades":
+    "The cascade pipeline has not been run for Pune district. Backlog, not refusal.",
+  "pune:climate-risk": "Not built for this city.",
+  "pune:shoreline": "Landlocked.",
 
   // Hyderabad
   "hyderabad:my-ward":

@@ -1,0 +1,356 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import type {
+  WaterwayLocatorAnchor,
+  WaterwayChapter,
+  WaterwayIdentity,
+  WaterwayManifest,
+  WaterwayReach,
+  WaterwayTimelineEntry,
+  WaterwayToday,
+  WaterwayWidthLedger,
+} from "@/lib/waterways/types";
+import { FactLine, SourceChip } from "./claim-chip";
+import { LocatorMap } from "./locator-map";
+import { TimelineView } from "./timeline-view";
+import { TodayPanel } from "./today-panel";
+import { WidthLedger } from "./width-ledger";
+import { WidthProfileChart } from "./width-profile-chart";
+
+/**
+ * The Story: eight chapters, Ennore to Mahabalipuram, scroll = chainage.
+ * Depth level L0 is what renders on first paint: a verdict and one visual
+ * per chapter. Every denser layer (receipts, reaches, sources) arrives only
+ * by the reader's click (DECISIONS.md W2).
+ *
+ * Chapter prose lives here by design: the story is this page's editorial
+ * voice; the numbers it leans on all come from the curated, gated data
+ * (facts carry claim ids; the verify script owns the banned-claims list).
+ */
+
+const CHAPTER_BODY: Record<string, string> = {
+  ennore:
+    "The canal enters Chennai through its heaviest industry: two power " +
+    "stations, a refinery belt, a port. The consent regime has steadily " +
+    "moved routine industrial discharge off the canal, and TNPCB's " +
+    "investigation of the August 2026 fish kill is under way. Continuous " +
+    "measurement alongside the regulator's is how such questions get " +
+    "answered quickly.",
+  squeeze:
+    "Through the city the canal runs under the MRTS railway, routed " +
+    "along it in the 1980s after a Planning Commission working group " +
+    "found no other corridor economically available. The reach now holds " +
+    "the alignment's narrowest water, and therefore the clearest case " +
+    "for the measured baseline that restoration planning needs.",
+  okkiyam:
+    "South Chennai drains through one channel into this canal; the marsh " +
+    "behind it breathes with the tide through the same gate. CMRL has " +
+    "invested in widening the water opening at this crossing, and 2026 field " +
+    "reports tracked a construction-phase narrowing alongside - the " +
+    "kind of change a live baseline registers as it happens.",
+  estuary:
+    "Below the city the canal widens into backwaters the tide still " +
+    "reaches, and everything changes: birds in the dozens of species, " +
+    "working fishers, a boat house, brackish water that stays naturally " +
+    "clear of hyacinth. The system hangs on mouths that sand closes for " +
+    "most of the year, and mouth management already has a budget line.",
+  ribbon:
+    "The last stretch is the canal at its most complete: banks " +
+    "un-encroached (though unprotected), no structures for eleven " +
+    "kilometres, a channel running green with vegetation. It is the " +
+    "least altered water on the alignment, and the easiest place to begin " +
+    "the restoration the current programmes plan.",
+  paper:
+    "The canal's record shows sustained intent: a national-waterway " +
+    "designation, a High Court mandate, detailed project reports, an " +
+    "umbrella sanction for the three waterways, and now the Urban " +
+    "Challenge Fund window with a water-metro study in procurement. " +
+    "Seventeen years of groundwork have come together; below is that record, " +
+    "dated and sourced.",
+  pilot:
+    "Neer Vazhvu built this page from public records and open satellites; " +
+    "keeping it current needs instruments on the water. The list is short " +
+    "and standard: levels and flow at the reaches that decide floods, " +
+    "dissolved oxygen where the monthly record stopped in 2023, the state " +
+    "of the mouths through the seasons, a boat-run depth profile - the " +
+    "first since 2014 - and field checks under the vegetation the " +
+    "satellite flags. This is the measurement layer Neer Vazhvu proposes " +
+    "to operate alongside the institutions doing the restoration; the " +
+    "page you are reading is its first deliverable.",
+};
+
+function ChapterVisual({
+  chapter,
+  manifest,
+  identity,
+  timeline,
+}: {
+  chapter: WaterwayChapter;
+  manifest: WaterwayManifest;
+  identity: WaterwayIdentity;
+  timeline: WaterwayTimelineEntry[];
+}) {
+  const chip = (name: string, alt: string) => (
+    <figure>
+      <div className="relative">
+        <Image
+          src={`/images/waterways/${manifest.waterwayId}/chips/${name}`}
+          alt={alt}
+          width={1100}
+          height={800}
+          loading="lazy"
+          unoptimized
+          className="w-full rounded-xl border border-border"
+        />
+        <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+          Sentinel-2 · Jun–Aug 2026
+        </span>
+      </div>
+      <figcaption className="mt-1 text-[11px] text-muted-foreground">
+        Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
+        are a clearest-pixel composite (Jun–Aug 2026), about 8 km across;
+        segment views are a median composite of the same window. Contains modified Copernicus Sentinel data (2026).
+      </figcaption>
+    </figure>
+  );
+  switch (chapter.key) {
+    case "open":
+      return (
+        <div className="grid grid-cols-2 gap-3">
+          {identity.headline_stats.map((s) => (
+            <div
+              key={s.claim_id}
+              className="rounded-xl border border-border bg-card p-4"
+            >
+              <div className="text-2xl font-semibold tabular-nums text-foreground">
+                {s.value}
+              </div>
+              <div className="mt-1 text-xs leading-snug text-muted-foreground">
+                {s.label}
+                <SourceChip source={s.source} date={s.date} flag={s.flag} />
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    case "ennore":
+      return chip("site-ennore-junction.jpg", "The Ennore creek junction from orbit");
+    case "squeeze":
+      return (
+        <WidthProfileChart
+          waterwayId={manifest.waterwayId}
+          xLabel="km from Ennore"
+        />
+      );
+    case "okkiyam":
+      return chip("site-okkiyam-maduvu.jpg", "The Okkiyam Maduvu confluence area from orbit");
+    case "estuary":
+      return chip("site-muttukadu.jpg", "The Muttukadu backwater from orbit");
+    case "ribbon":
+      return chip("seg-km64-66.jpg", "The vegetation-choked southern canal from orbit");
+    case "paper":
+      return <TimelineView timeline={timeline} />;
+    case "pilot":
+      return (
+        <ul className="space-y-2 rounded-xl border border-border bg-card p-4 text-sm text-foreground/90">
+          {[
+            "Water level and flow at the reaches that decide floods",
+            "Dissolved oxygen, resuming the monthly record",
+            "Mouth state at Ennore, Adyar and Muttukadu, continuously",
+            "A boat-run depth survey: the first since 2014",
+            "Field checks on the vegetation the satellite flags",
+          ].map((x) => (
+            <li key={x} className="flex gap-2">
+              <span aria-hidden className="text-primary">■</span>
+              {x}
+            </li>
+          ))}
+        </ul>
+      );
+    default:
+      return null;
+  }
+}
+
+export function StoryView({
+  manifest,
+  identity,
+  chapters,
+  reaches,
+  timeline,
+  today,
+  widthLedger,
+  locatorAnchors,
+  onExplore,
+}: {
+  manifest: WaterwayManifest;
+  identity: WaterwayIdentity;
+  chapters: WaterwayChapter[];
+  reaches: WaterwayReach[];
+  timeline: WaterwayTimelineEntry[];
+  today: WaterwayToday;
+  widthLedger: WaterwayWidthLedger | null;
+  locatorAnchors: WaterwayLocatorAnchor[];
+  onExplore: (reachId: number) => void;
+}) {
+  const [active, setActive] = useState(0);
+  const refs = useRef<(HTMLElement | null)[]>([]);
+  const byId = useMemo(
+    () => new Map(reaches.map((r) => [r.id, r])),
+    [reaches]
+  );
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            const idx = Number((e.target as HTMLElement).dataset.chapter);
+            if (!Number.isNaN(idx)) setActive(idx);
+          }
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px" },
+    );
+    refs.current.forEach((el) => el && obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
+  // The observer's setActive fires at every chapter crossing; memoizing
+  // the sections keeps that re-render to the rail alone (the chapters
+  // hold the profile chart, locators and receipt lists - a heavy tree).
+  const sections = useMemo(
+    () => (
+      <div className="min-w-0 flex-1 space-y-20 pt-4">
+        {chapters.map((ch, i) => {
+          const chapterFacts = ch.reach_ids
+            .flatMap((id) => (byId.get(id)?.facts ?? []).slice(0, 2))
+            .slice(0, 5);
+          return (
+            <section
+              key={ch.key}
+              id={`ch-${ch.key}`}
+              data-chapter={i}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              className="scroll-mt-36"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-mono text-xs uppercase tracking-widest text-primary">
+                    {i === 0
+                      ? identity.scope
+                      : ch.km
+                        ? `km ${ch.km[0]} – ${ch.km[1]}`
+                        : "end to end"}
+                  </div>
+                  <h2 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+                    {ch.title}
+                  </h2>
+                </div>
+                {ch.km && (
+                  <div className="hidden sm:block">
+                    <LocatorMap
+                      waterwayId={manifest.waterwayId}
+                      span={ch.km}
+                      anchors={locatorAnchors}
+                    />
+                  </div>
+                )}
+              </div>
+              <p className="mt-3 max-w-2xl text-lg leading-relaxed text-foreground">
+                {ch.verdict}
+              </p>
+              <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">
+                {CHAPTER_BODY[ch.key]}
+              </p>
+
+              <div className="mt-6">
+                <ChapterVisual
+                  chapter={ch}
+                  manifest={manifest}
+                  identity={identity}
+                  timeline={timeline}
+                />
+                {ch.key === "open" && <TodayPanel today={today} />}
+                {ch.key === "squeeze" && widthLedger && (
+                  <WidthLedger ledger={widthLedger} />
+                )}
+              </div>
+
+              {chapterFacts.length > 0 && (
+                <details className="group mt-5 rounded-xl border border-border bg-card">
+                  <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-foreground marker:content-none [&::-webkit-details-marker]:hidden">
+                    <span className="mr-2 inline-block transition-transform group-open:rotate-90">
+                      ▸
+                    </span>
+                    The receipts ({chapterFacts.length})
+                  </summary>
+                  <ul className="space-y-3 px-4 pb-4">
+                    {chapterFacts.map((f) => (
+                      <FactLine key={f.claim_id} fact={f} />
+                    ))}
+                  </ul>
+                </details>
+              )}
+
+              {ch.reaches.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {ch.reaches.map((r) => (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => onExplore(r.id)}
+                      className="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground/90 transition-colors hover:border-primary/50 hover:bg-primary/5"
+                    >
+                      {r.name} · km {r.km[0]}–{r.km[1]} →
+                    </button>
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [byId, chapters, reaches, timeline, today, widthLedger, locatorAnchors, manifest, identity, onExplore]
+  );
+
+  return (
+    <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24">
+      {/* Chapter rail (desktop) */}
+      <nav
+        aria-label="Chapters"
+        className="sticky top-36 hidden h-fit shrink-0 self-start md:block"
+      >
+        <ol className="space-y-3 border-l border-border pl-4">
+          {chapters.map((ch, i) => (
+            <li key={ch.key}>
+              <a
+                href={`#ch-${ch.key}`}
+                className={`block max-w-36 text-xs leading-snug transition-colors ${
+                  active === i
+                    ? "font-semibold text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {ch.km && (
+                  <span className="block font-mono text-[10px] opacity-70">
+                    km {ch.km[0]}–{ch.km[1]}
+                  </span>
+                )}
+                {ch.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {sections}
+    </div>
+  );
+}

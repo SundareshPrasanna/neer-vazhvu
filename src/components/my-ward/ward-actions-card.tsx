@@ -94,6 +94,97 @@ const ACTIONS_BY_CITY: Record<string, CityActionsConfig> = {
       { labelKey: "my_ward.hl_flood_emergency", value: "1916", href: "tel:1916" },
     ],
   },
+  // PUNE. Added WITH the cutover rather than after it, because line 152 reads
+  // `ACTIONS_BY_CITY[cityId] ?? ACTIONS_BY_CITY.chennai` - a missing city does
+  // not render an empty card, it renders CHENNAI'S HELPLINES. A Pune resident
+  // would have been given CMWSSB's number.
+  //
+  // The toll-free number is PMC's own, read off its grievance portal
+  // (complaint.pmc.gov.in) where it is captioned in Marathi as the call centre
+  // for "सूचना आणि तक्रारींसाठी" - suggestions and complaints. Nothing here is
+  // inferred: PMC publishes no separate water-supply or flood number that
+  // could be verified, so those entries carry value:null and a URL rather than
+  // a plausible-looking digit string.
+  pune: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "PMC grievance portal",
+        href: "https://complaint.pmc.gov.in/",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "Pune Municipal Corporation",
+        href: "https://pmc.gov.in/en/grievance",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      {
+        labelKey: "my_ward.hl_water_complaint",
+        value: "1800 1030 222",
+        href: "tel:18001030222",
+      },
+      {
+        // PMC dispatches tankers but publishes no booking line: the daily
+        // registers behind /pune/tanker are a record of what was sent, not a
+        // way to ask. Points at that page rather than inventing a number.
+        labelKey: "my_ward.hl_tanker_booking",
+        value: null,
+        href: "/pune/tanker",
+      },
+    ],
+  },
+  // GURUGRAM. The city this bug was actually live for: /gurugram/my-ward
+  // serves in production and gurugram was missing from this map, so it was
+  // rendering Chennai's helplines.
+  //
+  // Numbers are GMDA's own, read off gmda.gov.in, which publishes them as one
+  // line: "For any query, suggestion and complaint about Grievance Redressal
+  // Portal (GRAP) pls. contact through following means: Toll free number and
+  // PRI Number ( 18001801817, 01242653908) WEB portal ( services.gmda.gov.in )".
+  // Nothing here is inferred. MCG's own site serves a 1 KB shell with no
+  // contact details at all, so the municipal corporation contributes no
+  // verifiable number and none is invented for it.
+  gurugram: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "GMDA grievance redressal (GRAP)",
+        href: "https://services.gmda.gov.in/",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "Gurugram Metropolitan Development Authority",
+        href: "https://www.gmda.gov.in/",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      {
+        labelKey: "my_ward.hl_water_complaint",
+        value: "1800 180 1817",
+        href: "tel:18001801817",
+      },
+      {
+        // GMDA publishes this PRI line beside the toll-free one for the same
+        // grievance portal; carried because a toll-free number is not always
+        // reachable from every network.
+        labelKey: "my_ward.hl_mmc_helpline",
+        value: "0124 265 3908",
+        href: "tel:01242653908",
+      },
+      {
+        // Gurugram's tanker supply IS a published sales ledger rather than a
+        // booking line - point at it instead of inventing a number.
+        labelKey: "my_ward.hl_tanker_booking",
+        value: null,
+        href: "/gurugram/tanker",
+      },
+    ],
+  },
   delhi: {
     quickActions: [
       {
@@ -146,10 +237,21 @@ export function WardActionsCard({ wardNumber }: Props) {
   const { t } = useLanguage();
   const { cityId } = useMyWardCity();
   const [helpOpen, setHelpOpen] = useState(false);
-  // Fall back to Chennai when no per-city config is registered, so a new
-  // city onboarded without an entry here at least renders something
-  // sensible until its config lands.
-  const actionsConfig = ACTIONS_BY_CITY[cityId] ?? ACTIONS_BY_CITY.chennai;
+  // NO FALLBACK. This used to read `?? ACTIONS_BY_CITY.chennai`, on the
+  // reasoning that a city onboarded without an entry would "at least render
+  // something sensible". What it actually rendered was ANOTHER CITY'S
+  // EMERGENCY NUMBERS: a Gurugram resident opening this card was shown
+  // CMWSSB's complaint line, Chennai's water utility, 1,900 km away. That is
+  // not a degraded experience, it is wrong information presented with the same
+  // confidence as right information - the one failure mode a card full of
+  // helplines must not have.
+  //
+  // Rendering nothing is the honest degradation: the ward page keeps its other
+  // sections, and a missing city is VISIBLY missing rather than silently
+  // wearing Chennai's. Adding a city here is a launch step, and now it fails
+  // loudly enough to notice. See issue #286.
+  const actionsConfig = ACTIONS_BY_CITY[cityId];
+  if (!actionsConfig) return null;
 
   return (
     <Card>

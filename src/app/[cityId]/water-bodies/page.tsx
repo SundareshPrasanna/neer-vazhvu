@@ -65,8 +65,19 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
     loadJson<CurrentGeoJson>(`${cityId}-water-bodies-current.geojson`, "geojson"),
   ]);
 
-  // For cities without curated lost-tank data, fall back to the empty-state stub.
-  if (!lostFile) {
+  // Gate on the layer that actually DRAWS THE MAP, not on the optional
+  // lost-bodies overlay.
+  //
+  // This used to require `water-bodies-lost-<city>.json`, so a city could ship
+  // a complete current-water-bodies polygon layer and still be told "No
+  // curated water-body data files for this city yet." Gurugram was LIVE in
+  // exactly that state - `gurugram-water-bodies-current.geojson` present, page
+  // showing the empty stub - and Pune would have been the second. A
+  // lost-bodies register is the rare artifact, not the common one: no official
+  // register of Pune's lost water bodies exists at all, and Chennai's took a
+  // dedicated research pass. Keying the whole surface to it hid the common
+  // case behind the rare one.
+  if (!currentGeoJson && !lostFile) {
     return (
       <FeatureNotYetAvailable
         config={config}
@@ -104,8 +115,8 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
       cityState={config.stateCode}
       mapCenter={view ? view.center : [config.center.lat, config.center.lng]}
       mapZoom={view ? view.zoom : 11}
-      fullyLostCount={lostFile.summary.fully_lost_count}
-      reducedCount={lostFile.summary.severely_reduced_count}
+      fullyLostCount={lostFile?.summary.fully_lost_count ?? null}
+      reducedCount={lostFile?.summary.severely_reduced_count ?? null}
       namedOsmCount={namedOsmCount}
       hasCascadeOverlay={config.hasCascadeOverlay ?? false}
       catchmentsGapNote={config.catchmentsGapNote}

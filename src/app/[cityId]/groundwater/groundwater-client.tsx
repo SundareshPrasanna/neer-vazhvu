@@ -23,12 +23,17 @@ import type {
   CgwbStation,
   CgwbStationsFile,
 } from "@/types/groundwater";
+import {
+  districtsAsBlocks,
+  type DistrictEntry,
+} from "@/lib/groundwater/districts-as-blocks";
 
 /** Resolve which GW view layers a city has enabled, falling back to legacy
  *  "all views" behaviour when groundwaterViews is undefined on the place
  *  config. Each flag is a feature toggle for the matching view in the
  *  view-mode bar; cgwbStations gates the CGWB Year Book point overlay
  *  load and rendering. See PlaceConfig.groundwaterViews docs. */
+
 function resolveGwViews(config: PlaceConfig | undefined | null) {
   const v = config?.groundwaterViews;
   return {
@@ -131,6 +136,9 @@ export default function CityGroundwaterClient({
   const config = useMemo(() => tryGetPlaceConfig(cityId), [cityId]);
 
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
+  // How many polygons the block layer actually carries. The gate below needs
+  // DATA AND GEOMETRY, not either alone.
+  const [blockGeoCount, setBlockGeoCount] = useState(0);
   const [selectedBlock, setSelectedBlock] = useState<GWBlock | null>(null);
   const [wrisStations, setWrisStations] = useState<WrisStation[]>([]);
   const [selectedWrisStation, setSelectedWrisStation] = useState<WrisStation | null>(null);
@@ -167,7 +175,11 @@ export default function CityGroundwaterClient({
       // the 404 HTML body reject the whole Promise.all and leave the map
       // stuck in a loading state.
       fetch(assets.blocksJsonUrl)
-        .then((r) => (r.ok ? (r.json() as Promise<{ blocks?: GWBlock[] }>) : { blocks: [] }))
+        .then((r) =>
+          r.ok
+            ? (r.json() as Promise<{ blocks?: GWBlock[]; districts?: DistrictEntry[] }>)
+            : { blocks: [] },
+        )
         .catch(() => ({ blocks: [] })),
       fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .then((r) => r.json() as Promise<WrisStationsResponse>)
@@ -201,14 +213,16 @@ export default function CityGroundwaterClient({
         : Promise.resolve(null),
     ])
       .then(([blocksRes, wrisRes, geoRes, interpolatedRes, riskRes, cgwbRes]: [
-        { blocks?: GWBlock[] },
+        { blocks?: GWBlock[]; districts?: DistrictEntry[] },
         WrisStationsResponse,
         GeoJSON.FeatureCollection | null,
         InterpolatedWardsResponse | null,
         WardRiskFile | null,
         CgwbStationsFile | null,
       ]) => {
-        setBlocks(blocksRes.blocks ?? []);
+        const resolvedBlocks = districtsAsBlocks(blocksRes);
+        setBlocks(resolvedBlocks);
+        setBlockGeoCount(geoRes?.features?.length ?? 0);
         // Pre-select most-exploited block to anchor the user - but only
         // among blocks whose polygon is on the rendered map. Otherwise
         // the panel can describe a block the user can't visually find
@@ -224,7 +238,7 @@ export default function CityGroundwaterClient({
                 .filter((n) => n.length > 0),
             )
           : null;
-        const candidateBlocks = (blocksRes.blocks ?? []).filter((b) =>
+        const candidateBlocks = resolvedBlocks.filter((b) =>
           onMapNames ? onMapNames.has(b.name) : true,
         );
         const sorted = [...candidateBlocks].sort(
@@ -338,7 +352,28 @@ export default function CityGroundwaterClient({
   if (critical) {
     headlinePhrases.push(`${critical.name} critical at ${critical.latest.development_pct.toFixed(1)}%`);
   }
-  if (semiCount > 0) headlinePhrases.push(`${semiCount} blocks semi-critical`);
+  if (semiCount > 0)
+    headlinePhrases.push(
+      `${semiCount} ${semiCount === 1 ? "block" : "blocks"} semi-critical`,
+    );
+
+  // The exploitation view needs BLOCKS, not just a config flag. The depth and
+  // risk toggles below already gate on their data having loaded; this one did
+  // not, and the two cities whose IN-GRES assessment is DISTRICT-level rather
+  // than block-level both shipped with `exploitation: true` and an empty
+  // `blocks` array. The result was a page titled "CGWB block exploitation
+  // (GWR)" drawing a percent-scale legend over either nothing at all
+  // (Gurugram: no station layer either, so a bare basemap) or over markers
+  // coloured by DEPTH IN METRES (Surat) - two different quantities under one
+  // legend. Gate it the same way as its siblings.
+  // DATA *AND* GEOMETRY. Gating on blocks alone was half the rule and it broke
+  // in both directions: with no blocks, three cities drew a percent legend over
+  // markers coloured in metres; and once districtsAsBlocks started populating
+  // blocks for every district-level city, Kolkata and Surat would have got the
+  // legend back over a map with no polygons at all, because neither ships a
+  // <city>-gwr-blocks.geojson. A choropleth needs both halves or it is not one.
+  const hasExploitation =
+    gwViews.exploitation && blocks.length > 0 && blockGeoCount > 0;
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -348,10 +383,12 @@ export default function CityGroundwaterClient({
           {config.displayName} - {
             viewMode === "depth" ? "Ward depth (interpolated)" :
             viewMode === "risk" ? "Ward risk composite (3-factor)" :
-            "CGWB block exploitation (GWR)"
+            hasExploitation ? "CGWB block exploitation (GWR)" :
+            usesCgwbYearbook ? "CGWB Year Book stations" :
+            "Groundwater"
           }
         </span>
-        {viewMode === "exploitation" && headlinePhrases.length > 0 && (
+        {viewMode === "exploitation" && hasExploitation && headlinePhrases.length > 0 && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
             {headlinePhrases.join(" - ")}
           </span>
@@ -411,7 +448,7 @@ export default function CityGroundwaterClient({
                 Risk (composite)
               </button>
             )}
-            {gwViews.exploitation && (
+            {hasExploitation && (
               <button
                 onClick={() => setViewMode("exploitation")}
                 className={`px-2 py-0.5 rounded border ${
@@ -498,7 +535,7 @@ export default function CityGroundwaterClient({
           {/* Legend overlay - IISc view has its own legend baked into
               IIScStressWardsMap, so the GroundwaterLegend (which only
               models depth / risk / exploitation) is hidden for that mode. */}
-          {viewMode !== "iisc" && (
+          {viewMode !== "iisc" && (viewMode !== "exploitation" || hasExploitation) && (
             <div
               className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${
                 selectedBlock ? "bottom-[148px] md:bottom-4" : "bottom-2"

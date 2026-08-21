@@ -1,0 +1,133 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "surat"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "smc-reuse-programme",
+        "title": "Dated 8 Mar 2024",
+        "publisher": "Surat Municipal Corporation (hosted by CSE India)",
+        "license": "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution",
+        "url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf"
+      },
+      {
+        "id": "ogd-surat-water-supply",
+        "title": "Three releases",
+        "publisher": "Ministry of Housing and Urban Affairs, Smart Cities Mission (Surat) via data.gov.in",
+        "license": "Government Open Data License - India (GODL-India)",
+        "url": "https://www.data.gov.in/resource/water-supply-surat"
+      },
+      {
+        "id": "cpcb-nwmp",
+        "title": "2022 edition holds 7 Gujarat Tapi stations forming an upstream-to-sea profile (Ukai, Mandavi, Bardoli/Kakrapar, Kathore, Surat u/s, Rander, ONGC Hazira), plus Mindhola at Sachin, Purna, Masma Khadi creek, Moticher and Olpad ponds, and 8 NWMP groundwater stations in the industrial belt",
+        "publisher": "Central Pollution Control Board",
+        "license": "Government of India publication, cited with attribution",
+        "url": "https://cpcb.gov.in/nwmp-data-2022/"
+      },
+      {
+        "id": "smc-wardwise-area-population",
+        "title": "134 ward rows with area and census population 1961-2011, showing the city growing from 8 km2 (12 wards) to 462",
+        "publisher": "Surat Municipal Corporation",
+        "license": "Surat Municipal Corporation publication, cited with attribution",
+        "url": "https://www.suratmunicipal.gov.in/TheCity/City/Stml2"
+      },
+      {
+        "id": "wris-groundwater-gujarat",
+        "title": "About 65 Surat-district stations, ~6,500 readings, 1970-2026",
+        "publisher": "India-WRIS / National Water Informatics Centre",
+        "license": "Government of India publication, cited with attribution",
+        "url": "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-08-19",
+    "note": "Hand-compiled from primary sources, each fact carrying its own citation. No press figures and no values derived from the open-data release's two synthetic columns.",
+    "produced_by": "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+  },
+  "place_id": "surat",
+  "generated_at": "2026-08-19",
+  "note": "A static snapshot rather than a live pipeline. Surat's one live feed is the flood chain, which has its own surface.",
+  "facts": [
+    {
+      "id": "surat-treated-wastewater-reused",
+      "tier": 1,
+      "category": "Reuse",
+      "title": "Treated wastewater reused",
+      "value": "330",
+      "unit": "MLD",
+      "interpretation": "SMC reuses 330 MLD of the roughly 1,018 MLD of sewage it collects and treats, about a third, itemised across eleven named uses from textile clusters (115 MLD) to lake rejuvenation (2 MLD). This is the number that makes Surat unusual: most utilities treat sewage as a cost, and this one runs it as a revenue line.",
+      "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024",
+      "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf"
+    },
+    {
+      "id": "surat-reuse-revenue",
+      "tier": 1,
+      "category": "Reuse",
+      "title": "Cumulative revenue from selling treated water to industry",
+      "value": "496.23",
+      "unit": "Rs crore to January 2024",
+      "interpretation": "Against a capital cost of Rs 314.39 crore for three tertiary treatment plants. The tariff started at Rs 18.20 per kilolitre in 2014 and is now Rs 36.2, indexed to RBI. Annual revenue runs about Rs 120 crore. Press coverage of this programme reports different figures (Rs 340 crore, Rs 140 crore annually); these are the corporation's own.",
+      "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024",
+      "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf"
+    },
+    {
+      "id": "surat-industrial-buyers",
+      "tier": 2,
+      "category": "Reuse",
+      "title": "Industrial units buying tertiary-treated sewage",
+      "value": "249",
+      "unit": "units across Pandesara and Sachin",
+      "interpretation": "178 units in Pandesara Industrial Estate and 71 in the Sachin Textile Process Industries association, taking 115 MLD of tertiary-treated water from three plants (Bamroli 40 and 35 MLD, Dindoli 40 MLD). Surat is a textile city; these are the dyeing and printing houses that would otherwise be drawing fresh water.",
+      "source_label": "Surat Municipal Corporation, 'Reuse of Treated Used Water: A Successful Model', 8 March 2024",
+      "source_url": "https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf"
+    },
+    {
+      "id": "surat-no-measured-nrw",
+      "tier": 1,
+      "category": "Supply",
+      "title": "Measured non-revenue water",
+      "value": "Not published",
+      "unit": "",
+      "interpretation": "The national open-data release for Surat contains a 'losses including NRW' column, but it is exactly 20.0000% of total supply on all 48 monthly rows, and the accompanying 'actual supplied' column equals total supply on every row, which contradicts it. It is an assumption carried in a measurement column. Surat publishes no measured NRW, and we will not republish a constant as though it were a meter reading.",
+      "source_label": "Smart Cities Mission (Surat) open-data release D53, via data.gov.in",
+      "source_url": "https://www.data.gov.in/resource/water-supply-surat"
+    },
+    {
+      "id": "surat-city-growth",
+      "tier": 2,
+      "category": "Governance",
+      "title": "Municipal area, 1961 to today",
+      "value": "8 to 462.149",
+      "unit": "sq km",
+      "interpretation": "SMC's own wardwise table records the city growing from 8 sq km across 12 wards to 462.149 sq km across 134, in six annexations, the most recent in June 2020. A city that grew fifty-fold onto an estuarine flood plain in sixty years is the precondition for everything on the flood page.",
+      "source_label": "Surat Municipal Corporation, wardwise area and population (1961-2011 census and after the 2020 extension)",
+      "source_url": "https://www.suratmunicipal.gov.in/TheCity/City/Stml2"
+    },
+    {
+      "id": "surat-tapi-salinity",
+      "tier": 2,
+      "category": "Rivers",
+      "title": "Tapi conductivity, Ukai to the sea",
+      "value": "513 to 49,720",
+      "unit": "umhos/cm (2022 maxima)",
+      "interpretation": "The Tapi's problem at Surat is not sewage. CPCB's 2022 monitoring finds BOD at or below detection limit at most Surat stations, while conductivity climbs from 369-513 at Ukai to 1,537-49,720 at the ONGC bridge at Hazira, which is seawater. This is an estuary and a salinity story, not an organic pollution one.",
+      "source_label": "CPCB National Water Quality Monitoring Programme 2022, Table 9 (River Tapi)",
+      "source_url": "https://cpcb.gov.in/nwmp-data-2022/"
+    },
+    {
+      "id": "surat-groundwater-record",
+      "tier": 3,
+      "category": "Groundwater",
+      "title": "Groundwater observation record",
+      "value": "94 stations, 6,563 readings",
+      "unit": "1970 to 2026",
+      "interpretation": "A 56-year record across Surat district, from manual quarterly observations starting in 1970 to six-hourly telemetry in 2026. Deep in time, thin in space: too few stations to interpolate a per-zone depth surface honestly, so the groundwater page renders the points themselves.",
+      "source_label": "India-WRIS groundwater level exports, District = Surat",
+      "source_url": "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
+    }
+  ]
+}

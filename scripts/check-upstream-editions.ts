@@ -12,6 +12,7 @@
  */
 
 import { createHash } from "crypto";
+import { execSync } from "child_process";
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
 import { resolve, join } from "path";
 import { listAllPlaces } from "../src/lib/cities";
@@ -19,6 +20,33 @@ import { computeCoverage, cityOf } from "./lib/headwaters-coverage";
 import { sourceTypeProblem, type SourceType } from "./lib/registry-contract";
 
 const ROOT = resolve(__dirname, "..");
+
+/** Repo-tracked paths under the corpus-managed trees, resolved lazily and
+ *  once. Empty (never failing) when git is unavailable - existsSync remains
+ *  the primary check and git only widens it for corpus-replaced checkouts. */
+let gitTrackedPaths: Set<string> | null = null;
+function gitTracked(dep: string): boolean {
+  if (gitTrackedPaths === null) {
+    try {
+      gitTrackedPaths = new Set(
+        execSync("git ls-files -- public/data public/geojson", {
+          cwd: ROOT,
+          encoding: "utf8",
+        })
+          .split("\n")
+          .filter(Boolean),
+      );
+    } catch {
+      gitTrackedPaths = new Set();
+    }
+  }
+  const clean = dep.replace(/\/+$/, "");
+  if (gitTrackedPaths.has(clean)) return true;
+  // Directory joins ("public/data/cascade") name no single file.
+  const prefix = clean + "/";
+  for (const p of gitTrackedPaths) if (p.startsWith(prefix)) return true;
+  return false;
+}
 const REGISTRY_DIR = resolve(ROOT, "scripts/source-registry");
 const REPORT_FILE = resolve(ROOT, "editions-report.md");
 
@@ -348,7 +376,13 @@ function validate(entries: SourceEntry[]): string[] {
           problems.push(`${where}: malformed supabase lineage: ${dep}`);
         continue;
       }
-      if (!existsSync(resolve(ROOT, dep)))
+      // On disk OR tracked in git. The locked-corpus CI job replaces
+      // public/data with the released corpus, so a pre-release artifact
+      // (a preview-gated family awaiting its first neer-vazhvu-data
+      // release) exists only in the git index there - and its registry
+      // join must not read as a dangling path. A path in NEITHER place
+      // is still a genuine error.
+      if (!existsSync(resolve(ROOT, dep)) && !gitTracked(dep))
         problems.push(`${where}: dependsOn path not found: ${dep}`);
     }
   }

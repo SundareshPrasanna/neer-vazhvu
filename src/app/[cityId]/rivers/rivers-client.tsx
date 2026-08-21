@@ -6,6 +6,7 @@ import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
 import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
+import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { measureWorst } from "@/lib/rivers/measure";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
@@ -16,6 +17,25 @@ import type {
   PollutionSource as IndustrialSource,
   IndustrialPollutionData as IndustrialSourcesFile,
 } from "@/types/industrial-pollution";
+
+interface CetpComplianceParameter {
+  parameter: string;
+  norm: { kind: string; text: string; min?: number; max?: number };
+  sampled: number;
+  exceedances: number;
+  samples: { date: string; value?: number; below_detection_limit?: boolean; exceeds: boolean }[];
+}
+
+interface CetpCompliance {
+  id: string;
+  short: string;
+  capacity_mld: number;
+  receiving_water: string;
+  sample_dates: string[];
+  parameters: CetpComplianceParameter[];
+  total_exceedances: number;
+  parameters_ever_breached: number;
+}
 import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 
 import { RiverPanel } from "@/components/rivers/river-panel";
@@ -116,6 +136,8 @@ export interface RiverInfo {
    *  overrides come with Hyderabad's translation pass. */
   display_name_te?: string;
   display_name_bn?: string;
+  /** Native-script name shown under the English name (Marathi cities). */
+  display_name_mr?: string;
 }
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
@@ -243,6 +265,10 @@ export default function RiversClient({
   const [cpcb, setCpcb] = useState<CpcbFile | null>(null);
   const [events, setEvents] = useState<RiverEvent[]>([]);
   const [industrial, setIndustrial] = useState<IndustrialSource[]>([]);
+  // Consent-compliance record for cities that publish one (Surat today). Keyed
+  // by the `cetp_id` on the industrial source, so the join is declared in the
+  // data rather than inferred from an id string.
+  const [cetpCompliance, setCetpCompliance] = useState<Record<string, CetpCompliance>>({});
   const [drainFile, setDrainFile] = useState<DrainQualityFile | null>(null);
 
   useEffect(() => {
@@ -292,6 +318,24 @@ export default function RiversClient({
       .then((r) => (r.ok ? (r.json() as Promise<RiverEventsFile>) : null))
       .then((data) => setEvents(data?.events ?? []))
       .catch(() => setEvents([]));
+  }, [cityId]);
+
+  // Optional CETP consent-compliance record. Absent for every city but Surat,
+  // and the panel simply does not render where it is missing.
+  useEffect(() => {
+    let live = true;
+    fetch(`/data/cetp-compliance-${cityId}.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d: { cetps?: CetpCompliance[] }) => {
+        if (!live) return;
+        const byId: Record<string, CetpCompliance> = {};
+        for (const c of d.cetps ?? []) byId[c.id] = c;
+        setCetpCompliance(byId);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
   }, [cityId]);
 
   // Optional industrial pollution sources overlay.
@@ -492,6 +536,7 @@ export default function RiversClient({
         <span className="font-semibold text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">
           {cityDisplayName} - {scopeLabel}
         </span>
+        <WaterwayLinks cityId={cityId} />
         {showHeaderStats && (
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers
@@ -597,7 +642,11 @@ export default function RiversClient({
               cityId={cityId}
               cityDisplayName={cityDisplayName}
               additionalSections={
-                <RiverExtraSections events={selectedEvents} industrial={selectedIndustrial} />
+                <RiverExtraSections
+                  events={selectedEvents}
+                  industrial={selectedIndustrial}
+                  cetpCompliance={cetpCompliance}
+                />
               }
               onClose={() => setSelectedRiverId(null)}
             />
@@ -620,7 +669,11 @@ export default function RiversClient({
             cityId={cityId}
             cityDisplayName={cityDisplayName}
             additionalSections={
-              <RiverExtraSections events={selectedEvents} industrial={selectedIndustrial} />
+              <RiverExtraSections
+                  events={selectedEvents}
+                  industrial={selectedIndustrial}
+                  cetpCompliance={cetpCompliance}
+                />
             }
             onClose={() => setSelectedRiverId(null)}
           />
@@ -693,7 +746,17 @@ const EVENT_TONE: Record<EventCategory, { bg: string; text: string; label: strin
 /** Unknown categories must degrade to the news tone, never crash the panel. */
 const DEFAULT_TONE = EVENT_TONE.news;
 
-function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; industrial: IndustrialSource[] }) {
+function RiverExtraSections({
+  events,
+  industrial,
+  cetpCompliance,
+}: {
+  events: RiverEvent[];
+  industrial: IndustrialSource[];
+  /** Consent-compliance records keyed by `cetp_id`; empty for cities that
+   *  publish none, in which case the panel simply does not render. */
+  cetpCompliance: Record<string, CetpCompliance>;
+}) {
   if (events.length === 0 && industrial.length === 0) return null;
   return (
     <>
@@ -761,6 +824,38 @@ function RiverExtraSections({ events, industrial }: { events: RiverEvent[]; indu
               <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                 {s.operator}
               </div>
+              {(() => {
+                const c = s.cetp_id ? cetpCompliance[s.cetp_id] : undefined;
+                if (!c) return null;
+                const worst = [...c.parameters]
+                  .filter((p) => p.exceedances > 0)
+                  .sort((a, b) => b.exceedances - a.exceedances)
+                  .slice(0, 4);
+                return (
+                  <div className="mt-2 rounded border border-amber-300 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/20 p-2">
+                    <div className="text-[10px] uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                      Against its own GPCB consent
+                    </div>
+                    <div className="text-[11px] text-slate-700 dark:text-slate-300 mt-0.5">
+                      <span className="font-semibold">{c.total_exceedances}</span> results outside the
+                      plant&apos;s licence across{" "}
+                      <span className="font-semibold">{c.parameters_ever_breached}</span> parameters,
+                      over {c.sample_dates.length} monthly samples.
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {worst.map((p) => (
+                        <span
+                          key={p.parameter}
+                          className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700"
+                          title={`Consent limit ${p.norm.text}`}
+                        >
+                          {p.parameter} {p.exceedances}/{p.sampled}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               {s.pollutants.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
                   {s.pollutants.map((p) => (
@@ -820,12 +915,14 @@ function RiverInfoOnlyPanel({
           {(info.display_name_ta ||
             info.display_name_hi ||
             info.display_name_te ||
-            info.display_name_bn) && (
+            info.display_name_bn ||
+            info.display_name_mr) && (
             <span className="text-sm text-slate-500 dark:text-slate-400">
               {info.display_name_ta ||
                 info.display_name_hi ||
                 info.display_name_te ||
-                info.display_name_bn}
+                info.display_name_bn ||
+                info.display_name_mr}
             </span>
           )}
         </div>

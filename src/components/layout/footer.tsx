@@ -29,6 +29,16 @@ const CITY_FOOTER_SOURCES: Record<
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  pune: [
+    { label: "PMC", href: "https://webadmin.pmc.gov.in/en/jsonapi/node/reports_and_dpr" },
+    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+  ],
+  surat: [
+    { label: "Surat Municipal Corporation", href: "https://www.suratmunicipal.gov.in/Home/RainfallInfo" },
+    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
+    { label: "GEMI", href: "https://gemi.gujarat.gov.in/" },
+  ],
   mumbai: [
     { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
     { label: "MPCB", href: "https://mpcb.gov.in/" },
@@ -68,14 +78,20 @@ export function Footer() {
     return null;
   }
 
+  // /waterways/* is not a city (parsePath would resolve it to Chennai and
+  // list CMWSSB as a core source of a canal page). No city source list;
+  // "all sources" points at the page's own methods panel.
+  const isWaterway = pathname.startsWith("/waterways");
   const { cityId } = parsePath(pathname);
   // Fall back to NOTHING, not to Chennai. The old `?? CITY_FOOTER_SOURCES.chennai`
   // meant any city missing from the map above told its readers that CMWSSB -
   // Chennai's utility - was one of their core live sources. Kolkata shipped
   // live that way, and Gurugram would have. A city with no entry now renders
   // no source list, which is merely incomplete rather than false.
-  const sources = CITY_FOOTER_SOURCES[cityId] ?? [];
-  const aboutHref = cityId === "chennai" ? "/about#data-sources" : `/${cityId}/about#data-sources`;
+  const sources = isWaterway ? [] : (CITY_FOOTER_SOURCES[cityId] ?? []);
+  const aboutHref = isWaterway
+    ? "#methods"
+    : cityId === "chennai" ? "/about#data-sources" : `/${cityId}/about#data-sources`;
 
   return (
     <footer className="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 mt-12">

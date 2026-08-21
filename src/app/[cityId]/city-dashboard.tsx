@@ -15,6 +15,7 @@ import { DaysLeftHero } from "@/components/dashboard/days-left-hero";
 import { AllocationHero } from "@/components/dashboard/allocation-hero";
 import { CauveryPumpingHero } from "@/components/dashboard/cauvery-pumping-hero";
 import { DrainageCapacityHero } from "@/components/dashboard/drainage-capacity-hero";
+import { FloodHeadroomHero } from "@/components/dashboard/flood-headroom-hero";
 import { SewageBalanceCard } from "@/components/dashboard/sewage-balance-card";
 import { BangaloreDailyBriefing } from "@/components/dashboard/bangalore-daily-briefing";
 import { buildBangaloreBriefing } from "@/lib/insights/bangalore-briefing";
@@ -457,6 +458,16 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           scopeLabel={config.dashboardScopes?.city}
         />
       )}
+      {/* Cities that impound nothing but whose publisher states the trigger
+          levels: the chain rain -> dam -> weir -> creek, rendered as distance
+          to each published threshold. Surat today. */}
+      {config.heroMode === "flood-headroom" && config.floodChain && (
+        <FloodHeadroomHero
+          cityId={cityId}
+          cityDisplayName={config.displayName}
+          config={config.floodChain}
+        />
+      )}
       {/* Second card, deliberately after the hero: for a city whose emergency
           is sewage and drainage rather than scarcity, "where does it go" is
           the question immediately after "how often do the drains fail". */}
@@ -643,13 +654,33 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
         </Link>
       </div>
 
-      {/* Footer methodology */}
+      {/* Footer methodology.
+
+          BOTH CLAUSES ARE CONDITIONAL, and neither used to be. This paragraph
+          asserted "Reservoir levels for <city> from <acronym>" for every city,
+          including the run-of-river ones that impound nothing - Kolkata and
+          Gurugram both shipped live saying it - and it printed the consumption
+          figure as "~- MLD demand" wherever defaultConsumptionMld is null,
+          then promised sliders to adjust a number that is not there.
+
+          `impounds` is the same signal ReservoirCards uses a few dozen lines
+          up, for the same reason: a city's water_sources say whether it
+          actually stores water or just takes it from a river. */}
       <div className="text-xs text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
         <p>
-          <span className="font-semibold">Methodology:</span> Reservoir
-          levels for {config.displayName} from {config.primaryAuthority.acronym}.
-          Daily consumption assumptions (~{config.defaultConsumptionMld ?? "-"} MLD demand) are starting
-          points; the sliders above let you substitute your own. See the
+          <span className="font-semibold">Methodology:</span>{" "}
+          {config.waterSources.some((s) => s.type === "reservoir")
+            ? "Reservoir levels"
+            : "Source levels"}{" "}
+          for {config.displayName} from {config.primaryAuthority.acronym}.
+          {config.defaultConsumptionMld != null && (
+            <>
+              {" "}Daily consumption assumptions (~{config.defaultConsumptionMld} MLD
+              demand) are starting points; the sliders above let you substitute
+              your own.
+            </>
+          )}{" "}
+          See the
           <Link href={`/${cityId}/about`} className="text-blue-600 dark:text-blue-400 hover:underline mx-1">
             About page
           </Link>

@@ -71,7 +71,16 @@ export interface WaterSourceConfig {
 export interface GroundwaterViewsConfig {
   /** Block-level CGWB exploitation (GWR%) choropleth. The canonical
    *  authoritative map for any city; available wherever gwr-blocks data
-   *  exists. Default true. */
+   *  exists. Default true.
+   *
+   *  "Wherever the data exists" is now ENFORCED at render, not just meant:
+   *  the toggle, the legend and the page title all gate on the loaded
+   *  `blocks` array being non-empty, the same way `depth` gates on
+   *  interpolated wards and `risk` on the risk file. IN-GRES publishes some
+   *  states at DISTRICT level only (Gujarat, Haryana), and those cities'
+   *  gwr-blocks artifacts carry a `districts` payload with `blocks: []` -
+   *  so a bare `true` here used to title the page "CGWB block exploitation
+   *  (GWR)" and draw a percent legend over an empty map. */
   exploitation?: boolean;
   /** Per-ward IDW-interpolated depth choropleth from sparse stations.
    *  Honest only when ward-survey data is dense (Chennai: OpenCity
@@ -192,6 +201,33 @@ export interface FloodViewConfig {
  * what it does have is a published, falsifiable engineering promise that the
  * sky routinely breaks.
  */
+/**
+ * Editorial framing for the `flood-headroom` hero.
+ *
+ * Deliberately thin. Unlike `drainageCapacity`, this config carries NO
+ * thresholds: every number the hero renders (full reservoir level, causeway
+ * overflow level, each khadi's danger level) is scraped from the publisher's
+ * own page into `<cityId>-flood-chain.json`. Putting a threshold here would
+ * let config and source drift apart silently, and the whole point of this
+ * hero is that we did not choose the thresholds.
+ *
+ * What lives here is the framing the data cannot supply: what the chain is,
+ * who operates the top of it, and where the reader goes to check.
+ */
+export interface FloodChainConfig {
+  /** One clause naming the chain, e.g. "rain over the city, releases from
+   *  Ukai, the weir it backs up behind, and five creeks through the middle
+   *  of Surat". Rendered as the hero's subtitle. */
+  chainNote: string;
+  /** Who operates the upstream control the city does not. Surfaced because
+   *  the single most important fact about Surat's flood risk is that the
+   *  release decision is not the city's to make. */
+  upstreamOperator?: { name: string; note?: string };
+  /** Deep link to the publisher's live page, so a reader can verify the
+   *  reading against the source within one click. */
+  sourceLink?: { label: string; href: string };
+}
+
 export interface DrainageCapacityConfig {
   /** The design standard, in mm of rainfall per hour. Must be one of the
    *  thresholds on the ladder precomputed by
@@ -382,7 +418,7 @@ export interface BasePlaceConfig {
    *  the river stations downstream. Reads `<cityId>-stps.json`. Omit -> hidden. */
   hasTreatmentDischarge?: boolean;
 
-  /** Which KIND of tanker data this city has. The three are not
+  /** Which KIND of tanker data this city has. The four are not
    *  interchangeable and must not share a renderer - they answer different
    *  questions off different evidence:
    *  - `household-survey` (default, Bengaluru): longitudinal price surveys of
@@ -398,11 +434,28 @@ export interface BasePlaceConfig {
    *    because a booking here IS a collection, and no ward or section unit
    *    because the analytical dimensions are station, water type and buyer.
    *    Reads `<cityId>-tanker-sales.json`.
+   *  - `delivery-register` (Pune): the corporation's DISPATCH record. One
+   *    spreadsheet per filling point per working day, one row per tanker
+   *    already sent. THERE ARE NO BOOKINGS IN IT, so there is no fulfilment
+   *    rate - the measure that carries the utility-ledger page does not exist
+   *    here, which is exactly why this is a separate kind rather than Pune
+   *    pushed through Hyderabad's panel. No prices and no volumes either
+   *    (tanker capacity is not on the row). What it does carry is a
+   *    scheduled-vs-on-demand flag per trip, which is the finding, and units
+   *    of filling point, prabhag and vehicle. Reads `<cityId>-tankers.json`,
+   *    discriminated from utility-ledger by this flag rather than by filename.
    *
-   *  Adding a fourth kind is cheaper than bending one of these: forcing a
+   *  Adding a fifth kind is cheaper than bending one of these: forcing a
    *  city through the wrong panel means making its required fields optional
-   *  and gutting its copy, which damages the city the panel was written for. */
-  tankerDataKind?: 'household-survey' | 'utility-ledger' | 'utility-sales-ledger';
+   *  and gutting its copy, which damages the city the panel was written for.
+   *  `delivery-register` is the worked example - it was added rather than
+   *  reusing utility-ledger, whose bookings/fulfilment copy would have had to
+   *  be deleted for a city that has neither. */
+  tankerDataKind?:
+    | 'household-survey'
+    | 'utility-ledger'
+    | 'utility-sales-ledger'
+    | 'delivery-register';
 
   /** One-line description of what this city's tanker page actually shows.
    *  The shape of tanker data differs fundamentally by city - Bangalore has
@@ -513,6 +566,15 @@ export interface BasePlaceConfig {
    *    impounded storage at all, so it is the honest choice for
    *    run-of-river cities where `days-left` is undefined rather than
    *    merely awkward. Requires `drainageCapacity`.
+   *  - `flood-headroom`: Surat-style story for cities whose emergency is
+   *    arrival rather than scarcity, and whose publisher hands us BOTH a
+   *    live reading and the threshold it is measured against. Renders the
+   *    chain rain -> dam -> weir -> creek as distance-to-threshold at each
+   *    link, from `<cityId>-flood-chain.json`. Like `drainage-capacity` it
+   *    needs no impounded storage; unlike it, the thresholds are published
+   *    operational trigger levels rather than a design standard, so the
+   *    hero states headroom as fact rather than modelling exceedance.
+   *    Requires `floodChain`.
    *  - `none`: suppress hero entirely (cities with no useful summary
    *    yet). Reservoir cards + history chart still render below.
    *
@@ -522,6 +584,7 @@ export interface BasePlaceConfig {
     | 'allocation'
     | 'cauvery-pumping'
     | 'drainage-capacity'
+    | 'flood-headroom'
     | 'none';
 
   /** Drainage design standard for the `drainage-capacity` hero.
@@ -535,6 +598,12 @@ export interface BasePlaceConfig {
    *  carry a different rating, that is a config edit and a re-cited
    *  source, not a code change. */
   drainageCapacity?: DrainageCapacityConfig;
+
+  /** Editorial framing for the `flood-headroom` hero.
+   *  Required when heroMode === 'flood-headroom'; ignored otherwise.
+   *  Thresholds are NOT here - they are scraped from the publisher into
+   *  `<cityId>-flood-chain.json`. See FloodChainConfig. */
+  floodChain?: FloodChainConfig;
 
   /** When the days-left runway is ALREADY published by the source (e.g. BMC's
    *  Mumbai-lakes feed states "days of supply left"), set this so the shared

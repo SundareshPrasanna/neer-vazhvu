@@ -53,3 +53,19 @@ export function depThemeTitle(t: { theme: string; subtheme?: string }): string {
   const base = DEP_THEME_LABEL[t.theme] ?? t.theme;
   return t.subtheme ? `${base}: ${DEP_SUBTHEME_LABEL[t.subtheme] ?? t.subtheme}` : base;
 }
+
+/** Bar accents for the PRS status editions, oldest to newest. Sliced from the
+ *  END, so a two-edition basin gets exactly the rose/crimson pair the
+ *  Arkavathi has always used and a third edition extends it backwards. */
+const EPOCH_ACCENTS = ["#fecdd3", "#fda4af", "#fb7185", "#b91c1c"];
+export function withEpochAccents<T>(epochs: T[]): (T & { accent: string })[] {
+  const accents = EPOCH_ACCENTS.slice(-Math.max(epochs.length, 1));
+  return epochs.map((e, i) => ({ ...e, accent: accents[i] ?? EPOCH_ACCENTS[0] }));
+}
+
+/** Map colours for the stretch, indexed from the NEWEST edition backwards. The
+ *  growth view draws older reaches on top and thicker, so each newer band
+ *  shows only where the stretch extended in that edition. */
+const PRS_MAP_COLORS = ["#dc2626", "#f97316", "#fbbf24", "#fde68a"];
+export const prsMapColor = (fromNewest: number) =>
+  PRS_MAP_COLORS[Math.min(Math.max(fromNewest, 0), PRS_MAP_COLORS.length - 1)];

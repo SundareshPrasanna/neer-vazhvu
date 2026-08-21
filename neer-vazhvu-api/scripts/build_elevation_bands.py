@@ -102,6 +102,19 @@ BASINS = {
         "simplify_deg": 0.001,  # ~110 m - basin zoom, not street zoom
         "min_area_deg2": 1e-5,  # ~12 ha - drop basin-scale slivers
     },
+    "kabini": {
+        "boundary": "public/data/basins/kabini/boundary.geojson",
+        "out": "public/data/basins/kabini/elevation-bands.geojson",
+        # The Nagarahole/Bandipur ghat edge (1,486 m) down to the Cauvery
+        # confluence at T. Narasipura (634 m). Edges sit on the FABDEM
+        # percentiles this script prints (p0=634 p5=668 p20=700 p40=735
+        # p60=772 p80=825 p95=915 p100=1486): four fifths of the basin is a
+        # 670-825 m plain, so the plain is cut finer than the ghat tail.
+        "bands": [630, 670, 700, 735, 775, 825, 915],
+        "bbox_buffer_deg": 0.02,
+        "simplify_deg": 0.001,
+        "min_area_deg2": 1e-5,
+    },
 }
 
 # Sentinel for FABDEM's masked pixels (the sea). Land - including genuinely

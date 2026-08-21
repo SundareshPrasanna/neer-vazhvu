@@ -1,0 +1,690 @@
+{
+ "nvdm": "1.0",
+ "dataset": "data-root/tankers",
+ "scope": {
+  "kind": "city",
+  "id": "pune"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "pmc-tanker-register",
+    "title": "PMC daily tanker delivery registers, per filling point (Drupal JSON:API, node/water_tanker)",
+    "publisher": "Pune Municipal Corporation, Water Supply Department",
+    "license": "published openly by the corporation through its own JSON:API without stated terms; cited with attribution. Published here ONLY as counts - the source rows carry recipient society names, street addresses and phone numbers, and none of that is republished",
+    "role": "input"
+   }
+  ],
+  "method": "derived",
+  "produced_at": "2026-08-17",
+  "produced_by": "neer-vazhvu-api/scripts/build_pune_tankers.py",
+  "conventions": {
+   "aggregates_only": "One row per tanker delivered. Recipient society name, street address and phone number are present on the source rows and are NOT republished in any form - the recipients are private housing societies, not commercial buyers. Only counts ship.",
+   "devanagari": "Dates and some prabhag values are written in Devanagari numerals in the source and are translated before parsing."
+  }
+ },
+ "_source": "PMC daily tanker delivery registers",
+ "_source_url": "https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker",
+ "_fetched": "2026-08-17",
+ "_note": "PMC's own operational record of tanker supply: one spreadsheet per filling point per working day, one row per tanker sent. This is neither a booking system nor a survey, and no other city on this platform publishes tanker data at this resolution.",
+ "kind": "delivery-register",
+ "totals": {
+  "deliveries": 57370,
+  "registers_published": 411,
+  "registers_parsed": 400,
+  "distinct_days": 104,
+  "distinct_vehicles": 1956,
+  "deliveries_dated": 18038,
+  "deliveries_undated": 39332,
+  "trips_scheduled": 35338,
+  "trips_on_demand": 49548,
+  "filling_points": 7,
+  "_undated_note": "Registers with no date anywhere - not in the title, not in the sheet. PMC's upload timestamp is deliberately NOT used as a substitute: it is when the file was posted, not the day the tankers ran."
+ },
+ "on_demand_split": {
+  "rows_in_scope": 57225,
+  "rows_in_scope_pct": 99.7,
+  "trips_scheduled": 35338,
+  "trips_on_demand": 49548,
+  "on_demand_share_pct": 58.4,
+  "_scope_note": "Computed only over rows from a layout that HAS an on-demand column. The Bund Garden sheets do not carry one at all, so including them would push the on-demand share toward zero for a reason unrelated to demand."
+ },
+ "coverage": {
+  "from": "2026-04-17",
+  "to": "2026-08-03",
+  "_note": "Coverage starts when PMC began publishing these registers, not when tanker supply began. There is no earlier archive on this endpoint."
+ },
+ "daily": [
+  {
+   "date": "2026-04-17",
+   "deliveries": 377
+  },
+  {
+   "date": "2026-04-18",
+   "deliveries": 34
+  },
+  {
+   "date": "2026-04-19",
+   "deliveries": 32
+  },
+  {
+   "date": "2026-04-20",
+   "deliveries": 30
+  },
+  {
+   "date": "2026-04-21",
+   "deliveries": 26
+  },
+  {
+   "date": "2026-04-24",
+   "deliveries": 561
+  },
+  {
+   "date": "2026-04-25",
+   "deliveries": 723
+  },
+  {
+   "date": "2026-04-26",
+   "deliveries": 432
+  },
+  {
+   "date": "2026-04-27",
+   "deliveries": 51
+  },
+  {
+   "date": "2026-04-28",
+   "deliveries": 197
+  },
+  {
+   "date": "2026-04-29",
+   "deliveries": 47
+  },
+  {
+   "date": "2026-04-30",
+   "deliveries": 47
+  },
+  {
+   "date": "2026-05-01",
+   "deliveries": 50
+  },
+  {
+   "date": "2026-05-02",
+   "deliveries": 38
+  },
+  {
+   "date": "2026-05-03",
+   "deliveries": 76
+  },
+  {
+   "date": "2026-05-04",
+   "deliveries": 34
+  },
+  {
+   "date": "2026-05-05",
+   "deliveries": 36
+  },
+  {
+   "date": "2026-05-06",
+   "deliveries": 33
+  },
+  {
+   "date": "2026-05-07",
+   "deliveries": 42
+  },
+  {
+   "date": "2026-05-08",
+   "deliveries": 35
+  },
+  {
+   "date": "2026-05-09",
+   "deliveries": 34
+  },
+  {
+   "date": "2026-05-10",
+   "deliveries": 32
+  },
+  {
+   "date": "2026-05-11",
+   "deliveries": 31
+  },
+  {
+   "date": "2026-05-12",
+   "deliveries": 39
+  },
+  {
+   "date": "2026-05-13",
+   "deliveries": 602
+  },
+  {
+   "date": "2026-05-14",
+   "deliveries": 29
+  },
+  {
+   "date": "2026-05-15",
+   "deliveries": 39
+  },
+  {
+   "date": "2026-05-16",
+   "deliveries": 38
+  },
+  {
+   "date": "2026-05-17",
+   "deliveries": 27
+  },
+  {
+   "date": "2026-05-18",
+   "deliveries": 42
+  },
+  {
+   "date": "2026-05-19",
+   "deliveries": 42
+  },
+  {
+   "date": "2026-05-20",
+   "deliveries": 32
+  },
+  {
+   "date": "2026-05-21",
+   "deliveries": 46
+  },
+  {
+   "date": "2026-05-22",
+   "deliveries": 165
+  },
+  {
+   "date": "2026-05-23",
+   "deliveries": 162
+  },
+  {
+   "date": "2026-05-24",
+   "deliveries": 208
+  },
+  {
+   "date": "2026-05-25",
+   "deliveries": 135
+  },
+  {
+   "date": "2026-05-26",
+   "deliveries": 71
+  },
+  {
+   "date": "2026-05-27",
+   "deliveries": 282
+  },
+  {
+   "date": "2026-05-28",
+   "deliveries": 347
+  },
+  {
+   "date": "2026-05-29",
+   "deliveries": 204
+  },
+  {
+   "date": "2026-05-30",
+   "deliveries": 200
+  },
+  {
+   "date": "2026-05-31",
+   "deliveries": 228
+  },
+  {
+   "date": "2026-06-01",
+   "deliveries": 640
+  },
+  {
+   "date": "2026-06-02",
+   "deliveries": 268
+  },
+  {
+   "date": "2026-06-03",
+   "deliveries": 700
+  },
+  {
+   "date": "2026-06-04",
+   "deliveries": 628
+  },
+  {
+   "date": "2026-06-05",
+   "deliveries": 675
+  },
+  {
+   "date": "2026-06-06",
+   "deliveries": 231
+  },
+  {
+   "date": "2026-06-07",
+   "deliveries": 228
+  },
+  {
+   "date": "2026-06-08",
+   "deliveries": 185
+  },
+  {
+   "date": "2026-06-09",
+   "deliveries": 248
+  },
+  {
+   "date": "2026-06-10",
+   "deliveries": 357
+  },
+  {
+   "date": "2026-06-11",
+   "deliveries": 248
+  },
+  {
+   "date": "2026-06-12",
+   "deliveries": 310
+  },
+  {
+   "date": "2026-06-13",
+   "deliveries": 339
+  },
+  {
+   "date": "2026-06-14",
+   "deliveries": 297
+  },
+  {
+   "date": "2026-06-15",
+   "deliveries": 210
+  },
+  {
+   "date": "2026-06-16",
+   "deliveries": 369
+  },
+  {
+   "date": "2026-06-17",
+   "deliveries": 374
+  },
+  {
+   "date": "2026-06-18",
+   "deliveries": 306
+  },
+  {
+   "date": "2026-06-19",
+   "deliveries": 65
+  },
+  {
+   "date": "2026-06-20",
+   "deliveries": 449
+  },
+  {
+   "date": "2026-06-21",
+   "deliveries": 50
+  },
+  {
+   "date": "2026-06-22",
+   "deliveries": 69
+  },
+  {
+   "date": "2026-06-23",
+   "deliveries": 477
+  },
+  {
+   "date": "2026-06-24",
+   "deliveries": 60
+  },
+  {
+   "date": "2026-06-25",
+   "deliveries": 475
+  },
+  {
+   "date": "2026-06-26",
+   "deliveries": 416
+  },
+  {
+   "date": "2026-06-27",
+   "deliveries": 411
+  },
+  {
+   "date": "2026-06-28",
+   "deliveries": 68
+  },
+  {
+   "date": "2026-06-29",
+   "deliveries": 393
+  },
+  {
+   "date": "2026-06-30",
+   "deliveries": 388
+  },
+  {
+   "date": "2026-07-01",
+   "deliveries": 55
+  },
+  {
+   "date": "2026-07-02",
+   "deliveries": 74
+  },
+  {
+   "date": "2026-07-03",
+   "deliveries": 56
+  },
+  {
+   "date": "2026-07-04",
+   "deliveries": 86
+  },
+  {
+   "date": "2026-07-05",
+   "deliveries": 66
+  },
+  {
+   "date": "2026-07-06",
+   "deliveries": 409
+  },
+  {
+   "date": "2026-07-07",
+   "deliveries": 47
+  },
+  {
+   "date": "2026-07-08",
+   "deliveries": 48
+  },
+  {
+   "date": "2026-07-09",
+   "deliveries": 54
+  },
+  {
+   "date": "2026-07-10",
+   "deliveries": 54
+  },
+  {
+   "date": "2026-07-11",
+   "deliveries": 24
+  },
+  {
+   "date": "2026-07-12",
+   "deliveries": 17
+  },
+  {
+   "date": "2026-07-13",
+   "deliveries": 22
+  },
+  {
+   "date": "2026-07-14",
+   "deliveries": 33
+  },
+  {
+   "date": "2026-07-15",
+   "deliveries": 25
+  },
+  {
+   "date": "2026-07-16",
+   "deliveries": 26
+  },
+  {
+   "date": "2026-07-17",
+   "deliveries": 29
+  },
+  {
+   "date": "2026-07-18",
+   "deliveries": 22
+  },
+  {
+   "date": "2026-07-19",
+   "deliveries": 21
+  },
+  {
+   "date": "2026-07-20",
+   "deliveries": 20
+  },
+  {
+   "date": "2026-07-21",
+   "deliveries": 22
+  },
+  {
+   "date": "2026-07-22",
+   "deliveries": 4
+  },
+  {
+   "date": "2026-07-23",
+   "deliveries": 21
+  },
+  {
+   "date": "2026-07-24",
+   "deliveries": 22
+  },
+  {
+   "date": "2026-07-25",
+   "deliveries": 26
+  },
+  {
+   "date": "2026-07-26",
+   "deliveries": 20
+  },
+  {
+   "date": "2026-07-27",
+   "deliveries": 24
+  },
+  {
+   "date": "2026-07-28",
+   "deliveries": 25
+  },
+  {
+   "date": "2026-07-29",
+   "deliveries": 20
+  },
+  {
+   "date": "2026-08-01",
+   "deliveries": 355
+  },
+  {
+   "date": "2026-08-03",
+   "deliveries": 441
+  }
+ ],
+ "busiest_day": {
+  "date": "2026-04-25",
+  "deliveries": 723
+ },
+ "filling_points": [
+  {
+   "point": "Ramtekadi",
+   "deliveries": 30333,
+   "deliveries_dated": 11251,
+   "days_reporting": 42,
+   "mean_per_dated_day": 267.9
+  },
+  {
+   "point": "Bund Garden",
+   "deliveries": 19232,
+   "deliveries_dated": 1528,
+   "days_reporting": 5,
+   "mean_per_dated_day": 305.6
+  },
+  {
+   "point": "SNDT",
+   "deliveries": 3576,
+   "deliveries_dated": 3576,
+   "days_reporting": 95,
+   "mean_per_dated_day": 37.6
+  },
+  {
+   "point": "Swargate",
+   "deliveries": 3081,
+   "deliveries_dated": 567,
+   "days_reporting": 1,
+   "mean_per_dated_day": 567.0
+  },
+  {
+   "point": "Parvati",
+   "deliveries": 430,
+   "deliveries_dated": 398,
+   "days_reporting": 64,
+   "mean_per_dated_day": 6.2
+  },
+  {
+   "point": "Chaturshrungi",
+   "deliveries": 374,
+   "deliveries_dated": 374,
+   "days_reporting": 2,
+   "mean_per_dated_day": 187.0
+  },
+  {
+   "point": "Lashkar",
+   "deliveries": 301,
+   "deliveries_dated": 301,
+   "days_reporting": 1,
+   "mean_per_dated_day": 301.0
+  }
+ ],
+ "prabhags": [
+  {
+   "ward": "4",
+   "deliveries": 11916
+  },
+  {
+   "ward": "5",
+   "deliveries": 2961
+  },
+  {
+   "ward": "15",
+   "deliveries": 2731
+  },
+  {
+   "ward": "41",
+   "deliveries": 1995
+  },
+  {
+   "ward": "1",
+   "deliveries": 1800
+  },
+  {
+   "ward": "33",
+   "deliveries": 1302
+  },
+  {
+   "ward": "38",
+   "deliveries": 745
+  },
+  {
+   "ward": "3",
+   "deliveries": 741
+  },
+  {
+   "ward": "29",
+   "deliveries": 726
+  },
+  {
+   "ward": "10",
+   "deliveries": 606
+  },
+  {
+   "ward": "30",
+   "deliveries": 495
+  },
+  {
+   "ward": "6",
+   "deliveries": 483
+  },
+  {
+   "ward": "19",
+   "deliveries": 266
+  },
+  {
+   "ward": "32",
+   "deliveries": 226
+  },
+  {
+   "ward": "9",
+   "deliveries": 224
+  },
+  {
+   "ward": "31",
+   "deliveries": 207
+  },
+  {
+   "ward": "7",
+   "deliveries": 150
+  },
+  {
+   "ward": "17",
+   "deliveries": 137
+  },
+  {
+   "ward": "24",
+   "deliveries": 111
+  },
+  {
+   "ward": "27",
+   "deliveries": 104
+  },
+  {
+   "ward": "22",
+   "deliveries": 62
+  },
+  {
+   "ward": "11",
+   "deliveries": 58
+  },
+  {
+   "ward": "25",
+   "deliveries": 54
+  },
+  {
+   "ward": "23",
+   "deliveries": 48
+  },
+  {
+   "ward": "2",
+   "deliveries": 11
+  },
+  {
+   "ward": "26",
+   "deliveries": 10
+  },
+  {
+   "ward": "16",
+   "deliveries": 10
+  },
+  {
+   "ward": "13",
+   "deliveries": 8
+  },
+  {
+   "ward": "18",
+   "deliveries": 4
+  },
+  {
+   "ward": "28",
+   "deliveries": 2
+  },
+  {
+   "ward": "34",
+   "deliveries": 1
+  },
+  {
+   "ward": "35",
+   "deliveries": 1
+  }
+ ],
+ "outside_corporation": {
+  "label": "NAGAR PARISHAD (Uruli Devachi / Fursungi)",
+  "deliveries": 2083,
+  "share_of_ward_attributed_pct": 6.9,
+  "_finding": "PMC is still running tankers to the area it EXCLUDED from the corporation in 2024, when Uruli Devachi and Fursungi were taken out to form their own nagar parishad. The register attributes these deliveries to 'NAGAR PARISHAD' rather than to a prabhag."
+ },
+ "data_quality": {
+  "rows_with_prabhag_pct": 52.8,
+  "rows_with_vehicle_pct": 93.6,
+  "trip_cells_rejected": 1487,
+  "registers_unparsed": 11,
+  "registers_undated": 167,
+  "unmatched_titles": {
+   "एस.एन.डी.टी.28-04-2026": 1
+  },
+  "_note": "The prabhag column is populated on about half the rows, so the per-prabhag table below is a partial attribution and must not be read as a full ward ranking. Titles are hand-typed and a few do not match any known filling point; they are counted here rather than silently dropped. trip_cells_rejected counts trip columns holding a misaligned vehicle number rather than a count.",
+  "unparsed_registers": [
+   "SWARGATE 1 02.05.2026: no header row found",
+   "SWARGATE 1 03.05.2026: no header row found",
+   "SWARGATE 1 04.05.2026: no header row found",
+   "SWARGATE 1 05.05.2026: no header row found",
+   "SWARGATE 1 06.05.2026: no header row found",
+   "SWARGATE 1 07.05.2026: no header row found",
+   "SWARGATE 1 08.05.2026: no header row found",
+   "SWARGATE 1 09.05.2026: no header row found",
+   "SWARGATE 1 10.05.2026: no header row found",
+   "SWARGATE 1 11.05.2026 : no header row found",
+   "SWARGATE 1 12.05.2026: no header row found"
+  ]
+ }
+}

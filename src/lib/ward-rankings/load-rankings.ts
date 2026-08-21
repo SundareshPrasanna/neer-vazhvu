@@ -7,6 +7,7 @@ import {
   type WardRankings,
 } from "@/lib/utils/ward-rankings";
 import { loadProfilesServer } from "@/lib/utils/load-profiles-server";
+import { hasWardRankings } from "./cities";
 
 /**
  * Normalised "one row per ward" shape that powers the rankings table.
@@ -74,6 +75,10 @@ export interface WardRankingsBundle {
 /** Public entry point: returns the ranking bundle for a city, or null
  *  if no ranking data is available for that city. */
 export function loadWardRankings(cityId: string): WardRankingsBundle | null {
+  // The membership test lives in ./cities so a client component can ask the
+  // same question without importing this fs-backed module. Keep the branches
+  // below in step with that set - ward-rankings-cities.test.ts asserts it.
+  if (!hasWardRankings(cityId)) return null;
   if (cityId === "madurai") return loadMaduraiRankings();
   if (cityId === "chennai") return loadChennaiRankings();
   if (cityId === "bangalore") return loadBangaloreRankings();
