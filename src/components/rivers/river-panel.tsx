@@ -94,16 +94,34 @@ export function RiverPanel({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mb-3 text-center">
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
-            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{river.length_km} km</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("rivers.length")}</div>
+        {/* A LABEL WITH NOTHING UNDER IT IS WORSE THAN NO TILE. Both of these
+            rendered unconditionally, so a city whose artifact omits the field
+            got a bare "km" or an empty box under a confident heading - which is
+            what Surat shipped, because its river artifact carried neither
+            length_km nor cpcb_class while every other city's carries both. The
+            shared component was never the problem; it was being under-filled.
+            Now each tile appears only when its value does, and the row
+            collapses to one column when only one is known. */}
+        {(river.length_km != null || river.cpcb_class) && (
+          <div
+            className={`grid gap-2 mb-3 text-center ${
+              river.length_km != null && river.cpcb_class ? "grid-cols-2" : "grid-cols-1"
+            }`}
+          >
+            {river.length_km != null && (
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{river.length_km} km</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("rivers.length")}</div>
+              </div>
+            )}
+            {river.cpcb_class && (
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{river.cpcb_class}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("rivers.cpcb_class")}</div>
+              </div>
+            )}
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
-            <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{river.cpcb_class}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("rivers.cpcb_class")}</div>
-          </div>
-        </div>
+        )}
 
         {/* No monitoring data alarm */}
         <div className="bg-red-50 dark:bg-red-950/30 border border-red-300 dark:border-red-800 rounded-lg p-4 mb-5">

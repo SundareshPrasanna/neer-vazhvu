@@ -17,7 +17,7 @@ exemption register.
 | Threshold data | Published by the operator alongside every reading | Headroom is stated as a subtraction, never modelled |
 | Analytical unit | 9 zones | Ward surfaces off; zones carry live data and an official 2024 denominator |
 | Groundwater | 94 stations over a district, 1970-2026 | Points, not an interpolated surface; IN-GRES is district-level so there is no block choropleth |
-| Water bodies | 3,418 polygons (SAC atlas + OSM), 44 named | Basic map; no census, ranking, lost or cascade layers |
+| Water bodies | 805 polygons (SAC atlas inland + OSM), 22 named | Basic map; no census, ranking, lost or cascade layers |
 | Language | Gujarati | `gu` added to `LanguageCode`, carried in `upcomingLanguages` |
 
 ## Dashboard - the `flood-headroom` hero
@@ -97,10 +97,24 @@ routes to its named-gap state carrying the numbers in words - 194.59% district e
 
 ## Water bodies
 
-3,418 polygons - the SAC wetland atlas plus 17 bodies OpenStreetMap maps and the atlas missed -
-with area, inland/coastal, man-made/natural, turbidity and a decoded wetcode. 44 are named
-(34 atlas, 10 from OSM by containment). Strong geometric base, weak semantic one, and the naming
-gap is the source's.
+805 polygons - the SAC wetland atlas plus 21 bodies OpenStreetMap maps and the atlas missed -
+with area, man-made/natural, turbidity and a decoded wetcode. 22 are named (13 atlas, 9 from OSM
+by point-in-polygon containment). Strong geometric base, weak semantic one, and the naming gap is
+the source's.
+
+**THE SCOPE IS NARROWER THAN THE SOURCE, on purpose.** The first cut shipped the raw district
+extract: 3,418 polygons, of which 1,967 fell outside SMC limits and 1,259 were coastal intertidal -
+tidal flats and creek margins along the Gulf of Khambhat. That layer totalled 351 sq km of "water
+body" inside a 462 sq km city, which is what gave it away. It is a WETLAND atlas, and this page
+means lakes and talavs. Now clipped to SMC limits and to inland bodies: 58.2 sq km.
+
+Surat's coastal wetlands are real and are not renounced by this; they are simply not a lake
+register, and they need a surface that says what they are.
+
+**The name join was also wrong.** It tested whether an OSM named point fell inside a polygon's
+BOUNDING BOX and took the first hit, so "Gavier Lake" - a 4.5 ha bird-sanctuary lake - was stamped
+on a 4,166 ha coastal polygon whose box spans 16 by 13 km. Now point-in-polygon; Gavier Lake sits
+on Gavier Lake.
 
 `catchmentsGapNote` explains the absent cascade view as an editorial judgement rather than a
 missing file: Surat's bodies are coastal wetlands, tidal creeks and urban talavs, not a chained
