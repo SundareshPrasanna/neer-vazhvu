@@ -67,6 +67,20 @@ DISTRICT_BOX = {"south": 20.85, "north": 21.60, "west": 72.55, "east": 73.45}
 CITY_BOX = {"south": 21.00, "north": 21.35, "west": 72.60, "east": 72.99}
 
 
+def _point_in_ring(x: float, y: float, ring: list) -> bool:
+    """Ray-cast point-in-polygon on a lon/lat ring."""
+    inside = False
+    n = len(ring)
+    for i in range(n):
+        x1, y1 = ring[i][0], ring[i][1]
+        x2, y2 = ring[(i + 1) % n][0], ring[(i + 1) % n][1]
+        if (y1 > y) != (y2 > y):
+            xin = (x2 - x1) * (y - y1) / (y2 - y1) + x1
+            if x < xin:
+                inside = not inside
+    return inside
+
+
 def _iso_date(raw: str) -> str | None:
     """Normalise the several date shapes the WRIS exports ship.
 
@@ -484,6 +498,7 @@ def build_water_bodies(drop: Path, root: Path, osm_path: Path | None = None) -> 
         m = re.search(r'name="%s">([^<]*)<' % re.escape(key), mark)
         return m.group(1).strip() if m else ""
 
+    dropped = {"outside_city": 0, "coastal_intertidal": 0}
     features = []
     for mark in marks:
         try:
@@ -517,16 +532,36 @@ def build_water_bodies(drop: Path, root: Path, osm_path: Path | None = None) -> 
         # bounding box. Deliberately conservative: a name is only borrowed when
         # the OSM centroid falls INSIDE the atlas polygon's extent, never by
         # nearest-neighbour, because a wrong name is worse than none.
+        # POINT IN POLYGON, not point in BOUNDING BOX, and the difference is not
+        # academic. The bbox test put "Gavier Lake" - a small bird-sanctuary
+        # lake - on a 4,166 ha coastal polygon whose bounding box spans 16 x 13
+        # km and therefore contains it. The first match won, so the largest,
+        # least specific shape claimed the most recognisable name on the map.
         osm_name = None
         if osm:
-            xs = [c[0] for c in ring]
-            ys = [c[1] for c in ring]
             for cand in osm:
-                if min(xs) <= cand["lon"] <= max(xs) and min(ys) <= cand["lat"] <= max(
-                    ys
-                ):
+                if _point_in_ring(cand["lon"], cand["lat"], ring):
                     osm_name = cand
                     break
+        # SCOPE: SMC LIMITS, INLAND BODIES. The atlas is a WETLAND atlas over the
+        # whole district, and shipping it raw made this map unreadable: 3,418
+        # polygons of which 1,967 fell outside the city and 1,259 were coastal
+        # intertidal - tidal flats and creek margins along the Gulf of Khambhat
+        # that sprawl across the frame and are not water bodies in the sense
+        # this page means. The totals gave it away: 351 km2 of "water bodies"
+        # inside a 462 km2 city.
+        #
+        # Dropping them is an editorial choice, made deliberately, and it costs
+        # Surat's coastal wetland story on this surface. That story is real and
+        # belongs somewhere - it is simply not a lake register. The counts below
+        # are recorded in the artifact so the drop is visible rather than
+        # implied by a smaller number.
+        if not in_box(lat, lng, CITY_BOX):
+            dropped["outside_city"] += 1
+            continue
+        if (axes["setting"] or "").lower() == "coastal":
+            dropped["coastal_intertidal"] += 1
+            continue
         features.append(
             {
                 "type": "Feature",
@@ -588,7 +623,7 @@ def build_water_bodies(drop: Path, root: Path, osm_path: Path | None = None) -> 
                     "area_ha": None,
                     "turbidity": None,
                     "aquatic_vegetation": None,
-                    "in_city_limits": in_box(poly["lat"], poly["lon"], CITY_BOX),
+                    "in_city_limits": True,
                     "source": "openstreetmap",
                 },
                 "geometry": {"type": "Polygon", "coordinates": [poly["ring"]]},
@@ -609,15 +644,25 @@ def build_water_bodies(drop: Path, root: Path, osm_path: Path | None = None) -> 
                 root, ["sac-wetland-atlas-gujarat", "osm-surat-waterways"]
             ),
             "mixed",
-            "SAC National Wetland Atlas hydrological layer for Gujarat, clipped to a "
-            "Surat district bounding box; complete placemarks only, because the source "
-            "download was interrupted mid-record.",
+            "SAC National Wetland Atlas hydrological layer for Gujarat, clipped to "
+            "SMC limits and to INLAND bodies; complete placemarks only, because the "
+            "source download was interrupted mid-record.",
             produced_by="neer-vazhvu-api/scripts/build_surat_artifacts.py",
             note=(
-                f"{len(features)} polygons in the district box, {in_city} inside city "
-                f"limits. Names: {from_atlas} from the atlas, {from_osm} recovered from "
-                "OpenStreetMap by bounding-box containment (never nearest-neighbour, "
-                f"because a wrong name is worse than none), {len(features) - named} still "
+                f"{len(features)} polygons, all inside SMC limits. SCOPE IS NARROWER "
+                "THAN THE SOURCE, deliberately: this is a WETLAND atlas over the whole "
+                f"district, and shipping it raw put {dropped['outside_city']} polygons "
+                f"outside the city and {dropped['coastal_intertidal']} coastal "
+                "intertidal ones - tidal flats and creek margins along the Gulf of "
+                "Khambhat - on a page that means lakes and talavs by 'water body'. That "
+                "raw layer totalled 351 sq km of water inside a 462 sq km city, which is "
+                "what gave it away. The coastal wetlands are real and are not renounced; "
+                "they are not a lake register. "
+                f"Names: {from_atlas} from the atlas, {from_osm} recovered from "
+                "OpenStreetMap by POINT-IN-POLYGON containment (never bounding box, "
+                "which had put Gavier Lake on a 4,166 ha coastal polygon whose box spans "
+                "16 by 13 km, and never nearest-neighbour, because a wrong name is worse "
+                f"than none), {len(features) - named} still "
                 "unnamed. The atlas's level_iii and l4type fields are empty for every "
                 f"Surat feature; the wetcode is populated on {classified} and its first "
                 "two digits are decoded here into setting and origin, a mapping verified "
@@ -836,11 +881,23 @@ def build_supply(drop: Path, root: Path) -> None:
 
 
 OVERPASS = "https://overpass-api.de/api/interpreter"
+# THE BOX IS THE BASIN REACH, NOT THE CITY. The first version of this query
+# stopped at lon 73.10 - a box drawn around Surat - which cut the Tapi 48 km
+# short of Ukai and left five of the seven CPCB stations, Ukai and Mandavi
+# among them, floating off the end of the drawn river. A city bounding box is
+# the wrong frame for a river: the reach that matters here runs from the
+# reservoir that controls the flow down to the Gulf, and Ukai sits at 73.59.
+#
+# 73.75 carries the Tapi past Ukai into the reservoir reach (OSM returns whole
+# ways, so the geometry actually reaches ~74.09); Mindhola gets its own box to
+# its Sahyadri headwaters. Result: Tapi ~211 km over 11 ways, Mindhola ~135 km,
+# against 89.5 and 91.1 before.
 OVERPASS_QUERY = """
-[out:json][timeout:90];
+[out:json][timeout:120];
 (
-  way["waterway"="river"]["name"~"Tapi|Tapti",i](20.95,72.55,21.40,73.10);
-  way["waterway"~"river|stream"]["name"~"Khadi|khadi|Mindhola",i](21.00,72.60,21.35,73.00);
+  way["waterway"="river"]["name"~"Tapi|Tapti",i](21.00,72.55,21.50,73.75);
+  way["waterway"~"river|stream"]["name"~"Mindhola",i](20.90,72.60,21.35,73.60);
+  way["waterway"~"river|stream"]["name"~"Khadi|khadi",i](21.00,72.60,21.35,73.00);
 );
 out geom;
 """

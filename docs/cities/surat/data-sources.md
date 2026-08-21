@@ -110,6 +110,8 @@ problem is salinity and the estuary, not sewage.
 carries, across 8 stations rather than 13 - and 8 is what CPCB monitors in this reach, so the
 station count is the network's limit rather than ours.
 
+CPCB PUBLISHES NO COORDINATES for these stations - the NWMP tables carry a code, a name and the readings. The positions here are ours, read off the named location (a bridge, a dam, a town) to roughly 100 m, then SNAPPED to the drawn river centreline so a marker sits on the line rather than beside it. Each station records `position_method: "approximate"` and `position_snapped_km`, the distance it moved - Bardoli moved 10.3 km, which is a fair measure of how rough the underlying guess was. What the panel actually uses is `downstream_order`, which is CPCB's own upstream-to-sea sequence and is not a guess.
+
 Two extraction notes worth keeping. The editions are not laid out consistently: major-river tables
 lead each row with the station code, while the 2022 medium/minor table trails it, so the extractor
 matches on a unique name keyword as well. And `pdftotext -layout` is used rather than a Python PDF
@@ -143,7 +145,8 @@ Three traps in the source:
 SAC National Wetland Atlas hydrological layer for Gujarat clipped to a Surat district box (3,401
 polygons), plus **17 more contributed by OpenStreetMap** where the national-scale atlas missed a
 body - small urban talavs fall below its minimum mapping unit while being perfectly well known on
-the ground. 3,418 total, 1,451 inside city limits.
+the ground. 805 shipped, all inside SMC limits - narrowed from 3,418 in the raw district
+extract by dropping 1,967 polygons outside the city and 1,259 coastal intertidal ones.
 
 Two things about the drop it arrived in. Three of its four files were **Himachal Pradesh** (2,045
 features, 657 pro-glacial lakes) and are discarded; `hp` in the filename was the state, not a data
@@ -152,7 +155,7 @@ complete placemark, 18,279 of 18,280.
 
 Thin semantics, partly recovered. `level_iii` and `l4type` are empty for every Surat feature, and
 only 34 carry a name; OpenStreetMap lends 10 more by bounding-box containment (never
-nearest-neighbour - a wrong name is worse than none), giving **44 named of 3,418**. That is still
+nearest-neighbour - a wrong name is worse than none), giving **22 named of 805**. That is still
 about one in eighty, and it is the source's limit rather than a processing choice.
 
 What IS recoverable is the `wetcode`, populated on 3,084 of them. Its structure was derived from

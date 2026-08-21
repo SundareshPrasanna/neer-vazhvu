@@ -43,6 +43,7 @@ import json
 import re
 import shutil
 import subprocess
+import math
 import sys
 import tempfile
 from datetime import date
@@ -55,9 +56,94 @@ from nvdm_write import write_artifact  # noqa: E402
 
 CITY = "surat"
 
+RIVERS_GEOJSON = REPO_ROOT / "public/geojson/surat-rivers.geojson"
+
+
+def _reach_length_km(river_name: str) -> float | None:
+    """Length of the drawn reach, summed off the same GeoJSON the map renders."""
+    try:
+        geo = json.loads(RIVERS_GEOJSON.read_text())
+    except (OSError, ValueError):
+        return None
+
+    def km(a: tuple[float, float], b: tuple[float, float]) -> float:
+        r, p = 6371.0088, math.pi / 180
+        h = (
+            math.sin((b[1] - a[1]) * p / 2) ** 2
+            + math.cos(a[1] * p)
+            * math.cos(b[1] * p)
+            * math.sin((b[0] - a[0]) * p / 2) ** 2
+        )
+        return 2 * r * math.asin(math.sqrt(h))
+
+    total = 0.0
+    for feat in geo.get("features", []):
+        if (feat.get("properties") or {}).get("name") != river_name:
+            continue
+        g = feat.get("geometry") or {}
+        coords = g.get("coordinates") or []
+        for line in coords if g.get("type") == "MultiLineString" else [coords]:
+            total += sum(km(line[i], line[i + 1]) for i in range(len(line) - 1))
+    return round(total, 1) if total else None
+
+
+def _snap_to_river(
+    river_name: str, lat: float, lng: float
+) -> tuple[float, float, float]:
+    """Nearest vertex on the drawn river, and how far it moved (km).
+
+    CPCB gives no coordinates, so ours are read off the named location. Snapping
+    puts the marker ON the line the map draws instead of beside it. If the
+    geometry is missing the point is returned unchanged - a station placed
+    approximately is still better than none, and the artifact records which.
+    """
+    try:
+        geo = json.loads(RIVERS_GEOJSON.read_text())
+    except (OSError, ValueError):
+        return lat, lng, 0.0
+    pts: list[tuple[float, float]] = []
+    for feat in geo.get("features", []):
+        if (feat.get("properties") or {}).get("name") != river_name:
+            continue
+        g = feat.get("geometry") or {}
+        coords = g.get("coordinates") or []
+        lines = coords if g.get("type") == "MultiLineString" else [coords]
+        for line in lines:
+            pts.extend((c[0], c[1]) for c in line)
+    if not pts:
+        return lat, lng, 0.0
+
+    def km(a: tuple[float, float], b: tuple[float, float]) -> float:
+        r, p = 6371.0088, math.pi / 180
+        h = (
+            math.sin((b[1] - a[1]) * p / 2) ** 2
+            + math.cos(a[1] * p)
+            * math.cos(b[1] * p)
+            * math.sin((b[0] - a[0]) * p / 2) ** 2
+        )
+        return 2 * r * math.asin(math.sqrt(h))
+
+    best = min(pts, key=lambda q: km((lng, lat), q))
+    return best[1], best[0], km((lng, lat), best)
+
+
 # The Gujarat Tapi stations, upstream to sea. Keyed by the station code CPCB
 # prints, which is stable across editions; the printed NAME is not (it varies
 # in spacing, capitalisation and how much of the location it repeats).
+#
+# THE COORDINATES ARE APPROXIMATE AND THEY ARE OURS, NOT CPCB'S. The NWMP
+# tables publish a station code, a name and the readings - no position. These
+# lat/lngs are read off the named location (a bridge, a dam, a town) to roughly
+# 100 m, and several are rounded to 2dp because that is genuinely all the
+# confidence there is. They are emitted with position_method="approximate" and
+# the artifact says so, so nothing downstream can mistake them for surveyed
+# points.
+#
+# They are also SNAPPED to the river centreline at build time. Un-snapped they
+# sat up to 5 km off the drawn river even after the geometry was extended -
+# a station visibly beside a river rather than on it reads as a data error to
+# anyone looking at the map, and the along-river ORDER is what the panel
+# actually uses (downstream_order), not the exact point.
 TAPI_STATIONS = {
     "46": ("River Tapi at Ukai, Sherula Bridge", 21.2483, 73.5903, 1),
     "1247": ("River Tapi at Mandavi", 21.2600, 73.3000, 2),
@@ -233,6 +319,7 @@ def build(pdf_dir: Path, root: Path) -> dict:
     ):
         stations = []
         for code, (label, lat, lng, order) in catalogue.items():
+            snap_lat, snap_lng, moved_km = _snap_to_river(name, lat, lng)
             readings = []
             for year in sorted(editions):
                 m = editions[year].get((river_id, code))
@@ -244,16 +331,33 @@ def build(pdf_dir: Path, root: Path) -> dict:
                         "id": f"{river_id}-{code}",
                         "station_code": code,
                         "name": label,
-                        "lat": lat,
-                        "lng": lng,
+                        "lat": round(snap_lat, 5),
+                        "lng": round(snap_lng, 5),
+                        # Never CPCB's: see the note on the station tables.
+                        "position_method": "approximate",
+                        "position_snapped_km": round(moved_km, 2),
                         "downstream_order": order,
                         "readings": readings,
                     }
                 )
         if stations:
             stations.sort(key=lambda s: s["downstream_order"])
+            # length_km IS THE DRAWN REACH, not the river's official length.
+            # Every other city's artifact carries this field and Surat's did
+            # not, so the shared river panel rendered an empty "km" for both
+            # rivers - the shared component was fine, the data under-filled it.
+            # Measured off the same geometry the map draws so the number and
+            # the line can never disagree; the Tapi's full course from Madhya
+            # Pradesh is ~724 km and is NOT what this says.
             rivers.append(
-                {"id": river_id, "name": name, "name_gu": name_gu, "stations": stations}
+                {
+                    "id": river_id,
+                    "name": name,
+                    "name_gu": name_gu,
+                    "length_km": _reach_length_km(name),
+                    "length_basis": "drawn reach in surat-rivers.geojson",
+                    "stations": stations,
+                }
             )
 
     years = sorted(editions)

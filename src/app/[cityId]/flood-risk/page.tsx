@@ -737,7 +737,7 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
         en: "Six editions of CPCB monitoring across eight stations, and two CETPs against their own consent conditions",
       },
       water_bodies_desc: {
-        en: "3,418 mapped bodies from the SAC wetland atlas, and the naming gap that comes with them",
+        en: "805 mapped bodies inside SMC limits from the SAC wetland atlas, and the naming gap that comes with them",
       },
     },
   },

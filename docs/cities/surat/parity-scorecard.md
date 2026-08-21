@@ -28,7 +28,7 @@
 | Facts | 250w | 407w | 0.61 | Renders, 7 facts |
 | About | 120w | 208w | 0.58 | Renders |
 | Groundwater | 13w | 23w | 0.57 | Renders (both are map-only shells) |
-| Water bodies | 73w | 241w | 0.30 | Renders, 3,418 polygons |
+| Water bodies | 73w | 241w | 0.30 | Renders, 805 polygons inside SMC limits |
 | Origins | 2,361w | 3,928w | 0.60 | 8 chapters, 4 licence-verified plates |
 
 ## XHigh - Surat exceeds Chennai (6)
@@ -57,10 +57,10 @@ Four of these are platform firsts. Each was built generic, so other cities inher
 
 | Feature | Chennai | Surat | Why thinner |
 |---|---|---|---|
-| River geometry | 4 rivers | 2 rivers | OSM names only the Tapi and Mindhola; the five monitored khadis have no geometry anywhere public |
+| River geometry | 4 rivers | 2 rivers, **211 km + 135 km** | OSM names only the Tapi and Mindhola; the five monitored khadis have no geometry anywhere public. The reach is the BASIN reach, not a city box: the first cut queried Overpass inside a box around Surat and cut the Tapi 48 km short of Ukai, stranding five of seven CPCB stations off the drawn line |
 | Groundwater stations | ~35 | **94** (but district-wide) | More stations, but spread across the district rather than the city, so no interpolated surface |
 | River quality readings | 51 across 13 stations | **45 across 8 stations** | Fewer stations, one more year of span. CPCB monitors 8 in this reach; that is the network, not our coverage |
-| Water bodies | 1,636 OSM + 305 census | **3,418** (SAC atlas + 17 OSM-only) | Twice the polygons, a fraction of the names: 44 named. The naming gap is the source's |
+| Water bodies | 1,636 OSM + 305 census | **805** (SAC atlas inland, in-city + 21 OSM-only) | Twice the polygons, a fraction of the names: 44 named. The naming gap is the source's |
 | Facts | dynamic pipeline | 7 static | No live fact pipeline; static snapshot |
 | Origins long-read | 3,928 words | 2,361 words | Eight chapters against Chennai's longer arc; shorter, not absent |
 
