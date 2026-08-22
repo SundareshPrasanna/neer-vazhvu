@@ -40,7 +40,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
-from nvdm_write import merge_envelope  # noqa: E402
+from nvdm_write import write_artifact  # noqa: E402
 from registry_license import registry_license  # noqa: E402
 
 SOURCE_LABEL = "CPCB NWMP, annual Water Quality of Rivers (station-wise min-max)"
@@ -189,7 +189,7 @@ def main() -> None:
             "series": series,
         }
         pack_path = basin_dir / "readings" / f"{station_key}.json"
-        pack_path.write_text(json.dumps(merge_envelope(pack_path, pack), separators=(",", ":")))
+        write_artifact(pack_path, pack, compact=True)
         props["hasReadings"] = True
         props["readingsFrom"], props["readingsTo"] = years_with[0], years_with[-1]
         packed += 1
@@ -197,7 +197,7 @@ def main() -> None:
 
     if packed == 0:
         sys.exit("FAIL: no stations matched the parsed tables - check codeFrom/config")
-    mp_path.write_text(json.dumps(merge_envelope(mp_path, fc), separators=(",", ":")))
+    write_artifact(mp_path, fc, compact=True)
     print(f"\n{packed}/{len(fc['features'])} monitoring points have parameter packs "
           f"-> {mp_path.relative_to(REPO)}")
 

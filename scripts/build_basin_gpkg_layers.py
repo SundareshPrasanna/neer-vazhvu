@@ -49,6 +49,8 @@ from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon,
 from shapely.ops import linemerge, unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+from nvdm_write import write_artifact  # noqa: E402  (envelopes survive re-runs)
 R_MERC = 6378137.0
 COORD_DP = 5
 
@@ -233,8 +235,7 @@ def main(cfg_path: str) -> None:
 
     def emit(family: str, features: list, provenance: str) -> None:
         fp = basin_dir / f"{family}.geojson"
-        fc = {"type": "FeatureCollection", "features": features}
-        fp.write_text(json.dumps(fc, separators=(",", ":"), ensure_ascii=False))
+        write_artifact(fp, {"type": "FeatureCollection", "features": features}, compact=True)
         inv_updates[family] = {
             "featureCount": len(features),
             "sources": [{"file": f"{family}.geojson", "kind": None,
@@ -357,7 +358,7 @@ def main(cfg_path: str) -> None:
     inv_path = basin_dir / "inventory.json"
     inv = json.loads(inv_path.read_text())
     inv["families"].update(inv_updates)
-    inv_path.write_text(json.dumps(inv, ensure_ascii=False, indent=1))
+    write_artifact(inv_path, inv, indent=1)
     print(f"updated {inv_path.relative_to(ROOT)}")
 
 
