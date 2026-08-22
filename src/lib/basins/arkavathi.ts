@@ -127,7 +127,14 @@ export const ARKAVATHI: BasinManifest = {
     { family: "drainage", label: "Drainage network", floor: "hydrology", geom: "line", color: "#3b82f6", defaultOn: false, heavy: true },
 
     // ── Floor 2: Monitoring & evidence ──
-    { family: "monitoring-points", label: "Monitoring points", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true },
+    // NOT YET: a flow-stations line for T. Bekuppe (the Arkavathi's one CWC
+    // gauge with served discharge, verified in the Aug-2026 WRIS sweep) is
+    // prepared in scripts/basin-sources/arkavathi-flow.json - it lands once
+    // WRIS serves again (unreachable on build day) and the packs exist.
+    // readings: the 5 CPCB river-table stations (Hesaraghatta, TG Halli,
+    // Manchanabele, before-Sangam, d/s Kanakapura - the stretch's own
+    // monitoring locations) carry annual BOD/DO/FC trend packs.
+    { family: "monitoring-points", label: "Monitoring points", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },
     { family: "evidence-points", label: "Pollution evidence", floor: "monitoring", geom: "point", color: "#f43f5e", defaultOn: true },
 
     // ── Floor 3: Pressures (warm ramp) ──
@@ -175,6 +182,7 @@ export const ARKAVATHI: BasinManifest = {
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
     "Polluted river stretch (2018, 2025): Paani Earth, digitised from the CPCB / NGT polluted-river-stretch classification.",
     "Monitoring points: KSPCB, CPCB, CWC, Dept. of Mines & Geology, ATREE and others, compiled by Paani Earth.",
+    "Station BOD/DO/FC trends: CPCB NWMP annual Water Quality of Rivers tables, 2020-2024 (station-wise min-max; the worst end is plotted).",
     "Polluting drains: KSPCB's Dec 2020 inspection (NGT OA 673/2018) speaks of 16 storm-water drains on the PRS, but the June-2020 MPR itemises only 15 - the same count mapped here (Paani Earth, per-drain BOD; E-176 at Kelagina kote, Kanakapura also lacks coordinates in the source). The 16th drain is unaccounted in the public record - and the August-2025 MPR still reports \"16 drains identified and monitored\" while its own solid-waste table counts 17.",
     "Pollution evidence: Arkavathi Horata Samithi and RTI filings; Paani Earth x ICCW (IIT Madras) 7-site pollution study, Feb-Mar 2024 (lab analyses and report hosted on paani.earth).",
     "Treatment plants (STP/FSTP): BWSSB, KUWS&DB, BDA and KUIDFC, compiled by Paani Earth; locations confirmed against satellite imagery.",

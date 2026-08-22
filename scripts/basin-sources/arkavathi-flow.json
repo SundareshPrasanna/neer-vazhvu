@@ -1,0 +1,20 @@
+{
+  "_doc": "Arkavathi flow-stations config (station-readings contract v1) - PREPARED, NOT YET RUN: indiawris.gov.in was unreachable on build day (22 Aug 2026, every request timing out; the same API worked on 14 Aug). The Arkavathi has ONE CWC gauge with served data: T. Bekuppe (WRIS 019-CDBNG, site type GDQ, lower reach above the Sangam confluence - Paani's CWC sites layer attributes it 'Cauvery/Arkavati'). Verified in the Aug-2026 WRIS availability sweep: discharge (QOB/QCO) served for 2024, level telemetry frozen basin-wide since 04 Jun 2026. To land it once WRIS serves again: (1) seed an empty collection: write {\"type\":\"FeatureCollection\",\"features\":[]} to public/data/basins/arkavathi/flow-stations.geojson; (2) python3 scripts/build_basin_flow_readings.py public/data/basins/arkavathi scripts/basin-sources/arkavathi-flow.json (the station arrives via extraStations, its point taken from the API rows); (3) add the flow-stations layer line (readings: true) + CWC credit to src/lib/basins/arkavathi.ts (see the NOT YET note there); (4) register flow-stations.geojson + readings/019-CDBNG.json on wris-live-services dependsOn in scripts/source-registry/platform.json; (5) regenerate the three governance docs.",
+  "state": "Karnataka",
+  "districts": ["Ramanagar"],
+  "majorBasin": "Cauvery",
+  "dischargeFrom": "2015",
+  "levelFrom": "2023",
+  "waterYearStartMonth": 6,
+  "levelFreshnessNote": "Hourly CWC telemetry averaged per month. The WRIS level feed has been frozen basin-wide since 04 Jun 2026 - the series ends there until the source resumes.",
+  "stations": [],
+  "extraStations": [
+    {
+      "stationKey": "019-CDBNG",
+      "name": "T. Bekuppe",
+      "wrisName": "T. BEKKUPE",
+      "siteType": "GDQ",
+      "river": "Arkavathi"
+    }
+  ]
+}

@@ -92,7 +92,9 @@ export const KABINI: BasinManifest = {
 
     // ── Floor 2: Monitoring - the station-readings pilot ──
     { family: "flow-stations", label: "CWC flow gauges (tap for readings)", floor: "monitoring", geom: "point", color: "#0d9488", defaultOn: true, readings: true },
-    { family: "monitoring-points", label: "NWMP water-quality stations", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true },
+    // readings: the 5 river-table stations carry CPCB annual BOD/DO/FC trend
+    // packs (build_basin_wq_param_packs.py); lake stations stay location-only.
+    { family: "monitoring-points", label: "NWMP water-quality stations", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },
 
     // ── Floor 3: Pressures ──
     { family: "pressures-industrial", label: "KIADB industrial areas", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true, kindFilter: "industrial-area" },
