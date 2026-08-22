@@ -162,8 +162,10 @@ export function BasinOverview({
   const tiles = useMapTiles();
   const base = `/data/basins/${manifest.basinId}`;
   const [boundary, setBoundary] = useState<FeatureCollection | null>(null);
+  const [contextBoundary, setContextBoundary] = useState<FeatureCollection | null>(null);
   const [subBasins, setSubBasins] = useState<FeatureCollection | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
+  const [rivers, setRivers] = useState<FeatureCollection | null>(null);
   const [tanks, setTanks] = useState<FeatureCollection | null>(null);
   const [stations, setStations] = useState<FeatureCollection | null>(null);
   const [reservoirs, setReservoirs] = useState<FeatureCollection | null>(null);
@@ -178,8 +180,10 @@ export function BasinOverview({
 
   useEffect(() => {
     fetchJson(`${base}/boundary.geojson`).then((d) => setBoundary(d as FeatureCollection | null));
+    fetchJson(`${base}/context-boundary.geojson`).then((d) => setContextBoundary(d as FeatureCollection | null));
     fetchJson(`${base}/sub-basins.geojson`).then((d) => setSubBasins(d as FeatureCollection | null));
     fetchJson(`${base}/streams.geojson`).then((d) => setStreams(d as FeatureCollection | null));
+    fetchJson(`${base}/rivers.geojson`).then((d) => setRivers(d as FeatureCollection | null));
     fetchJson(`${base}/tanks.geojson`).then((d) => setTanks(d as FeatureCollection | null));
     fetchJson(`${base}/wq-stations.geojson`).then((d) => setStations(d as FeatureCollection | null));
     fetchJson(`${base}/reservoirs.geojson`).then((d) => setReservoirs(d as FeatureCollection | null));
@@ -260,6 +264,14 @@ export function BasinOverview({
       return null;
     };
     for (const f of prs.features) {
+      // Builders that know the assignment (line + point PRS files both carry
+      // subBasin, validated at build time) are trusted; sampling remains the
+      // fallback for data without it.
+      const pre = (f.properties as Record<string, unknown>)?.subBasin as string | undefined;
+      if (pre) {
+        (out[pre] ??= []).push((f.properties ?? {}) as Record<string, unknown>);
+        continue;
+      }
       const v = f.geometry ? firstVertex(f.geometry) : null;
       if (!v) continue;
       const hit = polys.find((p) => inGeom(v[0], v[1], p.geom));
@@ -270,6 +282,12 @@ export function BasinOverview({
   const prsCountByKey = useMemo(
     () => Object.fromEntries(Object.entries(prsBySubKey).map(([k, v]) => [k, v.length])),
     [prsBySubKey],
+  );
+  // Stretches draw as lines only where the source supplies line geometry
+  // (cauvery-ka via the Paani package); point-based PRS files keep the
+  // choropleth + profile list alone.
+  const hasPrsLines = !!prs?.features.some(
+    (f) => f.geometry?.type === "LineString" || f.geometry?.type === "MultiLineString",
   );
 
   // A scoreboard metric is usable only when verified (see METRIC_OPTIONS).
@@ -512,6 +530,11 @@ export function BasinOverview({
           preferCanvas
         >
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+          {/* Full-basin outline (all states), muted context behind the
+              interactive share - the counting frame stays the bold boundary. */}
+          {contextBoundary && (
+            <GeoJSON data={contextBoundary} style={{ color: "#94a3b8", weight: 1.5, dashArray: "6 6", fill: false, opacity: 0.7 }} interactive={false} />
+          )}
           {boundary && (
             <GeoJSON data={boundary} style={{ color: "#d946ef", weight: 2.5, fill: false, opacity: 0.9 }} interactive={false} />
           )}
@@ -546,6 +569,49 @@ export function BasinOverview({
               the WHOLE map, so polygons under it could never be selected or
               deselected - both interception bugs found by Sundaresh.) */}
           <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}`}>
+          {/* Named river centrelines - drawn above the choropleth (this
+              Fragment re-adds after the polygons) so the network stays
+              legible over the fills. */}
+          {rivers && (
+            <GeoJSON
+              data={rivers}
+              style={(f) => ({
+                color: "#0ea5e9",
+                weight: (f?.properties as Record<string, unknown>)?.kind === "mainstem" ? 2.75 : 1.75,
+                opacity: 0.9,
+              })}
+              onEachFeature={(feat, layer) => {
+                const p = feat.properties as Record<string, unknown>;
+                layer.bindTooltip(`${String(p.name)}${p.kind === "mainstem" ? " (mainstem)" : " River"}`, { sticky: true });
+              }}
+            />
+          )}
+          {/* CPCB polluted stretches drawn to their reported length, where the
+              source provides line geometry (points-only basins keep the
+              choropleth + profile list). Weight tracks priority, I widest. */}
+          {prs && hasPrsLines && (
+            <GeoJSON
+              data={{
+                ...prs,
+                features: prs.features.filter((f) => f.geometry?.type === "LineString" || f.geometry?.type === "MultiLineString"),
+              } as FeatureCollection}
+              style={(f) => ({
+                color: "#dc2626",
+                weight: 1.5 + priorityRank((f?.properties as Record<string, unknown>)?.priority) * 0.6,
+                opacity: 0.95,
+              })}
+              onEachFeature={(feat, layer) => {
+                const p = feat.properties as Record<string, unknown>;
+                layer.bindTooltip(
+                  `<strong>${String(p.river)}</strong> - CPCB polluted stretch, Priority ${String(p.priority)}` +
+                    `${p.lengthKm ? ` - ${String(p.lengthKm)} km` : ""}` +
+                    `${p.bodValue ? ` - max BOD ${String(p.bodValue)} mg/L` : ""}` +
+                    `${p.stretch ? `<br/>${String(p.stretch)}` : ""}`,
+                  { sticky: true },
+                );
+              }}
+            />
+          )}
           {selectedKey &&
             tanks?.features
               .filter((f) => (f.properties as Record<string, unknown>)?.subBasin === selectedKey && f.geometry?.type === "Point")
@@ -669,6 +735,25 @@ export function BasinOverview({
               <span className="inline-block w-3 h-3 rounded-sm bg-slate-300" />
               {metric === "pollution" ? "not assessed (no stations)" : "no data"}
             </div>
+            {/* Line layers - rows appear only when the data files exist. */}
+            {metric === "pollution" && hasPrsLines && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-[3px] rounded" style={{ backgroundColor: "#dc2626" }} />
+                stretch drawn to CPCB length
+              </div>
+            )}
+            {rivers && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-[2px] rounded" style={{ backgroundColor: "#0ea5e9" }} />
+                named rivers
+              </div>
+            )}
+            {contextBoundary && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 border-t-2 border-dashed" style={{ borderColor: "#94a3b8" }} />
+                full basin, all states
+              </div>
+            )}
             {/* Marker key - shown while a sub-basin is in focus and its own
                 points are on the map. Every rendered symbol gets a legend row. */}
             {selectedKey && (

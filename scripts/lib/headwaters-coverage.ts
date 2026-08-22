@@ -202,6 +202,8 @@ export const UNWATCHED: Record<string, string> = {
   // DEP pages) are queued for registry entries in the deep-dive maintenance
   // model (docs/specs/deep-dive-maintenance-model.md); when that lands these
   // move to the watched track like the Mumbai artifacts above.
+  "public/data/basins/cauvery-ka/rivers.geojson": "closed partner delivery (Paani Aug 2026): named river centrelines from Hydrology_Layers.gpkg, clipped to the KA basin share by scripts/build_basin_gpkg_layers.py",
+  "public/data/basins/cauvery-ka/context-boundary.geojson": "closed partner delivery (Paani Aug 2026): full Cauvery basin outline (KA/KL/TN/PY) from Hydrology_Layers.gpkg",
   "public/data/basins/kabini/pressures-industrial.geojson": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
   "public/data/basins/kabini/forests.geojson": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",
   "public/data/basins/kabini/protected-areas.geojson": "closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model",

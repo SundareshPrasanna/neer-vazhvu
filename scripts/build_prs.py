@@ -5,87 +5,43 @@ GENERIC + scalable: this script is river-agnostic. To onboard PRS for a new
 river (Cauvery, Ganga, ...), add a basin entry to scripts/prs-sources.json and
 run:
 
-    python scripts/build_prs.py <basinId>
+    python3 scripts/build_prs.py <basinId>
 
 No code change, no new component - the `prs` layer flag (in the basin manifest)
 and the PRSPanel render whatever this produces, the same way for every river.
 
-Each source line geometry (any OGR-readable format: GeoPackage, Shapefile,
-GeoJSON ...) is reprojected to WGS84, simplified + rounded for web use, and
-tagged with the constants a column-mapped ingest cannot inject (survey year,
-CPCB/NGT priority band; I = worst). Output:
+Sources are partner GeoPackages that live OUTSIDE the repo (shared under
+agreement, gitignored by policy). Each year entry names a GPKG + layer; the
+layer's line features are merged into one stretch line, reprojected to WGS84,
+simplified + rounded for web use, and tagged with the constants a column-mapped
+ingest cannot inject (survey year, CPCB/NGT priority band; I = worst).
 
-    public/data/basins/<basinId>/prs.geojson
+The displayed length comes from the layer's own distance attribute where the
+source carries one (`distanceAttr` + `fid` - the canonical 2025 layer does),
+else from the geodesic measure of the simplified line. Either way the build
+FAILS if geometry and stated length drift more than 1% apart - the lesson of
+PR #290, where months shipped against a stale standalone layer.
 
-Run from the repo root with the neer-vazhvu-api pyenv env active (needs shapely);
-ogr2ogr is taken from PATH / $OGR2OGR / a QGIS*.app bundle (macOS), mirroring
-scripts/ingest_basin.py.
+History: this script originally shelled to ogr2ogr. This machine no longer has
+GDAL, and the config had drifted behind the shipped data (#290 rebuilt the
+geometry without updating it) - it now reads GeoPackages directly (stdlib
+sqlite3 + the WKB parser in build_basin_gpkg_layers.py) and the config again
+reproduces what ships.
+
+Output: public/data/basins/<basinId>/prs.geojson
 """
 from __future__ import annotations
 
 import json
-import os
-import shutil
-import subprocess
+import sqlite3
 import sys
 from pathlib import Path
 
-from shapely.geometry import shape, mapping
+from build_basin_gpkg_layers import hav_km, line_geometry, merged_lines, read_layer
 
 REPO = Path(__file__).resolve().parent.parent
 CONFIG = REPO / "scripts" / "prs-sources.json"
-
-SIMPLIFY_DEG = 0.0001  # ~11 m; plenty for city/basin-zoom rendering
-COORD_DP = 5           # ~1 m
-
-
-def _find_tool(name: str, env_var: str) -> str:
-    if os.environ.get(env_var):
-        return os.environ[env_var]
-    found = shutil.which(name)
-    if found:
-        return found
-    for app in sorted(Path("/Applications").glob("QGIS*.app"), reverse=True):
-        cand = app / "Contents" / "MacOS" / name
-        if cand.exists():
-            return str(cand)
-    sys.exit(f"Could not find {name}. Install GDAL or set ${env_var}.")
-
-
-OGR2OGR = _find_tool("ogr2ogr", "OGR2OGR")
-
-
-def _proj_env() -> dict:
-    env = dict(os.environ)
-    if "Contents/MacOS" in OGR2OGR:
-        base = Path(OGR2OGR).parent.parent / "Resources"
-        for cand in (base / "qgis" / "proj", base / "proj"):
-            if (cand / "proj.db").exists():
-                env["PROJ_LIB"] = str(cand)
-                env["PROJ_DATA"] = str(cand)
-                break
-    return env
-
-
-def _reproject_to_4326(src: Path) -> dict:
-    r = subprocess.run(
-        [OGR2OGR, "-f", "GeoJSON", "-t_srs", "EPSG:4326",
-         "-nlt", "LINESTRING", "/vsistdout/", str(src)],
-        capture_output=True, text=True, env=_proj_env(),
-    )
-    if r.returncode != 0:
-        sys.exit(f"ogr2ogr failed for {src.name}:\n{r.stderr}")
-    return json.loads(r.stdout)
-
-
-def _round_coords(geom):
-    def rnd(c):
-        if isinstance(c[0], (int, float)):
-            return [round(c[0], COORD_DP), round(c[1], COORD_DP)]
-        return [rnd(x) for x in c]
-    geom = dict(geom)
-    geom["coordinates"] = rnd(geom["coordinates"])
-    return geom
+SIMPLIFY_DEG = 0.00005  # keeps the drawn line within ~0.3% of the stated length
 
 
 def build(basin_id: str) -> None:
@@ -93,19 +49,48 @@ def build(basin_id: str) -> None:
     if not cfg:
         sys.exit(f"No PRS config for basin '{basin_id}' in {CONFIG.relative_to(REPO)}")
 
-    src_dir = REPO / cfg["srcDir"]
+    src_dir = Path(cfg["srcDir"]).expanduser()
+    if not src_dir.is_dir():
+        sys.exit(f"srcDir not found: {src_dir} (partner GeoPackages live outside the repo)")
     river = cfg.get("river", basin_id)
     credit = cfg.get("credit", "")
     out = REPO / "public" / "data" / "basins" / basin_id / "prs.geojson"
 
     features = []
     for entry in cfg["years"]:
-        fc = _reproject_to_4326(src_dir / entry["file"])
-        if not fc.get("features"):
-            sys.exit(f"No features in {entry['file']}")
-        src = fc["features"][0]
-        geom = shape(src["geometry"]).simplify(SIMPLIFY_DEG, preserve_topology=False)
-        length_km = round(float(src["properties"].get("Length", 0.0)), 1)
+        gpkg = src_dir / entry["file"]
+        parts = []
+        for fid, kind, p in read_layer(gpkg, entry["layer"]):
+            if kind != "line":
+                continue
+            if "fid" in entry and fid != entry["fid"]:
+                continue
+            parts.extend(p)
+        if not parts:
+            sys.exit(f"No line geometry for {entry['year']} in {entry['file']}:{entry['layer']}")
+        geom = line_geometry(merged_lines(parts), SIMPLIFY_DEG)
+        lines = geom["coordinates"] if geom["type"] == "MultiLineString" else [geom["coordinates"]]
+        measured = sum(hav_km(l) for l in lines)
+        if entry.get("distanceAttr"):
+            con = sqlite3.connect(gpkg)
+            stated = float(con.execute(
+                f'SELECT "{entry["distanceAttr"]}" FROM "{entry["layer"]}" WHERE rowid = ?',
+                (entry["fid"],)).fetchone()[0])
+            con.close()
+            if abs(measured - stated) / stated > 0.01:
+                sys.exit(f"FAIL {entry['year']}: measured {measured:.2f} km vs stated "
+                         f"{stated:.2f} km (>1% apart) - wrong layer?")
+            length_km = round(stated, 1)
+        elif entry.get("statedKm"):
+            # Partner-stated length (e.g. Paani's own 2018 measure, 64.6) -
+            # still cross-checked against the geometry we drew.
+            stated = float(entry["statedKm"])
+            if abs(measured - stated) / stated > 0.01:
+                sys.exit(f"FAIL {entry['year']}: measured {measured:.2f} km vs statedKm "
+                         f"{stated:.2f} (>1% apart) - wrong layer?")
+            length_km = round(stated, 1)
+        else:
+            length_km = round(measured, 1)
         year, priority = entry["year"], entry["priority"]
         features.append({
             "type": "Feature",
@@ -118,7 +103,7 @@ def build(basin_id: str) -> None:
                 "label": f"Polluted stretch {year} ({length_km} km, Priority {priority})",
                 "source": credit,
             },
-            "geometry": _round_coords(mapping(geom)),
+            "geometry": geom,
         })
 
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -130,5 +115,5 @@ def build(basin_id: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        sys.exit("usage: python scripts/build_prs.py <basinId>   (e.g. arkavathi)")
+        sys.exit("usage: python3 scripts/build_prs.py <basinId>   (e.g. arkavathi)")
     build(sys.argv[1])

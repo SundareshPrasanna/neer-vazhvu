@@ -1,0 +1,93 @@
+{
+ "_doc": "Overview layers for cauvery-ka built from Paani Earth's Cauvery Basin GeoPackages (Aug 2026 delivery). The GPKGs are shared under the collaboration agreement and live OUTSIDE the repo (srcDir below, machine-local) - same policy as the Arkavathi/Kabini ingests. Every priority and BOD figure cites the CPCB October 2025 report: priorities from Table 3.14, max BOD 2022-23 per stretch from Annexure II (Karnataka pages; mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf in the corpus). Stretch lengths are the canonical layer's own Distance attribute, verified geodesically at build time. Run: python3 scripts/build_basin_gpkg_layers.py scripts/basin-sources/cauvery-ka-paani.json (AFTER any ingest_basin_overview.py re-run).",
+ "basinId": "cauvery-ka",
+ "srcDir": "~/Downloads/Cauvery_Basin_Geopackages (1)",
+ "clip": {
+  "gpkg": "Hydrology_Layers.gpkg",
+  "layer": "Cauvery_Basin_Boundary_in_KA",
+  "bufferDeg": 0.005
+ },
+ "prs": {
+  "gpkg": "PRS_Stretches_Since_1993.gpkg",
+  "layer": "PRS_2025_Polluted_River_Stretches",
+  "distanceAttr": "Distance (In Km)",
+  "simplifyEps": 0.00005,
+  "assessment": "CPCB NWMP assessment, max BOD observed 2022-2023, published October 2025",
+  "source": "CPCB, Polluted River Stretches in India - October 2025 (Table 3.14 + Annexure II); stretch lines: Paani Earth, PRS_Stretches_Since_1993.gpkg (canonical 2025 layer)",
+  "entries": [
+   {
+    "fid": 1,
+    "stretchId": "arkavathi-2025",
+    "river": "Arkavathi",
+    "stretch": "Hesaraghatta Reservoir to d/s Kanakapura Town",
+    "priority": "I",
+    "bodValue": 72,
+    "expectSubBasin": "C5",
+    "history": "2018: Priority III (Tippagondanahalli reservoir to Kanakapura, 64.6 km) - 2022: Priority I, lengthened upstream to Hesaraghatta - 2025: Priority I (Hesaraghatta to d/s Kanakapura, 109.1 km)"
+   },
+   {
+    "fid": 2,
+    "stretchId": "cauvery-krnagar-sangam-2025",
+    "river": "Cauvery",
+    "stretch": "d/s KR Nagar bridge to the confluence at Sangam",
+    "priority": "III",
+    "bodValue": 12,
+    "expectSubBasin": "C6"
+   },
+   {
+    "fid": 138,
+    "stretchId": "shimsha-2025",
+    "river": "Shimsha",
+    "stretch": "d/s of the highway bridge at Yediyur to d/s Halagur",
+    "priority": "III",
+    "bodValue": 18,
+    "expectSubBasin": "C4"
+   },
+   {
+    "fid": 139,
+    "stretchId": "lakshmantirtha-2025",
+    "river": "Lakshmanthirtha",
+    "stretch": "d/s Hunsur to the water-supply intake of Hunsur Town",
+    "priority": "IV",
+    "bodValue": 8,
+    "expectSubBasin": "C1"
+   },
+   {
+    "fid": 140,
+    "stretchId": "kabini-2025",
+    "river": "Kabini",
+    "stretch": "Saragur village d/s to the water-supply intake at T. Narasipura",
+    "priority": "V",
+    "bodValue": 6,
+    "expectSubBasin": "C2",
+    "history": "Absent from CPCB's 1993-94 and 2011 lists - 2018: Priority IV (~9 km below Nanjangud) - 2025: Priority V (Saragur to the T. Narasipura intake, 104.3 km; CPCB files it under stretches where improvement was observed)"
+   }
+  ]
+ },
+ "rivers": {
+  "gpkg": "Hydrology_Layers.gpkg",
+  "simplifyEps": 0.0005,
+  "provenance": "Paani Earth, Cauvery Basin GIS package (Aug 2026): named river centrelines, clipped to the Karnataka basin share. No centreline yet for the Palar (layer ships empty), Bhavani or Chinnar (the package's lines follow their Tamil Nadu courses, outside the Karnataka share).",
+  "layers": [
+   { "layer": "Cauvery River", "name": "Cauvery", "kind": "mainstem" },
+   { "layer": " Arkavathi River", "name": "Arkavathi" },
+   { "layer": " Kabini River ", "name": "Kabini" },
+   { "layer": "Hemavathi River ", "name": "Hemavathi" },
+   { "layer": "Shimsha River", "name": "Shimsha" },
+   { "layer": "Harangi River ", "name": "Harangi" },
+   { "layer": "Suvarnavathi River", "name": "Suvarnavathi" },
+   { "layer": "Lokapavani River ", "name": "Lokapavani" },
+   { "layer": "Lakshmanthirtha_River_Corrected", "name": "Lakshmanthirtha" },
+   { "layer": "Yagachi_River", "name": "Yagachi" },
+   { "layer": "Gundal River ", "name": "Gundal" },
+   { "layer": "Palar River", "name": "Palar", "allowEmpty": true }
+  ]
+ },
+ "contextBoundary": {
+  "gpkg": "Hydrology_Layers.gpkg",
+  "layer": "Cauvery_Basin_Boundary — basin",
+  "name": "Cauvery river basin (full extent: Karnataka, Kerala, Tamil Nadu, Puducherry)",
+  "simplifyEps": 0.002,
+  "provenance": "Paani Earth, Cauvery Basin GIS package (Aug 2026): full Cauvery basin boundary across Karnataka, Kerala, Tamil Nadu and Puducherry"
+ }
+}
