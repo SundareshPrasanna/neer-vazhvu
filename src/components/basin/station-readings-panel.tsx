@@ -223,7 +223,9 @@ function SeriesChart({ s, isDark }: { s: ReadingsSeries; isDark: boolean }) {
             <Tooltip contentStyle={tooltipStyle} />
             <Line type="monotone" dataKey="v" stroke="#9d174d" strokeWidth={1.5} dot={false} name={s.param ?? s.unit ?? ""} />
             {s.criterion != null && (
-              <ReferenceLine y={s.criterion} stroke="#dc2626" strokeDasharray="4 4"
+              // extendDomain: a station comfortably WITHIN the criterion must
+              // still show the line - "well under the limit" is the reading.
+              <ReferenceLine y={s.criterion} stroke="#dc2626" strokeDasharray="4 4" ifOverflow="extendDomain"
                 label={{ value: s.criterionLabel ?? `criterion ${s.criterion}`, fontSize: 9, fill: axis, position: "insideTopRight" }} />
             )}
           </LineChart>

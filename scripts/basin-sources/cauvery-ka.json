@@ -1,4 +1,5 @@
 {
+  "_prsNote": "prs-stretches no longer ingests from KWRIS: KA:Polluted_River_Stretch carries an earlier CPCB vintage (pre-Oct-2025 priorities) as blob polygons. The family is now built as REAL stretch lines with Oct-2025 priorities/BOD by scripts/build_basin_gpkg_layers.py (config: cauvery-ka-paani.json), which also builds rivers + context-boundary. Re-run that script after any ingest re-run - a full ingest regenerates inventory.json and would drop its three families, the same discipline as build_basin_wq_readings.py.",
   "basinId": "cauvery-ka",
   "displayName": "Cauvery Basin (Karnataka)",
   "adapter": "kwris",
@@ -41,21 +42,6 @@
         "Tank_Owner": "custodian"
       },
       "provenance": "KWRIS KA:MI_Tanks (Minor Irrigation Department tank register)"
-    },
-    {
-      "family": "prs-stretches",
-      "typeName": "KA:Polluted_River_Stretch",
-      "cql": "River_Name IN ('Arkavathi River','Lakshmanathirtha River','Kabini River or Kapila','Shimsha River','Cauvery River')",
-      "simplifyEps": 0.001,
-      "keep": {
-        "River_Name": "river",
-        "Priority": "priority",
-        "BODValue": "bodValue"
-      },
-      "static": {
-        "vintage": "CPCB assessment as published on KWRIS - predates the October 2025 update (the Arkavathi is Priority I, BOD up to 72 mg/L, in CPCB's October 2025 report)"
-      },
-      "provenance": "KWRIS KA:Polluted_River_Stretch (CPCB classification, earlier vintage)"
     },
     {
       "family": "wq-stations",

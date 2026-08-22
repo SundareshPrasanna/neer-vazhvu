@@ -1,13 +1,13 @@
 {
-  "_doc": "Per-basin Polluted River Stretch (PRS) sources. To onboard a new river's PRS, add a basin entry here and run `python scripts/build_prs.py <basinId>` - no code change. Each year entry: the source line geometry (any OGR-readable format), its survey year, and the CPCB/NGT priority band (I = worst). Output goes to public/data/basins/<basinId>/prs.geojson and is consumed by the generic `prs` layer + PRSPanel.",
+  "_doc": "Per-basin Polluted River Stretch (PRS) sources. To onboard a new river's PRS, add a basin entry here and run `python3 scripts/build_prs.py <basinId>` - no code change. Each year entry: the source GPKG + layer (optionally one fid), its survey year, and the CPCB/NGT priority band (I = worst). Layers carrying an authoritative distance attribute (the canonical 2025 layer's 'Distance (In Km)') declare it via distanceAttr; the build cross-checks geometry against it. NOTE (post-#290): the Arkavathi builds from Paani's canonical PRS_Stretches_Since_1993 package, NOT the older standalone Arkavathi_PRS_Stretch_*.gpkg files - those carry a shorter, superseded 2025 line, and the 2018/2020 editions are byte-identical geometry (there is no distinct 2020 edition; the epoch is 2018). Output goes to public/data/basins/<basinId>/prs.geojson and is consumed by the generic `prs` layer + PRSPanel.",
   "basins": {
     "arkavathi": {
       "river": "Arkavathi",
-      "srcDir": "docs/partnerships/paani_partnership",
+      "srcDir": "~/Downloads/Cauvery_Basin_Geopackages (1)",
       "credit": "Paani Earth (digitised from CPCB/NGT polluted-river-stretch classification)",
       "years": [
-        { "year": 2020, "file": "Arkavathi_PRS_Stretch_2020.gpkg", "priority": "III" },
-        { "year": 2025, "file": "Arkavathi_PRS_Stretch_2025.gpkg", "priority": "I" }
+        { "year": 2018, "file": "PRS_Stretches_Since_1993.gpkg", "layer": "PRS_2018_TippagondanahallitoKanakapuraTown", "priority": "III", "statedKm": 64.6 },
+        { "year": 2025, "file": "PRS_Stretches_Since_1993.gpkg", "layer": "PRS_2025_Polluted_River_Stretches", "fid": 1, "distanceAttr": "Distance (In Km)", "priority": "I" }
       ]
     }
   }
