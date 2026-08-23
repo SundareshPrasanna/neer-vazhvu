@@ -388,7 +388,10 @@ export interface AccountabilityData {
   portalNote?: string;
   baseline: {
     primary: { label: string; asOf: string; note?: string };
-    actionPlan: { label: string; url: string };
+    /** asOf dates the plan itself. It was hardcoded as "2019" in both surfaces,
+     *  which is the Arkavathi's edition and nobody else's - the Kabini and
+     *  Shimsha plans carry no date we can establish, so they render without one. */
+    actionPlan: { label: string; url: string; asOf?: string };
     banner?: string;
     otherSources?: string[];
   };
@@ -2798,7 +2801,7 @@ export function AccountabilityMatrix({ data, onShowRegion }: { data: Accountabil
                   </summary>
                   <div className="mt-1.5 ml-4 space-y-1.5">
                     <div className="rounded-md bg-slate-50 dark:bg-slate-800/60 px-2 py-1.5">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Action Plan (2019)</div>
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Action Plan{data.baseline.actionPlan.asOf ? ` (${data.baseline.actionPlan.asOf})` : ""}</div>
                       <p className="text-[12px] text-slate-700 dark:text-slate-200 leading-snug">{c.actionPlan.summary}</p>
                       {c.actionPlan.cite && <p className="text-[10px] text-slate-400 mt-0.5">{c.actionPlan.cite}</p>}
                     </div>
