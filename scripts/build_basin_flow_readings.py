@@ -44,6 +44,16 @@ DISCHARGE_TYPES = {"QOB", "QCO"}  # observed preferred over computed per day
 LEVEL_TYPES = {"HHS", "HZS", "HHT", "HZF"}
 
 
+# When the Dataset API stops answering, every remaining request still costs a
+# full timeout - 72 of them on this basin, which is over an hour of waiting to
+# learn something the third failure already told us. After this many
+# consecutive transport failures the run stops asking and falls back to the
+# packs already on disk.
+OUTAGE_AFTER = 3
+_consecutive_failures = 0
+_source_down = False
+
+
 def fetch_year(cache_dir: Path, dataset: str, state: str, district: str, year: int) -> list[dict]:
     """One (dataset, district, year) pull, paginated + cached.
 
@@ -51,10 +61,13 @@ def fetch_year(cache_dir: Path, dataset: str, state: str, district: str, year: i
     re-fetched - CWC publishes discharge in arrears, so both can still grow.
     Without this, a scheduled re-run would serve the stale cache and never see
     new data (docs/specs/deep-dive-maintenance-model.md)."""
+    global _consecutive_failures, _source_down
     key = f"{dataset.replace(' ', '_')}--{district.replace(' ', '_')}--{year}"
     cf = cache_dir / f"{key}.json"
     if cf.exists() and year < dt.date.today().year - 1:
         return json.loads(cf.read_text())
+    if _source_down:
+        return json.loads(cf.read_text()) if cf.exists() else []
     rows: list[dict] = []
     for page in range(MAX_PAGES):
         qs = urllib.parse.urlencode({
@@ -69,7 +82,13 @@ def fetch_year(cache_dir: Path, dataset: str, state: str, district: str, year: i
                 batch = json.loads(r.read().decode()).get("data") or []
         except Exception as e:  # noqa: BLE001 - a failed year is retried next run
             print(f"    ! {dataset} {district} {year} p{page}: {e}")
+            _consecutive_failures += 1
+            if _consecutive_failures >= OUTAGE_AFTER:
+                _source_down = True
+                print(f"    ! {_consecutive_failures} requests in a row failed - "
+                      f"treating India-WRIS as down and using what is already cached")
             return rows  # do NOT cache partial years
+        _consecutive_failures = 0
         rows += batch
         if len(batch) < PAGE_SIZE:
             break
@@ -195,6 +214,9 @@ def main() -> None:
 
     # stationKey -> the name the WRIS API uses (join is by name, never by code).
     name_of = {s["stationKey"]: s["wrisName"] for s in cfg["stations"]}
+    # Optional config coordinates, used only when the API cannot supply them.
+    cfg_coords = {s["stationKey"]: s["coordinates"]
+                  for s in cfg.get("extraStations", []) if s.get("coordinates")}
 
     # Reservoir gauges etc. that the partner file does not carry: append them.
     existing = {f["properties"]["stationKey"] for f in fc["features"]}
@@ -239,7 +261,29 @@ def main() -> None:
         wname = (name_of.get(props["stationKey"]) or "").upper()
         rows_q = q_rows.get(wname, [])
         rows_l = l_rows.get(wname, [])
+        pack_path = basin_dir / "readings" / f"{props['stationKey']}.json"
+
         if not rows_q and not rows_l:
+            # Nothing came back. That is either a station WRIS has no data for,
+            # or - as on 23 Aug 2026, when the Dataset API stopped answering
+            # altogether - a source outage. If a pack is already on disk, carry
+            # it forward rather than leaving the station flagged as having no
+            # readings with an orphaned pack beside it. The pack's own
+            # source.fetched still records when the data was really pulled, so
+            # nothing here claims to be fresher than it is.
+            if pack_path.exists():
+                prev = json.loads(pack_path.read_text())
+                period = prev.get("period") or {}
+                props["hasReadings"] = True
+                props["readingsFrom"] = period.get("from")
+                props["readingsTo"] = period.get("to")
+                if feat.get("geometry") is None:
+                    coords = (cfg_coords or {}).get(props["stationKey"])
+                    if coords:
+                        feat["geometry"] = {"type": "Point", "coordinates": coords}
+                print(f"  keep {props['stationKey']:12} {props['name']:22} "
+                      f"existing pack, fetched {prev.get('source', {}).get('fetched', '?')} "
+                      f"(no rows from the API this run)")
             continue
 
         if feat.get("geometry") is None:
@@ -286,6 +330,9 @@ def main() -> None:
     stations_fp.write_text(json.dumps(merge_envelope(stations_fp, fc), separators=(",", ":")))
     n_ready = sum(1 for f in fc["features"] if f["properties"].get("hasReadings"))
     print(f"\n{n_ready}/{len(fc['features'])} stations have readings -> {stations_fp.relative_to(REPO)}")
+    if _source_down:
+        print("India-WRIS did not answer this run. Existing packs were carried "
+              "forward unchanged; re-run when the source is back to refresh them.")
 
 
 if __name__ == "__main__":

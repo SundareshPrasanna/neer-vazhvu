@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -62,8 +63,8 @@ PARTNER_LAYERS = [
     ("KGIS_NotifiedForest_CauveryBasin — clipped", "forests.geojson"),
     ("KGIS_Protected_Areas_CauveryBasin — clipped", "protected-areas.geojson"),
     ("Command_Areas_in_Cauvery_Basin_IndiaWRIS — clipped", "command-areas.geojson"),
-    ("Paani_Cauvery_Karnataka_CWC_Sites", "cwc-sites.geojson"),
-    ("Paani_Cauvery_Karnataka_CPCB_NWMP_Sites", "nwmp-sites.geojson"),
+    # The Aug-6 CWC and NWMP station layers are NOT staged here: the review
+    # round replaced both with validated locations (section 7b below).
 ]
 
 # India-WRIS watershed polygons: the real sub-hydrosheds, replacing the
@@ -92,13 +93,43 @@ ADMIN_LAYERS = [
     ("Towns_in_KA_CauveryBasin — clipped", "admin-town.geojson", "town clips"),
 ]
 
-# The 2025 CPCB stretch. Its 2018/2020 siblings in the same GeoPackage are
-# NOT staged: KSPCB's own action plan puts that stretch at about 9 km
-# (Nanjangud water-supply intake to Hejjige village), but the delivered
-# geometry covers only ~3 km of it, so drawing it would understate the reach
-# by two thirds. The 2018 and 2020 lengths are reported in prs.json from the
-# documents instead, and the partial digitisation is flagged there.
 PRS_2025_LAYER = "PRS_2025_Polluted_River_Stretches"
+
+# ── Review round, 23 Aug 2026 ────────────────────────────────────────────────
+# Paani's feedback on the first Kabini build came with ten GeoPackages. These
+# are the ones it takes: corrected station locations, the drains the action
+# plan says do not exist, and a redrawn earlier stretch.
+#
+# The earlier stretch is the important one. The first build declined to draw
+# it: the geometry then on hand covered about 3 km of a reach KSPCB's own
+# action plan describes as roughly 9 km, so the panel reported it from the
+# documents and said plainly that it was not on the map. The redrawn line is
+# one contiguous 12 km course lying wholly inside the 2025 stretch, so it can
+# be drawn - and the growth from one edition to the next is finally visible
+# rather than described.
+PRS_2018_GPKG = "prs_2020_nanjangudtohejjige.gpkg"
+PRS_2018_LAYER = "prs_2020_nanjangudtohejjige"
+
+CWC_GPKG = "Kabini_CWC_Locations.gpkg"
+CWC_LAYER = "Kabini_CWC_Locations"
+KSPCB_GPKG = "Cauvery_Kabini_Monitoring_Points_KSPCB.gpkg"
+KSPCB_LAYER = "Cauvery_Kabini_Monitoring_Points_KSPCB"
+STP_GPKG = "Kabini_Basin_Sewage_treatment_Plants.gpkg"
+STP_LAYER = "Kabini_Basin_Sewage_treatment_Plants"
+DRAIN_INLET_GPKG = "Kabini_PRS_Polluting_drains_inlets.gpkg"
+DRAIN_INLET_LAYER = "polluting_drains_inlet_locations_as_per_oct2020mpr"
+DRAIN_LINE_GPKG = "Kabini_River_PRS_Polluting_Drains.gpkg"
+DRAIN_LINE_LAYER = "kabini_river_prs_polluting_drains_as_per_MPR"
+OUTSIDE_UNITS_GPKG = "Industries_Outside_industrial_Area.gpkg"
+OUTSIDE_UNITS_LAYER = "industries_outside_industrial_area"
+PRS_AREAS_GPKG = "Industrial_Areas_Relevant_to_kabini_PRS.gpkg"
+PRS_AREAS_LAYER = "Industrial_Areas_Relevant_to_kabini_PRS"
+
+# Her PRS-relevant industrial-area set overlaps ours almost entirely; what it
+# adds are estates that sit OUTSIDE the C2 boundary and drain toward it. Those
+# are staged as their own layer rather than merged in, so the distinction
+# between "in the basin" and "draining into it" stays visible on the map.
+IN_BASIN_AREA_MIN_SHARE = 0.001
 
 
 def _fc(features: list[dict]) -> dict:
@@ -175,10 +206,27 @@ def _intersecting(feats: list[dict], pmask) -> list[dict]:
     return kept
 
 
+def _tidy(f: dict, rename: dict[str, str]) -> dict:
+    """Collapse wrapped whitespace and rename spreadsheet headers to plain keys."""
+    out = {}
+    for k, v in (f.get("properties") or {}).items():
+        key = rename.get(k)
+        if key is None:
+            continue
+        if isinstance(v, str):
+            v = " ".join(v.split())
+        out[key] = v
+    f["properties"] = out
+    return f
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--gpkg-dir", default=str(Path.home() / "Downloads/Cauvery_Basin_Geopackages (1)"),
                     help="Paani Earth Cauvery GeoPackage folder (partner data, not in repo)")
+    ap.add_argument("--review-dir",
+                    default=str(Path.home() / "Downloads/Cauvery_Kabini_Review_23Aug2026"),
+                    help="Paani Earth's 23 Aug 2026 review-round GeoPackages")
     ap.add_argument("--out", default=str(REPO / ".cache/kabini-sources"))
     args = ap.parse_args()
 
@@ -276,6 +324,95 @@ def main() -> None:
         _write(out / "kabini-prs.geojson", _fc(prs_feats), "polluted stretch (2025)")
     else:
         print(f"  ! PRS GeoPackage not found ({prs_gpkg.name}); skipping the stretch layer")
+
+    # ── 7b. Review round (23 Aug 2026): the corrections Paani sent back ──
+    rdir = Path(args.review_dir)
+    if not rdir.exists():
+        sys.exit(f"Review-round GeoPackages not found: {rdir}")
+
+    # The earlier CPCB stretch, redrawn. Clipped like everything else, and
+    # measured out loud so a redelivery that moves it is visible at build time.
+    prs18 = _clip_to(_read_vector(rdir / PRS_2018_GPKG, PRS_2018_LAYER, None),
+                     kab_geom, kabini, 1)
+    for f in prs18:
+        f["properties"] = {}
+    km18 = sum(shape(f["geometry"]).length for f in prs18) * 111
+    print(f"    earlier stretch measures ~{km18:.2f} km in basin")
+    _write(out / "kabini-prs-2018.geojson", _fc(prs18), "polluted stretch (2018)")
+
+    # Validated CWC sites. Her file carries a third station, Kabini at
+    # Muthankera, which sits in Kerala and so falls outside the C2 clip - it
+    # stays out until the basin itself extends across the border.
+    cwc_all = _read_vector(rdir / CWC_GPKG, CWC_LAYER, None)
+    cwc = _intersecting(cwc_all, kabini)
+    dropped = [(f["properties"].get("stationnam"), f["properties"].get("state_name"))
+               for f in cwc_all if f not in cwc]
+    _write(out / "cwc-sites.geojson", _fc(cwc), "CWC sites (validated)")
+    for name, state in dropped:
+        print(f"    outside the boundary, not staged: {name} ({state})")
+
+    # stationKey keeps the CPCB_ prefix the first build established: the
+    # water-quality readings packs are filed under it.
+    kspcb = [_tidy(f, {"Water\nQuality Station Code": "stationKey",
+                       "Name or Location of Monitoring Station": "name",
+                       "Type of Water Body": "waterBody",
+                       "Frequency of Monitoring": "frequency"})
+             for f in _intersecting(_read_vector(rdir / KSPCB_GPKG, KSPCB_LAYER, None), kabini)]
+    for f in kspcb:
+        f["properties"]["stationKey"] = f"CPCB_{f['properties']['stationKey']}"
+        f["properties"]["name"] = f["properties"]["name"].rstrip(", ")
+    _write(out / "kspcb-sites.geojson", _fc(kspcb), "KSPCB monitoring (validated)")
+
+    stps = [_tidy(f, {"STP_Name": "name",
+                      "Implementing Agency": "operator",
+                      "Installed Capacity of STPs (in MLD)": "capacityMld",
+                      "Treatment Level": "treatmentLevel",
+                      "Date of Commissioning": "commissioned",
+                      "Destination of Treated Sewage": "destination",
+                      "Validation needed": "caveat",
+                      "Source": "sourceNote"})
+            for f in _intersecting(_read_vector(rdir / STP_GPKG, STP_LAYER, None), kabini)]
+    _write(out / "kabini-stps.geojson", _fc(stps), "sewage treatment plants")
+
+    # The drains the action plan says are not there. Inlets are the outfalls
+    # the October 2020 MPR itemises; the lines are the streams reaching them.
+    # The MPR itemises the drains with descriptions and no names, so the label
+    # is the place the report itself names - the phrase after its last
+    # "near"/"at"/"behind", trimmed at the comma. The full sentence rides along
+    # as the description, so the derivation is always checkable against it.
+    inlets = [_tidy(f, {"Details": "description"})
+              for f in _intersecting(_read_vector(rdir / DRAIN_INLET_GPKG, DRAIN_INLET_LAYER, None), kabini)]
+    for f in inlets:
+        text = f["properties"].get("description") or ""
+        hits = list(re.finditer(r"\b(?:near|behind|at)\s+", text, flags=re.I))
+        place = ""
+        if hits:
+            tail = text[hits[-1].end():]
+            place = tail.split(",")[0].strip()
+        f["properties"]["name"] = (place[:1].upper() + place[1:]) if place else "Unnamed outfall"
+    _write(out / "kabini-drain-inlets.geojson", _fc(inlets), "polluting drain inlets (MPR)")
+    _write(out / "kabini-drain-lines.geojson",
+           _fc(_clip_to(_read_vector(rdir / DRAIN_LINE_GPKG, DRAIN_LINE_LAYER, None),
+                        kab_geom, kabini, 1)),
+           "polluting drains (MPR + WRIS)")
+
+    _write(out / "kabini-units-outside-estates.geojson",
+           _fc(_intersecting(_read_vector(rdir / OUTSIDE_UNITS_GPKG, OUTSIDE_UNITS_LAYER, None), kabini)),
+           "units outside estates")
+
+    # Industrial areas she flags as influencing the stretch. Only the ones our
+    # in-basin layer cannot already carry - the estates outside the boundary -
+    # are staged, so the map does not draw the same polygon twice.
+    outside_areas = []
+    for f in _read_vector(rdir / PRS_AREAS_GPKG, PRS_AREAS_LAYER, None):
+        g = _geom(f)
+        if g is None or g.area <= 0:
+            continue
+        if g.intersection(kab_geom).area / g.area > IN_BASIN_AREA_MIN_SHARE:
+            continue
+        outside_areas.append(f)
+    _write(out / "kabini-areas-outside-basin.geojson", _fc(outside_areas),
+           "industrial areas outside basin")
 
     # ── 8. Partner pressure/station layers, filtered to the Kabini polygon ──
     for layer, fname in PARTNER_LAYERS:
