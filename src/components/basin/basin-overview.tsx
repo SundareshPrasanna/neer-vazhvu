@@ -521,8 +521,11 @@ export function BasinOverview({
 
   return (
     <div className="absolute inset-0 flex flex-col md:flex-row bg-white dark:bg-slate-950">
-      {/* Map */}
-      <div className="relative flex-1 min-h-[45vh]">
+      {/* Map. On mobile the column is map-then-panel, and the MAP takes the
+          fixed share: it is the panel that has to absorb whatever height the
+          content needs, by scrolling inside itself. On desktop the row puts
+          the map on the flexible side instead. */}
+      <div className="relative h-[45vh] shrink-0 md:h-full md:flex-1 md:shrink">
         <MapContainer
           center={manifest.mapCenter}
           zoom={manifest.mapZoom}
@@ -770,7 +773,7 @@ export function BasinOverview({
       </div>
 
       {/* Panel */}
-      <div className="w-full md:w-[380px] md:max-w-[45%] shrink-0 overflow-y-auto border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 p-3.5 space-y-3.5 text-slate-800 dark:text-slate-100">
+      <div className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain md:w-[380px] md:max-w-[45%] md:flex-none border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 p-3.5 space-y-3.5 text-slate-800 dark:text-slate-100">
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="text-[11px] uppercase tracking-wider text-slate-400">Basin overview</div>
