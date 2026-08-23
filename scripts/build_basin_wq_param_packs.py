@@ -110,6 +110,37 @@ def parse_pdf(pdf: Path, cache_dir: Path) -> dict[str, dict]:
     return out
 
 
+def _envelope_donor(readings_dir: Path, pack_path: Path, source_id: str) -> Path | None:
+    """A sibling pack to inherit the NVDM envelope from.
+
+    A station that appears for the first time has no envelope of its own, and
+    write_artifact only PRESERVES envelopes - it does not invent them. Without
+    this a newly-matched station ships ungoverned while its neighbours, written
+    by the same run from the same tables, carry full provenance.
+
+    The donor must cite THIS producer's source: a basin's readings directory
+    also holds CWC flow packs, and inheriting from one of those would file
+    CPCB's tables under India-WRIS."""
+    if pack_path.exists():
+        try:
+            if "nvdm" in json.loads(pack_path.read_text()):
+                return None
+        except (json.JSONDecodeError, OSError):
+            pass
+    for sib in sorted(readings_dir.glob("*.json")):
+        if sib == pack_path:
+            continue
+        try:
+            doc = json.loads(sib.read_text())
+        except (json.JSONDecodeError, OSError):
+            continue
+        if doc.get("nvdm") and doc.get("dataset") == "basins/readings" and any(
+            s.get("id") == source_id for s in doc.get("provenance", {}).get("sources", [])
+        ):
+            return sib
+    return None
+
+
 def main() -> None:
     if len(sys.argv) < 3:
         sys.exit("usage: build_basin_wq_param_packs.py <basin-dir> <config.json>")
@@ -189,7 +220,9 @@ def main() -> None:
             "series": series,
         }
         pack_path = basin_dir / "readings" / f"{station_key}.json"
-        write_artifact(pack_path, pack, compact=True)
+        write_artifact(pack_path, pack, compact=True,
+                       envelope_from=_envelope_donor(basin_dir / "readings", pack_path,
+                                                    "cpcb-nwmp-annual"))
         props["hasReadings"] = True
         props["readingsFrom"], props["readingsTo"] = years_with[0], years_with[-1]
         packed += 1
