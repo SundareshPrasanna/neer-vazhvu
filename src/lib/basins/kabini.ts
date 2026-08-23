@@ -44,7 +44,7 @@ export const KABINI: BasinManifest = {
       ],
       color: "#2563eb",
       narrative:
-        "The mainstem. Rises in the Wayanad hills of Kerala, enters Karnataka at the Kabini reservoir (Beechanahalli), gathers the Nugu and Taraka, and flows past Nanjangud to join the Cauvery at T. Narasipura. In 2018 CPCB's polluted stretch here was the 9 km below Nanjangud; by 2025 it ran 104 km, from Saragur to the T. Narasipura water-supply intake - effectively the whole Karnataka course.",
+        "The mainstem. Rises in the Wayanad hills of Kerala, enters Karnataka at the Kabini reservoir (Beechanahalli), gathers the Nugu and Taraka, and flows past Nanjangud to join the Cauvery at T. Narasipura. In 2018 CPCB's polluted stretch here was the short reach below Nanjangud - about 9 km on KSPCB's own action plan, 12 km as mapped; by 2025 it ran 104 km, from Saragur to the T. Narasipura water-supply intake, effectively the whole Karnataka course.",
       attributes: {
         origin: "Wayanad hills, Kerala (Pakramthalam range)",
         length: "About 105 km in Karnataka (KSPCB action plan); 155 km of mapped centreline inside the sub-basin",
@@ -83,30 +83,49 @@ export const KABINI: BasinManifest = {
     // aid, and ~1 MB that should only load when asked for.
     { family: "elevation-bands", label: "Terrain (elevation bands)", floor: "hydrology", geom: "fill", color: "#b45309", defaultOn: false, elevation: true },
     { family: "rivers", label: "Kabini & Gundal", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
-    // The 2025 CPCB stretch. Default OFF, as on the Arkavathi: it renders
-    // while the PRS panel is open, or when switched on explicitly.
+    // Both CPCB editions - the 2018 reach below Nanjangud and the 2025 one
+    // that runs the length of the river - so the growth toggle has something
+    // to compare. Default OFF, as on the Arkavathi: the stretch renders while
+    // the PRS panel is open, or when switched on explicitly.
     { family: "prs", label: "Polluted stretch (PRS)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: false, prs: true },
     { family: "waterbodies-major", label: "Major waterbodies (named)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true },
-    { family: "waterbodies-minor", label: "Minor irrigation tanks", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
+    { family: "waterbodies-minor", label: "Other waterbodies", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
     { family: "drainage", label: "Drainage network", floor: "hydrology", geom: "line", color: "#3b82f6", defaultOn: false, heavy: true },
 
+    // The outfalls the October 2020 progress report itemises, on a stretch
+    // whose action plan states there are no drains discharging into the river.
+    // Amber, matching the Arkavathi's polluting-drains layer.
+    { family: "prs-drains", label: "Polluting drain outfalls (MPR, Oct 2020)", floor: "hydrology", geom: "point", color: "#eab308", defaultOn: true, hasKinds: true, kindFilter: "drain-inlet" },
+    { family: "prs-drains", label: "Drains reaching them", floor: "hydrology", geom: "line", color: "#ca8a04", defaultOn: false, kindFilter: "drain-line" },
+
     // ── Floor 2: Monitoring - the station-readings pilot ──
-    { family: "flow-stations", label: "CWC flow gauges (tap for readings)", floor: "monitoring", geom: "point", color: "#0d9488", defaultOn: true, readings: true },
+    { family: "flow-stations", label: "CWC monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#0e7490", defaultOn: true, readings: true },
     // readings: the 5 river-table stations carry CPCB annual BOD/DO/FC trend
     // packs (build_basin_wq_param_packs.py); lake stations stay location-only.
-    { family: "monitoring-points", label: "NWMP water-quality stations", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },
+    { family: "monitoring-points", label: "KSPCB monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },
 
     // ── Floor 3: Pressures ──
     { family: "pressures-industrial", label: "KIADB industrial areas", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true, kindFilter: "industrial-area" },
     { family: "pressures-industrial", label: "KIADB industrial area points", floor: "pressures", geom: "point", color: "#9d174d", defaultOn: true, kindFilter: "industrial-area-point" },
+    // Large units sitting outside any notified estate - invisible in a
+    // KIADB-only view, and both of them on the stretch.
+    { family: "pressures-industrial", label: "Industries outside estates", floor: "pressures", geom: "fill", color: "#7f1d1d", defaultOn: true, kindFilter: "industry-outside-estate" },
+    // Estates OUTSIDE the basin boundary that drain toward it (Paani Earth's
+    // selection). Kept apart from the in-basin estates so the map never blurs
+    // "in the basin" into "draining into it".
+    { family: "pressures-industrial", label: "Industrial areas outside the basin", floor: "pressures", geom: "fill", color: "#f472b6", defaultOn: false, kindFilter: "industrial-area-outside-basin" },
     { family: "pressures-quarries", label: "Quarries (OSM-mapped)", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: false, hasKinds: true },
     { family: "forests", label: "Notified forests", floor: "pressures", geom: "fill", color: "#16a34a", defaultOn: false },
     { family: "protected-areas", label: "Protected areas (Nagarahole & Bandipur fringes)", floor: "pressures", geom: "fill", color: "#15803d", defaultOn: false },
 
     // ── Floor 4: Governance & infrastructure ──
     { family: "gaps", label: "District Environment Plan (DEP) Snapshot", floor: "governance", geom: "fill", color: "#dc2626", defaultOn: true, gap: true },
-    { family: "infrastructure", label: "Dams & reservoirs", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true, hasKinds: true, kindFilter: "dam" },
-    { family: "infrastructure", label: "Anicuts & weirs", floor: "governance", geom: "point", color: "#c084fc", defaultOn: true, kindFilter: "barrage" },
+    { family: "infrastructure", label: "Sewage treatment plants", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true, hasKinds: true, kindFilter: "stp" },
+    // Default OFF per Paani's review: the impoundments they mark already read
+    // as waterbodies. The layers stay because the WRIS register carries height,
+    // gross storage, year and purpose that a waterbody polygon does not.
+    { family: "infrastructure", label: "Dams & reservoirs", floor: "governance", geom: "point", color: "#7e22ce", defaultOn: false, kindFilter: "dam" },
+    { family: "infrastructure", label: "Anicuts & weirs", floor: "governance", geom: "point", color: "#c084fc", defaultOn: false, kindFilter: "barrage" },
     { family: "command-areas", label: "Irrigation command areas", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false },
     // District stays neutral, always-on context; the finer levels are opt-in
     // and take cool hues so they never collide with the warm gap choropleth.
@@ -127,12 +146,15 @@ export const KABINI: BasinManifest = {
     "Dams: India-WRIS National Register of Large Dams, extract dated 14 April 2026. It disagrees with the older CWC MLRD list on completion year for four minor tanks (Hebballa, Kamarahalli, Kalikatte, Karimuddenahalli); the newer register's years are the ones shown.",
     "Minor irrigation tanks: Karnataka GIS tank inventory (KGIS TIS), via Paani Earth's Cauvery package.",
     "Polluted river stretch: CPCB, Polluted River Stretches for Restoration of Water Quality 2025 (October 2025); geometry digitised by Paani Earth. Only the 2025 stretch is drawn - the package's 2018 and 2020 lines map about 3 km of a stretch KSPCB's own action plan describes as roughly 9 km, so the earlier epochs are reported in the panel from the documents instead.",
-    "Industrial areas (KIADB), notified forests and protected areas: Karnataka GIS (KGIS), via Paani Earth's Cauvery package, filtered to the Kabini boundary.",
+    "Industrial areas (KIADB), notified forests and protected areas: Karnataka GIS (KGIS), via Paani Earth's Cauvery package, filtered to the Kabini boundary. Estates shown as outside the basin, and the two large units outside any estate, are Paani Earth's own selection of works that drain toward the stretch.",
     "Quarries: digitised from OpenStreetMap (© OpenStreetMap contributors, ODbL), via Paani Earth's Cauvery package.",
     "Irrigation command areas: India-WRIS, via Paani Earth's Cauvery package.",
     "Administrative boundaries (districts, taluks, ULBs): Karnataka GIS (KGIS), via Paani Earth's Admin GeoPackage, clipped to the basin.",
     "CWC flow gauges + readings: India-WRIS Dataset API (CWC hydrological observations). Discharge is published in arrears; the telemetric level feed has been frozen at the source since 04 Jun 2026.",
-    "NWMP water-quality stations: CPCB NWMP station registry (WRIS), via Paani Earth's Cauvery package.",
+    "KSPCB water-quality monitoring points: station list validated and extended by Paani Earth (August 2026 review), wider than the NWMP subset alone; parameter trends from CPCB's annual Water Quality of Rivers tables.",
+    "Polluted river stretch, both editions: CPCB, Polluted River Stretches for Restoration of Water Quality 2025 (October 2025). The 2018 reach was redrawn by Paani Earth against the monitoring station locations and delivered in the August 2026 review; the mapped course measures 12.2 km against the 'about 9 Kms' KSPCB's action plan states.",
+    "Polluting drain outfalls and the drains reaching them: mapped by Paani Earth from the NMCG monthly progress report of October 2020, which itemises the drains without coordinates, onto the India-WRIS drainage network.",
+    "Sewage treatment plants: NMCG progress report (January 2025) against the CPCB 2021 STP inventory, compiled by Paani Earth. Coordinates for the Gundlupet plants are flagged by the compiler as needing validation.",
     "Terrain: FABDEM V1-2 (Hawker et al. 2022, University of Bristol - Copernicus GLO-30 with forests and buildings removed), via Google Earth Engine; CC BY-NC-SA 4.0. Classified into elevation bands at ~30 m resolution and clipped to the basin boundary, simplified for basin-scale display.",
   ],
 };

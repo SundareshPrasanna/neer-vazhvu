@@ -26,7 +26,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-08-14",
+    "produced_at": "2026-08-23",
     "produced_by": "scripts/build_kabini_sources.py + scripts/ingest_basin.py (scripts/basin-sources/kabini-ingest.json)"
   },
   "basinId": "kabini",
@@ -134,20 +134,26 @@
       ]
     },
     "prs": {
-      "featureCount": 1,
+      "featureCount": 2,
       "sources": [
         {
           "file": "kabini-prs.geojson",
           "kind": "prs",
           "count": 1,
-          "provenance": "CPCB's 2025 polluted stretch - 'River Kabini from Saragur village D/S to water supply intake point to Narasipura town', Priority V (Polluted River Stretches for Restoration of Water Quality 2025, CPCB, October 2025, p.15; max BOD 6 mg/L, p.77). Geometry digitised by Paani Earth (PRS_Stretches_Since_1993.gpkg, Aug 2026); length is her delivered distance attribute, 104.34 km. The 2018 and 2020 stretch lines in the same package are NOT ingested: KSPCB's own action plan puts that stretch at about 9 km and the delivered geometry maps only ~3 km of it, so the earlier epochs are reported in prs.json from the documents rather than drawn short."
+          "provenance": "CPCB's 2025 polluted stretch - 'River Kabini from Saragur village D/S to water supply intake point to Narasipura town', Priority V (Polluted River Stretches for Restoration of Water Quality 2025, CPCB, October 2025, p.15; max BOD 6 mg/L, p.77). Geometry digitised by Paani Earth; length is her delivered distance attribute, 104.34 km."
+        },
+        {
+          "file": "kabini-prs-2018.geojson",
+          "kind": "prs",
+          "count": 1,
+          "provenance": "CPCB's earlier stretch, 'Nanjanagud to Hejjige', Priority IV (Polluted River Stretches 2025, CPCB, Annexure X, p.108, which compares it with the 2025 reach). Geometry redrawn by Paani Earth against the monitoring station locations and delivered 23 August 2026; it replaces a first-round line that mapped about 3 km of the reach. The mapped course measures 12.2 km, against the 'about 9 Kms' KSPCB's own action plan states (p.3) - the panel reports both. Her file is labelled 2020; CPCB's own comparison dates the stretch to its 2018 list, and nothing about it changed between the two editions she mapped."
         }
       ],
-      "bytes": 27431,
+      "bytes": 30137,
       "sliced": false
     },
     "pressures-industrial": {
-      "featureCount": 22,
+      "featureCount": 28,
       "sources": [
         {
           "file": "kiadb-areas.geojson",
@@ -160,9 +166,21 @@
           "kind": "industrial-area-point",
           "count": 10,
           "provenance": "KIADB industrial area points (KGIS), via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+        },
+        {
+          "file": "kabini-units-outside-estates.geojson",
+          "kind": "industry-outside-estate",
+          "count": 2,
+          "provenance": "Large industrial units sitting outside any notified estate, mapped by Paani Earth, via Paani Earth Foundation's review-round delivery (23 August 2026). Not an exhaustive list - two units she identified near the stretch, invisible in a KIADB-estate view."
+        },
+        {
+          "file": "kabini-areas-outside-basin.geojson",
+          "kind": "industrial-area-outside-basin",
+          "count": 4,
+          "provenance": "KIADB industrial areas that fall OUTSIDE the KWRIS C2 boundary but which Paani Earth identifies as influencing the stretch through proximity and drainage, via Paani Earth Foundation's review-round delivery (23 August 2026). Staged separately from the in-basin estates so the difference between lying in the basin and draining into it stays visible."
         }
       ],
-      "bytes": 60530,
+      "bytes": 76437,
       "sliced": false
     },
     "pressures-quarries": {
@@ -218,7 +236,7 @@
       "sliced": false
     },
     "infrastructure": {
-      "featureCount": 10,
+      "featureCount": 12,
       "sources": [
         {
           "file": "kabini-dams.geojson",
@@ -231,9 +249,15 @@
           "kind": "barrage",
           "count": 2,
           "provenance": "India-WRIS barrage/weir/anicut register extract dated 14 April 2026, via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026); the two anicuts inside the Kabini boundary (Hullhalli on the Kabini, Halsur on the Nugu)."
+        },
+        {
+          "file": "kabini-stps.geojson",
+          "kind": "stp",
+          "count": 2,
+          "provenance": "Sewage treatment plants, compiled by Paani Earth from the NMCG progress report of January 2025 against the CPCB 2021 STP inventory, via Paani Earth Foundation's review-round delivery (23 August 2026). Two plants, and both need reading with care: the Vidyaranyapuram plant is Mysuru city's 67.65 MLD works, and Paani flags the Gundlupet coordinates as needing validation - her caveat travels with the feature."
         }
       ],
-      "bytes": 3956,
+      "bytes": 4809,
       "sliced": false
     },
     "flow-stations": {
@@ -243,10 +267,10 @@
           "file": "cwc-sites.geojson",
           "kind": null,
           "count": 2,
-          "provenance": "CWC hydrological observation sites, via Paani Earth Cauvery GIS package (Aug 2026). hasReadings + packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls."
+          "provenance": "CWC hydrological observation sites, locations and site types validated by Paani Earth against the CWC water year books, via Paani Earth Foundation's review-round delivery (23 August 2026). Two of the three fall inside the boundary; Kabini at Muthankera is in Kerala and is out of scope until the basin extends across the border. hasReadings and the packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls."
         }
       ],
-      "bytes": 1710,
+      "bytes": 1748,
       "sliced": false
     },
     "gaps": {
@@ -263,16 +287,16 @@
       "sliced": false
     },
     "monitoring-points": {
-      "featureCount": 13,
+      "featureCount": 14,
       "sources": [
         {
-          "file": "nwmp-sites.geojson",
+          "file": "kspcb-sites.geojson",
           "kind": null,
-          "count": 13,
-          "provenance": "CPCB NWMP monitoring stations (WRIS station registry), via Paani Earth Cauvery GIS package (Aug 2026); stations within the Kabini boundary."
+          "count": 14,
+          "provenance": "KSPCB water-quality monitoring stations, validated and extended by Paani Earth, via Paani Earth Foundation's review-round delivery (23 August 2026). Wider than the NWMP network alone - it includes the tanks and lakes KSPCB monitors monthly, which the first build's NWMP-only layer left out."
         }
       ],
-      "bytes": 3806,
+      "bytes": 4328,
       "sliced": false
     },
     "admin-district": {
@@ -312,6 +336,25 @@
         }
       ],
       "bytes": 149593,
+      "sliced": false
+    },
+    "prs-drains": {
+      "featureCount": 25,
+      "sources": [
+        {
+          "file": "kabini-drain-inlets.geojson",
+          "kind": "drain-inlet",
+          "count": 6,
+          "provenance": "Outfalls into the Kabini and the Gundlu, mapped by Paani Earth from the NMCG monthly progress report of October 2020 (p.64), via Paani Earth Foundation's review-round delivery (23 August 2026). The MPR lists the drains with descriptions but no coordinates; each point's findings text is the report's own wording. The KSPCB action plan states that there are no drains discharging into the river in the surroundings of Nanjangud."
+        },
+        {
+          "file": "kabini-drain-lines.geojson",
+          "kind": "drain-line",
+          "count": 19,
+          "provenance": "The stream courses reaching those outfalls, traced by Paani Earth from the progress report's descriptions onto the India-WRIS drainage network, via Paani Earth Foundation's review-round delivery (23 August 2026). 19 segments, about 24 km. Carries no attributes of its own - the record is in the inlet points."
+        }
+      ],
+      "bytes": 24002,
       "sliced": false
     }
   },
