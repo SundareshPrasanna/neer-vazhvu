@@ -1,6 +1,6 @@
 {
   "question": "Do the Action Plan and the MPRs address all potential pollution contributors on the Kabini stretch?",
-  "intro": "The Kabini's CPCB polluted stretch runs from Saragur village downstream to the T. Narasipura water-supply intake - 104.3 km at Priority V since CPCB redrew it in October 2025, where it was the 9 km below Nanjangud at Priority IV in 2018. This section compares the KSPCB Action Plan's commitments with what the monthly progress reports actually report. 'Not reported' means absent from the documents, not necessarily absent on the ground.",
+  "intro": "The Kabini's CPCB polluted stretch runs from Saragur village downstream to the T. Narasipura water-supply intake - 104.3 km at Priority V since CPCB redrew it in October 2025, where it was the reach below Nanjangud at Priority IV in 2018. This section compares the KSPCB Action Plan's commitments with what the monthly progress reports actually report, for every urban local body in the sub-basin and not only the towns the reports choose to itemise. 'Not reported' means absent from the documents, not necessarily absent on the ground.",
   "baseline": {
     "primary": {
       "label": "NMCG Monthly Progress Report (Karnataka, Kabini stretch)",
@@ -17,7 +17,8 @@
       "KSPCB NWMP monthly classification 2025-26",
       "NMCG MPR April 2026 - annexure tables only (station water-quality classes + state-wide STP lists); no per-stretch narrative",
       "Revised District Environmental Plan of Mysuru District (May 2022) - the only source that reports Sargur and T. Narasipura, the two towns the October-2025 redraw added to the stretch",
-      "KSPCB hazardous-waste authorisations under the 2016 Rules (per-unit Form 2 grants, e.g. 318149 for Jubilant Generics at KIADB Nanjangud)"
+      "KSPCB hazardous-waste authorisations under the 2016 Rules (per-unit Form 2 grants, e.g. 318149 for Jubilant Generics at KIADB Nanjangud)",
+      "Karnataka GIS urban local body boundaries, via Paani Earth (Aug 2026) - the 11 ULBs whose area falls inside the sub-basin, which is how this matrix knows which towns the documents leave out"
     ]
   },
   "legalLibrary": {
@@ -164,7 +165,14 @@
           "gaps": [],
           "legalRef": "public-stps"
         }
-      ]
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Sargur"
+        ]
+      }
     },
     {
       "kind": "ulb",
@@ -271,7 +279,14 @@
           "gaps": [],
           "legalRef": "public-stps"
         }
-      ]
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Nanjanagud"
+        ]
+      }
     },
     {
       "kind": "ulb",
@@ -378,6 +393,1052 @@
           "gaps": [],
           "legalRef": "public-stps"
         }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "T.Narasipura"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "hd-kote",
+      "name": "H.D. Kote (TMC)",
+      "inBasinNote": "In-basin ULB above the Kabini reservoir, about 2 km off the mapped stretch. Whatever it discharges enters the impoundment the stretch begins below.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for H.D. Kote in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for H.D. Kote - the reporting gap is the finding.",
+            "The Mysuru district plan gives the town 2.46 MLD of sewage, no STP and no sewerage network, with a faecal sludge plant approved and not built (May 2022, pp.57-59)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for H.D. Kote in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for H.D. Kote - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for H.D. Kote in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for H.D. Kote - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for H.D. Kote in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for H.D. Kote - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for H.D. Kote in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for H.D. Kote - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "H.D.Kote"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "kadakola",
+      "name": "Kadakola (TP)",
+      "inBasinNote": "In-basin town panchayat about 3 km off the stretch, on the Mysuru to Nanjangud road.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Kadakola in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Kadakola - the reporting gap is the finding.",
+            "The Mysuru district plan's own list of urban local bodies names the corporation and eight towns; this one is not among them (May 2022, p.3)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Kadakola in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Kadakola - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Kadakola in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Kadakola - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Kadakola in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Kadakola - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Kadakola in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Kadakola - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Kadakola"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "srirampura",
+      "name": "Srirampura (TP)",
+      "inBasinNote": "In-basin town panchayat in the Mysuru urban fringe, about 7 km off the stretch.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Srirampura in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Srirampura - the reporting gap is the finding.",
+            "The Mysuru district plan's own list of urban local bodies names the corporation and eight towns; this one is not among them (May 2022, p.3)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Srirampura in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Srirampura - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Srirampura in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Srirampura - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Srirampura in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Srirampura - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Srirampura in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Srirampura - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Srirampura"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "mysuru",
+      "name": "Mysuru (City Corporation)",
+      "inBasinNote": "97% of the city corporation's area falls inside the Kabini sub-basin, about 12 km off the mapped stretch. It is by far the largest sewage source in the district, and no document we hold states which river its flow reaches.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Mysuru in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Mysuru - the reporting gap is the finding.",
+            "The district plan puts city sewage at 180 MLD of the district's 206.74, against 199.41 MLD of installed capacity, and reports 105.34 MLD reaching water bodies untreated or partially treated (May 2022, p.59). None of it is attributed to a river."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Mysuru in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Mysuru - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Mysuru in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Mysuru - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Mysuru in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Mysuru - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Mysuru in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Mysuru - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Mysuru"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "bogadi",
+      "name": "Bogadi (TP)",
+      "inBasinNote": "In-basin town panchayat in the Mysuru urban fringe, about 14 km off the stretch.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Bogadi in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Bogadi - the reporting gap is the finding.",
+            "The Mysuru district plan's own list of urban local bodies names the corporation and eight towns; this one is not among them (May 2022, p.3)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Bogadi in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Bogadi - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Bogadi in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Bogadi - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Bogadi in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Bogadi - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Bogadi in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Bogadi - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Bogadi"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "rammanahalli",
+      "name": "Rammanahalli (TP)",
+      "inBasinNote": "In-basin town panchayat in the Mysuru urban fringe, about 14 km off the stretch.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Rammanahalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Rammanahalli - the reporting gap is the finding.",
+            "The Mysuru district plan's own list of urban local bodies names the corporation and eight towns; this one is not among them (May 2022, p.3)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Rammanahalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Rammanahalli - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Rammanahalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Rammanahalli - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Rammanahalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Rammanahalli - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Rammanahalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Rammanahalli - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Rammanahalli"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "hootagalli",
+      "name": "Hootagalli (CMC)",
+      "inBasinNote": "In-basin city municipal council in the Mysuru urban fringe, about 19 km off the stretch; the Hootagalli and Hootagalli Food industrial areas sit within it.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Hootagalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Hootagalli - the reporting gap is the finding.",
+            "The Mysuru district plan's own list of urban local bodies names the corporation and eight towns; this one is not among them (May 2022, p.3)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Hootagalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Hootagalli - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Hootagalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Hootagalli - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Hootagalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Hootagalli - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Hootagalli in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Hootagalli - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Hootagalli"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "gundlupete",
+      "name": "Gundlupet (TMC)",
+      "inBasinNote": "In-basin ULB on the Gundal, the Kabini's eastern tributary, in Chamarajanagara district. No monitoring station on this map sits on the Gundal at all.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Gundlupet in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Gundlupet - the reporting gap is the finding.",
+            "Its own district plan gives the town two STPs of 2.1 and 1.5 MLD, records that 100% underground drainage is not complete, and states that untreated sewage is not quantified (Chamarajanagara, Jun 2021)."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Gundlupet in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Gundlupet - the reporting gap is the finding."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Gundlupet in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Gundlupet - the reporting gap is the finding."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Gundlupet in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Gundlupet - the reporting gap is the finding."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Gundlupet in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Gundlupet - the reporting gap is the finding."
+          ],
+          "legalRef": "public-stps"
+        }
+      ],
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "GUNDLUPETE"
+        ]
+      }
+    },
+    {
+      "kind": "ulb",
+      "key": "hunsur",
+      "name": "Hunsur (CMC)",
+      "inBasinNote": "In-basin ULB about 23 km off the Kabini stretch, on the Lakshmanathirtha - a tributary with its own CPCB polluted stretch. Listed here because its area drains into this sub-basin, not because the Kabini's documents cover it.",
+      "grievance": {
+        "label": "Report illegal discharge (NMCG grievance module)",
+        "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+      },
+      "mapMatch": {
+        "family": "admin-town",
+        "prop": "name",
+        "values": [
+          "Hunsur"
+        ]
+      },
+      "categories": [
+        {
+          "key": "public-stps",
+          "label": "Public STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No public sewage treatment commitment for Hunsur in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any Kabini MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention public sewage treatment for Hunsur - the reporting gap is the finding.",
+            "Hunsur sits on the Lakshmanathirtha, which CPCB lists as a polluted stretch in its own right - 'from D/S Hunsur to the water supply intake point of Hunsur town', Priority IV. Its obligations belong to that stretch's action plan, not this one."
+          ],
+          "legalRef": "public-stps"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid waste commitment for Hunsur in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any Kabini MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention solid waste for Hunsur - the reporting gap is the finding.",
+            "Hunsur sits on the Lakshmanathirtha, which CPCB lists as a polluted stretch in its own right - 'from D/S Hunsur to the water supply intake point of Hunsur town', Priority IV. Its obligations belong to that stretch's action plan, not this one."
+          ],
+          "legalRef": "solid-waste"
+        },
+        {
+          "key": "biomedical",
+          "label": "Biomedical Waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No biomedical waste commitment for Hunsur in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any Kabini MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention biomedical waste for Hunsur - the reporting gap is the finding.",
+            "Hunsur sits on the Lakshmanathirtha, which CPCB lists as a polluted stretch in its own right - 'from D/S Hunsur to the water supply intake point of Hunsur town', Priority IV. Its obligations belong to that stretch's action plan, not this one."
+          ],
+          "legalRef": "biomedical"
+        },
+        {
+          "key": "fecal-sludge",
+          "label": "Fecal Sludge",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No faecal sludge commitment for Hunsur in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any Kabini MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention faecal sludge for Hunsur - the reporting gap is the finding.",
+            "Hunsur sits on the Lakshmanathirtha, which CPCB lists as a polluted stretch in its own right - 'from D/S Hunsur to the water supply intake point of Hunsur town', Priority IV. Its obligations belong to that stretch's action plan, not this one."
+          ],
+          "legalRef": "fecal-sludge"
+        },
+        {
+          "key": "private-stps",
+          "label": "Private STPs",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No private sewage treatment commitment for Hunsur in the Kabini Action Plan, which names CMC Nanjangud as the only local body on the river.",
+            "cite": "Kabini Action Plan, p.3"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported in any Kabini MPR edition through September 2025.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Neither the Action Plan nor the MPRs mention private sewage treatment for Hunsur - the reporting gap is the finding.",
+            "Hunsur sits on the Lakshmanathirtha, which CPCB lists as a polluted stretch in its own right - 'from D/S Hunsur to the water supply intake point of Hunsur town', Priority IV. Its obligations belong to that stretch's action plan, not this one."
+          ],
+          "legalRef": "public-stps"
+        }
       ]
     },
     {
@@ -427,7 +1488,19 @@
           ],
           "legalRef": "hazardous-waste"
         }
-      ]
+      ],
+      "mapMatch": {
+        "family": "pressures-industrial",
+        "prop": "name",
+        "contains": [
+          "Nanjangud",
+          "Thandya",
+          "Adakanahally"
+        ],
+        "kinds": [
+          "industrial-area"
+        ]
+      }
     },
     {
       "kind": "gp",

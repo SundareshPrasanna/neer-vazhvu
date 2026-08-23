@@ -522,7 +522,7 @@ function AccRegionBlock({ region, acc }: { region: AccRegion; acc: Accountabilit
               />
             </View>
             <Text style={[s.small, { marginTop: 1.5 }]}>
-              Action Plan (2019): {c.actionPlan.summary}
+              Action Plan{acc.baseline.actionPlan.asOf ? ` (${acc.baseline.actionPlan.asOf})` : ""}: {c.actionPlan.summary}
               {c.actionPlan.cite ? ` [${c.actionPlan.cite}]` : ""}
             </Text>
             <Text style={s.small}>
