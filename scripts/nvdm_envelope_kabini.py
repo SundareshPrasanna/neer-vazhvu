@@ -29,6 +29,18 @@ BASIN = REPO / "public/data/basins/kabini"
 
 # ── Source blocks ────────────────────────────────────────────────────────────
 
+def paani_review(title: str) -> dict:
+    """One layer of the 23 Aug 2026 review-round delivery - a dated, closed edition."""
+    return {
+        "title": f"{title} - Kabini review round (GeoPackages, 23 Aug 2026 delivery)",
+        "publisher": "Paani Earth Foundation",
+        "closed": True,
+        "as_of": "2026-08",
+        "role": "input",
+        "license": "partner-supplied compilation, cited with attribution; underlying government layers as attributed per layer",
+    }
+
+
 def paani(title: str) -> dict:
     """One layer of the partner GeoPackage delivery - a dated, closed edition."""
     return {
@@ -133,7 +145,8 @@ ARTIFACTS: dict[str, tuple[str, list[dict], str, str, bool]] = {
     "drainage.geojson": ("basins/drainage", [paani("India-WRIS stream network for the Kabini (Kabini_Drainage)"), KWRIS], "derived", PIPELINE, True),
     "waterbodies-major.geojson": ("basins/waterbodies-major", [paani("India-WRIS major waterbodies"), KWRIS], "derived", PIPELINE, True),
     "waterbodies-minor.geojson": ("basins/waterbodies-minor", [paani("KGIS minor-irrigation tank inventory (KGIS TIS)"), KWRIS], "derived", PIPELINE, True),
-    "prs.geojson": ("basins/prs", [paani("CPCB polluted river stretches, digitised (PRS_Stretches_Since_1993)"), CPCB_PRS, KWRIS], "derived", PIPELINE, True),
+    "prs.geojson": ("basins/prs", [paani("CPCB polluted river stretches, digitised (PRS_Stretches_Since_1993)"), paani_review("The 2018 stretch, redrawn against the monitoring station locations"), CPCB_PRS, KWRIS], "derived", PIPELINE, True),
+    "prs-drains.geojson": ("basins/prs-drains", [paani_review("Polluting drain outfalls and the drains reaching them, from the October 2020 progress report"), NMCG_MPR, KWRIS], "derived", PIPELINE, True),
     "prs.json": ("basins/prs", [CPCB_PRS, KSPCB_PLAN, NMCG_MPR, DEP_MYSURU, WRIS], "manual",
                  "Authored from the documents' own tables, page-cited; the 2018 stretch length is KSPCB's own figure because the delivered geometry maps only part of it.", False),
     "elevation-bands.geojson": ("basins/elevation-bands", [FABDEM, KWRIS], "derived",
@@ -141,14 +154,14 @@ ARTIFACTS: dict[str, tuple[str, list[dict], str, str, bool]] = {
     "admin-district.geojson": ("basins/admin-district", [paani("KGIS district boundaries"), KWRIS], "derived", PIPELINE, True),
     "admin-taluk.geojson": ("basins/admin-taluk", [paani("KGIS taluk (subdistrict) boundaries"), KWRIS], "derived", PIPELINE, True),
     "admin-town.geojson": ("basins/admin-town", [paani("KGIS urban local body boundaries"), KWRIS], "derived", PIPELINE, True),
-    "flow-stations.geojson": ("basins/flow-stations", [paani("CWC hydrological observation sites"), WRIS], "mixed", f"{PIPELINE} + {FLOW}", True),
-    "monitoring-points.geojson": ("basins/monitoring-points", [paani("CPCB NWMP monitoring stations (WRIS station registry)")], "derived", PIPELINE, True),
-    "pressures-industrial.geojson": ("basins/pressures-industrial", [paani("KIADB industrial areas and points (KGIS)")], "derived", PIPELINE, True),
+    "flow-stations.geojson": ("basins/flow-stations", [paani_review("CWC hydrological observation sites, locations and site types validated"), WRIS], "mixed", f"{PIPELINE} + {FLOW}", True),
+    "monitoring-points.geojson": ("basins/monitoring-points", [paani_review("KSPCB water-quality monitoring stations, validated and extended")], "derived", PIPELINE, True),
+    "pressures-industrial.geojson": ("basins/pressures-industrial", [paani("KIADB industrial areas and points (KGIS)"), paani_review("Industrial areas draining toward the stretch, and units outside any estate")], "derived", PIPELINE, True),
     "pressures-quarries.geojson": ("basins/pressures-quarries", [paani("Quarry polygons"), OSM], "derived", PIPELINE, True),
     "forests.geojson": ("basins/forests", [paani("KGIS notified forest boundaries")], "derived", PIPELINE, True),
     "protected-areas.geojson": ("basins/protected-areas", [paani("KGIS protected area boundaries (KFDC)")], "derived", PIPELINE, True),
     "command-areas.geojson": ("basins/command-areas", [paani("India-WRIS irrigation command areas")], "derived", PIPELINE, True),
-    "infrastructure.geojson": ("basins/infrastructure", [paani("India-WRIS dam and barrage/weir/anicut registers, 14 April 2026 extracts")], "derived", PIPELINE, True),
+    "infrastructure.geojson": ("basins/infrastructure", [paani("India-WRIS dam and barrage/weir/anicut registers, 14 April 2026 extracts"), paani_review("Sewage treatment plants, from the January 2025 progress report and the CPCB 2021 inventory")], "derived", PIPELINE, True),
     "gaps.geojson": ("basins/gaps", [paani("District boundaries (KGIS Admin GeoPackage)"), KWRIS], "derived", PIPELINE, True),
     "gaps.json": ("basins/gaps", [DEP_MYSURU, DEP_CHAMARAJANAGARA, DEP_KODAGU], "manual", "Authored from the three district plans' own tables, page-cited; see the conflicts entries for the plans' internal contradictions.", False),
     "accountability.json": ("basins/accountability", [KSPCB_PLAN, NMCG_MPR], "manual", "Authored on the cauvery-ka overview (accountability-C2.json) and carried verbatim by scripts/build_kabini_sources.py.", False),
