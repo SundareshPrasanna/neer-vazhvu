@@ -46,9 +46,10 @@ const TONE_CLASSES: Record<string, string> = {
 
 /**
  * Full-screen takeover for rich-data water bodies (Pallikaranai etc.).
- * Hosts an embedded map with TNSWA gazetted boundary + 1km NGT buffer +
- * cumulative water-loss / built-gain tints + year-selectable satellite
- * chip. Replaces the standard BottomSheet detail panel.
+ * Hosts an embedded map with the body's primary boundary (gazetted where
+ * one exists, OpenStreetMap otherwise) + its 1 km buffer + cumulative
+ * water-loss / built-gain tints + a year-selectable satellite chip.
+ * Replaces the standard BottomSheet detail panel.
  */
 export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
   const body = getRichBody(bodyId);
@@ -134,9 +135,9 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
           <h2 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-slate-100 truncate">
             {body.name}
           </h2>
-          {body.name_ta && (
+          {(body.name_local ?? body.name_ta) && (
             <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
-              {body.name_ta}
+              {body.name_local ?? body.name_ta}
             </p>
           )}
           {body.status_badges && body.status_badges.length > 0 && (
@@ -202,8 +203,9 @@ export function RichBodyOverlay({ bodyId, onClose }: RichBodyOverlayProps) {
         {/* Sources footnote with clickable link to full methodology modal */}
         <div className="px-4 md:px-6 py-2 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 shrink-0 flex items-center justify-between gap-3">
           <span className="truncate">
-            TNSWA &middot; Open Buildings v3 &middot; JRC GSW v1.4 &middot; Dynamic World V1
-            {" "}&middot; Landsat / Sentinel-2
+            {body.boundary_source_label ?? "OpenStreetMap"}{" "}
+            &middot; Overture &middot; Open Buildings v3 &middot; JRC GSW v1.4
+            {" "}&middot; Dynamic World V1 &middot; Landsat / Sentinel-2
           </span>
           <button
             onClick={() => setSourcesOpen(true)}

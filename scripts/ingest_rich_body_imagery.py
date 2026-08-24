@@ -257,11 +257,19 @@ def main():
     )
     chips: list[dict] = []
     existing_chips_by_year: dict[int, dict] = {}
+    # The tint blocks are written into this same manifest by the two
+    # ingest_rich_body_*_tint.py scripts. They are NOT regenerated here,
+    # so they have to be carried across or a partial imagery re-run
+    # (`--years 2004,2020`) silently deletes a body's water-loss and
+    # built-gain overlays - the chips merge correctly and the tints just
+    # vanish, with nothing in the output to say so.
+    existing_tints: dict | None = None
     if manifest_path.exists():
         try:
             existing = json.loads(manifest_path.read_text())
             for c in existing.get("chips", []):
                 existing_chips_by_year[int(c["year"])] = c
+            existing_tints = existing.get("tints")
         except Exception as e:
             print(f"  warning: could not read existing manifest: {e}")
 
@@ -361,6 +369,9 @@ def main():
         ),
         "chips": chips,
     }
+    if existing_tints:
+        manifest["tints"] = existing_tints
+        print(f"Carried forward {len(existing_tints)} tint layer(s) from the prior manifest")
     # `manifest_path` was already defined earlier (top of main) for the
     # existing-manifest read; reuse it for the write.
     manifest_path.parent.mkdir(parents=True, exist_ok=True)

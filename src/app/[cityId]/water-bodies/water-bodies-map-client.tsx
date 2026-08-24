@@ -318,6 +318,7 @@ export default function WaterBodiesMapClient({
               sidebar this collapsed to 0px (same fix as the flood maps). */}
           <UnifiedMap
             viewMode={viewMode}
+            cityId={cityId}
             scoredData={restorationData?.water_bodies ?? []}
             censusData={[]}
             onSelectCurrent={setSelected}

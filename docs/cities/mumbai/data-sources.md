@@ -70,6 +70,21 @@ Mumbai City + Mumbai Suburban are the only 2 of Maharashtra's 35 districts **exc
 | **26/7/2005** | Reference layer from the Chitale Fact-Finding Committee record + curated hotspot geojson |
 | **iFLOWS** | Built with public money, briefs officials only - documented as a transparency gap |
 
+## Rich-Data Deep-Zoom Panel (5 Mumbai flagship bodies)
+
+| | |
+|---|---|
+| **Bodies** | Powai, Vihar, Tulsi (the Salsette lakes) + Tansa, Bhatsa (BMC supply reservoirs) |
+| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Boundaries** | OpenStreetMap relation/way extracts via `scripts/fetch-rich-body-polygon.ts`; no gazetted GIS boundary is published for BMC's lakes, so there is no gazette-vs-OSM comparison of the kind Pallikaranai carries |
+| **Outputs** | `public/data/rich-bodies/{body}-imagery-manifest.json`, `{body}-jrc-water-trend.json`, `{body}-dw-water-trend.json`, `{body}-dynamic-world-built-trend.json`, `{body}-open-buildings-verification.json`, `{body}-overture-buildings.json`; chips and tints in Supabase Storage (`satellite-evidence`) |
+
+**Why these five.** Powai, Vihar and Tulsi are the in-city Salsette lakes where the halo actually changes: Vihar gave Bombay its first piped water in 1860, Tulsi followed in 1879, and Powai left the drinking-water system in 1892 and is now in NGT proceedings over sewage. Tansa (1892) and Bhatsa (impounded in stages to 1981) are the two ends of the supply chain the city built afterwards, and they carry the `supply_reservoir` flag in `mumbai-water-bodies-current.geojson`.
+
+**Two kinds of body, two ways to read the water series.** Vihar and Tulsi sit inside Sanjay Gandhi National Park, so their built-area halos measure a park edge rather than city growth; Tansa and Bhatsa are operated reservoirs 60-80 km out, whose water surface moves with BMC's draw-off schedule as much as with the monsoon. Both caveats are carried per body in the registry and surface in the in-panel sources modal.
+
+**Powai and the hyacinth problem.** JRC and Dynamic World both classify dense water-hyacinth mats as vegetation, not water. Powai's published weed cover ranges from 23-25% (BMC operational data, April 2024) to 80% (July 2025 NGT-proceedings framing), so its water-fraction line reads open-water extent rather than lake area. Both figures are reported in the panel rather than reconciled - no measurement method is published for either.
+
 ## Allocation instruments (the Ledger's paper)
 
 WRD Government Resolutions via the orgpedia mahGRs mirror (the way to full-text-search Maharashtra GRs; e.g. BMC's Bhatsa share, GR 11-Sep-2019, 427.93 Mm³/yr), STEM Water's own board minutes (8-Dec-2016, on environmentclearance.nic.in: 285 MLD sanctioned), MBMC's official supply page (211 = STEM 86 + MIDC 125), MMRDA Annual Report 2021-22 (Surya allocation 146.33 Mm³/yr), EC compliance tables. **Not public**: STEM's Thane/Bhiwandi split, MIDC per-buyer quantities, the MWRRA entitlement register (page literally "Under Construction"), Barvi sharing GR 18-Sep-2017 (number known, PDF unretrievable), BMC→Thane 90 MLD instrument - all named in the Ledger's gaps section.

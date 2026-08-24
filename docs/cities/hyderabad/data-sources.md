@@ -265,6 +265,31 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
   Sagar impounds, against 244 km for the Musi - and the Musi appears under three name variants
   that must be merged. A gap in the public map, not a fact about the river.
 
+## Rich-Data Deep-Zoom Panel (5 Hyderabad flagship bodies)
+
+| | |
+|---|---|
+| **Bodies** | Hussain Sagar, Osman Sagar, Himayat Sagar, Durgam Cheruvu, Ameenpur |
+| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Boundaries** | OpenStreetMap relation/way extracts via `scripts/fetch-rich-body-polygon.ts` |
+| **Outputs** | `public/data/rich-bodies/{body}-imagery-manifest.json`, `{body}-jrc-water-trend.json`, `{body}-dw-water-trend.json`, `{body}-dynamic-world-built-trend.json`, `{body}-open-buildings-verification.json`, `{body}-overture-buildings.json`; chips and tints in Supabase Storage (`satellite-evidence`) |
+
+**The gazetted boundary cannot be drawn, and that is the finding.** Every one of these lakes has an entry, or a conspicuous absence, in the HMDA gazetted lake register already in this repo (`public/data/hyderabad-lake-register.json`) - but the per-lake FTL, cadastral and buffer-zone sheets behind that register are scanned raster PDFs with no extractable text. So Hyderabad gets the OSM polygon alone, with the register's notification dates carried as timeline events and status badges instead of as a second polygon. Pallikaranai's gazette-vs-OSM set algebra is not reproducible here until those sheets are digitised.
+
+Per-lake position in the register edition held here:
+
+| Body | Register entry | Preliminary FTL | Final FTL |
+|---|---|---|---|
+| Osman Sagar | lake 2907, Gandipet | 2019-12-30 | none |
+| Durgam Cheruvu | lake 3706, Raidurg | 2014-06-07 | none |
+| Ameenpur | lake 1200/34, "Pedda cheruvu" | 2017-03-20 | none |
+| Hussain Sagar | no entry under that name | - | - |
+| Himayat Sagar | no entry under that name | - | - |
+
+The two absences are a gap in the record as we hold it, not a finding about those lakes' protection - both sit under arrangements the HMDA register does not enumerate. Region-wide, 1,626 of 2,978 gazetted lakes (54.6%) have no final notification.
+
+**Durgam Cheruvu is the small-body edge case.** At ~37 ha against a ~683 ha halo, its 30 m JRC body zone holds only a few hundred pixels, so its water series is the noisiest in the cohort, and its halo readings describe HITEC City rather than the lake's edge. The registry carries both caveats.
+
 ## Registered but not yet acquired
 
 Research-complete and URL-verified as of 2026-07-26, but not yet ingested. Each graduates into this

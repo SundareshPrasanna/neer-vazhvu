@@ -1,0 +1,138 @@
+{
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/dw-water-trend",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-08-24",
+    "produced_by": "scripts/verify_rich_body_dw_water_trend.py",
+    "note": "Extends the JRC v1.4 water trend past its 2021 cutoff; spliced with JRC at 2021/2022 in the panel chart. Method and known_limitations in the legacy data_source key."
+  },
+  "body_id": "powai",
+  "computed_at": "2026-08-24T13:41:08.150994+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/DYNAMICWORLD/V1",
+    "license": "CC BY 4.0",
+    "version": "Dynamic World V1",
+    "resolution_m": 10,
+    "revisit_days": "2-5 (Sentinel-2)",
+    "method": "Per-pixel annual MODE label across all DW scenes intersecting the zone; water = class 0",
+    "purpose": "Extends the JRC v1.4 water-trend series past its 2021 cutoff. Spliced with JRC at year 2021/2022 in the rich-body panel chart.",
+    "known_limitations": [
+      "Dynamic World started June 2015; this script covers 2022-present (the JRC gap)",
+      "Current-year is partial (through script run date) - see scene_count + check headline",
+      "Mode aggregation can be noisy in low-scene-count regions; check scene_count column",
+      "Water class includes seasonal flooding + permanent open water + flooded vegetation",
+      "DW is per-image per-pixel; methodology differs from JRC YearlyHistory (annual classifier). Expect small step at the splice year."
+    ]
+  },
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "by_zone": {
+    "Body (primary)": {
+      "2022": {
+        "year": 2022,
+        "scene_count": 43,
+        "water_pixels": 16096,
+        "valid_pixels": 18973,
+        "any_water_pct": 84.83,
+        "any_water_area_ha": 160.96
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 49,
+        "water_pixels": 14975,
+        "valid_pixels": 18973,
+        "any_water_pct": 78.93,
+        "any_water_area_ha": 149.75
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 51,
+        "water_pixels": 15471,
+        "valid_pixels": 18973,
+        "any_water_pct": 81.54,
+        "any_water_area_ha": 154.71
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 50,
+        "water_pixels": 14353,
+        "valid_pixels": 18973,
+        "any_water_pct": 75.65,
+        "any_water_area_ha": 143.53
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 41,
+        "water_pixels": 14920,
+        "valid_pixels": 18973,
+        "any_water_pct": 78.64,
+        "any_water_area_ha": 149.21
+      }
+    },
+    "Halo: 1km buffer - body": {
+      "2022": {
+        "year": 2022,
+        "scene_count": 86,
+        "water_pixels": 6555,
+        "valid_pixels": 97198,
+        "any_water_pct": 6.74,
+        "any_water_area_ha": 65.56
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 100,
+        "water_pixels": 6651,
+        "valid_pixels": 97198,
+        "any_water_pct": 6.84,
+        "any_water_area_ha": 66.52
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 102,
+        "water_pixels": 6442,
+        "valid_pixels": 97198,
+        "any_water_pct": 6.63,
+        "any_water_area_ha": 64.43
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 107,
+        "water_pixels": 6346,
+        "valid_pixels": 97198,
+        "any_water_pct": 6.53,
+        "any_water_area_ha": 63.46
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 84,
+        "water_pixels": 6501,
+        "valid_pixels": 97198,
+        "any_water_pct": 6.69,
+        "any_water_area_ha": 65.01
+      }
+    }
+  },
+  "headline_for_v0": [
+    "Body (primary): any-water fraction 84.83% (2022) -> 78.64% (2026), delta -6.19 pp",
+    "Halo: 1km buffer - body: any-water fraction 6.74% (2022) -> 6.69% (2026), delta -0.05 pp"
+  ]
+}

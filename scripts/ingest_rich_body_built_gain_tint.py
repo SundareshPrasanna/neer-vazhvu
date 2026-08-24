@@ -29,6 +29,9 @@ load_dotenv(ROOT / "neer-vazhvu-api" / ".env")
 
 import ee  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _rich_body_upload import upload_supabase  # noqa: E402
+
 DW = "GOOGLE/DYNAMICWORLD/V1"
 BUILT_CLASS_INDEX = 6
 BASELINE_YEARS = [2016, 2017, 2018]
@@ -69,6 +72,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--body-id", required=True)
     ap.add_argument("--max-dim", type=int, default=1200)
+    ap.add_argument(
+        "--upload",
+        action="store_true",
+        help="publish the tint PNG to Supabase storage and record its URL",
+    )
     args = ap.parse_args()
 
     init_ee()
@@ -145,16 +153,26 @@ def main():
     local_path.write_bytes(data)
     print(f"Wrote {local_path}  ({len(data)//1024} KB)")
 
+    remote_path = f"rich-bodies/{args.body_id}/tints/built-gain-cumulative.png"
+    public_url = None
+    if args.upload:
+        try:
+            public_url = upload_supabase(remote_path, data, "image/png")
+            print(f"Uploaded: {public_url}")
+        except Exception as e:
+            print(f"Upload failed: {e}")
+
     manifest["tints"] = manifest.get("tints", {})
     manifest["tints"]["built_gain"] = {
         "local_path": str(local_path),
-        "remote_path": f"rich-bodies/{args.body_id}/tints/built-gain-cumulative.png",
-        "public_url": None,
+        "remote_path": remote_path,
+        "public_url": public_url,
         "method": (
             f"Pixels with annual mode label = built (class 6) in "
-            f">= {MAJORITY_THRESHOLD} of {BASELINE_YEARS} (baseline) AND "
-            f"< {MAJORITY_THRESHOLD} of {END_YEARS} (end). Dynamic World V1, "
-            f"10 m, CC-BY-4.0."
+            f"< {MAJORITY_THRESHOLD} of {BASELINE_YEARS} (baseline) AND "
+            f">= {MAJORITY_THRESHOLD} of {END_YEARS} (end) - i.e. ground that "
+            f"was not built in the baseline window and is built in the end "
+            f"window. Dynamic World V1, 10 m, CC-BY-4.0."
         ),
         "baseline_years": BASELINE_YEARS,
         "end_years": END_YEARS,
