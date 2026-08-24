@@ -20,7 +20,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import {
   getRichBodyIdByOsmId,
-  RICH_BODIES,
+  getRichBodiesForCity,
 } from "@/lib/water-bodies/rich-body-registry";
 import "leaflet/dist/leaflet.css";
 
@@ -34,6 +34,10 @@ import "leaflet/dist/leaflet.css";
 
 interface UnifiedMapProps {
   viewMode: ViewMode;
+  /** Which city's rich-data bodies to load. REQUIRED for the same reason
+   *  the GeoJSON URLs are: without it the map fetched every registered
+   *  rich body in the country on every city page. */
+  cityId: string;
   scoredData: ScoredWaterBody[];
   censusData: CensusWaterBodyProperties[];
   onSelectCurrent: (body: SelectedWaterBody) => void;
@@ -101,6 +105,7 @@ function orphanRadius(areaHa: number | null | undefined): number {
 
 export function UnifiedMap({
   viewMode,
+  cityId,
   scoredData,
   censusData,
   onSelectCurrent,
@@ -256,20 +261,24 @@ export function UnifiedMap({
       .catch(console.error);
   }, [currentGeoJsonUrl, lostGeoJsonUrl]);
 
-  // Fetch all rich-body polygons from the registry, merge into one
-  // FeatureCollection. Each feature stamps body_id so the click handler
-  // can route to the right rich-body overlay.
+  // Fetch THIS city's rich-body polygons from the registry, merge into
+  // one FeatureCollection. Each feature stamps body_id so the click
+  // handler can route to the right rich-body overlay. A city with no
+  // rich bodies resolves to null rather than keeping the previous
+  // city's overlay on screen.
   useEffect(() => {
-    const entries = Object.values(RICH_BODIES);
-    if (entries.length === 0) return;
+    let cancelled = false;
     Promise.all(
-      entries.map((b) =>
+      getRichBodiesForCity(cityId).map((b) =>
         fetch(b.polygon_path)
           .then((r) => r.json())
           .then((gj: GeoJSON.FeatureCollection) => ({ body: b, gj }))
           .catch(() => null),
       ),
     ).then((results) => {
+      // Switching cities twice in quick succession would otherwise let
+      // the slower first fetch land last and paint the wrong city.
+      if (cancelled) return;
       const features: GeoJSON.Feature[] = [];
       for (const r of results) {
         if (!r) continue;
@@ -280,15 +289,20 @@ export function UnifiedMap({
               ...(f.properties ?? {}),
               body_id: r.body.id,
               name: r.body.name,
-              name_ta: r.body.name_ta ?? "",
+              name_ta: r.body.name_local ?? r.body.name_ta ?? "",
               osm_id: r.body.osm_id,
             },
           });
         }
       }
-      setRichBodiesGeoJSON({ type: "FeatureCollection", features });
+      setRichBodiesGeoJSON(
+        features.length ? { type: "FeatureCollection", features } : null,
+      );
     });
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [cityId]);
 
   // Match unnamed water body polygons to rivers by centroid proximity
   useEffect(() => {

@@ -73,13 +73,24 @@ export function RichBodyTimelineSlider({
     return () => clearInterval(id);
   }, [isPlaying, availableChips, onYearChange]);
 
-  // Only show events that fall within the slider range
+  // Events the slider rail can place: those inside the chip range.
   const visibleEvents = useMemo(
     () => events.filter((e) => e.year >= minYear && e.year <= maxYear),
     [events, minYear, maxYear]
   );
 
-  const openEvent = visibleEvents.find((e) => e.year === openEventYear) ?? null;
+  // Events that pre-date the satellite record. These used to be dropped
+  // on the floor, which quietly hid most of what the older bodies are
+  // about - Hussain Sagar's 1562 excavation, Vihar's 1860 waterworks,
+  // the 1908 Musi flood that produced the Hyderabad twins. Tulsi lost
+  // its entire timeline that way. They get their own row below the rail.
+  const preRecordEvents = useMemo(
+    () => events.filter((e) => e.year < minYear).sort((a, b) => a.year - b.year),
+    [events, minYear]
+  );
+
+  const openEvent =
+    [...visibleEvents, ...preRecordEvents].find((e) => e.year === openEventYear) ?? null;
 
   // Pick the chip metadata for the displayed year
   const currentChip = useMemo(
@@ -185,6 +196,30 @@ export function RichBodyTimelineSlider({
         className="w-full h-2 cursor-pointer accent-emerald-600"
         aria-label="Year"
       />
+
+      {/* Events older than the imagery. Satellite coverage starts in the
+          1980s; these bodies do not, and the record of what they are is
+          mostly older than any picture of them. */}
+      {preRecordEvents.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400">
+          <span className="shrink-0">Before the satellite record:</span>
+          {preRecordEvents.map((event) => (
+            <button
+              key={event.year}
+              onClick={() =>
+                setOpenEventYear(openEventYear === event.year ? null : event.year)
+              }
+              className="inline-flex items-baseline gap-1 rounded px-1 -mx-0.5 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-800 dark:hover:text-amber-200"
+              title={event.label}
+            >
+              <span className="tabular-nums font-medium">{event.year}</span>
+              <span className="truncate max-w-[16rem]">
+                {event.label_short ?? event.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Inline event detail card - shown when a stamp was clicked */}
       {openEvent && (

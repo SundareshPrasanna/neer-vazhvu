@@ -7,7 +7,15 @@
  *   - Nikhil Anand, Hydraulic City: Water and the Infrastructures of Citizenship in Mumbai (Duke 2017) - keystone
  *   - Sharada Dwivedi & Rahul Mehrotra, Bombay: The Cities Within (1995)
  *   - Gillian Tindall, City of Gold: The Biography of Bombay (1982)
- *   - Sahapedia - "Pyaaus of Mumbai" and Banganga / Walkeshwar historical studies
+ *   - Sahapedia - "Pyaaus of Mumbai", Banganga / Walkeshwar historical studies,
+ *     and "A Historical Study of Mumbai's Water Systems" on the Vihar scheme
+ *   - Mariam Dossal, "Henry Conybeare and the politics of centralised water supply
+ *     in mid-nineteenth century Bombay", IESHR 25(1), 1988. CORRECTION 2026-08-24:
+ *     this passage previously credited Vihar (1860) to Municipal Commissioner Arthur
+ *     Crawford. Crawford was appointed Bombay's FIRST Municipal Commissioner in July
+ *     1865 and served to 1871, so the office did not exist when Vihar opened. The
+ *     scheme was Conybeare's, as Superintendent of Repairs to the Board of
+ *     Conservancy, following his 1852 report on the sanitary state of Bombay.
  *   - Madhav Chitale Fact-Finding Committee Report on Mumbai Floods (2006, 3 volumes)
  *   - Praja Foundation, Status of Civic Issues in Mumbai (2024)
  *   - Mandala et al., water-access study of notified vs non-notified slums (2023)
@@ -120,9 +128,11 @@ export function MumbaiStoryEn() {
         </p>
         <p>
           The answer came from the hills of Salsette to the north. The Vihar
-          Waterworks, opened in 1860 under the eye of the Municipal Commissioner
-          Arthur Crawford, dammed the headwaters of the Mithi at Vihar lake and
-          piped the city its first impounded, gravity-fed water. Tulsi followed in
+          Waterworks, begun in 1856 and opened in 1860 to a scheme drawn up by
+          Henry Conybeare, the Board of Conservancy engineer whose 1852 report on
+          the sanitary state of Bombay had made the case for a piped supply,
+          dammed the headwaters of the Mithi at Vihar lake and piped the city its
+          first impounded, gravity-fed water. Tulsi followed in
           1879, Tansa in 1892 - the Tansa main, a hundred-odd kilometres of iron,
           one of the engineering marvels of Victorian India. For the well-to-do
           fort and the European quarter, water now arrived at the turn of a tap.

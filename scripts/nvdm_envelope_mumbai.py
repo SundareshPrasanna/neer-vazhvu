@@ -323,7 +323,137 @@ CASCADE_CATCHMENTS_BY = (
 
 # ---- per-dataset provenance map (the reviewable core) ----------------------
 
+
+# ---- rich-body deep-zoom cohort sources -------------------------------
+# Aliased with an RB_ prefix so this block reads the same in every city's
+# envelope script regardless of what that city already named its own
+# copies of these sources.
+OVERTURE_RELEASE = "2026-08-19.0"
+RB_OSM = {
+    "id": "osm-overpass",
+    "title": "OpenStreetMap (Overpass API extract)",
+    "publisher": "OpenStreetMap contributors",
+    "license": registry_license("osm-overpass"),
+}
+RB_LANDSAT = {
+    "id": "usgs-landsat",
+    "title": "Landsat 5/7/8 surface reflectance archive (GEE collections)",
+    "publisher": "USGS / NASA (Landsat program)",
+    "license": registry_license("usgs-landsat"),
+    "role": "input",
+}
+RB_SENTINEL2 = {
+    "id": "sentinel-2-l2a",
+    "title": "Sentinel-2 L2A imagery (channel evidence)",
+    "publisher": "ESA Copernicus",
+    "license": registry_license("sentinel-2-l2a"),
+    "role": "input",
+}
+RB_DYNAMIC_WORLD = {
+    "id": "google-dynamic-world",
+    "title": "Google Dynamic World built-up classification",
+    "publisher": "Google / World Resources Institute",
+    "license": registry_license("google-dynamic-world"),
+    "role": "input",
+}
+RB_JRC_GSW = {
+    "id": "jrc-global-surface-water",
+    "title": "JRC Global Surface Water v1.4 yearly history (JRC/GSW1_4/YearlyHistory)",
+    "publisher": "European Commission JRC (Pekel et al.)",
+    "license": registry_license("jrc-global-surface-water"),
+    "role": "input",
+}
+RB_OPEN_BUILDINGS = {
+    "id": "google-open-buildings",
+    "title": "Google Open Buildings v3 polygons",
+    "publisher": "Google Research",
+    "license": registry_license("google-open-buildings"),
+    "role": "input",
+    "as_of": "2023",
+}
+RB_OVERTURE = {
+    "id": "overture-buildings",
+    "title": "Overture Maps building footprints",
+    "publisher": "Overture Maps Foundation",
+    "license": registry_license("overture-buildings"),
+    "role": "input",
+}
+
+
 PROVENANCE: dict[str, dict] = {
+    # rich-bodies data (produced_at from each file's own computed_at).
+    # Same producers and same registered sources as the Chennai and
+    # Bangalore cohorts - see scripts/nvdm_envelope_bangalore.py.
+    "rich-bodies/jrc-water-trend": {
+        "method": "gee",
+        "produced_by": "scripts/verify_rich_body_water_trend.py",
+        "sources": [RB_JRC_GSW],
+        "note": (
+            "Zonal annual water-class statistics; JRC v1.4 cutoff is 2021 (no later "
+            "years). Method, classes and known_limitations in the legacy data_source key."
+        ),
+    },
+    "rich-bodies/dw-water-trend": {
+        "method": "gee",
+        "produced_by": "scripts/verify_rich_body_dw_water_trend.py",
+        "sources": [RB_DYNAMIC_WORLD],
+        "note": (
+            "Extends the JRC v1.4 water trend past its 2021 cutoff; spliced with JRC at "
+            "2021/2022 in the panel chart. Method and known_limitations in the legacy "
+            "data_source key."
+        ),
+    },
+    "rich-bodies/dynamic-world-built-trend": {
+        "method": "gee",
+        "produced_by": "scripts/verify_rich_body_built_trend.py",
+        "sources": [RB_DYNAMIC_WORLD],
+        "note": "Per-pixel annual MODE built-class statistics; known_limitations in the legacy data_source key.",
+    },
+    "rich-bodies/open-buildings-verification": {
+        "method": "gee",
+        "produced_by": "scripts/verify_rich_body_open_buildings.py",
+        "sources": [RB_OPEN_BUILDINGS],
+        "note": "Building-count verification per zone; v3 reflects state around 2023. Limitations in the legacy data_source key.",
+    },
+    "rich-bodies/overture-buildings": {
+        "method": "derived",
+        "produced_by": "scripts/verify_rich_body_overture_buildings.py",
+        "sources": [dict(RB_OVERTURE, as_of=OVERTURE_RELEASE[:7])],
+        "note": (
+            "Per-building polygon counts from the Overture " + OVERTURE_RELEASE + " release "
+            "(the release id is the evidence vintage); independent comparison against "
+            "Google Open Buildings by design."
+        ),
+    },
+    "rich-bodies/imagery-manifest": {
+        "method": "gee",
+        "produced_by": "scripts/ingest_rich_body_imagery.py",
+        "sources": [RB_LANDSAT, RB_SENTINEL2],
+        "note": (
+            "Manifest referencing binary imagery chips (the sanctioned pattern - NVDM "
+            "governs the manifest, not the rasters). Per-mission licences in the legacy "
+            "license key."
+        ),
+    },
+    # rich-bodies geojson: every body in this city is OSM-sourced, with no
+    # gazetted boundary override of the kind Chennai's Pallikaranai carries.
+    "geojson-layers/polygon": {
+        "method": "api",
+        "produced_by": "scripts/fetch-rich-body-polygon.ts",
+        "sources": [dict(RB_OSM, title="OpenStreetMap body polygon (Overpass relation/way extract)")],
+    },
+    "geojson-layers/buffer-1000m": {
+        "method": "derived",
+        "produced_by": "scripts/fetch-rich-body-polygon.ts",
+        "internal_inputs": [],
+        "sources": [dict(RB_OSM, title="OpenStreetMap body polygon (Overpass relation/way extract)", role="input")],
+        "note": (
+            "1 km Minkowski offset of the body polygon (@turf/buffer), not a circle from "
+            "the centroid; derived in-memory from the same Overpass fetch, hence "
+            "internal_inputs []."
+        ),
+    },
+
     # cascade family (derived; FABDEM-encumbered). internal_inputs per output
     # follow the pipeline's ACTUAL load() calls (round-2 review):
     #   topology outputs read tanks + rivers; build_catchments reads the

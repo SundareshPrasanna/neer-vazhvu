@@ -35,7 +35,7 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
 ### Water Bodies (Bengaluru)
 
 - Roughly 900 OSM water bodies + flagship-curated tanks (KTCDA / BBMP rejuvenation list) + lost-tank inventory (T.V. Ramachandra et al. at IISc).
-- **13 rich-data deep-zoom bodies onboarded**: Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka. Same body-agnostic pipeline as Chennai's 8 (Pallikaranai + 7 others); same registry pattern in `src/lib/water-bodies/rich-body-registry.ts`. See [data-sources.md](data-sources.md#rich-data-deep-zoom-panel-13-bengaluru-flagship-bodies) for the pipeline detail.
+- **14 rich-data deep-zoom bodies onboarded**: Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka. Same body-agnostic pipeline as Chennai's 7 (Pallikaranai + 6 others); same registry pattern in `src/lib/water-bodies/rich-body-registry.ts`. See [data-sources.md](data-sources.md#rich-data-deep-zoom-panel-14-bengaluru-flagship-bodies) for the pipeline detail.
 - **JRC → DW water-trend splice** - the per-body water-fraction chart reads JRC GSW v1.4 for years ≤2021 and Dynamic World V1 (water class 0) for ≥2022, so the chart doesn't truncate at JRC's cutoff. Methodology disclosed in the in-panel sources modal. Critical for bodies whose recent dynamics matter most: Bellandur (sewage + foam), Varthur (NGT monitoring), Hesaraghatta (drying tank).
 - **Tint legend labels** reflect the two-window methodology, not a continuum: "Water lost (1988-92 → 2017-21)" and "New built (2016-18 → 2023-25)". Earlier labels said "Water lost (1990-2021)" which was misleading.
 

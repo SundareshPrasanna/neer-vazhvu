@@ -460,6 +460,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
           <div className="relative flex-1 h-full">
             <UnifiedMap
               viewMode={viewMode}
+              cityId={cityId}
               scoredData={restorationData?.water_bodies ?? []}
               censusData={censusData}
               onSelectCurrent={setSelected}

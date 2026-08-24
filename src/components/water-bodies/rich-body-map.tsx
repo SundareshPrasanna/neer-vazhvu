@@ -22,14 +22,29 @@ interface ChipManifest {
     year: number;
     available: boolean;
     url?: string;
+    public_url?: string | null;
     sensor?: string;
     scene_count?: number;
   }>;
   tints?: {
-    water_loss?: { url: string; lost_area_ha_at_30m?: number };
-    built_gain?: { url: string; new_built_area_ha_at_10m?: number };
+    water_loss?: { url?: string; public_url?: string | null; lost_area_ha_at_30m?: number };
+    built_gain?: { url?: string; public_url?: string | null; new_built_area_ha_at_10m?: number };
   };
   era_map?: Record<string, string>;
+}
+
+/** Where a manifest asset actually lives.
+ *
+ *  The ingest scripts write `public_url`; the manifests written before
+ *  they were refactored also carry a duplicate `url`. Reading only `url`
+ *  meant that re-running an ingest - which emits `public_url` alone -
+ *  silently blanked a body's imagery, and the panel showed an empty
+ *  slider over a bare basemap with nothing in the console to explain it.
+ *  Accept either. */
+function assetUrl(
+  asset: { url?: string; public_url?: string | null } | null | undefined
+): string | null {
+  return asset?.url ?? asset?.public_url ?? null;
 }
 
 interface RichBodyMapProps {
@@ -91,9 +106,10 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
   useEffect(() => {
     if (!manifest) return;
     for (const chip of manifest.chips) {
-      if (!chip.available || !chip.url) continue;
+      const src = assetUrl(chip);
+      if (!chip.available || !src) continue;
       const img = new Image();
-      img.src = chip.url;
+      img.src = src;
     }
   }, [manifest]);
 
@@ -217,11 +233,11 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
 
       <LayersControl position="topright" collapsed={false}>
         {/* Backdrop satellite chip for the selected year */}
-        {renderChip?.url && (
+        {assetUrl(renderChip) && (
           <LayersControl.Overlay name={`Satellite ${renderYear}`} checked>
             <ImageOverlay
-              key={renderChip.url}
-              url={renderChip.url}
+              key={assetUrl(renderChip)!}
+              url={assetUrl(renderChip)!}
               bounds={bounds}
               opacity={1.0}
               pane="rb-chip-pane"
@@ -230,27 +246,27 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
         )}
 
         {/* Cumulative tints - in panes guaranteed to render above the chip */}
-        {manifest.tints?.water_loss?.url && (
+        {assetUrl(manifest.tints?.water_loss) && (
           // Tint methodology: pixels that were water in >=3 of the 5
           // baseline years (1988-1992) AND not water in >=3 of the 5
           // end years (2017-2021). The label reflects that two-window
           // comparison, not a continuum.
           <LayersControl.Overlay name="Water lost (1988-92 → 2017-21)" checked>
             <ImageOverlay
-              url={manifest.tints.water_loss.url}
+              url={assetUrl(manifest.tints!.water_loss)!}
               bounds={bounds}
               opacity={0.85}
               pane="rb-water-loss-pane"
             />
           </LayersControl.Overlay>
         )}
-        {manifest.tints?.built_gain?.url && (
+        {assetUrl(manifest.tints?.built_gain) && (
           // Tint methodology: pixels that became built in >=2 of the 3
           // end years (2023-2025) but were not built in >=2 of the 3
           // baseline years (2016-2018).
           <LayersControl.Overlay name="New built (2016-18 → 2023-25)" checked>
             <ImageOverlay
-              url={manifest.tints.built_gain.url}
+              url={assetUrl(manifest.tints!.built_gain)!}
               bounds={bounds}
               opacity={0.7}
               pane="rb-built-gain-pane"

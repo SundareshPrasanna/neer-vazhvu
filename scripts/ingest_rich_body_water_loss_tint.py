@@ -34,6 +34,9 @@ load_dotenv(ROOT / "neer-vazhvu-api" / ".env")
 
 import ee  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _rich_body_upload import upload_supabase  # noqa: E402
+
 JRC_YEARLY = "JRC/GSW1_4/YearlyHistory"
 BASELINE_YEARS = [1988, 1989, 1990, 1991, 1992]
 END_YEARS = [2017, 2018, 2019, 2020, 2021]
@@ -75,6 +78,11 @@ def main():
         "--include-direction",
         action="store_true",
         help="Also export a green tint for newly-water pixels (gained, not lost)",
+    )
+    ap.add_argument(
+        "--upload",
+        action="store_true",
+        help="publish the tint PNG to Supabase storage and record its URL",
     )
     args = ap.parse_args()
 
@@ -153,12 +161,21 @@ def main():
     local_path.write_bytes(data)
     print(f"Wrote {local_path}  ({len(data)//1024} KB)")
 
+    remote_path = f"rich-bodies/{args.body_id}/tints/water-loss-cumulative.png"
+    public_url = None
+    if args.upload:
+        try:
+            public_url = upload_supabase(remote_path, data, "image/png")
+            print(f"Uploaded: {public_url}")
+        except Exception as e:
+            print(f"Upload failed: {e}")
+
     # Update manifest
     manifest["tints"] = manifest.get("tints", {})
     manifest["tints"]["water_loss"] = {
         "local_path": str(local_path),
-        "remote_path": f"rich-bodies/{args.body_id}/tints/water-loss-cumulative.png",
-        "public_url": None,
+        "remote_path": remote_path,
+        "public_url": public_url,
         "method": (
             f"Pixels classified as any water (seasonal or permanent) in "
             f">= {MAJORITY_THRESHOLD} of {BASELINE_YEARS} (baseline) AND "

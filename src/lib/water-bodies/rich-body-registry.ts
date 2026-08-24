@@ -20,12 +20,23 @@ export interface RichBodyEntry {
   name: string;
   /** Display name in Tamil if available */
   name_ta?: string;
+  /** Display name in the city's own script where OSM carries one
+   *  (Telugu for Hyderabad, Marathi for Mumbai, and so on). The overlay
+   *  renders this as the subtitle under the English name; `name_ta` was
+   *  serving that role back when every rich body was Tamil-speaking. */
+  name_local?: string;
   /** City this body belongs to */
   city_id: string;
   /** Provenance of the primary polygon - shown in the sources modal so
    *  users see whether the boundary is gazetted legal vs OSM mapper
    *  interpretation vs satellite-derived. */
   boundary_source: string;
+  /** Short credit for the panel's footer strip. Defaults to
+   *  "OpenStreetMap", which is where every body's primary polygon comes
+   *  from except Pallikaranai's gazetted one. The footer used to hardcode
+   *  "TNSWA" - Pallikaranai's provenance printed over thirty bodies that
+   *  have nothing to do with the Tamil Nadu State Wetland Authority. */
+  boundary_source_label?: string;
   /** Gazetted Ramsar (or equivalent legal) boundary - the legal anchor */
   polygon_path: string;
   /** OSM-mapped ecological boundary (smaller than gazette for marshes with cutouts) */
@@ -105,6 +116,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
     name_ta: "பள்ளிக்கரணை சதுப்புநிலப்பகுதி",
     city_id: "chennai",
     boundary_source: "Tamil Nadu State Wetland Authority (TNSWA) - gazetted Ramsar Site #2481 boundary",
+    boundary_source_label: "TNSWA gazette",
     polygon_path: "/geojson/rich-bodies/pallikaranai.geojson",
     osm_ecological_path: "/geojson/rich-bodies/pallikaranai-osm-ecological.geojson",
     buffer_path: "/geojson/rich-bodies/pallikaranai-buffer-1000m.geojson",
@@ -1941,6 +1953,980 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  // ---------------------------------------------------------------- Mumbai
+  powai: {
+    id: "powai",
+    osm_id: 8546709,
+    name: "Powai Lake",
+    city_id: "mumbai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 8546709). " +
+      "Powai is a ~179 ha artificial lake in the Powai valley, made in " +
+      "1891 by damming a tributary of the Mithi as an anti-famine " +
+      "augmentation of Bombay's supply. It left the drinking-water " +
+      "system within about a year, against objections to the water's " +
+      "quality, and is today an amenity and habitat lake - and the " +
+      "subject of live NGT proceedings over untreated sewage reaching " +
+      "it.",
+    polygon_path: "/geojson/rich-bodies/powai.geojson",
+    buffer_path: "/geojson/rich-bodies/powai-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). No lake-specific " +
+      "no-build order applies; the halo is cohort-standard so bodies " +
+      "can be read against each other.",
+    imagery_manifest_path: "/data/rich-bodies/powai-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/powai-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/powai-overture-buildings.json",
+      water_trend: "/data/rich-bodies/powai-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/powai-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/powai-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1891,
+        label:
+          "A stream tributary of the Mithi is dammed behind two 10 m " +
+          "dams to augment Bombay's supply, on the Framji Kavasji " +
+          "estate that gives the lake its valley its name. It yields " +
+          "about two million gallons a day.",
+        label_short: "Dammed for Bombay's supply",
+        source_url: "https://en.wikipedia.org/wiki/Powai_Lake",
+      },
+      {
+        year: 1892,
+        label:
+          "The drinking-water supply is abandoned within about a year " +
+          "of completion, against objections to the water's quality, " +
+          "and Powai's water goes to irrigation instead. A restoration " +
+          "attempt in 1919 does not bring it back. It has never " +
+          "returned to the city's drinking-water system.",
+        label_short: "Drinking supply abandoned over water quality",
+        source_url: "https://en.wikipedia.org/wiki/Powai_Lake",
+      },
+      {
+        year: 2005,
+        label:
+          "26 July: Santacruz records 944 mm in twenty-four hours. The " +
+          "Mithi - born at the Vihar and Powai overflows that gave " +
+          "Mumbai its first pipe - cannot carry it, and the Chitale " +
+          "Fact-Finding Committee reports the following year on holding " +
+          "ponds built over and drains never upgraded.",
+        label_short: "26/7 deluge; Chitale committee",
+      },
+      {
+        year: 2024,
+        label:
+          "BMC's April operational data on hyacinth removal puts weed " +
+          "cover at 23-25% of the lake surface.",
+        label_short: "BMC puts hyacinth at 23-25%",
+      },
+      {
+        year: 2025,
+        label:
+          "NGT proceedings (OA 150/2025) address about 18 MLD of " +
+          "untreated sewage entering the lake - BMC's affidavit puts it " +
+          "at ~10.9 MLD. The treatment plant that would stop it is " +
+          "scheduled for December 2027; an NGT-appointed committee has " +
+          "proposed a Rs 5 lakh-per-inlet monthly penalty. Hyacinth " +
+          "cover in the July 2025 framing is 80%, against BMC's 23-25%.",
+        label_short: "NGT OA 150/2025; STP due Dec 2027",
+      },
+    ],
+    status_badges: [
+      { label: "NGT proceedings (OA 150/2025)", tone: "amber" },
+      { label: "Indian marsh crocodile habitat", tone: "emerald" },
+      { label: "STP scheduled Dec 2027", tone: "sky" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 8546709",
+          note: "OSM mappers traced the visible water surface; ~179 ha, consistent with the 179.3 ha carried for the same relation in this city's water-bodies layer. BMC manages the lake; no gazetted GIS boundary is published.",
+          link: "https://www.openstreetmap.org/relation/8546709",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers IIT Bombay, the Powai and Hiranandani built-up belt, and the Aarey-facing slope.",
+          licence: "Derived",
+        },
+        {
+          label: "Sewage load and hyacinth cover",
+          source: "NGT OA 150/2025 proceedings; BMC hyacinth-removal reporting (Apr 2024)",
+          note: "The two published hyacinth figures disagree by a wide margin - 23-25% (BMC operational data) against 80% (July 2025 proceedings framing). Both are reported here rather than reconciled, because no measurement method is published for either.",
+          licence: "Tribunal and municipal publication, cited with attribution",
+        },
+      ],
+      caveats: [
+        "Dense water-hyacinth mats classify as vegetation rather than water in both JRC and Dynamic World. On a lake whose published weed cover ranges from a quarter to four-fifths of the surface, the water-fraction series should be read as open-water extent, not as the lake's area - a fall in the line can mean weed, not loss.",
+      ],
+    },
+  },
+  vihar: {
+    id: "vihar",
+    osm_id: 311633,
+    name: "Vihar Lake",
+    city_id: "mumbai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 311633). " +
+      "Vihar is a ~478 ha reservoir inside Sanjay Gandhi National " +
+      "Park, impounding the headwaters of the Mithi. It opened in 1860 " +
+      "as Bombay's first impounded, gravity-fed piped supply and is " +
+      "still in the system, supplying roughly 90 MLD of Mumbai's " +
+      "roughly 4,000.",
+    polygon_path: "/geojson/rich-bodies/vihar.geojson",
+    buffer_path: "/geojson/rich-bodies/vihar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The lake sits " +
+      "inside Sanjay Gandhi National Park, whose own boundary and " +
+      "eco-sensitive zone are the operative legal lines; the 1 km halo " +
+      "is cohort-standard and is not one of them.",
+    imagery_manifest_path: "/data/rich-bodies/vihar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/vihar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/vihar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/vihar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/vihar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/vihar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1860,
+        label:
+          "The Vihar Waterworks are completed, four years after work " +
+          "began in January 1856, impounding the Mithi and piping " +
+          "Bombay its first stored, gravity-fed water. For the fort " +
+          "and the European quarter water now arrives at a tap; for " +
+          "everyone else, at the pyaav.",
+        label_short: "Bombay's first piped supply",
+        source_url: "https://en.wikipedia.org/wiki/Vihar_Lake",
+      },
+      {
+        year: 1879,
+        label: "Tulsi follows, in the same Salsette catchment.",
+        label_short: "Tulsi added",
+      },
+      {
+        year: 2005,
+        label:
+          "26 July: the Mithi, which rises at the Vihar and Powai " +
+          "overflows, cannot carry 944 mm in a day and rises into the " +
+          "bowl behind the Vellard.",
+        label_short: "26/7: the Mithi overwhelmed",
+      },
+    ],
+    status_badges: [
+      { label: "Mumbai's first impounded supply (1860)", tone: "sky" },
+      { label: "Inside Sanjay Gandhi National Park", tone: "emerald" },
+      { label: "Still in the supply system", tone: "sky" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 311633",
+          note: "OSM mappers traced the visible water surface; ~478 ha. BMC's Hydraulic Engineer's department operates the reservoir; no gazetted GIS boundary is published.",
+          link: "https://www.openstreetmap.org/relation/311633",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. Most of this halo lies inside Sanjay Gandhi National Park, so its built-area readings are a park-edge signal rather than a city-growth one.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Vihar's halo is mostly protected forest, so the built-gain series here is not measuring the same thing as it does around an in-city lake. Read the eastern arc - the Mulund and Bhandup slope - separately from the park interior.",
+      ],
+    },
+  },
+  tulsi: {
+    id: "tulsi",
+    osm_id: 6244817,
+    name: "Tulsi Lake",
+    city_id: "mumbai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 6244817). " +
+      "Tulsi is a ~114 ha reservoir inside Sanjay Gandhi National " +
+      "Park, added to Bombay's supply in 1879, twenty years after " +
+      "Vihar. It is the smallest and least disturbed of the three " +
+      "Salsette lakes.",
+    polygon_path: "/geojson/rich-bodies/tulsi.geojson",
+    buffer_path: "/geojson/rich-bodies/tulsi-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Sanjay Gandhi " +
+      "National Park's boundary and eco-sensitive zone are the " +
+      "operative legal lines here; the 1 km halo is cohort-standard.",
+    imagery_manifest_path: "/data/rich-bodies/tulsi-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/tulsi-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/tulsi-overture-buildings.json",
+      water_trend: "/data/rich-bodies/tulsi-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/tulsi-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/tulsi-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1879,
+        label:
+          "Tulsi is added to Bombay's supply, nineteen years after " +
+          "Vihar and thirteen before Tansa - the last of the lakes the " +
+          "city could reach without leaving Salsette.",
+        label_short: "Added to Bombay's supply",
+      },
+      {
+        year: 1892,
+        label:
+          "Tansa opens, a hundred-odd kilometres of iron main away. " +
+          "From here on the city's new water comes from outside the " +
+          "island, and the Salsette lakes become the small share.",
+        label_short: "The city's intake moves out of Salsette",
+      },
+    ],
+    status_badges: [
+      { label: "In supply since 1879", tone: "sky" },
+      { label: "Inside Sanjay Gandhi National Park", tone: "emerald" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 6244817",
+          note: "OSM mappers traced the visible water surface; ~114 ha. No gazetted GIS boundary is published.",
+          link: "https://www.openstreetmap.org/relation/6244817",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. This halo lies almost entirely inside Sanjay Gandhi National Park.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Tulsi's halo is effectively all park. Near-zero built area here is the expected reading, not a finding; the series is worth watching for change rather than level.",
+      ],
+    },
+  },
+  tansa: {
+    id: "tansa",
+    osm_id: 196507985,
+    name: "Tansa Lake",
+    city_id: "mumbai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 196507985). " +
+      "Tansa is a ~1,365 ha BMC supply reservoir in Thane district, " +
+      "impounded in 1892 and delivered to the city down a hundred-odd " +
+      "kilometres of iron main. The main itself became a settlement " +
+      "corridor, and the resettlement of the families living on it is " +
+      "part of the reservoir's record.",
+    polygon_path: "/geojson/rich-bodies/tansa.geojson",
+    buffer_path: "/geojson/rich-bodies/tansa-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Tansa lies inside " +
+      "the Tansa Wildlife Sanctuary, whose boundary is the operative " +
+      "legal line; the 1 km halo is cohort-standard.",
+    imagery_manifest_path: "/data/rich-bodies/tansa-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/tansa-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/tansa-overture-buildings.json",
+      water_trend: "/data/rich-bodies/tansa-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/tansa-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/tansa-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1892,
+        label:
+          "Tansa is impounded and piped to Bombay - the Tansa main, a " +
+          "hundred-odd kilometres of iron, one of the engineering " +
+          "marvels of Victorian India.",
+        label_short: "Impounded; the Tansa main opens",
+      },
+      {
+        year: 1957,
+        label:
+          "Modak Sagar on the Vaitarna follows, then Upper Vaitarna in " +
+          "1973 and Bhatsa in stages to 1981. Each dam pushes the " +
+          "source farther from the tap.",
+        label_short: "The walk into the Ghats begins",
+      },
+      {
+        year: 2015,
+        label:
+          "Tens of thousands of families had settled along the Tansa " +
+          "main itself. Moved off the pipeline on security grounds, " +
+          "many were resettled at Mahul - a colony ringed by " +
+          "refineries that the National Green Tribunal declared unfit " +
+          "for human habitation the same year.",
+        label_short: "Tansa main resettlement; NGT on Mahul",
+      },
+    ],
+    status_badges: [
+      { label: "BMC supply reservoir since 1892", tone: "sky" },
+      { label: "Inside Tansa Wildlife Sanctuary", tone: "emerald" },
+      { label: "Tansa main resettlement (Mahul)", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 196507985",
+          note: "OSM mappers traced the visible water surface; ~1,365 ha. This is a full-tank-ish trace rather than a gazetted FTL line - no gazetted GIS boundary is published for BMC's lakes.",
+          link: "https://www.openstreetmap.org/way/196507985",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; ~4,974 ha at this reservoir's size. Mostly sanctuary and village land in Shahapur and Wada talukas.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "A supply reservoir's water surface is operated, not observed: it is drawn down and refilled to a schedule. Year-to-year movement in the water-fraction series reflects monsoon and BMC's draw-off decisions together, and neither can be separated from the other in satellite data alone.",
+        "The single OSM way traced here is the reservoir's water surface only. The Tansa main - the corridor that carries the reservoir's public story - is not part of this polygon and is not measured by the halo.",
+      ],
+    },
+  },
+  bhatsa: {
+    id: "bhatsa",
+    osm_id: 7112404,
+    name: "Bhatsa Reservoir",
+    city_id: "mumbai",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 7112404). " +
+      "Bhatsa is a ~2,242 ha reservoir in Shahapur, impounded in " +
+      "stages through 1981 and today the single largest source in " +
+      "Mumbai's supply - close to half of it. It is the far end of the " +
+      "city's long walk into the Western Ghats.",
+    polygon_path: "/geojson/rich-bodies/bhatsa.geojson",
+    buffer_path: "/geojson/rich-bodies/bhatsa-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). No lake-specific " +
+      "no-build order applies; the halo is cohort-standard.",
+    imagery_manifest_path: "/data/rich-bodies/bhatsa-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/bhatsa-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/bhatsa-overture-buildings.json",
+      water_trend: "/data/rich-bodies/bhatsa-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/bhatsa-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/bhatsa-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1973,
+        label:
+          "Upper Vaitarna is impounded. The city's intake is now " +
+          "firmly in the Ghats, and the Salsette lakes that began it " +
+          "are a rounding error against the total.",
+        label_short: "Upper Vaitarna impounded",
+      },
+      {
+        year: 1981,
+        label:
+          "Bhatsa reaches its designed impoundment after staged " +
+          "construction, and becomes the largest single source in " +
+          "Mumbai's supply - today close to half of it.",
+        label_short: "Bhatsa fully impounded",
+      },
+      {
+        year: 2014,
+        label:
+          "Middle Vaitarna is commissioned, the first new source in a " +
+          "generation. Nothing since has changed Bhatsa's share.",
+        label_short: "Middle Vaitarna, the last new source",
+      },
+    ],
+    status_badges: [
+      { label: "Largest single source for Mumbai", tone: "sky" },
+      { label: "Impounded in stages to 1981", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap relation 7112404",
+          note: "OSM mappers traced the visible water surface; ~2,242 ha. No gazetted GIS boundary is published.",
+          link: "https://www.openstreetmap.org/relation/7112404",
+          licence: "ODbL",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; ~9,424 ha at this reservoir's size, the largest halo in the cohort. Shahapur taluka, Thane district.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "As with Tansa, this is an operated reservoir: the water surface moves with BMC's draw-off as much as with the monsoon, and satellite data cannot separate the two.",
+        "The water-surface line rises about thirty points across the 1990s, from roughly two-thirds of the mapped extent to near-full. Landsat coverage is complete from 1990, so this is a real change in how full the reservoir ran, not a gap in the record - but it is a change in operation against a fixed OpenStreetMap outline, not evidence that the reservoir grew.",
+        "Bhatsa is roughly 80 km from the city it supplies. Built-area change in its halo is a Shahapur story, not a Mumbai one - useful for catchment pressure, not for reading the city's growth.",
+      ],
+    },
+  },
+  // ------------------------------------------------------------- Hyderabad
+  "hussain-sagar": {
+    id: "hussain-sagar",
+    osm_id: 2833155,
+    name: "Hussain Sagar",
+    name_local: "హుసేన్ సాగర్",
+    city_id: "hyderabad",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 2833155). " +
+      "Hussain Sagar is a ~455 ha tank excavated in 1562 on a " +
+      "tributary of the Musi, more than two decades before Hyderabad " +
+      "itself was founded - the water came first and the city " +
+      "afterwards. It is the third-largest water body in the city " +
+      "after the two Nizam-era reservoirs, and the most visible.",
+    polygon_path: "/geojson/rich-bodies/hussain-sagar.geojson",
+    buffer_path: "/geojson/rich-bodies/hussain-sagar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Hussain Sagar has " +
+      "no lake-specific no-build order on this platform's record; the " +
+      "halo is cohort-standard so bodies can be read against each other.",
+    imagery_manifest_path: "/data/rich-bodies/hussain-sagar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/hussain-sagar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/hussain-sagar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/hussain-sagar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/hussain-sagar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/hussain-sagar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1562,
+        label:
+          "Excavated under Ibrahim Quli Qutb Shah on a tributary of " +
+          "the Musi and completed the following year - more than two " +
+          "decades before Hyderabad was founded.",
+        label_short: "Excavated under Ibrahim Quli Qutb Shah",
+      },
+      {
+        year: 1908,
+        label:
+          "28 September: the Great Musi Flood takes roughly 59,000 " +
+          "houses. Upstream, 221 of the 788 tanks strung along the " +
+          "river breach in sequence. The city's answer will be two new " +
+          "reservoirs rather than anything done here.",
+        label_short: "The Great Musi Flood",
+      },
+      {
+        year: 2024,
+        label:
+          "HYDRAA is created to protect lakes and remove " +
+          "encroachments. Final FTL notifications across the region " +
+          "jump to 533 in this year, against a 2017-2023 run that " +
+          "peaked at 60 and twice fell to 2.",
+        label_short: "HYDRAA created; notifications surge",
+      },
+    ],
+    status_badges: [
+      { label: "Excavated 1562-63", tone: "sky" },
+      { label: "No entry in HMDA gazetted register", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Tank boundary",
+          source: "OpenStreetMap relation 2833155",
+          note: "OSM mappers traced the visible water surface; ~455 ha, consistent with the 456 ha carried for the same relation in this city's water-bodies layer.",
+          link: "https://www.openstreetmap.org/relation/2833155",
+          licence: "ODbL",
+        },
+        {
+          label: "Gazetted Full Tank Level",
+          source: "HMDA Lake Protection Committee gazetted lake register (in repo)",
+          note: "No entry appears under this name in the register as published, so no preliminary or final FTL date can be cited for it here. That is a gap in the public record as we hold it, not a finding about the lake's protection - Hussain Sagar sits under GHMC and state-level arrangements that the HMDA register does not enumerate.",
+          link: "https://lakes.hmda.gov.in/",
+          licence: "Telangana government publication, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius. Covers Necklace Road, Khairatabad, Secunderabad's western edge and the Tank Bund frontage.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Hussain Sagar's halo has been substantially built since well before the satellite record opens in 1984. A flat built-area line here means the change happened earlier, not that it did not happen.",
+      ],
+    },
+  },
+  "osman-sagar": {
+    id: "osman-sagar",
+    osm_id: 28130557,
+    name: "Osman Sagar",
+    name_local: "ఉస్మాన్ సాగర్",
+    city_id: "hyderabad",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 28130557). At " +
+      "~1,810 ha Osman Sagar is the largest water body in the city. " +
+      "It impounds the Musi at Gandipet and was built as flood " +
+      "control first and water supply second, on M. Visvesvaraya's " +
+      "advice after the 1908 flood. Its catchment was the subject of " +
+      "GO 111 from 1996 until the 2022 repeal.",
+    polygon_path: "/geojson/rich-bodies/osman-sagar.geojson",
+    buffer_path: "/geojson/rich-bodies/osman-sagar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The legally " +
+      "operative line here was GO 111's 10 km catchment zone, not a " +
+      "1 km ring - and it was repealed in 2022. The halo is " +
+      "cohort-standard and should not be read as the protected area.",
+    imagery_manifest_path: "/data/rich-bodies/osman-sagar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/osman-sagar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/osman-sagar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/osman-sagar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/osman-sagar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/osman-sagar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1908,
+        label:
+          "28 September: the Great Musi Flood takes roughly 59,000 " +
+          "houses, and 221 of the 788 tanks along the river breach in " +
+          "sequence - a cascade engineered to slow water down failing " +
+          "link by link.",
+        label_short: "The Great Musi Flood",
+      },
+      {
+        year: 1909,
+        label:
+          "M. Visvesvaraya joins as Special Consulting Engineer on 15 " +
+          "April. His brief is not to find the city more water but to " +
+          "impound floods in excess of what the river channel could " +
+          "carry.",
+        label_short: "Visvesvaraya's flood-control brief",
+      },
+      {
+        year: 1913,
+        label: "Construction begins on the Musi at Gandipet.",
+        label_short: "Construction begins",
+      },
+      {
+        year: 1918,
+        label:
+          "Osman Sagar is completed. At roughly 1,810 ha it is still " +
+          "the largest water body in the city more than a century on.",
+        label_short: "Completed; still the city's largest",
+      },
+      {
+        year: 1996,
+        label:
+          "GO 111 bars major construction across the catchments of " +
+          "Osman Sagar and Himayat Sagar.",
+        label_short: "GO 111 protects the catchment",
+      },
+      {
+        year: 2019,
+        label:
+          "30 December: a preliminary Full Tank Level notification " +
+          "issues for the reservoir (HMDA register, lake 2907). No " +
+          "final notification appears in the register edition held " +
+          "here, so the boundary is not yet legally settled - the " +
+          "same position as 1,626 of the region's 2,978 gazetted " +
+          "lakes.",
+        label_short: "Preliminary FTL notified; no final yet",
+        source_url: "https://lakes.hmda.gov.in/",
+      },
+      {
+        year: 2022,
+        label:
+          "The Telangana cabinet repeals GO 111 across 84 villages " +
+          "and about 1.32 lakh acres, on the stated ground that the " +
+          "city no longer depends on the twin reservoirs. HMWSSB's " +
+          "own daily draw-off shows the twins' share rising over the " +
+          "years since, not falling.",
+        label_short: "GO 111 repealed",
+      },
+      {
+        year: 2026,
+        label:
+          "1 July: HMWSSB's published capacity-at-full-tank for Osman " +
+          "Sagar changes from 3.900 to 3.518 TMC, a 9.8% reduction, " +
+          "with the other sources unchanged and no accompanying " +
+          "notice. The cause is not established - re-survey, a gross- " +
+          "versus-live redefinition and a correction are all " +
+          "consistent with what is published.",
+        label_short: "Published capacity cut 9.8%, unexplained",
+      },
+    ],
+    status_badges: [
+      { label: "Largest water body in the city", tone: "sky" },
+      { label: "GO 111 catchment, repealed 2022", tone: "amber" },
+      { label: "FTL preliminary 2019, no final", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 28130557",
+          note: "OSM mappers traced the visible water surface; ~1,810 ha, consistent with this city's water-bodies layer. This is an observed surface, not the gazetted FTL line.",
+          link: "https://www.openstreetmap.org/way/28130557",
+          licence: "ODbL",
+        },
+        {
+          label: "Gazetted Full Tank Level",
+          source: "HMDA Lake Protection Committee gazetted lake register (in repo), lake 2907",
+          note: "Preliminary notification 30 December 2019; no final notification in the edition held here. The per-lake FTL and cadastral sheets behind the register are scanned raster PDFs with no extractable text, so the gazetted boundary cannot be drawn alongside the OSM one the way Pallikaranai's can.",
+          link: "https://lakes.hmda.gov.in/",
+          licence: "Telangana government publication, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated, and materially narrower than GO 111's catchment zone. Use it to read the shoreline, not the protected area.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Osman Sagar is an operated reservoir drawn down and refilled to HMWSSB's schedule, so year-to-year movement in the water-surface series mixes monsoon with draw-off decisions.",
+        "The published full-tank capacity moved by -9.8% on 1 July 2026 with no stated reason. Any percentage-of-capacity reading that crosses that date is comparing against two different denominators.",
+        "GO 111's zone extended well beyond this 1 km halo. Built-area change inside the halo is a shoreline reading and is not a measure of what the repeal permits.",
+      ],
+    },
+  },
+  "himayat-sagar": {
+    id: "himayat-sagar",
+    osm_id: 5411363,
+    name: "Himayat Sagar",
+    name_local: "హిమాయత్ సాగర్",
+    city_id: "hyderabad",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 5411363). " +
+      "Himayat Sagar impounds the Esi, the Musi's tributary, exactly " +
+      "as Osman Sagar impounds the Musi. At ~1,492 ha it is the " +
+      "second-largest water body in the city and the other half of " +
+      "the GO 111 twin.",
+    polygon_path: "/geojson/rich-bodies/himayat-sagar.geojson",
+    buffer_path: "/geojson/rich-bodies/himayat-sagar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). As at Osman " +
+      "Sagar, the legally operative line was GO 111's catchment zone " +
+      "until its 2022 repeal, not a 1 km ring.",
+    imagery_manifest_path: "/data/rich-bodies/himayat-sagar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/himayat-sagar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/himayat-sagar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/himayat-sagar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/himayat-sagar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/himayat-sagar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1908,
+        label:
+          "28 September: the Great Musi Flood. The reservoirs that " +
+          "follow are sized to absorb a flood peak rather than to " +
+          "serve a population.",
+        label_short: "The Great Musi Flood",
+      },
+      {
+        year: 1927,
+        label:
+          "Himayat Sagar is completed on the Esi, the second of the " +
+          "twin reservoirs, after Osman Sagar's 1918 completion.",
+        label_short: "Completed on the Esi",
+        source_url: "https://en.wikipedia.org/wiki/Himayat_Sagar",
+      },
+      {
+        year: 1996,
+        label:
+          "GO 111 bars major construction across both twin " +
+          "catchments.",
+        label_short: "GO 111 protects the catchment",
+      },
+      {
+        year: 2022,
+        label:
+          "GO 111 is repealed across 84 villages and about 1.32 lakh " +
+          "acres.",
+        label_short: "GO 111 repealed",
+      },
+      {
+        year: 2026,
+        label:
+          "1 July: HMWSSB's published capacity-at-full-tank for " +
+          "Himayat Sagar changes from 2.967 to 2.521 TMC, a 15.0% " +
+          "reduction, on the same day as Osman Sagar's and with no " +
+          "accompanying notice.",
+        label_short: "Published capacity cut 15.0%, unexplained",
+      },
+    ],
+    status_badges: [
+      { label: "Second-largest water body in the city", tone: "sky" },
+      { label: "GO 111 catchment, repealed 2022", tone: "amber" },
+      { label: "No entry in HMDA gazetted register", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap relation 5411363",
+          note: "OSM mappers traced the visible water surface; ~1,492 ha, consistent with this city's water-bodies layer.",
+          link: "https://www.openstreetmap.org/relation/5411363",
+          licence: "ODbL",
+        },
+        {
+          label: "Gazetted Full Tank Level",
+          source: "HMDA Lake Protection Committee gazetted lake register (in repo)",
+          note: "No entry appears under this name in the register as published - the only Himayathsagar-village entry is a separate small tank (Peeram Cheruvu, lake 2933). No preliminary or final FTL date can be cited for the reservoir itself from the record we hold.",
+          link: "https://lakes.hmda.gov.in/",
+          licence: "Telangana government publication, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated, and materially narrower than GO 111's catchment zone.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "An operated reservoir: the water-surface series mixes monsoon with HMWSSB's draw-off schedule.",
+        "The published full-tank capacity moved by -15.0% on 1 July 2026 with no stated reason. Percentage-of-capacity readings that cross that date compare against two different denominators.",
+        "OpenStreetMap carries a single 10 km way for the Esi against 244 km for the Musi, so upstream context for this reservoir is much thinner in the public map than for its twin.",
+      ],
+    },
+  },
+  "durgam-cheruvu": {
+    id: "durgam-cheruvu",
+    osm_id: 28131043,
+    name: "Durgam Cheruvu",
+    name_local: "దుర్గం చెరువు",
+    city_id: "hyderabad",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 28131043). At " +
+      "~37 ha Durgam Cheruvu is the smallest body in this cohort and " +
+      "the most closely surrounded: a Qutb Shahi-era tank in Raidurg " +
+      "that now sits between HITEC City and Jubilee Hills, with a " +
+      "cable-stayed bridge across it.",
+    polygon_path: "/geojson/rich-bodies/durgam-cheruvu.geojson",
+    buffer_path: "/geojson/rich-bodies/durgam-cheruvu-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The operative " +
+      "legal line would be the lake's Full Tank Level and its " +
+      "buffer-zone sheet, which has a preliminary notification but no " +
+      "final one on the register edition held here.",
+    imagery_manifest_path: "/data/rich-bodies/durgam-cheruvu-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/durgam-cheruvu-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/durgam-cheruvu-overture-buildings.json",
+      water_trend: "/data/rich-bodies/durgam-cheruvu-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/durgam-cheruvu-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/durgam-cheruvu-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2014,
+        label:
+          "7 June: a preliminary Full Tank Level notification issues " +
+          "for the lake (HMDA register, lake 3706, Raidurg village, " +
+          "Serilingampally mandal).",
+        label_short: "Preliminary FTL notified",
+        source_url: "https://lakes.hmda.gov.in/",
+      },
+      {
+        year: 2020,
+        label:
+          "25 September: the Durgam Cheruvu cable-stayed bridge is " +
+          "inaugurated across the lake - a 233 m main span built at " +
+          "about Rs 184 crore, connecting Jubilee Hills to the " +
+          "Mindspace side of HITEC City.",
+        label_short: "Cable bridge inaugurated",
+        source_url: "https://en.wikipedia.org/wiki/Durgam_Cheruvu_Bridge",
+      },
+      {
+        year: 2024,
+        label:
+          "HYDRAA is set up to protect lakes and remove " +
+          "encroachments. Rangareddy - the district this lake sits in, " +
+          "and the ORR growth corridor - has 891 gazetted lakes, of " +
+          "which 34.5% carry a final FTL notification, the second " +
+          "lowest coverage of any district in the region.",
+        label_short: "HYDRAA created; Rangareddy at 34.5%",
+      },
+      {
+        year: 2026,
+        label:
+          "No final Full Tank Level notification appears for this " +
+          "lake in the register edition held here, twelve years after " +
+          "the preliminary one. Until a final notification issues " +
+          "there is no legally settled boundary to measure against.",
+        label_short: "Still no final FTL notification",
+        source_url: "https://lakes.hmda.gov.in/",
+      },
+    ],
+    status_badges: [
+      { label: "FTL preliminary 2014, no final", tone: "amber" },
+      { label: "Cable bridge across the lake (2020)", tone: "sky" },
+      { label: "HITEC City halo", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 28131043",
+          note: "OSM mappers traced the visible water surface; ~37 ha, consistent with this city's water-bodies layer.",
+          link: "https://www.openstreetmap.org/way/28131043",
+          licence: "ODbL",
+        },
+        {
+          label: "Gazetted Full Tank Level",
+          source: "HMDA Lake Protection Committee gazetted lake register (in repo), lake 3706",
+          note: "Preliminary notification 7 June 2014; no final notification in the edition held here. The per-lake FTL and buffer-zone sheets are scanned raster PDFs with no extractable text, so the gazetted line cannot be drawn against the OSM one.",
+          link: "https://lakes.hmda.gov.in/",
+          licence: "Telangana government publication, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; ~683 ha. At this lake's size the halo is roughly eighteen times the water surface, so halo readings describe HITEC City rather than the lake's edge.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "At ~37 ha and 30 m JRC resolution the body zone holds only a few hundred pixels, so the water-surface series is noisier here than anywhere else in this cohort. Read the direction, not the individual years.",
+        "The halo is roughly eighteen times the lake's own area and covers one of the fastest-built districts in India. A high built-area figure here is a statement about Madhapur and Raidurg, not about encroachment on the lake - the gazetted FTL that would let anyone make the second statement has never been finally notified.",
+      ],
+    },
+  },
+  ameenpur: {
+    id: "ameenpur",
+    osm_id: 115772000,
+    name: "Ameenpur Lake",
+    city_id: "hyderabad",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 115772000). " +
+      "Ameenpur is a ~127 ha lake on the Sangareddy edge of the " +
+      "metropolitan region, declared in November 2016 as India's " +
+      "first Biodiversity Heritage Site on a water body - and the " +
+      "first such site in an urban setting - for the migratory birds " +
+      "it carries.",
+    polygon_path: "/geojson/rich-bodies/ameenpur.geojson",
+    buffer_path: "/geojson/rich-bodies/ameenpur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The lake's " +
+      "Biodiversity Heritage Site designation carries its own " +
+      "management regime under the Biological Diversity Act 2002; " +
+      "the 1 km halo is cohort-standard and is not that regime's " +
+      "boundary.",
+    imagery_manifest_path: "/data/rich-bodies/ameenpur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/ameenpur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/ameenpur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/ameenpur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/ameenpur-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/ameenpur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2016,
+        label:
+          "November: Telangana declares Ameenpur a Biodiversity " +
+          "Heritage Site under the Biological Diversity Act 2002 - " +
+          "the first water body in India to be designated, and the " +
+          "first such site in an urban area.",
+        label_short: "India's first BHS water body",
+        source_url:
+          "https://www.thehansindia.com/posts/index/Telangana/2016-11-06/Ameenpur-Lake-declared-Biodiversity-Heritage-Site/262605",
+      },
+      {
+        year: 2017,
+        label:
+          "20 March: a preliminary Full Tank Level notification " +
+          "issues for the lake (HMDA register, Pedda Cheruvu, lake " +
+          "1200/34, Ameenpur village, Sangareddy).",
+        label_short: "Preliminary FTL notified",
+        source_url: "https://lakes.hmda.gov.in/",
+      },
+      {
+        year: 2025,
+        label:
+          "Final FTL notifications across the region run at 533 in " +
+          "this year and 533 the year before, clearing a backlog that " +
+          "had moved by 10, 60, 2, 3 and 2 across 2017-2023. " +
+          "Twenty-five other lakes in Ameenpur mandal sit in the same " +
+          "register; several now carry final notifications.",
+        label_short: "Region-wide notification surge",
+        source_url: "https://lakes.hmda.gov.in/",
+      },
+      {
+        year: 2026,
+        label:
+          "No final Full Tank Level notification appears for Ameenpur " +
+          "itself in the register edition held here. The lake carries " +
+          "a national biodiversity designation and a boundary that is " +
+          "not yet legally settled at the same time.",
+        label_short: "Still no final FTL notification",
+        source_url: "https://lakes.hmda.gov.in/",
+      },
+    ],
+    status_badges: [
+      { label: "India's first BHS water body (2016)", tone: "emerald" },
+      { label: "FTL preliminary 2017, no final", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 115772000",
+          note: "OSM mappers traced the visible water surface; ~127 ha, consistent with this city's water-bodies layer.",
+          link: "https://www.openstreetmap.org/way/115772000",
+          licence: "ODbL",
+        },
+        {
+          label: "Gazetted Full Tank Level",
+          source: "HMDA Lake Protection Committee gazetted lake register (in repo), lake 1200/34",
+          note: "The register entry is under the local name Pedda Cheruvu, Ameenpur village, Sangareddy district. Preliminary notification 20 March 2017; no final notification in the edition held here.",
+          link: "https://lakes.hmda.gov.in/",
+          licence: "Telangana government publication, cited with attribution",
+        },
+        {
+          label: "Biodiversity Heritage Site designation",
+          source: "Telangana designation under the Biological Diversity Act 2002, November 2016",
+          note: "Reported designation; the notification itself is an outstanding fetch for this platform, so the date is carried at month rather than day precision and no site boundary is drawn from it.",
+          link: "https://www.thehansindia.com/posts/index/Telangana/2016-11-06/Ameenpur-Lake-declared-Biodiversity-Heritage-Site/262605",
+          licence: "Press report, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; ~975 ha covering Ameenpur, Ilapur and the Patancheru-Miyapur growth edge.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "The Biodiversity Heritage Site designation is carried here from press reporting. Until the notification itself is obtained, treat the month as reported and the site's legal boundary as unknown - it is not the polygon drawn on this map.",
+        "Ameenpur is a bird lake, and shallow bird lakes read as seasonal rather than permanent water in JRC. A low permanent-water fraction here is the expected signature of the habitat, not evidence of loss.",
+      ],
+    },
+  },
 };
 
 const BY_OSM_ID = new Map(
@@ -1954,4 +2940,14 @@ export function getRichBodyIdByOsmId(osmId: number | null | undefined): string |
 
 export function getRichBody(id: string): RichBodyEntry | null {
   return RICH_BODIES[id] ?? null;
+}
+
+/** Rich bodies belonging to one city.
+ *
+ *  The map used to fetch EVERY registry polygon on every city's page,
+ *  which was invisible at 7 bodies and is a real cost at 30: a Mumbai
+ *  visitor paid for Bangalore's thirteen lakes before their own map drew.
+ *  Callers pass their cityId and fetch only what they can render. */
+export function getRichBodiesForCity(cityId: string): RichBodyEntry[] {
+  return Object.values(RICH_BODIES).filter((b) => b.city_id === cityId);
 }

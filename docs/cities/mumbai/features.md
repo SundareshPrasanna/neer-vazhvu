@@ -36,6 +36,12 @@ The supply model is Chennai-like, not Bengaluru-like: BMC's seven impounded lake
 - **Shoreline** (`/mumbai/shoreline`) - same GEE MNDWI transect pipeline as Chennai, west-coast orientation, corroborated against the published record (NCCR 1990-2016 district table + MSMP 2017 risk grades) because no rate-publishing paper exists for Mumbai. Copy is config-driven per city (`ShorelineSummaryCopy`).
 - **Facts** (21 curated, each with a source URL) and **Origins** - the four-chapter water history (seven islands → Vihar 1860 → hydraulic citizenship → 26/7 and the forty-five litres) with five licensed Wikimedia images; provenance in `public/images/story/mumbai/MANIFEST.json`.
 
+### Water bodies deep zoom (Mumbai)
+
+- **5 rich-data deep-zoom bodies onboarded**: Powai, Vihar, Tulsi, Tansa, Bhatsa. Same body-agnostic pipeline as Chennai's 7 and Bengaluru's 14; same registry pattern in `src/lib/water-bodies/rich-body-registry.ts`. See [data-sources.md](data-sources.md#rich-data-deep-zoom-panel-5-mumbai-flagship-bodies) for the pipeline detail.
+- **The map loads only this city's bodies.** `UnifiedMap` takes a `cityId` and calls `getRichBodiesForCity()`; before that it fetched every registered polygon in the country on every city page.
+- **Per-body caveats do real work here** - the park-interior halos (Vihar, Tulsi), the operated-reservoir water series (Tansa, Bhatsa) and Powai's hyacinth-versus-water classification all change how the charts should be read, and each is carried in the registry rather than left to the reader.
+
 ### Deliberately absent at launch
 
 - **My Ward** - the ward panels are still in build (non-BMC corporation ward geometry has no public source). Removed from `FEATURE_AVAILABILITY`, so nav, sitemap and direct URLs all 404 for Mumbai. Returns with the ward-equity build (the per-ward Praja feedstock - supply hours, unfit samples, metering - is already in `public/data/mumbai-ward-water-praja.json`).

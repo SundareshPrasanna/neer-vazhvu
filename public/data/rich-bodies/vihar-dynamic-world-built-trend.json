@@ -1,0 +1,238 @@
+{
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/dynamic-world-built-trend",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-08-24",
+    "produced_by": "scripts/verify_rich_body_built_trend.py",
+    "note": "Per-pixel annual MODE built-class statistics; known_limitations in the legacy data_source key."
+  },
+  "body_id": "vihar",
+  "computed_at": "2026-08-24T13:45:08.177474+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/DYNAMICWORLD/V1",
+    "license": "CC BY 4.0",
+    "version": "Dynamic World V1",
+    "resolution_m": 10,
+    "revisit_days": "2-5 (Sentinel-2)",
+    "method": "Per-pixel annual MODE label across all DW scenes intersecting the zone; built = class 6",
+    "known_limitations": [
+      "Dynamic World started June 2015; pre-2016 not included",
+      "Current-year is partial (through script run date)",
+      "Mode aggregation can be noisy in low-scene-count regions; check scene_count column",
+      "Built class includes any built-up surface (roofs, roads, paved): not building-count-equivalent"
+    ]
+  },
+  "years": [
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "by_zone": {
+    "Body (primary)": {
+      "2016": {
+        "year": 2016,
+        "scene_count": 18,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2017": {
+        "year": 2017,
+        "scene_count": 21,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2018": {
+        "year": 2018,
+        "scene_count": 46,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2019": {
+        "year": 2019,
+        "scene_count": 45,
+        "built_pixels": 2,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.02
+      },
+      "2020": {
+        "year": 2020,
+        "scene_count": 44,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2021": {
+        "year": 2021,
+        "scene_count": 48,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2022": {
+        "year": 2022,
+        "scene_count": 43,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 49,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 51,
+        "built_pixels": 3,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.01,
+        "built_area_ha": 0.04
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 50,
+        "built_pixels": 0,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.0,
+        "built_area_ha": 0.0
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 41,
+        "built_pixels": 14,
+        "valid_pixels": 50738,
+        "built_fraction_pct": 0.03,
+        "built_area_ha": 0.14
+      }
+    },
+    "Halo: 1km buffer - body": {
+      "2016": {
+        "year": 2016,
+        "scene_count": 38,
+        "built_pixels": 28237,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 19.67,
+        "built_area_ha": 282.37
+      },
+      "2017": {
+        "year": 2017,
+        "scene_count": 42,
+        "built_pixels": 34491,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 24.02,
+        "built_area_ha": 344.91
+      },
+      "2018": {
+        "year": 2018,
+        "scene_count": 93,
+        "built_pixels": 37221,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 25.92,
+        "built_area_ha": 372.21
+      },
+      "2019": {
+        "year": 2019,
+        "scene_count": 90,
+        "built_pixels": 37764,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 26.3,
+        "built_area_ha": 377.65
+      },
+      "2020": {
+        "year": 2020,
+        "scene_count": 91,
+        "built_pixels": 39350,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 27.41,
+        "built_area_ha": 393.51
+      },
+      "2021": {
+        "year": 2021,
+        "scene_count": 97,
+        "built_pixels": 40108,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 27.93,
+        "built_area_ha": 401.08
+      },
+      "2022": {
+        "year": 2022,
+        "scene_count": 86,
+        "built_pixels": 40427,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 28.16,
+        "built_area_ha": 404.28
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 100,
+        "built_pixels": 38064,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 26.51,
+        "built_area_ha": 380.64
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 101,
+        "built_pixels": 42568,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 29.65,
+        "built_area_ha": 425.69
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 107,
+        "built_pixels": 37044,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 25.8,
+        "built_area_ha": 370.45
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 84,
+        "built_pixels": 43459,
+        "valid_pixels": 143585,
+        "built_fraction_pct": 30.27,
+        "built_area_ha": 434.6
+      }
+    }
+  },
+  "headline_for_v0": [
+    "Body (primary): built fraction 0.0% (2016) -> 0.03% (2026), delta +0.03 pp",
+    "Halo: 1km buffer - body: built fraction 19.67% (2016) -> 30.27% (2026), delta +10.6 pp"
+  ]
+}

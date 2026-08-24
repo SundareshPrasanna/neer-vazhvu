@@ -1,0 +1,69 @@
+{
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/open-buildings-verification",
+  "scope": {
+    "kind": "region",
+    "id": "mumbai"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-open-buildings",
+        "title": "Google Open Buildings v3 polygons",
+        "publisher": "Google Research",
+        "license": "CC BY 4.0 / ODbL",
+        "role": "input",
+        "as_of": "2023"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-08-24",
+    "produced_by": "scripts/verify_rich_body_open_buildings.py",
+    "note": "Building-count verification per zone; v3 reflects state around 2023. Limitations in the legacy data_source key."
+  },
+  "body_id": "vihar",
+  "computed_at": "2026-08-24T14:29:04.645623+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/Research/open-buildings/v3/polygons",
+    "license": "CC BY 4.0 / ODbL",
+    "version": "v3 (released June 2023)",
+    "method": "Google's tree-based segmentation of high-res satellite imagery",
+    "known_limitations": [
+      "May under-detect low-rise informal structures in dense slum geometry",
+      "Confidence < 0.5 buildings excluded by default",
+      "Footprint dates are approximate; v3 reflects state around 2023"
+    ]
+  },
+  "regions": [
+    {
+      "region": "Body (primary)",
+      "building_count": 2,
+      "building_area_m2_sum": 36.2298002243042,
+      "building_area_ha": 0.0,
+      "by_confidence": {
+        "high": 1,
+        "medium": 1,
+        "low": 0
+      },
+      "region_area_ha": 478.25,
+      "built_up_fraction_pct": 0.0
+    },
+    {
+      "region": "Halo: 1km buffer - body",
+      "building_count": 14409,
+      "building_area_m2_sum": 1413655.1409794951,
+      "building_area_ha": 141.37,
+      "by_confidence": {
+        "high": 7158,
+        "medium": 7249,
+        "low": 0
+      },
+      "region_area_ha": 1353.37,
+      "built_up_fraction_pct": 10.45
+    }
+  ],
+  "headline_for_v0": [
+    "Inside primary boundary: 2 buildings covering 0 ha (0.0% of 478 ha).",
+    "Inside 1 km halo: 14,409 buildings covering 141 ha (10.4% of 1353 ha)."
+  ]
+}
