@@ -22,7 +22,7 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 
 - Logical datasets present in **2+ cities**: 57
 - Logical datasets in **exactly 1 city** (bespoke): 61
-- Multi-city datasets whose per-city files have **divergent schemas**: 30
+- Multi-city datasets whose per-city files have **divergent schemas**: 29
 
 ### Multi-city datasets with schema drift (fix-first list for NVDM)
 
@@ -57,7 +57,6 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | geojson-layers | polygon | bangalore, chennai, hyderabad, mumbai | 2 |
 | geojson-layers | stps | bangalore, pune | 2 |
 | geojson-layers | wards-2025 | bangalore, pune | 2 |
-| rich-bodies | imagery-manifest | bangalore, chennai, hyderabad, mumbai | 2 |
 
 ## Hygiene
 
