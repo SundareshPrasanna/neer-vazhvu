@@ -252,6 +252,43 @@ these two CETPs. A GPCB Action Taken Report to the NGT (OA 18/2024) is a further
   Management Institute's discharge-point monitoring for the Pandesara and Sachin CETPs are both
   identified and neither is built.
 
+## Rich-Data Deep-Zoom Panel - deliberately absent
+
+Surat is the one onboarded city with **no** deep-zoom body, and the reason is worth
+stating rather than leaving as a silent gap.
+
+**Its own water bodies are below the resolution the panel needs.** The largest named
+entry in `surat-water-bodies-current.geojson` is Ponsra water tank at 35 ha; Gopi Talav,
+the one with civic recognition, is 3.1 ha. JRC Global Surface Water is 30 m, so a 3 ha
+body is roughly 33 pixels. The panel now labels anything under 400 pixels as unreadable
+year-to-year; Surat's bodies are an order of magnitude below that line. Shipping them
+would produce a percentage that moves on single-pixel reclassification.
+
+**Ukai was built and rejected on the evidence.** Surat's water and flood story is governed
+by Ukai, ~100 km upstream, and the reservoir was a plausible candidate on the Bhatsa
+precedent (80 km from the Mumbai it supplies). The full pipeline was run against OSM
+relation 1920044, 38,178 ha, and the result was a body this surface cannot say anything
+about:
+
+| Metric | Ukai |
+|---|---|
+| Water in body, 1989-93 → 2017-21 avg | 98.1% → 96.4% |
+| Built in 1 km halo, 2016 → 2026 | 2.18% → 2.56% |
+| Built inside the body | 0.00% → 0.00% |
+| Buildings inside the body (Overture) | 0 |
+
+The deep-zoom panel is a change-detection instrument: water lost, ground built. Ukai
+shows neither. It would have shipped a flat line, two empty tint layers and a halo that
+moved a third of a point in a decade.
+
+**What Surat's water story actually needs** is the release series - when Ukai discharges
+and how much headroom the Tapi has - which is an operational time series, not a boundary.
+That is what the flood-headroom hero and the dam-storage card already carry. Adding a
+deep-zoom panel here would be surface for its own sake.
+
+Revisit if a higher-resolution water product is adopted, or if SMC publishes FTL polygons
+for the inland talavs.
+
 ## Retired / rejected
 
 - `wb_hp.kml` and its two byte-identical zips: Himachal Pradesh, wrong state.

@@ -1,0 +1,69 @@
+{
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/open-buildings-verification",
+  "scope": {
+    "kind": "region",
+    "id": "kolkata"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-open-buildings",
+        "title": "Google Open Buildings v3 polygons",
+        "publisher": "Google Research",
+        "license": "CC BY 4.0 / ODbL",
+        "role": "input",
+        "as_of": "2023"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-08-25",
+    "produced_by": "scripts/verify_rich_body_open_buildings.py",
+    "note": "Building-count verification per zone; v3 reflects state around 2023."
+  },
+  "body_id": "santragachi",
+  "computed_at": "2026-08-25T14:33:40.446964+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/Research/open-buildings/v3/polygons",
+    "license": "CC BY 4.0 / ODbL",
+    "version": "v3 (released June 2023)",
+    "method": "Google's tree-based segmentation of high-res satellite imagery",
+    "known_limitations": [
+      "May under-detect low-rise informal structures in dense slum geometry",
+      "Confidence < 0.5 buildings excluded by default",
+      "Footprint dates are approximate; v3 reflects state around 2023"
+    ]
+  },
+  "regions": [
+    {
+      "region": "Body (primary)",
+      "building_count": 6,
+      "building_area_m2_sum": 127.20489978790283,
+      "building_area_ha": 0.01,
+      "by_confidence": {
+        "high": 1,
+        "medium": 5,
+        "low": 0
+      },
+      "region_area_ha": 12.57,
+      "built_up_fraction_pct": 0.08
+    },
+    {
+      "region": "Halo: 1km buffer - body",
+      "building_count": 19700,
+      "building_area_m2_sum": 1481006.7235712497,
+      "building_area_ha": 148.1,
+      "by_confidence": {
+        "high": 11571,
+        "medium": 8124,
+        "low": 0
+      },
+      "region_area_ha": 479.23,
+      "built_up_fraction_pct": 30.9
+    }
+  ],
+  "headline_for_v0": [
+    "Inside primary boundary: 6 buildings covering 0 ha (0.1% of 13 ha).",
+    "Inside 1 km halo: 19,700 buildings covering 148 ha (30.9% of 479 ha)."
+  ]
+}

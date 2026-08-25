@@ -7,6 +7,10 @@ interface ZoneYear {
   year: number;
   any_water_pct?: number | null;
   built_fraction_pct?: number | null;
+  /** JRC pixels inside the zone that carried a classification that year.
+   *  At 30 m a small urban lake is only a few hundred of them, which is
+   *  what makes its water line swing. See SMALL_BODY_PIXELS. */
+  valid_pixels?: number | null;
 }
 
 interface JrcTrend {
@@ -42,6 +46,18 @@ interface OvertureBuildings {
 // Generic zone names emitted by all verify_rich_body_*.py scripts via
 // scripts/_rich_body_zones.py. Same names regardless of body source.
 const BODY_ZONE = "Body (primary)";
+
+/** Below this many JRC pixels the water-fraction line is noise rather than
+ *  trend, and the panel says so instead of drawing it straight-faced.
+ *
+ *  JRC Global Surface Water is 30 m, so 400 pixels is about 36 ha. Under
+ *  that, a single misclassified edge pixel moves the reading by a quarter
+ *  of a point and the year-to-year series swings tens of points on nothing.
+ *  Measured across the cohort: bodies above this line average a 6-point
+ *  year-to-year change, bodies below it average 15, and the worst of them
+ *  (Iblur, 12 pixels) is drawing a percentage from a patch of ground the
+ *  size of a football pitch. */
+const SMALL_BODY_PIXELS = 400;
 const HALO_ZONE = "Halo: 1km buffer - body";
 
 interface RichBodyStatsStripProps {
@@ -99,23 +115,43 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
     : null;
   const builtBaseline = dw?.by_zone[HALO_ZONE]?.["2016"]?.built_fraction_pct ?? null;
 
+  // How many JRC pixels the body actually covers, at its best-covered year.
+  // Fourteen of the bodies in this cohort sit under SMALL_BODY_PIXELS, and
+  // their water lines swing tens of points between consecutive years on
+  // nothing but edge-pixel reclassification. Saying so on the stat is more
+  // honest than printing a decimal place that the data cannot support.
+  const bodyPixels = jrc?.by_zone[BODY_ZONE]
+    ? Math.max(
+        0,
+        ...Object.values(jrc.by_zone[BODY_ZONE]).map((v) => v.valid_pixels ?? 0),
+      )
+    : 0;
+  const isSmallBody = bodyPixels > 0 && bodyPixels < SMALL_BODY_PIXELS;
+
   return (
     <div className="px-4 md:px-6 py-2.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 shrink-0">
       <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
         <Stat
           label="Water surface in body"
-          help="The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A small step at the splice is methodology-driven (per-pixel annual classifier vs MODE-aggregated per-image), not a real water-level jump."
+          help={
+            "The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A small step at the splice is methodology-driven (per-pixel annual classifier vs MODE-aggregated per-image), not a real water-level jump." +
+            (isSmallBody
+              ? ` This body covers only about ${bodyPixels} pixels at JRC's 30 m resolution, so a handful of edge pixels changing class moves the figure by several points. Read the direction over decades, not the year-to-year steps, and treat any single year as approximate.`
+              : "")
+          }
           value={waterPct != null ? `${waterPct.toFixed(1)}%` : "n/a"}
           delta={waterPct != null && waterBaseline != null ? waterPct - waterBaseline : null}
           deltaUnit=" pts"
           deltaContext="1988-92 avg"
           deltaInvert
           caveat={
-            year > 2021 && dwWater?.by_zone[BODY_ZONE]?.[String(year)]
-              ? "Dynamic World"
-              : year <= 2021
-                ? null
-                : "JRC ends 2021"
+            isSmallBody
+              ? `small body, ~${bodyPixels}px`
+              : year > 2021 && dwWater?.by_zone[BODY_ZONE]?.[String(year)]
+                ? "Dynamic World"
+                : year <= 2021
+                  ? null
+                  : "JRC ends 2021"
           }
         />
         <Stat

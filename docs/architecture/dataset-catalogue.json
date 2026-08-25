@@ -12797,7 +12797,8 @@
     ]
    },
    "consumers": [
-    "src/content/story-pune-en.tsx"
+    "src/content/story-pune-en.tsx",
+    "src/lib/water-bodies/rich-body-registry.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
@@ -14668,6 +14669,279 @@
    "scope": "bangalore",
    "dataset": "overture-buildings",
    "bytes": 2649,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/bhalaswa-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "dw-water-trend",
+   "bytes": 4070,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/bhalaswa-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6170,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/bhalaswa-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "imagery-manifest",
+   "bytes": 19911,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/bhalaswa-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "jrc-water-trend",
+   "bytes": 32516,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/bhalaswa-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "open-buildings-verification",
+   "bytes": 2025,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/bhalaswa-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "overture-buildings",
+   "bytes": 2669,
    "schema": {
     "kind": "object",
     "keys": [
@@ -17438,6 +17712,279 @@
    "flags": []
   },
   {
+   "path": "public/data/rich-bodies/khadakwasla-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dw-water-trend",
+   "bytes": 4116,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/khadakwasla-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6203,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/khadakwasla-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "imagery-manifest",
+   "bytes": 20274,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/khadakwasla-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "jrc-water-trend",
+   "bytes": 33326,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/khadakwasla-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "open-buildings-verification",
+   "bytes": 2024,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/khadakwasla-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "overture-buildings",
+   "bytes": 2669,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
    "path": "public/data/rich-bodies/madivala-dw-water-trend.json",
    "family": "rich-bodies",
    "scope": "bangalore",
@@ -17671,6 +18218,279 @@
    "scope": "bangalore",
    "dataset": "overture-buildings",
    "bytes": 2648,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/najafgarh-jheel-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "dw-water-trend",
+   "bytes": 4112,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/najafgarh-jheel-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6195,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/najafgarh-jheel-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "imagery-manifest",
+   "bytes": 20761,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/najafgarh-jheel-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "jrc-water-trend",
+   "bytes": 32653,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/najafgarh-jheel-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "open-buildings-verification",
+   "bytes": 2032,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/najafgarh-jheel-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "overture-buildings",
+   "bytes": 2674,
    "schema": {
     "kind": "object",
     "keys": [
@@ -18291,6 +19111,552 @@
    "producer_refs": [
     "scripts/verify_rich_body_overture_buildings.py"
    ],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/panshet-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dw-water-trend",
+   "bytes": 4110,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/panshet-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6178,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/panshet-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "imagery-manifest",
+   "bytes": 19788,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/panshet-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "jrc-water-trend",
+   "bytes": 33412,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/panshet-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "open-buildings-verification",
+   "bytes": 2025,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/panshet-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "overture-buildings",
+   "bytes": 2665,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/pavana-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dw-water-trend",
+   "bytes": 4095,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/pavana-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6197,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/pavana-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "imagery-manifest",
+   "bytes": 19443,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/pavana-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "jrc-water-trend",
+   "bytes": 33239,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/pavana-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "open-buildings-verification",
+   "bytes": 2021,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/pavana-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "overture-buildings",
+   "bytes": 2665,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
    "headwaters_sources": [
     "google-dynamic-world",
     "google-open-buildings",
@@ -19404,6 +20770,279 @@
    "flags": []
   },
   {
+   "path": "public/data/rich-bodies/rabindra-sarobar-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "dw-water-trend",
+   "bytes": 4080,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/rabindra-sarobar-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6171,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/rabindra-sarobar-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "imagery-manifest",
+   "bytes": 21523,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/rabindra-sarobar-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "jrc-water-trend",
+   "bytes": 32562,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/rabindra-sarobar-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "open-buildings-verification",
+   "bytes": 2035,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/rabindra-sarobar-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "overture-buildings",
+   "bytes": 2683,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
    "path": "public/data/rich-bodies/rachenahalli-dw-water-trend.json",
    "family": "rich-bodies",
    "scope": "bangalore",
@@ -19950,6 +21589,279 @@
    "flags": []
   },
   {
+   "path": "public/data/rich-bodies/sanjay-lake-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "dw-water-trend",
+   "bytes": 4057,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sanjay-lake-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6167,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sanjay-lake-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "imagery-manifest",
+   "bytes": 20269,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sanjay-lake-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "jrc-water-trend",
+   "bytes": 32321,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sanjay-lake-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "open-buildings-verification",
+   "bytes": 2027,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sanjay-lake-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "delhi",
+   "dataset": "overture-buildings",
+   "bytes": 2674,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
    "path": "public/data/rich-bodies/sankey-dw-water-trend.json",
    "family": "rich-bodies",
    "scope": "bangalore",
@@ -20183,6 +22095,279 @@
    "scope": "bangalore",
    "dataset": "overture-buildings",
    "bytes": 2646,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/santragachi-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "dw-water-trend",
+   "bytes": 4058,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/santragachi-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6165,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/santragachi-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "imagery-manifest",
+   "bytes": 20631,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/santragachi-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "jrc-water-trend",
+   "bytes": 32314,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/santragachi-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "open-buildings-verification",
+   "bytes": 2030,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/santragachi-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "overture-buildings",
+   "bytes": 2676,
    "schema": {
     "kind": "object",
     "keys": [
@@ -20496,6 +22681,552 @@
    "flags": []
   },
   {
+   "path": "public/data/rich-bodies/subhash-sarobar-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "dw-water-trend",
+   "bytes": 4075,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/subhash-sarobar-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6155,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/subhash-sarobar-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "imagery-manifest",
+   "bytes": 21127,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/subhash-sarobar-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "jrc-water-trend",
+   "bytes": 32275,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/subhash-sarobar-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "open-buildings-verification",
+   "bytes": 2015,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/subhash-sarobar-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "kolkata",
+   "dataset": "overture-buildings",
+   "bytes": 2679,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sultanpur-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "gurugram",
+   "dataset": "dw-water-trend",
+   "bytes": 4062,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sultanpur-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "gurugram",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6140,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sultanpur-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "gurugram",
+   "dataset": "imagery-manifest",
+   "bytes": 20040,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sultanpur-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "gurugram",
+   "dataset": "jrc-water-trend",
+   "bytes": 32319,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sultanpur-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "gurugram",
+   "dataset": "open-buildings-verification",
+   "bytes": 2019,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/sultanpur-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "gurugram",
+   "dataset": "overture-buildings",
+   "bytes": 2668,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
    "path": "public/data/rich-bodies/tansa-dw-water-trend.json",
    "family": "rich-bodies",
    "scope": "mumbai",
@@ -20729,6 +23460,279 @@
    "scope": "mumbai",
    "dataset": "overture-buildings",
    "bytes": 2636,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/temghar-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dw-water-trend",
+   "bytes": 4082,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/temghar-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6137,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/temghar-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "imagery-manifest",
+   "bytes": 19776,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/temghar-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "jrc-water-trend",
+   "bytes": 32725,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/temghar-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "open-buildings-verification",
+   "bytes": 2008,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/temghar-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "overture-buildings",
+   "bytes": 2660,
    "schema": {
     "kind": "object",
     "keys": [
@@ -21275,6 +24279,279 @@
    "scope": "bangalore",
    "dataset": "overture-buildings",
    "bytes": 2645,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "comparison_note",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/varasgaon-dw-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dw-water-trend",
+   "bytes": 4112,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/varasgaon-dynamic-world-built-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "dynamic-world-built-trend",
+   "bytes": 6192,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/varasgaon-imagery-manifest.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "imagery-manifest",
+   "bytes": 20028,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "chip_aspect_w_over_h",
+     "chip_bbox_wsen",
+     "chip_max_dimension_px",
+     "chips",
+     "computed_at",
+     "dataset",
+     "era_map",
+     "license",
+     "nvdm",
+     "provenance",
+     "scope",
+     "storage_bucket",
+     "tints"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/varasgaon-jrc-water-trend.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "jrc-water-trend",
+   "bytes": 33451,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "by_zone",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "scope",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/varasgaon-open-buildings-verification.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "open-buildings-verification",
+   "bytes": 2023,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "body_id",
+     "computed_at",
+     "data_source",
+     "dataset",
+     "headline_for_v0",
+     "nvdm",
+     "provenance",
+     "regions",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "overture-buildings",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "ODbL / CDLA depending on theme",
+    "USGS public domain, courtesy attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope entries jrc-global-surface-water / google-open-buildings / overture-buildings / google-dynamic-world / sentinel-2-l2a",
+   "flags": []
+  },
+  {
+   "path": "public/data/rich-bodies/varasgaon-overture-buildings.json",
+   "family": "rich-bodies",
+   "scope": "pune",
+   "dataset": "overture-buildings",
+   "bytes": 2668,
    "schema": {
     "kind": "object",
     "keys": [
@@ -27590,6 +30867,89 @@
    "flags": []
   },
   {
+   "path": "public/geojson/rich-bodies/bhalaswa-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "delhi",
+   "dataset": "buffer-1000m",
+   "bytes": 10220,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/bhalaswa.geojson",
+   "family": "geojson-layers",
+   "scope": "delhi",
+   "dataset": "polygon",
+   "bytes": 18858,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
    "path": "public/geojson/rich-bodies/bhatsa-buffer-1000m.geojson",
    "family": "geojson-layers",
    "scope": "mumbai",
@@ -28420,6 +31780,89 @@
    "flags": []
   },
   {
+   "path": "public/geojson/rich-bodies/khadakwasla-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "buffer-1000m",
+   "bytes": 22890,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/khadakwasla.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "polygon",
+   "bytes": 60939,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
    "path": "public/geojson/rich-bodies/madivala-buffer-1000m.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
@@ -28461,6 +31904,89 @@
    "scope": "bangalore",
    "dataset": "polygon",
    "bytes": 21302,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/najafgarh-jheel-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "delhi",
+   "dataset": "buffer-1000m",
+   "bytes": 12017,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/najafgarh-jheel.geojson",
+   "family": "geojson-layers",
+   "scope": "delhi",
+   "dataset": "polygon",
+   "bytes": 12306,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -28714,6 +32240,172 @@
     "CC BY 4.0",
     "ODbL 1.0",
     "public data from a Tamil Nadu government portal, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/panshet-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "buffer-1000m",
+   "bytes": 32591,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/panshet.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "polygon",
+   "bytes": 113143,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/pavana-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "buffer-1000m",
+   "bytes": 40911,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/pavana.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "polygon",
+   "bytes": 678903,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": "covered by the platform-scope GEE entries",
@@ -29052,6 +32744,89 @@
    "flags": []
   },
   {
+   "path": "public/geojson/rich-bodies/rabindra-sarobar-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "buffer-1000m",
+   "bytes": 12405,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/rabindra-sarobar.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "polygon",
+   "bytes": 26482,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
    "path": "public/geojson/rich-bodies/rachenahalli-buffer-1000m.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
@@ -29218,6 +32993,89 @@
    "flags": []
   },
   {
+   "path": "public/geojson/rich-bodies/sanjay-lake-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "delhi",
+   "dataset": "buffer-1000m",
+   "bytes": 10128,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/sanjay-lake.geojson",
+   "family": "geojson-layers",
+   "scope": "delhi",
+   "dataset": "polygon",
+   "bytes": 11249,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
    "path": "public/geojson/rich-bodies/sankey-buffer-1000m.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
@@ -29259,6 +33117,89 @@
    "scope": "bangalore",
    "dataset": "polygon",
    "bytes": 9882,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/santragachi-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "buffer-1000m",
+   "bytes": 9281,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/santragachi.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "polygon",
+   "bytes": 7128,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -29384,6 +33325,172 @@
    "flags": []
   },
   {
+   "path": "public/geojson/rich-bodies/subhash-sarobar-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "buffer-1000m",
+   "bytes": 10789,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/subhash-sarobar.geojson",
+   "family": "geojson-layers",
+   "scope": "kolkata",
+   "dataset": "polygon",
+   "bytes": 14308,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/sultanpur-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "gurugram",
+   "dataset": "buffer-1000m",
+   "bytes": 7576,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/sultanpur.geojson",
+   "family": "geojson-layers",
+   "scope": "gurugram",
+   "dataset": "polygon",
+   "bytes": 10458,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
    "path": "public/geojson/rich-bodies/tansa-buffer-1000m.geojson",
    "family": "geojson-layers",
    "scope": "mumbai",
@@ -29425,6 +33532,89 @@
    "scope": "mumbai",
    "dataset": "polygon",
    "bytes": 117480,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/temghar-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "buffer-1000m",
+   "bytes": 15592,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/temghar.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "polygon",
+   "bytes": 51788,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -29591,6 +33781,89 @@
    "scope": "bangalore",
    "dataset": "polygon",
    "bytes": 18931,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "body_id",
+     "fetched_at",
+     "license",
+     "name",
+     "name_en",
+     "name_ta",
+     "osm_id",
+     "osm_type",
+     "protect_class",
+     "protection_title",
+     "ramsar",
+     "source",
+     "start_date",
+     "wikidata",
+     "wikipedia"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/varasgaon-buffer-1000m.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "buffer-1000m",
+   "bytes": 40156,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "body_id",
+     "buffer_metres",
+     "computed_with",
+     "fetched_at",
+     "source_polygon"
+    ]
+   },
+   "consumers": [
+    "src/lib/water-bodies/rich-body-registry.ts"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "google-dynamic-world",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": "covered by the platform-scope GEE entries",
+   "flags": []
+  },
+  {
+   "path": "public/geojson/rich-bodies/varasgaon.geojson",
+   "family": "geojson-layers",
+   "scope": "pune",
+   "dataset": "polygon",
+   "bytes": 206748,
    "schema": {
     "kind": "FeatureCollection",
     "features": 1,
@@ -31741,14 +36014,18 @@
   {
    "family": "geojson-layers",
    "dataset": "buffer-1000m",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 406868,
+   "bytes": 631424,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -31973,14 +36250,18 @@
   {
    "family": "geojson-layers",
    "dataset": "polygon",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 1448575,
+   "bytes": 2660885,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -32266,14 +36547,18 @@
   {
    "family": "rich-bodies",
    "dataset": "dw-water-trend",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 130678,
+   "bytes": 179707,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -32281,14 +36566,18 @@
   {
    "family": "rich-bodies",
    "dataset": "dynamic-world-built-trend",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 197730,
+   "bytes": 271800,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -32296,14 +36585,18 @@
   {
    "family": "rich-bodies",
    "dataset": "imagery-manifest",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 629541,
+   "bytes": 873112,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -32311,14 +36604,18 @@
   {
    "family": "rich-bodies",
    "dataset": "jrc-water-trend",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 1044768,
+   "bytes": 1437881,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -32326,14 +36623,18 @@
   {
    "family": "rich-bodies",
    "dataset": "open-buildings-verification",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 64661,
+   "bytes": 88945,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -32341,14 +36642,18 @@
   {
    "family": "rich-bodies",
    "dataset": "overture-buildings",
-   "files": 31,
+   "files": 43,
    "scopes": [
     "bangalore",
     "chennai",
+    "delhi",
+    "gurugram",
     "hyderabad",
-    "mumbai"
+    "kolkata",
+    "mumbai",
+    "pune"
    ],
-   "bytes": 82441,
+   "bytes": 114491,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
