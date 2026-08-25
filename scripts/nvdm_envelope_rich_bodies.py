@@ -157,7 +157,31 @@ GEOJSON_BUFFER = ("geojson-layers/buffer-1000m", {
     ),
 })
 
-SCOPE_KIND = {"mumbai": "region"}  # MMR is a region, every other city is a city
+def scope_kinds() -> dict[str, str]:
+    """city_id -> scope kind, read from the city configs.
+
+    Some places are regions rather than cities (MMR runs to nine corporations,
+    Kolkata likewise), and the envelope's scope.kind has to agree with the
+    registry or the L2 gate rejects the artifact. This was hardcoded to
+    {"mumbai": "region"} on the first pass, which is exactly the kind of
+    guess-from-memory the gate exists to catch: Kolkata is a region too and
+    twelve artifacts failed. Derive it instead."""
+    kinds: dict[str, str] = {}
+    for cfg in (ROOT / "src/lib/cities").glob("*.ts"):
+        # Strip comments first. hyderabad.ts contains a paragraph explaining why
+        # Hyderabad is NOT a region ("MMR needed placeKind:'region' because...")
+        # and a naive match reads that as the setting, which would mis-scope
+        # every Hyderabad artifact.
+        text = "\n".join(
+            line for line in cfg.read_text().splitlines()
+            if not line.lstrip().startswith("//")
+        )
+        m = re.search(r"cityId:\s*['\"]([a-z-]+)['\"]", text)
+        if not m:
+            continue
+        k = re.search(r"placeKind:\s*['\"]([a-z]+)['\"]", text)
+        kinds[m.group(1)] = k.group(1) if k else "city"
+    return kinds
 
 
 def registry_cities() -> dict[str, str]:
@@ -195,6 +219,9 @@ def produced_at(doc: dict) -> str:
     return "1970-01-01"
 
 
+SCOPE_KINDS: dict[str, str] = {}
+
+
 def envelope_for(slug: str, city: str, dataset: str, spec: dict, doc: dict) -> dict:
     sources = [dict(s) for s in spec["sources"]]
     if dataset.endswith("overture-buildings"):
@@ -214,7 +241,7 @@ def envelope_for(slug: str, city: str, dataset: str, spec: dict, doc: dict) -> d
     return {
         "nvdm": "1.0",
         "dataset": dataset,
-        "scope": {"kind": SCOPE_KIND.get(city, "city"), "id": city},
+        "scope": {"kind": SCOPE_KINDS.get(city, "city"), "id": city},
         "provenance": prov,
     }
 
@@ -242,6 +269,8 @@ def main() -> int:
     ap.add_argument("--city")
     args = ap.parse_args()
 
+    global SCOPE_KINDS
+    SCOPE_KINDS = scope_kinds()
     cities = registry_cities()
     data_dir = ROOT / "public/data/rich-bodies"
     geo_dir = ROOT / "public/geojson/rich-bodies"
