@@ -493,6 +493,31 @@ as a false zero. The single populated row attaches Old Naidu's 1988 commissionin
 
 ---
 
+## Rich-Data Deep-Zoom Panel (5 Pune reservoirs)
+
+| | |
+|---|---|
+| **Bodies** | Temghar, Panshet, Warasgaon, Khadakwasla (the Mutha chain) + Pawana (PCMC) |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+
+**Temghar's impoundment is visible in the satellite record, and it settles something the registers disagree about.** Water inside the boundary holds a steady 14-15% from 1990 to 2000 with full Landsat coverage - a river channel in a valley - then jumps to 98.8% in 2005 and stays there. Construction ran 1997-2010. CWC's NRLD-2019 and NRLD-2023 disagree on Temghar's commissioning year, so the Origins chapter declines to assert one; the deep-zoom panel does not assert one either, but it can say the water arrived between 2000 and 2005 because that is measured rather than cited.
+
+**Built-up halo scales with distance from the city**, which is the chain's whole story in one column:
+
+| Reservoir | Halo built 2016 | 2026 | Live capacity |
+|---|---|---|---|
+| Khadakwasla | 20.3% | **32.7%** | 55.91 Mm3 |
+| Pawana | 6.7% | **13.6%** | 240.97 Mm3 |
+| Warasgaon | 5.3% | 5.7% | 363.13 Mm3 |
+| Panshet | 2.3% | 4.4% | 301.61 Mm3 |
+| Temghar | 1.4% | 1.6% | 105.01 Mm3 |
+
+The reservoir the city names holds the least and is urbanising fastest. Capacities are from the in-repo WRD Pravah bulletin.
+
+**Spelling**: this platform's Pune surfaces follow the state WRD bulletin (Warasgaon, Pawana); OpenStreetMap spells them Varasgaon and Pavana. Registry ids follow the OSM slug, display names follow the bulletin.
+
+**The 1961 Panshet breach predates the satellite record by more than twenty years** and nothing in the panel shows it. The registry entry repeats the Origins chapter's discipline: Maharashtra's own disaster plan states no official casualty figure exists, and this platform does not launder the circulating number into one.
+
 ## 7. Rainfall - IMD gridded, and the grid cell is a real decision
 
 **Sources:** IMD 0.25-degree gridded daily rainfall via `imdlib`; Open-Meteo archive for the

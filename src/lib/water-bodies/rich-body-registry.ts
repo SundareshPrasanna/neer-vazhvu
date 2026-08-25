@@ -2927,6 +2927,974 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       ],
     },
   },
+  // ----------------------------------------------------------------- Delhi
+  "najafgarh-jheel": {
+    id: "najafgarh-jheel",
+    osm_id: 203051309,
+    name: "Najafgarh Jheel",
+    name_local: "नजफगढ़ झील",
+    city_id: "delhi",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 203051309). At " +
+      "~606 ha this is the largest water body in the National Capital " +
+      "Territory, and it is the surviving core of something far bigger: " +
+      "the Sahibi river once ended in a shallow monsoon lake that in " +
+      "flood years spread over some 226 sq km. Colonial drainage from " +
+      "the 1860s cut it a channel to the Yamuna and kept cutting. The " +
+      "channel is now the Najafgarh drain.",
+    polygon_path: "/geojson/rich-bodies/najafgarh-jheel.geojson",
+    buffer_path: "/geojson/rich-bodies/najafgarh-jheel-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The jheel straddles " +
+      "the Delhi-Haryana border, so the operative regime differs on " +
+      "either side of a line this halo ignores.",
+    imagery_manifest_path: "/data/rich-bodies/najafgarh-jheel-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/najafgarh-jheel-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/najafgarh-jheel-overture-buildings.json",
+      water_trend: "/data/rich-bodies/najafgarh-jheel-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/najafgarh-jheel-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/najafgarh-jheel-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1860,
+        label:
+          "From the 1860s colonial engineers cut the jheel a channel to " +
+          "the Yamuna to drain what the administration treated as a " +
+          "malaria-and-flood problem, and kept cutting until the lake " +
+          "was effectively gone. What survives of the outlet is the " +
+          "Najafgarh drain.",
+        label_short: "Colonial drainage begins",
+      },
+      {
+        year: 2005,
+        label:
+          "The satellite record shows how little of this is a lake in " +
+          "the ordinary sense: across the whole JRC series the share of " +
+          "the boundary classified as permanent water never exceeds " +
+          "0.05% in any year. The jheel fills and empties, and in a dry " +
+          "year such as this one it reads at about 15% water against " +
+          "97% five years later.",
+        label_short: "Entirely seasonal, and hugely variable",
+      },
+      {
+        year: 2024,
+        label:
+          "The Najafgarh drain carries roughly two thirds of Delhi's " +
+          "sewage to the Yamuna on its own; with the Shahdara drain the " +
+          "two channels account for about 84% of the city's load. The " +
+          "drained lake's outlet is now the city's largest single " +
+          "pollution pathway.",
+        label_short: "Two drains carry 84% of the load",
+      },
+      {
+        year: 2026,
+        label:
+          "The remnant is still awaiting a settled wetland notification " +
+          "more than a decade after the process began - the boundary " +
+          "question that decides what may be built against it is not " +
+          "closed on either side of the state line.",
+        label_short: "Wetland notification still unsettled",
+      },
+    ],
+    status_badges: [
+      { label: "Largest water body in the NCT", tone: "sky" },
+      { label: "~226 sq km drained to a remnant", tone: "amber" },
+      { label: "Entirely seasonal water", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Jheel boundary",
+          source: "OpenStreetMap way 203051309",
+          note: "OSM mappers traced the visible water surface; ~606 ha, consistent with the 601.5 ha this platform's Delhi water-bodies layer carries for the same way. This is the remnant core, not the historical jheel.",
+          link: "https://www.openstreetmap.org/way/203051309",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "The 226 sq km figure",
+          source: "In-repo Delhi facts and Origins chapter",
+          note: "A flood-year extent for the pre-drainage jheel, not a constant surface. The lake was a shallow seasonal sheet whose area varied enormously year to year, which is exactly what the satellite series still shows of the remnant.",
+          licence: "Cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated. The halo crosses the Delhi-Haryana border, so built-area change inside it mixes two planning regimes.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Permanent water never exceeds 0.05% of this boundary in any year of the JRC record. Effectively everything here is seasonal, so the water-surface line swings between roughly 15% and 98% on rainfall alone. Read it as a record of monsoons, not of loss.",
+        "The 1990 reading rests on about half the boundary, the rest being no-data in a sparse early-Landsat year. The series is only trustworthy from 1992.",
+        "The jheel straddles a state line. Its Delhi half and its Haryana half are governed differently, and this map draws no distinction between them.",
+      ],
+    },
+  },
+  bhalaswa: {
+    id: "bhalaswa",
+    osm_id: 16104149,
+    name: "Bhalswa Lake",
+    name_local: "भलस्वा झील",
+    city_id: "delhi",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 16104149). " +
+      "Bhalswa is a horseshoe lake in north-west Delhi, an oxbow left " +
+      "behind when the Yamuna abandoned a meander. Its distinguishing " +
+      "feature is what sits on its edge: the Bhalswa landfill, in " +
+      "operation since 1993.",
+    polygon_path: "/geojson/rich-bodies/bhalaswa.geojson",
+    buffer_path: "/geojson/rich-bodies/bhalaswa-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius; no lake-specific no-build order is recorded here.",
+    imagery_manifest_path: "/data/rich-bodies/bhalaswa-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/bhalaswa-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/bhalaswa-overture-buildings.json",
+      water_trend: "/data/rich-bodies/bhalaswa-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/bhalaswa-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/bhalaswa-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1993,
+        label:
+          "The Bhalswa landfill opens beside the lake. Over the years " +
+          "that follow the dump grows against the water, and reporting " +
+          "on the site describes roughly half the original horseshoe " +
+          "being taken by it.",
+        label_short: "Bhalswa landfill opens",
+        source_url: "https://en.wikipedia.org/wiki/Bhalswa_landfill",
+      },
+      {
+        year: 2016,
+        label:
+          "The satellite record picks up what the neighbourhood already " +
+          "knew: built-up ground in the 1 km halo stands at about 64% " +
+          "in this year, on its way to 84% a decade later. The lake is " +
+          "being closed in on from every side that is not landfill.",
+        label_short: "Halo at 64% built",
+      },
+      {
+        year: 2025,
+        label:
+          "DDA announces a bioremediation and maintenance contract for " +
+          "the lake, reported at about Rs 1.2 crore, aimed at water " +
+          "quality beside the dump site.",
+        label_short: "DDA bioremediation contract",
+      },
+    ],
+    status_badges: [
+      { label: "Yamuna oxbow lake", tone: "sky" },
+      { label: "Landfill on its edge since 1993", tone: "amber" },
+      { label: "Halo 64% to 84% built, 2016-2026", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 16104149",
+          note: "OSM mappers traced the visible water surface at ~51 ha. Published descriptions of the lake give figures closer to 34 ha; the difference is a boundary-definition question this platform cannot settle, and the polygon drawn here is the OSM trace, not a gazetted line.",
+          link: "https://www.openstreetmap.org/relation/16104149",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Landfill history and restoration contract",
+          source: "Press and encyclopedic reporting on the Bhalswa site",
+          note: "The landfill's 1993 opening is well attested. Figures for how much of the lake it took, and the value of the DDA contract, are news-sourced single points rather than measurements, and are carried here as reported.",
+          licence: "Press report, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; covers the landfill, the Bhalswa resettlement colony and the Mukundpur and Jahangirpuri edge.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Dynamic World classifies the landfill mass as built rather than bare, so part of this halo's built-up figure is a rubbish mountain rather than housing. The rise is real; its composition is not what the label implies.",
+        "Nothing in this panel measures contamination. The leachate question that dominates the lake's public record needs water-quality sampling, which is not what satellite classification provides.",
+      ],
+    },
+  },
+  "sanjay-lake": {
+    id: "sanjay-lake",
+    osm_id: 76849338,
+    name: "Sanjay Lake",
+    name_local: "संजय झील",
+    city_id: "delhi",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 76849338). Sanjay " +
+      "Lake is an engineered lake in Trilokpuri, east Delhi, built by " +
+      "the DDA in the 1970s and opened in 1982 inside a wooded park. " +
+      "It is fed by rain and by backflow from the Yamuna and Hindon " +
+      "rather than by a river of its own.",
+    polygon_path: "/geojson/rich-bodies/sanjay-lake.geojson",
+    buffer_path: "/geojson/rich-bodies/sanjay-lake-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The lake sits " +
+      "inside a DDA park whose own boundary is the operative line.",
+    imagery_manifest_path: "/data/rich-bodies/sanjay-lake-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/sanjay-lake-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/sanjay-lake-overture-buildings.json",
+      water_trend: "/data/rich-bodies/sanjay-lake-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/sanjay-lake-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/sanjay-lake-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1982,
+        label:
+          "The lake opens, developed by the DDA through the 1970s: a " +
+          "contained sheet of water engineered inside a park, fed by " +
+          "rainwater and by backflow diverted from the Yamuna and the " +
+          "Hindon.",
+        label_short: "Opened by the DDA",
+        source_url: "https://en.wikipedia.org/wiki/Sanjay_Lake",
+      },
+      {
+        year: 2009,
+        label:
+          "Management passes from the DDA to the Delhi Tourism " +
+          "department, having been DDA-run since it opened.",
+        label_short: "Management moves to Delhi Tourism",
+        source_url: "https://en.wikipedia.org/wiki/Sanjay_Lake",
+      },
+      {
+        year: 2016,
+        label:
+          "Built-up ground in the 1 km halo already stands at about " +
+          "87%, rising to roughly 94% a decade later. There is very " +
+          "little left around this lake that is not east Delhi.",
+        label_short: "Halo already 87% built",
+      },
+    ],
+    status_badges: [
+      { label: "Engineered lake, opened 1982", tone: "sky" },
+      { label: "Rain and backflow fed", tone: "slate" },
+      { label: "Halo ~94% built", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 76849338",
+          note: "OSM mappers traced the visible water surface at ~19 ha, inside a park of roughly 69 ha. Published descriptions give the water body as about 17 ha; the polygon here is the OSM trace.",
+          link: "https://www.openstreetmap.org/way/76849338",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; covers Trilokpuri, Mayur Vihar Phase II and the Kalyanpuri edge.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "At about 19 ha this body covers only around 140 JRC pixels, which is too few for the water-surface line to be read year by year: it swings between 12% and 100% across the record on edge-pixel reclassification as much as on water. The panel labels the figure accordingly.",
+        "The lake is filled deliberately, from rain and diverted backflow. A low reading can mean a management decision rather than a dry year, and satellite data cannot tell the two apart.",
+      ],
+    },
+  },
+  // --------------------------------------------------------------- Kolkata
+  "rabindra-sarobar": {
+    id: "rabindra-sarobar",
+    osm_id: 8257895,
+    name: "Rabindra Sarobar",
+    name_local: "রবীন্দ্র সরোবর",
+    city_id: "kolkata",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 8257895, " +
+      "mapped as Dhakuria Lake). An excavated lake in south Kolkata, " +
+      "the city's best-known open water and one of only two lakes here " +
+      "that West Bengal's pollution control board samples. The National " +
+      "Green Tribunal has been supervising it since 2017.",
+    polygon_path: "/geojson/rich-bodies/rabindra-sarobar.geojson",
+    buffer_path: "/geojson/rich-bodies/rabindra-sarobar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The operative " +
+      "regime here is the NGT's supervision of the lake itself, not a " +
+      "radius; the halo is cohort-standard.",
+    imagery_manifest_path: "/data/rich-bodies/rabindra-sarobar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/rabindra-sarobar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/rabindra-sarobar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/rabindra-sarobar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/rabindra-sarobar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/rabindra-sarobar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2017,
+        label:
+          "15 November: the National Green Tribunal orders on Rabindra " +
+          "Sarobar and appoints KMDA as custodian of the lake.",
+        label_short: "NGT order; KMDA made custodian",
+      },
+      {
+        year: 2026,
+        label:
+          "Built-up ground in the 1 km halo reads about 88%, against " +
+          "93% a decade earlier. The fall is classifier noise in an " +
+          "already-saturated fabric rather than anything being " +
+          "unbuilt - south Kolkata was full before this record opens.",
+        label_short: "Halo saturated, and has been throughout",
+      },
+    ],
+    status_badges: [
+      { label: "Under NGT supervision since 2017", tone: "amber" },
+      { label: "WBPCB-sampled", tone: "sky" },
+      { label: "Small body: read trends, not years", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 8257895",
+          note: "OSM mappers traced the water surface at ~23 ha. The lake is usually given as closer to 29 ha, and this platform's Kolkata onboarding notes already record OSM's extent here as conservative. The polygon drawn is the OSM trace, not a survey.",
+          link: "https://www.openstreetmap.org/relation/8257895",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; covers Dhakuria, Kalighat, Tollygunge and the Southern Avenue frontage.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "At ~23 ha this body covers only about 220 JRC pixels. The water-surface line is not readable year by year at that size and the panel labels it accordingly.",
+        "The halo has been effectively fully built for the whole satellite record. Its built-up series moves within classifier noise, so neither the rises nor the falls in it mean much here.",
+        "Nothing in this panel measures water quality, which is the substance of the NGT proceedings. WBPCB's sampling is the relevant record and is not satellite-derived.",
+      ],
+    },
+  },
+  "subhash-sarobar": {
+    id: "subhash-sarobar",
+    osm_id: 49602,
+    name: "Subhash Sarobar",
+    name_local: "সুভাষ সরোবর",
+    city_id: "kolkata",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 49602). The " +
+      "second of Kolkata's two WBPCB-sampled lakes, in the east of the " +
+      "city at Beleghata, and the quieter counterpart to Rabindra " +
+      "Sarobar.",
+    polygon_path: "/geojson/rich-bodies/subhash-sarobar.geojson",
+    buffer_path: "/geojson/rich-bodies/subhash-sarobar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius; no lake-specific order is recorded here.",
+    imagery_manifest_path: "/data/rich-bodies/subhash-sarobar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/subhash-sarobar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/subhash-sarobar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/subhash-sarobar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/subhash-sarobar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/subhash-sarobar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2016,
+        label:
+          "Built-up ground in the 1 km halo stands at about 90% at the " +
+          "start of the Dynamic World record and is at much the same " +
+          "level a decade later. Beleghata was built long before any " +
+          "satellite was watching.",
+        label_short: "Halo already ~90% built",
+      },
+    ],
+    status_badges: [
+      { label: "WBPCB-sampled", tone: "sky" },
+      { label: "Small body: read trends, not years", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap relation 49602",
+          note: "OSM mappers traced the water surface at ~17 ha. Recovered for this platform only when multipolygon assembly was added to the Kolkata water-bodies pass; a ways-only extract had dropped both sarobars entirely.",
+          link: "https://www.openstreetmap.org/relation/49602",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; covers Beleghata, Phoolbagan and the CIT Road belt.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "At ~17 ha this body covers only about 160 JRC pixels, too few to read the water-surface line year by year. The panel labels the figure accordingly.",
+        "As at Rabindra Sarobar, the halo has been saturated throughout the record; movement in its built-up series is noise rather than change.",
+      ],
+    },
+  },
+  santragachi: {
+    id: "santragachi",
+    osm_id: 11978644,
+    name: "Santragachi Jheel",
+    name_local: "সাঁতরাগাছি ঝিল",
+    city_id: "kolkata",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 11978644). A " +
+      "shallow jheel beside Santragachi station in Howrah, across the " +
+      "Hooghly from Kolkata proper, and the region's best-known " +
+      "wintering site for migratory waterfowl.",
+    polygon_path: "/geojson/rich-bodies/santragachi.geojson",
+    buffer_path: "/geojson/rich-bodies/santragachi-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius.",
+    imagery_manifest_path: "/data/rich-bodies/santragachi-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/santragachi-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/santragachi-overture-buildings.json",
+      water_trend: "/data/rich-bodies/santragachi-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/santragachi-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/santragachi-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2026,
+        label:
+          "Built-up ground in the 1 km halo reads about 90%, up from " +
+          "roughly 87% a decade earlier. The jheel is a pocket of open " +
+          "water in continuous Howrah fabric, and the railway yard " +
+          "beside it accounts for much of what is not housing.",
+        label_short: "Halo ~90% built",
+      },
+    ],
+    status_badges: [
+      { label: "Migratory waterfowl site", tone: "emerald" },
+      { label: "Small body: read trends, not years", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Jheel boundary",
+          source: "OpenStreetMap relation 11978644",
+          note: "OSM mappers traced the water surface at ~13 ha. A second, smaller OSM feature carries the same name nearby; this is the larger of the two.",
+          link: "https://www.openstreetmap.org/relation/11978644",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; covers Santragachi station, its railway yard and the surrounding Howrah blocks.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "This is the smallest body in the cohort outside Bengaluru's park lakes: about 13 ha, under 100 JRC pixels. Its water-surface line swings from 12% to 100% across the record and should not be read as a year-by-year measurement of anything.",
+        "Water hyacinth is cleared from this jheel ahead of the wintering season, and both JRC and Dynamic World classify dense hyacinth as vegetation rather than water. A low reading here can be weed cover, clearance timing, or genuine drawdown, and satellite classification alone cannot separate them.",
+      ],
+    },
+  },
+  // ------------------------------------------------------------------ Pune
+  temghar: {
+    id: "temghar",
+    osm_id: 207470490,
+    name: "Temghar Reservoir",
+    name_local: "टेमघर धरण",
+    city_id: "pune",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 207470490). The " +
+      "highest and newest of the four dams on the Mutha that feed " +
+      "Khadakwasla, holding 105.01 million cubic metres live. Its " +
+      "arrival is visible in the satellite record.",
+    polygon_path: "/geojson/rich-bodies/temghar.geojson",
+    buffer_path: "/geojson/rich-bodies/temghar-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius; the halo here is Western Ghats slope.",
+    imagery_manifest_path: "/data/rich-bodies/temghar-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/temghar-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/temghar-overture-buildings.json",
+      water_trend: "/data/rich-bodies/temghar-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/temghar-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/temghar-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2000,
+        label:
+          "The reservoir is not yet here. Across 1990 to 2000 the " +
+          "satellite record reads a steady 14 to 15% water inside " +
+          "this boundary with full Landsat coverage: a river channel " +
+          "in a valley, not an impoundment.",
+        label_short: "Still a river valley",
+      },
+      {
+        year: 2005,
+        label:
+          "Water inside the boundary jumps to 98.8% and stays high for " +
+          "the rest of the record. Construction ran from 1997 to 2010, " +
+          "and this is impoundment happening mid-build. CWC's two " +
+          "register editions disagree on Temghar's commissioning year, " +
+          "so this platform does not assert one - but the water arrived " +
+          "between 2000 and 2005, and that much is measured rather " +
+          "than cited.",
+        label_short: "Impoundment, measured not cited",
+        source_url: "https://en.wikipedia.org/wiki/Temghar_Dam",
+      },
+    ],
+    status_badges: [
+      { label: "Newest of the Mutha four", tone: "sky" },
+      { label: "Impoundment visible 2000-2005", tone: "emerald" },
+      { label: "105.01 Mm3 live", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 207470490",
+          note: "OSM mappers traced the visible water surface at ~348 ha.",
+          link: "https://www.openstreetmap.org/way/207470490",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Live capacity",
+          source: "Maharashtra WRD Pravah daily bulletin (in repo, pune-dam-storage.json)",
+          note: "105.01 Mm3 live, 107.96 gross. The smallest live store of the four Mutha dams and the highest up the chain.",
+          licence: "Public government daily bulletin, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "An operated reservoir on the Khadakwasla chain: the water surface moves with irrigation and supply releases as much as with the monsoon, and satellite data cannot separate the two.",
+        "The pre-2005 readings are not a dry reservoir, they are no reservoir. Do not read the rise as recovery: it is the valley being filled.",
+      ],
+    },
+  },
+  panshet: {
+    id: "panshet",
+    osm_id: 207470488,
+    name: "Panshet Reservoir",
+    name_local: "पानशेत धरण",
+    city_id: "pune",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 207470488). Panshet " +
+      "sits on the Ambi, a Mutha tributary, and holds 301.61 million " +
+      "cubic metres live, the second-largest of the four. It is also " +
+      "the founding trauma of Pune's water system.",
+    polygon_path: "/geojson/rich-bodies/panshet.geojson",
+    buffer_path: "/geojson/rich-bodies/panshet-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius.",
+    imagery_manifest_path: "/data/rich-bodies/panshet-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/panshet-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/panshet-overture-buildings.json",
+      water_trend: "/data/rich-bodies/panshet-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/panshet-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/panshet-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1961,
+        label:
+          "12 July: the dam breaches while still under construction. " +
+          "The water goes down the Mutha and through Pune, and " +
+          "contemporary accounts describe something close to half the " +
+          "built city inundated. How many people died is not known: " +
+          "the Government of Maharashtra's own current Pune District " +
+          "Disaster Management Plan records the disaster and states " +
+          "that no official casualty figure exists. A round number " +
+          "circulates in retellings and this platform does not repeat " +
+          "it.",
+        label_short: "The dam breaks, mid-construction",
+      },
+      {
+        year: 2026,
+        label:
+          "Rebuilt, Panshet now holds 301.61 million cubic metres live. " +
+          "Built-up ground in its 1 km halo has moved from about 2% to " +
+          "4% across the Dynamic World record: this is still Ghats " +
+          "country, and the pressure the chain is under is downstream.",
+        label_short: "Rebuilt; halo still Ghats",
+      },
+    ],
+    status_badges: [
+      { label: "Breached 12 July 1961", tone: "amber" },
+      { label: "Second-largest of the four", tone: "sky" },
+      { label: "301.61 Mm3 live", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 207470488",
+          note: "OSM mappers traced the visible water surface at ~1,358 ha.",
+          link: "https://www.openstreetmap.org/way/207470488",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Live capacity",
+          source: "Maharashtra WRD Pravah daily bulletin (in repo, pune-dam-storage.json)",
+          note: "301.61 Mm3 live, 310.61 gross.",
+          licence: "Public government daily bulletin, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "An operated reservoir on the Khadakwasla chain: the water surface moves with irrigation and supply releases as much as with the monsoon, and satellite data cannot separate the two.",
+        "The 1961 breach predates the satellite record by more than twenty years. Nothing in this panel shows it, and the water surface here is the rebuilt reservoir throughout.",
+      ],
+    },
+  },
+  varasgaon: {
+    id: "varasgaon",
+    osm_id: 7973774,
+    name: "Warasgaon Reservoir",
+    name_local: "वरसगाव धरण",
+    city_id: "pune",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 7973774, mapped " +
+      "as Varasgaon). Despite the name recognition going to " +
+      "Khadakwasla, this is the largest live store on the Mutha " +
+      "chain at 363.13 million cubic metres.",
+    polygon_path: "/geojson/rich-bodies/varasgaon.geojson",
+    buffer_path: "/geojson/rich-bodies/varasgaon-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius.",
+    imagery_manifest_path: "/data/rich-bodies/varasgaon-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/varasgaon-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/varasgaon-overture-buildings.json",
+      water_trend: "/data/rich-bodies/varasgaon-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/varasgaon-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/varasgaon-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2026,
+        label:
+          "Warasgaon holds 363.13 million cubic metres live, more than " +
+          "six times Khadakwasla's 55.91. The reservoir the city names " +
+          "is not the reservoir that holds its water. Built-up ground " +
+          "in the halo has barely moved, from about 5% to 6%.",
+        label_short: "The chain's largest store",
+      },
+    ],
+    status_badges: [
+      { label: "Largest live store on the chain", tone: "sky" },
+      { label: "363.13 Mm3 live", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap relation 7973774",
+          note: "OSM mappers traced the visible water surface at ~1,825 ha. This platform's Pune surfaces spell the reservoir Warasgaon, following the state WRD bulletin; OSM spells it Varasgaon.",
+          link: "https://www.openstreetmap.org/relation/7973774",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Live capacity",
+          source: "Maharashtra WRD Pravah daily bulletin (in repo, pune-dam-storage.json)",
+          note: "363.13 Mm3 live, 375.36 gross - the largest of the four.",
+          licence: "Public government daily bulletin, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "An operated reservoir on the Khadakwasla chain: the water surface moves with irrigation and supply releases as much as with the monsoon, and satellite data cannot separate the two.",
+      ],
+    },
+  },
+  khadakwasla: {
+    id: "khadakwasla",
+    osm_id: 22824920,
+    name: "Khadakwasla Reservoir",
+    name_local: "खडकवासला धरण",
+    city_id: "pune",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 22824920). Completed " +
+      "around 1879-80 for irrigation, Khadakwasla is the reservoir " +
+      "everything on the Mutha chain flows into and the one whose " +
+      "discharge the city watches. It holds the least of the four: " +
+      "55.91 million cubic metres live.",
+    polygon_path: "/geojson/rich-bodies/khadakwasla.geojson",
+    buffer_path: "/geojson/rich-bodies/khadakwasla-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius. This is the only halo on the chain where the city " +
+      "itself is inside it.",
+    imagery_manifest_path: "/data/rich-bodies/khadakwasla-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/khadakwasla-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/khadakwasla-overture-buildings.json",
+      water_trend: "/data/rich-bodies/khadakwasla-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/khadakwasla-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/khadakwasla-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 1880,
+        label:
+          "Khadakwasla is completed, built for irrigation rather than " +
+          "for the city's taps. CWC's two register editions differ by " +
+          "a year on the date, so this platform gives it as 1879-80 " +
+          "rather than picking one.",
+        label_short: "Completed, for irrigation",
+      },
+      {
+        year: 2016,
+        label:
+          "Built-up ground in the 1 km halo stands at about 20%, and " +
+          "reaches roughly 33% within a decade. It is the largest " +
+          "increase anywhere on the chain, and the reason is position: " +
+          "Khadakwasla is the one the city has reached.",
+        label_short: "Halo 20% to 33% built",
+      },
+      {
+        year: 2026,
+        label:
+          "CPCB's 2024 sampling reads 4.1 mg/L BOD at Khadakwasla dam " +
+          "against 102.5 at Bopodi downstream. The chain delivers clean " +
+          "water; what happens to it happens in Pune.",
+        label_short: "Clean at the dam, not downstream",
+      },
+    ],
+    status_badges: [
+      { label: "Completed 1879-80", tone: "sky" },
+      { label: "Balancing reservoir, 55.91 Mm3", tone: "slate" },
+      { label: "Halo 20% to 33% built", tone: "amber" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap way 22824920",
+          note: "OSM mappers traced the visible water surface at ~991 ha.",
+          link: "https://www.openstreetmap.org/way/22824920",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Live capacity",
+          source: "Maharashtra WRD Pravah daily bulletin (in repo, pune-dam-storage.json)",
+          note: "55.91 Mm3 live, 85.91 gross - the smallest live store of the four, which is what a balancing reservoir is for.",
+          licence: "Public government daily bulletin, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "An operated reservoir on the Khadakwasla chain: the water surface moves with irrigation and supply releases as much as with the monsoon, and satellite data cannot separate the two.",
+        "This halo is urban Pune on one side and Ghats on the other. A single built-up percentage averages two very different places.",
+      ],
+    },
+  },
+  pavana: {
+    id: "pavana",
+    osm_id: 1894403,
+    name: "Pawana Lake",
+    name_local: "पवना धरण",
+    city_id: "pune",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (relation 1894403, mapped " +
+      "as Pavana Lake). Pawana sits outside the Mutha chain and " +
+      "supplies Pimpri-Chinchwad rather than Pune proper, holding " +
+      "240.97 million cubic metres live.",
+    polygon_path: "/geojson/rich-bodies/pavana.geojson",
+    buffer_path: "/geojson/rich-bodies/pavana-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). Cohort-standard " +
+      "radius.",
+    imagery_manifest_path: "/data/rich-bodies/pavana-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/pavana-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/pavana-overture-buildings.json",
+      water_trend: "/data/rich-bodies/pavana-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/pavana-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/pavana-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2026,
+        label:
+          "Built-up ground in the 1 km halo has doubled across the " +
+          "Dynamic World record, from about 7% to 14%. Of the " +
+          "reservoirs on this page only Khadakwasla has urbanised " +
+          "faster, and Pawana's halo is filling with resorts and " +
+          "second homes rather than with the city itself.",
+        label_short: "Halo built-up doubles",
+      },
+    ],
+    status_badges: [
+      { label: "Supplies Pimpri-Chinchwad", tone: "sky" },
+      { label: "Halo built-up doubled since 2016", tone: "amber" },
+      { label: "240.97 Mm3 live", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Reservoir boundary",
+          source: "OpenStreetMap relation 1894403",
+          note: "OSM mappers traced the visible water surface at ~2,355 ha. This platform's Pune surfaces spell it Pawana, following the state WRD bulletin; OSM spells it Pavana.",
+          link: "https://www.openstreetmap.org/relation/1894403",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Live capacity",
+          source: "Maharashtra WRD Pravah daily bulletin (in repo, pune-dam-storage.json)",
+          note: "240.97 Mm3 live, 272.11 gross.",
+          licence: "Public government daily bulletin, cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated; cohort-standard radius.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "An operated reservoir on the Khadakwasla chain: the water surface moves with irrigation and supply releases as much as with the monsoon, and satellite data cannot separate the two.",
+      ],
+    },
+  },
+  // -------------------------------------------------------------- Gurugram
+  sultanpur: {
+    id: "sultanpur",
+    osm_id: 35310140,
+    name: "Sultanpur Lake",
+    name_local: "सुल्तानपुर झील",
+    city_id: "gurugram",
+    boundary_source:
+      "OpenStreetMap community-mapped polygon (way 35310140). The " +
+      "shallow seasonal lake at the heart of Sultanpur National Park " +
+      "in Farrukhnagar, and Haryana's Ramsar site. It is the only " +
+      "water body in this region with an international designation, " +
+      "and it is the reason Gurugram appears in this cohort at all: " +
+      "the district's own gazetted register runs to village ponds, " +
+      "with nothing else at this scale.",
+    polygon_path: "/geojson/rich-bodies/sultanpur.geojson",
+    buffer_path: "/geojson/rich-bodies/sultanpur-buffer-1000m.geojson",
+    buffer_metres: 1000,
+    buffer_legal_basis:
+      "1 km context buffer (indicative, editorial). The operative " +
+      "legal lines here are the national park boundary and its " +
+      "eco-sensitive zone, both mapped separately in OpenStreetMap and " +
+      "neither of them this circle. Do not read the halo as the ESZ.",
+    imagery_manifest_path: "/data/rich-bodies/sultanpur-imagery-manifest.json",
+    analysis_paths: {
+      open_buildings: "/data/rich-bodies/sultanpur-open-buildings-verification.json",
+      overture_buildings: "/data/rich-bodies/sultanpur-overture-buildings.json",
+      water_trend: "/data/rich-bodies/sultanpur-jrc-water-trend.json",
+      dw_water_trend: "/data/rich-bodies/sultanpur-dw-water-trend.json",
+      built_trend: "/data/rich-bodies/sultanpur-dynamic-world-built-trend.json",
+    },
+    timeline_events: [
+      {
+        year: 2016,
+        label:
+          "Built-up ground in the 1 km halo stands at about 7% at the " +
+          "start of the Dynamic World record.",
+        label_short: "Halo at 7% built",
+      },
+      {
+        year: 2021,
+        label:
+          "Sultanpur is designated a Wetland of International " +
+          "Importance under the Ramsar Convention, one of two Haryana " +
+          "sites listed that year.",
+        label_short: "Ramsar designation",
+        source_url: "https://rsis.ramsar.org/",
+      },
+      {
+        year: 2026,
+        label:
+          "Built-up ground in the halo reads about 26%, having more " +
+          "than tripled in a decade. The designation protects the park; " +
+          "it does not protect the ground the birds fly over to reach " +
+          "it, and that ground is now the Gurugram-Jhajjar growth edge.",
+        label_short: "Halo built-up 7% to 26%",
+      },
+    ],
+    status_badges: [
+      { label: "Ramsar site", tone: "emerald" },
+      { label: "Halo built-up 7% to 26%, 2016-2026", tone: "amber" },
+      { label: "Entirely seasonal water", tone: "slate" },
+    ],
+    buffer_legally_mandated: false,
+    data_sources: {
+      boundary: [
+        {
+          label: "Lake boundary",
+          source: "OpenStreetMap way 35310140",
+          note: "OSM mappers traced the visible water surface at ~60 ha. This is the lake, not the park: Sultanpur National Park is a separate OSM relation (21132682) with its own eco-sensitive zone relation (21132683), and neither is drawn here.",
+          link: "https://www.openstreetmap.org/way/35310140",
+          licence: "ODbL 1.0",
+        },
+        {
+          label: "Ramsar designation",
+          source: "Ramsar Sites Information Service",
+          note: "The designation is recorded here as an event and a badge. No Ramsar boundary is drawn on this map: the site's official extent is not carried in this repo, and the polygon shown is the OpenStreetMap water surface. This is the opposite of Pallikaranai, where the gazetted line is the primary boundary and OSM is the comparison.",
+          link: "https://rsis.ramsar.org/",
+          licence: "Cited with attribution",
+        },
+        {
+          label: "1 km surroundings buffer (editorial)",
+          source: "Computed via @turf/buffer from the OSM polygon",
+          note: "Not legally mandated, and materially different from the park's eco-sensitive zone. Covers Sultanpur and Chandu villages and the Gurugram-Farrukhnagar road.",
+          licence: "Derived",
+        },
+      ],
+      caveats: [
+        "Not one pixel inside this boundary is classified as permanent water in any year of the JRC record. Sultanpur is a seasonal wetland that is deliberately filled to hold birds through the winter, so its water surface reflects management decisions and monsoon together. A low year is not evidence of loss.",
+        "At ~60 ha the body covers about 350 JRC pixels, below the point where the year-to-year water line can be read as measurement. The panel labels the figure accordingly.",
+        "Gurugram's own water-body register, the GMDA layer this platform carries, does not contain this lake, and Sultanpur appears in Delhi's OpenStreetMap extract because the extract's bounding box reaches into Haryana. The lake sits in Gurugram district and is filed here on that basis.",
+      ],
+    },
+  },
 };
 
 const BY_OSM_ID = new Map(

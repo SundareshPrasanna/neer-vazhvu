@@ -231,6 +231,21 @@ them is ours.
 
 ---
 
+## Rich-Data Deep-Zoom Panel (1 Gurugram body)
+
+| | |
+|---|---|
+| **Body** | Sultanpur Lake |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+
+**Gurugram has exactly one body at deep-zoom scale, and it is not in Gurugram's own register.** The GMDA water-body layer this platform carries runs to 824 features whose largest entry is 350 ha of Budhera agricultural tank and whose typical entry is a village pond under an acre. Sultanpur Lake - ~60 ha, and Haryana's Ramsar site - appears in *Delhi's* OpenStreetMap extract because that extract's bounding box reaches into Haryana. It sits in Farrukhnagar, Gurugram district, and is filed here on that basis.
+
+**Its halo built-up went 7.2% to 26.2% between 2016 and 2026**, more than tripling around a Ramsar site. The designation protects the park; the 1 km halo is the Gurugram-Jhajjar growth edge and is not the eco-sensitive zone.
+
+**No Ramsar boundary is drawn.** The polygon is the OpenStreetMap water surface. The site's official extent is not carried in this repo, so unlike Pallikaranai - where the gazetted line is primary and OSM is the comparison - Sultanpur has only the OSM trace. The national park (OSM relation 21132682) and its ESZ (21132683) exist as separate features and are not drawn either.
+
+**Entirely seasonal**: no pixel inside the boundary reads as permanent water in any year, and the lake is deliberately filled to hold wintering birds. At ~350 JRC pixels it also carries the panel's small-body label.
+
 ## Known gaps, with the blocker named
 
 | What is missing | Blocker | Ours to fix? |

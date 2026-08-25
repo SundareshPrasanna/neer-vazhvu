@@ -148,6 +148,20 @@ Still with OpenCity (restore ask trimmed accordingly): the MCD **zones** KML (11
 
 **Coordinates.** No CETP is mapped in OpenStreetMap. Plant markers sit on the industrial area or locality each serves, never a surveyed position; every entry records `location_precision` (`industrial_area` 8, `locality` 3, `road` 1, `none` 1). **SMA CETP has no coordinate** - neither "SMA Industrial Area" nor "Shahzada Bagh" is in OSM - so it keeps its flow series and is excluded from the map rather than placed by guesswork. The 22 named industrial estates come from Overpass, filtered point-in-ward so Noida/Gurgaon/Kundli parcels are excluded (`overpass-api.de` 504s under this load; the kumi mirror worked).
 
+## Rich-Data Deep-Zoom Panel (3 Delhi bodies)
+
+| | |
+|---|---|
+| **Bodies** | Najafgarh Jheel, Bhalswa Lake, Sanjay Lake |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Outputs** | Per body: imagery manifest, JRC water trend, DW water extension, DW built trend, Open Buildings and Overture counts, polygon and 1 km buffer; chips and tints in Supabase `satellite-evidence` |
+
+**Najafgarh is not a lake in the ordinary sense, and the data says so.** Across the whole JRC record the share of its boundary classified as *permanent* water never exceeds 0.05%. Everything there is seasonal, and the water line swings between roughly 15% (2005) and 98% (2021) on rainfall. That is the remnant behaving as the pre-drainage jheel did, not evidence of recovery or loss, and the registry caveat says so. The 1990 reading rests on about half the boundary and the series is only trustworthy from 1992.
+
+**Bhalswa's halo went from 63.5% to 84.2% built between 2016 and 2026** - but Dynamic World classifies the adjacent landfill mass as built, so part of that rise is a rubbish mountain rather than housing. Stated in the body's caveats rather than left for the reader to trip over.
+
+**Sanjay Lake is below the resolution floor** at ~19 ha / ~140 JRC pixels, and carries the panel's small-body label.
+
 ## Registered but not yet acquired
 
 The audit's full per-page source map (DPCC monthly Yamuna feed, CAG audit PDF, DUSIB 675 JJ bastis, CGWB blocks, CETP monthly WQ PDFs, BBMB/Tehri feeds, drainage master plan, heritage baolis) is research-complete and URL-verified as of 2026-07-20 but not yet ingested. Each source graduates into this file when its data actually lands in the repo.

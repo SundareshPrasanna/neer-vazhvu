@@ -363,6 +363,19 @@ KMC's inventory is a **departmental tank list "as prepared on 1993"** plus an NR
 2004, covering 3,777 lakes/ponds. A 33-year-old inventory is a named gap and a strong argument for the
 satellite water-body pipeline as the corroborating layer.
 
+## Rich-Data Deep-Zoom Panel (3 Kolkata bodies)
+
+| | |
+|---|---|
+| **Bodies** | Rabindra Sarobar, Subhash Sarobar, Santragachi Jheel |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+
+**The East Kolkata Wetlands are deliberately absent, and that is the most important thing on this page.** EKW treats 910 MLD, 65% of the city's sewage, and is the Ramsar site that makes Kolkata's water system work. It is not in OpenStreetMap under that name, so a deep-zoom body would need the gazetted Ramsar boundary - and the usual sources for that carry redistribution terms this repo's licence discipline will not wave through. Until that boundary is obtained on terms we can publish, Kolkata's deep zoom covers three park lakes and not the wetland that matters most. Do not read the cohort as a ranking of importance.
+
+**All three are at or below the resolution floor.** Rabindra Sarobar ~220 JRC pixels, Subhash Sarobar ~160, Santragachi ~98. Their water lines swing tens of points between consecutive years on edge-pixel reclassification, and all three carry the panel's small-body label. Santragachi additionally has hyacinth cleared before the wintering season, which both JRC and Dynamic World read as vegetation rather than water.
+
+**Their halos have been saturated since before the record opens** (88-93% built throughout), so movement in the built-up series is classifier noise, not change. Rabindra and Subhash both read *lower* in 2026 than 2016 for that reason.
+
 ## Named gaps
 
 - **NRW: not found at all.** Combined with near-absent domestic volumetric charging and largely
