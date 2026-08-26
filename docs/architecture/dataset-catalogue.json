@@ -2668,7 +2668,9 @@
    ],
    "producer_refs": [
     "scripts/build_basin_gpkg_layers.py",
-    "scripts/nvdm_envelope_cauvery_snapshot.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -4310,6 +4312,78 @@
    "flags": []
   },
   {
+   "path": "public/data/basins/kabini/context-boundary.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "context-boundary",
+   "bytes": 96478,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "name",
+     "role",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/context-rivers.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "context-rivers",
+   "bytes": 66900,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "name",
+     "riverId",
+     "role"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/basins/kabini/drainage/C05CAM14.geojson",
    "family": "basins",
    "scope": "kabini",
@@ -4879,7 +4953,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "inventory",
-   "bytes": 15181,
+   "bytes": 16432,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12581,7 +12655,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 5108,
+   "bytes": 5107,
    "schema": {
     "kind": "object",
     "keys": [
@@ -26234,7 +26308,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain-history",
-   "bytes": 84322,
+   "bytes": 94009,
    "schema": {
     "kind": "object",
     "keys": [
@@ -26268,7 +26342,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain",
-   "bytes": 13718,
+   "bytes": 13671,
    "schema": {
     "kind": "object",
     "keys": [
@@ -34526,11 +34600,24 @@
   {
    "family": "basins",
    "dataset": "context-boundary",
+   "files": 2,
+   "scopes": [
+    "cauvery-ka",
+    "kabini"
+   ],
+   "bytes": 137008,
+   "schema_variants": 2,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "context-rivers",
    "files": 1,
    "scopes": [
-    "cauvery-ka"
+    "kabini"
    ],
-   "bytes": 40530,
+   "bytes": 66900,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -34673,7 +34760,7 @@
     "cauvery-tn",
     "kabini"
    ],
-   "bytes": 31761,
+   "bytes": 33012,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -35454,7 +35541,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 13718,
+   "bytes": 13671,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -35466,7 +35553,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 84322,
+   "bytes": 94009,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -35665,7 +35752,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 5108,
+   "bytes": 5107,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
