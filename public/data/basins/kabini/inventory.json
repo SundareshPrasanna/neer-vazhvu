@@ -26,7 +26,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-08-23",
+    "produced_at": "2026-08-26",
     "produced_by": "scripts/build_kabini_sources.py + scripts/ingest_basin.py (scripts/basin-sources/kabini-ingest.json)"
   },
   "basinId": "kabini",
@@ -355,6 +355,32 @@
         }
       ],
       "bytes": 24002,
+      "sliced": false
+    },
+    "context-boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "kabini-context-boundary.geojson",
+          "kind": null,
+          "count": 1,
+          "provenance": "The Kabini's FULL watershed, Karnataka and Kerala together, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Drawn as context behind the KWRIS C2 boundary the rest of the atlas is clipped to: 31% of this basin is in Kerala, and the clip was making the river look as though it started at the state line. Nothing else is extended across the border - no Kerala-side stations, pressures or administrative data is claimed here."
+        }
+      ],
+      "bytes": 95464,
+      "sliced": false
+    },
+    "context-rivers": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "kabini-context-rivers.geojson",
+          "kind": null,
+          "count": 1,
+          "provenance": "The 85 km of Kabini centreline above the Karnataka boundary, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Only the reach OUTSIDE the C2 polygon is staged, so the in-basin course is not drawn twice."
+        }
+      ],
+      "bytes": 65892,
       "sliced": false
     }
   },

@@ -42,6 +42,7 @@ from ingest_basin import _read_vector  # noqa: E402  (shared GDAL reader, 4326 o
 from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-runs)
 
 from shapely.geometry import MultiLineString, MultiPolygon, mapping, shape  # noqa: E402
+from shapely.ops import unary_union  # noqa: E402
 from shapely.prepared import prep  # noqa: E402
 
 CAUVERY_KA = REPO / "public/data/basins/cauvery-ka"
@@ -94,6 +95,14 @@ ADMIN_LAYERS = [
 ]
 
 PRS_2025_LAYER = "PRS_2025_Polluted_River_Stretches"
+
+# The basin does not stop at the state line. The Kabini rises in Wayanad and
+# 31% of its watershed is in Kerala, which the C2 clip cuts away - so the atlas
+# has been drawing a river that appears to start nowhere. These two layers put
+# the missing third back as CONTEXT: the full watershed outline, and the 85 km
+# of centreline above the border. Nothing else is extended across it, and no
+# Kerala-side pressure, station or administrative data is claimed.
+FULL_WATERSHED_LAYER = "Cauvery_Tributary_Kabini — dissolved"
 
 # ── Review round, 23 Aug 2026 ────────────────────────────────────────────────
 # Paani's feedback on the first Kabini build came with ten GeoPackages. These
@@ -324,6 +333,30 @@ def main() -> None:
         _write(out / "kabini-prs.geojson", _fc(prs_feats), "polluted stretch (2025)")
     else:
         print(f"  ! PRS GeoPackage not found ({prs_gpkg.name}); skipping the stretch layer")
+
+    # ── 7a. The Kerala reach, as context ──
+    full = _read_vector(hyd, FULL_WATERSHED_LAYER, None)
+    full_geom = unary_union([g for g in (_geom(f) for f in full) if g is not None])
+    beyond = full_geom.difference(kab_geom)
+    _write(out / "kabini-context-boundary.geojson",
+           _fc([{"type": "Feature", "geometry": mapping(full_geom),
+                 "properties": {"name": "Kabini basin, full extent (Karnataka and Kerala)",
+                                "role": "context"}}]),
+           "full watershed (with Kerala)")
+    print(f"    {beyond.area / full_geom.area * 100:.0f}% of the watershed lies outside the C2 clip")
+
+    # Only the reach ABOVE the boundary, so the in-basin course is not drawn
+    # twice with two different weights.
+    ctx_rivers = []
+    for layer, river_id, name in RIVER_LAYERS:
+        g = unary_union([x for x in (_geom(f) for f in _read_vector(hyd, layer, None)) if x is not None])
+        out_of_basin = _same_dim(g.difference(kab_geom), 1)
+        if out_of_basin is None or out_of_basin.is_empty:
+            continue
+        ctx_rivers.append({"type": "Feature", "geometry": mapping(out_of_basin),
+                           "properties": {"riverId": river_id, "name": name, "role": "context"}})
+        print(f"    {name:10} {out_of_basin.length * 111:6.1f} km beyond the boundary")
+    _write(out / "kabini-context-rivers.geojson", _fc(ctx_rivers), "rivers beyond the boundary")
 
     # ── 7b. Review round (23 Aug 2026): the corrections Paani sent back ──
     rdir = Path(args.review_dir)
