@@ -855,12 +855,16 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       // MapController applies center/zoom) instead of the wide boundary fit.
       return null;
     } else {
-      feats = boundaryData?.features ?? [];
+      // A basin whose story crosses its working boundary ships a wider
+      // context outline; frame to that, or the reach it exists to show gets
+      // cropped at the line it is meant to cross.
+      const context = data["context-boundary"]?.features ?? [];
+      feats = context.length ? context : boundaryData?.features ?? [];
     }
     if (!feats.length) return null;
     const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, shedData, boundaryData, selectedSheds, manifest.defaultFocus]);
+  }, [selectedRiverId, shedData, boundaryData, selectedSheds, manifest.defaultFocus, data]);
 
   // Frame the region highlighted from the accountability matrix ("Show X on
   // the map") once its layer data is in. Matching mirrors the highlight style.
@@ -940,6 +944,30 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // content has loaded - this gates the "Explore the polluted stretch" entry
   // point, which must be offered even while the stretch itself is hidden
   // (the layer is default-off per Paani's Phase-1 review).
+  // Every station in the basin that has a readings pack, for the panel's
+  // compare-with picker. Family travels with each one so the picker can offer
+  // only stations that share a series worth drawing side by side.
+  const readingsPeers = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { stationKey: string; name: string; family: string; agency?: string }[] = [];
+    for (const l of manifest.layers) {
+      if (!l.readings) continue;
+      for (const f of data[l.family]?.features ?? []) {
+        const p = (f.properties ?? {}) as Record<string, unknown>;
+        const key = p.stationKey == null ? "" : String(p.stationKey);
+        if (!p.hasReadings || !key || seen.has(key)) continue;
+        seen.add(key);
+        out.push({
+          stationKey: key,
+          name: String(p.name ?? key),
+          family: l.family,
+          agency: p.agency == null ? undefined : String(p.agency),
+        });
+      }
+    }
+    return out.sort((a, b) => a.name.localeCompare(b.name));
+  }, [manifest.layers, data]);
+
   const hasPrsStory = manifest.layers.some((l) => l.prs) && prsData !== null;
   // The survey editions actually drawn on the map, oldest first. A basin can
   // ship fewer of these than its panel reports - an edition whose geometry is
@@ -1713,6 +1741,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   basinId={manifest.basinId}
                   stationKey={String(selectedFeature.props.stationKey)}
                   name={selectedFeature.props.name != null ? String(selectedFeature.props.name) : undefined}
+                  family={selectedFeature.family}
+                  peers={readingsPeers}
                   onClose={() => setSelectedFeature(null)}
                 />
               ) : renderFeatureDetail?.({
@@ -1910,6 +1940,9 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     // Default: just the current (latest) stretch, red.
     return { color: "#dc2626", weight: 5, opacity: faded ? 0.5 : 0.95 };
   }
+  if (l.family === "context-rivers") {
+    return { color: l.color, weight: 2.5, dashArray: "6 4", opacity: faded ? 0.5 : 0.95 };
+  }
   if (l.family === "rivers") {
     const rprops = feat?.properties as Record<string, unknown>;
     const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
@@ -2003,6 +2036,12 @@ function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, fe
 function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
   if (matchesHighlight(hl, l, feat)) {
     return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
+  }
+  if (l.family === "context-boundary") {
+    // The wider basin behind the working boundary: dashed, unfilled, neutral,
+    // so it reads as "there is more river than this map covers" and never
+    // competes with the frame the data is actually clipped to.
+    return { color: l.color, weight: 2, dashArray: "7 5", fill: false, opacity: faded ? 0.5 : 0.9 };
   }
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
