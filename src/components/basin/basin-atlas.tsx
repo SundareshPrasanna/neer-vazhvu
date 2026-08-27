@@ -1799,6 +1799,9 @@ export function buildLegendItems(layers: BasinLayer[], elevation?: { band: strin
     else if (l.family === "monitoring-points") {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
+    } else if (l.readings) {
+      items.push({ sym: "dot", color: l.color, label: "Gauge (tap for readings)" });
+      items.push({ sym: "ring", color: l.color, label: "Gauge (readings not yet fetched)" });
     } else if (l.family === "pressures-industrial" && l.kindFilter === "industrial-area-other") {
       items.push({ sym: "outline", color: "#94a3b8", label: "Industrial area - unnamed (no effluent details)" });
     } else if (l.family === "pressures-industrial" && l.kindFilter === "major-industry") {
@@ -1961,7 +1964,13 @@ function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L
   // Monitoring: hollow if not in public domain (honest-gap cue). Treatment
   // plants never reach here - they render as shaped markers (treatmentIcon)
   // that carry their own solid/hollow status convention.
-  const hollow = l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES";
+  // Two different absences, same cue: KSPCB points that publish nothing, and
+  // gauges whose series we have not fetched yet. Both are stations you cannot
+  // read today, and a solid dot beside them would promise a chart that is not
+  // there.
+  const hollow =
+    (l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES") ||
+    (!!l.readings && p.hasReadings === false);
   return {
     radius: 5,
     color: l.color,
@@ -2193,7 +2202,8 @@ function humanizeKey(k: string): string {
 function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown>; label: string; onClose: () => void }) {
   const title = String(props.name ?? props.contributor ?? props.kind ?? label);
   const entries = Object.entries(props).filter(
-    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
+    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && k !== "hasReadings"
+      && k !== "readingsPending" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
   );
   return (
     <div className="space-y-3">

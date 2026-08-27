@@ -340,21 +340,17 @@ def main() -> None:
         print(f"  pack {props['stationKey']:12} {props['name']:22} "
               f"{len(series)} series, {len(daily):5} discharge days, {len(level):6} level rows")
 
-    # A configured station only reaches the map once it has a series to show.
-    # Shipping an inert dot beside stations that all open charts reads as a
-    # broken station, not as an honest gap (review, 27 Aug) - and the gap here
-    # is ours, not the register's: the station is real, the source was down.
-    pending = [f["properties"]["name"] for f in fc["features"]
-               if not f["properties"].get("hasReadings")
-               and f["properties"]["stationKey"] in {e["stationKey"] for e in cfg.get("extraStations", [])}]
-    if pending:
-        keys = {e["stationKey"] for e in cfg.get("extraStations", [])}
-        fc["features"] = [f for f in fc["features"]
-                          if f["properties"].get("hasReadings")
-                          or f["properties"]["stationKey"] not in keys]
-        for name in pending:
-            print(f"  HELD {name:22s} configured, but no readings yet - not shipped. "
-                  f"Re-run when the source answers.")
+    # Configured stations with no series yet DO ship, marked pending, so the
+    # map shows the gauge network as it exists rather than only the parts we
+    # managed to fetch. They render hollow and their panel says why - the
+    # absence is ours (the source was unreachable), not the register's.
+    keys = {e["stationKey"] for e in cfg.get("extraStations", [])}
+    pending = [f for f in fc["features"]
+               if not f["properties"].get("hasReadings") and f["properties"]["stationKey"] in keys]
+    for f in pending:
+        f["properties"]["readingsPending"] = True
+        print(f"  PENDING {f['properties']['name']:20s} shipped without readings "
+              f"(source unreachable); a re-run attaches them")
 
     stations_fp.write_text(json.dumps(merge_envelope(stations_fp, fc), separators=(",", ":")))
     # This script owns flow-stations.geojson, so it owns that family's
@@ -368,15 +364,15 @@ def main() -> None:
         if fam is not None:
             fam["featureCount"] = len(fc["features"])
             fam["bytes"] = stations_fp.stat().st_size
-            held = f" {len(pending)} configured station(s) are held back pending readings." if pending else ""
+            held = f" {len(pending)} station(s) ship pending readings." if pending else ""
             for s in fam.get("sources", []):
                 s["count"] = len(fc["features"])
                 s["provenance"] = (
                     "CWC hydrological observation sites, locations and site types validated by "
                     "Paani Earth against the CWC water year books, plus any gauge added from "
                     "scripts/basin-sources/*-flow.json. hasReadings and the packs are attached by "
-                    "scripts/build_basin_flow_readings.py from India-WRIS pulls; a station only "
-                    "ships once it has a series to show." + held)
+                    "scripts/build_basin_flow_readings.py from India-WRIS pulls; a station whose "
+                    "series has not been fetched yet ships marked pending." + held)
             write_artifact(inv_fp, inv, indent=1)
             print(f"  inventory: flow-stations featureCount -> {len(fc['features'])}")
 
