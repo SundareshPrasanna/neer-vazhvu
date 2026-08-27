@@ -1,7 +1,8 @@
 {
- "_doc": "Overview layers for cauvery-ka built from Paani Earth's Cauvery Basin GeoPackages (Aug 2026 delivery). The GPKGs are shared under the collaboration agreement and live OUTSIDE the repo (srcDir below, machine-local) - same policy as the Arkavathi/Kabini ingests. Every priority and BOD figure cites the CPCB October 2025 report: priorities from Table 3.14, max BOD 2022-23 per stretch from Annexure II (Karnataka pages; mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf in the corpus). Stretch lengths are the canonical layer's own Distance attribute, verified geodesically at build time. Run: python3 scripts/build_basin_gpkg_layers.py scripts/basin-sources/cauvery-ka-paani.json (AFTER any ingest_basin_overview.py re-run).",
+ "_doc": "Overview layers for cauvery-ka built from Paani Earth's Cauvery Basin GeoPackages (Aug 2026 delivery). The GPKGs are shared under the collaboration agreement and live OUTSIDE the repo (srcDir below, machine-local) - same policy as the Arkavathi/Kabini ingests. Every priority and BOD figure cites the CPCB October 2025 report: priorities from Table 3.14, max BOD 2022-23 per stretch from Annexure II (Karnataka pages; mirrored at public/docs/cpcb-polluted-river-stretches-oct-2025.pdf in the corpus). Stretch lengths are the canonical layer's own Distance attribute, verified geodesically at build time. The snapshot-view layers (state boundary, major waterbodies) come from the 23 Aug 2026 review package, reviewDir below. Run: python3 scripts/build_basin_gpkg_layers.py scripts/basin-sources/cauvery-ka-paani.json (AFTER any ingest_basin_overview.py re-run).",
  "basinId": "cauvery-ka",
  "srcDir": "~/Downloads/Cauvery_Basin_Geopackages (1)",
+ "reviewDir": "~/Downloads/Cauvery_Kabini_Review_23Aug2026",
  "clip": {
   "gpkg": "Hydrology_Layers.gpkg",
   "layer": "Cauvery_Basin_Boundary_in_KA",
@@ -89,5 +90,34 @@
   "name": "Cauvery river basin (full extent: Karnataka, Kerala, Tamil Nadu, Puducherry)",
   "simplifyEps": 0.002,
   "provenance": "Paani Earth, Cauvery Basin GIS package (Aug 2026): full Cauvery basin boundary across Karnataka, Kerala, Tamil Nadu and Puducherry"
+ },
+ "stateBoundary": {
+  "from": "review",
+  "gpkg": "Cauvery_Snapshot_view_layers.gpkg",
+  "layer": "Karnataka_State_Boundary",
+  "name": "Karnataka",
+  "simplifyEps": 0.004,
+  "provenance": "Paani Earth, Cauvery snapshot layer package (Aug 2026): Karnataka state boundary, KGIS state layer (KGISStateName/KGISStateCode attribution carried in the source)"
+ },
+ "waterbodies": {
+  "from": "review",
+  "gpkg": "Cauvery_Snapshot_view_layers.gpkg",
+  "layer": "IndiaWRIS_Cauvery_MajorWaterbodies — MajorWaterbodies",
+  "simplifyEps": 0.0002,
+  "minAreaHa": 100,
+  "nameAttr": "wbname",
+  "areaAttr": "area_ha",
+  "provenance": "India-WRIS major waterbodies register for the Cauvery basin, as delivered in Paani Earth's Cauvery snapshot layer package (Aug 2026); clipped to the Karnataka basin share. Areas are the register's own area_ha."
+ },
+ "cityFootprint": {
+  "gpkg": "Admin-Geopackages.gpkg",
+  "cityId": "bengaluru",
+  "name": "Greater Bengaluru",
+  "simplifyEps": 0.0008,
+  "parts": [
+   { "layer": "GBA_Boundary_within_CauveryBasin", "drains": "cauvery" },
+   { "layer": "GBA_Outside_CauveryBoundary.", "drains": "away" }
+  ],
+  "provenance": "Paani Earth, Cauvery Basin GIS package (Aug 2026): Greater Bengaluru Authority boundary, split by the Cauvery basin divide. Used as geometry only - the source carries ward-level census columns, but the two parts are geometry clips of one ward set, so ward populations cannot be summed across the split without double-counting."
  }
 }

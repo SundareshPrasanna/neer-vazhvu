@@ -40,7 +40,7 @@ interface LiveReservoir {
   storagePctFrl: number | null;
 }
 
-type MetricKey = "rainfallDeviationPct" | "gwLevelM" | "pollution";
+type MetricKey = "rainfallDeviationPct" | "gwLevelM" | "pollution" | "watersheds";
 
 // Rainfall/GW render ONLY once their scoreboard values carry verified: true -
 // the M4 cross-check found KWRIS's devper is NOT seasonal deviation
@@ -49,8 +49,19 @@ type MetricKey = "rainfallDeviationPct" | "gwLevelM" | "pollution";
 // from the CPCB stretch geometries client-side and is always available.
 const METRIC_OPTIONS: { key: MetricKey; label: string; needsVerified?: boolean }[] = [
   { key: "pollution", label: "Pollution" },
+  { key: "watersheds", label: "Watersheds" },
   { key: "rainfallDeviationPct", label: "Rainfall", needsVerified: true },
   { key: "gwLevelM", label: "Groundwater", needsVerified: true },
+];
+
+// Identity shading: not a ramp at all, so it carries no severity meaning -
+// one hue per sub-basin, in manifest order, for reading the basin AS a set of
+// tributary watersheds (the Aug-2026 partner review asked for exactly this).
+// Chosen away from the line layers drawn over them (rivers #0ea5e9, streams
+// #3b82f6, CPCB stretches #dc2626) and the waterbody fill (#0369a1).
+const WATERSHED_HUES = [
+  "#7c3aed", "#059669", "#c2410c", "#a21caf", "#be123c",
+  "#0d9488", "#4d7c0f", "#b45309", "#475569",
 ];
 
 // Sequential severity ramps (worse = darker/redder), neutral when unknown.
@@ -163,6 +174,9 @@ export function BasinOverview({
   const base = `/data/basins/${manifest.basinId}`;
   const [boundary, setBoundary] = useState<FeatureCollection | null>(null);
   const [contextBoundary, setContextBoundary] = useState<FeatureCollection | null>(null);
+  const [stateBoundary, setStateBoundary] = useState<FeatureCollection | null>(null);
+  const [waterbodies, setWaterbodies] = useState<FeatureCollection | null>(null);
+  const [cityFootprint, setCityFootprint] = useState<FeatureCollection | null>(null);
   const [subBasins, setSubBasins] = useState<FeatureCollection | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
   const [rivers, setRivers] = useState<FeatureCollection | null>(null);
@@ -181,6 +195,9 @@ export function BasinOverview({
   useEffect(() => {
     fetchJson(`${base}/boundary.geojson`).then((d) => setBoundary(d as FeatureCollection | null));
     fetchJson(`${base}/context-boundary.geojson`).then((d) => setContextBoundary(d as FeatureCollection | null));
+    fetchJson(`${base}/state-boundary.geojson`).then((d) => setStateBoundary(d as FeatureCollection | null));
+    fetchJson(`${base}/waterbodies.geojson`).then((d) => setWaterbodies(d as FeatureCollection | null));
+    fetchJson(`${base}/city-footprint.geojson`).then((d) => setCityFootprint(d as FeatureCollection | null));
     fetchJson(`${base}/sub-basins.geojson`).then((d) => setSubBasins(d as FeatureCollection | null));
     fetchJson(`${base}/streams.geojson`).then((d) => setStreams(d as FeatureCollection | null));
     fetchJson(`${base}/rivers.geojson`).then((d) => setRivers(d as FeatureCollection | null));
@@ -230,6 +247,12 @@ export function BasinOverview({
 
   const refs: SubBasinRef[] = useMemo(() => manifest.subBasins ?? [], [manifest.subBasins]);
   const refByKey = useMemo(() => Object.fromEntries(refs.map((r) => [r.key, r])), [refs]);
+  // Manifest order, not source order: the palette assignment has to be stable
+  // across a re-ingest that reshuffles the geojson.
+  const hueByKey = useMemo(
+    () => Object.fromEntries(refs.map((r, i) => [r.key, WATERSHED_HUES[i % WATERSHED_HUES.length]])),
+    [refs],
+  );
 
   // Pollution metric: CPCB stretches assigned to sub-basins by sampling a
   // vertex against the sub-basin polygons (client-side, a handful of
@@ -381,13 +404,17 @@ export function BasinOverview({
       color: isSel ? (tiles.isDark ? "#f8fafc" : "#0f172a") : tiles.isDark ? "#e2e8f0" : "#1e293b",
       weight: isSel ? 3 : 1.8,
       opacity: isSel ? 1 : 0.75,
-      fillColor: metricColor(metric, v),
-      fillOpacity: tiles.isDark ? 0.45 : 0.55,
+      fillColor: metric === "watersheds" ? (hueByKey[key] ?? "#cbd5e1") : metricColor(metric, v),
+      // Identity shading sits a touch lighter: nine saturated hues would
+      // otherwise drown the river network drawn over them.
+      fillOpacity: metric === "watersheds" ? (tiles.isDark ? 0.38 : 0.45) : tiles.isDark ? 0.45 : 0.55,
     };
   };
 
-  const legendStops =
-    metric === "rainfallDeviationPct"
+  const legendStops: [string, string][] =
+    metric === "watersheds"
+      ? refs.map((r) => [r.name, hueByKey[r.key]] as [string, string])
+      : metric === "rainfallDeviationPct"
       ? [["normal or surplus", "#93c5fd"], ["-20 to -60%", "#fbbf24"], ["-60 to -90%", "#f97316"], ["below -90%", "#dc2626"]]
       : metric === "gwLevelM"
         ? [["< 8 m", "#93c5fd"], ["8-15 m", "#fbbf24"], ["15-22 m", "#f97316"], ["> 22 m", "#dc2626"]]
@@ -533,6 +560,12 @@ export function BasinOverview({
           preferCanvas
         >
           <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+          {/* The administrative frame, drawn first and left unclipped: the
+              useful part is where the state line and the basin part company,
+              above all the southern border the Cauvery crosses into TN. */}
+          {stateBoundary && (
+            <GeoJSON data={stateBoundary} style={{ color: "#64748b", weight: 1.25, dashArray: "3 5", fill: false, opacity: 0.8 }} interactive={false} />
+          )}
           {/* Full-basin outline (all states), muted context behind the
               interactive share - the counting frame stays the bold boundary. */}
           {contextBoundary && (
@@ -546,7 +579,7 @@ export function BasinOverview({
           )}
           {subBasins && (
             <GeoJSON
-              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}`}
+              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}`}
               data={subBasins}
               style={subBasinStyle}
               onEachFeature={(feat, layer) => {
@@ -571,7 +604,49 @@ export function BasinOverview({
               put the dots on top, but its canvas then swallowed clicks over
               the WHOLE map, so polygons under it could never be selected or
               deselected - both interception bugs found by Sundaresh.) */}
-          <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}`}>
+          <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}`}>
+          {/* Major waterbody surfaces, above the choropleth but under the
+              river network. They stay clickable and pass the click through to
+              the sub-basin they sit in (assigned at build time), so putting a
+              10,000 ha surface like KRS on the map does not create a dead
+              patch where tapping selects nothing. */}
+          {waterbodies && (
+            <GeoJSON
+              data={waterbodies}
+              style={{ color: "#0369a1", weight: 0.8, fillColor: "#0284c7", fillOpacity: tiles.isDark ? 0.75 : 0.7, opacity: 0.9 }}
+              onEachFeature={(feat, layer) => {
+                const p = feat.properties as Record<string, unknown>;
+                const name = typeof p.name === "string" && p.name.trim()
+                  ? p.name
+                  : "Unnamed in the India-WRIS register";
+                layer.bindTooltip(
+                  `<strong>${name}</strong>${p.areaHa ? `<br/><span style="font-size:11px">${Number(p.areaHa).toLocaleString()} ha</span>` : ""}`,
+                  { sticky: true },
+                );
+                const code = p.subBasin;
+                if (typeof code === "string") layer.on("click", () => setSelectedKey(code));
+              }}
+            />
+          )}
+          {/* The city against the divide. Non-interactive on purpose: it lies
+              over the Arkavathi, the one sub-basin a reader is most likely to
+              be reaching for, and a frame must not eat that click. */}
+          {cityFootprint && (
+            <GeoJSON
+              data={cityFootprint}
+              interactive={false}
+              style={(f) => {
+                const drains = (f?.properties as Record<string, unknown>)?.drains;
+                // White + a hard dark edge: the only fill on this map that
+                // belongs to no ramp, so the city stays readable whichever
+                // choropleth is underneath it. Solid edge = drains here,
+                // dashed = the other side of the divide.
+                return drains === "cauvery"
+                  ? { color: "#111827", weight: 2, fillColor: "#ffffff", fillOpacity: 0.55, opacity: 1 }
+                  : { color: "#111827", weight: 1.5, dashArray: "4 3", fill: false, opacity: 0.8 };
+              }}
+            />
+          )}
           {/* Named river centrelines - drawn above the choropleth (this
               Fragment re-adds after the polygons) so the network stays
               legible over the fills. */}
@@ -726,18 +801,32 @@ export function BasinOverview({
           )}
           <div className="bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-600 dark:text-slate-300 shadow space-y-0.5">
             <div className="font-semibold text-slate-700 dark:text-slate-200">
-              {metric === "pollution" ? "CPCB polluted stretches" : metric === "gwLevelM" ? "Groundwater level" : "Rainfall vs normal"}
+              {metric === "watersheds"
+                ? "Tributary watersheds"
+                : metric === "pollution"
+                  ? "CPCB polluted stretches"
+                  : metric === "gwLevelM"
+                    ? "Groundwater level"
+                    : "Rainfall vs normal"}
             </div>
-            {legendStops.map(([label, color]) => (
-              <div key={label} className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
-                {label}
+            {/* Identity shading names nine of them, so the swatches go in two
+                columns rather than growing the box down the whole map. */}
+            <div className={metric === "watersheds" ? "grid grid-cols-2 gap-x-3 gap-y-0.5" : "space-y-0.5"}>
+              {legendStops.map(([label, color]) => (
+                <div key={label} className="flex items-center gap-1.5 whitespace-nowrap">
+                  <span className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: color }} />
+                  {label}
+                </div>
+              ))}
+            </div>
+            {/* Identity shading has no unknown class - every sub-basin has a
+                hue, whether or not any metric was ever reported for it. */}
+            {metric !== "watersheds" && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm bg-slate-300" />
+                {metric === "pollution" ? "not assessed (no stations)" : "no data"}
               </div>
-            ))}
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded-sm bg-slate-300" />
-              {metric === "pollution" ? "not assessed (no stations)" : "no data"}
-            </div>
+            )}
             {/* Line layers - rows appear only when the data files exist. */}
             {metric === "pollution" && hasPrsLines && (
               <div className="flex items-center gap-1.5">
@@ -749,6 +838,34 @@ export function BasinOverview({
               <div className="flex items-center gap-1.5">
                 <span className="inline-block w-3 h-[2px] rounded" style={{ backgroundColor: "#0ea5e9" }} />
                 named rivers
+              </div>
+            )}
+            {waterbodies && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#0284c7" }} />
+                major waterbodies
+              </div>
+            )}
+            {cityFootprint && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 h-3 rounded-sm border" style={{ backgroundColor: "#ffffff", borderColor: "#111827" }} />
+                {(() => {
+                  const inside = cityFootprint.features.find(
+                    (f) => (f.properties as Record<string, unknown>)?.drains === "cauvery",
+                  )?.properties as Record<string, unknown> | undefined;
+                  const name = String(inside?.name ?? "the city");
+                  // The share is the whole point of drawing it, so it goes in
+                  // the legend rather than only in the blurb.
+                  return inside?.sharePct
+                    ? `${name} (${inside.sharePct}% drains here)`
+                    : name;
+                })()}
+              </div>
+            )}
+            {stateBoundary && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 border-t border-dotted" style={{ borderColor: "#64748b" }} />
+                {String((stateBoundary.features[0]?.properties as Record<string, unknown>)?.name ?? "state")} boundary
               </div>
             )}
             {contextBoundary && (

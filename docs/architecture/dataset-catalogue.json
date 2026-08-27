@@ -1973,7 +1973,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "prs",
-   "bytes": 45691,
+   "bytes": 45717,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2647,6 +2647,39 @@
    ]
   },
   {
+   "path": "public/data/basins/cauvery-ka/city-footprint.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "city-footprint",
+   "bytes": 9478,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "areaKm2",
+     "cityId",
+     "drains",
+     "name",
+     "sharePct"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026): Greater Bengaluru boundary split by the Cauvery divide, geometry only",
+   "flags": []
+  },
+  {
    "path": "public/data/basins/cauvery-ka/context-boundary.geojson",
    "family": "basins",
    "scope": "cauvery-ka",
@@ -2681,7 +2714,7 @@
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "inventory",
-   "bytes": 2974,
+   "bytes": 4321,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2869,6 +2902,36 @@
    ]
   },
   {
+   "path": "public/data/basins/cauvery-ka/state-boundary.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "state-boundary",
+   "bytes": 36540,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "name",
+     "role"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani, 23 Aug 2026 review package): Karnataka state outline from the KGIS state layer; KGIS registration queued in the maintenance model",
+   "flags": []
+  },
+  {
    "path": "public/data/basins/cauvery-ka/streams.geojson",
    "family": "basins",
    "scope": "cauvery-ka",
@@ -2977,6 +3040,37 @@
    "flags": [
     "unaccounted"
    ]
+  },
+  {
+   "path": "public/data/basins/cauvery-ka/waterbodies.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "waterbodies",
+   "bytes": 120036,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 25,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "subBasin"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani, 23 Aug 2026 review package): India-WRIS major-waterbody surfaces clipped to the KA basin share; India-WRIS registration queued in the maintenance model",
+   "flags": []
   },
   {
    "path": "public/data/basins/cauvery-ka/wq-stations.geojson",
@@ -5141,7 +5235,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "prs",
-   "bytes": 41184,
+   "bytes": 43677,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12581,7 +12675,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 5108,
+   "bytes": 5107,
    "schema": {
     "kind": "object",
     "keys": [
@@ -26234,7 +26328,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain-history",
-   "bytes": 84322,
+   "bytes": 94009,
    "schema": {
     "kind": "object",
     "keys": [
@@ -26268,7 +26362,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain",
-   "bytes": 13718,
+   "bytes": 13671,
    "schema": {
     "kind": "object",
     "keys": [
@@ -34512,6 +34606,18 @@
   },
   {
    "family": "basins",
+   "dataset": "city-footprint",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 9478,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "command-areas",
    "files": 2,
    "scopes": [
@@ -34673,7 +34779,7 @@
     "cauvery-tn",
     "kabini"
    ],
-   "bytes": 31761,
+   "bytes": 33108,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -34750,7 +34856,7 @@
     "arkavathi",
     "kabini"
    ],
-   "bytes": 174334,
+   "bytes": 176853,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -34849,6 +34955,18 @@
   },
   {
    "family": "basins",
+   "dataset": "state-boundary",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 36540,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "streams",
    "files": 2,
    "scopes": [
@@ -34910,6 +35028,18 @@
    "bytes": 7012,
    "schema_variants": 1,
    "registered": false,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "waterbodies",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 120036,
+   "schema_variants": 1,
+   "registered": true,
    "has_consumer": true
   },
   {
@@ -35454,7 +35584,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 13718,
+   "bytes": 13671,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -35466,7 +35596,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 84322,
+   "bytes": 94009,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -35665,7 +35795,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 5108,
+   "bytes": 5107,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

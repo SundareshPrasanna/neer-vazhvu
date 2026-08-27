@@ -21,7 +21,7 @@ export const CAUVERY_KA: BasinManifest = {
   displayName: "Cauvery Basin (Karnataka)",
   displayNameLocal: "ಕಾವೇರಿ ಜಲಾನಯನ (ಕರ್ನಾಟಕ)",
   blurb:
-    "Karnataka's share of the Cauvery: 34,899 sq km across nine sub-basins, from the Kodagu headwaters to the Tamil Nadu border below Kanakapura. Bengaluru draws its river water from here (KRS, Hemavathi, Kabini, Harangi) and returns its wastewater here (the Arkavathi). Tap a sub-basin to see its state; the Arkavathi carries the full deep dive.",
+    "Karnataka's share of the Cauvery: 34,899 sq km across nine sub-basins, from the Kodagu headwaters to the Tamil Nadu border below Kanakapura. Bengaluru draws its river water from here (KRS, Hemavathi, Kabini, Harangi) and returns its wastewater here (the Arkavathi), yet only about a third of the city's own ground actually drains to the Cauvery: the rest sits the other side of the divide, drawn on the map. Tap a sub-basin to see its state; the Arkavathi carries the full deep dive.",
   mapCenter: [12.6, 76.6],
   mapZoom: 8,
   areaKm2: 34899,
@@ -34,8 +34,11 @@ export const CAUVERY_KA: BasinManifest = {
   layers: [
     // Overview mode renders its own surface (M2); these declarations drive
     // data fetching + the DataOnThisMap inventory with the existing plumbing.
+    { family: "state-boundary", label: "Karnataka state boundary", floor: "hydrology", geom: "line", color: "#64748b", defaultOn: true, context: true },
     { family: "boundary", label: "Basin boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
     { family: "sub-basins", label: "Sub-basins", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
+    { family: "city-footprint", label: "Greater Bengaluru, split by the basin divide", floor: "hydrology", geom: "fill", color: "#f59e0b", defaultOn: true, context: true },
+    { family: "waterbodies", label: "Major waterbodies (India-WRIS)", floor: "hydrology", geom: "fill", color: "#0369a1", defaultOn: true },
     { family: "streams", label: "Streams (CWC-attributed)", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
     { family: "tanks", label: "MI tanks (named)", floor: "hydrology", geom: "point", color: "#0284c7", defaultOn: false },
     { family: "reservoirs", label: "Reservoirs", floor: "hydrology", geom: "point", color: "#0891b2", defaultOn: true },
@@ -148,5 +151,6 @@ export const CAUVERY_KA: BasinManifest = {
     "Sub-basin rainfall deviation and groundwater level: KWRIS geomGIS sub-basin views (KSNDMC/IMD basis; period under verification).",
     "Polluted river stretches: CPCB classification as published on KWRIS (earlier vintage; the Arkavathi is Priority I in CPCB's October 2025 report, mirrored on this site).",
     "Live reservoir storage: KWRIS reservoir_landing daily feed.",
+    "Karnataka state boundary, major waterbody surfaces (India-WRIS register) and the Greater Bengaluru footprint: Paani Earth Foundation Cauvery GIS packages (Aug 2026). The Bengaluru split is measured from the two supplied parts; the city's ward populations are not summed across it, because the parts are geometry clips of one ward set.",
   ],
 };
