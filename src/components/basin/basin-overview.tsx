@@ -387,10 +387,21 @@ export function BasinOverview({
       const g = subBasins?.features.find((f) => (f.properties as Record<string, unknown>)?.code === selectedKey)?.geometry;
       return g ? [g] : null;
     }
-    if (boundary?.features[0]?.geometry) return [boundary.features[0].geometry];
+    // The working boundary PLUS any upstream catchment shipped with it. Fitting
+    // the boundary alone pushed the out-of-state headwaters into a corner,
+    // half out of frame, which is the same as not drawing them (review,
+    // 27 Aug: "I don't see any changes"). The downstream context outline is
+    // deliberately not in the fit - it would zoom past the subject.
+    const upstream = contextBoundary?.features
+      .filter((f) => (f.properties as Record<string, unknown>)?.role === "beyond")
+      .map((f) => f.geometry)
+      .filter(Boolean) ?? [];
+    if (boundary?.features[0]?.geometry) {
+      return [boundary.features[0].geometry, ...upstream];
+    }
     const all = subBasins?.features.map((f) => f.geometry).filter(Boolean);
-    return all && all.length ? all : null;
-  }, [selectedKey, subBasins, boundary]);
+    return all && all.length ? [...all, ...upstream] : null;
+  }, [selectedKey, subBasins, boundary, contextBoundary]);
 
   const subBasinStyle = (feat?: Feature) => {
     const key = (feat?.properties as Record<string, unknown>)?.code as string;
@@ -578,8 +589,8 @@ export function BasinOverview({
                 // downstream reach has its own atlas, and shading it here
                 // would bury the subject rather than frame it.
                 if ((f?.properties as Record<string, unknown>)?.role === "beyond") {
-                  return { color: "#94a3b8", weight: 1, dashArray: "3 4", opacity: 0.6,
-                           fillColor: "#94a3b8", fillOpacity: tiles.isDark ? 0.18 : 0.2 };
+                  return { color: "#475569", weight: 1.5, dashArray: "4 3", opacity: 0.85,
+                           fillColor: "#64748b", fillOpacity: tiles.isDark ? 0.26 : 0.3 };
                 }
                 return { color: "#94a3b8", weight: 1.5, dashArray: "6 6", fill: false, opacity: 0.7 };
               }}
@@ -884,7 +895,7 @@ export function BasinOverview({
             )}
             {contextBoundary && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#94a3b8", opacity: 0.35 }} />
+                <span className="inline-block w-3 h-3 rounded-sm border" style={{ backgroundColor: "#64748b", opacity: 0.45, borderColor: "#475569" }} />
                 {(() => {
                   const beyond = contextBoundary.features.find(
                     (f) => (f.properties as Record<string, unknown>)?.role === "beyond",
