@@ -340,6 +340,22 @@ def main() -> None:
         print(f"  pack {props['stationKey']:12} {props['name']:22} "
               f"{len(series)} series, {len(daily):5} discharge days, {len(level):6} level rows")
 
+    # A configured station only reaches the map once it has a series to show.
+    # Shipping an inert dot beside stations that all open charts reads as a
+    # broken station, not as an honest gap (review, 27 Aug) - and the gap here
+    # is ours, not the register's: the station is real, the source was down.
+    pending = [f["properties"]["name"] for f in fc["features"]
+               if not f["properties"].get("hasReadings")
+               and f["properties"]["stationKey"] in {e["stationKey"] for e in cfg.get("extraStations", [])}]
+    if pending:
+        keys = {e["stationKey"] for e in cfg.get("extraStations", [])}
+        fc["features"] = [f for f in fc["features"]
+                          if f["properties"].get("hasReadings")
+                          or f["properties"]["stationKey"] not in keys]
+        for name in pending:
+            print(f"  HELD {name:22s} configured, but no readings yet - not shipped. "
+                  f"Re-run when the source answers.")
+
     stations_fp.write_text(json.dumps(merge_envelope(stations_fp, fc), separators=(",", ":")))
     n_ready = sum(1 for f in fc["features"] if f["properties"].get("hasReadings"))
     print(f"\n{n_ready}/{len(fc['features'])} stations have readings -> {stations_fp.relative_to(REPO)}")
