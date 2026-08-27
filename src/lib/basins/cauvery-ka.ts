@@ -26,7 +26,7 @@ export const CAUVERY_KA: BasinManifest = {
   mapZoom: 8,
   areaKm2: 34899,
   areaNote:
-    "Karnataka portion only, per Karnataka WRD's basin decomposition (KWRIS). The Cauvery continues into Tamil Nadu - that reach has its own atlas, linked below.",
+    "Karnataka portion only, per Karnataka WRD's basin decomposition (KWRIS). Water reaches it from out of state as well: the Kabini rises in Wayanad, and about 2,100 sq km of Kerala drains into this basin before the river crosses the border. That upstream catchment is shaded on the map, because a basin does not begin at a state line. Downstream, the Cauvery continues into Tamil Nadu - that reach has its own atlas, linked below, and is deliberately not shaded here.",
   relatedBasins: [
     { basinId: "cauvery-tn", label: "Tamil Nadu side of the Cauvery" },
   ],

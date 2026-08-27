@@ -399,13 +399,34 @@ def main(cfg_path: str) -> None:
             sys.exit("context boundary is not polygonal")
         for rings in parts:
             polys.append(Polygon(rings[0], rings[1:]))
-    geom = unary_union(polys).simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
+    full = make_valid(unary_union(polys))
+    geom = full.simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
     if geom.geom_type == "Polygon":
         geom = MultiPolygon([geom])
-    emit("context-boundary", [{
+    # An outline cannot show an area, so the out-of-state catchment ships as
+    # its own fillable feature. It is deliberately the UPSTREAM share only -
+    # the ground that drains into this basin from another state - and not
+    # everything outside the state line: the downstream reach belongs to its
+    # own atlas, and tinting it here buries the subject instead of framing it.
+    beyond = None
+    b_cfg = ctx_cfg.get("beyond")
+    if b_cfg:
+        upstream = make_valid(unary_union(polygons_of(gpkg_of(b_cfg), b_cfg["layer"])))
+        beyond = make_valid(upstream.difference(mask)).simplify(
+            ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
+    feats = [{
         "type": "Feature", "geometry": rounded(mapping(geom)),
         "properties": {"name": ctx_cfg["name"], "role": "context"},
-    }], ctx_cfg["provenance"])
+    }]
+    if beyond is not None and not beyond.is_empty:
+        feats.append({
+            "type": "Feature", "geometry": as_multipolygon(beyond, ctx_cfg.get("simplifyEps", 0.002)),
+            "properties": {"name": b_cfg["name"], "role": "beyond",
+                           "areaKm2": round(poly_km2(beyond))},
+        })
+        print(f"  context-boundary: {poly_km2(beyond):,.0f} sq km of upstream catchment "
+              f"out of state ({b_cfg['layer']})")
+    emit("context-boundary", feats, ctx_cfg["provenance"])
 
     # 5. Karnataka state boundary - the administrative frame the basin sits in.
     #    Deliberately NOT clipped: the point of drawing it is the part that

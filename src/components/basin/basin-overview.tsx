@@ -569,7 +569,21 @@ export function BasinOverview({
           {/* Full-basin outline (all states), muted context behind the
               interactive share - the counting frame stays the bold boundary. */}
           {contextBoundary && (
-            <GeoJSON data={contextBoundary} style={{ color: "#94a3b8", weight: 1.5, dashArray: "6 6", fill: false, opacity: 0.7 }} interactive={false} />
+            <GeoJSON
+              data={contextBoundary}
+              interactive={false}
+              style={(f) => {
+                // The out-of-state catchment that drains INTO this basin, as
+                // ground rather than as an empty line. Upstream only: the
+                // downstream reach has its own atlas, and shading it here
+                // would bury the subject rather than frame it.
+                if ((f?.properties as Record<string, unknown>)?.role === "beyond") {
+                  return { color: "#94a3b8", weight: 1, dashArray: "3 4", opacity: 0.6,
+                           fillColor: "#94a3b8", fillOpacity: tiles.isDark ? 0.18 : 0.2 };
+                }
+                return { color: "#94a3b8", weight: 1.5, dashArray: "6 6", fill: false, opacity: 0.7 };
+              }}
+            />
           )}
           {boundary && (
             <GeoJSON data={boundary} style={{ color: "#d946ef", weight: 2.5, fill: false, opacity: 0.9 }} interactive={false} />
@@ -870,8 +884,16 @@ export function BasinOverview({
             )}
             {contextBoundary && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 border-t-2 border-dashed" style={{ borderColor: "#94a3b8" }} />
-                full basin, all states
+                <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: "#94a3b8", opacity: 0.35 }} />
+                {(() => {
+                  const beyond = contextBoundary.features.find(
+                    (f) => (f.properties as Record<string, unknown>)?.role === "beyond",
+                  )?.properties as Record<string, unknown> | undefined;
+                  // Naming the size is the point: this atlas covers the smaller half.
+                  return beyond?.areaKm2
+                    ? `Kerala headwaters, upstream (${Number(beyond.areaKm2).toLocaleString()} sq km)`
+                    : "full basin, all states";
+                })()}
               </div>
             )}
             {/* Marker key - shown while a sub-basin is in focus and its own
