@@ -349,17 +349,82 @@ function mergePoints(tracks: Track[], pick: (s: ReadingsSeries) => [string | num
       : String(a.x).localeCompare(String(b.x)));
 }
 
+/** Compact hover readout.
+ *
+ *  recharts' default tooltip prints one "<full station name>: <value>" row per
+ *  series. On a 150px chart with every station compared that box is taller and
+ *  wider than the plot it sits on, so the reader loses the very thing a hover
+ *  is for: where they are on the x-axis (review, 27 Aug). This keeps the rows
+ *  to a swatch, a short name and the value, goes two-up past four series, and
+ *  sorts by value so the stack is scannable. The x label leads, because that
+ *  is the position being read. */
+function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
+  active?: boolean;
+  payload?: { dataKey?: string | number; name?: string; value?: number; color?: string }[];
+  label?: string | number;
+  isDark: boolean;
+  unit?: string;
+  labelFormat?: (v: string | number) => string;
+}) {
+  if (!active || !payload?.length) return null;
+  const rows = payload
+    .filter((d) => d.value != null && Number.isFinite(Number(d.value)))
+    .sort((a, b) => Number(b.value) - Number(a.value));
+  if (!rows.length) return null;
+  const twoUp = rows.length > 4;
+  return (
+    <div
+      style={{
+        backgroundColor: isDark ? "rgba(15,23,42,0.94)" : "rgba(255,255,255,0.96)",
+        border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+        borderRadius: 6,
+        padding: "4px 6px",
+        fontSize: 10,
+        lineHeight: 1.35,
+        color: isDark ? "#e2e8f0" : "#0f172a",
+        boxShadow: "0 1px 6px rgba(0,0,0,0.12)",
+        maxWidth: twoUp ? 250 : 170,
+        pointerEvents: "none",
+      }}
+    >
+      <div style={{ fontWeight: 600, marginBottom: 2 }}>
+        {labelFormat && label != null ? labelFormat(label) : String(label ?? "")}
+        {unit ? <span style={{ fontWeight: 400, opacity: 0.6 }}> · {unit}</span> : null}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: twoUp ? "1fr 1fr" : "1fr", columnGap: 8 }}>
+        {rows.map((d, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap" }}>
+            <span style={{ width: 7, height: 7, borderRadius: 2, background: d.color, flexShrink: 0 }} />
+            <span style={{ opacity: 0.75, overflow: "hidden", textOverflow: "ellipsis", maxWidth: 92 }}>
+              {shortName(String(d.name ?? ""))}
+            </span>
+            <span style={{ fontWeight: 600, marginLeft: "auto" }}>{fmtValue(Number(d.value))}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Station names run long ("Kabini at T. Narasipura water supply intake"). The
+ *  swatch colour is what identifies the line; the text only has to disambiguate. */
+function shortName(name: string): string {
+  const cut = name.replace(/^(Kabini|Cauvery)\s+(at|near|d\/s|u\/s)\s+/i, "");
+  return cut.length > 16 ? `${cut.slice(0, 15)}\u2026` : cut;
+}
+
+function fmtValue(v: number): string {
+  if (!Number.isFinite(v)) return "-";
+  const a = Math.abs(v);
+  if (a >= 1000) return v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  if (a >= 10) return v.toFixed(1);
+  return v.toFixed(2);
+}
+
 function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]; isDark: boolean }) {
   const grid = isDark ? "#334155" : "#e2e8f0";
   const axis = isDark ? "#94a3b8" : "#64748b";
   const tickStyle = { fontSize: 9, fill: axis };
-  const tooltipStyle = {
-    backgroundColor: isDark ? "#1e293b" : "#ffffff",
-    border: `1px solid ${grid}`,
-    borderRadius: 6,
-    fontSize: 11,
-  } as const;
-
   switch (s.kind) {
     case "discharge-monthly":
     case "discharge-daily":
@@ -372,7 +437,7 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
             <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis dataKey="x" tick={tickStyle} minTickGap={40} />
             <YAxis tick={tickStyle} width={54} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip cursor={{ stroke: axis, strokeWidth: 1, strokeDasharray: "3 3" }} allowEscapeViewBox={{ x: false, y: true }} wrapperStyle={{ zIndex: 20, pointerEvents: "none" }} content={<HoverReadout isDark={isDark} unit={s.unit} />} />
             {tracks.map((tr) => (
               <Line key={tr.key} type="monotone" dataKey={tr.key} stroke={tr.color}
                 strokeWidth={1.5} dot={false} connectNulls name={tr.label} />
@@ -398,7 +463,7 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
             <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis dataKey="m" tick={tickStyle} />
             <YAxis tick={tickStyle} width={54} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip cursor={{ stroke: axis, strokeWidth: 1, strokeDasharray: "3 3" }} allowEscapeViewBox={{ x: false, y: true }} wrapperStyle={{ zIndex: 20, pointerEvents: "none" }} content={<HoverReadout isDark={isDark} unit={s.unit} />} />
             <Area dataKey="band" stroke="none" fill="#2563eb" fillOpacity={0.18} name="p25-p75" />
             <Line type="monotone" dataKey="median" stroke="#2563eb" strokeWidth={2} dot={false} name="median" />
           </ComposedChart>
@@ -429,7 +494,7 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
             ) : (
               <YAxis tick={tickStyle} width={54} />
             )}
-            <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => `exceeded ${v}% of days`} />
+            <Tooltip cursor={{ stroke: axis, strokeWidth: 1, strokeDasharray: "3 3" }} allowEscapeViewBox={{ x: false, y: true }} wrapperStyle={{ zIndex: 20, pointerEvents: "none" }} content={<HoverReadout isDark={isDark} unit={s.unit} labelFormat={(v) => `exceeded ${v}% of days`} />} />
             {tracks.map((tr) => (
               <Line key={tr.key} type="monotone" dataKey={tr.key} stroke={tr.color}
                 strokeWidth={1.5} dot={false} connectNulls name={tr.label} />
@@ -452,7 +517,7 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
             <CartesianGrid strokeDasharray="3 3" stroke={grid} />
             <XAxis dataKey="x" tick={tickStyle} minTickGap={20} />
             <YAxis tick={tickStyle} width={54} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip cursor={{ stroke: axis, strokeWidth: 1, strokeDasharray: "3 3" }} allowEscapeViewBox={{ x: false, y: true }} wrapperStyle={{ zIndex: 20, pointerEvents: "none" }} content={<HoverReadout isDark={isDark} unit={s.unit} />} />
             {tracks.map((tr) => (
               <Bar key={tr.key} dataKey={tr.key} fill={tr.color} name={tr.label} />
             ))}

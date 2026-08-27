@@ -1941,7 +1941,10 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     return { color: "#dc2626", weight: 5, opacity: faded ? 0.5 : 0.95 };
   }
   if (l.family === "context-rivers") {
-    return { color: l.color, weight: 2.5, dashArray: "6 4", opacity: faded ? 0.5 : 0.95 };
+    // Heavier than the in-basin course, not lighter: this is the reach a
+    // reader is being asked to notice, and a pale hairline read as a minor
+    // stream against the basemap.
+    return { color: l.color, weight: 3, dashArray: "7 4", opacity: faded ? 0.55 : 1 };
   }
   if (l.family === "rivers") {
     const rprops = feat?.properties as Record<string, unknown>;
@@ -2038,9 +2041,17 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gap
     return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
   }
   if (l.family === "context-boundary") {
-    // The wider basin behind the working boundary: dashed, unfilled, neutral,
-    // so it reads as "there is more river than this map covers" and never
-    // competes with the frame the data is actually clipped to.
+    // Two roles. "context" is the full outline: dashed, unfilled, neutral, so
+    // it reads as "there is more basin than this map covers" without competing
+    // with the frame the data is clipped to. "beyond" is the out-of-state
+    // catchment itself, and it gets a FILL - 2,196 sq km drawn as bare outline
+    // is 2,196 sq km nobody can see (review, 27 Aug).
+    if ((feat?.properties as Record<string, unknown> | undefined)?.role === "beyond") {
+      return {
+        color: l.color, weight: 1, dashArray: "3 4", opacity: faded ? 0.4 : 0.75,
+        fillColor: l.color, fillOpacity: faded ? 0.1 : 0.22,
+      };
+    }
     return { color: l.color, weight: 2, dashArray: "7 5", fill: false, opacity: faded ? 0.5 : 0.9 };
   }
   if (l.family === "boundary") {

@@ -338,10 +338,17 @@ def main() -> None:
     full = _read_vector(hyd, FULL_WATERSHED_LAYER, None)
     full_geom = unary_union([g for g in (_geom(f) for f in full) if g is not None])
     beyond = full_geom.difference(kab_geom)
+    # Two features, because an outline alone cannot show an area. The full
+    # extent is the frame; the Kerala share is the thing being pointed at, and
+    # it only reads if it can be filled (review, 27 Aug: "I don't see Kabini
+    # extended into Kerala" - it was drawn, as 2,196 sq km of empty outline).
     _write(out / "kabini-context-boundary.geojson",
            _fc([{"type": "Feature", "geometry": mapping(full_geom),
                  "properties": {"name": "Kabini basin, full extent (Karnataka and Kerala)",
-                                "role": "context"}}]),
+                                "role": "context"}},
+                {"type": "Feature", "geometry": mapping(beyond),
+                 "properties": {"name": "The Kerala (Wayanad) headwaters, outside this atlas's clip",
+                                "role": "beyond"}}]),
            "full watershed (with Kerala)")
     print(f"    {beyond.area / full_geom.area * 100:.0f}% of the watershed lies outside the C2 clip")
 
