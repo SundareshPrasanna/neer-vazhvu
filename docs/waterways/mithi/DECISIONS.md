@@ -98,6 +98,51 @@ curation layer, and it must not be given one by invention.
   on that way and is already OFFSET-flagged. Spot-QA against current
   sub-metre imagery stays a listed curation task.
 
+- **M11 The satellite seasons are Mumbai's, and Chennai's windows are
+  wrong here.** Measured 27 Aug 2026 over km 12 (Sentinel-2 scenes /
+  under 20% cloud / under 5% cloud): pre-monsoon Feb-May 2026 46/43/31;
+  MONSOON Jun-Aug 2026 **42/1/0**; post-monsoon Oct-Dec 2025 45/32/25.
+  Mumbai's southwest monsoon is effectively opaque to optical satellite -
+  one usable scene in three months, none clear. The first M2 run copied
+  the canal/Cooum Jun-Aug "recent" window and returned water fraction
+  ~0.00 across the entire river including km 13, where the dry window
+  reads 0.55. An estuary does not lose its water in flood; the composite
+  was cloud-masked emptiness resting on a single 5 Jun scene, which the
+  build log said out loud. Corrected pair for a west-coast monsoon river:
+  WET = post-monsoon (Oct-Dec 2025, maximum water), DRY = pre-monsoon
+  (Feb-May 2026, minimum). The config key is still named `recent` for
+  pipeline compatibility; it carries the post-monsoon window and curation
+  must label it by its dates. **There is no honest current-monsoon
+  reading of this river from orbit**, so nothing on the page may be
+  presented as a live August condition.
+
+- **M12 Sentinel-2 is blind to the upper Mithi, in both seasons.**
+  Effective NDWI width against OSM-measured width, by km:
+  km 0-7 ratio 0.00-0.02 in dry AND wet - the satellite detects
+  essentially no water where the channel is 19-33 m; km 8-9 goes 0.00
+  dry to 0.24-0.25 wet (the river appears only in flood); km 10-14 runs
+  0.27-0.70 dry to 0.57-0.87 wet; km 15-17.84 barely moves seasonally
+  (0.37-0.43 dry, 0.41-0.45 wet). Cause in the upper reach: 19-33 m is
+  two to four Sentinel-2 pixels inside the densest urban fabric in India,
+  and the corridor reads 57-99% vegetation - weed and waste mats, bank
+  growth and tree canopy over a narrow channel, plus building shadow.
+  Consequence, binding: **no satellite-derived width ships for km 0-9**,
+  and the methods panel states the blindness with these numbers, the way
+  the Cooum states its failed spectral gate. The satellite layer works
+  only where the Mithi is an estuary, which is the inverse of where the
+  widening and desilting programmes act.
+  Corollary: `veg_frac` in km 0-7 is NOT a usable floating-vegetation
+  proxy at this channel width - the corridor it averages over is mostly
+  not river. It is reported for the tidal reach only.
+
+- **M13 Two different boundaries, both real, and they are not the same
+  one.** The OSM width step is at km 10 (M4) and is a geometry fact. The
+  satellite's seasonal-amplitude step is lower, around km 15: km 10-14
+  swings strongly between seasons while km 15-17.84 hardly moves, which
+  is what tide-dominated rather than rain-dominated water looks like. So
+  km 10 marks where tidal influence BEGINS and km 15 where it dominates.
+  Curation states both and conflates neither.
+
 ## Open, before anything ships
 
 - M3 curation has no research base yet. Claims must come from a sourced

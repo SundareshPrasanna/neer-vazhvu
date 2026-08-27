@@ -88,5 +88,61 @@
       72.8369,
       19.0487
     ]
+  },
+  "satellite": {
+    "_doc": "Windows are MUMBAI seasons and they are NOT Chennai's. Measured 27 Aug 2026 over km 12 (Sentinel-2 scene counts / under 20% cloud / under 5% cloud): pre-monsoon Feb-May 2026 46/43/31; MONSOON Jun-Aug 2026 42/1/0; post-monsoon Oct-Dec 2025 45/32/25. Mumbai's southwest monsoon is effectively opaque to optical satellite - exactly ONE usable scene in three months and none clear - so a Jun-Aug window is not a composite, it is a single 5 Jun scene, and the first run with that window returned water_frac ~0 even across the tidal reach, which cannot be real for an estuary in flood. The seasonal contrast for a west-coast monsoon river is therefore post-monsoon (WET, maximum water) against pre-monsoon (DRY, minimum). The 'recent' key keeps its name for pipeline compatibility but carries the post-monsoon 2025 window; it is a WET reading, not a current one, and curation must label it by its dates. There is no honest current-monsoon reading of this river from orbit. Anchors are chainage points on the built centerline; place names belong to curation.",
+    "windows": {
+      "dry": [
+        "2026-02-01",
+        "2026-05-15"
+      ],
+      "recent": [
+        "2025-10-01",
+        "2025-12-31"
+      ]
+    },
+    "ndvi_veg": 0.35,
+    "default_half_w": 25,
+    "margin": 8,
+    "chip_every_km": 1,
+    "chip_buffer_m": 300,
+    "min_water_ha_for_ndti": 1.0,
+    "sites": {
+      "vihar-outlet": {
+        "lon": 72.8998,
+        "lat": 19.144,
+        "half_m": 500
+      },
+      "upper-channel-km04": {
+        "lon": 72.8849,
+        "lat": 19.1298,
+        "half_m": 500
+      },
+      "kurla-approach-km08": {
+        "lon": 72.8802,
+        "lat": 19.1023,
+        "half_m": 500
+      },
+      "tidal-limit-km10": {
+        "lon": 72.8787,
+        "lat": 19.0866,
+        "half_m": 700
+      },
+      "widest-reach-km14": {
+        "lon": 72.8667,
+        "lat": 19.0558,
+        "half_m": 900
+      },
+      "mahim-mouth": {
+        "lon": 72.8373,
+        "lat": 19.0486,
+        "half_m": 900
+      }
+    }
+  },
+  "veg_calendar": {
+    "start_year": 2019,
+    "end_year": 2026,
+    "end_month": 8
   }
 }
