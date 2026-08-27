@@ -87,6 +87,11 @@ ARTIFACTS: dict[str, tuple[str, str, list[dict], str, str]] = {
         "cauvery-ka", "basins/context-boundary",
         [paani("Full Cauvery basin boundary across Karnataka, Kerala, Tamil Nadu and Puducherry (Hydrology_Layers.gpkg)")],
         "derived", GPKG_PIPELINE),
+    "cauvery-ka/context-rivers.geojson": (
+        "cauvery-ka", "basins/context-rivers",
+        [paani("Named river centrelines above the Karnataka basin share (Hydrology_Layers.gpkg), "
+               "clipped to the out-of-state upstream catchment")],
+        "derived", GPKG_PIPELINE),
     "cauvery-ka/state-boundary.geojson": (
         "cauvery-ka", "basins/state-boundary",
         [snapshot("Karnataka state boundary (Cauvery_Snapshot_view_layers.gpkg), KGIS state layer")],

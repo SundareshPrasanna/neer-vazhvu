@@ -34,6 +34,7 @@ export const CAUVERY_KA: BasinManifest = {
   layers: [
     // Overview mode renders its own surface (M2); these declarations drive
     // data fetching + the DataOnThisMap inventory with the existing plumbing.
+    { family: "context-rivers", label: "The Kabini above the basin, in Kerala", floor: "hydrology", geom: "line", color: "#0ea5e9", defaultOn: true, context: true },
     { family: "state-boundary", label: "Karnataka state boundary", floor: "hydrology", geom: "line", color: "#64748b", defaultOn: true, context: true },
     { family: "boundary", label: "Basin boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
     { family: "sub-basins", label: "Sub-basins", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },

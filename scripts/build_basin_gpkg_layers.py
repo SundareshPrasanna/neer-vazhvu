@@ -310,6 +310,17 @@ def main(cfg_path: str) -> None:
     mask = unary_union(mask_parts).buffer(clip_cfg.get("bufferDeg", 0.005))
     print(f"clip mask: {clip_cfg['layer']!r}, area {mask.area:.2f} sq deg")
 
+    # 1b. The upstream catchment out of state, if the config names one. Both
+    #     the context outline and the context rivers are cut against it: a
+    #     reach only counts as context when it drains INTO this basin, which
+    #     is what keeps the downstream Tamil Nadu course off this map.
+    beyond_cfg = (cfg.get("contextBoundary") or {}).get("beyond")
+    upstream = None
+    if beyond_cfg:
+        upstream = make_valid(make_valid(unary_union(
+            polygons_of(gpkg_of(beyond_cfg), beyond_cfg["layer"]))).difference(mask))
+        print(f"  upstream catchment out of state: {poly_km2(upstream):,.0f} sq km")
+
     # 2. PRS stretch lines from the canonical layer, attributes from the config
     #    (which cites the CPCB report per entry).
     prs_cfg = cfg["prs"]
@@ -391,6 +402,38 @@ def main(cfg_path: str) -> None:
         print(f"  rivers: {entry['name']} {km:.0f} km in-basin")
     emit("rivers", feats, riv_cfg["provenance"])
 
+    # 3b. The same rivers ABOVE the basin, inside the upstream catchment only.
+    #     Without this the shaded headwaters have no river in them and the
+    #     course still appears to start at the state line - the catchment was
+    #     drawn and the river was not (review, 27 Aug).
+    if upstream is not None and not upstream.is_empty:
+        ctx_feats = []
+        for entry in riv_cfg["layers"]:
+            parts = []
+            for _, kind, pp in read_layer(src_dir / riv_cfg["gpkg"], entry["layer"]):
+                if kind == "line":
+                    parts.extend(pp)
+            if not parts:
+                continue
+            above = MultiLineString([q for q in parts if len(q) >= 2]).difference(mask).intersection(upstream)
+            if above.is_empty:
+                continue
+            lines = ([list(above.coords)] if above.geom_type == "LineString"
+                     else [list(g.coords) for g in getattr(above, "geoms", []) if g.geom_type == "LineString"])
+            lines = [[(x, y) for x, y, *_ in l] for l in lines if len(l) >= 2]
+            if not lines:
+                continue
+            geom = line_geometry(merged_lines(lines), riv_cfg.get("simplifyEps", 0.0005))
+            km = sum(hav_km(l) for l in (geom["coordinates"] if geom["type"] == "MultiLineString" else [geom["coordinates"]]))
+            ctx_feats.append({"type": "Feature", "geometry": geom, "properties": {
+                "riverId": entry["name"].lower().replace(" ", "-"),
+                "name": entry["name"], "role": "context", "lengthKm": round(km, 1),
+            }})
+            print(f"  context-rivers: {entry['name']} {km:.0f} km above the basin")
+        if ctx_feats:
+            emit("context-rivers", ctx_feats, riv_cfg["provenance"] +
+                 " Reaches shown above the basin are clipped to the upstream out-of-state catchment.")
+
     # 4. Full-basin context outline.
     ctx_cfg = cfg["contextBoundary"]
     polys = []
@@ -410,10 +453,8 @@ def main(cfg_path: str) -> None:
     # own atlas, and tinting it here buries the subject instead of framing it.
     beyond = None
     b_cfg = ctx_cfg.get("beyond")
-    if b_cfg:
-        upstream = make_valid(unary_union(polygons_of(gpkg_of(b_cfg), b_cfg["layer"])))
-        beyond = make_valid(upstream.difference(mask)).simplify(
-            ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
+    if b_cfg and upstream is not None:
+        beyond = upstream.simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
     feats = [{
         "type": "Feature", "geometry": rounded(mapping(geom)),
         "properties": {"name": ctx_cfg["name"], "role": "context"},

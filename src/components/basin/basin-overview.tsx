@@ -177,6 +177,7 @@ export function BasinOverview({
   const [stateBoundary, setStateBoundary] = useState<FeatureCollection | null>(null);
   const [waterbodies, setWaterbodies] = useState<FeatureCollection | null>(null);
   const [cityFootprint, setCityFootprint] = useState<FeatureCollection | null>(null);
+  const [contextRivers, setContextRivers] = useState<FeatureCollection | null>(null);
   const [subBasins, setSubBasins] = useState<FeatureCollection | null>(null);
   const [streams, setStreams] = useState<FeatureCollection | null>(null);
   const [rivers, setRivers] = useState<FeatureCollection | null>(null);
@@ -198,6 +199,7 @@ export function BasinOverview({
     fetchJson(`${base}/state-boundary.geojson`).then((d) => setStateBoundary(d as FeatureCollection | null));
     fetchJson(`${base}/waterbodies.geojson`).then((d) => setWaterbodies(d as FeatureCollection | null));
     fetchJson(`${base}/city-footprint.geojson`).then((d) => setCityFootprint(d as FeatureCollection | null));
+    fetchJson(`${base}/context-rivers.geojson`).then((d) => setContextRivers(d as FeatureCollection | null));
     fetchJson(`${base}/sub-basins.geojson`).then((d) => setSubBasins(d as FeatureCollection | null));
     fetchJson(`${base}/streams.geojson`).then((d) => setStreams(d as FeatureCollection | null));
     fetchJson(`${base}/rivers.geojson`).then((d) => setRivers(d as FeatureCollection | null));
@@ -604,7 +606,7 @@ export function BasinOverview({
           )}
           {subBasins && (
             <GeoJSON
-              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}`}
+              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}-${contextRivers ? 1 : 0}`}
               data={subBasins}
               style={subBasinStyle}
               onEachFeature={(feat, layer) => {
@@ -629,7 +631,7 @@ export function BasinOverview({
               put the dots on top, but its canvas then swallowed clicks over
               the WHOLE map, so polygons under it could never be selected or
               deselected - both interception bugs found by Sundaresh.) */}
-          <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}`}>
+          <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}-${contextRivers ? 1 : 0}`}>
           {/* Major waterbody surfaces, above the choropleth but under the
               river network. They stay clickable and pass the click through to
               the sub-basin they sit in (assigned at build time), so putting a
@@ -686,6 +688,20 @@ export function BasinOverview({
               onEachFeature={(feat, layer) => {
                 const p = feat.properties as Record<string, unknown>;
                 layer.bindTooltip(`${String(p.name)}${p.kind === "mainstem" ? " (mainstem)" : " River"}`, { sticky: true });
+              }}
+            />
+          )}
+          {contextRivers && (
+            <GeoJSON
+              data={contextRivers}
+              style={{ color: "#0ea5e9", weight: 2.25, dashArray: "7 4", opacity: 0.95 }}
+              onEachFeature={(feat, layer) => {
+                const p = feat.properties as Record<string, unknown>;
+                layer.bindTooltip(
+                  `${String(p.name)} above the basin${p.lengthKm ? ` - ${String(p.lengthKm)} km` : ""}` +
+                    `<br/><span style="font-size:11px">Upstream of this atlas; nothing else here is mapped that far</span>`,
+                  { sticky: true },
+                );
               }}
             />
           )}
@@ -863,6 +879,16 @@ export function BasinOverview({
               <div className="flex items-center gap-1.5">
                 <span className="inline-block w-3 h-[2px] rounded" style={{ backgroundColor: "#0ea5e9" }} />
                 named rivers
+              </div>
+            )}
+            {contextRivers && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block w-3 border-t-2 border-dashed" style={{ borderColor: "#0ea5e9" }} />
+                {(() => {
+                  const km = contextRivers.features.reduce(
+                    (a, f) => a + Number((f.properties as Record<string, unknown>)?.lengthKm ?? 0), 0);
+                  return km ? `river above the basin (${Math.round(km)} km)` : "river above the basin";
+                })()}
               </div>
             )}
             {waterbodies && (

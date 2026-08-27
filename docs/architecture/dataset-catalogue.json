@@ -2710,11 +2710,42 @@
    "flags": []
   },
   {
+   "path": "public/data/basins/cauvery-ka/context-rivers.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "context-rivers",
+   "bytes": 5349,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "lengthKm",
+     "name",
+     "riverId",
+     "role"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026): the Kabini centreline above the Karnataka basin share, clipped to the Kerala catchment that drains into it",
+   "flags": []
+  },
+  {
    "path": "public/data/basins/cauvery-ka/inventory.json",
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "inventory",
-   "bytes": 4321,
+   "bytes": 4889,
    "schema": {
     "kind": "object",
     "keys": [
@@ -34643,6 +34674,18 @@
   },
   {
    "family": "basins",
+   "dataset": "context-rivers",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 5349,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "drainage",
    "files": 24,
    "scopes": [
@@ -34779,7 +34822,7 @@
     "cauvery-tn",
     "kabini"
    ],
-   "bytes": 33108,
+   "bytes": 33676,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
