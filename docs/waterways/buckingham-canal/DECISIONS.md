@@ -90,6 +90,19 @@ docs/specs/buckingham-canal-story-build.md.
   C = not channel-measurable (creek complexes, junctions, open water).
   Jitter, not IQR, is the noise proxy: large IQR on reaches that open
   into backwaters is real physical variation.
+  Tracing median-year is read from the geometry the transects cross,
+  which for a multipolygon means its OUTER rings, not the relation
+  itself: a relation's timestamp moves when someone retags it or swaps a
+  member, and says nothing about when the bank line was drawn. Inner
+  rings are islands and are excluded. Each polygon contributes one
+  representative year to the >=2021 test so a many-ringed relation
+  cannot outvote the ways beside it, while the displayed span still
+  covers every ring touched. Meta snapshots taken before the fetch
+  carried member ways fall back to the relation's own year, which is
+  what the canal and Cooum builds used; both reproduce byte-for-byte.
+  This remains a last-edit bound, not an imagery date: a way can read
+  2026 on a v10 tag edit while its geometry still traces old aerials
+  (the Mithi's km 10-11 way carries source=Yahoo, retired ~2011).
 - **W10 Watch items that must update the page before public cutover:**
   TNPCB fish-kill lab results (pending 18 Aug 2026); CMRL Water Metro RFP
   content (live 19 Aug 2026); Ashok Leyland consent status.

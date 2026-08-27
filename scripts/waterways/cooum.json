@@ -36,7 +36,7 @@
     "queries": {
       "osm-cooum-centerline.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"];out geom;",
       "osm-water-polygons.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out geom;",
-      "osm-water-meta.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out meta;"
+      "osm-water-meta.json": "[out:json][timeout:240];relation(11901885);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out meta;way(r);out meta;"
     }
   },
   "satellite": {
