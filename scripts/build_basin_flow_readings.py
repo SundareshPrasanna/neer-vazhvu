@@ -31,7 +31,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
-from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-runs)
+from nvdm_write import merge_envelope, write_artifact  # noqa: E402  (envelopes survive re-runs)
 from registry_license import registry_license  # noqa: E402
 
 API = "https://indiawris.gov.in/Dataset/"
@@ -357,6 +357,29 @@ def main() -> None:
                   f"Re-run when the source answers.")
 
     stations_fp.write_text(json.dumps(merge_envelope(stations_fp, fc), separators=(",", ":")))
+    # This script owns flow-stations.geojson, so it owns that family's
+    # inventory row too. It did not, and the row still carried the ingest's
+    # count: the map showed 3 stations under a label saying 2, because the
+    # reservoir gauge this script appends was never counted (review, 27 Aug).
+    inv_fp = basin_dir / "inventory.json"
+    if inv_fp.exists():
+        inv = json.loads(inv_fp.read_text())
+        fam = inv.get("families", {}).get("flow-stations")
+        if fam is not None:
+            fam["featureCount"] = len(fc["features"])
+            fam["bytes"] = stations_fp.stat().st_size
+            held = f" {len(pending)} configured station(s) are held back pending readings." if pending else ""
+            for s in fam.get("sources", []):
+                s["count"] = len(fc["features"])
+                s["provenance"] = (
+                    "CWC hydrological observation sites, locations and site types validated by "
+                    "Paani Earth against the CWC water year books, plus any gauge added from "
+                    "scripts/basin-sources/*-flow.json. hasReadings and the packs are attached by "
+                    "scripts/build_basin_flow_readings.py from India-WRIS pulls; a station only "
+                    "ships once it has a series to show." + held)
+            write_artifact(inv_fp, inv, indent=1)
+            print(f"  inventory: flow-stations featureCount -> {len(fc['features'])}")
+
     n_ready = sum(1 for f in fc["features"] if f["properties"].get("hasReadings"))
     print(f"\n{n_ready}/{len(fc['features'])} stations have readings -> {stations_fp.relative_to(REPO)}")
     if _source_down:
