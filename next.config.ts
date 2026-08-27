@@ -45,6 +45,9 @@ const EMBED_FRAME_ANCESTORS = [
   "https://forrivers.life",
   "https://www.forrivers.life",
   "https://orchid-wildcat-815854.hostingersite.com",
+  "https://waterparliament.net",
+  "https://www.waterparliament.net",
+  "https://water-parliament.vercel.app",
   ...(process.env.NODE_ENV === "development" ? ["http://localhost:*"] : []),
 ].join(" ");
 const embedHeaders = securityHeaders.map((h) => {
