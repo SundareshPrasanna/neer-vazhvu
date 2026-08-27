@@ -1,0 +1,92 @@
+{
+  "_doc": "Mithi river (waterway 3, Mumbai) pipeline config. Extent decision 27 Aug 2026: the FULL river as OSM maps it - relation 6245575, one unbroken chain of 10 ways (exactly 2 free endpoints, no gap to bridge), 17.84 km from the Vihar Lake outlet (19.1440, 72.8998) to the Mahim Causeway mouth (19.0487, 72.8369). That chained length matches MCGM's published 17.84 km exactly. Do NOT take the length from summing raw way lengths or from public/geojson/mumbai-rivers.geojson: both give 18.20 km by double-counting shared endpoints. Chainage 0 at the Vihar outlet, increasing to the mouth. Chain on LON, not lat: the final 300 m below Mahim Causeway runs west and slightly NORTH, so the mouth endpoint (19.048725) sits at a higher latitude than the junction just upstream of it (19.048071) and a lat-axis chain picks that junction as its extreme, walks straight out to the mouth and terminates after 5 points. Longitude is monotonic end to end (72.8998 at Vihar down to 72.8369 at the mouth). TIDAL: below ~km 10 (Kurla/CST Road) the river is tidal and becomes Mahim Creek; OSM tags the whole course water=river with no distinction, so the tidal limit is declared here and in curation, never inferred from tags.",
+  "id": "mithi",
+  "research_dir": "docs/research/mithi",
+  "curation": "docs/waterways/mithi/waterway-curation.json",
+  "geometry": {
+    "inputs": [
+      {
+        "file": "osm-mithi-centerline.json",
+        "keep_tags": null
+      }
+    ],
+    "clip": {
+      "axis": "lon",
+      "min": 72.83,
+      "max": 72.91
+    },
+    "chain": {
+      "axis": "lon",
+      "chainage_zero_at": "max",
+      "gap_m": 300.0,
+      "progress_tol_deg": 0.002
+    },
+    "sample_m": 50.0,
+    "transect_every_m": 50.0,
+    "half_transect_m": 300.0,
+    "open_water_m": 400.0,
+    "feature": {
+      "name": "Mithi River (Vihar outlet - Mahim Causeway mouth)",
+      "source": "OpenStreetMap via Overpass, ODbL, snapshot 2026-08",
+      "chainage_zero": "Vihar Lake outlet (19.1440, 72.8998), the upstream end of OSM relation 6245575"
+    }
+  },
+  "fetch": {
+    "mirror": "https://overpass.kumi.systems/api/interpreter",
+    "queries": {
+      "osm-mithi-centerline.json": "[out:json][timeout:240];relation(6245575);way(r)[\"waterway\"];out geom;",
+      "osm-water-polygons.json": "[out:json][timeout:240];relation(6245575);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out geom;",
+      "osm-water-meta.json": "[out:json][timeout:240];relation(6245575);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out meta;way(r);out meta;"
+    }
+  },
+  "tidal_limit_km": 10.0,
+  "_tidal_note": "Declared, not inferred. OSM tags the whole course water=river; below km 10 (19.0855, 72.8787, the Kurla/CST Road area) the Mithi is tidal and becomes Mahim Creek, and the mapped water surface there encloses intertidal flats - one inner ring of relation/2310505 is wetland=tidalflat. Widths below this chainage are an INTERTIDAL ENVELOPE, not a channel width, and must never be compared against the widening programme's design widths. open_water_m is deliberately NOT used to flag this: the measured widths run continuously from 56 m to 242 m through the tidal reach with no natural break, so any threshold would slice the distribution arbitrarily and throw away a real measurement. The reach table makes km 10 a hard boundary and the curation states the quantity change per reach.",
+  "reaches_km": [
+    [
+      1,
+      0,
+      2.5
+    ],
+    [
+      2,
+      2.5,
+      5.0
+    ],
+    [
+      3,
+      5.0,
+      8.0
+    ],
+    [
+      4,
+      8.0,
+      10.0
+    ],
+    [
+      5,
+      10.0,
+      12.0
+    ],
+    [
+      6,
+      12.0,
+      14.5
+    ],
+    [
+      7,
+      14.5,
+      16.5
+    ],
+    [
+      8,
+      16.5,
+      17.84
+    ]
+  ],
+  "mouths": {
+    "mithi": [
+      72.8369,
+      19.0487
+    ]
+  }
+}
