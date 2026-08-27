@@ -222,11 +222,20 @@ def main() -> None:
     existing = {f["properties"]["stationKey"] for f in fc["features"]}
     for extra in cfg.get("extraStations", []):
         if extra["stationKey"] not in existing:
+            # Config coordinates are used AT INSERTION, not just as an API
+            # fallback: a station added during a source outage would otherwise
+            # ship with null geometry and never reach the map at all.
+            coords = extra.get("coordinates")
+            props = {"stationKey": extra["stationKey"], "name": extra["name"],
+                     "agency": "CWC", "siteType": extra.get("siteType", ""),
+                     "river": extra.get("river", ""), "hasReadings": False}
+            for k in ("state", "note"):
+                if extra.get(k):
+                    props[k] = extra[k]
             fc["features"].append({
-                "type": "Feature", "geometry": None,  # filled from the first API row
-                "properties": {"stationKey": extra["stationKey"], "name": extra["name"],
-                               "agency": "CWC", "siteType": extra.get("siteType", ""),
-                               "river": extra.get("river", ""), "hasReadings": False},
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": coords} if coords else None,
+                "properties": props,
             })
             name_of[extra["stationKey"]] = extra["wrisName"]
 
@@ -238,11 +247,15 @@ def main() -> None:
     wanted = {v.upper() for v in name_of.values()}
     basin_name = cfg.get("majorBasin", "Cauvery")
 
-    for district in cfg["districts"]:
+    # A basin can cross a state line, so the query loops states as well as
+    # districts. cfg["state"]/["districts"] stay the single-state shorthand.
+    state_districts = cfg.get("stateDistricts") or {cfg["state"]: cfg["districts"]}
+    for _state, _districts in state_districts.items():
+     for district in _districts:
         for dataset, start, sink in (("River Water Discharge", start_q, q_rows),
                                      ("River Water Level", start_l, l_rows)):
             for year in range(start, today.year + 1):
-                rows = fetch_year(cache_dir, dataset, cfg["state"], district, year)
+                rows = fetch_year(cache_dir, dataset, _state, district, year)
                 n = 0
                 for row in rows:
                     if row.get("majorBasin") != basin_name:

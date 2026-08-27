@@ -154,6 +154,41 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
     return tracks;
   };
 
+  // Series the compared stations carry that this one does not. Without these,
+  // opening a single-series station (the reservoir's gauge level) and comparing
+  // it with a river station showed that one chart and silently hid everything
+  // the peer actually measures (review, 27 Aug).
+  const peerOnly = useMemo<ReadingsSeries[]>(() => {
+    if (!compareKeys.length) return [];
+    const mine = new Set(shown.filter((s) => COMPARABLE.has(String(s.kind))).map(seriesId));
+    const out: ReadingsSeries[] = [];
+    const seen = new Set<string>();
+    for (const k of compareKeys) {
+      for (const o of peerPacks[k]?.series ?? []) {
+        if (!o.verified || !COMPARABLE.has(String(o.kind))) continue;
+        const id = seriesId(o);
+        if (mine.has(id) || seen.has(id)) continue;
+        seen.add(id);
+        out.push(o);
+      }
+    }
+    return out;
+  }, [compareKeys, peerPacks, shown]);
+
+  /** Tracks for a peer-only series: no primary line, because the open station
+   *  does not measure it. That absence IS the reading. */
+  const peerTracksFor = (s: ReadingsSeries): Track[] => {
+    const tracks: Track[] = [];
+    for (const k of compareKeys) {
+      const match = peerPacks[k]?.series.find((o) => o.verified && seriesId(o) === seriesId(s));
+      if (match) {
+        tracks.push({ key: `p_${k}`, label: peerPacks[k]?.station.name ?? k,
+                      color: colorOf[k] ?? PEER_COLORS[0], series: match });
+      }
+    }
+    return tracks;
+  };
+
   // A station can be selected and still add nothing - the reservoir gauge has
   // no discharge to put beside a river station's. Say so rather than leaving
   // the reader wondering why the chart did not change.
@@ -164,6 +199,11 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
       const p = peerPacks[k];
       if (p?.series.some((o) => o.verified && o.kind === s.kind
         && (s.kind !== "wq-param-series" || o.param === s.param))) contributing.add(k);
+    }
+  }
+  for (const s of peerOnly) {
+    for (const k of compareKeys) {
+      if (peerPacks[k]?.series.some((o) => o.verified && seriesId(o) === seriesId(s))) contributing.add(k);
     }
   }
   const idle = compareKeys.filter((k) => peerPacks[k] !== undefined && !contributing.has(k));
@@ -278,6 +318,18 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
         />
       ))}
 
+      {peerOnly.length > 0 && (
+        <div className="space-y-3 pt-1 border-t border-dashed border-slate-200 dark:border-slate-700">
+          <p className="text-[10px] text-slate-400 leading-snug pt-1">
+            Not measured at {pack?.station.name ?? stationKey}, and measured at the station
+            {compareKeys.length > 1 ? "s" : ""} you added:
+          </p>
+          {peerOnly.map((s, i) => (
+            <SeriesBlock key={`peer-${s.kind}-${i}`} s={s} tracks={peerTracksFor(s)} comparing isDark={isDark} />
+          ))}
+        </div>
+      )}
+
       {pack && (
         <div className="pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
           Source: {pack.source.url ? (
@@ -299,6 +351,10 @@ function groupByAgency(peers: ReadingsPeer[]): [string, ReadingsPeer[]][] {
   }
   return [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 }
+
+/** Identity of a series for comparison: kind, and parameter where kind alone
+ *  is not enough to tell two series apart. */
+const seriesId = (s: ReadingsSeries) => `${s.kind}|${s.kind === "wq-param-series" ? s.param ?? "" : ""}`;
 
 /** The viewed station's colour once a comparison is on - matching the legend,
  *  which cannot show three different hues for one station. */

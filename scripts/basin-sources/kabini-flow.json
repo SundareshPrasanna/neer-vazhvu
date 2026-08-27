@@ -32,6 +32,31 @@
         11.9734
       ],
       "coordinatesNote": "As returned by the WRIS Dataset API on the first build; used only when the API is unreachable."
+    },
+    {
+      "stationKey": "CCP00T8",
+      "name": "Kabini at Muthankera",
+      "wrisName": "Kabini at Muthankera",
+      "siteType": "GDSQ & RF",
+      "river": "Kabini",
+      "state": "Kerala",
+      "coordinates": [
+        76.08581,
+        11.80797
+      ],
+      "coordinatesNote": "From Paani Earth's validated CWC location set (Kabini_CWC_Locations.gpkg), reprojected to WGS84. The same file's other two stations reproject to the coordinates already shipped, which is what makes this one trustworthy.",
+      "note": "The upstream-most CWC gauge on the Kabini, in Wayanad. It sits outside the Karnataka share this atlas clips to, and inside the basin the atlas now draws."
     }
-  ]
+  ],
+  "_statesNote": "Kerala/Wayanad is queried for the Kabini's own headwaters: the basin this atlas draws now extends across the border, and CCP00T8 is the upstream-most CWC gauge on the river. state/districts stay as the single-state shorthand the other basins use.",
+  "stateDistricts": {
+    "Karnataka": [
+      "Mysore",
+      "Chamarajanagar",
+      "Kodagu"
+    ],
+    "Kerala": [
+      "Wayanad"
+    ]
+  }
 }
