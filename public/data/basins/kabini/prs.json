@@ -42,6 +42,15 @@
         "license": "government plan document, cited with attribution"
       },
       {
+        "title": "KSPCB F-Register 2020-21, Regional Office Mysore-2, as on 31 March 2021 (consented industries by taluk, category and working status)",
+        "publisher": "Karnataka State Pollution Control Board",
+        "url": "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Mysore-2_1.pdf",
+        "closed": true,
+        "as_of": "2021-03-31",
+        "role": "input",
+        "license": "government register, cited with attribution"
+      },
+      {
         "id": "wris-live-services",
         "title": "India-WRIS Dataset API - CWC hydrological observations (River Water Level / River Water Discharge)",
         "publisher": "CWC / NWIC, India-WRIS",
@@ -51,8 +60,8 @@
       }
     ],
     "method": "manual",
-    "produced_at": "2026-08-23",
-    "produced_by": "Authored from the documents' own tables, page-cited; the 2018 stretch length is KSPCB's own figure because the delivered geometry maps only part of it."
+    "produced_at": "2026-08-27",
+    "produced_by": "Authored from the documents' own tables, page-cited; the 2018 stretch length is KSPCB's own figure because the delivered geometry maps only part of it. Nanjangud industrial-register counts come from scripts/build_kabini_fregister.py."
   },
   "river": "Kabini",
   "stretchName": "Saragur - T. Narasipura",
@@ -221,8 +230,9 @@
       "key": "industrial",
       "label": "Industrial effluent",
       "status": "built",
+      "scope": "stretch",
       "subtabKind": "categories",
-      "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 2.5; NMCG Monthly Progress Report, August 2025",
+      "source": "KSPCB Action Plan for Rejuvenation of River Kabini, section 2.5; NMCG Monthly Progress Report, August 2025; KSPCB Mysore-2 F-Register 2020-21 (as on 31 March 2021)",
       "intro": "The Nanjangud industrial belt sits at the head of the original polluted reach. Both the action plan and the progress reports report it as discharging nothing to the river.",
       "summaryBadge": "unverified",
       "summaryLine": "Zero-discharge asserted for 140 units; no public effluent data exists to check it against",
@@ -240,6 +250,21 @@
             "The August 2025 MPR reports 38 water-polluting industries, 9.03 MLD of effluent and 38 ETPs of 9.43 MLD capacity, all recorded as complying; CETP nil at every status.",
             "The KIADB Thandya and Adakanahalli estates are not named in the August 2025 stretch section at all."
           ]
+        },
+        {
+          "key": "register",
+          "label": "The same taluk, on the board's own register",
+          "level": "taluk",
+          "layerRef": "pressures-industrial",
+          "body": "The plan's table of 140 units can be read against KSPCB's own F-register for Regional Office Mysore-2, the 2020-21 edition as on 31 March 2021. That register carries 345 consented units in Nanjangud taluk, 217 of them recorded as operating. The two records agree on the categories that matter most for a polluted stretch, and part company lower down the scale.",
+          "points": [
+            "Red category: 71 consented on the register, 30 of them operating, against 29 in the plan's table. Green: 135 consented, 87 operating, against 84. On operating units the two records line up.",
+            "Orange: 64 consented, 32 operating, against 17 in the plan. White: 75 consented, 68 operating, against 10. These two categories are where the plan's table and the register diverge.",
+            "Nanjangud carries the largest Red-category list of the seven taluks in this register (71 of 197), which is consistent with the belt sitting at the head of the stretch.",
+            "The register is a 31 March 2021 snapshot and the plan is earlier still, so neither speaks to units consented since. A current count needs the 2025-26 edition.",
+            "The register carries no 17-category flag, so the count of 17-category units on this stretch is not available from it."
+          ],
+          "sourceTier": "other"
         },
         {
           "key": "check",
@@ -636,7 +661,8 @@
     "Towns on the stretch: computed from the KGIS urban local body boundaries in Paani Earth's Admin GeoPackage against the mapped 2025 stretch.",
     "Independent evidence: Taghinia Hejabi, Basavarajappa, Karbassi and Monavari, 'Heavy metal pollution in water and sediments in the Kabini River, Karnataka, India', Environmental Monitoring and Assessment 182 (2011); IIT-Madras Cauvery emerging-contaminants study as reported by The New Indian Express; The Hindu, 'Nanjangud turns Kapila toxic' (2014). Compiled by Paani Earth Foundation.",
     "Water-quality classification: KSPCB, Classification of Water Quality under the National Water Quality Monitoring Programme, April 2022 to March 2023.",
-    "Hazardous waste: KSPCB authorisation 318149 under the Hazardous and Other Wastes (Management and Transboundary Movement) Rules 2016."
+    "Hazardous waste: KSPCB authorisation 318149 under the Hazardous and Other Wastes (Management and Transboundary Movement) Rules 2016.",
+    "Industrial register counts for Nanjangud taluk: KSPCB Regional Office Mysore-2 F-Register 2020-21, as on 31 March 2021 (kspcb.karnataka.gov.in). Extracted by scripts/build_kabini_fregister.py, which reads all 1,158 industrial rows of the register and excludes the bio-medical-waste register bound into the same PDF."
   ],
   "evidence": {
     "headline": "The worst reading on the stretch sits at the point a town draws its drinking water - and the pollutants most likely to matter here are the ones no official monitoring measures.",
