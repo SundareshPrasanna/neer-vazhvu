@@ -23,7 +23,7 @@ export const KABINI: BasinManifest = {
   mapZoom: 10,
   areaKm2: 4883,
   areaNote:
-    "Karnataka portion of the Kabini sub-basin (C2), per Karnataka WRD's basin decomposition (KWRIS). The headwaters rise in Wayanad, Kerala - that reach is not yet mapped here, though the partner package's own Kabini watershed (1.45x this polygon) covers it.",
+    "Karnataka portion of the Kabini sub-basin (C2), per Karnataka WRD's basin decomposition (KWRIS). The full watershed is 7,067 sq km: 2,199 of them, 31%, lie in Wayanad, Kerala, where the river rises and runs 84.5 km before it reaches the state line. That catchment and that reach are drawn as context, shaded, so the Kabini does not appear to begin at the border. Everything else on this map stops at the Karnataka boundary.",
   // Open the DEP view on Mysuru by default (54.6% of the district is in-basin
   // and it carries the Kabini-side ULB cards).
   defaultGapUnit: "mysuru",
@@ -76,7 +76,12 @@ export const KABINI: BasinManifest = {
   // thematic layers a distinct bright hue.
   layers: [
     // ── Floor 1: Hydrology ──
-    { family: "boundary", label: "Basin boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
+    // The full watershed, Karnataka and Kerala together, drawn muted behind
+    // the bold C2 frame. 31% of this basin is in Kerala; clipping it away made
+    // the river look as though it began at the state line.
+    { family: "context-boundary", label: "Full basin, including the Kerala headwaters", floor: "hydrology", geom: "fill", color: "#64748b", defaultOn: true, context: true },
+    { family: "context-rivers", label: "The Kabini in Kerala, above the state line", floor: "hydrology", geom: "line", color: "#0284c7", defaultOn: true, context: true },
+    { family: "boundary", label: "Basin boundary (Karnataka)", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
     { family: "sub-hydrosheds", label: "Sub-catchments (WRIS watersheds)", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
     // FABDEM 30 m hypsometric bands - the Nagarahole/Bandipur ghat edge at
     // 1,486 m down to the Cauvery confluence at 634 m. Default OFF: a reading

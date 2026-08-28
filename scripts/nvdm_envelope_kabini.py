@@ -153,6 +153,8 @@ ARTIFACTS: dict[str, tuple[str, list[dict], str, str, bool]] = {
     "boundary.geojson": ("basins/boundary", [KWRIS], "derived", PIPELINE, True),
     "sub-hydrosheds.geojson": ("basins/sub-hydrosheds", [paani("India-WRIS watershed polygons (Watersheds_in_CauveryBasin)"), KWRIS], "derived", PIPELINE, True),
     "rivers.geojson": ("basins/rivers", [paani("India-WRIS named river centrelines (Kabini, Gundal)"), KWRIS], "derived", PIPELINE, True),
+    "context-boundary.geojson": ("basins/context-boundary", [paani("India-WRIS Kabini tributary watershed, full extent across Karnataka and Kerala"), KWRIS], "derived", PIPELINE, True),
+    "context-rivers.geojson": ("basins/context-rivers", [paani("India-WRIS named river centrelines, the reach above the Karnataka boundary"), KWRIS], "derived", PIPELINE, True),
     "drainage.geojson": ("basins/drainage", [paani("India-WRIS stream network for the Kabini (Kabini_Drainage)"), KWRIS], "derived", PIPELINE, True),
     "waterbodies-major.geojson": ("basins/waterbodies-major", [paani("India-WRIS major waterbodies"), KWRIS], "derived", PIPELINE, True),
     "waterbodies-minor.geojson": ("basins/waterbodies-minor", [paani("KGIS minor-irrigation tank inventory (KGIS TIS)"), KWRIS], "derived", PIPELINE, True),

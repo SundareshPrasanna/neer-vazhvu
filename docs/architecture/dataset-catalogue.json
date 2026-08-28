@@ -1739,6 +1739,7 @@
    ],
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_basin_flow_readings.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
@@ -2702,7 +2703,9 @@
    ],
    "producer_refs": [
     "scripts/build_basin_gpkg_layers.py",
-    "scripts/nvdm_envelope_cauvery_snapshot.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -2733,7 +2736,9 @@
     "src/components/basin/basin-overview.tsx"
    ],
    "producer_refs": [
-    "scripts/nvdm_envelope_cauvery_snapshot.py"
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [],
    "licenses": [],
@@ -2765,6 +2770,7 @@
    ],
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_basin_flow_readings.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
@@ -3255,6 +3261,7 @@
    ],
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_basin_flow_readings.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
@@ -4438,6 +4445,81 @@
    "flags": []
   },
   {
+   "path": "public/data/basins/kabini/context-boundary.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "context-boundary",
+   "bytes": 237906,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "name",
+     "role",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/context-rivers.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "context-rivers",
+   "bytes": 66918,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "lengthKm",
+     "name",
+     "riverId",
+     "role"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/basins/kabini/drainage/C05CAM14.geojson",
    "family": "basins",
    "scope": "kabini",
@@ -4821,10 +4903,10 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "flow-stations",
-   "bytes": 2122,
+   "bytes": 2602,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 3,
+    "features": 4,
     "geometries": [
      "Point"
     ],
@@ -5007,7 +5089,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "inventory",
-   "bytes": 15181,
+   "bytes": 15635,
    "schema": {
     "kind": "object",
     "keys": [
@@ -5030,6 +5112,7 @@
    ],
    "producer_refs": [
     "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_basin_flow_readings.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_basin_prs_points.py",
     "scripts/build_cauvery_tn_wq.py",
@@ -34667,23 +34750,25 @@
   {
    "family": "basins",
    "dataset": "context-boundary",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "cauvery-ka"
+    "cauvery-ka",
+    "kabini"
    ],
-   "bytes": 45586,
-   "schema_variants": 1,
+   "bytes": 283492,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "context-rivers",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "cauvery-ka"
+    "cauvery-ka",
+    "kabini"
    ],
-   "bytes": 5349,
+   "bytes": 72267,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -34735,7 +34820,7 @@
    "scopes": [
     "kabini"
    ],
-   "bytes": 2122,
+   "bytes": 2602,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -34826,7 +34911,7 @@
     "cauvery-tn",
     "kabini"
    ],
-   "bytes": 33676,
+   "bytes": 34130,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
