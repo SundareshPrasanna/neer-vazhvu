@@ -32,16 +32,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
+from build_basin_gpkg_layers import hav_km  # noqa: E402  (published lengths are geodesic)
 from ingest_basin import _read_vector  # noqa: E402  (shared GDAL reader, 4326 output)
 from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-runs)
 
 from shapely.geometry import MultiLineString, MultiPolygon, mapping, shape  # noqa: E402
+from shapely.ops import transform, unary_union  # noqa: E402
 from shapely.prepared import prep  # noqa: E402
 
 CAUVERY_KA = REPO / "public/data/basins/cauvery-ka"
@@ -94,6 +97,14 @@ ADMIN_LAYERS = [
 ]
 
 PRS_2025_LAYER = "PRS_2025_Polluted_River_Stretches"
+
+# The basin does not stop at the state line. The Kabini rises in Wayanad and
+# 31% of its watershed is in Kerala, which the C2 clip cuts away - so the atlas
+# has been drawing a river that appears to start nowhere. These two layers put
+# the missing third back as CONTEXT: the full watershed outline, and the
+# 84.5 km of centreline above the border. Nothing else is extended across it,
+# and no Kerala-side pressure, station or administrative data is claimed.
+FULL_WATERSHED_LAYER = "Cauvery_Tributary_Kabini — dissolved"
 
 # ── Review round, 23 Aug 2026 ────────────────────────────────────────────────
 # Paani's feedback on the first Kabini build came with ten GeoPackages. These
@@ -153,6 +164,30 @@ def _geom(f: dict):
     if s.is_empty:
         return None
     return s if s.is_valid else s.buffer(0)
+
+
+def _hav_length_km(geom) -> float:
+    """Haversine length of a (Multi)LineString - the *111 flat-degrees
+    shortcut overstates east-west runs at this latitude by ~1%."""
+    lines = geom.geoms if geom.geom_type == "MultiLineString" else [geom]
+    return sum(hav_km(list(ls.coords)) for ls in lines)
+
+
+_WGS84_A = 6378.137
+_WGS84_E2 = 0.00669437999014
+
+
+def _cos_area_km2(geom) -> float:
+    """Cos-lat (sinusoidal) shoelace scaled by the WGS84 ellipsoid's local
+    radii - no projection dependency, and it reproduces KWRIS's stated C2
+    area (4,883 sq km) to within 0.3 sq km."""
+    lat = math.radians(geom.centroid.y)
+    s2 = math.sin(lat) ** 2
+    m = _WGS84_A * (1 - _WGS84_E2) / (1 - _WGS84_E2 * s2) ** 1.5
+    n = _WGS84_A / (1 - _WGS84_E2 * s2) ** 0.5
+    deg_km = math.pi * math.sqrt(m * n) / 180
+    return transform(lambda x, y: (x * math.cos(math.radians(y)) * deg_km, y * deg_km),
+                     geom).area
 
 
 def _same_dim(geom, dim: int):
@@ -325,6 +360,42 @@ def main() -> None:
     else:
         print(f"  ! PRS GeoPackage not found ({prs_gpkg.name}); skipping the stretch layer")
 
+    # ── 7a. The Kerala reach, as context ──
+    full = _read_vector(hyd, FULL_WATERSHED_LAYER, None)
+    full_geom = unary_union([g for g in (_geom(f) for f in full) if g is not None])
+    beyond = full_geom.difference(kab_geom)
+    beyond_km2 = round(_cos_area_km2(beyond))
+    # Two features, because an outline alone cannot show an area. The full
+    # extent is the frame; the Kerala share is the thing being pointed at, and
+    # it only reads if it can be filled (review, 27 Aug: "I don't see Kabini
+    # extended into Kerala" - it was drawn, as 2,199 sq km of empty outline).
+    _write(out / "kabini-context-boundary.geojson",
+           _fc([{"type": "Feature", "geometry": mapping(full_geom),
+                 "properties": {"name": "Kabini basin, full extent (Karnataka and Kerala)",
+                                "role": "context"}},
+                {"type": "Feature", "geometry": mapping(beyond),
+                 "properties": {"name": "The Kerala (Wayanad) headwaters, outside this atlas's clip",
+                                "role": "beyond", "areaKm2": beyond_km2}}]),
+           "full watershed (with Kerala)")
+    print(f"    Kerala share {beyond_km2:,} sq km "
+          f"({beyond.area / full_geom.area * 100:.0f}% of the watershed) lies outside the C2 clip; "
+          f"full extent {round(_cos_area_km2(full_geom)):,} sq km")
+
+    # Only the reach ABOVE the boundary, so the in-basin course is not drawn
+    # twice with two different weights.
+    ctx_rivers = []
+    for layer, river_id, name in RIVER_LAYERS:
+        g = unary_union([x for x in (_geom(f) for f in _read_vector(hyd, layer, None)) if x is not None])
+        out_of_basin = _same_dim(g.difference(kab_geom), 1)
+        if out_of_basin is None or out_of_basin.is_empty:
+            continue
+        km = _hav_length_km(out_of_basin)
+        ctx_rivers.append({"type": "Feature", "geometry": mapping(out_of_basin),
+                           "properties": {"riverId": river_id, "name": name, "role": "context",
+                                          "lengthKm": round(km, 1)}})
+        print(f"    {name:10} {km:6.1f} km beyond the boundary")
+    _write(out / "kabini-context-rivers.geojson", _fc(ctx_rivers), "rivers beyond the boundary")
+
     # ── 7b. Review round (23 Aug 2026): the corrections Paani sent back ──
     rdir = Path(args.review_dir)
     if not rdir.exists():
@@ -342,7 +413,8 @@ def main() -> None:
 
     # Validated CWC sites. Her file carries a third station, Kabini at
     # Muthankera, which sits in Kerala and so falls outside the C2 clip - it
-    # stays out until the basin itself extends across the border.
+    # is not staged here; build_basin_flow_readings.py appends it from the
+    # flow config, and it ships marked pending until its series are fetched.
     cwc_all = _read_vector(rdir / CWC_GPKG, CWC_LAYER, None)
     cwc = _intersecting(cwc_all, kabini)
     dropped = [(f["properties"].get("stationnam"), f["properties"].get("state_name"))

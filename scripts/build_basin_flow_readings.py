@@ -31,7 +31,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
-from nvdm_write import merge_envelope  # noqa: E402  (envelopes survive re-runs)
+from nvdm_write import merge_envelope, write_artifact  # noqa: E402  (envelopes survive re-runs)
 from registry_license import registry_license  # noqa: E402
 
 API = "https://indiawris.gov.in/Dataset/"
@@ -62,7 +62,10 @@ def fetch_year(cache_dir: Path, dataset: str, state: str, district: str, year: i
     Without this, a scheduled re-run would serve the stale cache and never see
     new data (docs/specs/deep-dive-maintenance-model.md)."""
     global _consecutive_failures, _source_down
-    key = f"{dataset.replace(' ', '_')}--{district.replace(' ', '_')}--{year}"
+    # State is part of the key: the stateDistricts loop can query the same
+    # district name under two states, and a cache hit across them would serve
+    # the wrong state's rows.
+    key = f"{dataset.replace(' ', '_')}--{state.replace(' ', '_')}--{district.replace(' ', '_')}--{year}"
     cf = cache_dir / f"{key}.json"
     if cf.exists() and year < dt.date.today().year - 1:
         return json.loads(cf.read_text())
@@ -214,7 +217,9 @@ def main() -> None:
 
     # stationKey -> the name the WRIS API uses (join is by name, never by code).
     name_of = {s["stationKey"]: s["wrisName"] for s in cfg["stations"]}
-    # Optional config coordinates, used only when the API cannot supply them.
+    # Config coordinates are authoritative: they place each extra station at
+    # insertion, and backfill a feature that predates that rule. The API's row
+    # coordinates only place stations the config leaves without any.
     cfg_coords = {s["stationKey"]: s["coordinates"]
                   for s in cfg.get("extraStations", []) if s.get("coordinates")}
 
@@ -222,11 +227,20 @@ def main() -> None:
     existing = {f["properties"]["stationKey"] for f in fc["features"]}
     for extra in cfg.get("extraStations", []):
         if extra["stationKey"] not in existing:
+            # Config coordinates are used AT INSERTION, not just as an API
+            # fallback: a station added during a source outage would otherwise
+            # ship with null geometry and never reach the map at all.
+            coords = extra.get("coordinates")
+            props = {"stationKey": extra["stationKey"], "name": extra["name"],
+                     "agency": "CWC", "siteType": extra.get("siteType", ""),
+                     "river": extra.get("river", ""), "hasReadings": False}
+            for k in ("state", "note"):
+                if extra.get(k):
+                    props[k] = extra[k]
             fc["features"].append({
-                "type": "Feature", "geometry": None,  # filled from the first API row
-                "properties": {"stationKey": extra["stationKey"], "name": extra["name"],
-                               "agency": "CWC", "siteType": extra.get("siteType", ""),
-                               "river": extra.get("river", ""), "hasReadings": False},
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": coords} if coords else None,
+                "properties": props,
             })
             name_of[extra["stationKey"]] = extra["wrisName"]
 
@@ -238,11 +252,15 @@ def main() -> None:
     wanted = {v.upper() for v in name_of.values()}
     basin_name = cfg.get("majorBasin", "Cauvery")
 
-    for district in cfg["districts"]:
+    # A basin can cross a state line, so the query loops states as well as
+    # districts. cfg["state"]/["districts"] stay the single-state shorthand.
+    state_districts = cfg.get("stateDistricts") or {cfg["state"]: cfg["districts"]}
+    for _state, _districts in state_districts.items():
+     for district in _districts:
         for dataset, start, sink in (("River Water Discharge", start_q, q_rows),
                                      ("River Water Level", start_l, l_rows)):
             for year in range(start, today.year + 1):
-                rows = fetch_year(cache_dir, dataset, cfg["state"], district, year)
+                rows = fetch_year(cache_dir, dataset, _state, district, year)
                 n = 0
                 for row in rows:
                     if row.get("majorBasin") != basin_name:
@@ -277,6 +295,10 @@ def main() -> None:
                 props["hasReadings"] = True
                 props["readingsFrom"] = period.get("from")
                 props["readingsTo"] = period.get("to")
+                # A pack exists, so the pending flag and the config note (which
+                # explains why the series are missing) are stale here too.
+                props.pop("readingsPending", None)
+                props.pop("note", None)
                 if feat.get("geometry") is None:
                     coords = (cfg_coords or {}).get(props["stationKey"])
                     if coords:
@@ -324,10 +346,62 @@ def main() -> None:
         pack_path.write_text(json.dumps(merge_envelope(pack_path, pack), separators=(",", ":")))
         props["hasReadings"] = True
         props["readingsFrom"], props["readingsTo"] = all_dates[0], all_dates[-1]
+        # The readings attached: drop the pending flag from any earlier run,
+        # and the config note that explained the series' absence.
+        props.pop("readingsPending", None)
+        props.pop("note", None)
         print(f"  pack {props['stationKey']:12} {props['name']:22} "
               f"{len(series)} series, {len(daily):5} discharge days, {len(level):6} level rows")
 
+    # Configured stations with no series yet DO ship, marked pending, so the
+    # map shows the gauge network as it exists rather than only the parts we
+    # managed to fetch. They render hollow and their panel says why - the
+    # absence is ours (the source was unreachable), not the register's.
+    keys = {e["stationKey"] for e in cfg.get("extraStations", [])}
+    pending = [f for f in fc["features"]
+               if not f["properties"].get("hasReadings") and f["properties"]["stationKey"] in keys]
+    for f in pending:
+        f["properties"]["readingsPending"] = True
+        print(f"  PENDING {f['properties']['name']:20s} shipped without readings "
+              f"(source unreachable); a re-run attaches them")
+
     stations_fp.write_text(json.dumps(merge_envelope(stations_fp, fc), separators=(",", ":")))
+    # This script owns flow-stations.geojson, so it owns that family's TOTALS
+    # (featureCount/bytes - the map showed 3 stations under a label saying 2
+    # until it did; review, 27 Aug) and one source row: the gauges it appends
+    # from the flow config. The rows the ingest wrote for staged files keep
+    # their own counts and provenance - that text carries each basin's own
+    # citations, which are the ingest manifest's to state, not this script's
+    # to rewrite.
+    inv_fp = basin_dir / "inventory.json"
+    if inv_fp.exists():
+        inv = json.loads(inv_fp.read_text())
+        fam = inv.get("families", {}).get("flow-stations")
+        if fam is not None:
+            fam["featureCount"] = len(fc["features"])
+            fam["bytes"] = stations_fp.stat().st_size
+            sources = fam.setdefault("sources", [])
+            cfg_name = Path(sys.argv[2]).name
+            extras = [f for f in fc["features"] if f["properties"]["stationKey"] in keys]
+            row = next((s for s in sources if s.get("file") == cfg_name), None)
+            if extras:
+                if row is None:
+                    row = {"file": cfg_name, "kind": None}
+                    sources.append(row)
+                held = (f" {len(pending)} of them ship{'s' if len(pending) == 1 else ''} "
+                        "pending readings; a re-run attaches the series once India-WRIS "
+                        "answers.") if pending else ""
+                row["count"] = len(extras)
+                row["provenance"] = (
+                    f"Gauges appended from scripts/basin-sources/{cfg_name} - stations the "
+                    "staged partner file does not carry. hasReadings and the readings packs "
+                    "are attached by scripts/build_basin_flow_readings.py from India-WRIS "
+                    "pulls." + held)
+            elif row is not None:
+                sources.remove(row)
+            write_artifact(inv_fp, inv, indent=1)
+            print(f"  inventory: flow-stations featureCount -> {len(fc['features'])}")
+
     n_ready = sum(1 for f in fc["features"] if f["properties"].get("hasReadings"))
     print(f"\n{n_ready}/{len(fc['features'])} stations have readings -> {stations_fp.relative_to(REPO)}")
     if _source_down:

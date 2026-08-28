@@ -135,7 +135,10 @@ def main() -> None:
 
         root = _fam_root(fam)
         for prop in REQUIRED_PROPS.get(root, []):
-            missing = sum(1 for f in feats if not f["properties"].get(prop))
+            # Required means PRESENT, not truthy: hasReadings false is a real
+            # value (the contract's way of saying "no pack"), so a pending
+            # station must not read as a missing property.
+            missing = sum(1 for f in feats if f["properties"].get(prop) in (None, ""))
             if missing:
                 errors.append(f"{fam}: {missing}/{len(feats)} features missing required '{prop}'")
         for prop in EXPECTED_PROPS.get(root, []):

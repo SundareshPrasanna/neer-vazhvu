@@ -841,10 +841,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
   // What the map frames: the selected river's sub-catchments, or the whole
   // basin boundary when nothing is selected (the default). Depends only on the
-  // boundary/shed data (stable references once loaded) and the selection - NOT
-  // the whole `data` object - so changing floors never refits/resets the zoom.
+  // boundary/shed/context data (stable references once loaded) and the
+  // selection - NOT the whole `data` object - so changing floors never
+  // refits/resets the zoom.
   const shedData = data["sub-hydrosheds"];
   const boundaryData = data["boundary"];
+  const contextData = data["context-boundary"];
   const fitBounds = useMemo(() => {
     let feats: Feature[];
     if (selectedRiverId && shedData) {
@@ -855,12 +857,16 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       // MapController applies center/zoom) instead of the wide boundary fit.
       return null;
     } else {
-      feats = boundaryData?.features ?? [];
+      // A basin whose story crosses its working boundary ships a wider
+      // context outline; frame to that, or the reach it exists to show gets
+      // cropped at the line it is meant to cross.
+      const context = contextData?.features ?? [];
+      feats = context.length ? context : boundaryData?.features ?? [];
     }
     if (!feats.length) return null;
     const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, shedData, boundaryData, selectedSheds, manifest.defaultFocus]);
+  }, [selectedRiverId, shedData, boundaryData, contextData, selectedSheds, manifest.defaultFocus]);
 
   // Frame the region highlighted from the accountability matrix ("Show X on
   // the map") once its layer data is in. Matching mirrors the highlight style.
@@ -940,6 +946,30 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // content has loaded - this gates the "Explore the polluted stretch" entry
   // point, which must be offered even while the stretch itself is hidden
   // (the layer is default-off per Paani's Phase-1 review).
+  // Every station in the basin that has a readings pack, for the panel's
+  // compare-with picker. Family travels with each one so the picker can offer
+  // only stations that share a series worth drawing side by side.
+  const readingsPeers = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { stationKey: string; name: string; family: string; agency?: string }[] = [];
+    for (const l of manifest.layers) {
+      if (!l.readings) continue;
+      for (const f of data[l.family]?.features ?? []) {
+        const p = (f.properties ?? {}) as Record<string, unknown>;
+        const key = p.stationKey == null ? "" : String(p.stationKey);
+        if (!p.hasReadings || !key || seen.has(key)) continue;
+        seen.add(key);
+        out.push({
+          stationKey: key,
+          name: String(p.name ?? key),
+          family: l.family,
+          agency: p.agency == null ? undefined : String(p.agency),
+        });
+      }
+    }
+    return out.sort((a, b) => a.name.localeCompare(b.name));
+  }, [manifest.layers, data]);
+
   const hasPrsStory = manifest.layers.some((l) => l.prs) && prsData !== null;
   // The survey editions actually drawn on the map, oldest first. A basin can
   // ship fewer of these than its panel reports - an edition whose geometry is
@@ -1424,10 +1454,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             // / command-areas are interactive thematic fills. pointToLayer keeps
             // any point geometry (e.g. waste-facility) a circle, not a default
             // marker (which would 404 its icon and render broken).
-            // boundary + always-on district are non-interactive context; the
-            // opt-in admin levels (taluk/town/GP) are tappable to reveal their
-            // place in the hierarchy.
-            const isBase = l.family === "boundary" || l.family === "admin-district";
+            // boundary, the full-extent context outline + always-on district
+            // are non-interactive context; the opt-in admin levels
+            // (taluk/town/GP) are tappable to reveal their place in the
+            // hierarchy.
+            const isBase = l.family === "boundary" || l.family === "admin-district" || l.family === "context-boundary";
             const isAdmin = l.family.startsWith("admin");
             // The key must encode WHICH region is highlighted, not just that
             // one is: react-leaflet only re-applies styles on remount, so a
@@ -1713,6 +1744,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                   basinId={manifest.basinId}
                   stationKey={String(selectedFeature.props.stationKey)}
                   name={selectedFeature.props.name != null ? String(selectedFeature.props.name) : undefined}
+                  family={selectedFeature.family}
+                  peers={readingsPeers}
                   onClose={() => setSelectedFeature(null)}
                 />
               ) : renderFeatureDetail?.({
@@ -1766,7 +1799,17 @@ export function buildLegendItems(layers: BasinLayer[], elevation?: { band: strin
     else if (l.family === "sub-hydrosheds") items.push({ sym: "dash", color: l.color, label: "Sub-catchment" });
     else if (l.family === "rivers") items.push({ sym: "line", color: l.color, label: "River" });
     else if (l.family === "drainage") items.push({ sym: "line", color: l.color, label: l.label });
-    else if (l.family === "monitoring-points") {
+    else if (l.readings) {
+      // A readings layer's cue is whether a pack opens on tap, whatever the
+      // family - so this branch must win over the monitoring-points one.
+      if (l.family === "flow-stations") {
+        items.push({ sym: "dot", color: l.color, label: "Gauge (tap for readings)" });
+        items.push({ sym: "ring", color: l.color, label: "Gauge (readings not yet fetched)" });
+      } else {
+        items.push({ sym: "dot", color: l.color, label: "Station (tap for readings)" });
+        items.push({ sym: "ring", color: l.color, label: "Station (no readings to show)" });
+      }
+    } else if (l.family === "monitoring-points") {
       items.push({ sym: "dot", color: l.color, label: "Monitoring (public data)" });
       items.push({ sym: "ring", color: l.color, label: "Monitoring (not in public domain)" });
     } else if (l.family === "pressures-industrial" && l.kindFilter === "industrial-area-other") {
@@ -1910,6 +1953,12 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     // Default: just the current (latest) stretch, red.
     return { color: "#dc2626", weight: 5, opacity: faded ? 0.5 : 0.95 };
   }
+  if (l.family === "context-rivers") {
+    // Heavier than the in-basin course, not lighter: this is the reach a
+    // reader is being asked to notice, and a pale hairline read as a minor
+    // stream against the basemap.
+    return { color: l.color, weight: 3, dashArray: "7 4", opacity: faded ? 0.55 : 1 };
+  }
   if (l.family === "rivers") {
     const rprops = feat?.properties as Record<string, unknown>;
     const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
@@ -1922,10 +1971,16 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
 
 function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
   const p = (feat?.properties ?? {}) as Record<string, unknown>;
-  // Monitoring: hollow if not in public domain (honest-gap cue). Treatment
-  // plants never reach here - they render as shaped markers (treatmentIcon)
-  // that carry their own solid/hollow status convention.
-  const hollow = l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES";
+  // Hollow marks a station you cannot read here today, but the cue is keyed
+  // per layer type: a readings layer goes hollow when no readings pack is
+  // attached (solid promises a chart on tap - see the tap gate on
+  // StationReadingsPanel), a non-readings monitoring layer when the station's
+  // data is not in the public domain. Treatment plants never reach here -
+  // they render as shaped markers (treatmentIcon) that carry their own
+  // solid/hollow status convention.
+  const hollow = l.readings
+    ? p.hasReadings !== true
+    : l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES";
   return {
     radius: 5,
     color: l.color,
@@ -2003,6 +2058,20 @@ function matchesHighlight(hl: MapHighlight | null | undefined, l: BasinLayer, fe
 function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gapUnit?: string | null, hl?: MapHighlight | null): PathOptions {
   if (matchesHighlight(hl, l, feat)) {
     return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
+  }
+  if (l.family === "context-boundary") {
+    // Two roles. "context" is the full outline: dashed, unfilled, neutral, so
+    // it reads as "there is more basin than this map covers" without competing
+    // with the frame the data is clipped to. "beyond" is the out-of-state
+    // catchment itself, and it gets a FILL - 2,199 sq km drawn as bare outline
+    // is 2,199 sq km nobody can see (review, 27 Aug).
+    if ((feat?.properties as Record<string, unknown> | undefined)?.role === "beyond") {
+      return {
+        color: l.color, weight: 1, dashArray: "3 4", opacity: faded ? 0.4 : 0.75,
+        fillColor: l.color, fillOpacity: faded ? 0.1 : 0.22,
+      };
+    }
+    return { color: l.color, weight: 2, dashArray: "7 5", fill: false, opacity: faded ? 0.5 : 0.9 };
   }
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap
@@ -2143,7 +2212,8 @@ function humanizeKey(k: string): string {
 function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown>; label: string; onClose: () => void }) {
   const title = String(props.name ?? props.contributor ?? props.kind ?? label);
   const entries = Object.entries(props).filter(
-    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
+    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && k !== "hasReadings"
+      && k !== "readingsPending" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
   );
   return (
     <div className="space-y-3">
