@@ -11,7 +11,7 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 |---|--:|--:|--:|--:|--:|
 | cascade | 58 | 150.0 | 5 | 58 | 0 |
 | geojson-layers | 161 | 100.3 | 11 | 154 | 6 |
-| basins | 154 | 51.3 | 5 | 59 | 9 |
+| basins | 154 | 51.2 | 5 | 59 | 9 |
 | data-root | 173 | 30.6 | 10 | 141 | 31 |
 | rich-bodies | 259 | 2.8 | 8 | 259 | 0 |
 | waterways | 14 | 0.5 | 2 | 8 | 6 |

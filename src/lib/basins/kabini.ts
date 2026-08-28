@@ -23,7 +23,7 @@ export const KABINI: BasinManifest = {
   mapZoom: 10,
   areaKm2: 4883,
   areaNote:
-    "Karnataka portion of the Kabini sub-basin (C2), per Karnataka WRD's basin decomposition (KWRIS). The full watershed is 7,061 sq km: 2,196 of them, 31%, lie in Wayanad, Kerala, where the river rises and runs 84 km before it reaches the state line. That catchment and that reach are drawn as context, shaded, so the Kabini does not appear to begin at the border. Everything else on this map stops at the Karnataka boundary.",
+    "Karnataka portion of the Kabini sub-basin (C2), per Karnataka WRD's basin decomposition (KWRIS). The full watershed is 7,067 sq km: 2,199 of them, 31%, lie in Wayanad, Kerala, where the river rises and runs 84.5 km before it reaches the state line. That catchment and that reach are drawn as context, shaded, so the Kabini does not appear to begin at the border. Everything else on this map stops at the Karnataka boundary.",
   // Open the DEP view on Mysuru by default (54.6% of the district is in-basin
   // and it carries the Kabini-side ULB cards).
   defaultGapUnit: "mysuru",

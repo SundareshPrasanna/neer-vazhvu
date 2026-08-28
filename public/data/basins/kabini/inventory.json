@@ -26,7 +26,7 @@
    }
   ],
   "method": "derived",
-  "produced_at": "2026-08-27",
+  "produced_at": "2026-08-28",
   "produced_by": "scripts/build_kabini_sources.py + scripts/ingest_basin.py (scripts/basin-sources/kabini-ingest.json)"
  },
  "basinId": "kabini",
@@ -266,8 +266,14 @@
     {
      "file": "cwc-sites.geojson",
      "kind": null,
-     "count": 4,
-     "provenance": "CWC hydrological observation sites, locations and site types validated by Paani Earth against the CWC water year books, plus any gauge added from scripts/basin-sources/*-flow.json. hasReadings and the packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls; a station whose series has not been fetched yet ships marked pending. 1 station(s) ship pending readings."
+     "count": 2,
+     "provenance": "CWC hydrological observation sites, locations and site types validated by Paani Earth against the CWC water year books, via Paani Earth Foundation's review-round delivery (23 August 2026). Two of the three fall inside the boundary and are staged here; the third, Kabini at Muthankera in Kerala (Wayanad), is appended from scripts/basin-sources/kabini-flow.json and ships on the map marked pending until its series are fetched. hasReadings and the packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls."
+    },
+    {
+     "file": "kabini-flow.json",
+     "kind": null,
+     "count": 2,
+     "provenance": "Gauges appended from scripts/basin-sources/kabini-flow.json - stations the staged partner file does not carry. hasReadings and the readings packs are attached by scripts/build_basin_flow_readings.py from India-WRIS pulls. 1 of them ships pending readings; a re-run attaches the series once India-WRIS answers."
     }
    ],
    "bytes": 2820,
@@ -358,16 +364,16 @@
    "sliced": false
   },
   "context-boundary": {
-   "featureCount": 1,
+   "featureCount": 2,
    "sources": [
     {
      "file": "kabini-context-boundary.geojson",
      "kind": null,
-     "count": 1,
-     "provenance": "The Kabini's FULL watershed, Karnataka and Kerala together, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Drawn as context behind the KWRIS C2 boundary the rest of the atlas is clipped to: 31% of this basin is in Kerala, and the clip was making the river look as though it started at the state line. Nothing else is extended across the border - no Kerala-side stations, pressures or administrative data is claimed here."
+     "count": 2,
+     "provenance": "The Kabini's FULL watershed, Karnataka and Kerala together, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Two features: the full extent (role context) and the Kerala share outside the C2 clip (role beyond), drawn as context behind the KWRIS C2 boundary the rest of the atlas is clipped to. 31% of this basin is in Kerala, and the clip was making the river look as though it started at the state line. Nothing else is extended across the border - no Kerala-side stations, pressures or administrative data is claimed here."
     }
    ],
-   "bytes": 95464,
+   "bytes": 237906,
    "sliced": false
   },
   "context-rivers": {
@@ -377,10 +383,10 @@
      "file": "kabini-context-rivers.geojson",
      "kind": null,
      "count": 1,
-     "provenance": "The 85 km of Kabini centreline above the Karnataka boundary, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Only the reach OUTSIDE the C2 polygon is staged, so the in-basin course is not drawn twice."
+     "provenance": "The 84.5 km of Kabini centreline above the Karnataka boundary, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Only the reach OUTSIDE the C2 polygon is staged, so the in-basin course is not drawn twice."
     }
    ],
-   "bytes": 65892,
+   "bytes": 66918,
    "sliced": false
   }
  },
