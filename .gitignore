@@ -106,7 +106,11 @@ docs/specs/
 # research corpora (PDF mirrors of gov/ADB/CGWB docs), partnership
 # folders (shared under agreement, not ours to publish), and Paani
 # Earth collaboration data.
-docs/research/
+# (docs/research/* not docs/research/: an ignored DIRECTORY cannot have a
+# file negated back inside it. kabini/prs.json publishes the F-register
+# counts, so the extraction output that reproduces them stays tracked.)
+docs/research/*
+!docs/research/kabini-fregister-counts.json
 docs/partnerships/
 docs/paani_data/
 

@@ -44,11 +44,16 @@ import collections
 import json
 import os
 import re
-import ssl
 import sys
 import tempfile
-import urllib.request
 from pathlib import Path
+
+# Colour vocabulary and the KSPCB fetch recipe (UA header, TLS-noverify) are
+# build_fregister.py's - same host, same register family, one definition.
+# The taluk norm() below stays local on purpose: it strips every non-letter
+# (so "H.D. Kote" and "T.Narasipura" spellings collapse), where
+# build_fregister's norm strips whitespace only.
+from build_fregister import CODE_RE, COLNORM, FULLWORD, fetch
 
 HERE = Path(__file__).resolve().parent
 SRC = json.loads((HERE / "fregister-sources.json").read_text())
@@ -60,8 +65,6 @@ COL = {"fno": 0, "uin": 1, "name": 2, "area": 4, "taluk": 5,
 INDUSTRIAL_WIDTH = 25
 HEADER_FIRST = "F-Reg No."
 
-COLOURS = {"RED": "Red", "ORANGE": "Orange", "GREEN": "Green", "WHITE": "White"}
-CAT_LETTER = {"R": "Red", "O": "Orange", "G": "Green", "W": "White"}
 STATUSES = {"OPERATION": "Operation", "CLOSED": "Closed", "YTC": "Yet to commence"}
 SIZES = ("Large", "Medium", "Small", "Micro")
 
@@ -84,17 +87,6 @@ def norm(s: str) -> str:
     return re.sub(r"[^a-z]", "", (s or "").lower())
 
 
-def fetch(url: str, dest: Path) -> None:
-    if dest.exists():
-        return
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, context=ctx, timeout=180) as r:
-        dest.write_bytes(r.read())
-
-
 def taluk_of(raw: str) -> str | None:
     return TALUKS.get(norm(raw))
 
@@ -105,11 +97,11 @@ def colour_of(row: list[str]) -> tuple[str | None, bool]:
     cell = (row[COL["colour"]] or "").strip()
     if cell.upper() == "LB":
         return None, True
-    if cell.upper() in COLOURS:
-        return COLOURS[cell.upper()], False
-    m = re.match(r"^([ROGW])[-\s]?\d", (row[COL["cat"]] or "").strip(), re.I)
+    if cell.upper() in FULLWORD:
+        return FULLWORD[cell.upper()], False
+    m = CODE_RE.match((row[COL["cat"]] or "").strip())
     if m:
-        return CAT_LETTER[m.group(1).upper()], False
+        return COLNORM[m.group(1).upper()], False
     return None, False
 
 
@@ -177,13 +169,28 @@ def main() -> None:
                     m = re.match(r"\s*(\d{1,4})\s+\S", line)
                     if m:
                         text_lines.setdefault(int(m.group(1)), line)
+            # Everything past the safety-margin page is the bio-medical
+            # register: extracting its tables is the bulk of the runtime and
+            # every row fails the width check anyway. The margin only closes
+            # after TWO consecutive pages yield no industrial-width rows, so
+            # one fully-dropped table page (or an interior no-table page)
+            # cannot end the run early - and if two in a row ever did, the
+            # completeness sweep below fails loudly on the missing numbers.
+            if rows and pi > last_industrial_page + 1:
+                break
 
     if len(headers) != 1:
         sys.exit(f"FAIL: {len(headers)} distinct header signatures - layout drifted")
 
     # Trap 2: no silent gaps and no silently-blank rows. The table extractor
     # both drops rows and emits them empty; the text layer resolves either.
+    # The sweep bound comes from BOTH layers: a row dropped at the register's
+    # very tail is invisible to max(rows), but its text line survives, and a
+    # text-layer number above the table's maximum that parses as an
+    # industrial row can only be such a tail drop (the bio-medical register
+    # restarts its numbering at 1, so it never reaches up here).
     hi = max(rows)
+    hi = max([hi] + [n for n, l in text_lines.items() if n > hi and recover_row(l)])
     recovered, repaired = [], []
     for fno in range(1, hi + 1):
         line = text_lines.get(fno)
@@ -233,13 +240,25 @@ def main() -> None:
         st = status_of(row)
         detail[tk][f"{colour}/{st or 'unstated'}"] += 1
 
-    # A blank taluk cell is an incomplete row, not a new taluk; anything else
-    # is a spelling this file has not been taught and must not swallow.
-    named_unknown = [u for u in unknown_taluk if norm(u[1])]
-    if named_unknown:
-        for fno, raw, name in named_unknown:
-            print(f"  UNKNOWN TALUK F-Reg {fno}: {raw!r} ({name})")
-        sys.exit(f"FAIL: {len(named_unknown)} rows carry an unrecognised taluk")
+    # A blank taluk cell is an incomplete row the text layer could not
+    # rebuild; anything else is a spelling this file has not been taught.
+    # BOTH fail: a row that reaches this list belongs to no taluk bucket, so
+    # letting it pass would leave it inside len(rows) but outside every
+    # count - the silent drop this script exists to refuse.
+    if unknown_taluk:
+        for fno, raw, name in unknown_taluk:
+            label = repr(raw) if norm(raw) else "blank taluk cell"
+            print(f"  UNKNOWN TALUK F-Reg {fno}: {label} ({name})")
+        sys.exit(f"FAIL: {len(unknown_taluk)} rows carry an unrecognised or blank taluk")
+
+    # Closing invariant: every extracted row lands in exactly one bucket
+    # (per-taluk totals carry the unclassified-colour rows; local bodies and
+    # unknown-taluk rows are the only rows outside them).
+    accounted = (sum(c["total"] for c in per.values())
+                 + sum(local_bodies.values()) + len(unknown_taluk))
+    if accounted != len(rows):
+        sys.exit(f"FAIL: {len(rows)} rows extracted but {accounted} accounted for "
+                 f"across per-taluk + local-body + unknown-taluk buckets")
 
     focus = cfg["focusTaluk"]
     print(f"\n  {'taluk':16s} {'total':>6s} {'Red':>5s} {'Orange':>7s} {'Green':>6s} {'White':>6s} {'?':>3s}")
