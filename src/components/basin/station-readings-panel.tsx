@@ -39,9 +39,11 @@ const CLASS_COLORS: Record<string, string> = {
 const PEER_COLORS = ["#7c3aed", "#ea580c", "#0891b2", "#65a30d", "#be185d"];
 
 /** Charts that overlay cleanly. A quartile band or a class timeline does not:
- *  two bands on one axis read as neither. Those stay single-station. */
+ *  two bands on one axis read as neither. Those stay single-station. Gauge
+ *  levels are station-local datums (T. Narasipur ~317 m, the Kabini Reservoir
+ *  ~1,482 m), so they read as single-station charts too, like climatology. */
 const COMPARABLE = new Set([
-  "discharge-monthly", "discharge-daily", "gauge-level-monthly",
+  "discharge-monthly", "discharge-daily",
   "wq-param-series", "flow-duration", "annual-water-year",
 ]);
 
@@ -206,7 +208,10 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
       if (peerPacks[k]?.series.some((o) => o.verified && seriesId(o) === seriesId(s))) contributing.add(k);
     }
   }
-  const idle = compareKeys.filter((k) => peerPacks[k] !== undefined && !contributing.has(k));
+  // A null pack is a peer whose fetch FAILED - saying it has no series in
+  // common would be a claim about data nobody has seen.
+  const unloadable = compareKeys.filter((k) => peerPacks[k] === null);
+  const idle = compareKeys.filter((k) => peerPacks[k] != null && !contributing.has(k));
 
   return (
     <div className="space-y-3">
@@ -303,6 +308,12 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
             <p className="text-[10px] text-amber-700 dark:text-amber-300 leading-snug">
               No series in common with {idle.map((k) => peerPacks[k]?.station.name ?? k).join(", ")}
               , so nothing is added to these charts.
+            </p>
+          )}
+
+          {unloadable.length > 0 && (
+            <p className="text-[10px] text-amber-700 dark:text-amber-300 leading-snug">
+              Couldn&apos;t load readings for {unloadable.map((k) => offered.find((p) => p.stationKey === k)?.name ?? k).join(", ")}.
             </p>
           )}
         </div>
@@ -416,16 +427,21 @@ function mergePoints(tracks: Track[], pick: (s: ReadingsSeries) => [string | num
  *  is the position being read. */
 function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
   active?: boolean;
-  payload?: { dataKey?: string | number; name?: string; value?: number; color?: string }[];
+  // An array value is a band (the climatology quartiles ship as [p25, p75]) -
+  // it must survive the finite-number filter or the band row goes unreadable.
+  payload?: { dataKey?: string | number; name?: string; value?: number | number[]; color?: string }[];
   label?: string | number;
   isDark: boolean;
   unit?: string;
   labelFormat?: (v: string | number) => string;
 }) {
   if (!active || !payload?.length) return null;
+  const isBand = (v: unknown): v is number[] =>
+    Array.isArray(v) && v.length > 0 && v.every((n) => Number.isFinite(Number(n)));
+  const sortVal = (v?: number | number[]) => (isBand(v) ? Math.max(...v.map(Number)) : Number(v));
   const rows = payload
-    .filter((d) => d.value != null && Number.isFinite(Number(d.value)))
-    .sort((a, b) => Number(b.value) - Number(a.value));
+    .filter((d) => isBand(d.value) || (d.value != null && Number.isFinite(Number(d.value))))
+    .sort((a, b) => sortVal(b.value) - sortVal(a.value));
   if (!rows.length) return null;
   const twoUp = rows.length > 4;
   return (
@@ -445,7 +461,7 @@ function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
     >
       <div style={{ fontWeight: 600, marginBottom: 2 }}>
         {labelFormat && label != null ? labelFormat(label) : String(label ?? "")}
-        {unit ? <span style={{ fontWeight: 400, opacity: 0.6 }}> · {unit}</span> : null}
+        {unit ? <span style={{ fontWeight: 400, opacity: 0.6 }}> - {unit}</span> : null}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: twoUp ? "1fr 1fr" : "1fr", columnGap: 8 }}>
         {rows.map((d, i) => (
@@ -454,7 +470,9 @@ function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
             <span style={{ opacity: 0.75, overflow: "hidden", textOverflow: "ellipsis", maxWidth: 92 }}>
               {shortName(String(d.name ?? ""))}
             </span>
-            <span style={{ fontWeight: 600, marginLeft: "auto" }}>{fmtValue(Number(d.value))}</span>
+            <span style={{ fontWeight: 600, marginLeft: "auto" }}>
+              {isBand(d.value) ? d.value.map((n) => fmtValue(Number(n))).join(" - ") : fmtValue(Number(d.value))}
+            </span>
           </div>
         ))}
       </div>
@@ -563,9 +581,10 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
     case "annual-water-year": {
       const data = mergePoints(tracks, (x) => (x.points ?? []) as [string, number][]);
       // The long-term average is one station's own baseline; drawn across a
-      // comparison it would read as a shared line and mean nothing.
+      // comparison it would read as a shared line and mean nothing. The single
+      // track's key is not always "v" - a peer-only chart's is p_<stationKey>.
       const single = tracks.length === 1;
-      const vals = single ? data.map((d) => Number(d.v)).filter(Number.isFinite) : [];
+      const vals = single ? data.map((d) => Number(d[tracks[0].key])).filter(Number.isFinite) : [];
       const lta = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
       return (
         <ResponsiveContainer width="100%" height={150}>
