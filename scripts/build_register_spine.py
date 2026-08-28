@@ -74,6 +74,7 @@ OBSERVED_MIN_HA = 2.0        # below this the 30 m record is a blob, not a footp
 OBSERVED_OCCURRENCE_PCT = 20 # water in at least a fifth of valid observations: recurrent extent, not a flood year
 OBSERVED_MAX_GROWTH = 3.0    # fixed/mapped above this is an adjacent water body, not this one: drop and flag
 RIVER_NAME_RX = re.compile(r"\b(river|aaru|aru|canal|kalvai|drain|odai|nadi|creek|backwater)\b", re.I)
+INFRA_NAME_RX = re.compile(r"\b(thermal|power station|power plant|fly ?ash|ash pond|cooling|effluent|treatment plant|stp|cetp|salt pan|saltpan)\b", re.I)
 
 SIZE_CLASSES = [(0.4, "under 0.4"), (2, "0.4-2"), (10, "2-10"), (50, "10-50"), (100, "50-100"), (200, "100-200")]
 
@@ -275,6 +276,8 @@ def river_section_reason(props: dict, geom, river_pts, lat0: float) -> str | Non
     wtype = (props.get("water_type") or "").lower()
     if wtype in INFRA_TYPES:
         return f"infrastructure: typed {wtype}"
+    if props.get("name") and INFRA_NAME_RX.search(props["name"]):
+        return "infrastructure: named as a plant pond, ash pond, cooling or treatment reservoir, or salt pan"
     if wtype in RIVER_TYPES:
         return f"river-section: typed {wtype}"
     name = props.get("name") or ""
