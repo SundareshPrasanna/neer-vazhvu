@@ -2220,6 +2220,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_kabini.py"
@@ -2896,6 +2897,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_kabini.py"
@@ -4030,6 +4032,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_kabini.py"
@@ -5746,6 +5749,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
     "scripts/nvdm_envelope_kabini.py"
@@ -6169,7 +6173,7 @@
    "family": "data-root",
    "scope": "delhi",
    "dataset": "bbmb-dam-storage",
-   "bytes": 1264,
+   "bytes": 1263,
    "schema": {
     "kind": "object",
     "keys": [
@@ -6370,7 +6374,9 @@
     "src/components/cascade/catchment-atlas.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/app/cascade/districts.py"
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_spine.py",
+    "scripts/register_calibrate_bands.py"
    ],
    "headwaters_sources": [
     "fabdem-dem",
@@ -6984,7 +6990,9 @@
     "src/components/cascade/catchment-atlas.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/app/cascade/districts.py"
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_spine.py",
+    "scripts/register_calibrate_bands.py"
    ],
    "headwaters_sources": [
     "fabdem-dem",
@@ -7637,7 +7645,9 @@
     "src/components/cascade/catchment-atlas.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/app/cascade/districts.py"
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_spine.py",
+    "scripts/register_calibrate_bands.py"
    ],
    "headwaters_sources": [
     "fabdem-dem",
@@ -8158,7 +8168,9 @@
     "src/components/cascade/catchment-atlas.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/app/cascade/districts.py"
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_spine.py",
+    "scripts/register_calibrate_bands.py"
    ],
    "headwaters_sources": [
     "fabdem-dem",
@@ -8814,7 +8826,9 @@
     "src/components/cascade/catchment-atlas.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/app/cascade/districts.py"
+    "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_spine.py",
+    "scripts/register_calibrate_bands.py"
    ],
    "headwaters_sources": [
     "fabdem-dem",
@@ -12793,7 +12807,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 5107,
+   "bytes": 5105,
    "schema": {
     "kind": "object",
     "keys": [
@@ -12993,7 +13007,7 @@
    "family": "data-root",
    "scope": "pune",
    "dataset": "dam-storage",
-   "bytes": 4301,
+   "bytes": 4300,
    "schema": {
     "kind": "object",
     "keys": [
@@ -13608,6 +13622,92 @@
    "licenses": [
     "CC BY 4.0",
     "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/register/chennai-census-extract.json",
+   "family": "register",
+   "scope": "chennai",
+   "dataset": "census-extract",
+   "bytes": 173886,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "row_count",
+     "rows",
+     "scope"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "scripts/build_register_spine.py"
+   ],
+   "headwaters_sources": [
+    "datagovin-waterbodies-census-tn"
+   ],
+   "licenses": [
+    "Government Open Data License - India"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/register/chennai-spine.geojson",
+   "family": "register",
+   "scope": "chennai",
+   "dataset": "spine",
+   "bytes": 3033361,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1814,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "anchor",
+     "city_id",
+     "crosswalk",
+     "fixed_area_ha",
+     "floors",
+     "geometry_kind",
+     "geometry_sources",
+     "legal_area_ha",
+     "mapped_area_ha",
+     "name",
+     "name_ta",
+     "nv_wb_id",
+     "observed_area_ha",
+     "observed_buffer_m",
+     "observed_flag",
+     "size_class",
+     "status",
+     "tier_hint",
+     "water_type"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "scripts/build_register_spine.py"
+   ],
+   "headwaters_sources": [
+    "datagovin-waterbodies-census-tn",
+    "jrc-global-surface-water",
+    "osm-overpass",
+    "tnswa-ramsar-boundary"
+   ],
+   "licenses": [
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "Government Open Data License - India",
+    "ODbL 1.0",
+    "public data from a Tamil Nadu government portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -26446,7 +26546,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain-history",
-   "bytes": 94009,
+   "bytes": 103713,
    "schema": {
     "kind": "object",
     "keys": [
@@ -26480,7 +26580,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain",
-   "bytes": 13671,
+   "bytes": 13691,
    "schema": {
     "kind": "object",
     "keys": [
@@ -27919,6 +28019,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-bangalore.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
@@ -28194,6 +28295,7 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/tests/test_cascade_districts.py",
+    "scripts/build_register_spine.py",
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/compute-bangalore-ward-risk.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
@@ -28686,6 +28788,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/compute-restoration-priority.ts",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm.ts",
@@ -28901,6 +29004,7 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/app/gee/cities.py",
     "scripts/audit-large-water-bodies.ts",
+    "scripts/build_register_spine.py",
     "scripts/compute-restoration-priority.ts",
     "scripts/compute-ward-profiles.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
@@ -29077,6 +29181,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-delhi.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
@@ -29233,6 +29338,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "neer-vazhvu-api/scripts/join_delhi_census_water_bodies.py",
+    "scripts/build_register_spine.py",
     "scripts/compute-restoration-priority-delhi.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts",
@@ -29399,6 +29505,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_lost_water_bodies.py",
     "neer-vazhvu-api/scripts/harvest_arcgis_rest.py",
+    "scripts/build_register_spine.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts"
    ],
@@ -29568,6 +29675,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-hyderabad.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
@@ -29651,6 +29759,7 @@
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/scripts/fetch_hmda_lake_register.py",
+    "scripts/build_register_spine.py",
     "scripts/compute-restoration-priority-hyderabad.ts",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts",
@@ -29835,6 +29944,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
@@ -29972,6 +30082,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_kolkata_lost_water_bodies.py",
     "neer-vazhvu-api/scripts/build_kolkata_water_census.py",
+    "scripts/build_register_spine.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts"
    ],
@@ -30062,6 +30173,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/fetch-rivers-osm-madurai.ts",
     "scripts/fetch-water-bodies-osm-madurai.ts",
@@ -30152,6 +30264,7 @@
     "neer-vazhvu-api/tests/test_cascade_districts.py",
     "neer-vazhvu-api/tests/test_cities.py",
     "scripts/build-madurai-lost-bodies-geojson.ts",
+    "scripts/build_register_spine.py",
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/compute-restoration-priority-madurai.ts",
@@ -30451,6 +30564,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/compute-mumbai-ward-risk.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
@@ -30535,6 +30649,7 @@
     "neer-vazhvu-api/app/cascade/districts.py",
     "neer-vazhvu-api/tests/test_nvdm_io.py",
     "scripts/build-mumbai-water-bodies.py",
+    "scripts/build_register_spine.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_mumbai.py"
@@ -30700,6 +30815,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
@@ -30816,6 +30932,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_geography.py",
+    "scripts/build_register_spine.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts"
    ],
@@ -34485,6 +34602,7 @@
     "scripts/build-mumbai-rivers.py",
     "scripts/build_basin_gpkg_layers.py",
     "scripts/build_kabini_sources.py",
+    "scripts/build_register_spine.py",
     "scripts/fetch-osm-layers.ts",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_chennai.py",
@@ -34536,6 +34654,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_surat_artifacts.py",
+    "scripts/build_register_spine.py",
     "scripts/convert-bangalore-water-bodies-census-kml.py",
     "scripts/fetch-osm-layers.ts"
    ],
@@ -35488,7 +35607,7 @@
    "scopes": [
     "delhi"
    ],
-   "bytes": 1264,
+   "bytes": 1263,
    "schema_variants": 1,
    "registered": false,
    "has_consumer": true
@@ -35633,7 +35752,7 @@
    "scopes": [
     "pune"
    ],
-   "bytes": 4301,
+   "bytes": 4300,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -35716,7 +35835,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 13671,
+   "bytes": 13691,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -35728,7 +35847,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 94009,
+   "bytes": 103713,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -35927,7 +36046,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 5107,
+   "bytes": 5105,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -36790,6 +36909,30 @@
     "delhi"
    ],
    "bytes": 3119,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "register",
+   "dataset": "census-extract",
+   "files": 1,
+   "scopes": [
+    "chennai"
+   ],
+   "bytes": 173886,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "register",
+   "dataset": "spine",
+   "files": 1,
+   "scopes": [
+    "chennai"
+   ],
+   "bytes": 3033361,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false

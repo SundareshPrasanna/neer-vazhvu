@@ -151,7 +151,9 @@
       },
       "dependsOn": [
         "supabase:water_bodies_census",
-        "public/data/restoration-priority.json"
+        "public/data/restoration-priority.json",
+        "public/data/register/chennai-census-extract.json",
+        "public/data/register/chennai-spine.geojson"
       ],
       "refreshMethod": "neer-vazhvu-api app/scrapers/data_gov_in.py (REST, needs a free data.gov.in API key)",
       "notes": "First Census of Water Bodies (2018-19), 305 Chennai-district bodies with encroachment status/%, original vs present storage capacity, construction/renovation year. Backs /chennai/water-bodies census layer. Server sends an ETag (verified 2026-07-26), so http-meta works; the page is the dataset landing page, not the API. A Second Census has been announced nationally - this watch is how we would learn it landed. Lineage is Supabase, not a committed file.",
@@ -379,7 +381,8 @@
       "dependsOn": [
         "public/geojson/rich-bodies/pallikaranai.geojson",
         "public/geojson/rich-bodies/pallikaranai-buffer-1000m.geojson",
-        "public/data/rich-bodies/pallikaranai-boundary-analysis.json"
+        "public/data/rich-bodies/pallikaranai-boundary-analysis.json",
+        "public/data/register/chennai-spine.geojson"
       ],
       "refreshMethod": "scripts/fetch-tnswa-ramsar-polygon.ts (qgis2web JS export -> GeoJSON; buffer via @turf/buffer)",
       "notes": "qgis2web data export behind the TNSWA public web map (tnswa.tn.gov.in/qgis_web/index.html). RamsarBoundary_2.js carries all 20 TN Ramsar sites as MultiPolygon features keyed by 'Wetland'; our Pallikaranai polygon (feature 'Pallikaranai Marsh Reserve Forest', retrieved 2026-05-17) is the gazetted Ramsar Site #2481 boundary used for the boundary set-algebra, the NGT 1 km buffer, and the rich-body map. Matches the official RSIS area (1,247.54 ha) within 0.4%. A hash change means the state re-published the gazetted geometry - review event, not auto-apply (the 233 ha boundary-gap analysis re-runs from it). Registered 2026-07-30 (NVDM Chennai migration): the polygon was previously used with no lineage on record.",
