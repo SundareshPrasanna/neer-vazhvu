@@ -10,10 +10,10 @@ This exists because a platform that treats data gaps as first-class has to be ab
 | Kind | Entries |
 |---|---|
 | Suppressed freshness checks | 0 |
-| Artifacts with no registered upstream | 86 |
+| Artifacts with no registered upstream | 90 |
 | Routes a city deliberately does not ship | 46 |
 | Absences the product states on the page | 26 |
-| **Total** | **158** |
+| **Total** | **162** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -98,8 +98,12 @@ Shipped data with no Headwaters upstream to watch for new editions. Usually corr
 | mumbai | public/geojson/mumbai-coastal-transects.geojson | our own MNDWI/GEE computation, coastal-shoreline-refresh.yml annual (P5-1) |
 | mumbai | public/geojson/mumbai-flood-2005-hotspots.geojson | closed series: 26/7/2005 reference layer |
 | mumbai | public/geojson/mumbai-water-bodies-lost.geojson | archival |
+| platform | public/data/basins/cauvery-ka/city-footprint.geojson | closed partner delivery (Paani Aug 2026): Greater Bengaluru boundary split by the Cauvery divide, geometry only |
 | platform | public/data/basins/cauvery-ka/context-boundary.geojson | closed partner delivery (Paani Aug 2026): full Cauvery basin outline (KA/KL/TN/PY) from Hydrology_Layers.gpkg |
+| platform | public/data/basins/cauvery-ka/context-rivers.geojson | closed partner delivery (Paani Aug 2026): the Kabini centreline above the Karnataka basin share, clipped to the Kerala catchment that drains into it |
 | platform | public/data/basins/cauvery-ka/rivers.geojson | closed partner delivery (Paani Aug 2026): named river centrelines from Hydrology_Layers.gpkg, clipped to the KA basin share by scripts/build_basin_gpkg_layers.py |
+| platform | public/data/basins/cauvery-ka/state-boundary.geojson | closed partner delivery (Paani, 23 Aug 2026 review package): Karnataka state outline from the KGIS state layer; KGIS registration queued in the maintenance model |
+| platform | public/data/basins/cauvery-ka/waterbodies.geojson | closed partner delivery (Paani, 23 Aug 2026 review package): India-WRIS major-waterbody surfaces clipped to the KA basin share; India-WRIS registration queued in the maintenance model |
 | platform | public/data/basins/kabini/command-areas.geojson | closed partner delivery (Paani Aug 2026); India-WRIS command-area registration queued in the maintenance model |
 | platform | public/data/basins/kabini/forests.geojson | closed partner delivery (Paani Aug 2026); KGIS registration queued in the maintenance model |
 | platform | public/data/basins/kabini/gaps.json | authored from three closed DEP editions (2021/2022); district DEP pages queued for Headwaters registration in the maintenance model |

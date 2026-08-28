@@ -2,8 +2,12 @@
 """Stamp NVDM v1 envelopes on the Cauvery-KA snapshot + NWMP-pack artifacts
 (L2 gate, enforcing on new data artifacts).
 
-Covers the 12 artifacts added by the Aug-2026 Phase 2 continuation:
-  - cauvery-ka rivers + context-boundary (Paani GeoPackage geometry)
+Covers the 16 artifacts added by the Aug-2026 Phase 2 continuation and the
+snapshot rebuild that followed the 23 Aug review:
+  - cauvery-ka rivers + context-boundary + context-rivers (Paani GeoPackage
+    geometry)
+  - cauvery-ka state-boundary + waterbodies + city-footprint (23 Aug review
+    package; the snapshot layers the feedback deck asked for)
   - ten readings/CPCB_*.json BOD/DO/FC trend packs (Kabini + Arkavathi)
 
 The modified files are deliberately NOT here: kabini/monitoring-points.geojson
@@ -44,6 +48,19 @@ def paani(title: str) -> dict:
     }
 
 
+def snapshot(title: str) -> dict:
+    """A layer of the 23 Aug 2026 review package - the same closed partner
+    delivery, a different dated edition of it."""
+    return {
+        "title": f"{title} - Cauvery snapshot layer package (GeoPackages, 23 Aug 2026 review delivery)",
+        "publisher": "Paani Earth Foundation",
+        "closed": True,
+        "as_of": "2026-08-23",
+        "role": "input",
+        "license": "partner-supplied compilation, cited with attribution; underlying government layers as attributed per layer",
+    }
+
+
 CPCB_NWMP = {
     "id": "cpcb-nwmp-annual",
     "title": "CPCB NWMP annual Water Quality of Rivers tables, 2020-2024 editions (station-wise observed min-max per parameter)",
@@ -70,6 +87,25 @@ ARTIFACTS: dict[str, tuple[str, str, list[dict], str, str]] = {
     "cauvery-ka/context-boundary.geojson": (
         "cauvery-ka", "basins/context-boundary",
         [paani("Full Cauvery basin boundary across Karnataka, Kerala, Tamil Nadu and Puducherry (Hydrology_Layers.gpkg)")],
+        "derived", GPKG_PIPELINE),
+    "cauvery-ka/context-rivers.geojson": (
+        "cauvery-ka", "basins/context-rivers",
+        [paani("Named river centrelines above the Karnataka basin share (Hydrology_Layers.gpkg), "
+               "clipped to the out-of-state upstream catchment")],
+        "derived", GPKG_PIPELINE),
+    "cauvery-ka/state-boundary.geojson": (
+        "cauvery-ka", "basins/state-boundary",
+        [snapshot("Karnataka state boundary (Cauvery_Snapshot_view_layers.gpkg), KGIS state layer")],
+        "derived", GPKG_PIPELINE),
+    "cauvery-ka/waterbodies.geojson": (
+        "cauvery-ka", "basins/waterbodies",
+        [snapshot("India-WRIS major waterbodies register for the Cauvery basin "
+                  "(Cauvery_Snapshot_view_layers.gpkg), clipped to the Karnataka basin share")],
+        "derived", GPKG_PIPELINE),
+    "cauvery-ka/city-footprint.geojson": (
+        "cauvery-ka", "basins/city-footprint",
+        [paani("Greater Bengaluru Authority boundary split by the Cauvery basin divide "
+               "(Admin-Geopackages.gpkg), used as geometry only")],
         "derived", GPKG_PIPELINE),
     **{f"kabini/readings/CPCB_{c}.json": (
         "kabini", "basins/readings", [CPCB_NWMP], "derived", wq("kabini"))

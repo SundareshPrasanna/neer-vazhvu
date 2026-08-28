@@ -10,6 +10,14 @@ Produces, for an overview basin (config: scripts/basin-sources/<basin>-paani.jso
     rivers.geojson           named river centrelines, clipped to the basin share
     context-boundary.geojson the FULL basin outline (all states), drawn muted
                              behind the interactive share
+    state-boundary.geojson   the state outline the basin sits in, unclipped -
+                             the frame, not a member of the basin's own layers
+    waterbodies.geojson      major waterbody SURFACES from the partner's
+                             India-WRIS register, clipped to the basin share
+                             (the reservoir dots keep live storage; these
+                             carry extent)
+    city-footprint.geojson   a city boundary split by the basin divide, each
+                             part carrying its own measured area and share
 
 Why a sibling script and not an ingest family: ingest_basin_overview.py pulls
 from live GeoServers; these layers come from partner GeoPackages that live
@@ -29,7 +37,9 @@ Validations (build fails on any):
     so the map's client-side counting is deterministic at build time;
   - no silently-empty layer: a configured river with no geometry after the
     basin clip fails unless the config marks it `allowEmpty` (the honest-gap
-    escape hatch for layers the partner shipped empty).
+    escape hatch for layers the partner shipped empty);
+  - a city footprint's parts must not overlap: the drains-here share is a
+    ratio of measured areas, and overlapping parts would double-count ground.
 
 GPKG reading is stdlib sqlite3 + a small ISO-WKB parser (this machine has no
 GDAL/ogr2ogr; only shapely). Handles 4326 passthrough and the 3857 inverse.
@@ -45,8 +55,9 @@ import struct
 import sys
 from pathlib import Path
 
+from shapely import make_valid
 from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon, mapping
-from shapely.ops import linemerge, unary_union
+from shapely.ops import linemerge, transform, unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -176,6 +187,39 @@ def hav_km(coords) -> float:
     return s
 
 
+def poly_km2(geom) -> float:
+    """Area in sq km via a local equirectangular projection about the shape's
+    own centroid latitude. Over a single sub-basin-sized shape that is good to
+    well under a percent, and it keeps this script free of a projection
+    dependency (the module docstring's no-GDAL rule)."""
+    if geom.is_empty:
+        return 0.0  # an empty geometry's centroid.y raises GEOSException
+    lat0 = math.radians(geom.centroid.y)
+    return transform(lambda x, y: (x * 111.320 * math.cos(lat0), y * 110.574), geom).area
+
+
+def polygons_of(gpkg: Path, table: str):
+    """Every polygon part of a layer, made valid. The partner exports carry
+    self-intersecting rings (a side-location conflict in the waterbodies layer
+    killed a plain intersection), so validity is repaired on read, not assumed."""
+    parts = []
+    for _, kind, rings_list in read_layer(gpkg, table):
+        if kind != "poly":
+            continue
+        for rings in rings_list:
+            parts.append(make_valid(Polygon(rings[0], rings[1:])))
+    return parts
+
+
+def as_multipolygon(geom, eps: float) -> dict:
+    g = make_valid(geom).simplify(eps, preserve_topology=True)
+    if g.geom_type == "Polygon":
+        g = MultiPolygon([g])
+    elif g.geom_type == "GeometryCollection":
+        g = MultiPolygon([p for p in g.geoms if p.geom_type == "Polygon"])
+    return rounded(mapping(g))
+
+
 def merged_lines(parts) -> list[list]:
     """linemerge + longest-part-first: basin-overview.tsx samples the mid-vertex
     of the FIRST part of a MultiLineString, so part order is load-bearing."""
@@ -210,6 +254,17 @@ def main(cfg_path: str) -> None:
     src_dir = Path(cfg["srcDir"]).expanduser()
     if not src_dir.is_dir():
         sys.exit(f"srcDir not found: {src_dir} (partner GeoPackages live outside the repo)")
+    review_dir = Path(cfg["reviewDir"]).expanduser() if cfg.get("reviewDir") else None
+
+    def gpkg_of(section: dict) -> Path:
+        """Sections read from the original delivery unless they name the later
+        review package (from: "review") - the two arrived months apart and are
+        not merged into one directory."""
+        base = review_dir if section.get("from") == "review" else src_dir
+        if base is None or not base.is_dir():
+            sys.exit(f"reviewDir not found: {base} (needed by a from:'review' section)")
+        return base / section["gpkg"]
+
     basin_dir = ROOT / "public" / "data" / "basins" / cfg["basinId"]
     sub_basins = json.loads((basin_dir / "sub-basins.geojson").read_text())
 
@@ -256,6 +311,17 @@ def main(cfg_path: str) -> None:
             mask_parts.append(Polygon(rings[0], rings[1:]))
     mask = unary_union(mask_parts).buffer(clip_cfg.get("bufferDeg", 0.005))
     print(f"clip mask: {clip_cfg['layer']!r}, area {mask.area:.2f} sq deg")
+
+    # 1b. The upstream catchment out of state, if the config names one. Both
+    #     the context outline and the context rivers are cut against it: a
+    #     reach only counts as context when it drains INTO this basin, which
+    #     is what keeps the downstream Tamil Nadu course off this map.
+    beyond_cfg = (cfg.get("contextBoundary") or {}).get("beyond")
+    upstream = None
+    if beyond_cfg:
+        upstream = make_valid(make_valid(unary_union(
+            polygons_of(gpkg_of(beyond_cfg), beyond_cfg["layer"]))).difference(mask))
+        print(f"  upstream catchment out of state: {poly_km2(upstream):,.0f} sq km")
 
     # 2. PRS stretch lines from the canonical layer, attributes from the config
     #    (which cites the CPCB report per entry).
@@ -338,6 +404,38 @@ def main(cfg_path: str) -> None:
         print(f"  rivers: {entry['name']} {km:.0f} km in-basin")
     emit("rivers", feats, riv_cfg["provenance"])
 
+    # 3b. The same rivers ABOVE the basin, inside the upstream catchment only.
+    #     Without this the shaded headwaters have no river in them and the
+    #     course still appears to start at the state line - the catchment was
+    #     drawn and the river was not (review, 27 Aug).
+    if upstream is not None and not upstream.is_empty:
+        ctx_feats = []
+        for entry in riv_cfg["layers"]:
+            parts = []
+            for _, kind, pp in read_layer(src_dir / riv_cfg["gpkg"], entry["layer"]):
+                if kind == "line":
+                    parts.extend(pp)
+            if not parts:
+                continue
+            above = MultiLineString([q for q in parts if len(q) >= 2]).difference(mask).intersection(upstream)
+            if above.is_empty:
+                continue
+            lines = ([list(above.coords)] if above.geom_type == "LineString"
+                     else [list(g.coords) for g in getattr(above, "geoms", []) if g.geom_type == "LineString"])
+            lines = [[(x, y) for x, y, *_ in l] for l in lines if len(l) >= 2]
+            if not lines:
+                continue
+            geom = line_geometry(merged_lines(lines), riv_cfg.get("simplifyEps", 0.0005))
+            km = sum(hav_km(l) for l in (geom["coordinates"] if geom["type"] == "MultiLineString" else [geom["coordinates"]]))
+            ctx_feats.append({"type": "Feature", "geometry": geom, "properties": {
+                "riverId": entry["name"].lower().replace(" ", "-"),
+                "name": entry["name"], "role": "context", "lengthKm": round(km, 1),
+            }})
+            print(f"  context-rivers: {entry['name']} {km:.0f} km above the basin")
+        if ctx_feats:
+            emit("context-rivers", ctx_feats, riv_cfg["provenance"] +
+                 " Reaches shown above the basin are clipped to the upstream out-of-state catchment.")
+
     # 4. Full-basin context outline.
     ctx_cfg = cfg["contextBoundary"]
     polys = []
@@ -346,15 +444,153 @@ def main(cfg_path: str) -> None:
             sys.exit("context boundary is not polygonal")
         for rings in parts:
             polys.append(Polygon(rings[0], rings[1:]))
-    geom = unary_union(polys).simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
+    full = make_valid(unary_union(polys))
+    geom = full.simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
     if geom.geom_type == "Polygon":
         geom = MultiPolygon([geom])
-    emit("context-boundary", [{
+    # An outline cannot show an area, so the out-of-state catchment ships as
+    # its own fillable feature. It is deliberately the UPSTREAM share only -
+    # the ground that drains into this basin from another state - and not
+    # everything outside the state line: the downstream reach belongs to its
+    # own atlas, and tinting it here buries the subject instead of framing it.
+    beyond = None
+    b_cfg = ctx_cfg.get("beyond")
+    if b_cfg and upstream is not None:
+        # Simplified HERE as well as in as_multipolygon below - redundant on
+        # purpose: the published areaKm2 (2,112) was measured on this
+        # simplified shape, and dropping this pass moves it to 2,109. Keep
+        # the byte-stable pipeline until the published figure is re-cut
+        # deliberately.
+        beyond = upstream.simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
+    feats = [{
         "type": "Feature", "geometry": rounded(mapping(geom)),
         "properties": {"name": ctx_cfg["name"], "role": "context"},
-    }], ctx_cfg["provenance"])
+    }]
+    if beyond is not None and not beyond.is_empty:
+        feats.append({
+            "type": "Feature", "geometry": as_multipolygon(beyond, ctx_cfg.get("simplifyEps", 0.002)),
+            "properties": {"name": b_cfg["name"], "role": "beyond",
+                           "areaKm2": round(poly_km2(beyond))},
+        })
+        print(f"  context-boundary: {poly_km2(beyond):,.0f} sq km of upstream catchment "
+              f"out of state ({b_cfg['layer']})")
+    emit("context-boundary", feats, ctx_cfg["provenance"])
 
-    # 5. Patch the inventory (see the re-run note in the module docstring).
+    # 5. Karnataka state boundary - the administrative frame the basin sits in.
+    #    Deliberately NOT clipped: the point of drawing it is the part that
+    #    leaves the basin, above all the southern border the Cauvery crosses
+    #    on its way into Tamil Nadu.
+    sb_cfg = cfg.get("stateBoundary")
+    if sb_cfg:
+        geom = unary_union(polygons_of(gpkg_of(sb_cfg), sb_cfg["layer"]))
+        if geom.is_empty:
+            sys.exit(f"FAIL stateBoundary: {sb_cfg['layer']!r} has no polygon geometry")
+        emit("state-boundary", [{
+            "type": "Feature",
+            "geometry": as_multipolygon(geom, sb_cfg.get("simplifyEps", 0.004)),
+            "properties": {"name": sb_cfg["name"], "role": "context"},
+        }], sb_cfg["provenance"])
+        print(f"  state-boundary: {sb_cfg['name']}, {poly_km2(geom):,.0f} sq km")
+
+    # 6. Major waterbodies, clipped to the basin share. These are the surfaces
+    #    behind the reservoir dots: the dots carry live storage, the polygons
+    #    carry extent, and the two are separate families on purpose.
+    wb_cfg = cfg.get("waterbodies")
+    if wb_cfg:
+        gpkg = gpkg_of(wb_cfg)
+        con = sqlite3.connect(gpkg)
+        attrs = dict(con.execute(
+            f'SELECT rowid, "{wb_cfg["nameAttr"]}" FROM "{wb_cfg["layer"]}"'))
+        areas = dict(con.execute(
+            f'SELECT rowid, "{wb_cfg["areaAttr"]}" FROM "{wb_cfg["layer"]}"'))
+        con.close()
+        min_ha = wb_cfg.get("minAreaHa", 0)
+        feats, dropped_small, no_area_recorded, unnamed = [], 0, 0, 0
+        for fid, kind, rings_list in read_layer(gpkg, wb_cfg["layer"]):
+            if kind != "poly":
+                continue
+            geom = make_valid(unary_union(
+                [make_valid(Polygon(r[0], r[1:])) for r in rings_list]))
+            if not geom.intersects(mask):
+                continue
+            raw_area = areas.get(fid)
+            if raw_area is None or raw_area == "":
+                # A row with no area recorded is a register gap, not a small
+                # waterbody - reported as its own bucket, never as "below
+                # the threshold".
+                no_area_recorded += 1
+                continue
+            area_ha = float(raw_area)
+            if area_ha < min_ha:
+                dropped_small += 1
+                continue
+            clipped = make_valid(geom).intersection(mask)
+            if clipped.is_empty:
+                continue
+            name = (attrs.get(fid) or "").strip() or None
+            if name is None:
+                unnamed += 1
+            # The clipped centroid can land outside a concave shape (and so
+            # outside every sub-basin ring); representative_point() is
+            # guaranteed inside. None only when both sampling points miss.
+            code = sub_code_for(clipped.centroid.x, clipped.centroid.y)
+            if code is None:
+                rp = clipped.representative_point()
+                code = sub_code_for(rp.x, rp.y)
+            feats.append({
+                "type": "Feature",
+                "geometry": as_multipolygon(clipped, wb_cfg.get("simplifyEps", 0.0002)),
+                "properties": {
+                    "name": name,
+                    "areaHa": round(area_ha, 1),
+                    "subBasin": code,
+                },
+            })
+        feats.sort(key=lambda f: -(f["properties"]["areaHa"] or 0))
+        emit("waterbodies", feats, wb_cfg["provenance"])
+        print(f"  waterbodies: {len(feats)} in-basin at >= {min_ha} ha "
+              f"({dropped_small} below the threshold, {no_area_recorded} with "
+              f"no area recorded, {unnamed} unnamed in the register)")
+
+    # 7. City footprint against the basin divide. Bengaluru is the reason this
+    #    atlas exists and only part of it drains here; the split IS the point,
+    #    so each part carries its own measured area and share.
+    cf_cfg = cfg.get("cityFootprint")
+    if cf_cfg:
+        gpkg = gpkg_of(cf_cfg)
+        parts = []
+        for entry in cf_cfg["parts"]:
+            geom = unary_union(polygons_of(gpkg, entry["layer"]))
+            if geom.is_empty:
+                sys.exit(f"FAIL cityFootprint: {entry['layer']!r} has no polygon geometry")
+            parts.append((entry, geom))
+        # The two parts must tile the city, not overlap it - otherwise the
+        # share below would be arithmetic on double-counted ground.
+        if len(parts) == 2:
+            overlap = poly_km2(parts[0][1].intersection(parts[1][1]))
+            if overlap > 1.0:
+                sys.exit(f"FAIL cityFootprint: parts overlap by {overlap:.1f} sq km; "
+                         "the drains-here share would be double-counted")
+        total = sum(poly_km2(g) for _, g in parts)
+        feats = []
+        for entry, geom in parts:
+            km2 = poly_km2(geom)
+            feats.append({
+                "type": "Feature",
+                "geometry": as_multipolygon(geom, cf_cfg.get("simplifyEps", 0.0008)),
+                "properties": {
+                    "cityId": cf_cfg["cityId"],
+                    "name": cf_cfg["name"],
+                    "drains": entry["drains"],
+                    "areaKm2": round(km2, 1),
+                    "sharePct": round(100 * km2 / total, 1),
+                },
+            })
+            print(f"  city-footprint: {cf_cfg['name']} drains={entry['drains']} "
+                  f"{km2:,.0f} sq km ({100 * km2 / total:.1f}%)")
+        emit("city-footprint", feats, cf_cfg["provenance"])
+
+    # 8. Patch the inventory (see the re-run note in the module docstring).
     inv_path = basin_dir / "inventory.json"
     inv = json.loads(inv_path.read_text())
     inv["families"].update(inv_updates)

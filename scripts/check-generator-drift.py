@@ -147,6 +147,10 @@ INLINE_LICENCE_ALLOWLIST = {
     "academic working paper, cited with attribution",
     "government handbook, cited with attribution",
     "government plan document, cited with attribution",
+    # KSPCB's published F-register of consented industries: a government
+    # document with no registry id of its own (the board publishes it as a
+    # standalone per-office PDF, not through a feed we track).
+    "government register, cited with attribution",
     "portal label only (OpenCity dataset page); no upstream grant established",
     "public policy document, cited with attribution",
     # Closed partner deliveries (Paani Earth GeoPackages, Kabini build): the

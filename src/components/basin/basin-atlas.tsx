@@ -1966,7 +1966,9 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     const sel = rid === selectedRiverId;
     return { color: r?.color ?? l.color, weight: sel ? 5 : 3, opacity: sel || !selectedRiverId ? 1 : 0.75 };
   }
-  return { color: l.color, weight: 1, opacity: faded ? 0.4 : 0.85 };
+  // fill: false matters when a polygon family is routed through the line
+  // path - Leaflet's default otherwise fills it, tinting the whole shape.
+  return { color: l.color, weight: 1, opacity: faded ? 0.4 : 0.85, fill: false };
 }
 
 function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {

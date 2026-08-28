@@ -99,6 +99,17 @@ KSPCB_PLAN = {
     "license": "government plan document, cited with attribution",
 }
 
+KSPCB_FREGISTER = {
+    "title": "KSPCB F-Register 2020-21, Regional Office Mysore-2, as on 31 March 2021 "
+             "(consented industries by taluk, category and working status)",
+    "publisher": "Karnataka State Pollution Control Board",
+    "url": "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Mysore-2_1.pdf",
+    "closed": True,
+    "as_of": "2021-03-31",
+    "role": "input",
+    "license": "government register, cited with attribution",
+}
+
 FABDEM = {
     "id": "fabdem-dem",
     "title": "FABDEM v1-2 30 m bare-earth DEM (hypsometric bands for the basin)",
@@ -149,8 +160,8 @@ ARTIFACTS: dict[str, tuple[str, list[dict], str, str, bool]] = {
     "waterbodies-minor.geojson": ("basins/waterbodies-minor", [paani("KGIS minor-irrigation tank inventory (KGIS TIS)"), KWRIS], "derived", PIPELINE, True),
     "prs.geojson": ("basins/prs", [paani("CPCB polluted river stretches, digitised (PRS_Stretches_Since_1993)"), paani_review("The 2018 stretch, redrawn against the monitoring station locations"), CPCB_PRS, KWRIS], "derived", PIPELINE, True),
     "prs-drains.geojson": ("basins/prs-drains", [paani_review("Polluting drain outfalls and the drains reaching them, from the October 2020 progress report"), NMCG_MPR, KWRIS], "derived", PIPELINE, True),
-    "prs.json": ("basins/prs", [CPCB_PRS, KSPCB_PLAN, NMCG_MPR, DEP_MYSURU, WRIS], "manual",
-                 "Authored from the documents' own tables, page-cited; the 2018 stretch length is KSPCB's own figure because the delivered geometry maps only part of it.", False),
+    "prs.json": ("basins/prs", [CPCB_PRS, KSPCB_PLAN, NMCG_MPR, DEP_MYSURU, KSPCB_FREGISTER, WRIS], "manual",
+                 "Authored from the documents' own tables, page-cited; the 2018 stretch length is KSPCB's own figure because the delivered geometry maps only part of it. Nanjangud industrial-register counts come from scripts/build_kabini_fregister.py.", False),
     "elevation-bands.geojson": ("basins/elevation-bands", [FABDEM, KWRIS], "derived",
                                 "neer-vazhvu-api/scripts/build_elevation_bands.py --basin kabini", True),
     "admin-district.geojson": ("basins/admin-district", [paani("KGIS district boundaries"), KWRIS], "derived", PIPELINE, True),

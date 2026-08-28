@@ -1734,6 +1734,7 @@
     "src/app/[cityId]/rivers/page.tsx",
     "src/app/embed/basins/[basinId]/page.tsx",
     "src/components/basin/basin-atlas-client.tsx",
+    "src/components/basin/basin-overview.tsx",
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
@@ -1974,7 +1975,7 @@
    "family": "basins",
    "scope": "arkavathi",
    "dataset": "prs",
-   "bytes": 45691,
+   "bytes": 45717,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2648,14 +2649,47 @@
    ]
   },
   {
+   "path": "public/data/basins/cauvery-ka/city-footprint.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "city-footprint",
+   "bytes": 9478,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "areaKm2",
+     "cityId",
+     "drains",
+     "name",
+     "sharePct"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026): Greater Bengaluru boundary split by the Cauvery divide, geometry only",
+   "flags": []
+  },
+  {
    "path": "public/data/basins/cauvery-ka/context-boundary.geojson",
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "context-boundary",
-   "bytes": 40530,
+   "bytes": 45586,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 1,
+    "features": 2,
     "geometries": [
      "MultiPolygon"
     ],
@@ -2680,11 +2714,44 @@
    "flags": []
   },
   {
+   "path": "public/data/basins/cauvery-ka/context-rivers.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "context-rivers",
+   "bytes": 5349,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "lengthKm",
+     "name",
+     "riverId",
+     "role"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani Aug 2026): the Kabini centreline above the Karnataka basin share, clipped to the Kerala catchment that drains into it",
+   "flags": []
+  },
+  {
    "path": "public/data/basins/cauvery-ka/inventory.json",
    "family": "basins",
    "scope": "cauvery-ka",
    "dataset": "inventory",
-   "bytes": 2974,
+   "bytes": 4889,
    "schema": {
     "kind": "object",
     "keys": [
@@ -2698,6 +2765,7 @@
     "src/app/[cityId]/rivers/page.tsx",
     "src/app/embed/basins/[basinId]/page.tsx",
     "src/components/basin/basin-atlas-client.tsx",
+    "src/components/basin/basin-overview.tsx",
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
@@ -2873,6 +2941,36 @@
    ]
   },
   {
+   "path": "public/data/basins/cauvery-ka/state-boundary.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "state-boundary",
+   "bytes": 36540,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "name",
+     "role"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani, 23 Aug 2026 review package): Karnataka state outline from the KGIS state layer; KGIS registration queued in the maintenance model",
+   "flags": []
+  },
+  {
    "path": "public/data/basins/cauvery-ka/streams.geojson",
    "family": "basins",
    "scope": "cauvery-ka",
@@ -2981,6 +3079,37 @@
    "flags": [
     "unaccounted"
    ]
+  },
+  {
+   "path": "public/data/basins/cauvery-ka/waterbodies.geojson",
+   "family": "basins",
+   "scope": "cauvery-ka",
+   "dataset": "waterbodies",
+   "bytes": 120036,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 25,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "subBasin"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py"
+   ],
+   "headwaters_sources": [],
+   "licenses": [],
+   "accountability": "allowlisted",
+   "accountability_reason": "closed partner delivery (Paani, 23 Aug 2026 review package): India-WRIS major-waterbody surfaces clipped to the KA basin share; India-WRIS registration queued in the maintenance model",
+   "flags": []
   },
   {
    "path": "public/data/basins/cauvery-ka/wq-stations.geojson",
@@ -3127,6 +3256,7 @@
     "src/app/[cityId]/rivers/page.tsx",
     "src/app/embed/basins/[basinId]/page.tsx",
     "src/components/basin/basin-atlas-client.tsx",
+    "src/components/basin/basin-overview.tsx",
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
@@ -4372,10 +4502,11 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'kabini')"
+    "src/components/basin/basin-overview.tsx"
    ],
    "producer_refs": [
     "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
@@ -4976,6 +5107,7 @@
     "src/app/[cityId]/rivers/page.tsx",
     "src/app/embed/basins/[basinId]/page.tsx",
     "src/components/basin/basin-atlas-client.tsx",
+    "src/components/basin/basin-overview.tsx",
     "src/lib/basins/types.ts"
    ],
    "producer_refs": [
@@ -5221,7 +5353,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "prs",
-   "bytes": 41184,
+   "bytes": 43708,
    "schema": {
     "kind": "object",
     "keys": [
@@ -34592,6 +34724,18 @@
   },
   {
    "family": "basins",
+   "dataset": "city-footprint",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 9478,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "command-areas",
    "files": 2,
    "scopes": [
@@ -34611,7 +34755,7 @@
     "cauvery-ka",
     "kabini"
    ],
-   "bytes": 278436,
+   "bytes": 283492,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -34619,11 +34763,12 @@
   {
    "family": "basins",
    "dataset": "context-rivers",
-   "files": 1,
+   "files": 2,
    "scopes": [
+    "cauvery-ka",
     "kabini"
    ],
-   "bytes": 66918,
+   "bytes": 72267,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -34766,7 +34911,7 @@
     "cauvery-tn",
     "kabini"
    ],
-   "bytes": 32215,
+   "bytes": 34130,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -34843,7 +34988,7 @@
     "arkavathi",
     "kabini"
    ],
-   "bytes": 174334,
+   "bytes": 176884,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -34942,6 +35087,18 @@
   },
   {
    "family": "basins",
+   "dataset": "state-boundary",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 36540,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "streams",
    "files": 2,
    "scopes": [
@@ -35003,6 +35160,18 @@
    "bytes": 7012,
    "schema_variants": 1,
    "registered": false,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "waterbodies",
+   "files": 1,
+   "scopes": [
+    "cauvery-ka"
+   ],
+   "bytes": 120036,
+   "schema_variants": 1,
+   "registered": true,
    "has_consumer": true
   },
   {
