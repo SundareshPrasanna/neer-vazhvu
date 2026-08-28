@@ -35,10 +35,12 @@ Usage:
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 from statistics import mean
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
 RB = ROOT / "public/data/rich-bodies"
 GJ = ROOT / "public/geojson/rich-bodies"
 CASCADE = ROOT / "public/data/cascade"
@@ -52,13 +54,14 @@ JRC_RECENT = range(2017, 2022)
 DW_RECENT = range(2022, 2026)
 TREND_YEARS = range(2012, 2022)
 
-# ---- initial thresholds (the values the methodology publishes; edit here, nowhere else)
-C1_BANDS = [(85, "A"), (70, "B"), (50, "C"), (30, "D")]              # % retained; else E
-REF_TOP_N, REF_MIN_COVERAGE = 5, 0.80
-C3_BANDS = [(1, "A"), (5, "B"), (10, "C"), (20, "D")]               # %;  else E (Health Card "area converted")
-U1_RISING, U1_EASING = -1.0, 1.0                                    # pp/yr
-SIZE_CLASSES = [(0.4, "under 0.4"), (2, "0.4-2"), (10, "2-10"), (50, "10-50"), (100, "50-100"), (200, "100-200")]
-EXTENT_FLOOR_HA, EXTENT_FLOOR_PX = 2.0, 100
+# ---- thresholds: shared with the screen engine, see scripts/register_thresholds.py
+from register_thresholds import (  # noqa: E402
+    C1_BANDS, C1_REF_MIN_COVERAGE, C1_REF_TOP_N_30M, C3_BANDS, C3_CORROBORATION_PCT,
+    SIZE_CLASSES, TREND_FLOOR_10M_HA, TREND_FLOOR_30M_PX, U1_EASING_PP_YR, U1_RISING_PP_YR,
+)
+REF_TOP_N, REF_MIN_COVERAGE = C1_REF_TOP_N_30M, C1_REF_MIN_COVERAGE
+U1_RISING, U1_EASING = U1_RISING_PP_YR, U1_EASING_PP_YR
+EXTENT_FLOOR_HA, EXTENT_FLOOR_PX = TREND_FLOOR_10M_HA, TREND_FLOOR_30M_PX
 
 
 def band_from(value, table, worst="E", higher_is_worse=True):
@@ -203,7 +206,7 @@ def body_record(body_id, cities, casc):
     # Corroboration: a built fraction under 5% with no mapped structure inside the
     # footprint is the bund ring and its road reading as built; that is the tank, not
     # encroachment. Band A until a structure corroborates it.
-    if c3 is not None and c3 < 5 and structures == 0:
+    if c3 is not None and c3 < C3_CORROBORATION_PCT and structures == 0:
         c3_band = "A"
     halo_now = built_halo.get(str(last_full), {}).get("built_fraction_pct") if last_full else None
     halo_2016 = built_halo.get("2016", {}).get("built_fraction_pct")

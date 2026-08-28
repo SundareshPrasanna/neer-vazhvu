@@ -124,6 +124,17 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "BBMB Bhakra/Pong daily bulletin (launchd; BBMB overwrites daily, no archive)",
   },
   {
+    id: "restoration-register-edition",
+    cityId: "chennai",
+    file: "public/data/register/chennai-edition.json",
+    // Quarterly edition; a quarter plus a month of grace. Editions are frozen
+    // and released with the corpus, so staleness here means the screen was
+    // not re-run for a quarter, not that a scrape failed.
+    maxAgeDays: 120,
+    dateFrom: "json:as_of",
+    note: "Restoration Register screen edition (scripts/build_register_screen.py)",
+  },
+  {
     id: "cauvery-ka-scoreboard",
     cityId: "bangalore",
     file: "public/data/basins/cauvery-ka/scoreboard.json",

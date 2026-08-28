@@ -20,7 +20,8 @@
         "public/data/elevation-bands-mumbai.geojson",
         "public/data/elevation-bands-delhi.geojson",
         "public/data/cascade",
-        "public/data/basins/kabini/elevation-bands.geojson"
+        "public/data/basins/kabini/elevation-bands.geojson",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_elevation_bands.py (GEE), re-run per city",
       "notes": "FABDEM V1-2 - satellite DEM with buildings and forests removed - underpins the elevation-band layer in all five cities, honest at ~30 m horizontal / ~2 m vertical. A new FABDEM version changes every band boundary at once, which is exactly why this is registered once at platform scope rather than five times. LICENCE FLAG: FABDEM is CC BY-NC-SA, non-commercial - relevant if any BRSR or commercial track ever reuses these layers. The canonical data host is data.bris.ac.uk but its dataset paths need an exact opaque id we do not have; the Fathom product page is the stable, verified surface (200 on 2026-07-26). Cascade catchment delineation (catchments_fabdem_wbt_v1 in neer-vazhvu-api/app/cascade/catchments.py) runs on a FABDEM mosaic, so the entire public/data/cascade family is FABDEM-DERIVED - and therefore inherits CC BY-NC-SA (non-commercial) encumbrance. Flagged for the NVDM derivative-licence audit 2026-07-30. LICENCE: confirmed at data.bris.ac.uk/data/dataset/s5hqmjcdj8yo2ibzi9b4ew3sn (verified 2026-07-31): 'The FABDEM dataset is licensed under a Creative Commons \"CC BY-NC-SA 4.0\" license. For commercial use queries, please contact fabdem@fathom.global'. ShareAlike is the sharp edge, not just NC: anything built on FABDEM must be redistributed under the same licence, which is why the repo MIT LICENSE cannot reach the cascade artefacts.",
@@ -68,7 +69,8 @@
       },
       "dependsOn": [
         "public/data/rich-bodies",
-        "public/data/register/chennai-spine.geojson"
+        "public/data/register/chennai-spine.geojson",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "scripts/verify_rich_body_water_trend.py / ingest_rich_body_water_loss_tint.py (GEE)",
       "notes": "JRC Global Surface Water v1.4 supplies the long-run water-extent trend in every rich-body deep-zoom panel across the rich-body cohort. A new JRC version re-bases those trends, so it is a review event rather than an auto-apply. dependsOn points at the rich-bodies GROUP - the coverage gate collapses that directory to one logical artifact rather than one entry per file, so the cohort can grow without touching this registry.",
@@ -94,7 +96,8 @@
         "public/data/waterways/buckingham-canal/reaches.json",
         "public/data/waterways/buckingham-canal/today.json",
         "public/data/waterways/cooum/reaches.json",
-        "public/data/waterways/cooum/today.json"
+        "public/data/waterways/cooum/today.json",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "scripts/verify_rich_body_open_buildings.py",
       "notes": "Google Open Buildings v3 is one of the two independent building-footprint sources in the rich-body encroachment verification; Overture is the other, and the artifacts deliberately compare them side by side. A version bump on either changes the verification result, which is why both are registered.",
@@ -187,7 +190,8 @@
         "public/data/waterways/cooum/today.json",
         "public/data/waterways/cooum/centerline.geojson",
         "public/data/waterways/cooum/width-profile.json",
-        "public/data/register/chennai-spine.geojson"
+        "public/data/register/chennai-spine.geojson",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "per-city fetch-*-osm-*.ts scripts (Overpass extracts)",
       "notes": "Continuously edited; no editions to detect (NVDM per-source rule 2026-07-30: registered for lineage/licence accountability; formerly 13 UNWATCHED allowlist lines). Re-fetch cadence is a freshness question (P5-1)."
@@ -207,7 +211,8 @@
       "dependsOn": [
         "public/data/rich-bodies",
         "public/geojson/rich-bodies",
-        "public/data/cascade"
+        "public/data/cascade",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "neer-vazhvu-api/app/gee + app/cascade/encroachment.py (GEE collection)",
       "notes": "Rolling GEE collection, no editions (formerly allowlist-only per platform _doc). Registered 2026-07-30 for NVDM lineage."
@@ -234,7 +239,8 @@
         "public/data/waterways/buckingham-canal/reaches.json",
         "public/data/waterways/buckingham-canal/today.json",
         "public/data/waterways/cooum/reaches.json",
-        "public/data/waterways/cooum/today.json"
+        "public/data/waterways/cooum/today.json",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "neer-vazhvu-api/app/cascade/channels.py + gee imagery chips",
       "notes": "Continuous acquisition; channel evidence + rich-body imagery. Registered 2026-07-30 for NVDM lineage."

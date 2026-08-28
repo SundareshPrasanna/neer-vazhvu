@@ -153,7 +153,8 @@
         "supabase:water_bodies_census",
         "public/data/restoration-priority.json",
         "public/data/register/chennai-census-extract.json",
-        "public/data/register/chennai-spine.geojson"
+        "public/data/register/chennai-spine.geojson",
+        "public/data/register/chennai-edition.json"
       ],
       "refreshMethod": "neer-vazhvu-api app/scrapers/data_gov_in.py (REST, needs a free data.gov.in API key)",
       "notes": "First Census of Water Bodies (2018-19), 305 Chennai-district bodies with encroachment status/%, original vs present storage capacity, construction/renovation year. Backs /chennai/water-bodies census layer. Server sends an ETag (verified 2026-07-26), so http-meta works; the page is the dataset landing page, not the API. A Second Census has been announced nationally - this watch is how we would learn it landed. Lineage is Supabase, not a committed file.",

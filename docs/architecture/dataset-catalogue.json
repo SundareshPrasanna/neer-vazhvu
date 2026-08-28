@@ -6375,6 +6375,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py",
     "scripts/register_calibrate_bands.py"
    ],
@@ -6991,6 +6992,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py",
     "scripts/register_calibrate_bands.py"
    ],
@@ -7646,6 +7648,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py",
     "scripts/register_calibrate_bands.py"
    ],
@@ -8169,6 +8172,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py",
     "scripts/register_calibrate_bands.py"
    ],
@@ -8827,6 +8831,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/app/cascade/districts.py",
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py",
     "scripts/register_calibrate_bands.py"
    ],
@@ -13646,6 +13651,7 @@
    },
    "consumers": [],
    "producer_refs": [
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py"
    ],
    "headwaters_sources": [
@@ -13657,6 +13663,60 @@
    "accountability": "watched",
    "accountability_reason": null,
    "flags": []
+  },
+  {
+   "path": "public/data/register/chennai-edition.json",
+   "family": "register",
+   "scope": "chennai",
+   "dataset": "edition",
+   "bytes": 6581938,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "as_of",
+     "city_id",
+     "compute_timing",
+     "dataset",
+     "edition",
+     "lenses",
+     "methodology",
+     "nvdm",
+     "provenance",
+     "records",
+     "scope",
+     "summary",
+     "thresholds_version",
+     "windows"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "scripts/build_register_screen.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "datagovin-waterbodies-census-tn",
+    "fabdem-dem",
+    "google-dynamic-world",
+    "google-open-buildings",
+    "jrc-global-surface-water",
+    "osm-overpass",
+    "sentinel-2-l2a"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "CC BY 4.0 / ODbL",
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)",
+    "Copernicus free and open data, attribution required",
+    "Copernicus free and open data, attribution required; GSW download page states 'All data here is produced under the Copernicus Programme and is provided free of charge, without restriction of use', required attribution 'Source: EC JRC/Google' plus Pekel et al. (2016) citation - verified 2026-07-31",
+    "Government Open Data License - India",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": [
+    "big"
+   ]
   },
   {
    "path": "public/data/register/chennai-spine.geojson",
@@ -13695,6 +13755,7 @@
    },
    "consumers": [],
    "producer_refs": [
+    "scripts/build_register_screen.py",
     "scripts/build_register_spine.py"
    ],
    "headwaters_sources": [
@@ -14189,6 +14250,7 @@
     "src/lib/data/restoration-projects.ts"
    ],
    "producer_refs": [
+    "scripts/build_register_screen.py",
     "scripts/check-restoration-data.ts"
    ],
    "headwaters_sources": [
@@ -36921,6 +36983,18 @@
     "chennai"
    ],
    "bytes": 173886,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "register",
+   "dataset": "edition",
+   "files": 1,
+   "scopes": [
+    "chennai"
+   ],
+   "bytes": 6581938,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
