@@ -2,9 +2,10 @@
 """Stamp NVDM v1 envelopes on the Cauvery-KA snapshot + NWMP-pack artifacts
 (L2 gate, enforcing on new data artifacts).
 
-Covers the 15 artifacts added by the Aug-2026 Phase 2 continuation and the
+Covers the 16 artifacts added by the Aug-2026 Phase 2 continuation and the
 snapshot rebuild that followed the 23 Aug review:
-  - cauvery-ka rivers + context-boundary (Paani GeoPackage geometry)
+  - cauvery-ka rivers + context-boundary + context-rivers (Paani GeoPackage
+    geometry)
   - cauvery-ka state-boundary + waterbodies + city-footprint (23 Aug review
     package; the snapshot layers the feedback deck asked for)
   - ten readings/CPCB_*.json BOD/DO/FC trend packs (Kabini + Arkavathi)

@@ -194,12 +194,19 @@ export function BasinOverview({
   const [accBySub, setAccBySub] = useState<Record<string, AccountabilityData | null>>({});
 
   useEffect(() => {
+    // The snapshot families are optional per basin (cauvery-tn shares
+    // overviewMode "sub-basins" and ships none of them): fetch only what the
+    // inventory lists, so an absent family is a skipped request rather than
+    // a guaranteed 404. inventory is null only mid-hop (basin-atlas-client
+    // fetches inventory.json after swapping the manifest) - fetch blind
+    // then; a missing file already resolves to null.
+    const listed = (family: string) => !inventory || !!inventory.families?.[family];
     fetchJson(`${base}/boundary.geojson`).then((d) => setBoundary(d as FeatureCollection | null));
     fetchJson(`${base}/context-boundary.geojson`).then((d) => setContextBoundary(d as FeatureCollection | null));
-    fetchJson(`${base}/state-boundary.geojson`).then((d) => setStateBoundary(d as FeatureCollection | null));
-    fetchJson(`${base}/waterbodies.geojson`).then((d) => setWaterbodies(d as FeatureCollection | null));
-    fetchJson(`${base}/city-footprint.geojson`).then((d) => setCityFootprint(d as FeatureCollection | null));
-    fetchJson(`${base}/context-rivers.geojson`).then((d) => setContextRivers(d as FeatureCollection | null));
+    if (listed("state-boundary")) fetchJson(`${base}/state-boundary.geojson`).then((d) => setStateBoundary(d as FeatureCollection | null));
+    if (listed("waterbodies")) fetchJson(`${base}/waterbodies.geojson`).then((d) => setWaterbodies(d as FeatureCollection | null));
+    if (listed("city-footprint")) fetchJson(`${base}/city-footprint.geojson`).then((d) => setCityFootprint(d as FeatureCollection | null));
+    if (listed("context-rivers")) fetchJson(`${base}/context-rivers.geojson`).then((d) => setContextRivers(d as FeatureCollection | null));
     fetchJson(`${base}/sub-basins.geojson`).then((d) => setSubBasins(d as FeatureCollection | null));
     fetchJson(`${base}/streams.geojson`).then((d) => setStreams(d as FeatureCollection | null));
     fetchJson(`${base}/rivers.geojson`).then((d) => setRivers(d as FeatureCollection | null));
@@ -208,6 +215,9 @@ export function BasinOverview({
     fetchJson(`${base}/reservoirs.geojson`).then((d) => setReservoirs(d as FeatureCollection | null));
     fetchJson(`${base}/prs-stretches.geojson`).then((d) => setPrs(d as FeatureCollection | null));
     fetchJson(`${base}/scoreboard.json`).then((d) => setScoreboard(d as Scoreboard | null));
+    // inventory is deliberately not a dep: a null-to-loaded transition after
+    // a hop must not refetch every family (the blind fetches already ran).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [base]);
 
   // Live storage for reservoirs that join the daily feed.
@@ -424,6 +434,17 @@ export function BasinOverview({
     };
   };
 
+  // Remount keys for the canvas layers, computed once so the two keys below
+  // share one source of truth and cannot drift. restyleKey is exactly what
+  // subBasinStyle reads (Leaflet ignores prop-only style changes, so the
+  // choropleth remounts to restyle). The markers Fragment adds the polygon
+  // families on top: it must ALSO remount when any of them lands, so the
+  // dots re-add after the late polygons on the shared canvas (later-added
+  // draws on top and wins hover/click - see the comment at the Fragment).
+  const restyleKey = `${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}`;
+  const markersKey =
+    `markers-${restyleKey}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}-${contextRivers ? 1 : 0}`;
+
   const legendStops: [string, string][] =
     metric === "watersheds"
       ? refs.map((r) => [r.name, hueByKey[r.key]] as [string, string])
@@ -606,7 +627,7 @@ export function BasinOverview({
           )}
           {subBasins && (
             <GeoJSON
-              key={`${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}-${contextRivers ? 1 : 0}`}
+              key={restyleKey}
               data={subBasins}
               style={subBasinStyle}
               onEachFeature={(feat, layer) => {
@@ -624,14 +645,14 @@ export function BasinOverview({
           {/* Focus mode: fit to the selected sub-basin and reveal its own
               tanks + WQ stations (the L1/L2 layers, scoped not statewide). */}
           <FitToSelection geoms={fitGeoms} />
-          {/* The markers share the sub-basin layer's key so both remount
-              together, in JSX order: polygons re-added first, dots after -
-              within the single canvas renderer, later-added shapes draw on
-              top and win hover/click. (A separate higher-zIndex pane also
-              put the dots on top, but its canvas then swallowed clicks over
-              the WHOLE map, so polygons under it could never be selected or
-              deselected - both interception bugs found by Sundaresh.) */}
-          <Fragment key={`markers-${metric}-${selectedKey}-${tiles.isDark}-${prs ? 1 : 0}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}-${contextRivers ? 1 : 0}`}>
+          {/* The markers share the sub-basin layer's restyle key so both
+              remount together, in JSX order: polygons re-added first, dots
+              after - within the single canvas renderer, later-added shapes
+              draw on top and win hover/click. (A separate higher-zIndex pane
+              also put the dots on top, but its canvas then swallowed clicks
+              over the WHOLE map, so polygons under it could never be selected
+              or deselected - both interception bugs found by Sundaresh.) */}
+          <Fragment key={markersKey}>
           {/* Major waterbody surfaces, above the choropleth but under the
               river network. They stay clickable and pass the click through to
               the sub-basin they sit in (assigned at build time), so putting a
@@ -919,20 +940,45 @@ export function BasinOverview({
                 {String((stateBoundary.features[0]?.properties as Record<string, unknown>)?.name ?? "state")} boundary
               </div>
             )}
-            {contextBoundary && (
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm border" style={{ backgroundColor: "#64748b", opacity: 0.45, borderColor: "#475569" }} />
-                {(() => {
-                  const beyond = contextBoundary.features.find(
-                    (f) => (f.properties as Record<string, unknown>)?.role === "beyond",
-                  )?.properties as Record<string, unknown> | undefined;
-                  // Naming the size is the point: this atlas covers the smaller half.
-                  return beyond?.areaKm2
-                    ? `Kerala headwaters, upstream (${Number(beyond.areaKm2).toLocaleString()} sq km)`
-                    : "full basin, all states";
-                })()}
-              </div>
-            )}
+            {contextBoundary && (() => {
+              // One legend row per role actually in the data: the dashed
+              // full-basin outline and the filled upstream catchment are
+              // separate drawn features, so each present role gets the
+              // swatch that matches its own rendering.
+              const roleProps = (role: string) =>
+                contextBoundary.features.find(
+                  (f) => (f.properties as Record<string, unknown>)?.role === role,
+                )?.properties as Record<string, unknown> | undefined;
+              const outline = roleProps("context");
+              const beyond = roleProps("beyond");
+              return (
+                <>
+                  {outline && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="inline-block w-3 border-t-2 border-dashed" style={{ borderColor: "#94a3b8" }} />
+                      full basin, all states
+                    </div>
+                  )}
+                  {beyond && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="inline-block w-3 h-3 rounded-sm border" style={{ backgroundColor: "#64748b", opacity: 0.45, borderColor: "#475569" }} />
+                      {(() => {
+                        // The label comes from the feature so a future
+                        // basin's upstream catchment names itself; naming
+                        // the size is the point - this atlas covers the
+                        // smaller half.
+                        const name = typeof beyond.name === "string" && beyond.name.trim()
+                          ? beyond.name
+                          : "Kerala headwaters, upstream";
+                        return beyond.areaKm2
+                          ? `${name} (${Number(beyond.areaKm2).toLocaleString()} sq km)`
+                          : name;
+                      })()}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
             {/* Marker key - shown while a sub-basin is in focus and its own
                 points are on the map. Every rendered symbol gets a legend row. */}
             {selectedKey && (

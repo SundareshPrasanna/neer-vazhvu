@@ -192,6 +192,8 @@ def poly_km2(geom) -> float:
     own centroid latitude. Over a single sub-basin-sized shape that is good to
     well under a percent, and it keeps this script free of a projection
     dependency (the module docstring's no-GDAL rule)."""
+    if geom.is_empty:
+        return 0.0  # an empty geometry's centroid.y raises GEOSException
     lat0 = math.radians(geom.centroid.y)
     return transform(lambda x, y: (x * 111.320 * math.cos(lat0), y * 110.574), geom).area
 
@@ -454,6 +456,11 @@ def main(cfg_path: str) -> None:
     beyond = None
     b_cfg = ctx_cfg.get("beyond")
     if b_cfg and upstream is not None:
+        # Simplified HERE as well as in as_multipolygon below - redundant on
+        # purpose: the published areaKm2 (2,112) was measured on this
+        # simplified shape, and dropping this pass moves it to 2,109. Keep
+        # the byte-stable pipeline until the published figure is re-cut
+        # deliberately.
         beyond = upstream.simplify(ctx_cfg.get("simplifyEps", 0.002), preserve_topology=True)
     feats = [{
         "type": "Feature", "geometry": rounded(mapping(geom)),
@@ -498,7 +505,7 @@ def main(cfg_path: str) -> None:
             f'SELECT rowid, "{wb_cfg["areaAttr"]}" FROM "{wb_cfg["layer"]}"'))
         con.close()
         min_ha = wb_cfg.get("minAreaHa", 0)
-        feats, dropped_small, unnamed = [], 0, 0
+        feats, dropped_small, no_area_recorded, unnamed = [], 0, 0, 0
         for fid, kind, rings_list in read_layer(gpkg, wb_cfg["layer"]):
             if kind != "poly":
                 continue
@@ -506,7 +513,14 @@ def main(cfg_path: str) -> None:
                 [make_valid(Polygon(r[0], r[1:])) for r in rings_list]))
             if not geom.intersects(mask):
                 continue
-            area_ha = float(areas.get(fid) or 0)
+            raw_area = areas.get(fid)
+            if raw_area is None or raw_area == "":
+                # A row with no area recorded is a register gap, not a small
+                # waterbody - reported as its own bucket, never as "below
+                # the threshold".
+                no_area_recorded += 1
+                continue
+            area_ha = float(raw_area)
             if area_ha < min_ha:
                 dropped_small += 1
                 continue
@@ -516,20 +530,27 @@ def main(cfg_path: str) -> None:
             name = (attrs.get(fid) or "").strip() or None
             if name is None:
                 unnamed += 1
-            cx, cy = clipped.centroid.x, clipped.centroid.y
+            # The clipped centroid can land outside a concave shape (and so
+            # outside every sub-basin ring); representative_point() is
+            # guaranteed inside. None only when both sampling points miss.
+            code = sub_code_for(clipped.centroid.x, clipped.centroid.y)
+            if code is None:
+                rp = clipped.representative_point()
+                code = sub_code_for(rp.x, rp.y)
             feats.append({
                 "type": "Feature",
                 "geometry": as_multipolygon(clipped, wb_cfg.get("simplifyEps", 0.0002)),
                 "properties": {
                     "name": name,
                     "areaHa": round(area_ha, 1),
-                    "subBasin": sub_code_for(cx, cy),
+                    "subBasin": code,
                 },
             })
         feats.sort(key=lambda f: -(f["properties"]["areaHa"] or 0))
         emit("waterbodies", feats, wb_cfg["provenance"])
         print(f"  waterbodies: {len(feats)} in-basin at >= {min_ha} ha "
-              f"({dropped_small} below the threshold, {unnamed} unnamed in the register)")
+              f"({dropped_small} below the threshold, {no_area_recorded} with "
+              f"no area recorded, {unnamed} unnamed in the register)")
 
     # 7. City footprint against the basin divide. Bengaluru is the reason this
     #    atlas exists and only part of it drains here; the split IS the point,

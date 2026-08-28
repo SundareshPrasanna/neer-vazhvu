@@ -32,14 +32,14 @@ export const CAUVERY_KA: BasinManifest = {
   ],
   rivers: [],
   layers: [
-    // Overview mode renders its own surface (M2); these declarations drive
-    // data fetching + the DataOnThisMap inventory with the existing plumbing.
-    { family: "context-rivers", label: "The Kabini above the basin, in Kerala", floor: "hydrology", geom: "line", color: "#0ea5e9", defaultOn: true, context: true },
-    { family: "state-boundary", label: "Karnataka state boundary", floor: "hydrology", geom: "line", color: "#64748b", defaultOn: true, context: true },
+    // Not read on this basin's surface: overview mode (basin-overview.tsx)
+    // fetches each family by fixed path and hardcodes its styles, and never
+    // consults manifest.layers. The snapshot families (state-boundary,
+    // waterbodies, city-footprint, context-rivers) are therefore deliberately
+    // not declared here - a declaration would be inert config that can drift
+    // from what is actually drawn.
     { family: "boundary", label: "Basin boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
     { family: "sub-basins", label: "Sub-basins", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
-    { family: "city-footprint", label: "Greater Bengaluru, split by the basin divide", floor: "hydrology", geom: "fill", color: "#f59e0b", defaultOn: true, context: true },
-    { family: "waterbodies", label: "Major waterbodies (India-WRIS)", floor: "hydrology", geom: "fill", color: "#0369a1", defaultOn: true },
     { family: "streams", label: "Streams (CWC-attributed)", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
     { family: "tanks", label: "MI tanks (named)", floor: "hydrology", geom: "point", color: "#0284c7", defaultOn: false },
     { family: "reservoirs", label: "Reservoirs", floor: "hydrology", geom: "point", color: "#0891b2", defaultOn: true },
