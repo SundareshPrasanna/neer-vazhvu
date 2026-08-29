@@ -1,0 +1,126 @@
+# Monthly refresh of the Atlas districts from their upstream registers: the
+# TNRD Panchayat master, JJM Citizen Corner, IN-GRES, Open-Meteo and the
+# TNGIS registers, through the one chain in scripts/atlas-refresh-district.sh.
+# JJM and TNRD move continuously, so a monthly read keeps a district honest
+# without pacing a public portal every day; IN-GRES changes once a year and
+# is also watched by Headwaters (upstream-editions.yml), so an edition alert
+# is the cue to run this by hand for the groundwater steps.
+#
+# Fail-closed, like the producers: a count that drifts from the reviewed
+# refresh plan (a new Gram Panchayat, a reorganised block, a changed portal)
+# stops the chain, nothing is committed for that district, and an issue is
+# filed for a person to review the drift and update pipeline-inputs/atlas/.
+# A district that completes is committed on its own, so one district's stop
+# never holds the other's refresh.
+#
+# Artifact-commit pattern (pravah-dam-refresh.yml, bmc-floodspots-refresh.yml):
+# the served artifacts are committed back to the branch after the NVDM gates.
+# Production serves the corpus at corpus.lock, so a refreshed tree reaches the
+# site only through the data-repo release (scripts/release-corpus.sh).
+#
+# If a Tamil Nadu host blocks GitHub's runner addresses (crrt, cmwssb and
+# cms.tn.gov.in have), the same script runs from the launchd job on the
+# maintainer's Mac; see docs/specs/atlas-district-restart-plan.md section 3.2.
+name: Atlas District Refresh
+
+on:
+  schedule:
+    - cron: '30 1 2 * *'   # 2nd of the month, 01:30 UTC = 07:00 IST
+  workflow_dispatch:
+    inputs:
+      district:
+        description: "District slug (thanjavur, tiruchirappalli) or 'all'"
+        required: false
+        default: "all"
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        district: [thanjavur, tiruchirappalli]
+    # Serialise the two districts: JJM is a public portal read at a paced
+    # rate, and two parallel readers would double the load and race the
+    # commit step.
+    concurrency:
+      group: atlas-refresh
+      cancel-in-progress: false
+    steps:
+      - name: Skip districts not requested
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.district != 'all' && github.event.inputs.district != matrix.district }}
+        run: echo "skipping ${{ matrix.district }}"
+
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.district == 'all' || github.event.inputs.district == matrix.district }}
+
+      - name: Set up Node
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.district == 'all' || github.event.inputs.district == matrix.district }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Set up Python 3.12
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.district == 'all' || github.event.inputs.district == matrix.district }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # pdftotext reads the TNRD LGD directory PDF; the Census extractor is
+      # stdlib Python; everything else is Node.
+      - name: Install poppler and dependencies
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.district == 'all' || github.event.inputs.district == matrix.district }}
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+          npm ci --no-audit --no-fund
+
+      - name: Refresh ${{ matrix.district }}
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.district == 'all' || github.event.inputs.district == matrix.district }}
+        id: refresh
+        run: bash scripts/atlas-refresh-district.sh ${{ matrix.district }}
+
+      - name: Commit refreshed artifacts
+        if: ${{ steps.refresh.outcome == 'success' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          changed=$(git diff --name-only -- public/data/atlas)
+          if [ -z "$changed" ]; then
+            echo "No artifact changed for ${{ matrix.district }}; nothing to gate or commit"
+            exit 0
+          fi
+          # Every enveloped file at HEAD must still certify L2 after the
+          # producers rewrote it (the gate that caught envelope-stripping
+          # producers on other feeds). The gate refuses an empty list, hence
+          # the guard above.
+          bash scripts/nvdm-refresh-gate.sh $changed
+          python3 scripts/build_dataset_catalogue.py
+          python3 scripts/validate_nvdm.py
+          python3 scripts/validate_nvdm.py --selftest
+          git add public/data/atlas docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
+          if git diff --staged --quiet; then
+            echo "No change to commit for ${{ matrix.district }}"
+            exit 0
+          fi
+          git commit -m "Atlas refresh: ${{ matrix.district }} ($(date -u +%Y-%m-%d))"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push
+
+      - name: File an issue for a stopped refresh
+        if: ${{ failure() && steps.refresh.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Atlas refresh stopped: ${{ matrix.district }} ($(date -u +%Y-%m-%d))"
+          body="The monthly Atlas refresh for **${{ matrix.district }}** stopped before publishing. The chain is fail-closed: a count that drifts from the reviewed refresh plan, a malformed response, or an unreachable host halts it and nothing is committed for the district.
+
+Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+To resolve: read the step log, then either update \`pipeline-inputs/atlas/tn/${{ matrix.district }}/refresh-plan.json\` (expected counts, new units) after reviewing the drift, or rerun once the host is reachable. If the host blocks GitHub runners, run \`bash scripts/atlas-refresh-district.sh ${{ matrix.district }}\` from the launchd job instead."
+          gh issue create --title "$title" --body "$body" --label pipeline-alert || echo "issue creation failed; the run log carries the failure"
