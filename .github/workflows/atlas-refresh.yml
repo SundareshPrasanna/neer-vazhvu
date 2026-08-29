@@ -90,8 +90,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          changed=$(git diff --name-only -- public/data/atlas)
-          if [ -z "$changed" ]; then
+          mapfile -t changed < <(git diff --name-only -- public/data/atlas)
+          if [ "${#changed[@]}" -eq 0 ]; then
             echo "No artifact changed for ${{ matrix.district }}; nothing to gate or commit"
             exit 0
           fi
@@ -99,7 +99,7 @@ jobs:
           # producers rewrote it (the gate that caught envelope-stripping
           # producers on other feeds). The gate refuses an empty list, hence
           # the guard above.
-          bash scripts/nvdm-refresh-gate.sh $changed
+          bash scripts/nvdm-refresh-gate.sh "${changed[@]}"
           python3 scripts/build_dataset_catalogue.py
           python3 scripts/validate_nvdm.py
           python3 scripts/validate_nvdm.py --selftest
@@ -117,10 +117,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          title="Atlas refresh stopped: ${{ matrix.district }} ($(date -u +%Y-%m-%d))"
-          body="The monthly Atlas refresh for **${{ matrix.district }}** stopped before publishing. The chain is fail-closed: a count that drifts from the reviewed refresh plan, a malformed response, or an unreachable host halts it and nothing is committed for the district.
-
-Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-To resolve: read the step log, then either update \`pipeline-inputs/atlas/tn/${{ matrix.district }}/refresh-plan.json\` (expected counts, new units) after reviewing the drift, or rerun once the host is reachable. If the host blocks GitHub runners, run \`bash scripts/atlas-refresh-district.sh ${{ matrix.district }}\` from the launchd job instead."
+          district="${{ matrix.district }}"
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          title="Atlas refresh stopped: ${district} ($(date -u +%Y-%m-%d))"
+          body=$(printf '%s\n' \
+            "The monthly Atlas refresh for **${district}** stopped before publishing. The chain is fail-closed: a count that drifts from the reviewed refresh plan, a malformed response, or an unreachable register halts it and nothing is committed for the district (an unreachable identity host alone is skipped and reported in the log, not stopped)." \
+            "" \
+            "Run: ${run_url}" \
+            "" \
+            "To resolve: read the step log, then either update pipeline-inputs/atlas/tn/${district}/refresh-plan.json (expected counts, new units) after reviewing the drift, or rerun once the host is reachable. If the host blocks GitHub runners, run scripts/atlas-refresh-district.sh ${district} from the launchd job instead.")
           gh issue create --title "$title" --body "$body" --label pipeline-alert || echo "issue creation failed; the run log carries the failure"
