@@ -1,0 +1,174 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tiruchirappalli"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-25",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for TIRUCHIRAPPALLI: the district row and its 11 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-tiruchirappalli-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-07-25",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=TIRUCHIRAPPALLI;loctype=DISTRICT;locuuid=e317d594-dd8e-408f-96ea-c84c96b980a8;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "TIRUCHIRAPPALLI",
+    "locationUUID": "e317d594-dd8e-408f-96ea-c84c96b980a8",
+    "category": "semi_critical",
+    "stageOfExtractionPercent": 84.7049
+  },
+  "recordsSha256": "52d55dc3bb0bd46d85930ec15349a586bc9a49daec64ebed64ce553b491f4a3d",
+  "recordCount": 11,
+  "records": [
+    {
+      "locationName": "LALGUDI",
+      "locationUUID": "e7df849e-1467-41fb-8cb9-c47e0d6f7acd",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 41.2226,
+      "annualRechargeHam": 4844.66,
+      "totalAvailabilityHam": 15362.46,
+      "availabilityForFutureUseHam": 8760.29,
+      "rainfallMm": 822.4826
+    },
+    {
+      "locationName": "MANAPPARAI",
+      "locationUUID": "3eeaf2f2-5bc6-4a0b-a146-cb9417133de0",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 143.0393,
+      "annualRechargeHam": 3176.75,
+      "totalAvailabilityHam": 6540.33,
+      "availabilityForFutureUseHam": 701.24,
+      "rainfallMm": 825.5813
+    },
+    {
+      "locationName": "MANNACHANALLUR",
+      "locationUUID": "6197bb05-a945-4206-8323-d7e6339d7238",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.2173,
+      "annualRechargeHam": 2420.91,
+      "totalAvailabilityHam": 4206.24,
+      "availabilityForFutureUseHam": 886.26,
+      "rainfallMm": 717.7223
+    },
+    {
+      "locationName": "MARUNGAPURI",
+      "locationUUID": "2cd93acc-3d9c-4bb8-879f-6ab99c22a8b9",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 119.5835,
+      "annualRechargeHam": 2150.57,
+      "totalAvailabilityHam": 4317.93,
+      "availabilityForFutureUseHam": 708.06,
+      "rainfallMm": 733.3541
+    },
+    {
+      "locationName": "MUSIRI",
+      "locationUUID": "7abadb8b-ff58-4a11-b88c-4c7dc30f4d87",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 131.475,
+      "annualRechargeHam": 2747.46,
+      "totalAvailabilityHam": 8062.05,
+      "availabilityForFutureUseHam": 1685.79,
+      "rainfallMm": 623.6741
+    },
+    {
+      "locationName": "SRIRANGAM",
+      "locationUUID": "2f9a5893-7402-4a41-ac7f-f66e5b8190ae",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 58.2004,
+      "annualRechargeHam": 1743.43,
+      "totalAvailabilityHam": 6406.78,
+      "availabilityForFutureUseHam": 3096.32,
+      "rainfallMm": 813.1934
+    },
+    {
+      "locationName": "THIRUCHIRAPALLI-EAST",
+      "locationUUID": "8c44a46e-c459-4596-86f1-a0624836223a",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 36.3053,
+      "annualRechargeHam": 215.92,
+      "totalAvailabilityHam": 397.38,
+      "availabilityForFutureUseHam": 218.26,
+      "rainfallMm": 800.7341
+    },
+    {
+      "locationName": "THIRUCHIRAPALLI-WEST",
+      "locationUUID": "78ace18a-eaac-4c7a-ad58-3959a9c1355f",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 16.8787,
+      "annualRechargeHam": 247.94,
+      "totalAvailabilityHam": 712.79,
+      "availabilityForFutureUseHam": 535.52,
+      "rainfallMm": 800.7341
+    },
+    {
+      "locationName": "THIRUVERUMBUR",
+      "locationUUID": "a2726a15-8f0d-4d8e-9b05-cf32d7896763",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417,
+      "annualRechargeHam": 1207.22,
+      "totalAvailabilityHam": 4191.16,
+      "availabilityForFutureUseHam": 3896.77,
+      "rainfallMm": 811.0791
+    },
+    {
+      "locationName": "THOTTIAM",
+      "locationUUID": "db5e6f12-4e76-4a38-94e9-0c15899b664f",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 72.8703,
+      "annualRechargeHam": 1282.84,
+      "totalAvailabilityHam": 5116.32,
+      "availabilityForFutureUseHam": 1427.16,
+      "rainfallMm": 670.6311
+    },
+    {
+      "locationName": "THURAIYUR",
+      "locationUUID": "c4489c52-8388-4e9d-8a50-19e2d280e51a",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.3594,
+      "annualRechargeHam": 2562.54,
+      "totalAvailabilityHam": 8929.29,
+      "availabilityForFutureUseHam": 1646.66,
+      "rainfallMm": 754.6778
+    }
+  ]
+}

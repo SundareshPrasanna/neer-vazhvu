@@ -1,0 +1,809 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/curated-briefs",
+  "scope": {
+    "kind": "district",
+    "id": "tn-thanjavur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnrd-lgd-directory-2021",
+        "title": "TNRD village panchayat directory with LGD codes (village_eng.pdf, 2021 edition)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "as_of": "2021-03-11",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "census-2011-village-amenities",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Tamil Nadu village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "as_of": "2011",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "closed": true,
+        "title": "Dynamic Ground Water Resources of Tamil Nadu 2024 (firka assessment report)",
+        "publisher": "Central Ground Water Board / State Ground and Surface Water Resources Data Centre, Tamil Nadu",
+        "url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/17482438881618904436file.pdf",
+        "license": "GoI publication, cited with attribution",
+        "role": "input",
+        "as_of": "2024"
+      },
+      {
+        "closed": true,
+        "title": "NAQUIM Lower Cauvery aquifer report (through 2019-03-31)",
+        "publisher": "Central Ground Water Board",
+        "url": "https://www.cgwb.gov.in/cgwbpnm/public/uploads/documents/16982328741431874796file.pdf",
+        "license": "GoI publication, cited with attribution",
+        "role": "input",
+        "as_of": "2019"
+      },
+      {
+        "closed": true,
+        "title": "Census 2011 population table for Thanjavur district (TNRD mirror, Nanjikottai Census Town)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "url": "https://tnrd.tn.gov.in/databases/census_of_india_2011TN/pdf/15Thanjavur.pdf",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "as_of": "2011"
+      },
+      {
+        "closed": true,
+        "title": "Tamil Nadu Government Gazette 2021, Part II Section 2 supplement (Census Town 638846 corroboration)",
+        "publisher": "Government of Tamil Nadu (Stationery and Printing)",
+        "url": "https://www.stationeryprinting.tn.gov.in/gazette/2021/7_II_2_A_Sup.pdf",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "as_of": "2021"
+      },
+      {
+        "closed": true,
+        "title": "Tamil Nadu AgriNet summer 2025 crop enumeration rows for the four Panchayats (one-time manual reading)",
+        "publisher": "Agriculture Department, Government of Tamil Nadu (TN-AgriSNet)",
+        "url": "https://www.tnagrisnet.tn.gov.in/",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "as_of": "2025"
+      },
+      {
+        "closed": true,
+        "title": "Bhuvan Panchayat geotag and planning-layer counts for Nanjikkottai (one-time manual reading, 2026-07-25)",
+        "publisher": "NRSC / ISRO (Bhuvan Panchayat)",
+        "url": "https://bhuvanpanchayat.nrsc.gov.in/",
+        "license": "GoI publication, cited with attribution",
+        "role": "input",
+        "as_of": "2026-07-25"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-07-25",
+    "produced_by": "manual",
+    "internal_inputs": [],
+    "note": "Four reviewed Gram Panchayat briefs for Thanjavur (Poondi, Kuruvikkarambai, Vettuvakkottai, Nanjikkottai), written by hand from the July 2026 four-Panchayat slice and its shared evidence record (docs/research/thanjavur-four-panchayat-slice-2026-07.md). A reviewed brief carries what a person understood about the place and is preferred by the Panchayat page over the generated brief of the same LGD code, which stays underneath for the named gaps. The closed sources are the documents read once for these four places: the AgriNet crop rows and the Bhuvan counts are dated one-time readings, not feeds, and are not re-acquired. Groundwater figures here are the 2024 FIRKA assessment read from the CGWB report; the generated briefs use the IN-GRES TALUK assessment, so the two can legitimately differ for the same place.",
+    "conventions": {
+      "precedence": "a curated brief overrides the generated brief of the same lgdCode on the page; nothing here is machine-derived",
+      "reviewedAt": "the date the reviewer checked identity and evidence; the page shows it beside the brief",
+      "groundwater": "firka-level (2024 CGWB report), containing-area context, not a Panchayat measurement"
+    }
+  },
+  "schemaVersion": 1,
+  "briefs": [
+    {
+      "lgdCode": "228400",
+      "placeId": "poondi",
+      "name": "Poondi",
+      "blockName": "Ammapet",
+      "status": "brief-ready",
+      "thesis": "Recorded tap-water coverage and a historically canal-dependent farm landscape now sit within a semi-critical groundwater setting.",
+      "verdictTitle": "Drinking-water service is well documented; present-day irrigation reliability is not.",
+      "verdictBody": "JJM lists a tap connection for every recorded household and recent programme sampling. Census records show strong historical dependence on canals, while Saliyamangalam firka is classified Semi Critical. The missing link is current irrigation: the available records do not show whether today’s paddy area receives dependable canal water or is shifting pressure onto groundwater.",
+      "headlineFacts": [
+        {
+          "value": "1,143",
+          "label": "Households and tap connections",
+          "note": "JJM record · data checked 25 Jul 2026"
+        },
+        {
+          "value": "94",
+          "label": "Water sample rows",
+          "note": "Latest displayed Safe · 16 Jul 2026"
+        },
+        {
+          "value": "425.08 ha",
+          "label": "Historical canal irrigation",
+          "note": "Census village baseline · reference year 2009"
+        },
+        {
+          "value": "85.8%",
+          "label": "Groundwater extraction stage",
+          "note": "Saliyamangalam firka · 2024"
+        }
+      ],
+      "insights": [
+        {
+          "id": "identity",
+          "domain": "identity",
+          "title": "Administrative identity",
+          "text": "Poondi is recorded as LGD Gram Panchayat 228400 and JJM Gram Panchayat 152086; the Census record covers settlements 638660 and 638661."
+        },
+        {
+          "id": "drinking-water",
+          "domain": "drinking-water",
+          "title": "Drinking-water service",
+          "text": "JJM displays 1,143 households and 1,143 tap connections across three habitations, eight deep-tubewell source rows, 94 sample rows, and a latest displayed Safe sample dated 2026-07-16."
+        },
+        {
+          "id": "land-water-baseline",
+          "domain": "agriculture",
+          "title": "Land and irrigation baseline",
+          "text": "The 2009 Census baseline totals 711.53 ha, 438.98 ha net sown, and 432.97 ha irrigated; 425.08 ha of the irrigated area is recorded as canal irrigation."
+        },
+        {
+          "id": "current-crops",
+          "domain": "agriculture",
+          "title": "Current crop signal",
+          "text": "Summer 2025 AgriNet rows show 332.2 ha across Poondi-1 and Poondi-2, chiefly paddy, but current irrigation method remains unknown."
+        },
+        {
+          "id": "groundwater",
+          "domain": "groundwater",
+          "title": "Groundwater pressure",
+          "text": "Saliyamangalam firka is Semi Critical at 85.8 percent in the 2024 groundwater assessment."
+        }
+      ],
+      "nextEvidence": [
+        "Which canal and command area currently serve Poondi?",
+        "Which nearby rain gauge best represents local seasonal conditions?",
+        "How much of today’s cultivated area depends on canals, wells, or both?",
+        "Where do the Panchayat boundary, drainage paths, flood-prone areas, and water bodies lie?"
+      ],
+      "reviewedAt": "2026-07-25",
+      "evidence": [
+        {
+          "id": "thanjavur-reviewed-resolver-pack",
+          "name": "Tamil Nadu Rural Development place records",
+          "sourceUrl": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+          "sourceAsOf": "TNRD LGD list 2021-03-11 plus current master retrieved 2026-07-25",
+          "supports": [
+            "place identity",
+            "local administration"
+          ],
+          "limitations": [
+            "Records are matched using official identifiers; similar place names are not treated as interchangeable.",
+            "The current TNRD master and the older LGD-coded list were published at different times and serve different purposes."
+          ]
+        },
+        {
+          "id": "thanjavur-jjm-service-pack",
+          "name": "Jal Jeevan Mission service records",
+          "sourceUrl": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+          "sourceAsOf": "retrieved 2026-07-25",
+          "supports": [
+            "population and settlements",
+            "drinking-water service",
+            "drinking-water sources",
+            "drinking-water samples",
+            "water-supply systems",
+            "public water works"
+          ],
+          "limitations": [
+            "Connection counts do not establish quantity, continuity, pressure, or seasonal reliability.",
+            "A latest displayed Safe sample is a programme sample status, not a claim that all environmental water is safe."
+          ]
+        },
+        {
+          "id": "thanjavur-census-baseline-pack",
+          "name": "Census 2011 village baseline",
+          "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45367",
+          "sourceAsOf": "Census 2011 release; village reference year 2009",
+          "supports": [
+            "place identity",
+            "population and settlements",
+            "historical water access",
+            "historical land and irrigation",
+            "pollution pressure"
+          ],
+          "limitations": [
+            "The source is a historical baseline and cannot represent current service or irrigation conditions.",
+            "Village amenity figures are shown only for Census settlements that form part of the named Panchayat."
+          ]
+        },
+        {
+          "id": "thanjavur-firka-groundwater-pack",
+          "name": "CGWB groundwater assessment",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/17482438881618904436file.pdf",
+          "sourceAsOf": "Tamil Nadu dynamic groundwater assessment 2024",
+          "supports": [
+            "groundwater conditions"
+          ],
+          "limitations": [
+            "Firka category and extraction percentage are containing-area proxies, not measurements at an individual well or Panchayat."
+          ]
+        },
+        {
+          "id": "lower-cauvery-aquifer-pack",
+          "name": "Lower Cauvery aquifer context",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/16982328741431874796file.pdf",
+          "sourceAsOf": "NAQUIM Lower Cauvery aquifer report through 2019-03-31",
+          "supports": [
+            "aquifer context"
+          ],
+          "limitations": [
+            "Regional aquifer context is not a local groundwater-level observation or trend."
+          ]
+        },
+        {
+          "id": "thanjavur-summer-crop-pack",
+          "name": "Tamil Nadu crop enumeration",
+          "sourceUrl": "https://www.tnagrisnet.tn.gov.in/",
+          "sourceAsOf": "Summer 2025 crop enumeration retrieved 2026-07-25",
+          "supports": [
+            "current crops and irrigation"
+          ],
+          "limitations": [
+            "Direct crop-area rows are current partial evidence, but they do not identify current irrigation source, method, delivery, or crop-water demand."
+          ]
+        },
+        {
+          "id": "thanjavur-bhuvan-boundary-screen",
+          "name": "Bhuvan Panchayat boundary screen",
+          "sourceUrl": "https://bhuvanpanchayat.nrsc.gov.in/",
+          "sourceAsOf": "public selector and geometry service checked 2026-07-25; page last modified 2024-03-26",
+          "supports": [
+            "Panchayat boundaries"
+          ],
+          "limitations": [
+            "Bhuvan boundary files are not shown because their publication terms and map date have not been confirmed.",
+            "The public selector does not list the current Thiruvonam block, so it cannot provide a boundary for Vettuvakkottai.",
+            "Bhuvan block identifiers differ from LGD block codes."
+          ]
+        }
+      ]
+    },
+    {
+      "lgdCode": "228711",
+      "placeId": "kuruvikkarambai",
+      "name": "Kuruvikkarambai",
+      "blockName": "Sethubavachatram",
+      "status": "brief-ready",
+      "thesis": "A large coconut-growing area and recorded tap-water coverage sit within an over-exploited groundwater setting.",
+      "verdictTitle": "Coconut cultivation and groundwater pressure need closer local monitoring.",
+      "verdictBody": "Summer 2025 crop records show a large coconut footprint, Census records show substantial historical canal irrigation, and JJM lists a sizeable groundwater-based drinking-water system. Kuruvikkarambai firka is Over Exploited. These facts justify closer water-use monitoring, but they do not show the current irrigation source, field method, delivery schedule, or crop stress needed for farm advice.",
+      "headlineFacts": [
+        {
+          "value": "1,566",
+          "label": "Households and tap connections",
+          "note": "Across two JJM service villages"
+        },
+        {
+          "value": "10",
+          "label": "Habitations",
+          "note": "Combined service population 6,370"
+        },
+        {
+          "value": "823.1 ha",
+          "label": "Summer crop rows",
+          "note": "Dominated by coconut · 2025"
+        },
+        {
+          "value": "121.9%",
+          "label": "Groundwater extraction stage",
+          "note": "Kuruvikkarambai firka · 2024"
+        }
+      ],
+      "insights": [
+        {
+          "id": "identity",
+          "domain": "identity",
+          "title": "Administrative identity",
+          "text": "Kuruvikkarambai is recorded as LGD Gram Panchayat 228711 and JJM Gram Panchayat 152422; its service and Census records cover two settlements."
+        },
+        {
+          "id": "drinking-water",
+          "domain": "drinking-water",
+          "title": "Drinking-water service",
+          "text": "JJM displays 1,566 households and connections across ten habitations and a combined service population of 6,370; it lists 29 deep-tubewell source rows."
+        },
+        {
+          "id": "land-water-baseline",
+          "domain": "agriculture",
+          "title": "Land and irrigation baseline",
+          "text": "The 2009 Census baseline totals 1,251.74 ha, 874.22 ha net sown, and 253.29 ha irrigated, including 241.50 ha by canals."
+        },
+        {
+          "id": "current-crops",
+          "domain": "agriculture",
+          "title": "Current crop signal",
+          "text": "Summer 2025 AgriNet rows show 823.1 ha across Kuruvikkarambai-1 and -2, dominated by coconut, but do not identify the current irrigation source or delivery system."
+        },
+        {
+          "id": "groundwater",
+          "domain": "groundwater",
+          "title": "Groundwater pressure",
+          "text": "Kuruvikkarambai firka is Over Exploited at 121.9 percent in the 2024 groundwater assessment."
+        }
+      ],
+      "nextEvidence": [
+        "What currently supplies irrigation water to the coconut-growing area?",
+        "What do crop stage, rainfall, soil moisture, and observed stress show?",
+        "Which canal, wells, or pumps serve the cultivated land?",
+        "Where do farms, drainage paths, and water bodies intersect inside the Panchayat?"
+      ],
+      "reviewedAt": "2026-07-25",
+      "evidence": [
+        {
+          "id": "thanjavur-reviewed-resolver-pack",
+          "name": "Tamil Nadu Rural Development place records",
+          "sourceUrl": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+          "sourceAsOf": "TNRD LGD list 2021-03-11 plus current master retrieved 2026-07-25",
+          "supports": [
+            "place identity",
+            "local administration"
+          ],
+          "limitations": [
+            "Records are matched using official identifiers; similar place names are not treated as interchangeable.",
+            "The current TNRD master and the older LGD-coded list were published at different times and serve different purposes."
+          ]
+        },
+        {
+          "id": "thanjavur-jjm-service-pack",
+          "name": "Jal Jeevan Mission service records",
+          "sourceUrl": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+          "sourceAsOf": "retrieved 2026-07-25",
+          "supports": [
+            "population and settlements",
+            "drinking-water service",
+            "drinking-water sources",
+            "drinking-water samples",
+            "water-supply systems",
+            "public water works"
+          ],
+          "limitations": [
+            "Connection counts do not establish quantity, continuity, pressure, or seasonal reliability.",
+            "A latest displayed Safe sample is a programme sample status, not a claim that all environmental water is safe."
+          ]
+        },
+        {
+          "id": "thanjavur-census-baseline-pack",
+          "name": "Census 2011 village baseline",
+          "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45367",
+          "sourceAsOf": "Census 2011 release; village reference year 2009",
+          "supports": [
+            "place identity",
+            "population and settlements",
+            "historical water access",
+            "historical land and irrigation",
+            "pollution pressure"
+          ],
+          "limitations": [
+            "The source is a historical baseline and cannot represent current service or irrigation conditions.",
+            "Village amenity figures are shown only for Census settlements that form part of the named Panchayat."
+          ]
+        },
+        {
+          "id": "thanjavur-firka-groundwater-pack",
+          "name": "CGWB groundwater assessment",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/17482438881618904436file.pdf",
+          "sourceAsOf": "Tamil Nadu dynamic groundwater assessment 2024",
+          "supports": [
+            "groundwater conditions"
+          ],
+          "limitations": [
+            "Firka category and extraction percentage are containing-area proxies, not measurements at an individual well or Panchayat."
+          ]
+        },
+        {
+          "id": "lower-cauvery-aquifer-pack",
+          "name": "Lower Cauvery aquifer context",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/16982328741431874796file.pdf",
+          "sourceAsOf": "NAQUIM Lower Cauvery aquifer report through 2019-03-31",
+          "supports": [
+            "aquifer context"
+          ],
+          "limitations": [
+            "Regional aquifer context is not a local groundwater-level observation or trend."
+          ]
+        },
+        {
+          "id": "thanjavur-summer-crop-pack",
+          "name": "Tamil Nadu crop enumeration",
+          "sourceUrl": "https://www.tnagrisnet.tn.gov.in/",
+          "sourceAsOf": "Summer 2025 crop enumeration retrieved 2026-07-25",
+          "supports": [
+            "current crops and irrigation"
+          ],
+          "limitations": [
+            "Direct crop-area rows are current partial evidence, but they do not identify current irrigation source, method, delivery, or crop-water demand."
+          ]
+        },
+        {
+          "id": "thanjavur-bhuvan-boundary-screen",
+          "name": "Bhuvan Panchayat boundary screen",
+          "sourceUrl": "https://bhuvanpanchayat.nrsc.gov.in/",
+          "sourceAsOf": "public selector and geometry service checked 2026-07-25; page last modified 2024-03-26",
+          "supports": [
+            "Panchayat boundaries"
+          ],
+          "limitations": [
+            "Bhuvan boundary files are not shown because their publication terms and map date have not been confirmed.",
+            "The public selector does not list the current Thiruvonam block, so it cannot provide a boundary for Vettuvakkottai.",
+            "Bhuvan block identifiers differ from LGD block codes."
+          ]
+        }
+      ]
+    },
+    {
+      "lgdCode": "228911",
+      "placeId": "vettuvakkottai",
+      "name": "Vettuvakkottai",
+      "blockName": "Thiruvonam",
+      "status": "brief-ready",
+      "thesis": "A mixed canal-and-well irrigation history meets over-exploited groundwater and a dated direct-to-water-body drainage signal.",
+      "verdictTitle": "A historic drainage warning deserves verification—not a pollution label.",
+      "verdictBody": "Historical records show substantial irrigation split between canals and wells, while Summer 2025 records show a mixed crop portfolio. A 2009 Census record for Ooranipuram says drainage discharged directly to a water body. This should prompt a present-day check; it does not establish current contamination or identify a pollution source.",
+      "headlineFacts": [
+        {
+          "value": "742",
+          "label": "Households and tap connections",
+          "note": "Across nine habitations"
+        },
+        {
+          "value": "629.83 ha",
+          "label": "Historical irrigated area",
+          "note": "348.00 ha canal · 281.83 ha wells"
+        },
+        {
+          "value": "138.4 ha",
+          "label": "Summer crop rows",
+          "note": "Mixed crop portfolio · 2025"
+        },
+        {
+          "value": "126.7%",
+          "label": "Groundwater extraction stage",
+          "note": "Kavalipatti firka · 2024"
+        }
+      ],
+      "insights": [
+        {
+          "id": "identity",
+          "domain": "identity",
+          "title": "Administrative identity",
+          "text": "Vettuvakkottai is recorded as LGD Gram Panchayat 228911 and JJM Gram Panchayat 152334; its Census record covers settlements 638954, 638955, and 638956."
+        },
+        {
+          "id": "drinking-water",
+          "domain": "drinking-water",
+          "title": "Drinking-water service",
+          "text": "JJM displays 742 households and connections across nine habitations, 23 deep-tubewell source rows, and a latest displayed Safe sample dated 2026-06-29."
+        },
+        {
+          "id": "land-water-baseline",
+          "domain": "agriculture",
+          "title": "Land and irrigation baseline",
+          "text": "The 2009 Census baseline totals 1,202.68 ha, 794.92 ha net sown, and 629.83 ha irrigated, split between 348.00 ha by canals and 281.83 ha by wells."
+        },
+        {
+          "id": "pollution-pressure",
+          "domain": "pollution",
+          "title": "Dated pollution-pressure signal",
+          "text": "Ooranipuram's 2009 amenity record says drainage discharged directly to a water body. This is a historical warning that requires a present-day check, not a current pollution finding."
+        },
+        {
+          "id": "agriculture-groundwater",
+          "domain": "groundwater",
+          "title": "Agriculture and groundwater",
+          "text": "Summer 2025 AgriNet shows 138.4 ha across a mixed crop portfolio; Kavalipatti firka is Over Exploited at 126.7 percent."
+        }
+      ],
+      "nextEvidence": [
+        "Does the recorded drainage outlet still discharge to the same water body?",
+        "What do current water-quality measurements show at the outlet and receiving water?",
+        "How much irrigation currently depends on canals compared with wells?",
+        "Where are the Panchayat boundary, drains, farms, and receiving water body?"
+      ],
+      "reviewedAt": "2026-07-25",
+      "evidence": [
+        {
+          "id": "thanjavur-reviewed-resolver-pack",
+          "name": "Tamil Nadu Rural Development place records",
+          "sourceUrl": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+          "sourceAsOf": "TNRD LGD list 2021-03-11 plus current master retrieved 2026-07-25",
+          "supports": [
+            "place identity",
+            "local administration"
+          ],
+          "limitations": [
+            "Records are matched using official identifiers; similar place names are not treated as interchangeable.",
+            "The current TNRD master and the older LGD-coded list were published at different times and serve different purposes."
+          ]
+        },
+        {
+          "id": "thanjavur-jjm-service-pack",
+          "name": "Jal Jeevan Mission service records",
+          "sourceUrl": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+          "sourceAsOf": "retrieved 2026-07-25",
+          "supports": [
+            "population and settlements",
+            "drinking-water service",
+            "drinking-water sources",
+            "drinking-water samples",
+            "water-supply systems",
+            "public water works"
+          ],
+          "limitations": [
+            "Connection counts do not establish quantity, continuity, pressure, or seasonal reliability.",
+            "A latest displayed Safe sample is a programme sample status, not a claim that all environmental water is safe."
+          ]
+        },
+        {
+          "id": "thanjavur-census-baseline-pack",
+          "name": "Census 2011 village baseline",
+          "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45367",
+          "sourceAsOf": "Census 2011 release; village reference year 2009",
+          "supports": [
+            "place identity",
+            "population and settlements",
+            "historical water access",
+            "historical land and irrigation",
+            "pollution pressure"
+          ],
+          "limitations": [
+            "The source is a historical baseline and cannot represent current service or irrigation conditions.",
+            "Village amenity figures are shown only for Census settlements that form part of the named Panchayat."
+          ]
+        },
+        {
+          "id": "thanjavur-firka-groundwater-pack",
+          "name": "CGWB groundwater assessment",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/17482438881618904436file.pdf",
+          "sourceAsOf": "Tamil Nadu dynamic groundwater assessment 2024",
+          "supports": [
+            "groundwater conditions"
+          ],
+          "limitations": [
+            "Firka category and extraction percentage are containing-area proxies, not measurements at an individual well or Panchayat."
+          ]
+        },
+        {
+          "id": "lower-cauvery-aquifer-pack",
+          "name": "Lower Cauvery aquifer context",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/16982328741431874796file.pdf",
+          "sourceAsOf": "NAQUIM Lower Cauvery aquifer report through 2019-03-31",
+          "supports": [
+            "aquifer context"
+          ],
+          "limitations": [
+            "Regional aquifer context is not a local groundwater-level observation or trend."
+          ]
+        },
+        {
+          "id": "thanjavur-summer-crop-pack",
+          "name": "Tamil Nadu crop enumeration",
+          "sourceUrl": "https://www.tnagrisnet.tn.gov.in/",
+          "sourceAsOf": "Summer 2025 crop enumeration retrieved 2026-07-25",
+          "supports": [
+            "current crops and irrigation"
+          ],
+          "limitations": [
+            "Direct crop-area rows are current partial evidence, but they do not identify current irrigation source, method, delivery, or crop-water demand."
+          ]
+        },
+        {
+          "id": "thanjavur-bhuvan-boundary-screen",
+          "name": "Bhuvan Panchayat boundary screen",
+          "sourceUrl": "https://bhuvanpanchayat.nrsc.gov.in/",
+          "sourceAsOf": "public selector and geometry service checked 2026-07-25; page last modified 2024-03-26",
+          "supports": [
+            "Panchayat boundaries"
+          ],
+          "limitations": [
+            "Bhuvan boundary files are not shown because their publication terms and map date have not been confirmed.",
+            "The public selector does not list the current Thiruvonam block, so it cannot provide a boundary for Vettuvakkottai.",
+            "Bhuvan block identifiers differ from LGD block codes."
+          ]
+        }
+      ]
+    },
+    {
+      "lgdCode": "228767",
+      "placeId": "nanjikkottai",
+      "name": "Nanjikkottai",
+      "blockName": "Thanjavur",
+      "status": "brief-ready",
+      "thesis": "A large peri-urban Census Town combines extensive drinking-water records with severe groundwater pressure across its firka.",
+      "verdictTitle": "Extensive tap-water service sits alongside severe groundwater pressure.",
+      "verdictBody": "JJM displays tap connections for 9,512 households, with supply records spanning deep tubewells and lake sources. At the same time, the containing Nanjikottai firka is classified Over Exploited, with groundwater extraction assessed at 122.4 percent. The public record establishes the scale of service and groundwater pressure, but not whether supply is continuous, seasonally reliable, or environmentally safe.",
+      "headlineFacts": [
+        {
+          "value": "9,512",
+          "label": "Households and tap connections",
+          "note": "JJM service record · data checked 25 Jul 2026"
+        },
+        {
+          "value": "32,689",
+          "label": "Historical population",
+          "note": "Nanjikottai Census Town · Census 2011"
+        },
+        {
+          "value": "714",
+          "label": "Water sample rows",
+          "note": "Latest displayed Safe · 18 Jul 2026"
+        },
+        {
+          "value": "122.4%",
+          "label": "Groundwater extraction stage",
+          "note": "Nanjikottai firka · 2024"
+        }
+      ],
+      "insights": [
+        {
+          "id": "identity",
+          "domain": "identity",
+          "title": "Administrative identity",
+          "text": "This profile covers Nanjikottai Census Town under Nanjikkottai Gram Panchayat; its official administrative and service identifiers are listed below."
+        },
+        {
+          "id": "population",
+          "domain": "identity",
+          "title": "Population and settlements",
+          "text": "TNRD's Census 2011 table records 32,689 people for Nanjikottai, while JJM displays a service population of 35,135; the different vintages and programme definitions do not support a growth calculation."
+        },
+        {
+          "id": "drinking-water",
+          "domain": "drinking-water",
+          "title": "Drinking-water service",
+          "text": "JJM displays 9,512 households and connections across 24 habitations, 30 deep-tubewell and 39 lake source rows, and 714 sample rows with a latest displayed Safe sample dated 2026-07-18."
+        },
+        {
+          "id": "public-works",
+          "domain": "drinking-water",
+          "title": "Public works evidence",
+          "text": "Bhuvan lists 333 accepted geotags, including 152 water-adjacent programme records. The counts do not establish that every record is a separate asset, or that each asset is functional and currently maintained."
+        },
+        {
+          "id": "groundwater",
+          "domain": "groundwater",
+          "title": "Groundwater pressure",
+          "text": "Nanjikottai firka is Over Exploited at 122.4 percent in the 2024 groundwater assessment."
+        }
+      ],
+      "nextEvidence": [
+        "What are the current crop area, irrigation sources, and agricultural water demand?",
+        "How many of the recorded lake sources and public works are distinct and functional?",
+        "What do current water-quality measurements show in local lakes, drains, and supply sources?",
+        "Where is the current Panchayat boundary in relation to Thanjavur Corporation?"
+      ],
+      "reviewedAt": "2026-07-25",
+      "evidence": [
+        {
+          "id": "thanjavur-jjm-service-pack",
+          "name": "Jal Jeevan Mission service records",
+          "sourceUrl": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+          "sourceAsOf": "retrieved 2026-07-25",
+          "supports": [
+            "population and settlements",
+            "drinking-water service",
+            "drinking-water sources",
+            "drinking-water samples",
+            "water-supply systems",
+            "public water works"
+          ],
+          "limitations": [
+            "Connection counts do not establish quantity, continuity, pressure, or seasonal reliability.",
+            "A latest displayed Safe sample is a programme sample status, not a claim that all environmental water is safe."
+          ]
+        },
+        {
+          "id": "thanjavur-census-baseline-pack",
+          "name": "Census 2011 village baseline",
+          "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45367",
+          "sourceAsOf": "Census 2011 release; village reference year 2009",
+          "supports": [
+            "place identity",
+            "population and settlements",
+            "historical water access",
+            "historical land and irrigation",
+            "pollution pressure"
+          ],
+          "limitations": [
+            "The source is a historical baseline and cannot represent current service or irrigation conditions.",
+            "Village amenity figures are shown only for Census settlements that form part of the named Panchayat."
+          ]
+        },
+        {
+          "id": "nanjikkottai-census-town-crosswalk",
+          "name": "TNRD Census Town population table",
+          "sourceUrl": "https://tnrd.tn.gov.in/databases/census_of_india_2011TN/pdf/15Thanjavur.pdf",
+          "sourceAsOf": "Census 2011 population table; checked 2026-07-25",
+          "supports": [
+            "place identity",
+            "population and settlements"
+          ],
+          "limitations": [
+            "The 2011 population is historical and is not a current population estimate.",
+            "The table covers Nanjikottai Census Town; figures from nearby settlements are not added to its total."
+          ]
+        },
+        {
+          "id": "nanjikkottai-gazette-crosswalk",
+          "name": "Tamil Nadu Gazette Census Town record",
+          "sourceUrl": "https://www.stationeryprinting.tn.gov.in/gazette/2021/7_II_2_A_Sup.pdf",
+          "sourceAsOf": "Tamil Nadu Gazette 2021; checked 2026-07-25",
+          "supports": [
+            "place identity"
+          ],
+          "limitations": [
+            "The Gazette corroborates Census Town 638846; it does not provide a current population or a publishable Panchayat boundary."
+          ]
+        },
+        {
+          "id": "nanjikkottai-bhuvan-public-works",
+          "name": "Bhuvan public-works inventory",
+          "sourceUrl": "https://bhuvanpanchayat.nrsc.gov.in/",
+          "sourceAsOf": "BHUGRAM and planning layers; checked 2026-07-25",
+          "supports": [
+            "public water works"
+          ],
+          "limitations": [
+            "Geotag and planning counts describe programme records, not verified present condition, performance, ownership, or uniqueness of physical assets.",
+            "Bhuvan uses Panchayat identifier 2913001028 for these records."
+          ]
+        },
+        {
+          "id": "lower-cauvery-aquifer-pack",
+          "name": "Lower Cauvery aquifer context",
+          "sourceUrl": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/16982328741431874796file.pdf",
+          "sourceAsOf": "NAQUIM Lower Cauvery aquifer report through 2019-03-31",
+          "supports": [
+            "aquifer context"
+          ],
+          "limitations": [
+            "Regional aquifer context is not a local groundwater-level observation or trend."
+          ]
+        },
+        {
+          "id": "thanjavur-summer-crop-pack",
+          "name": "Tamil Nadu crop enumeration",
+          "sourceUrl": "https://www.tnagrisnet.tn.gov.in/",
+          "sourceAsOf": "Summer 2025 crop enumeration retrieved 2026-07-25",
+          "supports": [
+            "current crops and irrigation"
+          ],
+          "limitations": [
+            "Direct crop-area rows are current partial evidence, but they do not identify current irrigation source, method, delivery, or crop-water demand."
+          ]
+        },
+        {
+          "id": "thanjavur-bhuvan-boundary-screen",
+          "name": "Bhuvan Panchayat boundary screen",
+          "sourceUrl": "https://bhuvanpanchayat.nrsc.gov.in/",
+          "sourceAsOf": "public selector and geometry service checked 2026-07-25; page last modified 2024-03-26",
+          "supports": [
+            "Panchayat boundaries"
+          ],
+          "limitations": [
+            "Bhuvan boundary files are not shown because their publication terms and map date have not been confirmed.",
+            "The public selector does not list the current Thiruvonam block, so it cannot provide a boundary for Vettuvakkottai.",
+            "Bhuvan block identifiers differ from LGD block codes."
+          ]
+        }
+      ]
+    }
+  ]
+}
