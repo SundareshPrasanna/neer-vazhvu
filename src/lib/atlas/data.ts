@@ -6,11 +6,18 @@
  * job), the way the cascade and ward-profile loaders do. Never imported by
  * client components: the registry is the only atlas module they may touch.
  *
- * NV_ATLAS_DATA_ROOT points the readers at another tree (the unit tests use
- * the one-block fixture corpus under fixtures/atlas/).
+ * The base directory is a module-level constant built from literal segments,
+ * exactly like src/lib/cascade-stats-loader.ts, and every path handed to fs
+ * is joined onto it here. Turbopack's file tracer can scope an fs read to a
+ * subfolder only when the base is static: an environment override, a
+ * NODE_ENV branch, a reassignable binding and an ignore comment each made it
+ * trace the whole project into every route that reaches this module. The
+ * unit tests therefore never repoint these readers; they read the fixture
+ * corpus themselves (src/lib/atlas/test-support.ts) and feed the pure
+ * builders these readers feed.
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { resolve } from "node:path";
+import { join } from "node:path";
 
 import {
   ATLAS_DATA_ROOT,
@@ -29,19 +36,16 @@ import {
 } from "./artifacts";
 import type { PlaceBrief } from "./place-brief";
 
-function dataRoot(): string {
-  const override = process.env.NV_ATLAS_DATA_ROOT;
-  return override ? resolve(override) : resolve(process.cwd(), ATLAS_DATA_ROOT);
-}
-
-function fileFor(district: DistrictRef, family: AtlasFamily, shard?: string): string {
-  const rel = districtArtifactPath(district, family, shard).slice(ATLAS_DATA_ROOT.length + 1);
-  return resolve(dataRoot(), rel);
-}
+const DATA_DIR = join(process.cwd(), "public", "data", "atlas");
 
 const cache = new Map<string, unknown>();
 
-/** Drop everything read so far. Tests call this when they repoint the root. */
+function fileFor(district: DistrictRef, family: AtlasFamily, shard?: string): string {
+  const rel = districtArtifactPath(district, family, shard).slice(ATLAS_DATA_ROOT.length + 1);
+  return join(DATA_DIR, rel);
+}
+
+/** Drop everything read so far. */
 export function clearAtlasDataCache(): void {
   cache.clear();
 }
@@ -64,7 +68,7 @@ export function readDistrictArtifact<T>(
 }
 
 export function listShards(district: DistrictRef, family: AtlasFamily): string[] {
-  const dir = resolve(dataRoot(), district.stateSlug, district.slug, family);
+  const dir = join(DATA_DIR, district.stateSlug, district.slug, family);
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
     .filter((name) => /\.(geo)?json$/.test(name))

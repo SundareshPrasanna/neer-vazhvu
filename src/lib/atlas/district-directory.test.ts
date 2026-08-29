@@ -2,13 +2,19 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildDistrictDirectory,
   directoryPlaceName,
-  getAllDistrictDirectories,
-  getDistrictBrief,
+  findBrief,
   getDistrictBriefs,
   getDistrictDirectory,
 } from "./district-directory";
-import { FIXTURE_DISTRICTS } from "./test-support";
+import {
+  FIXTURE_DISTRICTS,
+  buildAllFixtureDirectories,
+  districtBySlug,
+  fixtureBriefs,
+  readFixtureArtifacts,
+} from "./test-support";
 
 test("TNRD's shouting names are shown in title case, mixed-case names untouched", () => {
   assert.equal(directoryPlaceName("KURUVIKKARAMBAI"), "Kuruvikkarambai");
@@ -18,7 +24,11 @@ test("TNRD's shouting names are shown in title case, mixed-case names untouched"
 
 for (const fixture of FIXTURE_DISTRICTS) {
   test(`${fixture.slug}: the public directory is built from the served artifacts`, () => {
-    const directory = getDistrictDirectory("tn", fixture.slug);
+    const directory = buildDistrictDirectory(
+      districtBySlug(fixture.slug),
+      readFixtureArtifacts(fixture.slug).directory,
+      fixtureBriefs(fixture.slug),
+    );
     assert.ok(directory);
     assert.equal(directory.panchayats.length, fixture.panchayats);
     assert.equal(directory.blocks.length, 1);
@@ -37,11 +47,11 @@ for (const fixture of FIXTURE_DISTRICTS) {
   });
 
   test(`${fixture.slug}: briefs resolve by LGD code`, () => {
-    const briefs = getDistrictBriefs(fixture.slug);
+    const briefs = fixtureBriefs(fixture.slug);
     assert.equal(briefs.length, fixture.panchayats);
     const first = briefs[0];
-    assert.equal(getDistrictBrief(fixture.slug, first.placeId)?.placeId, first.placeId);
-    assert.equal(getDistrictBrief(fixture.slug, "000000"), undefined);
+    assert.equal(findBrief(briefs, first.placeId)?.placeId, first.placeId);
+    assert.equal(findBrief(briefs, "000000"), undefined);
   });
 }
 
@@ -49,5 +59,5 @@ test("unregistered districts and states resolve to nothing", () => {
   assert.equal(getDistrictDirectory("tn", "madurai"), undefined);
   assert.equal(getDistrictDirectory("ka", "thanjavur"), undefined);
   assert.equal(getDistrictBriefs("madurai").length, 0);
-  assert.equal(getAllDistrictDirectories().length, FIXTURE_DISTRICTS.length);
+  assert.equal(buildAllFixtureDirectories().length, FIXTURE_DISTRICTS.length);
 });

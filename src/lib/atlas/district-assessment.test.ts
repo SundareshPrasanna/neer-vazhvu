@@ -2,14 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { AssessmentsShard, BriefsShard } from "./artifacts";
-import { assembleEvidenceInputs, generateDistrictAssessments, loadDistrictCorpus } from "./district-assessment";
-import { FIXTURE_DISTRICTS, districtBySlug, readFixture } from "./test-support";
+import {
+  assembleDistrictCorpus,
+  assembleEvidenceInputs,
+  generateDistrictAssessments,
+} from "./district-assessment";
+import { FIXTURE_DISTRICTS, readFixture, readFixtureArtifacts } from "./test-support";
 
 for (const fixture of FIXTURE_DISTRICTS) {
-  const district = districtBySlug(fixture.slug);
-
   test(`${fixture.slug}: the served corpus is consistent with its directory`, () => {
-    const { corpus, errors } = loadDistrictCorpus(district);
+    const { corpus, errors } = assembleDistrictCorpus(readFixtureArtifacts(fixture.slug));
     assert.deepEqual(errors, []);
     assert.equal(corpus.identity.gramPanchayats.size, fixture.panchayats);
     assert.equal(corpus.jjm.length, 1);
@@ -19,7 +21,7 @@ for (const fixture of FIXTURE_DISTRICTS) {
   });
 
   test(`${fixture.slug}: every Panchayat gets an evidence record wired to its bindings`, () => {
-    const { corpus } = loadDistrictCorpus(district);
+    const { corpus } = assembleDistrictCorpus(readFixtureArtifacts(fixture.slug));
     const inputs = assembleEvidenceInputs(corpus);
     assert.equal(inputs.length, fixture.panchayats);
     for (const record of inputs) {
@@ -34,7 +36,7 @@ for (const fixture of FIXTURE_DISTRICTS) {
   });
 
   test(`${fixture.slug}: regenerating from the served inputs reproduces the served assessments and briefs`, () => {
-    const { corpus } = loadDistrictCorpus(district);
+    const { corpus } = assembleDistrictCorpus(readFixtureArtifacts(fixture.slug));
     const assessments = readFixture<AssessmentsShard>(fixture.slug, "assessments", `${fixture.block}.json`);
     const briefs = readFixture<BriefsShard>(fixture.slug, "briefs", `${fixture.block}.json`);
     const run = generateDistrictAssessments(corpus, assessments.assessedAt);

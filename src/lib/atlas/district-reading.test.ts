@@ -5,11 +5,10 @@ import {
   classifyIrrigation,
   composeDistrictVerdict,
   deriveDistrictTone,
-  getDistrictReading,
   listNames,
   type VerdictSignals,
 } from "./district-reading";
-import { FIXTURE_DISTRICTS } from "./test-support";
+import { FIXTURE_DISTRICTS, buildFixtureReading } from "./test-support";
 
 const TONES = new Set(["positive", "warning", "neutral", "blocked"]);
 
@@ -99,7 +98,7 @@ test("irrigation is classified by the majority source", () => {
 
 test("both fixture districts produce a complete reading from the same code", () => {
   for (const fixture of FIXTURE_DISTRICTS) {
-    const reading = getDistrictReading("tn", fixture.slug);
+    const reading = buildFixtureReading(fixture.slug);
     assert.ok(reading, `${fixture.slug} has no reading`);
     assert.ok(TONES.has(reading.verdict.tone));
     assert.equal(reading.facts.length, 3);
@@ -122,7 +121,7 @@ test("both fixture districts produce a complete reading from the same code", () 
 });
 
 test("Thanjavur's fixture block reads as canal-fed on an over-drawn aquifer with the 100.0% artifact named", () => {
-  const reading = getDistrictReading("tn", "thanjavur")!;
+  const reading = buildFixtureReading("thanjavur");
   assert.equal(reading.irrigation.source, "canal");
   assert.ok(reading.mettur, "a Cauvery delta district carries the Mettur reading");
   assert.match(reading.mettur!.gap, /not wired/);
@@ -133,8 +132,8 @@ test("Thanjavur's fixture block reads as canal-fed on an over-drawn aquifer with
 });
 
 test("the Tiruchirappalli fixture reads its own numbers, not Thanjavur's", () => {
-  const trichy = getDistrictReading("tn", "tiruchirappalli")!;
-  const thanjavur = getDistrictReading("tn", "thanjavur")!;
+  const trichy = buildFixtureReading("tiruchirappalli");
+  const thanjavur = buildFixtureReading("thanjavur");
   assert.notEqual(trichy.verdict.sentence, thanjavur.verdict.sentence);
   assert.notEqual(trichy.groundwater.finding, thanjavur.groundwater.finding);
   assert.ok(trichy.groundwater.categories.safe > 0);

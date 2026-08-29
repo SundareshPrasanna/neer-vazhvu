@@ -2,8 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { computeRecordsSha256 } from "./acquisition-validation";
-import { identityFromDirectory, type DistrictDirectoryArtifact } from "./artifacts";
-import { loadRainfall } from "./data";
+import { identityFromDirectory, type DistrictDirectoryArtifact, type RainfallArtifact } from "./artifacts";
 import {
   RAINFALL_WINDOW_DAYS,
   haversineKm,
@@ -11,7 +10,7 @@ import {
   summarizeRainfall,
   validateTnDistrictRainfallExtract,
 } from "./tn-rainfall";
-import { FIXTURE_DISTRICTS, districtBySlug, readFixture } from "./test-support";
+import { FIXTURE_DISTRICTS, readFixture } from "./test-support";
 
 test("daily totals ignore gaps and find the wettest day", () => {
   const summary = summarizeDailyRainfall(
@@ -37,10 +36,9 @@ test("distance between two points is measured on the sphere", () => {
 });
 
 for (const fixture of FIXTURE_DISTRICTS) {
-  const district = districtBySlug(fixture.slug);
   const directory = readFixture<DistrictDirectoryArtifact>(fixture.slug, "directory.json");
   const identity = identityFromDirectory(directory);
-  const rainfall = loadRainfall(district)!;
+  const rainfall = readFixture<RainfallArtifact>(fixture.slug, "rainfall.json");
 
   test(`${fixture.slug} rainfall covers every Gram Panchayat once and stays inside the place`, () => {
     assert.deepEqual(validateTnDistrictRainfallExtract(rainfall, identity), []);
@@ -61,7 +59,7 @@ for (const fixture of FIXTURE_DISTRICTS) {
   });
 }
 
-const thanjavur = loadRainfall(districtBySlug("thanjavur"))!;
+const thanjavur = readFixture<RainfallArtifact>("thanjavur", "rainfall.json");
 const identity = identityFromDirectory(readFixture<DistrictDirectoryArtifact>("thanjavur", "directory.json"));
 
 test("rainfall older than the profile accepts is rejected", () => {

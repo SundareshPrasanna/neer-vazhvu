@@ -1,10 +1,20 @@
+import type {
+  DistrictDirectoryArtifact,
+  GroundwaterTaluksArtifact,
+  RainfallArtifact,
+  WaterBodiesShard,
+} from "./artifacts";
 import {
   loadDirectory,
   loadGroundwaterTaluks,
   loadRainfall,
   loadWaterBodyShards,
 } from "./data";
-import { getDistrictBriefs, getDistrictDirectory } from "./district-directory";
+import {
+  getDistrictBriefs,
+  getDistrictDirectory,
+  type DistrictDirectory,
+} from "./district-directory";
 import type { PlaceBrief } from "./place-brief";
 import { findAtlasDistrict, type AtlasDistrict } from "./registry";
 
@@ -116,11 +126,9 @@ function isHistorical(representsYear: number | null, asOf: string): boolean {
  * Every date here is read from the artifacts' own fields and envelopes, so a
  * district refreshed on a different day answers for itself.
  */
-function collectVintages(district: AtlasDistrict, asOf: string): SourceVintage[] {
-  const directory = loadDirectory(district);
-  const groundwater = loadGroundwaterTaluks(district);
-  const waterBodies = loadWaterBodyShards(district)[0];
-  const rainfall = loadRainfall(district);
+function collectVintages(inputs: DistrictAggregateInputs): SourceVintage[] {
+  const { asOf, directoryArtifact: directory, groundwater, rainfall } = inputs;
+  const waterBodies = inputs.waterBodies[0];
 
   return [
     {
@@ -286,15 +294,27 @@ function accumulate(bucket: Bucket, brief: PlaceBrief, asOf: string): void {
   }
 }
 
-export function buildDistrictAggregate(
-  district: AtlasDistrict,
-  asOf: string,
-): DistrictAggregate {
-  const directory = getDistrictDirectory(district.stateSlug, district.slug);
-  if (!directory) throw new Error(`No directory for ${district.slug}`);
-  const briefsByCode = new Map(
-    getDistrictBriefs(district.slug).map((brief) => [brief.placeId, brief]),
-  );
+/**
+ * Everything the roll-up reads, handed in rather than read here so the
+ * builder is a pure function of the served artifacts: getDistrictAggregate
+ * supplies them from disk, the tests from the fixture corpus.
+ */
+export interface DistrictAggregateInputs {
+  district: AtlasDistrict;
+  asOf: string;
+  /** The public directory, as district-directory builds it. */
+  directory: DistrictDirectory;
+  briefs: PlaceBrief[];
+  /** The served directory artifact, read for its vintages. */
+  directoryArtifact: DistrictDirectoryArtifact | undefined;
+  groundwater: GroundwaterTaluksArtifact | undefined;
+  waterBodies: WaterBodiesShard[];
+  rainfall: RainfallArtifact | undefined;
+}
+
+export function buildDistrictAggregate(inputs: DistrictAggregateInputs): DistrictAggregate {
+  const { district, asOf, directory, groundwater } = inputs;
+  const briefsByCode = new Map(inputs.briefs.map((brief) => [brief.placeId, brief]));
 
   const districtBucket = emptyBucket();
   const blockBuckets = new Map<string, Bucket>();
@@ -338,7 +358,6 @@ export function buildDistrictAggregate(
     }))
     .sort((left, right) => collator.compare(left.name, right.name));
 
-  const groundwater = loadGroundwaterTaluks(district);
   const taluks: TalukGroundwater[] = (groundwater?.records ?? [])
     .map((record) => ({
       name: record.locationName,
@@ -356,7 +375,7 @@ export function buildDistrictAggregate(
   return {
     slug: district.slug,
     districtName: directory.districtName,
-    vintages: collectVintages(district, asOf),
+    vintages: collectVintages(inputs),
     panchayatCount: directory.panchayats.length,
     blockCount: directory.blocks.length,
     population: {
@@ -408,13 +427,23 @@ export function getDistrictAggregate(
   const key = `${district.stateSlug}/${district.slug}/${asOf}`;
   const existing = cache.get(key);
   if (existing) return existing;
-  if (!getDistrictDirectory(stateSlug, districtSlug)) return undefined;
-  const built = buildDistrictAggregate(district, asOf);
+  const directory = getDistrictDirectory(stateSlug, districtSlug);
+  if (!directory) return undefined;
+  const built = buildDistrictAggregate({
+    district,
+    asOf,
+    directory,
+    briefs: getDistrictBriefs(district.slug),
+    directoryArtifact: loadDirectory(district),
+    groundwater: loadGroundwaterTaluks(district),
+    waterBodies: loadWaterBodyShards(district),
+    rainfall: loadRainfall(district),
+  });
   cache.set(key, built);
   return built;
 }
 
-/** Drop the built aggregates; tests call this after repointing the data root. */
+/** Drop the built aggregates. */
 export function clearDistrictAggregateCache(): void {
   cache.clear();
 }

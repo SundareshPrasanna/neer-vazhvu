@@ -2193,6 +2193,7 @@
     "src/lib/atlas/artifacts.ts",
     "src/lib/atlas/capability-evidence.test.ts",
     "src/lib/atlas/district-assessment.ts",
+    "src/lib/atlas/test-support.ts",
     "src/lib/atlas/tn-census-attributes.test.ts",
     "src/lib/atlas/tn-district-refresh.test.ts",
     "src/lib/atlas/tn-groundwater-projection.test.ts",
@@ -2246,7 +2247,9 @@
      "summary"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/atlas/tn-groundwater-projection.test.ts"
+   ],
    "producer_refs": [
     "scripts/atlas-project-groundwater.ts"
    ],
@@ -2287,7 +2290,8 @@
     ]
    },
    "consumers": [
-    "src/lib/atlas/tn-groundwater-projection.test.ts"
+    "src/lib/atlas/tn-groundwater-projection.test.ts",
+    "src/lib/atlas/tn-groundwater.test.ts"
    ],
    "producer_refs": [
     "scripts/atlas-groundwater-tn-district.ts",
@@ -2889,7 +2893,9 @@
      "window"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/atlas/tn-rainfall.test.ts"
+   ],
    "producer_refs": [
     "scripts/atlas-rainfall-tn-district.ts"
    ],
@@ -5250,6 +5256,7 @@
     "src/lib/atlas/artifacts.ts",
     "src/lib/atlas/capability-evidence.test.ts",
     "src/lib/atlas/district-assessment.ts",
+    "src/lib/atlas/test-support.ts",
     "src/lib/atlas/tn-census-attributes.test.ts",
     "src/lib/atlas/tn-district-refresh.test.ts",
     "src/lib/atlas/tn-groundwater-projection.test.ts",
@@ -5303,7 +5310,9 @@
      "summary"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/atlas/tn-groundwater-projection.test.ts"
+   ],
    "producer_refs": [
     "scripts/atlas-project-groundwater.ts"
    ],
@@ -5344,7 +5353,8 @@
     ]
    },
    "consumers": [
-    "src/lib/atlas/tn-groundwater-projection.test.ts"
+    "src/lib/atlas/tn-groundwater-projection.test.ts",
+    "src/lib/atlas/tn-groundwater.test.ts"
    ],
    "producer_refs": [
     "scripts/atlas-groundwater-tn-district.ts",
@@ -5945,7 +5955,9 @@
      "window"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/atlas/tn-rainfall.test.ts"
+   ],
    "producer_refs": [
     "scripts/atlas-rainfall-tn-district.ts"
    ],
@@ -40806,7 +40818,7 @@
    "bytes": 317584,
    "schema_variants": 1,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "atlas",
@@ -40845,7 +40857,7 @@
    "bytes": 326590,
    "schema_variants": 1,
    "registered": true,
-   "has_consumer": false
+   "has_consumer": true
   },
   {
    "family": "atlas",

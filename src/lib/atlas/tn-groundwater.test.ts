@@ -2,17 +2,17 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { computeRecordsSha256 } from "./acquisition-validation";
-import { loadGroundwaterTaluks } from "./data";
+import type { GroundwaterTaluksArtifact } from "./artifacts";
 import {
   buildTnDistrictGroundwaterExtract,
   normalizeGroundwaterRow,
   summarizeGroundwater,
   validateTnDistrictGroundwaterExtract,
 } from "./tn-groundwater";
-import { districtBySlug } from "./test-support";
+import { readFixture } from "./test-support";
 
-const thanjavur = loadGroundwaterTaluks(districtBySlug("thanjavur"))!;
-const tiruchirappalli = loadGroundwaterTaluks(districtBySlug("tiruchirappalli"))!;
+const thanjavur = readFixture<GroundwaterTaluksArtifact>("thanjavur", "groundwater-taluks.json");
+const tiruchirappalli = readFixture<GroundwaterTaluksArtifact>("tiruchirappalli", "groundwater-taluks.json");
 
 test("the served taluk artifacts validate and carry their envelope", () => {
   for (const extract of [thanjavur, tiruchirappalli]) {

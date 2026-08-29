@@ -369,7 +369,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               <AtlasNote>
                 Canal, well and tank figures are shares of the irrigated farmland beside them, not of
                 households and not of drinking water. They come from Census 2011 ({irrigation.describes})
-                and cover only the {irrigation.places} Panchayats with a Census land record, so a block
+                and cover only the {irrigation.places}{" "}Panchayats with a Census land record, so a block
                 with few such records shows a share of a small area. Tap and testing figures are JJM and
                 current at the read date. The taluk category is the one most of the block&rsquo;s
                 Panchayats inherit by projection, since blocks and revenue taluks do not nest.

@@ -2,8 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { computeRecordsSha256 } from "./acquisition-validation";
-import { identityFromDirectory, type DistrictDirectoryArtifact } from "./artifacts";
-import { loadGroundwaterProjection, loadGroundwaterTaluks } from "./data";
+import {
+  identityFromDirectory,
+  type DistrictDirectoryArtifact,
+  type GroundwaterProjectionArtifact,
+  type GroundwaterTaluksArtifact,
+} from "./artifacts";
 import {
   pointInPolygonRings,
   polygonCentroid,
@@ -14,8 +18,8 @@ import { FIXTURE_DISTRICTS, districtBySlug, readFixture } from "./test-support";
 const district = districtBySlug("thanjavur");
 const directory = readFixture<DistrictDirectoryArtifact>("thanjavur", "directory.json");
 const identity = identityFromDirectory(directory);
-const groundwater = loadGroundwaterTaluks(district)!;
-const projection = loadGroundwaterProjection(district)!;
+const groundwater = readFixture<GroundwaterTaluksArtifact>("thanjavur", "groundwater-taluks.json");
+const projection = readFixture<GroundwaterProjectionArtifact>("thanjavur", "groundwater-projection.json");
 
 test("a point inside a ring is inside, and a hole excludes it", () => {
   const square: number[][][] = [[[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]];
@@ -34,10 +38,10 @@ test("the centroid of a square is its middle", () => {
 
 for (const fixture of FIXTURE_DISTRICTS) {
   test(`${fixture.slug}: every Gram Panchayat is projected or deferred exactly once`, () => {
-    const d = districtBySlug(fixture.slug);
     const served = readFixture<DistrictDirectoryArtifact>(fixture.slug, "directory.json");
-    const p = loadGroundwaterProjection(d)!;
-    assert.deepEqual(validateGroundwaterProjection(p, identityFromDirectory(served), loadGroundwaterTaluks(d)!), []);
+    const p = readFixture<GroundwaterProjectionArtifact>(fixture.slug, "groundwater-projection.json");
+    const g = readFixture<GroundwaterTaluksArtifact>(fixture.slug, "groundwater-taluks.json");
+    assert.deepEqual(validateGroundwaterProjection(p, identityFromDirectory(served), g), []);
     const codes = [
       ...p.records.map((record) => record.lgdGramPanchayatCode),
       ...p.review.map((entry) => entry.lgdGramPanchayatCode),

@@ -140,6 +140,11 @@ export function buildDistrictDirectory(
   };
 }
 
+/** The generated brief for one Panchayat, by LGD code. */
+export function findBrief(briefs: PlaceBrief[], lgdCode: string): PlaceBrief | undefined {
+  return briefs.find((brief) => brief.placeId === lgdCode);
+}
+
 const directoryCache = new Map<string, DistrictDirectory>();
 
 export function getDistrictDirectory(
@@ -168,7 +173,7 @@ export function getDistrictBrief(
 ): PlaceBrief | undefined {
   const district = districtBySlug(districtSlug);
   if (!district) return undefined;
-  return loadBriefs(district).find((brief) => brief.placeId === lgdCode);
+  return findBrief(loadBriefs(district), lgdCode);
 }
 
 /** Every brief for a district, for roll-ups that read the district as a whole. */
@@ -184,7 +189,7 @@ export function getAllDistrictDirectories(): DistrictDirectory[] {
     .filter((directory): directory is DistrictDirectory => directory !== undefined);
 }
 
-/** Drop the built directories; tests call this after repointing the data root. */
+/** Drop the built directories. */
 export function clearDistrictDirectoryCache(): void {
   directoryCache.clear();
 }

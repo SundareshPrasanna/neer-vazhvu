@@ -63,18 +63,40 @@ function districtBySlug(districtSlug: string): AtlasDistrict | undefined {
   return listAtlasDistricts().find((district) => district.slug === districtSlug);
 }
 
+/**
+ * The reviewed briefs a district serves. The registry flag is the gate: a
+ * district not marked as carrying reviewed briefs shows none even when a
+ * file is present, so a stray artifact cannot publish itself.
+ */
+export function curatedBriefsOf(
+  district: AtlasDistrict,
+  artifact: CuratedBriefsArtifact | undefined,
+): CuratedBrief[] {
+  if (!district.hasCuratedBriefs) return [];
+  return artifact?.briefs ?? [];
+}
+
+export function findCuratedBrief(
+  briefs: CuratedBrief[],
+  lgdCode: string,
+): CuratedBrief | undefined {
+  return briefs.find((brief) => brief.lgdCode === lgdCode);
+}
+
 export function getCuratedBriefs(districtSlug: string): CuratedBrief[] {
   const district = districtBySlug(districtSlug);
   if (!district || !district.hasCuratedBriefs) return [];
-  const artifact = readDistrictArtifact<CuratedBriefsArtifact>(district, "curated-briefs");
-  return artifact?.briefs ?? [];
+  return curatedBriefsOf(
+    district,
+    readDistrictArtifact<CuratedBriefsArtifact>(district, "curated-briefs"),
+  );
 }
 
 export function getCuratedBrief(
   districtSlug: string,
   lgdCode: string,
 ): CuratedBrief | undefined {
-  return getCuratedBriefs(districtSlug).find((brief) => brief.lgdCode === lgdCode);
+  return findCuratedBrief(getCuratedBriefs(districtSlug), lgdCode);
 }
 
 export function curatedBriefCount(districtSlug: string): number {

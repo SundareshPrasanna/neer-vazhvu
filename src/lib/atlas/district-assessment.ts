@@ -56,20 +56,31 @@ export interface DistrictCorpus {
   briefs: BriefsShard[];
 }
 
-/** Read every served input for a district and check each against the
- *  directory's identity. The directory is required; every other family is
- *  optional, so a district can be assessed before all its sources are in. */
-export function loadDistrictCorpus(district: DistrictRef): {
+/** The served families of one district, as read from disk or from a fixture.
+ *  The directory is required; every other family is optional, so a district
+ *  can be assessed before all its sources are in. */
+export interface DistrictArtifacts {
+  directory: DistrictDirectoryArtifact;
+  jjm: JjmServiceShard[];
+  census: CensusShard[];
+  groundwater: GroundwaterTaluksArtifact | undefined;
+  projection: GroundwaterProjectionArtifact | undefined;
+  rainfall: RainfallArtifact | undefined;
+  waterBodies: WaterBodiesShard[];
+  assessments: AssessmentsShard[];
+  briefs: BriefsShard[];
+}
+
+/** Check every served input against the directory's identity. Pure: the
+ *  artifacts are handed in, by loadDistrictCorpus from disk and by the tests
+ *  from the fixture corpus. */
+export function assembleDistrictCorpus(artifacts: DistrictArtifacts): {
   corpus: DistrictCorpus;
   errors: string[];
 } {
   const errors: string[] = [];
-  const directory = loadDirectory(district);
-  if (!directory) {
-    throw new Error(`${district.stateSlug}/${district.slug}: directory.json is not present`);
-  }
+  const { directory, jjm, census, groundwater, rainfall, waterBodies } = artifacts;
   const identity = identityFromDirectory(directory);
-  const jjm = loadJjmServiceShards(district);
   for (const shard of jjm) {
     errors.push(
       ...validateJjmServiceRecords(shard.records, identity).map(
@@ -77,7 +88,6 @@ export function loadDistrictCorpus(district: DistrictRef): {
       ),
     );
   }
-  const census = loadCensusShards(district);
   for (const shard of census) {
     for (const record of shard.records) {
       if (!identity.gramPanchayats.has(record.lgdGramPanchayatCode)) {
@@ -94,13 +104,12 @@ export function loadDistrictCorpus(district: DistrictRef): {
       }
     }
   }
-  const groundwater = loadGroundwaterTaluks(district);
   if (groundwater) {
     errors.push(
       ...validateTnDistrictGroundwaterExtract(groundwater).map((e) => `groundwater-taluks: ${e}`),
     );
   }
-  const projection = groundwater ? loadGroundwaterProjection(district) : undefined;
+  const projection = groundwater ? artifacts.projection : undefined;
   if (projection && groundwater) {
     errors.push(
       ...validateGroundwaterProjection(projection, identity, groundwater).map(
@@ -108,13 +117,11 @@ export function loadDistrictCorpus(district: DistrictRef): {
       ),
     );
   }
-  const rainfall = loadRainfall(district);
   if (rainfall) {
     errors.push(
       ...validateTnDistrictRainfallExtract(rainfall, identity).map((e) => `rainfall: ${e}`),
     );
   }
-  const waterBodies = loadWaterBodyShards(district);
   for (const shard of waterBodies) {
     for (const feature of shard.features) {
       const code = feature.properties.lgdGramPanchayatCode;
@@ -133,11 +140,34 @@ export function loadDistrictCorpus(district: DistrictRef): {
       projection,
       rainfall,
       waterBodies,
-      assessments: loadAssessmentShards(district),
-      briefs: loadBriefShards(district),
+      assessments: artifacts.assessments,
+      briefs: artifacts.briefs,
     },
     errors,
   };
+}
+
+/** Read every served input for a district from disk. */
+export function loadDistrictCorpus(district: DistrictRef): {
+  corpus: DistrictCorpus;
+  errors: string[];
+} {
+  const directory = loadDirectory(district);
+  if (!directory) {
+    throw new Error(`${district.stateSlug}/${district.slug}: directory.json is not present`);
+  }
+  const groundwater = loadGroundwaterTaluks(district);
+  return assembleDistrictCorpus({
+    directory,
+    jjm: loadJjmServiceShards(district),
+    census: loadCensusShards(district),
+    groundwater,
+    projection: groundwater ? loadGroundwaterProjection(district) : undefined,
+    rainfall: loadRainfall(district),
+    waterBodies: loadWaterBodyShards(district),
+    assessments: loadAssessmentShards(district),
+    briefs: loadBriefShards(district),
+  });
 }
 
 function boundaryRecord(

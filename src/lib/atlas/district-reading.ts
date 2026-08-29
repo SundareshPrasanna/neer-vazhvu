@@ -13,7 +13,17 @@
  * neutral, blocked). The frame is alignment and next steps: nothing is
  * attributed to an officer or a department, and a gap is named as a gap.
  */
-import type { AtlasEnvelope, GroundwaterProjectionArtifact, WaterBodiesShard } from "./artifacts";
+import type {
+  AtlasEnvelope,
+  BriefsShard,
+  CensusShard,
+  DistrictDirectoryArtifact,
+  GroundwaterProjectionArtifact,
+  GroundwaterTaluksArtifact,
+  JjmServiceShard,
+  RainfallArtifact,
+  WaterBodiesShard,
+} from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
 import {
   loadBriefShards,
@@ -632,18 +642,23 @@ function waterBodiesReading(
 
 /* ── the reading ───────────────────────────────────────────────────────── */
 
+/**
+ * Everything the reading is composed from, handed in so buildDistrictReading
+ * is a pure function of the served artifacts: getDistrictReading supplies
+ * them from disk, the tests from the fixture corpus.
+ */
 export interface DistrictReadingInputs {
   district: AtlasDistrict;
   aggregate: DistrictAggregate;
   briefs: PlaceBrief[];
-  directory: ReturnType<typeof loadDirectory>;
-  groundwater: ReturnType<typeof loadGroundwaterTaluks>;
+  directory: DistrictDirectoryArtifact | undefined;
+  groundwater: GroundwaterTaluksArtifact | undefined;
   projection: GroundwaterProjectionArtifact | undefined;
-  rainfall: ReturnType<typeof loadRainfall>;
-  jjm: ReturnType<typeof loadJjmServiceShards>;
-  census: ReturnType<typeof loadCensusShards>;
+  rainfall: RainfallArtifact | undefined;
+  jjm: JjmServiceShard[];
+  census: CensusShard[];
   waterBodies: WaterBodiesShard[];
-  briefShards: ReturnType<typeof loadBriefShards>;
+  briefShards: BriefsShard[];
   curated: CuratedBriefsArtifact | undefined;
   asOf: string;
 }
@@ -862,12 +877,14 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
 
 /** The day a district's figures are dated to: the latest brief assessment,
  *  else the directory acquisition. Read from the artifacts, never typed. */
-export function districtAsOf(district: AtlasDistrict): string {
-  const shards = loadBriefShards(district);
+export function districtAsOf(
+  briefShards: BriefsShard[],
+  directory: DistrictDirectoryArtifact | undefined,
+): string {
   return (
-    latest(shards.map((s) => s.assessedAt)) ??
-    loadDirectory(district)?.acquiredAt ??
-    loadDirectory(district)?.provenance.produced_at ??
+    latest(briefShards.map((s) => s.assessedAt)) ??
+    directory?.acquiredAt ??
+    directory?.provenance.produced_at ??
     "unstated"
   );
 }
@@ -880,21 +897,23 @@ export function getDistrictReading(stateSlug: string, districtSlug: string): Dis
   const key = `${district.stateSlug}/${district.slug}`;
   const existing = cache.get(key);
   if (existing) return existing;
-  const asOf = districtAsOf(district);
+  const briefShards = loadBriefShards(district);
+  const directory = loadDirectory(district);
+  const asOf = districtAsOf(briefShards, directory);
   const aggregate = getDistrictAggregate(stateSlug, districtSlug, asOf);
   if (!aggregate) return undefined;
   const built = buildDistrictReading({
     district,
     aggregate,
     briefs: getDistrictBriefs(district.slug),
-    directory: loadDirectory(district),
+    directory,
     groundwater: loadGroundwaterTaluks(district),
     projection: loadGroundwaterProjection(district),
     rainfall: loadRainfall(district),
     jjm: loadJjmServiceShards(district),
     census: loadCensusShards(district),
     waterBodies: loadWaterBodyShards(district),
-    briefShards: loadBriefShards(district),
+    briefShards,
     curated: district.hasCuratedBriefs
       ? readDistrictArtifact<CuratedBriefsArtifact>(district, "curated-briefs")
       : undefined,
@@ -904,7 +923,7 @@ export function getDistrictReading(stateSlug: string, districtSlug: string): Dis
   return built;
 }
 
-/** Drop the built readings; tests call this after repointing the data root. */
+/** Drop the built readings. */
 export function clearDistrictReadingCache(): void {
   cache.clear();
 }
