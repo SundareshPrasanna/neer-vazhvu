@@ -83,7 +83,7 @@ test("a well-fed district with its gap on the no-canal blocks says so", () => {
       ],
     }),
   );
-  assert.match(verdict.sentence, /^60% of the irrigated farmland is watered from wells/);
+  assert.match(verdict.sentence, /^60% of the irrigated farmland was watered from wells at the 2011 Census/);
   assert.match(verdict.sentence, /blocks without canal water, Vaiyampatty and Marungapuri/);
   assert.equal(verdict.tone, "warning");
 });

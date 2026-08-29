@@ -294,15 +294,19 @@ export function deriveDistrictTone(s: VerdictSignals): BriefTone {
   return "neutral";
 }
 
+// The irrigation source mix is the Census 2011 village pattern (reference
+// year 2009), the newest village-level enumeration served here. The verdict
+// opens with it, so the sentence itself carries the vintage: a reader must
+// not take a 2009 pattern for the current season.
 function sourceClause(s: VerdictSignals): string {
   const head = s.metturBasin ? "canal water released at Mettur" : "canal water released upstream";
   switch (s.source) {
     case "canal":
-      return `${whole(s.canalPercent)} of the irrigated farmland runs on ${head}`;
+      return `${whole(s.canalPercent)} of the irrigated farmland ran on ${head} at the 2011 Census`;
     case "well":
-      return `${whole(s.wellPercent)} of the irrigated farmland is watered from wells`;
+      return `${whole(s.wellPercent)} of the irrigated farmland was watered from wells at the 2011 Census`;
     case "mixed":
-      return `irrigation is split between canals (${whole(s.canalPercent)}) and wells (${whole(s.wellPercent)})`;
+      return `irrigation was split between canals (${whole(s.canalPercent)}) and wells (${whole(s.wellPercent)}) at the 2011 Census`;
     default:
       return "no Census irrigation record is on file";
   }
@@ -797,7 +801,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     inputs.census[0],
     censusDescribes,
     sourceOf(inputs.census[0])?.retrieved,
-    "Census 2011 village tables. No newer village-level enumeration exists.",
+    "Census 2011 village tables, the newest village-level irrigation enumeration served here. Newer official readings exist at coarser grain and are not wired yet: the annual Season and Crop Report (district totals by source, 2024-25 edition published) and the 2017-18 Minor Irrigation Census (wells and tanks by village).",
   );
   push(
     "Groundwater assessment",
