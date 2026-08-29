@@ -295,10 +295,10 @@ export function deriveDistrictTone(s: VerdictSignals): BriefTone {
 }
 
 // The irrigation source mix is the Census 2011 village pattern (reference
-// year 2009), the newest village-level enumeration served here. The verdict
-// opens with it, so the sentence itself carries the vintage: a reader must
-// not take a 2009 pattern for the current season.
-function sourceClause(s: VerdictSignals): string {
+// year 2009). It no longer opens the verdict (see composeDistrictVerdict);
+// this clause is kept for the "what the district runs on" section, where
+// the vintage is stated beside it.
+export function sourceClause(s: VerdictSignals): string {
   const head = s.metturBasin ? "canal water released at Mettur" : "canal water released upstream";
   switch (s.source) {
     case "canal":
@@ -355,9 +355,22 @@ function capitalise(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+/**
+ * The verdict leads with what is current: the IN-GRES taluk balance and the
+ * JJM service register. The irrigation source mix is the Census 2011 pattern
+ * (reference year 2009) and stays out of the opening sentence and the
+ * headline facts until a current reading is wired; it is the first named
+ * gap instead, and the "what the district runs on" section carries it as a
+ * labelled baseline.
+ */
 export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
-  const sentence = `${capitalise(sourceClause(s))}, ${groundwaterClause(s)}, and ${serviceClause(s)}.`;
+  const sentence = `${capitalise(groundwaterClause(s))}, and ${serviceClause(s)}.`;
   const nextSteps: string[] = [];
+  if (s.source !== null) {
+    nextSteps.push(
+      "A current irrigation reading by source: the canal, well and tank shares below are the Census 2011 pattern (reference year 2009); the Season and Crop Report 2024-25 is published and not yet wired.",
+    );
+  }
   if (s.metturBasin && (s.canalPercent ?? 0) > 0) {
     nextSteps.push("Live Mettur storage (the tnsmart daily reservoir feed), not wired yet.");
   }
@@ -699,19 +712,15 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
 
   const censusDescribes = directory?.vintages.census.sourceAsOf ?? "Census 2011";
   const jjmRetrieved = directory?.vintages.jjm.sourceAsOf ?? "unstated";
+  const drinking = drinkingShares(briefs);
+  const groundwaterShare = drinking.byCategory.find((s) => /ground/i.test(s.label));
+  const surfaceShare = drinking.byCategory.find((s) => /surface/i.test(s.label));
+  const topType = drinking.byType[0];
+  // Headline facts are current readings only: the IN-GRES taluk balance and
+  // the JJM register. The Census 2011 irrigation mix (reference year 2009)
+  // is a labelled baseline in "what the district runs on", never the first
+  // number a reader meets.
   const facts: HeadlineFact[] = [];
-  if (source !== null) {
-    const dominantCanal = source !== "well";
-    facts.push({
-      value: pct(dominantCanal ? aggregate.canalPercent : aggregate.wellPercent),
-      label: dominantCanal ? "of irrigated farmland from canals" : "of irrigated farmland from wells",
-      asOf: censusDescribes,
-      note:
-        `${num(aggregate.irrigatedHectares)} ha irrigated across ${aggregate.landPlaces} of ${aggregate.panchayatCount} ` +
-        `Panchayats with a Census land record; ${dominantCanal ? "wells" : "canals"} ` +
-        `${pct(dominantCanal ? aggregate.wellPercent : aggregate.canalPercent)}, tanks ${pct(aggregate.tankPercent)}.`,
-    });
-  }
   if (aggregate.taluks.length > 0) {
     const deficit = signals.overExploited + signals.critical;
     facts.push({
@@ -735,6 +744,17 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
         (aggregate.tapPercent === 100 ? " Exactly 100.0% is read as reported complete, not measured." : ""),
     });
   }
+  if (groundwaterShare && drinking.total > 0) {
+    facts.push({
+      value: pct(groundwaterShare.percent),
+      label: "of drinking-water sources draw on groundwater",
+      asOf: `JJM, read ${jjmRetrieved}`,
+      note:
+        `${num(drinking.total)} sources on the JJM register` +
+        (topType ? `, ${num(topType.value)} of them ${topType.label.toLowerCase()}` : "") +
+        `; ${surfaceShare ? num(surfaceShare.value) : 0} on surface water.`,
+    });
+  }
   if (facts.length < 3 && aggregate.waterBodyCount > 0) {
     facts.push({
       value: num(aggregate.waterBodyCount),
@@ -744,10 +764,6 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     });
   }
 
-  const drinking = drinkingShares(briefs);
-  const groundwaterShare = drinking.byCategory.find((s) => /ground/i.test(s.label));
-  const surfaceShare = drinking.byCategory.find((s) => /surface/i.test(s.label));
-  const topType = drinking.byType[0];
   let drinkingSentence: string;
   if (drinking.total === 0) {
     drinkingSentence = "JJM records no drinking-water sources for the Panchayats here.";

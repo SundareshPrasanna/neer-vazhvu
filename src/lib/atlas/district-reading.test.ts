@@ -59,7 +59,7 @@ test("the verdict is one sentence, reads the exact-100 figure as a convention, a
   const verdict = composeDistrictVerdict(signals({ overExploited: 6, critical: 1, safe: 2 }));
   assert.ok(verdict.sentence.endsWith("."));
   assert.equal(verdict.sentence.split(". ").length, 1);
-  assert.match(verdict.sentence, /released at Mettur/);
+  assert.match(verdict.sentence, /^6 of 9 taluks already draw more groundwater than recharges/);
   assert.match(verdict.sentence, /6 of 9 taluks already draw more groundwater than recharges and 1 more is close/);
   assert.match(verdict.sentence, /reporting convention rather than a measurement/);
   assert.ok(verdict.nextSteps.some((s) => /Mettur/.test(s)));
@@ -83,7 +83,7 @@ test("a well-fed district with its gap on the no-canal blocks says so", () => {
       ],
     }),
   );
-  assert.match(verdict.sentence, /^60% of the irrigated farmland was watered from wells at the 2011 Census/);
+  assert.match(verdict.sentence, /^4 of 9 taluks already draw more groundwater than recharges/);
   assert.match(verdict.sentence, /blocks without canal water, Vaiyampatty and Marungapuri/);
   assert.equal(verdict.tone, "warning");
 });
