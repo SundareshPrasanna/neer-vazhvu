@@ -386,7 +386,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             intro="The TNGIS all-water-bodies register, joined to each Panchayat by the register's own LGD code rather than by a name match."
           >
             {reading.waterBodies ? (
-              <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+              <div className="max-w-xl">
                 <AtlasCard>
                   <div className="text-2xl sm:text-3xl font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                     {num(reading.waterBodies.count)}
@@ -402,11 +402,6 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                     {reading.waterBodies.retrieved}.
                   </p>
                 </AtlasCard>
-                <AtlasGap title="Geometry and names withheld pending licence">
-                  Rights status: {reading.waterBodies.rightsStatus.replace(/-/g, " ")}. The layer&rsquo;s
-                  terms read: &ldquo;{reading.waterBodies.termsQuote}&rdquo; Only derived counts and
-                  areas are published until an approval is recorded. {reading.waterBodies.licence}
-                </AtlasGap>
               </div>
             ) : (
               <AtlasGap title="No water-body register acquired">
