@@ -40,7 +40,10 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # JJM is read serially and paced (three page methods per village, about
+    # 4-5 s each measured on 2026-08-29): 612 villages is about 45 minutes
+    # on a normal day, so the ceiling leaves room for a slow one.
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
