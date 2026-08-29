@@ -1,0 +1,227 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-projection",
+  "scope": {
+    "kind": "district",
+    "id": "tn-thanjavur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-25",
+    "produced_by": "scripts/atlas-project-groundwater.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/thanjavur/directory.json",
+      "public/data/atlas/tn/thanjavur/groundwater-taluks.json"
+    ],
+    "note": "IN-GRES 2024-2025 taluk assessment projected onto 586 of 589 Gram Panchayats across 9 taluks; 3 deferred with a reason in review[]."
+  },
+  "projection": {
+    "of": {
+      "kind": "district",
+      "id": "tn-thanjavur"
+    },
+    "method": "spatial-intersection",
+    "limitations": [
+      "The assessment unit is a revenue taluk, not the Gram Panchayat: each Panchayat inherits its containing taluk's category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.",
+      "Containment is decided by the TNGIS polygon centroid (vertex fallback for concave polygons); a Panchayat that falls in no taluk or in a taluk without an assessment is deferred, never guessed.",
+      "8 TNRD blocks span more than one revenue taluk, so a block-to-taluk name match would have been wrong."
+    ]
+  },
+  "schemaVersion": 1,
+  "planId": "tn-thanjavur-v1",
+  "assessmentYear": "2024-2025",
+  "projectedAt": "2026-07-25",
+  "projectionMethod": "spatial-intersection",
+  "source": {
+    "talukLayer": "admin_master:administrative_boundary_taluk",
+    "talukDistrictLgdCode": "586",
+    "groundwaterSourceId": "ingres-gec-dynamic-groundwater",
+    "boundarySourceId": "tngis-tnrd-panchayat-boundary"
+  },
+  "recordsSha256": "f96db828e0d2390afaf3debca74195900c3d2d1d0d2a08461346b75310f3c8d8",
+  "recordCount": 15,
+  "records": [
+    {
+      "lgdGramPanchayatCode": "228700",
+      "lgdGramPanchayatName": "Adaikkathevan",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228702",
+      "lgdGramPanchayatName": "Andikkadu",
+      "lgdBlockCode": "6633",
+      "talukName": "Pattukkottai",
+      "subDistrictCode": "5816",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 100.103
+    },
+    {
+      "lgdGramPanchayatCode": "228703",
+      "lgdGramPanchayatName": "Chokkanathapuram",
+      "lgdBlockCode": "6633",
+      "talukName": "Pattukkottai",
+      "subDistrictCode": "5816",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 100.103
+    },
+    {
+      "lgdGramPanchayatCode": "228704",
+      "lgdGramPanchayatName": "Gangatharapuram",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228705",
+      "lgdGramPanchayatName": "Kalanivasal",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228708",
+      "lgdGramPanchayatName": "Kolakkudi",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228711",
+      "lgdGramPanchayatName": "Kuruvikkarambai",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228717",
+      "lgdGramPanchayatName": "Nadiyam",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228723",
+      "lgdGramPanchayatName": "Rettavayal",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228725",
+      "lgdGramPanchayatName": "Ruthirachindamani",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228726",
+      "lgdGramPanchayatName": "Sarabendrarajapattinam",
+      "lgdBlockCode": "6633",
+      "talukName": "Pattukkottai",
+      "subDistrictCode": "5816",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 100.103
+    },
+    {
+      "lgdGramPanchayatCode": "228728",
+      "lgdGramPanchayatName": "Senthalaivayal",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228729",
+      "lgdGramPanchayatName": "Serubalakkadu",
+      "lgdBlockCode": "6633",
+      "talukName": "Pattukkottai",
+      "subDistrictCode": "5816",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 100.103
+    },
+    {
+      "lgdGramPanchayatCode": "228730",
+      "lgdGramPanchayatName": "Sethubavachatram",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    },
+    {
+      "lgdGramPanchayatCode": "228735",
+      "lgdGramPanchayatName": "Veeriyankottai",
+      "lgdBlockCode": "6633",
+      "talukName": "Peravurani",
+      "subDistrictCode": "5817",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272
+    }
+  ],
+  "review": [],
+  "summary": {
+    "gramPanchayats": 15,
+    "projected": 15,
+    "deferred": 0,
+    "byCategory": {
+      "semi_critical": 11,
+      "over_exploited": 4
+    },
+    "blocksSpanningTaluks": 1,
+    "talukCoverage": 2
+  }
+}

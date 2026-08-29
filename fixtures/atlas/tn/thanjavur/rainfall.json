@@ -1,0 +1,230 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/rainfall",
+  "scope": {
+    "kind": "district",
+    "id": "tn-thanjavur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo daily precipitation (forecast past_days and ERA5 archive)",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "asserts",
+        "url": "https://open-meteo.com/",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-07-25",
+    "produced_by": "scripts/atlas-rainfall-tn-district.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/thanjavur/directory.json"
+    ],
+    "note": "Open-Meteo daily precipitation summed over 2026-06-25 to 2026-07-25 for 589 Gram Panchayats, queried at the bounding-box centre of each TNGIS polygon (from the directory). No normal was computed on this run, so anomaly fields are null.",
+    "conventions": {
+      "measurement": "modelled reanalysis interpolated to a grid point inside the Panchayat, not a rain gauge; gridOffsetKm is the distance from the queried centroid to the returned grid cell",
+      "window": "30 days ending on the acquisition date, matching the profile's current-rainfall limit",
+      "units": "mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-thanjavur-v1",
+  "acquiredAt": "2026-07-25",
+  "source": {
+    "sourceId": "open-meteo-grid-rainfall",
+    "sourceUrl": "https://api.open-meteo.com/v1/forecast",
+    "measurement": "modelled-reanalysis",
+    "windowDays": 30
+  },
+  "window": {
+    "start": "2026-06-25",
+    "end": "2026-07-25"
+  },
+  "recordsSha256": "2235c1600f011ed07eecaba2d025becf59dc46267fb6c9374cedcb4d44c07c1e",
+  "recordCount": 15,
+  "records": [
+    {
+      "lgdGramPanchayatCode": "228700",
+      "queryLatitude": 10.2064,
+      "queryLongitude": 79.2602,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.25373,
+      "gridOffsetKm": 2.556,
+      "rainfallMm": 34.9,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 8.1
+    },
+    {
+      "lgdGramPanchayatCode": "228702",
+      "queryLatitude": 10.3018,
+      "queryLongitude": 79.3238,
+      "gridLatitude": 10.29877,
+      "gridLongitude": 79.32338,
+      "gridOffsetKm": 0.345,
+      "rainfallMm": 24.6,
+      "daysWithRain": 28,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 7
+    },
+    {
+      "lgdGramPanchayatCode": "228703",
+      "queryLatitude": 10.3394,
+      "queryLongitude": 79.2943,
+      "gridLatitude": 10.369068,
+      "gridLongitude": 79.31399,
+      "gridOffsetKm": 3.943,
+      "rainfallMm": 40.5,
+      "daysWithRain": 26,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 10.9
+    },
+    {
+      "lgdGramPanchayatCode": "228704",
+      "queryLatitude": 10.3131,
+      "queryLongitude": 79.2551,
+      "gridLatitude": 10.29877,
+      "gridLongitude": 79.24429,
+      "gridOffsetKm": 1.977,
+      "rainfallMm": 34.3,
+      "daysWithRain": 25,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 6.9
+    },
+    {
+      "lgdGramPanchayatCode": "228705",
+      "queryLatitude": 10.2509,
+      "queryLongitude": 79.2044,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.17471,
+      "gridOffsetKm": 4.091,
+      "rainfallMm": 42.8,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-03",
+      "wettestDayMm": 9.4
+    },
+    {
+      "lgdGramPanchayatCode": "228708",
+      "queryLatitude": 10.1985,
+      "queryLongitude": 79.17,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.17471,
+      "gridOffsetKm": 3.373,
+      "rainfallMm": 42.8,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-03",
+      "wettestDayMm": 9.4
+    },
+    {
+      "lgdGramPanchayatCode": "228711",
+      "queryLatitude": 10.295,
+      "queryLongitude": 79.253,
+      "gridLatitude": 10.29877,
+      "gridLongitude": 79.24429,
+      "gridOffsetKm": 1.041,
+      "rainfallMm": 34.3,
+      "daysWithRain": 25,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 6.9
+    },
+    {
+      "lgdGramPanchayatCode": "228717",
+      "queryLatitude": 10.2753,
+      "queryLongitude": 79.2821,
+      "gridLatitude": 10.29877,
+      "gridLongitude": 79.24429,
+      "gridOffsetKm": 4.891,
+      "rainfallMm": 34.3,
+      "daysWithRain": 25,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 6.9
+    },
+    {
+      "lgdGramPanchayatCode": "228723",
+      "queryLatitude": 10.2223,
+      "queryLongitude": 79.1933,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.17471,
+      "gridOffsetKm": 2.142,
+      "rainfallMm": 42.8,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-03",
+      "wettestDayMm": 9.4
+    },
+    {
+      "lgdGramPanchayatCode": "228725",
+      "queryLatitude": 10.2104,
+      "queryLongitude": 79.2091,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.17471,
+      "gridOffsetKm": 4.271,
+      "rainfallMm": 42.8,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-03",
+      "wettestDayMm": 9.4
+    },
+    {
+      "lgdGramPanchayatCode": "228726",
+      "queryLatitude": 10.2747,
+      "queryLongitude": 79.3082,
+      "gridLatitude": 10.29877,
+      "gridLongitude": 79.32338,
+      "gridOffsetKm": 3.152,
+      "rainfallMm": 24.6,
+      "daysWithRain": 28,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 7
+    },
+    {
+      "lgdGramPanchayatCode": "228728",
+      "queryLatitude": 10.1918,
+      "queryLongitude": 79.2458,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.25373,
+      "gridOffsetKm": 4.17,
+      "rainfallMm": 34.9,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 8.1
+    },
+    {
+      "lgdGramPanchayatCode": "228729",
+      "queryLatitude": 10.3199,
+      "queryLongitude": 79.2789,
+      "gridLatitude": 10.29877,
+      "gridLongitude": 79.24429,
+      "gridOffsetKm": 4.449,
+      "rainfallMm": 34.3,
+      "daysWithRain": 25,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 6.9
+    },
+    {
+      "lgdGramPanchayatCode": "228730",
+      "queryLatitude": 10.2529,
+      "queryLongitude": 79.2817,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.25373,
+      "gridOffsetKm": 4.088,
+      "rainfallMm": 34.9,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 8.1
+    },
+    {
+      "lgdGramPanchayatCode": "228735",
+      "queryLatitude": 10.2612,
+      "queryLongitude": 79.2487,
+      "gridLatitude": 10.228471,
+      "gridLongitude": 79.25373,
+      "gridOffsetKm": 3.681,
+      "rainfallMm": 34.9,
+      "daysWithRain": 27,
+      "wettestDate": "2026-07-10",
+      "wettestDayMm": 8.1
+    }
+  ]
+}

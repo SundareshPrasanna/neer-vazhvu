@@ -1,0 +1,1060 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/directory",
+  "scope": {
+    "kind": "district",
+    "id": "tn-thanjavur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnrd-lgd-directory-2021",
+        "title": "TNRD village panchayat directory with LGD codes (village_eng.pdf, 2021 edition)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+        "as_of": "2021-03-11",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "tnrd-panchayat-master",
+        "title": "TNRD current village panchayat master (vptax public dues enquiry)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php",
+        "as_of": "2026-07-25",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "census-2011-village-amenities",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Tamil Nadu village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        "as_of": "2011",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "asserts",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-25",
+    "produced_by": "scripts/atlas-refresh-tn-district.ts",
+    "internal_inputs": [],
+    "note": "Identity directory for Thanjavur: 589 LGD-coded Gram Panchayats in 14 blocks. LGD codes come from the 2021 TNRD PDF (pdf-extract), current membership from the TNRD master (scrape), the JJM village enumeration from the citizen corner (scrape), Census 2011 identity columns from the DCHB village release (xlsx extract), and centroids from the TNGIS panchayat boundary layer (WFS). JJM and Census bindings are the crosswalk's: machine matches plus staged pairings, each labelled proposed until a reviewer verifies it. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
+    "conventions": {
+      "key": "lgdCode is the LGD Gram Panchayat code; every other identifier is a binding to it",
+      "bindings": "jjm and census bindings carry matchClass (how the pairing was made) and status (proposed | verified); a proposed binding is usable but has not been checked by someone with local knowledge",
+      "composition": "reviewed = a plan target a person checked; crosswalk = the bound Census unit's village set, unreviewed; unbound = no Census unit bound, 2011 composition not established",
+      "centroid": "[longitude, latitude] of the TNGIS polygon's bounding-box centre",
+      "tngis": "TNGIS terms require prior approval for public display or redistribution; only derived centroids, areas and digests of the polygons are published here"
+    }
+  },
+  "schemaVersion": 1,
+  "district": {
+    "slug": "thanjavur",
+    "name": "Thanjavur",
+    "stateSlug": "tn",
+    "stateName": "Tamil Nadu",
+    "planId": "tn-thanjavur-v1",
+    "tnrdLgdCode": "540",
+    "tnrdMasterCode": "13",
+    "jjmStateId": "29",
+    "jjmDistrictId": "441",
+    "censusDistrictCode": "620",
+    "lgdDistrictCode": "586",
+    "ingresDistrictName": "THANJAVUR"
+  },
+  "acquiredAt": "2026-07-25",
+  "vintages": {
+    "tnrdLgd": {
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)",
+      "retrievedAt": "2026-07-25",
+      "recordCount": 15
+    },
+    "tnrdMaster": {
+      "sourceAsOf": "2026-07-25",
+      "retrievedAt": "2026-07-25",
+      "recordCount": 2
+    },
+    "jjm": {
+      "sourceAsOf": "2026-07-25",
+      "retrievedAt": "2026-07-25",
+      "recordCount": 16
+    },
+    "census": {
+      "sourceAsOf": "Census 2011 release; village reference year 2009",
+      "retrievedAt": "2026-07-25",
+      "recordCount": 13
+    },
+    "boundary": {
+      "layer": "tnrd:panchayat_boundary",
+      "retrievedAt": "2026-07-25",
+      "recordCount": 15
+    }
+  },
+  "crosswalk": {
+    "proposalId": "thanjavur-crosswalk-v1",
+    "foldingVersion": "tn-transliteration-v2",
+    "matchProcedureVersion": "raw-exact-then-fold-v1",
+    "resolutionIds": [
+      "thanjavur-crosswalk-resolution-v1"
+    ],
+    "summary": {
+      "lgdGramPanchayats": 15,
+      "jjmBound": 15,
+      "censusBound": 6,
+      "bothBound": 6,
+      "unbound": 0,
+      "verifiedBindings": 0,
+      "proposedBindings": 21,
+      "byMatchClass": {
+        "exact": 20,
+        "unique-folded": 1
+      }
+    }
+  },
+  "blocks": [
+    {
+      "code": "6633",
+      "name": "SETHUBAVACHATRAM",
+      "jjmBlockId": "4567",
+      "jjmBlockName": "Sethubhavachatram",
+      "censusCdBlockCode": "0234",
+      "censusCdBlockName": "Sethubhavachatram",
+      "panchayatCount": 15
+    }
+  ],
+  "panchayats": [
+    {
+      "lgdCode": "228700",
+      "name": "Adaikkathevan",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152411",
+        "blockId": "4567",
+        "gpId": "152411",
+        "gpName": "Adaikkathevan",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376716",
+            "villageName": "Adaikkathevan"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0234/0553",
+        "cdBlockCode": "0234",
+        "gramPanchayatCode": "0553",
+        "gramPanchayatName": "Adaikkathevan",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "639202",
+            "villageName": "Adaikkathevan",
+            "subdistrictCode": "05817"
+          },
+          {
+            "villageCode": "639203",
+            "villageName": "Villunivayal",
+            "subdistrictCode": "05817"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639202",
+            "name": "Adaikkathevan"
+          },
+          {
+            "kind": "village",
+            "code": "639203",
+            "name": "Villunivayal"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 793.2314,
+        "centroid": [
+          79.26025,
+          10.2064
+        ],
+        "bbox": [
+          79.2393,
+          10.1916,
+          79.2812,
+          10.2212
+        ],
+        "geometrySha256": "d8eec5b149d538f6651bd345ba0df76be1325b52e546cf7ae24d6b88fb072fa8",
+        "ringCount": 2,
+        "vertexCount": 280
+      }
+    },
+    {
+      "lgdCode": "228702",
+      "name": "Andikkadu",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152413",
+        "blockId": "4567",
+        "gpId": "152413",
+        "gpName": "Andikkadu",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376718",
+            "villageName": "Andikkadu"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0234/0555",
+        "cdBlockCode": "0234",
+        "gramPanchayatCode": "0555",
+        "gramPanchayatName": "Andikkadu",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "639114",
+            "villageName": "Marudangavayal",
+            "subdistrictCode": "05816"
+          },
+          {
+            "villageCode": "639118",
+            "villageName": "Andikkadu",
+            "subdistrictCode": "05816"
+          },
+          {
+            "villageCode": "639119",
+            "villageName": "Ettivayal",
+            "subdistrictCode": "05816"
+          },
+          {
+            "villageCode": "639120",
+            "villageName": "Udayamudaiyan",
+            "subdistrictCode": "05816"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639114",
+            "name": "Marudangavayal"
+          },
+          {
+            "kind": "village",
+            "code": "639118",
+            "name": "Andikkadu"
+          },
+          {
+            "kind": "village",
+            "code": "639119",
+            "name": "Ettivayal"
+          },
+          {
+            "kind": "village",
+            "code": "639120",
+            "name": "Udayamudaiyan"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1050.494,
+        "centroid": [
+          79.32375,
+          10.30185
+        ],
+        "bbox": [
+          79.3028,
+          10.2789,
+          79.3447,
+          10.3248
+        ],
+        "geometrySha256": "c197bd4d155288a37f0769e05aecb442a1d6fe07a7345486fd02de634d46cf10",
+        "ringCount": 2,
+        "vertexCount": 413
+      }
+    },
+    {
+      "lgdCode": "228703",
+      "name": "Chokkanathapuram",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152414",
+        "blockId": "4567",
+        "gpId": "152414",
+        "gpName": "Chokkanathapuram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376719",
+            "villageName": "Chokkanathapuram"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0234/0556",
+        "cdBlockCode": "0234",
+        "gramPanchayatCode": "0556",
+        "gramPanchayatName": "Chokkanathapuram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "639080",
+            "villageName": "Chokkanathapuram",
+            "subdistrictCode": "05816"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639080",
+            "name": "Chokkanathapuram"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 813.5307,
+        "centroid": [
+          79.29425,
+          10.3394
+        ],
+        "bbox": [
+          79.2603,
+          10.3216,
+          79.3282,
+          10.3572
+        ],
+        "geometrySha256": "80e17f799d3dc9b64d8dba44002c7c9d939e91e66934513f170e5f1a7ca555d5",
+        "ringCount": 1,
+        "vertexCount": 529
+      }
+    },
+    {
+      "lgdCode": "228704",
+      "name": "Gangatharapuram",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152415",
+        "blockId": "4567",
+        "gpId": "152415",
+        "gpName": "Gangatharapuram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376720",
+            "villageName": "Gangadharapuram"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 592.7477,
+        "centroid": [
+          79.25505,
+          10.31305
+        ],
+        "bbox": [
+          79.2432,
+          10.2938,
+          79.2669,
+          10.3323
+        ],
+        "geometrySha256": "ec9c6560b26134d6dc7854e6b2951d4a8d39159349fa14e00a4044ac7d749ec9",
+        "ringCount": 1,
+        "vertexCount": 519
+      }
+    },
+    {
+      "lgdCode": "228705",
+      "name": "Kalanivasal",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152416",
+        "blockId": "4567",
+        "gpId": "152416",
+        "gpName": "Kalanivasal",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376721",
+            "villageName": "Kalanivasal"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0234/0559",
+        "cdBlockCode": "0234",
+        "gramPanchayatCode": "0559",
+        "gramPanchayatName": "Kalanivasal",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "639169",
+            "villageName": "Kalanivasal",
+            "subdistrictCode": "05817"
+          },
+          {
+            "villageCode": "639179",
+            "villageName": "Korathur",
+            "subdistrictCode": "05817"
+          },
+          {
+            "villageCode": "639180",
+            "villageName": "Korathur Ukkadai",
+            "subdistrictCode": "05817"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639169",
+            "name": "Kalanivasal"
+          },
+          {
+            "kind": "village",
+            "code": "639179",
+            "name": "Korathur"
+          },
+          {
+            "kind": "village",
+            "code": "639180",
+            "name": "Korathur Ukkadai"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 898.9817,
+        "centroid": [
+          79.20435,
+          10.2509
+        ],
+        "bbox": [
+          79.1922,
+          10.2255,
+          79.2165,
+          10.2763
+        ],
+        "geometrySha256": "e322fdbe92ad1949605e0f8e188f23362acc9d9d21965aaae67ef2b2e35c79de",
+        "ringCount": 1,
+        "vertexCount": 575
+      }
+    },
+    {
+      "lgdCode": "228708",
+      "name": "Kolakkudi",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152419",
+        "blockId": "4567",
+        "gpId": "152419",
+        "gpName": "Kolakkudi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376724",
+            "villageName": "Kulakkudi"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 434.8041,
+        "centroid": [
+          79.16995,
+          10.1985
+        ],
+        "bbox": [
+          79.1495,
+          10.1844,
+          79.1904,
+          10.2126
+        ],
+        "geometrySha256": "a97546b6f6c521a4ad91db82397717328a04637adc24a6b345c5d0315b3cce2f",
+        "ringCount": 2,
+        "vertexCount": 403
+      }
+    },
+    {
+      "lgdCode": "228711",
+      "name": "Kuruvikkarambai",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": {
+        "blockLocalCode": "14",
+        "gramPanchayatLocalCode": "11",
+        "name": "குருவிக்கரம்பை"
+      },
+      "jjm": {
+        "sourceUnitId": "4567/152422",
+        "blockId": "4567",
+        "gpId": "152422",
+        "gpName": "KURUVIKKARAMBAI",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376727",
+            "villageName": "Kuruvikkarambai"
+          },
+          {
+            "villageId": "702158",
+            "villageName": "Kuruvikarambai II"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0234/0565",
+        "cdBlockCode": "0234",
+        "gramPanchayatCode": "0565",
+        "gramPanchayatName": "Kuruvikarambai",
+        "matchClass": "unique-folded",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "639145",
+            "villageName": "Kuruvikarambai II",
+            "subdistrictCode": "05817"
+          },
+          {
+            "villageCode": "639147",
+            "villageName": "Kuruvikarambai I",
+            "subdistrictCode": "05817"
+          }
+        ]
+      },
+      "composition": {
+        "status": "reviewed",
+        "completeness": "complete",
+        "basis": "manual-audit",
+        "reviewedAt": "2026-07-25",
+        "members": [
+          {
+            "kind": "village",
+            "code": "639145",
+            "name": "Kuruvikarambai II"
+          },
+          {
+            "kind": "village",
+            "code": "639147",
+            "name": "Kuruvikarambai I"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1253.5091,
+        "centroid": [
+          79.253,
+          10.295
+        ],
+        "bbox": [
+          79.2281,
+          10.272,
+          79.2779,
+          10.318
+        ],
+        "geometrySha256": "e52d27d3f0808d26c59d802dcd9b2bbfc4ec656fdaadd250b217e64ed4191d8f",
+        "ringCount": 1,
+        "vertexCount": 1077
+      }
+    },
+    {
+      "lgdCode": "228717",
+      "name": "Nadiyam",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152428",
+        "blockId": "4567",
+        "gpId": "152428",
+        "gpName": "Nadiyam",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376733",
+            "villageName": "Nadiyam"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 765.0203,
+        "centroid": [
+          79.2821,
+          10.2753
+        ],
+        "bbox": [
+          79.2676,
+          10.2542,
+          79.2966,
+          10.2964
+        ],
+        "geometrySha256": "428f02ccf3bdd4ad41b66d58bdf9f84da5843c21c00651ee5a64b3cfc2e75938",
+        "ringCount": 1,
+        "vertexCount": 473
+      }
+    },
+    {
+      "lgdCode": "228723",
+      "name": "Rettavayal",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152434",
+        "blockId": "4567",
+        "gpId": "152434",
+        "gpName": "Rettavayal",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376739",
+            "villageName": "Rettaivayal"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 554.8548,
+        "centroid": [
+          79.19325,
+          10.2223
+        ],
+        "bbox": [
+          79.1786,
+          10.2079,
+          79.2079,
+          10.2367
+        ],
+        "geometrySha256": "bc71f42c079ba605418d77d37ffcac8274aa35ca1eb71b8a246de1863d076de3",
+        "ringCount": 1,
+        "vertexCount": 268
+      }
+    },
+    {
+      "lgdCode": "228725",
+      "name": "Ruthirachindamani",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152436",
+        "blockId": "4567",
+        "gpId": "152436",
+        "gpName": "Ruthirachindamani",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376741",
+            "villageName": "Ruthirachinthamani"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 736.0388,
+        "centroid": [
+          79.20915,
+          10.2104
+        ],
+        "bbox": [
+          79.1878,
+          10.1953,
+          79.2305,
+          10.2255
+        ],
+        "geometrySha256": "a46e5dec4c71ce00e63a870720673dbecb98f7af280b9fb9754dfb70d0e0087e",
+        "ringCount": 1,
+        "vertexCount": 547
+      }
+    },
+    {
+      "lgdCode": "228726",
+      "name": "Sarabendrarajapattinam",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152438",
+        "blockId": "4567",
+        "gpId": "152438",
+        "gpName": "Sarabendrarajapattinam",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376743",
+            "villageName": "Sarabendrarajanpattinam"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 314.4924,
+        "centroid": [
+          79.30825,
+          10.27465
+        ],
+        "bbox": [
+          79.2956,
+          10.2613,
+          79.3209,
+          10.288
+        ],
+        "geometrySha256": "8116bc13376ffe89e70fd33985ace99191bdeef8123280cd3fee6ec94f6e48e1",
+        "ringCount": 1,
+        "vertexCount": 89
+      }
+    },
+    {
+      "lgdCode": "228728",
+      "name": "Senthalaivayal",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152439",
+        "blockId": "4567",
+        "gpId": "152439",
+        "gpName": "Senthalaivayal",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376744",
+            "villageName": "Senthalaivayal"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 192.913,
+        "centroid": [
+          79.24575,
+          10.1918
+        ],
+        "bbox": [
+          79.2343,
+          10.1847,
+          79.2572,
+          10.1989
+        ],
+        "geometrySha256": "12dbabd48d09e4e7c16a9c767f7c5ea1681510779624a5ee6d962cee4e07af21",
+        "ringCount": 1,
+        "vertexCount": 203
+      }
+    },
+    {
+      "lgdCode": "228729",
+      "name": "Serubalakkadu",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152440",
+        "blockId": "4567",
+        "gpId": "152440",
+        "gpName": "Serubalakkadu",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376745",
+            "villageName": "Seruvalakkadu"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 271.1008,
+        "centroid": [
+          79.27885,
+          10.31985
+        ],
+        "bbox": [
+          79.2707,
+          10.31,
+          79.287,
+          10.3297
+        ],
+        "geometrySha256": "4def1f4bbe1fdaece4457df8df6a3a58e65604e712a11db9322d634623334d9a",
+        "ringCount": 1,
+        "vertexCount": 198
+      }
+    },
+    {
+      "lgdCode": "228730",
+      "name": "Sethubavachatram",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": {
+        "blockLocalCode": "14",
+        "gramPanchayatLocalCode": "28",
+        "name": "சேதுபாவாசத்திரம்"
+      },
+      "jjm": {
+        "sourceUnitId": "4567/152441",
+        "blockId": "4567",
+        "gpId": "152441",
+        "gpName": "Sethubavachatram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376746",
+            "villageName": "Sethubavachatram"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0234/0582",
+        "cdBlockCode": "0234",
+        "gramPanchayatCode": "0582",
+        "gramPanchayatName": "Sethubavachatram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "639187",
+            "villageName": "Sethubavachatram",
+            "subdistrictCode": "05817"
+          }
+        ]
+      },
+      "composition": {
+        "status": "reviewed",
+        "completeness": "complete",
+        "basis": "authoritative-enumeration",
+        "reviewedAt": "2026-07-25",
+        "members": [
+          {
+            "kind": "village",
+            "code": "639187",
+            "name": "Sethubavachatram"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 85.4603,
+        "centroid": [
+          79.2817,
+          10.25285
+        ],
+        "bbox": [
+          79.2749,
+          10.2467,
+          79.2885,
+          10.259
+        ],
+        "geometrySha256": "e2bdc631fdca521720391d6dfff36bc4ce77690acf50a0aa90018d1105465727",
+        "ringCount": 1,
+        "vertexCount": 237
+      }
+    },
+    {
+      "lgdCode": "228735",
+      "name": "Veeriyankottai",
+      "blockCode": "6633",
+      "blockName": "SETHUBAVACHATRAM",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4567/152446",
+        "blockId": "4567",
+        "gpId": "152446",
+        "gpName": "Veeriyankottai",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "376732",
+            "villageName": "Viriankottai"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 363.4455,
+        "centroid": [
+          79.2487,
+          10.2612
+        ],
+        "bbox": [
+          79.2375,
+          10.2483,
+          79.2599,
+          10.2741
+        ],
+        "geometrySha256": "85d37334e2fb9287d4641057b26d90c335346531cadd74636c374665b817f91b",
+        "ringCount": 1,
+        "vertexCount": 300
+      }
+    }
+  ],
+  "unbound": {
+    "jjm": [],
+    "census": []
+  }
+}
