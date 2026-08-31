@@ -44,6 +44,9 @@ import {
 const PRODUCED_BY = "scripts/atlas-rainfall-tn-district.ts";
 const CACHE = "rainfall.json";
 const BATCH_SIZE = 100;
+// A centroid further than this from every returned grid node is queried at
+// its exact coordinates; the extract validator refuses records beyond 15 km.
+const ESCALATE_KM = 10;
 const USER_AGENT = "neer-vazhvu-atlas/0.1 (research; contact@neervazhvu.org)";
 
 const sleep = (ms: number): Promise<void> =>
@@ -162,24 +165,61 @@ async function acquire(
   console.error(`  ${points.length} Panchayats over ${uniquePoints.length} reanalysis grid cells`);
 
   const rowByCell = new Map<string, DailyResponse>();
-  let window: { start: string; end: string } | null = null;
-  for (let index = 0; index < uniquePoints.length; index += BATCH_SIZE) {
-    const batch = uniquePoints.slice(index, index + BATCH_SIZE);
-    const rows = await readBatch(batch);
-    for (let offset = 0; offset < batch.length; offset += 1) {
-      rowByCell.set(batch[offset].code, rows[offset]);
-      window ??= {
-        start: rows[offset].daily.time[0],
-        end: rows[offset].daily.time[rows[offset].daily.time.length - 1],
-      };
+  const fetchCells = async (cellsToRead: Point[]): Promise<void> => {
+    for (let index = 0; index < cellsToRead.length; index += BATCH_SIZE) {
+      const batch = cellsToRead.slice(index, index + BATCH_SIZE);
+      const rows = await readBatch(batch);
+      for (let offset = 0; offset < batch.length; offset += 1) {
+        rowByCell.set(batch[offset].code, rows[offset]);
+      }
+      console.error(`  ${Math.min(index + BATCH_SIZE, cellsToRead.length)}/${cellsToRead.length} cells`);
     }
-    console.error(`  ${Math.min(index + BATCH_SIZE, uniquePoints.length)}/${uniquePoints.length} cells`);
+  };
+  await fetchCells(uniquePoints);
+  const firstRow = rowByCell.values().next().value;
+  if (!firstRow) throw new Error("Open-Meteo returned no daily series");
+  const window = {
+    start: firstRow.daily.time[0],
+    end: firstRow.daily.time[firstRow.daily.time.length - 1],
+  };
+
+  // The API's grid is its own: nodes 0.07 to 0.14 degrees apart, not a tidy
+  // lattice, so a rounded query can land between nodes and be snapped to one
+  // 12 to 16 km from a centroid (Tiruchirappalli, 2026-08-31). Each Panchayat
+  // therefore takes the NEAREST returned node, and a centroid still more than
+  // ESCALATE_KM from every node is queried exactly, as its own cell.
+  const nearestCell = (point: Point): { code: string; km: number } => {
+    let best = { code: "", km: Number.POSITIVE_INFINITY };
+    for (const [code, row] of rowByCell) {
+      const km = haversineKm([point.latitude, point.longitude], [row.latitude, row.longitude]);
+      if (km < best.km) best = { code, km };
+    }
+    return best;
+  };
+  const assignment = new Map<string, string>();
+  const escalated: Point[] = [];
+  for (const point of points) {
+    const near = nearestCell(point);
+    if (near.km > ESCALATE_KM) {
+      escalated.push({ code: `exact:${point.code}`, latitude: point.latitude, longitude: point.longitude });
+    } else {
+      assignment.set(point.code, near.code);
+    }
   }
-  if (!window) throw new Error("Open-Meteo returned no daily series");
+  if (escalated.length > 0) {
+    console.error(
+      `  ${escalated.length} centroids more than ${ESCALATE_KM} km from any cell node: queried exactly`,
+    );
+    await fetchCells(escalated);
+    for (const point of points) {
+      if (!assignment.has(point.code)) assignment.set(point.code, `exact:${point.code}`);
+    }
+  }
+  const allCells = [...uniquePoints, ...escalated];
 
   const records: RainfallRecord[] = [];
   for (const point of points) {
-    const row = rowByCell.get(cellKeyOf(point));
+    const row = rowByCell.get(assignment.get(point.code) ?? "");
     if (!row) throw new Error(`No grid-cell series for ${point.code}`);
     const daily = summarizeDailyRainfall(row.daily.time, row.daily.precipitation_sum);
     records.push({
@@ -206,8 +246,8 @@ async function acquire(
   const normalTotals = new Map<string, number[]>();
   for (let back = 1; back <= RAINFALL_NORMAL_YEARS; back += 1) {
     const year = endYear - back;
-    for (let index = 0; index < uniquePoints.length; index += BATCH_SIZE) {
-      const batch = uniquePoints.slice(index, index + BATCH_SIZE);
+    for (let index = 0; index < allCells.length; index += BATCH_SIZE) {
+      const batch = allCells.slice(index, index + BATCH_SIZE);
       const totals = await readArchiveWindow(
         batch,
         `${year}-${windowStart}`,
@@ -223,8 +263,7 @@ async function acquire(
     console.error(`  normal ${year} done`);
   }
   for (const record of records) {
-    const cell = `${Number(record.queryLatitude).toFixed(1)},${Number(record.queryLongitude).toFixed(1)}`;
-    const totals = normalTotals.get(cell) ?? [];
+    const totals = normalTotals.get(assignment.get(record.lgdGramPanchayatCode) ?? "") ?? [];
     if (totals.length === 0) continue;
     const normal = Number(
       (totals.reduce((sum, value) => sum + value, 0) / totals.length).toFixed(2),
