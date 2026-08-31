@@ -63,8 +63,17 @@ rm -f "$log"
 step "2 jjm: service register per block"
 must npx tsx scripts/atlas-jjm-tn-district.ts --district "$district" --fetch --as-of "$as_of"
 
-step "3 census: 2011 roll-up per block (closed source, replayed)"
-must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --replay
+# Census 2011 is a closed source: its roll-up changes only when the
+# directory's bindings change, and the replay needs the locally cached DCHB
+# workbook, which a fresh CI runner does not have (learned from the first
+# runner dry run, 2026-08-29). So it re-runs only after a real identity
+# refresh; otherwise the served shards stand.
+if [ "$identity" = "refreshed" ]; then
+  step "3 census: 2011 roll-up per block (closed source, replayed after an identity refresh)"
+  must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --replay
+else
+  step "3 census: skipped (closed source; identity not refreshed this run)"
+fi
 
 step "4 groundwater: IN-GRES taluk assessment"
 must npx tsx scripts/atlas-groundwater-tn-district.ts --district "$district" --fetch --as-of "$as_of"

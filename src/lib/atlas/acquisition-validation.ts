@@ -467,6 +467,9 @@ function validateAcquiredSource<T>(
   if (!isValidDate(raw.retrievedAt)) {
     errors.push(`${label}.retrievedAt: must be a valid date`);
   }
+  if ("reusedCachedArtifact" in raw && raw.reusedCachedArtifact !== true) {
+    errors.push(`${label}.reusedCachedArtifact: when present it must be exactly true`);
+  }
   if (!isNonEmptyString(raw.snapshotSha256) || !SHA256_PATTERN.test(raw.snapshotSha256)) {
     errors.push(`${label}.snapshotSha256: must be a lowercase SHA-256`);
   }
@@ -701,7 +704,18 @@ export function validateTnDistrictSourceExtract(raw: unknown): string[] {
     ["census", census],
   ];
   for (const [name, source] of sources) {
-    if (source !== null && source.retrievedAt !== raw.acquiredAt) {
+    if (source === null) continue;
+    if (source.reusedCachedArtifact === true) {
+      // A CLOSED source reused from the content-addressed cache keeps its
+      // original retrieval date; the flag is the explicit licence for the
+      // dates to differ, and a reused artifact can never postdate the run.
+      if (typeof raw.acquiredAt === "string" && source.retrievedAt > raw.acquiredAt) {
+        errors.push(
+          `sources.${name}.retrievedAt: a reused cached artifact must carry ` +
+            "its original retrieval date, not one after acquiredAt",
+        );
+      }
+    } else if (source.retrievedAt !== raw.acquiredAt) {
       errors.push(`sources.${name}.retrievedAt: must equal acquiredAt`);
     }
   }

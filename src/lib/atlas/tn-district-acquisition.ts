@@ -29,6 +29,10 @@ const USER_AGENT =
   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 " +
   "Safari/537.36 NeerVazhvu-Onboarding-Atlas/1.0";
 const FETCH_TIMEOUT_MS = 60_000;
+// The DCHB workbook is 33.7 MB and censusindia.gov.in has served it at about
+// 200 KB/s (measured 2026-08-31: three 60 s attempts each moved 10-12 MB), so
+// its download gets its own ceiling instead of the shared one.
+const CENSUS_WORKBOOK_TIMEOUT_MS = 300_000;
 const FETCH_ATTEMPTS = 3;
 const MAX_TEXT_BUFFER = 64 * 1024 * 1024;
 
@@ -42,6 +46,10 @@ interface AcquisitionOptions {
   cacheDir: string;
   pythonExecutable?: string;
   censusExtractorPath?: string;
+  /** The previous extract's census workbook, so a CLOSED release is reused
+   *  from the content-addressed cache instead of re-downloaded (33 MB from a
+   *  slow host whose TLS chain CI runners reject). */
+  previousCensus?: { artifactSha256: string; retrievedAt: string };
 }
 
 interface NamedOption {
@@ -177,6 +185,7 @@ async function fetchIntoCache(
 async function fetchWithSystemCurlIntoCache(
   cache: ContentAddressedCache,
   url: string,
+  timeoutMs: number = FETCH_TIMEOUT_MS,
 ): Promise<FetchResult> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
@@ -191,7 +200,7 @@ async function fetchWithSystemCurlIntoCache(
           "--proto",
           "=https",
           "--max-time",
-          String(FETCH_TIMEOUT_MS / 1_000),
+          String(timeoutMs / 1_000),
           "--output",
           "-",
           url,
@@ -612,13 +621,49 @@ async function acquireCensus(
   cache: ContentAddressedCache,
   options: AcquisitionOptions,
 ): Promise<AcquiredSourceRecordSet<CensusVillageRecord>> {
-  // Census India's chain is accepted by the operating-system trust store but
-  // is incomplete for Node's bundled CA verifier. curl still performs normal
-  // TLS verification here; this is not an insecure-certificate fallback.
-  const response = await fetchWithSystemCurlIntoCache(
-    cache,
-    plan.sources.census.url,
-  );
+  // The DCHB workbook is a CLOSED release (the 2021 census did not happen),
+  // so its bytes can never change: when the previous acquisition's workbook
+  // sits in the content-addressed cache, it is reused hash-verified instead
+  // of re-downloaded (33.7 MB from a host measured at ~200 KB/s, whose TLS
+  // chain CI runners reject). The record then carries the ORIGINAL
+  // retrievedAt under an explicit reusedCachedArtifact flag the extract
+  // validator understands. No cached copy falls through to the download.
+  let response: FetchResult | null = null;
+  let retrievedAt = acquiredAt;
+  let reused = false;
+  if (options.previousCensus) {
+    const cachedPath = join(cache.objectDir, options.previousCensus.artifactSha256);
+    try {
+      const bytes = new Uint8Array(await readFile(cachedPath));
+      if (sha256(bytes) !== options.previousCensus.artifactSha256) {
+        throw new Error(`Cache object ${cachedPath} does not match its content digest`);
+      }
+      response = {
+        artifact: { sha256: options.previousCensus.artifactSha256, path: cachedPath, bytes },
+        responseUrl: plan.sources.census.url,
+        contentType: "",
+      };
+      retrievedAt = options.previousCensus.retrievedAt;
+      reused = true;
+      console.error(
+        `  census: reusing the cached closed-edition workbook ` +
+          `(sha ${options.previousCensus.artifactSha256.slice(0, 12)}, retrieved ${retrievedAt})`,
+      );
+    } catch {
+      response = null; // absent or unreadable cache: download below
+    }
+  }
+  if (response === null) {
+    // Census India's chain is accepted by the operating-system trust store
+    // but is incomplete for Node's bundled CA verifier. curl still performs
+    // normal TLS verification here; this is not an insecure-certificate
+    // fallback.
+    response = await fetchWithSystemCurlIntoCache(
+      cache,
+      plan.sources.census.url,
+      CENSUS_WORKBOOK_TIMEOUT_MS,
+    );
+  }
   const signature = Buffer.from(response.artifact.bytes.subarray(0, 2)).toString("ascii");
   if (signature !== "PK") {
     throw new Error("Census source did not return an XLSX/ZIP workbook");
@@ -649,7 +694,8 @@ async function acquireCensus(
   return {
     sourceId: "census-2011-village-amenities",
     sourceUrl: plan.sources.census.url,
-    retrievedAt: acquiredAt,
+    retrievedAt,
+    ...(reused ? { reusedCachedArtifact: true as const } : {}),
     sourceAsOf: plan.sources.census.sourceAsOf,
     snapshotSha256: response.artifact.sha256,
     artifactSha256s: [response.artifact.sha256],

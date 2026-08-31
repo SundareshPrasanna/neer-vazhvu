@@ -175,9 +175,18 @@ async function main(): Promise<void> {
   if (fetchNow) {
     const asOf = argValue(argv, "--as-of");
     if (!asOf) throw new Error("--as-of YYYY-MM-DD is required with --fetch");
+    // The previous extract lets the CLOSED census workbook be reused from
+    // the content-addressed cache instead of re-downloaded every month.
+    const previous = readCacheJson<TnDistrictSourceExtract>(district, EXTRACT_CACHE);
     extract = await acquireTnDistrictSourceExtract(plan, asOf, {
       cacheDir: cacheDir(district),
       censusExtractorPath: resolve(ROOT, "scripts/atlas_extract_census_village_amenities.py"),
+      previousCensus: previous?.sources.census
+        ? {
+            artifactSha256: previous.sources.census.artifactSha256s[0],
+            retrievedAt: previous.sources.census.retrievedAt,
+          }
+        : undefined,
     });
     writeCache(district, EXTRACT_CACHE, extract);
   } else {

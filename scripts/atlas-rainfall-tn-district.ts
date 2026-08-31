@@ -96,8 +96,11 @@ async function readArchiveWindow(points: Point[], start: string, end: string): P
     end_date: end,
     timezone: "Asia/Kolkata",
   });
+  // Eight doublings reach about eight and a half minutes in total: enough to
+  // ride out a rolling hour another consumer has partly saturated, which a
+  // 64-second ceiling was not (observed 2026-08-31).
   let response: Response | null = null;
-  for (let attempt = 0; attempt < 6; attempt += 1) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
     response = await fetch(`${RAINFALL_ARCHIVE_URL}?${params.toString()}`, {
       headers: { "User-Agent": USER_AGENT },
     });
@@ -125,44 +128,77 @@ async function readArchiveWindow(points: Point[], start: string, end: string): P
   );
 }
 
+/** The reanalysis grid is about 0.1 degrees, so every centroid rounded to the
+ *  same tenth of a degree receives the same series. */
+function cellKeyOf(point: Point): string {
+  return `${point.latitude.toFixed(1)},${point.longitude.toFixed(1)}`;
+}
+
 async function acquire(
   points: Point[],
   planId: string,
   asOf: string,
 ): Promise<TnDistrictRainfallExtract> {
-  const records: RainfallRecord[] = [];
-  let window: { start: string; end: string } | null = null;
-  for (let index = 0; index < points.length; index += BATCH_SIZE) {
-    const batch = points.slice(index, index + BATCH_SIZE);
-    const rows = await readBatch(batch);
-    for (let offset = 0; offset < batch.length; offset += 1) {
-      const point = batch[offset];
-      const row = rows[offset];
-      const daily = summarizeDailyRainfall(row.daily.time, row.daily.precipitation_sum);
-      window ??= {
-        start: row.daily.time[0],
-        end: row.daily.time[row.daily.time.length - 1],
-      };
-      records.push({
-        lgdGramPanchayatCode: point.code,
-        queryLatitude: Number(point.latitude.toFixed(4)),
-        queryLongitude: Number(point.longitude.toFixed(4)),
-        gridLatitude: row.latitude,
-        gridLongitude: row.longitude,
-        gridOffsetKm: haversineKm(
-          [point.latitude, point.longitude],
-          [row.latitude, row.longitude],
-        ),
-        ...daily,
-        normalMm: null,
-        normalYears: 0,
-        anomalyMm: null,
-        percentOfNormal: null,
+  // Open-Meteo accounts its allowance per LOCATION per window, not per HTTP
+  // call: 589 Panchayats times one current window and eleven normal years is
+  // about 7,100 location-windows, and the archive started answering 429
+  // after roughly 5,000 in an hour (measured 2026-08-31, eight of eleven
+  // normal years in). Panchayats in the same grid cell were already getting
+  // identical series, so the API is asked once per cell and every Panchayat
+  // inherits its cell's rows; a district collapses to a few dozen cells and
+  // the whole run stays two orders of magnitude under the cap.
+  const cells = new Map<string, Point>();
+  for (const point of points) {
+    const key = cellKeyOf(point);
+    if (!cells.has(key)) {
+      cells.set(key, {
+        code: key,
+        latitude: Number(point.latitude.toFixed(1)),
+        longitude: Number(point.longitude.toFixed(1)),
       });
     }
-    console.error(`  ${Math.min(index + BATCH_SIZE, points.length)}/${points.length}`);
+  }
+  const uniquePoints = [...cells.values()];
+  console.error(`  ${points.length} Panchayats over ${uniquePoints.length} reanalysis grid cells`);
+
+  const rowByCell = new Map<string, DailyResponse>();
+  let window: { start: string; end: string } | null = null;
+  for (let index = 0; index < uniquePoints.length; index += BATCH_SIZE) {
+    const batch = uniquePoints.slice(index, index + BATCH_SIZE);
+    const rows = await readBatch(batch);
+    for (let offset = 0; offset < batch.length; offset += 1) {
+      rowByCell.set(batch[offset].code, rows[offset]);
+      window ??= {
+        start: rows[offset].daily.time[0],
+        end: rows[offset].daily.time[rows[offset].daily.time.length - 1],
+      };
+    }
+    console.error(`  ${Math.min(index + BATCH_SIZE, uniquePoints.length)}/${uniquePoints.length} cells`);
   }
   if (!window) throw new Error("Open-Meteo returned no daily series");
+
+  const records: RainfallRecord[] = [];
+  for (const point of points) {
+    const row = rowByCell.get(cellKeyOf(point));
+    if (!row) throw new Error(`No grid-cell series for ${point.code}`);
+    const daily = summarizeDailyRainfall(row.daily.time, row.daily.precipitation_sum);
+    records.push({
+      lgdGramPanchayatCode: point.code,
+      queryLatitude: Number(point.latitude.toFixed(4)),
+      queryLongitude: Number(point.longitude.toFixed(4)),
+      gridLatitude: row.latitude,
+      gridLongitude: row.longitude,
+      gridOffsetKm: haversineKm(
+        [point.latitude, point.longitude],
+        [row.latitude, row.longitude],
+      ),
+      ...daily,
+      normalMm: null,
+      normalYears: 0,
+      anomalyMm: null,
+      percentOfNormal: null,
+    });
+  }
 
   const windowStart = window.start.slice(5);
   const windowEnd = window.end.slice(5);
@@ -170,8 +206,8 @@ async function acquire(
   const normalTotals = new Map<string, number[]>();
   for (let back = 1; back <= RAINFALL_NORMAL_YEARS; back += 1) {
     const year = endYear - back;
-    for (let index = 0; index < points.length; index += BATCH_SIZE) {
-      const batch = points.slice(index, index + BATCH_SIZE);
+    for (let index = 0; index < uniquePoints.length; index += BATCH_SIZE) {
+      const batch = uniquePoints.slice(index, index + BATCH_SIZE);
       const totals = await readArchiveWindow(
         batch,
         `${year}-${windowStart}`,
@@ -187,7 +223,8 @@ async function acquire(
     console.error(`  normal ${year} done`);
   }
   for (const record of records) {
-    const totals = normalTotals.get(record.lgdGramPanchayatCode) ?? [];
+    const cell = `${Number(record.queryLatitude).toFixed(1)},${Number(record.queryLongitude).toFixed(1)}`;
+    const totals = normalTotals.get(cell) ?? [];
     if (totals.length === 0) continue;
     const normal = Number(
       (totals.reduce((sum, value) => sum + value, 0) / totals.length).toFixed(2),
@@ -255,6 +292,9 @@ async function main(): Promise<void> {
     throw new Error(`Invalid rainfall extract:\n- ${errors.join("\n- ")}`);
   }
   const summary = summarizeRainfall(rainfall);
+  const gridCells = new Set(
+    rainfall.records.map((record) => `${record.gridLatitude},${record.gridLongitude}`),
+  ).size;
   const envelope = atlasEnvelope({
     district,
     family: "rainfall",
@@ -266,7 +306,9 @@ async function main(): Promise<void> {
     note:
       `Open-Meteo daily precipitation summed over ${rainfall.window.start} to ` +
       `${rainfall.window.end} for ${rainfall.recordCount} Gram Panchayats, queried at the ` +
-      "bounding-box centre of each TNGIS polygon (from the directory). " +
+      "bounding-box centre of each TNGIS polygon (from the directory), " +
+      `collapsed to ${gridCells} reanalysis grid cells: Panchayats whose centroids share ` +
+      "a cell share its series, which the per-record grid coordinates and offset state. " +
       (summary.withNormal > 0
         ? `The normal is a ${RAINFALL_NORMAL_YEARS}-year mean of the same calendar window from the ERA5 archive for the same grid point.`
         : "No normal was computed on this run, so anomaly fields are null."),

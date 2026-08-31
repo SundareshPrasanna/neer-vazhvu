@@ -199,6 +199,11 @@ export interface AcquiredSourceRecordSet<T> {
   sourceId: string;
   sourceUrl: string;
   retrievedAt: string;
+  /** Set when a CLOSED source's bytes were reused from the content-addressed
+   *  cache instead of re-downloaded: retrievedAt is then the ORIGINAL
+   *  retrieval date, earlier than the extract's acquiredAt, and the extract
+   *  validator accepts that pair only under this flag. */
+  reusedCachedArtifact?: true;
   sourceAsOf: string;
   snapshotSha256: string;
   artifactSha256s: string[];
