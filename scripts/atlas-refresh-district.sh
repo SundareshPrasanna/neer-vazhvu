@@ -87,8 +87,26 @@ must npx tsx scripts/atlas-groundwater-tn-district.ts --district "$district" --f
 # artifacts stand: the projection is a view of two inputs that did not move,
 # and the register refresh (JJM, IN-GRES, rainfall) is what a monthly run is
 # for. Learned from the second runner dry run, 2026-08-31.
-gw_changed=0
-git diff --quiet -- "public/data/atlas/tn/$district/groundwater-taluks.json" || gw_changed=1
+# "Changed" means the assessment payload, not the envelope: a re-fetch
+# always rewrites produced_at and retrieved, so a byte comparison would fire
+# every month (it did, on the third runner dry run). Provenance is dropped
+# from both sides before comparing.
+gw_file="public/data/atlas/tn/$district/groundwater-taluks.json"
+gw_changed=$(python3 - "$gw_file" <<'PY'
+import json, subprocess, sys
+path = sys.argv[1]
+def payload(text):
+    doc = json.loads(text)
+    doc.pop("provenance", None)
+    return json.dumps(doc, sort_keys=True)
+try:
+    head = subprocess.run(["git", "show", f"HEAD:{path}"], check=True, capture_output=True, text=True).stdout
+except subprocess.CalledProcessError:
+    print(1); sys.exit(0)   # no committed version: treat as changed
+with open(path) as f:
+    print(0 if payload(head) == payload(f.read()) else 1)
+PY
+)
 if [ "$identity" = "refreshed" ] || [ "$gw_changed" = 1 ]; then
   step "5 project-gw: taluk assessment onto Gram Panchayats"
   must npx tsx scripts/atlas-project-groundwater.ts --district "$district" --as-of "$as_of"
