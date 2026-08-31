@@ -87,24 +87,25 @@ must npx tsx scripts/atlas-groundwater-tn-district.ts --district "$district" --f
 # artifacts stand: the projection is a view of two inputs that did not move,
 # and the register refresh (JJM, IN-GRES, rainfall) is what a monthly run is
 # for. Learned from the second runner dry run, 2026-08-31.
-# "Changed" means the assessment payload, not the envelope: a re-fetch
-# always rewrites produced_at and retrieved, so a byte comparison would fire
-# every month (it did, on the third runner dry run). Provenance is dropped
-# from both sides before comparing.
+# "Changed" means the assessment itself: a re-fetch always rewrites the
+# envelope dates AND the artifact's own acquiredAt, so neither a byte
+# comparison nor a provenance-stripped one holds (the third and fourth runner
+# dry runs fired on those). The artifact carries a digest of its records and
+# the assessment year; those two are what "the taluk assessment changed"
+# means.
 gw_file="public/data/atlas/tn/$district/groundwater-taluks.json"
 gw_changed=$(python3 - "$gw_file" <<'PY'
 import json, subprocess, sys
 path = sys.argv[1]
-def payload(text):
+def identity(text):
     doc = json.loads(text)
-    doc.pop("provenance", None)
-    return json.dumps(doc, sort_keys=True)
+    return (doc.get("assessmentYear"), doc.get("recordsSha256"), doc.get("recordCount"))
 try:
     head = subprocess.run(["git", "show", f"HEAD:{path}"], check=True, capture_output=True, text=True).stdout
 except subprocess.CalledProcessError:
     print(1); sys.exit(0)   # no committed version: treat as changed
 with open(path) as f:
-    print(0 if payload(head) == payload(f.read()) else 1)
+    print(0 if identity(head) == identity(f.read()) else 1)
 PY
 )
 if [ "$identity" = "refreshed" ] || [ "$gw_changed" = 1 ]; then
