@@ -47,6 +47,7 @@ const BATCH_SIZE = 100;
 // A centroid further than this from every returned grid node is queried at
 // its exact coordinates; the extract validator refuses records beyond 15 km.
 const ESCALATE_KM = 10;
+const NORMAL_BATCH_PAUSE_MS = 6000;
 const USER_AGENT = "neer-vazhvu-atlas/0.1 (research; contact@neervazhvu.org)";
 
 const sleep = (ms: number): Promise<void> =>
@@ -64,6 +65,32 @@ interface Point {
   longitude: number;
 }
 
+/**
+ * One request with the same patience for every way Open-Meteo says "slow
+ * down": an HTTP 429, or the connection simply dropped, which is what a
+ * runner's shared address sees after a burst (the sixth runner dry run died
+ * on a thrown "fetch failed" that no status check could catch). Eight
+ * doublings reach about eight and a half minutes in total.
+ */
+async function fetchWithPatience(url: string, label: string): Promise<Response> {
+  let last: Response | Error | null = null;
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+      if (response.status !== 429) return response;
+      last = response;
+    } catch (error) {
+      last = error instanceof Error ? error : new Error(String(error));
+    }
+    const wait = 2000 * 2 ** attempt;
+    console.error(`    ${label}: ${last instanceof Error ? last.message : "rate limited"}, waiting ${wait / 1000}s`);
+    await sleep(wait);
+  }
+  throw new Error(
+    `${label}: gave up after retries (${last instanceof Error ? last.message : `HTTP ${last?.status}`})`,
+  );
+}
+
 async function readBatch(points: Point[]): Promise<DailyResponse[]> {
   const params = new URLSearchParams({
     latitude: points.map((point) => point.latitude.toFixed(4)).join(","),
@@ -73,9 +100,7 @@ async function readBatch(points: Point[]): Promise<DailyResponse[]> {
     forecast_days: "1",
     timezone: "Asia/Kolkata",
   });
-  const response = await fetch(`${RAINFALL_API_URL}?${params.toString()}`, {
-    headers: { "User-Agent": USER_AGENT },
-  });
+  const response = await fetchWithPatience(`${RAINFALL_API_URL}?${params.toString()}`, "Open-Meteo");
   if (!response.ok) throw new Error(`Open-Meteo returned HTTP ${response.status}`);
   const body = (await response.json()) as DailyResponse | DailyResponse[];
   const rows = Array.isArray(body) ? body : [body];
@@ -99,23 +124,12 @@ async function readArchiveWindow(points: Point[], start: string, end: string): P
     end_date: end,
     timezone: "Asia/Kolkata",
   });
-  // Eight doublings reach about eight and a half minutes in total: enough to
-  // ride out a rolling hour another consumer has partly saturated, which a
-  // 64-second ceiling was not (observed 2026-08-31).
-  let response: Response | null = null;
-  for (let attempt = 0; attempt < 8; attempt += 1) {
-    response = await fetch(`${RAINFALL_ARCHIVE_URL}?${params.toString()}`, {
-      headers: { "User-Agent": USER_AGENT },
-    });
-    if (response.status !== 429) break;
-    const wait = 2000 * 2 ** attempt;
-    console.error(`    rate limited, waiting ${wait / 1000}s`);
-    await sleep(wait);
-  }
-  if (!response || !response.ok) {
-    throw new Error(
-      `Open-Meteo archive returned HTTP ${response?.status ?? "no response"} after retries`,
-    );
+  const response = await fetchWithPatience(
+    `${RAINFALL_ARCHIVE_URL}?${params.toString()}`,
+    "Open-Meteo archive",
+  );
+  if (!response.ok) {
+    throw new Error(`Open-Meteo archive returned HTTP ${response.status} after retries`);
   }
   const body = (await response.json()) as DailyResponse | DailyResponse[];
   const rows = Array.isArray(body) ? body : [body];
@@ -258,7 +272,11 @@ async function acquire(
         bucket.push(totals[offset]);
         normalTotals.set(batch[offset].code, bucket);
       }
-      await sleep(1200);
+      // Pace the normals: eleven years of sixty cells in ten seconds is over
+      // Open-Meteo's per-minute allowance from a shared runner address (the
+      // sixth runner dry run was throttled after nine years). Six seconds a
+      // batch keeps a district near one minute and under the cap.
+      await sleep(NORMAL_BATCH_PAUSE_MS);
     }
     console.error(`  normal ${year} done`);
   }
