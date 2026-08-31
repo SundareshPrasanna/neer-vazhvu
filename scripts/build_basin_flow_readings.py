@@ -128,11 +128,15 @@ def build_series(daily_q: dict, level_rows: list, cfg: dict, today: dt.date) -> 
             by_cal_month[d.month].append(daily_q[d])
             by_wy[water_year(d, wy_start)].append(daily_q[d])
 
+        # Aggregated points carry the day-count behind each value as a third
+        # element: a month averaged from 3 readings is not a month averaged
+        # from 31, and the chart should let a reader tell them apart
+        # (Madhuri review, 31 Aug 2026).
         series.append({
             "kind": "discharge-monthly", "unit": "cumec", "verified": True,
             "label": "Monthly mean discharge",
-            "note": "Mean of daily CWC observed/computed discharge; months with any data shown.",
-            "points": [[m, round(statistics.fmean(v), 2)] for m, v in sorted(by_month.items())],
+            "note": "Mean of daily CWC observed/computed discharge; months with any data shown - hover for how many daily readings each month holds.",
+            "points": [[m, round(statistics.fmean(v), 2), len(v)] for m, v in sorted(by_month.items())],
         })
 
         cutoff = today.replace(year=today.year - 3)
@@ -153,7 +157,8 @@ def build_series(daily_q: dict, level_rows: list, cfg: dict, today: dt.date) -> 
             months.append({"m": m,
                            "p25": round(vals[len(vals) // 4], 2),
                            "median": round(statistics.median(vals), 2),
-                           "p75": round(vals[(3 * len(vals)) // 4], 2)})
+                           "p75": round(vals[(3 * len(vals)) // 4], 2),
+                           "n": len(vals)})
         if months:
             series.append({
                 "kind": "climatology-monthly", "unit": "cumec", "verified": True,
@@ -171,11 +176,12 @@ def build_series(daily_q: dict, level_rows: list, cfg: dict, today: dt.date) -> 
             series.append({
                 "kind": "flow-duration", "unit": "cumec", "verified": True,
                 "label": "Flow-duration curve",
-                "note": f"Exceedance of {n} daily values, {days[0].year}-{days[-1].year}.",
+                "note": f"Exceedances calculated from {n:,} daily flow observations, "
+                        f"{days[0].year}-{days[-1].year}.",
                 "exceedance": exceed,
             })
 
-        wy_pts = [[wy, round(statistics.fmean(v), 2)]
+        wy_pts = [[wy, round(statistics.fmean(v), 2), len(v)]
                   for wy, v in sorted(by_wy.items()) if len(v) >= 60]
         if len(wy_pts) >= 2:
             lta = round(statistics.fmean(p[1] for p in wy_pts), 2)
@@ -183,7 +189,8 @@ def build_series(daily_q: dict, level_rows: list, cfg: dict, today: dt.date) -> 
                 "kind": "annual-water-year", "unit": "cumec", "verified": True,
                 "label": "Water-year mean discharge vs long-term average",
                 "note": f"Water year starts 01-{wy_start:02d}; long-term average {lta} cumec "
-                        "over the years shown; years with under 60 daily readings omitted.",
+                        "over the years shown (dashed line); years with under 60 daily "
+                        "readings omitted.",
                 "points": wy_pts,
             })
 
@@ -192,7 +199,7 @@ def build_series(daily_q: dict, level_rows: list, cfg: dict, today: dt.date) -> 
         for row in level_rows:
             d = dt.date.fromisoformat(row["dataTime"][:10])
             by_month_lvl[month_key(d)].append(row["dataValue"])
-        pts = [[m, round(statistics.fmean(v), 2)] for m, v in sorted(by_month_lvl.items())]
+        pts = [[m, round(statistics.fmean(v), 2), len(v)] for m, v in sorted(by_month_lvl.items())]
         if pts:
             series.append({
                 "kind": "gauge-level-monthly", "unit": "m", "verified": True,
