@@ -1600,13 +1600,23 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
 
         {/* Reset: clears ANY active selection (river scope, gap unit, clicked
             feature, or accountability-matrix highlight) so every layer shows
-            basin-wide and nothing is greyed out, and flies back to the overview. */}
-        {(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs || mapHighlight) && (
+            basin-wide and nothing is greyed out, and flies back to the overview.
+            ALSO the way back to the full three-panel view when the layers rail
+            is closed: with the rail shut and nothing selected there was no
+            button here at all, and the left-edge reopen tab was easy to miss -
+            a dead end that read as "the panels are gone", fixed only by a
+            reload (Madhuri, 31 Aug). */}
+        {(selectedRiverId || selectedGapUnit || selectedFeature || selectedPrs || mapHighlight || !railOpen) && (
           <button
-            onClick={() => { setSelectedGapUnit(null); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); setMapHighlight(null); selectRiver(null); }}
+            onClick={() => {
+              setSelectedGapUnit(null); setSelectedFeature(null); setSelectedPrs(false); setGapFromPrs(false); setMapHighlight(null); selectRiver(null);
+              // Reopen the rail on desktop; on phones the map is the calm
+              // resting state and the Layers sheet stays closed.
+              if (typeof window !== "undefined" && window.innerWidth >= 768) setRailOpen(true);
+            }}
             className="absolute top-3 right-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
           >
-            ↺ Reset{selectedRiver ? " to whole basin" : ""}
+            ↺ Reset{selectedRiver ? " to whole basin" : !hasSelection && !mapHighlight ? " view" : ""}
           </button>
         )}
 
