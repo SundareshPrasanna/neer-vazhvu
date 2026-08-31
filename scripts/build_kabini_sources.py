@@ -65,10 +65,22 @@ PARTNER_LAYERS = [
     ("Cauvery_Arkavathi_Basin_Quarries — movado_qgis__7_quarries", "quarries-paani.geojson"),
     ("KGIS_NotifiedForest_CauveryBasin — clipped", "forests.geojson"),
     ("KGIS_Protected_Areas_CauveryBasin — clipped", "protected-areas.geojson"),
-    ("Command_Areas_in_Cauvery_Basin_IndiaWRIS — clipped", "command-areas.geojson"),
+    # Command areas are staged separately (section 8a): keep-if-intersecting
+    # admitted the K R Sagar command, 2,011 sq km of Cauvery-mainstem command
+    # grazing the basin's northeast edge (Madhuri review, 31 Aug).
     # The Aug-6 CWC and NWMP station layers are NOT staged here: the review
     # round replaced both with validated locations (section 7b below).
 ]
+
+COMMAND_AREAS_LAYER = "Command_Areas_in_Cauvery_Basin_IndiaWRIS — clipped"
+# What belongs here is any command fed by a Kabini-system work, but the WRIS
+# register carries no headworks field to say so - the share of the command
+# inside the basin is the proxy. It cannot be a majority test: canals export
+# water across the divide, so the Kabini dam's own command is only 48.5%
+# inside C2, while K R Sagar's (a Cauvery-mainstem work) touches on a 0.4%
+# sliver. A quarter splits that two-orders-of-magnitude gap; every share is
+# printed so a redelivery landing near the line is seen, not silently judged.
+COMMAND_AREA_MIN_SHARE = 0.25
 
 # India-WRIS watershed polygons: the real sub-hydrosheds, replacing the
 # single-shed placeholder the first Kabini build shipped. WRIS publishes these
@@ -396,6 +408,22 @@ def main() -> None:
         print(f"    {name:10} {km:6.1f} km beyond the boundary")
     _write(out / "kabini-context-rivers.geojson", _fc(ctx_rivers), "rivers beyond the boundary")
 
+    # The major waterbodies within the Kerala share - the reservoirs that feed
+    # the reach above the state line (Madhuri review, 31 Aug: the headwaters
+    # read as a lakeless void). Same WRIS major-waterbodies source as the
+    # in-basin layer, majority-inside the Kerala share so nothing is drawn
+    # twice; still context, so no Kerala-side claim beyond the geometry.
+    ctx_wb = []
+    for f in _read_vector(hyd, WB_MAJOR_LAYER, None):
+        g = _geom(f)
+        if g is None or g.area <= 0:
+            continue
+        if g.intersection(beyond).area / g.area >= 0.5:
+            ctx_wb.append(f)
+            print(f"    Kerala waterbody: {(f['properties'].get('wbname') or '?').strip()}")
+    _write(out / "kabini-context-waterbodies.geojson", _fc(ctx_wb),
+           "Kerala-share major waterbodies")
+
     # ── 7b. Review round (23 Aug 2026): the corrections Paani sent back ──
     rdir = Path(args.review_dir)
     if not rdir.exists():
@@ -490,6 +518,24 @@ def main() -> None:
     for layer, fname in PARTNER_LAYERS:
         _write(out / fname, _fc(_intersecting(_read_vector(gpkg, layer, None), kabini)),
                layer[:34])
+
+    # ── 8a. Irrigation command areas: substantially inside, not merely
+    # touching. Keep-if-intersecting admitted every command that grazes the
+    # boundary; the K R Sagar command (Cauvery mainstem) entered on a sliver
+    # and sprawled across Mandya (Madhuri review, 31 Aug). Shares are printed
+    # so a redelivery that moves one is caught at build time, not on the map.
+    commands = []
+    for f in _read_vector(gpkg, COMMAND_AREAS_LAYER, None):
+        g = _geom(f)
+        if g is None or g.area <= 0 or not kabini.intersects(g):
+            continue
+        share = g.intersection(kab_geom).area / g.area
+        name = (f["properties"].get("cname") or "?").strip()
+        verdict = "kept" if share >= COMMAND_AREA_MIN_SHARE else "DROPPED"
+        print(f"    command area {name:22} {share * 100:5.1f}% in basin - {verdict}")
+        if share >= COMMAND_AREA_MIN_SHARE:
+            commands.append(f)
+    _write(out / "command-areas.geojson", _fc(commands), "command areas (share-filtered)")
 
     # ── 9. Admin units + the district clips the DEP gaps choropleth needs ──
     admin_gpkg = gdir / ADMIN_GPKG

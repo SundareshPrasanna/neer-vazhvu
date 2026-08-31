@@ -79,10 +79,25 @@ export const KABINI: BasinManifest = {
     // The full watershed, Karnataka and Kerala together, drawn muted behind
     // the bold C2 frame. 31% of this basin is in Kerala; clipping it away made
     // the river look as though it began at the state line.
-    { family: "context-boundary", label: "Full basin, including the Kerala headwaters", floor: "hydrology", geom: "fill", color: "#64748b", defaultOn: true, context: true },
-    { family: "context-rivers", label: "The Kabini in Kerala, above the state line", floor: "hydrology", geom: "line", color: "#0284c7", defaultOn: true, context: true },
+    // One layer, two legend rows (Madhuri, 31 Aug): the full-basin frame and
+    // the Kerala share it encloses are one decision - show the whole watershed
+    // - so they toggle together, but each needs its own symbol to be read.
+    {
+      family: "context-boundary", label: "Full Kabini basin (Kerala share shaded)", floor: "hydrology", geom: "fill", color: "#64748b", outlineColor: "#f0abfc", defaultOn: true, context: true,
+      legendRows: [
+        { sym: "dash", color: "#f0abfc", label: "Full Kabini basin boundary" },
+        { sym: "box", color: "#64748b", label: "Kabini basin that falls within Kerala" },
+      ],
+    },
+    { family: "context-rivers", label: "Kabini river stretch in Kerala", floor: "hydrology", geom: "line", color: "#0284c7", defaultOn: true, context: true },
+    // WRIS major waterbodies inside the Wayanad share - the Banasura Sagar and
+    // Karapuzha reservoirs. Context like the reach above the state line: the
+    // headwaters should not read as a lakeless void (Madhuri, 31 Aug).
+    { family: "context-waterbodies", label: "Major waterbodies (Kerala headwaters)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true, context: true },
     { family: "boundary", label: "Basin boundary (Karnataka)", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
-    { family: "sub-hydrosheds", label: "Sub-catchments (WRIS watersheds)", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
+    // Default OFF (Madhuri, 31 Aug): eight dashed catchments on the opening
+    // view read as clutter before the reader has a question that needs them.
+    { family: "sub-hydrosheds", label: "Sub-catchments (WRIS watersheds)", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: false, context: true },
     // FABDEM 30 m hypsometric bands - the Nagarahole/Bandipur ghat edge at
     // 1,486 m down to the Cauvery confluence at 634 m. Default OFF: a reading
     // aid, and ~1 MB that should only load when asked for.
@@ -101,7 +116,9 @@ export const KABINI: BasinManifest = {
     // whose action plan states there are no drains discharging into the river.
     // Amber, matching the Arkavathi's polluting-drains layer.
     { family: "prs-drains", label: "Polluting drain outfalls (MPR, Oct 2020)", floor: "hydrology", geom: "point", color: "#eab308", defaultOn: true, hasKinds: true, kindFilter: "drain-inlet" },
-    { family: "prs-drains", label: "Drains reaching them", floor: "hydrology", geom: "line", color: "#ca8a04", defaultOn: false, kindFilter: "drain-line" },
+    // Bright yellow, matching the outfall dots they feed - the earlier dark
+    // amber sat on the basemap's own orange roads (Madhuri, 31 Aug).
+    { family: "prs-drains", label: "Drains reaching them", floor: "hydrology", geom: "line", color: "#facc15", defaultOn: false, kindFilter: "drain-line" },
 
     // ── Floor 2: Monitoring - the station-readings pilot ──
     { family: "flow-stations", label: "CWC monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#0e7490", defaultOn: true, readings: true },
@@ -132,9 +149,10 @@ export const KABINI: BasinManifest = {
     { family: "infrastructure", label: "Dams & reservoirs", floor: "governance", geom: "point", color: "#7e22ce", defaultOn: false, kindFilter: "dam" },
     { family: "infrastructure", label: "Anicuts & weirs", floor: "governance", geom: "point", color: "#c084fc", defaultOn: false, kindFilter: "barrage" },
     { family: "command-areas", label: "Irrigation command areas", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false },
-    // District stays neutral, always-on context; the finer levels are opt-in
-    // and take cool hues so they never collide with the warm gap choropleth.
-    { family: "admin-district", label: "Districts", floor: "governance", geom: "fill", color: "#94a3b8", defaultOn: true, context: true },
+    // District stays neutral context; all admin levels are opt-in (Madhuri,
+    // 31 Aug: administrative lines off the default view) and take cool hues so
+    // they never collide with the warm gap choropleth.
+    { family: "admin-district", label: "Districts", floor: "governance", geom: "fill", color: "#94a3b8", defaultOn: false, context: true },
     { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
     { family: "admin-town", label: "Urban Local Bodies (ULBs)", floor: "governance", geom: "fill", color: "#e7298a", defaultOn: false },
   ],
@@ -146,7 +164,8 @@ export const KABINI: BasinManifest = {
     sub: "Cauvery basin spatial data and review",
   },
   credits: [
-    "Basin boundary: Karnataka WRD basin decomposition (KWRIS), sub-basin C2, carried over from the Cauvery (Karnataka) atlas ingest. Every layer here is clipped to it, so the atlas is the Karnataka portion of the Kabini; the Wayanad (Kerala) headwaters are not mapped.",
+    "Basin boundary: Karnataka WRD basin decomposition (KWRIS), sub-basin C2, carried over from the Cauvery (Karnataka) atlas ingest. Every data layer here is clipped to it, so the atlas is the Karnataka portion of the Kabini; the Wayanad (Kerala) headwaters appear as context only - the full-watershed outline, the river's course above the state line, and the major waterbodies within it.",
+    "Kerala-headwaters context waterbodies: India-WRIS major waterbodies (via Paani Earth's Cauvery hydrology GeoPackage, August 2026), filtered to the Wayanad share of the watershed. Drawn as context; no Kerala-side pressure, station or administrative data is claimed.",
     "Sub-catchments, river centrelines, drainage network, major waterbodies, dams and anicuts: India-WRIS, via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). WRIS publishes watersheds with codes and no names, so sub-catchments are labelled by code.",
     "Dams: India-WRIS National Register of Large Dams, extract dated 14 April 2026. It disagrees with the older CWC MLRD list on completion year for four minor tanks (Hebballa, Kamarahalli, Kalikatte, Karimuddenahalli); the newer register's years are the ones shown.",
     "Minor irrigation tanks: Karnataka GIS tank inventory (KGIS TIS), via Paani Earth's Cauvery package.",

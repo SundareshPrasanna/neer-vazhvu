@@ -154,7 +154,7 @@
         "name": "cname",
         "areaHa": "area_ha"
       },
-      "provenance": "India-WRIS irrigation command areas, via Paani Earth Cauvery GIS package (Aug 2026); features intersecting the Kabini boundary."
+      "provenance": "India-WRIS irrigation command areas, via Paani Earth Cauvery GIS package (Aug 2026); commands with a substantial share (a quarter or more by area) inside the Kabini boundary - the register carries no headworks field, so in-basin share stands proxy for 'fed by a Kabini-system work'. The K R Sagar command (Cauvery mainstem, 0.4% in basin on a boundary sliver) is excluded on that rule; the Kabini dam's own command stays although its canals irrigate past the watershed line (48.5% in basin) (Madhuri review, 31 Aug 2026)."
     },
     {
       "file": "kabini-dams.geojson",
@@ -341,6 +341,16 @@
         "lengthKm": "lengthKm"
       },
       "provenance": "The 84.5 km of Kabini centreline above the Karnataka boundary, from India-WRIS via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). Only the reach OUTSIDE the C2 polygon is staged, so the in-basin course is not drawn twice."
+    },
+    {
+      "file": "kabini-context-waterbodies.geojson",
+      "family": "context-waterbodies",
+      "fields": {
+        "name": "wbname",
+        "areaHa": "area_ha",
+        "tankId": "uqcode"
+      },
+      "provenance": "India-WRIS major waterbodies within the Kerala (Wayanad) share of the watershed, via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026) - the same source as the in-basin major-waterbodies layer, filtered to bodies lying mainly outside the C2 clip so nothing is drawn twice. Context, like the reach above the state line: the headwaters should not read as a lakeless void (Madhuri review, 31 Aug 2026)."
     }
   ]
 }
