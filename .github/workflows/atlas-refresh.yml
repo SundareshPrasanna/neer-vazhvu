@@ -18,6 +18,14 @@
 # Production serves the corpus at corpus.lock, so a refreshed tree reaches the
 # site only through the data-repo release (scripts/release-corpus.sh).
 #
+# What a runner refreshes and what it does not: the identity step needs the
+# census workbook cache and the geometry steps need the TNGIS polygon cache,
+# neither of which a fresh runner has, so on a runner the chain refreshes the
+# registers (JJM, IN-GRES, rainfall) and regenerates assessments over the
+# served directory, projection and water bodies. Identity, projection and
+# water bodies refresh on a local run, where the cache lives. Both paths
+# are the same script; the split is decided by the cache, not by a flag.
+#
 # If a Tamil Nadu host blocks GitHub's runner addresses (crrt, cmwssb and
 # cms.tn.gov.in have), the same script runs from the launchd job on the
 # maintainer's Mac; see docs/specs/atlas-district-restart-plan.md section 3.2.

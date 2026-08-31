@@ -78,14 +78,33 @@ fi
 step "4 groundwater: IN-GRES taluk assessment"
 must npx tsx scripts/atlas-groundwater-tn-district.ts --district "$district" --fetch --as-of "$as_of"
 
-step "5 project-gw: taluk assessment onto Gram Panchayats"
-must npx tsx scripts/atlas-project-groundwater.ts --district "$district" --as-of "$as_of"
+# The projection and the water-body counts are geometry steps: they read the
+# TNGIS Panchayat polygons the identity refresh cached and the TNGIS taluk
+# and water-body layers. A fresh CI runner has no cache and the identity
+# step skips there, so they run only when this run refreshed identity (a
+# local run, where the cache lives) or, for the projection, when the taluk
+# assessment itself changed (IN-GRES publishes yearly). Otherwise the served
+# artifacts stand: the projection is a view of two inputs that did not move,
+# and the register refresh (JJM, IN-GRES, rainfall) is what a monthly run is
+# for. Learned from the second runner dry run, 2026-08-31.
+gw_changed=0
+git diff --quiet -- "public/data/atlas/tn/$district/groundwater-taluks.json" || gw_changed=1
+if [ "$identity" = "refreshed" ] || [ "$gw_changed" = 1 ]; then
+  step "5 project-gw: taluk assessment onto Gram Panchayats"
+  must npx tsx scripts/atlas-project-groundwater.ts --district "$district" --as-of "$as_of"
+else
+  step "5 project-gw: skipped (identity and taluk assessment unchanged; served projection stands)"
+fi
 
 step "6 rainfall: Open-Meteo 30-day window per Gram Panchayat"
 must npx tsx scripts/atlas-rainfall-tn-district.ts --district "$district" --fetch --as-of "$as_of"
 
-step "7 water-bodies: TNGIS counts per block"
-must npx tsx scripts/atlas-water-bodies-tn-district.ts --district "$district" --as-of "$as_of" --fetch
+if [ "$identity" = "refreshed" ]; then
+  step "7 water-bodies: TNGIS counts per block"
+  must npx tsx scripts/atlas-water-bodies-tn-district.ts --district "$district" --as-of "$as_of" --fetch
+else
+  step "7 water-bodies: skipped (geometry step; runs with an identity refresh)"
+fi
 
 step "8 assess: assessments and briefs per block"
 must npx tsx scripts/atlas-generate-assessments.ts --district "$district" --as-of "$as_of"
