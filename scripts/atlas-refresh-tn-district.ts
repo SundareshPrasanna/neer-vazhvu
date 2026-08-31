@@ -262,7 +262,10 @@ async function main(): Promise<void> {
         retrieved: asOf,
       }),
       upstreamSource("jjm", { retrieved: asOf }),
-      upstreamSource("census", { as_of: "2011", retrieved: asOf }),
+      // The extract's own date, not the run's: a reused closed-edition
+      // workbook keeps its original retrieval date (reusedCachedArtifact),
+      // and the envelope must say the same thing the extract does.
+      upstreamSource("census", { as_of: "2011", retrieved: extract.sources.census.retrievedAt }),
       ...(boundary
         ? [upstreamSource("tngisBoundary", { retrieved: boundary.source.retrievedAt })]
         : []),
