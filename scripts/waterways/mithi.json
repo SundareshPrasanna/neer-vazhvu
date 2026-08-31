@@ -1,0 +1,148 @@
+{
+  "_doc": "Mithi river (waterway 3, Mumbai) pipeline config. Extent decision 27 Aug 2026: the FULL river as OSM maps it - relation 6245575, one unbroken chain of 10 ways (exactly 2 free endpoints, no gap to bridge), 17.84 km from the Vihar Lake outlet (19.1440, 72.8998) to the Mahim Causeway mouth (19.0487, 72.8369). That chained length matches MCGM's published 17.84 km exactly. Do NOT take the length from summing raw way lengths or from public/geojson/mumbai-rivers.geojson: both give 18.20 km by double-counting shared endpoints. Chainage 0 at the Vihar outlet, increasing to the mouth. Chain on LON, not lat: the final 300 m below Mahim Causeway runs west and slightly NORTH, so the mouth endpoint (19.048725) sits at a higher latitude than the junction just upstream of it (19.048071) and a lat-axis chain picks that junction as its extreme, walks straight out to the mouth and terminates after 5 points. Longitude is monotonic end to end (72.8998 at Vihar down to 72.8369 at the mouth). TIDAL: below ~km 10 (Kurla/CST Road) the river is tidal and becomes Mahim Creek; OSM tags the whole course water=river with no distinction, so the tidal limit is declared here and in curation, never inferred from tags.",
+  "id": "mithi",
+  "research_dir": "docs/research/mithi",
+  "curation": "docs/waterways/mithi/waterway-curation.json",
+  "geometry": {
+    "inputs": [
+      {
+        "file": "osm-mithi-centerline.json",
+        "keep_tags": null
+      }
+    ],
+    "clip": {
+      "axis": "lon",
+      "min": 72.83,
+      "max": 72.91
+    },
+    "chain": {
+      "axis": "lon",
+      "chainage_zero_at": "max",
+      "gap_m": 300.0,
+      "progress_tol_deg": 0.002
+    },
+    "sample_m": 50.0,
+    "transect_every_m": 50.0,
+    "half_transect_m": 300.0,
+    "open_water_m": 400.0,
+    "feature": {
+      "name": "Mithi River (Vihar outlet - Mahim Causeway mouth)",
+      "source": "OpenStreetMap via Overpass, ODbL, snapshot 2026-08",
+      "chainage_zero": "Vihar Lake outlet (19.1440, 72.8998), the upstream end of OSM relation 6245575"
+    }
+  },
+  "fetch": {
+    "mirror": "https://overpass.kumi.systems/api/interpreter",
+    "queries": {
+      "osm-mithi-centerline.json": "[out:json][timeout:240];relation(6245575);way(r)[\"waterway\"];out geom;",
+      "osm-water-polygons.json": "[out:json][timeout:240];relation(6245575);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out geom;",
+      "osm-water-meta.json": "[out:json][timeout:240];relation(6245575);way(r)[\"waterway\"]->.r;(way[\"natural\"=\"water\"](around.r:250);relation[\"natural\"=\"water\"](around.r:250);way[\"waterway\"=\"riverbank\"](around.r:250);relation[\"waterway\"=\"riverbank\"](around.r:250););out meta;way(r);out meta;"
+    }
+  },
+  "tidal_limit_km": 10.0,
+  "_tidal_note": "Declared, not inferred. OSM tags the whole course water=river; below km 10 (19.0855, 72.8787, the Kurla/CST Road area) the Mithi is tidal and becomes Mahim Creek, and the mapped water surface there encloses intertidal flats - one inner ring of relation/2310505 is wetland=tidalflat. Widths below this chainage are an INTERTIDAL ENVELOPE, not a channel width, and must never be compared against the widening programme's design widths. open_water_m is deliberately NOT used to flag this: the measured widths run continuously from 56 m to 242 m through the tidal reach with no natural break, so any threshold would slice the distribution arbitrarily and throw away a real measurement. The reach table makes km 10 a hard boundary and the curation states the quantity change per reach.",
+  "reaches_km": [
+    [
+      1,
+      0,
+      2.5
+    ],
+    [
+      2,
+      2.5,
+      5.0
+    ],
+    [
+      3,
+      5.0,
+      8.0
+    ],
+    [
+      4,
+      8.0,
+      10.0
+    ],
+    [
+      5,
+      10.0,
+      12.0
+    ],
+    [
+      6,
+      12.0,
+      14.5
+    ],
+    [
+      7,
+      14.5,
+      16.5
+    ],
+    [
+      8,
+      16.5,
+      17.84
+    ]
+  ],
+  "mouths": {
+    "mithi": [
+      72.8369,
+      19.0487
+    ]
+  },
+  "satellite": {
+    "_doc": "Windows are MUMBAI seasons and they are NOT Chennai's. Measured 27 Aug 2026 over km 12 (Sentinel-2 scene counts / under 20% cloud / under 5% cloud): pre-monsoon Feb-May 2026 46/43/31; MONSOON Jun-Aug 2026 42/1/0; post-monsoon Oct-Dec 2025 45/32/25. Mumbai's southwest monsoon is effectively opaque to optical satellite - exactly ONE usable scene in three months and none clear - so a Jun-Aug window is not a composite, it is a single 5 Jun scene, and the first run with that window returned water_frac ~0 even across the tidal reach, which cannot be real for an estuary in flood. The seasonal contrast for a west-coast monsoon river is therefore post-monsoon (WET, maximum water) against pre-monsoon (DRY, minimum). The 'recent' key keeps its name for pipeline compatibility but carries the post-monsoon 2025 window; it is a WET reading, not a current one, and curation must label it by its dates. There is no honest current-monsoon reading of this river from orbit. Anchors are chainage points on the built centerline; place names belong to curation.",
+    "windows": {
+      "dry": [
+        "2026-02-01",
+        "2026-05-15"
+      ],
+      "recent": [
+        "2025-10-01",
+        "2025-12-31"
+      ]
+    },
+    "ndvi_veg": 0.35,
+    "default_half_w": 25,
+    "margin": 8,
+    "chip_every_km": 1,
+    "chip_buffer_m": 300,
+    "min_water_ha_for_ndti": 1.0,
+    "sites": {
+      "vihar-outlet": {
+        "lon": 72.8998,
+        "lat": 19.144,
+        "half_m": 500
+      },
+      "upper-channel-km04": {
+        "lon": 72.8849,
+        "lat": 19.1298,
+        "half_m": 500
+      },
+      "kurla-approach-km08": {
+        "lon": 72.8802,
+        "lat": 19.1023,
+        "half_m": 500
+      },
+      "tidal-limit-km10": {
+        "lon": 72.8787,
+        "lat": 19.0866,
+        "half_m": 700
+      },
+      "widest-reach-km14": {
+        "lon": 72.8667,
+        "lat": 19.0558,
+        "half_m": 900
+      },
+      "mahim-mouth": {
+        "lon": 72.8373,
+        "lat": 19.0486,
+        "half_m": 900
+      }
+    }
+  },
+  "veg_calendar": {
+    "start_year": 2019,
+    "end_year": 2026,
+    "end_month": 8
+  }
+}
