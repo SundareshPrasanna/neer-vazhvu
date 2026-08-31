@@ -14,10 +14,14 @@ scripts/basin-sources/kabini-ingest.json maps staged files onto the layer
 contract and scripts/ingest_basin.py does the rest. Re-run order:
     python3 scripts/build_kabini_sources.py [--gpkg-dir ...]
     python3 scripts/ingest_basin.py scripts/basin-sources/kabini-ingest.json
+    python3 scripts/build_basin_wq_param_packs.py public/data/basins/kabini \
+        scripts/basin-sources/kabini-wq-params.json
     python3 scripts/build_basin_flow_readings.py public/data/basins/kabini \
         scripts/basin-sources/kabini-flow.json
     python3 scripts/validate_basin.py scripts/basin-sources/kabini-ingest.json
-(re-ingest rewrites flow-stations.geojson, so the readings step comes after it.)
+(re-ingest rewrites flow-stations.geojson AND strips hasReadings from
+monitoring-points.geojson, so BOTH pack steps come after it - skipping the
+wq step ships the six KSPCB stations hollow.)
 
 Scope rule: the Kabini rises in Wayanad, Kerala, and the partner's own Kabini
 watershed polygon is 1.45x our C2 - it includes that Kerala reach. Everything
