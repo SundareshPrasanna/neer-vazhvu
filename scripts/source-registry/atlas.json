@@ -352,7 +352,8 @@
         "public/data/atlas/mh/satara/boundaries",
         "public/data/atlas/mh/satara/rainfall.json",
         "public/data/atlas/mh/satara/assessments",
-        "public/data/atlas/mh/satara/briefs"
+        "public/data/atlas/mh/satara/briefs",
+        "public/data/atlas/mh/satara/curated-briefs.json"
       ],
       "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch-boundary --as-of <date> (mh2.geojson 78 MB plus mh/mh.csv, content-addressed; the district's features are sliced by DISTRICT and joined to the 2011 codes through the CEN_2001 crosswalk) then scripts/atlas-boundaries-lgd-district.ts --district <slug> --as-of <date>",
       "notes": "Village polygons keyed on the 2001 Census code (CEN_2001), with DataMeet's own mh.csv mapping them to the 2011 village code the LGD carries. A Panchayat's geometry is the MultiPolygon of its LGD-listed member villages, never dissolved, so the parts stay auditable; Satara 2026-09: 1,865 features, 1,665 of the 1,764 LGD villages drawn. Indicative, not survey grade: a 2001-era community digitisation, 2001-to-2011 splits and merges resolved by the crosswalk only. ODbL: attribution required and share-alike on the derived database, which is why the derived Panchayat polygons are served (boundaries/<block>.geojson) under the same licence, unlike the TNGIS layer. GitHub raw serves an ETag, so http-meta sees a re-cut file.",
