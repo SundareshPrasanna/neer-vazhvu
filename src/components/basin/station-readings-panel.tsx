@@ -377,6 +377,21 @@ function primaryColorFor(kind: string): string {
   return "#2563eb";
 }
 
+/** Plain-language read of what each chart kind shows, one sentence under the
+ *  chart - a first-time reader should not have to reverse-engineer the axes
+ *  (Madhuri review, 31 Aug 2026). Keyed by kind, so it stays true for every
+ *  station and basin; the per-series `note` carries the specifics. */
+const KIND_EXPLAINER: Record<string, string> = {
+  "discharge-monthly": "Each point is the average of that month's daily river-flow readings.",
+  "discharge-daily": "One point per daily flow reading, as published.",
+  "climatology-monthly": "The typical year: for each calendar month, the median daily flow on record and the band the middle half falls in.",
+  "flow-duration": "How often a flow is met or exceeded: the value at 10% was reached on at least 10% of recorded days. The left end is flood, the right end is dry-weather flow.",
+  "annual-water-year": "Average flow over each water year, beside each station's own long-term average (dashed line).",
+  "gauge-level-monthly": "Monthly average water level against the station's own gauge datum - levels read within a station, not across stations.",
+  "wq-param-series": "One reading per year from CPCB's annual river-quality tables, with the criterion line where one applies.",
+  "wq-class-series": "CPCB water-quality class for each year, A (best) to E (worst).",
+};
+
 function SeriesBlock({ s, tracks, comparing, isDark }: {
   s: ReadingsSeries; tracks: Track[]; comparing: boolean; isDark: boolean;
 }) {
@@ -393,20 +408,26 @@ function SeriesBlock({ s, tracks, comparing, isDark }: {
           This chart shows the selected station only.
         </div>
       )}
+      {KIND_EXPLAINER[String(s.kind)] && (
+        <div className="text-[10px] text-slate-400 leading-snug mt-0.5">{KIND_EXPLAINER[String(s.kind)]}</div>
+      )}
       {s.note && <div className="text-[10px] text-slate-400 leading-snug mt-0.5">{s.note}</div>}
     </div>
   );
 }
 
 /** Merge every track's points onto one row per x value, so recharts can draw
- *  a line per station over a shared axis. */
-function mergePoints(tracks: Track[], pick: (s: ReadingsSeries) => [string | number, number][]) {
+ *  a line per station over a shared axis. A point's optional third element is
+ *  the number of daily readings behind the value (see ReadingsPoint); it rides
+ *  along as `<key>_n` for the hover readout, never plotted. */
+function mergePoints(tracks: Track[], pick: (s: ReadingsSeries) => (string | number)[][]) {
   const rows = new Map<string, Record<string, string | number>>();
   for (const tr of tracks) {
-    for (const [x, v] of pick(tr.series)) {
+    for (const [x, v, n] of pick(tr.series)) {
       const id = String(x);
       const row = rows.get(id) ?? { x };
       row[tr.key] = Number(v);
+      if (n != null && Number.isFinite(Number(n))) row[`${tr.key}_n`] = Number(n);
       rows.set(id, row);
     }
   }
@@ -429,7 +450,7 @@ function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
   active?: boolean;
   // An array value is a band (the climatology quartiles ship as [p25, p75]) -
   // it must survive the finite-number filter or the band row goes unreadable.
-  payload?: { dataKey?: string | number; name?: string; value?: number | number[]; color?: string }[];
+  payload?: { dataKey?: string | number; name?: string; value?: number | number[]; color?: string; payload?: Record<string, unknown> }[];
   label?: string | number;
   isDark: boolean;
   unit?: string;
@@ -464,17 +485,27 @@ function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
         {unit ? <span style={{ fontWeight: 400, opacity: 0.6 }}> - {unit}</span> : null}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: twoUp ? "1fr 1fr" : "1fr", columnGap: 8 }}>
-        {rows.map((d, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap" }}>
-            <span style={{ width: 7, height: 7, borderRadius: 2, background: d.color, flexShrink: 0 }} />
-            <span style={{ opacity: 0.75, overflow: "hidden", textOverflow: "ellipsis", maxWidth: 92 }}>
-              {shortName(String(d.name ?? ""))}
-            </span>
-            <span style={{ fontWeight: 600, marginLeft: "auto" }}>
-              {isBand(d.value) ? d.value.map((n) => fmtValue(Number(n))).join(" - ") : fmtValue(Number(d.value))}
-            </span>
-          </div>
-        ))}
+        {rows.map((d, i) => {
+          // How many daily readings stand behind an aggregated value - packs
+          // built with counts put them beside the value as `<key>_n`
+          // (Madhuri review, 31 Aug 2026: a 3-reading month must not read
+          // like a 31-reading month). Older packs simply have none.
+          const n = Number(d.payload?.[`${String(d.dataKey)}_n`]);
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap" }}>
+              <span style={{ width: 7, height: 7, borderRadius: 2, background: d.color, flexShrink: 0 }} />
+              <span style={{ opacity: 0.75, overflow: "hidden", textOverflow: "ellipsis", maxWidth: 92 }}>
+                {shortName(String(d.name ?? ""))}
+              </span>
+              <span style={{ fontWeight: 600, marginLeft: "auto" }}>
+                {isBand(d.value) ? d.value.map((v) => fmtValue(Number(v))).join(" - ") : fmtValue(Number(d.value))}
+                {Number.isFinite(n) && n > 0 && (
+                  <span style={{ fontWeight: 400, opacity: 0.6 }}> ·{n}d</span>
+                )}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -528,8 +559,10 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
     }
 
     case "climatology-monthly": {
+      // median_n feeds the hover readout's count suffix on the median row -
+      // the quartiles' day-count when the pack carries it.
       const data = (s.months ?? []).map((m) => ({
-        m: MONTH_ABBR[m.m], band: [m.p25, m.p75], median: m.median,
+        m: MONTH_ABBR[m.m], band: [m.p25, m.p75], median: m.median, median_n: m.n,
       }));
       return (
         <ResponsiveContainer width="100%" height={150}>
@@ -580,12 +613,14 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
 
     case "annual-water-year": {
       const data = mergePoints(tracks, (x) => (x.points ?? []) as [string, number][]);
-      // The long-term average is one station's own baseline; drawn across a
-      // comparison it would read as a shared line and mean nothing. The single
-      // track's key is not always "v" - a peer-only chart's is p_<stationKey>.
-      const single = tracks.length === 1;
-      const vals = single ? data.map((d) => Number(d[tracks[0].key])).filter(Number.isFinite) : [];
-      const lta = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      // Every station's long-term average draws as a dashed line in that
+      // station's own colour - the caption promises the line, so compare mode
+      // must not silently drop it (Madhuri review, 31 Aug 2026). Colour is
+      // what keeps N baselines from reading as one shared level.
+      const baselines = tracks.map((tr) => {
+        const vals = data.map((d) => Number(d[tr.key])).filter(Number.isFinite);
+        return vals.length ? { key: tr.key, color: tr.color, lta: vals.reduce((a, b) => a + b, 0) / vals.length } : null;
+      }).filter((b) => b != null);
       return (
         <ResponsiveContainer width="100%" height={150}>
           <BarChart data={data} margin={{ top: 6, right: 6, bottom: 0, left: -18 }}>
@@ -596,7 +631,9 @@ function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]
             {tracks.map((tr) => (
               <Bar key={tr.key} dataKey={tr.key} fill={tr.color} name={tr.label} />
             ))}
-            {lta != null && <ReferenceLine y={lta} stroke={axis} strokeDasharray="4 4" />}
+            {baselines.map((b) => (
+              <ReferenceLine key={`lta-${b.key}`} y={b.lta} stroke={b.color} strokeDasharray="4 4" strokeOpacity={0.75} />
+            ))}
           </BarChart>
         </ResponsiveContainer>
       );

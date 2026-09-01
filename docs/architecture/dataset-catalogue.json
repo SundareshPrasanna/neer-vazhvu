@@ -8043,6 +8043,7 @@
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
+    "scripts/build_kabini_sources.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_kabini.py"
    ],
@@ -10205,6 +10206,7 @@
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
+    "scripts/build_kabini_sources.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_kabini.py"
    ],
@@ -10671,10 +10673,10 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "command-areas",
-   "bytes": 419459,
+   "bytes": 265627,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 7,
+    "features": 6,
     "geometries": [
      "MultiPolygon"
     ],
@@ -10760,6 +10762,75 @@
    "producer_refs": [
     "scripts/build_kabini_sources.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/context-streams.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "context-streams",
+   "bytes": 818075,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1254,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "name",
+     "role"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_kabini.py"
+   ],
+   "headwaters_sources": [
+    "kwris-basin-geoserver"
+   ],
+   "licenses": [
+    "public Karnataka government data; open WFS, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/kabini/context-waterbodies.geojson",
+   "family": "basins",
+   "scope": "kabini",
+   "dataset": "context-waterbodies",
+   "bytes": 173420,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "tankId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'kabini')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
     "scripts/nvdm_envelope_kabini.py"
    ],
    "headwaters_sources": [
@@ -11342,7 +11413,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "inventory",
-   "bytes": 15635,
+   "bytes": 19134,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11415,6 +11486,7 @@
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
+    "scripts/build_kabini_sources.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_kabini.py"
    ],
@@ -11701,7 +11773,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "readings",
-   "bytes": 22864,
+   "bytes": 22904,
    "schema": {
     "kind": "object",
     "keys": [
@@ -11737,7 +11809,7 @@
    "family": "basins",
    "scope": "kabini",
    "dataset": "readings",
-   "bytes": 24007,
+   "bytes": 24047,
    "schema": {
     "kind": "object",
     "keys": [
@@ -41137,7 +41209,7 @@
     "arkavathi",
     "kabini"
    ],
-   "bytes": 471021,
+   "bytes": 317189,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -41164,6 +41236,30 @@
     "kabini"
    ],
    "bytes": 72267,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "context-streams",
+   "files": 1,
+   "scopes": [
+    "kabini"
+   ],
+   "bytes": 818075,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "context-waterbodies",
+   "files": 1,
+   "scopes": [
+    "kabini"
+   ],
+   "bytes": 173420,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -41306,7 +41402,7 @@
     "cauvery-tn",
     "kabini"
    ],
-   "bytes": 34130,
+   "bytes": 37629,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -41422,7 +41518,7 @@
     "arkavathi",
     "kabini"
    ],
-   "bytes": 79045,
+   "bytes": 79125,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

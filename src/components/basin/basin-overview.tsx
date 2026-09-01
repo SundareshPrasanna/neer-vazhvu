@@ -12,7 +12,8 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Marker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
 import { districtHref, listVisibleAtlasDistricts } from "@/lib/atlas/registry";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
@@ -67,6 +68,10 @@ const WATERSHED_HUES = [
 ];
 
 // Sequential severity ramps (worse = darker/redder), neutral when unknown.
+// The pollution view carries NO ramp: the red stretch lines are the signal,
+// and a count choropleth beside them said the same thing twice, confusingly
+// (Madhuri review, 31 Aug 2026 - "if there is no red, it already indicates
+// there is no PRS"). Counts live in the sub-basin cards and profile instead.
 function metricColor(metric: MetricKey, v: number | null): string {
   if (v === null) return "#cbd5e1";
   if (metric === "rainfallDeviationPct") {
@@ -76,16 +81,10 @@ function metricColor(metric: MetricKey, v: number | null): string {
     if (v >= -90) return "#f97316";
     return "#dc2626";
   }
-  if (metric === "gwLevelM") {
-    // metres below ground level: deeper = worse
-    if (v < 8) return "#93c5fd";
-    if (v < 15) return "#fbbf24";
-    if (v < 22) return "#f97316";
-    return "#dc2626";
-  }
-  // pollution: count of CPCB stretches touching the sub-basin
-  if (v === 0) return "#a7f3d0";
-  if (v === 1) return "#f97316";
+  // gwLevelM - metres below ground level: deeper = worse
+  if (v < 8) return "#93c5fd";
+  if (v < 15) return "#fbbf24";
+  if (v < 22) return "#f97316";
   return "#dc2626";
 }
 
@@ -102,6 +101,28 @@ const CLASS_CHIP: Record<string, string> = {
   E: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
 };
 const CLASS_DOT: Record<string, string> = { A: "#10b981", B: "#10b981", C: "#f59e0b", D: "#f97316", E: "#dc2626" };
+
+// WQ stations draw as DIAMONDS so monitoring reads as its own family beside
+// the round tanks and reservoirs (Madhuri, 31 Aug); the fill stays the worst
+// recorded class, grey when nothing is published. The white edge holds on
+// both basemaps. Same shape in the legend, from the same colours.
+function wqStationIcon(worst: string | undefined): L.DivIcon {
+  const fill = (worst && CLASS_DOT[worst]) || "#94a3b8";
+  return L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect x="3.5" y="3.5" width="9" height="9" rx="1" transform="rotate(45 8 8)" fill="${fill}" stroke="#ffffff" stroke-width="1.5"/></svg>`,
+    className: "",
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+}
+
+function LegendDiamond({ color }: { color: string }) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 16 16" className="shrink-0" aria-hidden>
+      <rect x="3.5" y="3.5" width="9" height="9" rx="1" transform="rotate(45 8 8)" fill={color} stroke="#64748b" strokeWidth="1" />
+    </svg>
+  );
+}
 
 // CPCB priority chips (I worst - BOD > 30 mg/L - down to V mildest).
 const PRIORITY_CHIP: Record<string, string> = {
@@ -191,6 +212,21 @@ export function BasinOverview({
   const [live, setLive] = useState<Record<string, LiveReservoir>>({});
   const [metric, setMetric] = useState<MetricKey>("pollution");
   const [selectedKey, setSelectedKey] = useState<string | null>(initialSubBasinKey);
+  // The full legend ate most of a small map (Madhuri, 31 Aug): it opens as a
+  // chip and remembers the reader's choice - the same storage key as the
+  // deep-dive atlas legend, so it is one habit across both surfaces.
+  // Collapsed on first paint even when storage says open, so server and
+  // client render the same initial tree.
+  const [legendOpen, setLegendOpen] = useState(false);
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("nv-basin-legend-open") === "1") setLegendOpen(true);
+    } catch { /* storage unavailable: stay collapsed */ }
+  }, []);
+  const toggleLegend = () => setLegendOpen((o) => {
+    try { localStorage.setItem("nv-basin-legend-open", o ? "0" : "1"); } catch { /* fine */ }
+    return !o;
+  });
   // Per-sub-basin accountability matrices (the portable Arkavati contract):
   // fetched on selection; absent file (404 -> null) simply renders nothing.
   const [accBySub, setAccBySub] = useState<Record<string, AccountabilityData | null>>({});
@@ -429,10 +465,18 @@ export function BasinOverview({
       color: isSel ? (tiles.isDark ? "#f8fafc" : "#0f172a") : tiles.isDark ? "#e2e8f0" : "#1e293b",
       weight: isSel ? 3 : 1.8,
       opacity: isSel ? 1 : 0.75,
-      fillColor: metric === "watersheds" ? (hueByKey[key] ?? "#cbd5e1") : metricColor(metric, v),
+      fillColor:
+        metric === "watersheds" ? (hueByKey[key] ?? "#cbd5e1")
+        // Pollution: a quiet neutral wash - the sub-basins stay tappable
+        // frames while the red stretch lines carry the whole signal.
+        : metric === "pollution" ? (tiles.isDark ? "#475569" : "#e2e8f0")
+        : metricColor(metric, v),
       // Identity shading sits a touch lighter: nine saturated hues would
       // otherwise drown the river network drawn over them.
-      fillOpacity: metric === "watersheds" ? (tiles.isDark ? 0.38 : 0.45) : tiles.isDark ? 0.45 : 0.55,
+      fillOpacity:
+        metric === "watersheds" ? (tiles.isDark ? 0.38 : 0.45)
+        : metric === "pollution" ? (tiles.isDark ? 0.25 : 0.35)
+        : tiles.isDark ? 0.45 : 0.55,
     };
   };
 
@@ -447,6 +491,9 @@ export function BasinOverview({
   const markersKey =
     `markers-${restyleKey}-${subBasins ? 1 : 0}-${waterbodies ? 1 : 0}-${cityFootprint ? 1 : 0}-${contextRivers ? 1 : 0}`;
 
+  // The pollution view has NO fill stops: the count choropleth is gone
+  // (Madhuri, 31 Aug - absence of red already says "no PRS"; counts live in
+  // the sub-basin cards and profile), so its legend carries line rows only.
   const legendStops: [string, string][] =
     metric === "watersheds"
       ? refs.map((r) => [r.name, hueByKey[r.key]] as [string, string])
@@ -454,7 +501,17 @@ export function BasinOverview({
       ? [["normal or surplus", "#93c5fd"], ["-20 to -60%", "#fbbf24"], ["-60 to -90%", "#f97316"], ["below -90%", "#dc2626"]]
       : metric === "gwLevelM"
         ? [["< 8 m", "#93c5fd"], ["8-15 m", "#fbbf24"], ["15-22 m", "#f97316"], ["> 22 m", "#dc2626"]]
-        : [["none identified (monitored)", "#a7f3d0"], ["1 stretch", "#f97316"], ["2+", "#dc2626"]];
+        : [];
+
+  // Edge colours that must survive BOTH basemaps (Madhuri, 31 Aug: on the
+  // dark imagery the near-black city edge, the mid-slate state line and the
+  // Wayanad shade all vanished). The map styles and the legend swatches read
+  // these same values, so the key can never disagree with the drawing.
+  const cityEdge = tiles.isDark ? "#f8fafc" : "#111827";
+  const stateLine = tiles.isDark ? "#cbd5e1" : "#64748b";
+  const basinLine = tiles.isDark ? "#f0abfc" : "#d946ef";
+  const beyondEdge = tiles.isDark ? "#94a3b8" : "#475569";
+  const beyondFill = tiles.isDark ? "#94a3b8" : "#64748b";
 
   // Selected sub-basin profile - rendered INLINE under its card in the
   // list (clicking the bottom card must not teleport focus to the top).
@@ -626,12 +683,13 @@ export function BasinOverview({
               useful part is where the state line and the basin part company,
               above all the southern border the Cauvery crosses into TN. */}
           {stateBoundary && (
-            <GeoJSON data={stateBoundary} style={{ color: "#64748b", weight: 1.25, dashArray: "3 5", fill: false, opacity: 0.8 }} interactive={false} />
+            <GeoJSON key={`state-${tiles.isDark}`} data={stateBoundary} style={{ color: stateLine, weight: 1.25, dashArray: "3 5", fill: false, opacity: 0.8 }} interactive={false} />
           )}
           {/* Full-basin outline (all states), muted context behind the
               interactive share - the counting frame stays the bold boundary. */}
           {contextBoundary && (
             <GeoJSON
+              key={`ctxb-${tiles.isDark}`}
               data={contextBoundary}
               interactive={false}
               style={(f) => {
@@ -640,15 +698,15 @@ export function BasinOverview({
                 // downstream reach has its own atlas, and shading it here
                 // would bury the subject rather than frame it.
                 if ((f?.properties as Record<string, unknown>)?.role === "beyond") {
-                  return { color: "#475569", weight: 1.5, dashArray: "4 3", opacity: 0.85,
-                           fillColor: "#64748b", fillOpacity: tiles.isDark ? 0.26 : 0.3 };
+                  return { color: beyondEdge, weight: 1.5, dashArray: "4 3", opacity: 0.85,
+                           fillColor: beyondFill, fillOpacity: tiles.isDark ? 0.32 : 0.3 };
                 }
                 return { color: "#94a3b8", weight: 1.5, dashArray: "6 6", fill: false, opacity: 0.7 };
               }}
             />
           )}
           {boundary && (
-            <GeoJSON data={boundary} style={{ color: "#d946ef", weight: 2.5, fill: false, opacity: 0.9 }} interactive={false} />
+            <GeoJSON key={`bnd-${tiles.isDark}`} data={boundary} style={{ color: basinLine, weight: 2.5, fill: false, opacity: 0.9 }} interactive={false} />
           )}
           {streams && (
             <GeoJSON data={streams} style={{ color: "#3b82f6", weight: 1, opacity: 0.5 }} interactive={false} />
@@ -718,8 +776,8 @@ export function BasinOverview({
                 // choropleth is underneath it. Solid edge = drains here,
                 // dashed = the other side of the divide.
                 return drains === "cauvery"
-                  ? { color: "#111827", weight: 2, fillColor: "#ffffff", fillOpacity: 0.55, opacity: 1 }
-                  : { color: "#111827", weight: 1.5, dashArray: "4 3", fill: false, opacity: 0.8 };
+                  ? { color: cityEdge, weight: 2, fillColor: "#ffffff", fillOpacity: 0.55, opacity: 1 }
+                  : { color: cityEdge, weight: 1.5, dashArray: "4 3", fill: false, opacity: 0.8 };
               }}
             />
           )}
@@ -827,10 +885,13 @@ export function BasinOverview({
                   </>
                 );
                 return (
-                  <CircleMarker key={`s${i}`} center={[lat, lon]} radius={5.5} pathOptions={{ color: "#0f172a", weight: 1, fillColor: worst ? CLASS_DOT[worst] : "#94a3b8", fillOpacity: 0.9 }}>
+                  // A DOM marker, not a canvas circle: the diamond sits in the
+                  // markerPane, above every canvas fill, like the atlas's
+                  // treatment-plant shapes.
+                  <Marker key={`s${i}`} position={[lat, lon]} icon={wqStationIcon(worst)}>
                     <LeafletTooltip>{stationInfo}</LeafletTooltip>
                     <Popup>{stationInfo}</Popup>
-                  </CircleMarker>
+                  </Marker>
                 );
               })}
           {reservoirs?.features.map((f, i) => {
@@ -889,7 +950,15 @@ export function BasinOverview({
               ))}
             </div>
           )}
-          <div className="bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded px-2 py-1.5 text-[10px] text-slate-600 dark:text-slate-300 shadow space-y-0.5">
+          <div className="bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded text-[10px] text-slate-600 dark:text-slate-300 shadow max-w-[240px]">
+            <button
+              onClick={toggleLegend}
+              className="w-full flex items-center justify-between gap-2 px-2 py-1.5 font-semibold text-slate-700 dark:text-slate-200"
+            >
+              Legend <span className="text-slate-400">{legendOpen ? "−" : "+"}</span>
+            </button>
+            {legendOpen && (
+            <div className="px-2 pb-1.5 space-y-0.5 max-h-[46vh] overflow-y-auto">
             <div className="font-semibold text-slate-700 dark:text-slate-200">
               {metric === "watersheds"
                 ? "Tributary watersheds"
@@ -910,33 +979,45 @@ export function BasinOverview({
               ))}
             </div>
             {/* Identity shading has no unknown class - every sub-basin has a
-                hue, whether or not any metric was ever reported for it. */}
-            {metric !== "watersheds" && (
+                hue, whether or not any metric was ever reported for it. The
+                pollution view has no fill classes at all, so no "no data"
+                row either: assessed-or-not lives in the cards and profile. */}
+            {metric !== "watersheds" && metric !== "pollution" && (
               <div className="flex items-center gap-1.5">
                 <span className="inline-block w-3 h-3 rounded-sm bg-slate-300" />
-                {metric === "pollution" ? "not assessed (no stations)" : "no data"}
+                no data
               </div>
             )}
-            {/* Line layers - rows appear only when the data files exist. */}
+            {/* Line layers - rows appear only when the data files exist.
+                Labels name the frame in full (Madhuri, 31 Aug): "stretch
+                drawn to CPCB length" and "named rivers" said how the lines
+                were made, not what they are. */}
             {metric === "pollution" && hasPrsLines && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-[3px] rounded" style={{ backgroundColor: "#dc2626" }} />
-                stretch drawn to CPCB length
+                <span className="inline-block w-3 h-[3px] rounded shrink-0" style={{ backgroundColor: "#dc2626" }} />
+                Polluted river stretches in the {manifest.displayName}
               </div>
             )}
             {rivers && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-[2px] rounded" style={{ backgroundColor: "#0ea5e9" }} />
-                named rivers
+                <span className="inline-block w-3 h-[2px] rounded shrink-0" style={{ backgroundColor: "#0ea5e9" }} />
+                Rivers of the {manifest.displayName}
               </div>
             )}
             {contextRivers && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 border-t-2 border-dashed" style={{ borderColor: "#0ea5e9" }} />
+                <span className="inline-block w-3 border-t-2 border-dashed shrink-0" style={{ borderColor: "#0ea5e9" }} />
                 {(() => {
+                  // Name the river, not just its relation to the clip - the
+                  // old "river above the basin" read as a riddle (Madhuri,
+                  // 31 Aug). Names come from the features, so another basin's
+                  // upstream reach labels itself.
+                  const names = [...new Set(contextRivers.features
+                    .map((f) => String((f.properties as Record<string, unknown>)?.name ?? "").trim())
+                    .filter(Boolean))].join(" & ") || "river";
                   const km = contextRivers.features.reduce(
                     (a, f) => a + Number((f.properties as Record<string, unknown>)?.lengthKm ?? 0), 0);
-                  return km ? `river above the basin (${Math.round(km)} km)` : "river above the basin";
+                  return `${names} river stretch above the state line${km ? ` (${Math.round(km)} km)` : ""}`;
                 })()}
               </div>
             )}
@@ -948,7 +1029,10 @@ export function BasinOverview({
             )}
             {cityFootprint && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 h-3 rounded-sm border" style={{ backgroundColor: "#ffffff", borderColor: "#111827" }} />
+                {/* The swatch carries the same hard edge as the polygon - a
+                    plain white box read as "no colour" on the dark panel
+                    (Madhuri, 31 Aug). border-2 so the edge survives 12 px. */}
+                <span className="inline-block w-3 h-3 rounded-sm border-2 shrink-0" style={{ backgroundColor: "#ffffff", borderColor: cityEdge }} />
                 {(() => {
                   const inside = cityFootprint.features.find(
                     (f) => (f.properties as Record<string, unknown>)?.drains === "cauvery",
@@ -964,7 +1048,7 @@ export function BasinOverview({
             )}
             {stateBoundary && (
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-3 border-t border-dotted" style={{ borderColor: "#64748b" }} />
+                <span className="inline-block w-3 border-t border-dotted shrink-0" style={{ borderColor: stateLine }} />
                 {String((stateBoundary.features[0]?.properties as Record<string, unknown>)?.name ?? "state")} boundary
               </div>
             )}
@@ -989,7 +1073,7 @@ export function BasinOverview({
                   )}
                   {beyond && (
                     <div className="flex items-center gap-1.5">
-                      <span className="inline-block w-3 h-3 rounded-sm border" style={{ backgroundColor: "#64748b", opacity: 0.45, borderColor: "#475569" }} />
+                      <span className="inline-block w-3 h-3 rounded-sm border shrink-0" style={{ backgroundColor: beyondFill, opacity: 0.55, borderColor: beyondEdge }} />
                       {(() => {
                         // The label comes from the feature so a future
                         // basin's upstream catchment names itself; naming
@@ -1012,11 +1096,21 @@ export function BasinOverview({
             {selectedKey && (
               <>
                 <div className="pt-1 mt-0.5 border-t border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-200">In this sub-basin</div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: "#0284c7" }} />MI tank</div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full border border-slate-900" style={{ backgroundColor: "#dc2626" }} />WQ station (colour = worst class, A-E)</div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full border border-slate-900" style={{ backgroundColor: "#0891b2" }} />Reservoir - live storage</div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-full border-2 border-slate-600 bg-white" />Reservoir / tank - location only</div>
+                <div className="flex items-center gap-1.5"><span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: "#0284c7" }} />MI tank</div>
+                {/* Diamonds, one per class band, matching the markers - a
+                    single red dot claiming "colour = worst class" made the
+                    reader do the mapping themselves (Madhuri, 31 Aug). */}
+                <div>WQ station - worst recorded class:</div>
+                <div className="flex items-center gap-2 flex-wrap pl-1">
+                  {([["A-B", "#10b981"], ["C", "#f59e0b"], ["D", "#f97316"], ["E", "#dc2626"], ["none", "#94a3b8"]] as [string, string][]).map(([label, color]) => (
+                    <span key={label} className="flex items-center gap-0.5"><LegendDiamond color={color} />{label}</span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full border border-slate-900 shrink-0" style={{ backgroundColor: "#0891b2" }} />Reservoir - live storage</div>
+                <div className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-full border-2 border-slate-600 bg-white shrink-0" />Reservoir / tank - location only</div>
               </>
+            )}
+            </div>
             )}
           </div>
         </div>
