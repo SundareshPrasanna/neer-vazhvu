@@ -73,6 +73,15 @@
         "retrieved": "2026-09-01"
       },
       {
+        "id": "water-bodies-census-mh",
+        "title": "First Census of Water Bodies, Maharashtra state return (data.gov.in resource e1874d07)",
+        "publisher": "Department of Water Resources, River Development and Ganga Rejuvenation, Ministry of Jal Shakti, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "url": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+        "retrieved": "2026-09-01"
+      },
+      {
         "id": "datameet-village-boundaries-mh",
         "title": "DataMeet indian_village_boundaries, Maharashtra (mh2.geojson with the mh.csv 2001-to-2011 crosswalk)",
         "publisher": "DataMeet community",
@@ -91,7 +100,8 @@
       "public/data/atlas/mh/satara/census-2011/4260.json",
       "public/data/atlas/mh/satara/groundwater-taluks.json",
       "public/data/atlas/mh/satara/groundwater-projection.json",
-      "public/data/atlas/mh/satara/rainfall.json"
+      "public/data/atlas/mh/satara/rainfall.json",
+      "public/data/atlas/mh/satara/water-bodies/4260.geojson"
     ],
     "note": "village-water-profile-v2: 132 Gram Panchayats in Khatav block assessed against 40 capabilities by the evidence rules in src/lib/atlas/capability-evidence.ts (capability-evidence-v2). Each requirement records its state (adequate, unavailable, not-applicable, not-assessed), the evidence with its locality class and projection method, and limitations. A capability with no rule is reported unavailable rather than guessed; an undetermined applicability is not-assessed rather than a gap.",
     "conventions": {
@@ -427,10 +437,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189421-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -676,8 +699,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -959,10 +982,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189422-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -1208,8 +1244,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -2021,10 +2057,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189424-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "12 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 10, Tank 2. Owned by State WRD/State Irrigation 12. 12 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 12; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -2270,8 +2319,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -2553,10 +2602,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189425-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -2802,8 +2864,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -3084,10 +3146,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189426-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -3333,8 +3408,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -3616,10 +3691,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189427-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "17 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 17. Owned by State WRD/State Irrigation 17. 17 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 17; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -3865,8 +3953,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -4147,10 +4235,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189428-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -4396,8 +4497,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -4678,10 +4779,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189429-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -4927,8 +5041,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -5741,10 +5855,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189431-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "13 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 13. Owned by State WRD/State Irrigation 13. 13 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 13; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -5990,8 +6117,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -6273,10 +6400,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189432-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 9. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -6522,8 +6662,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -6803,10 +6943,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189433-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 4, Tank 2. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -7052,8 +7205,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -8397,10 +8550,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189436-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "7 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 7. Owned by State WRD/State Irrigation 7. 7 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 7; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -8646,8 +8812,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -8928,10 +9094,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189437-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "8 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8. Owned by State WRD/State Irrigation 8. 8 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 8; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -9177,8 +9356,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -10522,10 +10701,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189440-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "8 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8. Owned by State WRD/State Irrigation 8. 8 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 8; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -10771,8 +10963,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -11585,10 +11777,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189442-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -11834,8 +12039,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -12116,10 +12321,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189443-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -12365,8 +12583,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -13180,10 +13398,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189445-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -13429,8 +13660,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -14242,10 +14473,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189447-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8, Tank 1. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -14491,8 +14735,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -15306,10 +15550,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189449-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -15555,8 +15812,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -15804,10 +16061,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189450-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "7 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6, Tank 1. Owned by State WRD/State Irrigation 7. 7 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 7; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -16053,8 +16323,8 @@
         }
       ],
       "summary": {
-        "adequate": 11,
-        "unavailable": 15,
+        "adequate": 12,
+        "unavailable": 14,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -16336,10 +16606,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189451-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -16585,8 +16868,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -17399,10 +17682,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189453-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "12 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 12. Owned by State WRD/State Irrigation 12. 12 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 12; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -17648,8 +17944,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -17929,10 +18225,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189454-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -18178,8 +18487,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -18461,10 +18770,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189455-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -18710,8 +19032,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -18992,10 +19314,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189456-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -19241,8 +19576,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -20586,10 +20921,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189459-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "8 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8. Owned by State WRD/State Irrigation 8. 8 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 8; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -20835,8 +21183,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -21117,10 +21465,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189460-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "15 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 13, Tank 2. Owned by State WRD/State Irrigation 15. 15 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 15; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -21366,8 +21727,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -21648,10 +22009,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189461-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -21897,8 +22271,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -22181,10 +22555,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189462-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -22430,8 +22817,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -22712,10 +23099,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189463-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "17 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 16, Tank 1. Owned by State WRD/State Irrigation 17. 17 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 17; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -22961,8 +23361,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -23243,10 +23643,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189464-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "16 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 15, Tank 1. Owned by State WRD/State Irrigation 16. 16 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 16; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -23492,8 +23905,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -24306,10 +24719,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189466-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -24555,8 +24981,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -25900,10 +26326,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189469-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -26149,8 +26588,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -26432,10 +26871,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189470-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -26681,8 +27133,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -27496,10 +27948,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189472-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -27745,8 +28210,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -28027,10 +28492,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189473-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -28276,8 +28754,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -28559,10 +29037,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189474-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -28808,8 +29299,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -31207,10 +31698,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189479-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "14 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 12, Tank 2. Owned by State WRD/State Irrigation 14. 14 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 14; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -31456,8 +31960,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -31739,10 +32243,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189480-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -31988,8 +32505,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -32803,10 +33320,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189482-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "15 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 15. Owned by State WRD/State Irrigation 15. 15 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 15; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -33052,8 +33582,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -33270,10 +33800,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189483-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -33496,8 +34039,8 @@
         }
       ],
       "summary": {
-        "adequate": 6,
-        "unavailable": 19,
+        "adequate": 7,
+        "unavailable": 18,
         "not-applicable": 0,
         "not-assessed": 15
       }
@@ -33778,10 +34321,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189484-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -34027,8 +34583,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -34310,10 +34866,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189485-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -34559,8 +35128,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -34841,10 +35410,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189486-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Tank 1, Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -35090,8 +35672,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -35904,10 +36486,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189488-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -36153,8 +36748,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -36435,10 +37030,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189489-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "16 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 14, Tank 2. Owned by State WRD/State Irrigation 16. 16 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 16; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -36684,8 +37292,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -36966,10 +37574,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189490-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -37215,8 +37836,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -37496,10 +38117,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189491-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -37745,8 +38379,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -38027,10 +38661,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189492-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -38276,8 +38923,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -38558,10 +39205,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189493-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 4, Tank 1. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -38807,8 +39467,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -39088,10 +39748,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189494-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -39337,8 +40010,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -39619,10 +40292,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189495-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -39868,8 +40554,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -41215,10 +41901,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189498-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Tank 1, Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -41464,8 +42163,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -41747,10 +42446,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189499-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -41996,8 +42708,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -42278,10 +42990,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189500-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -42527,8 +43252,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -42808,10 +43533,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189501-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3, Tank 2. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -43057,8 +43795,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -43339,10 +44077,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189502-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -43588,8 +44339,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -43871,10 +44622,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189503-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -44120,8 +44884,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -44370,10 +45134,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189504-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -44619,8 +45396,8 @@
         }
       ],
       "summary": {
-        "adequate": 11,
-        "unavailable": 15,
+        "adequate": 12,
+        "unavailable": 14,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -44901,10 +45678,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189505-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -45150,8 +45940,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -45431,10 +46221,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189506-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -45680,8 +46483,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -46494,10 +47297,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189508-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2, Tank 1. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -46743,8 +47559,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -47557,10 +48373,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189510-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 4, Reservoirs 1. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -47806,8 +48635,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -48087,10 +48916,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189511-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3, Ponds 1, Tank 1. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -48336,8 +49178,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -49680,10 +50522,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189514-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -49929,8 +50784,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -50211,10 +51066,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189515-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -50460,8 +51328,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -50743,10 +51611,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189516-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -50992,8 +51873,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -51273,10 +52154,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189517-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -51522,8 +52416,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -52335,10 +53229,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189519-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 9. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -52584,8 +53491,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -52866,10 +53773,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189520-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8, Tank 1. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -53115,8 +54035,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -53929,10 +54849,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189522-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -54178,8 +55111,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -56056,10 +56989,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189526-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -56305,8 +57251,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -56587,10 +57533,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189527-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "5 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 5. Owned by State WRD/State Irrigation 5. 5 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 5; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -56836,8 +57795,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -57119,10 +58078,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189528-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -57368,8 +58340,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -58182,10 +59154,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189530-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 9. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -58431,8 +59416,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -58713,10 +59698,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189531-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 9. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -58962,8 +59960,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -59244,10 +60242,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189532-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -59493,8 +60504,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -59775,10 +60786,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189533-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "9 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 9. Owned by State WRD/State Irrigation 9. 9 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 9; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -60024,8 +61048,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -60307,10 +61331,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189534-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "8 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8. Owned by State WRD/State Irrigation 8. 8 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 8; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -60556,8 +61593,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -60838,10 +61875,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189535-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "7 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 7. Owned by State WRD/State Irrigation 7. 7 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 7; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -61087,8 +62137,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -61370,10 +62420,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189537-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -61619,8 +62682,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -61902,10 +62965,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189538-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "2 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 2. Owned by State WRD/State Irrigation 2. 2 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 2; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -62151,8 +63227,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -62965,10 +64041,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189540-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "16 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 16. Owned by State WRD/State Irrigation 16. 16 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 16; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -63214,8 +64303,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -63497,10 +64586,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189541-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "4 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 4. Owned by State WRD/State Irrigation 4. 4 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 4; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -63746,8 +64848,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -64029,10 +65131,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189542-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "8 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 8. Owned by State WRD/State Irrigation 8. 8 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 8; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -64278,8 +65393,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -65092,10 +66207,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189544-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "1 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 1. Owned by State WRD/State Irrigation 1. 1 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 1; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -65341,8 +66469,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -66688,10 +67816,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "189547-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "6 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 6. Owned by State WRD/State Irrigation 6. 6 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 6; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -66937,8 +68078,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }
@@ -68700,10 +69841,23 @@
         {
           "requirementId": "water-body-inventory",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "245193-water-bodies",
+              "sourceRefs": [
+                "water-bodies-census-mh"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-01",
+              "notes": "3 water bodies in the First Census of Water Bodies: Water consv schemes/percolation tanks/check-dams 3. Owned by State WRD/State Irrigation 3. 3 of them carry a recorded coordinate; waterspread not published."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+            "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+            "The register names 0 of 3; a return that names none is a structure register rather than a survey of tanks and lakes."
           ]
         },
         {
@@ -68949,8 +70103,8 @@
         }
       ],
       "summary": {
-        "adequate": 14,
-        "unavailable": 12,
+        "adequate": 15,
+        "unavailable": 11,
         "not-applicable": 0,
         "not-assessed": 14
       }

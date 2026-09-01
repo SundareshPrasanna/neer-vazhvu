@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { AtlasBreadcrumbs } from "@/components/atlas/atlas-breadcrumbs";
-import { AtlasPlaceMap, type AtlasMapPolygons } from "@/components/atlas/atlas-map";
+import { AtlasPlaceMap, type AtlasMapMarker, type AtlasMapPolygons } from "@/components/atlas/atlas-map";
+import { AtlasSectionNav } from "@/components/atlas/atlas-section-nav";
 import {
   AtlasCard,
   AtlasContainer,
@@ -24,7 +25,7 @@ import {
   type Tone,
 } from "@/components/atlas/atlas-primitives";
 import { getCuratedBrief } from "@/lib/atlas/curated-briefs";
-import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks } from "@/lib/atlas/data";
+import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks, loadWaterBodyShard } from "@/lib/atlas/data";
 import { getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
 import { displayTalukName, unitLabelOf } from "@/lib/atlas/district-reading";
 import {
@@ -179,6 +180,22 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
     : (brief?.verdict?.tone ?? "neutral");
   const facts = curated?.headlineFacts ?? brief?.headlineFacts ?? [];
   const detail = brief?.detail;
+  // The census register serves the enumerators' coordinates (open licence);
+  // a TNGIS-built district has no point to draw.
+  const waterBodyFeature =
+    detail?.waterBodies?.register === "water-bodies-census"
+      ? loadWaterBodyShard(entry, panchayat.blockCode)?.features.find(
+          (feature) => feature.properties.lgdGramPanchayatCode === gpCode,
+        )
+      : undefined;
+  const waterBodyMarkers: AtlasMapMarker[] = (waterBodyFeature?.geometry?.coordinates ?? []).map(
+    ([longitude, latitude], index) => ({
+      id: `${gpCode}-water-body-${index}`,
+      latitude,
+      longitude,
+      label: "Water body, First Census of Water Bodies",
+    }),
+  );
 
   // One list drives both the contents rail and the chapters, so a section
   // can never appear in one and be missing from the other.
@@ -292,23 +309,12 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
       <main>
         <AtlasContainer className="py-8 sm:py-10">
           <div className="lg:grid lg:grid-cols-[14rem_1fr] lg:gap-10">
-            <nav aria-label="Profile sections" className="mb-6 lg:mb-0 lg:sticky lg:top-20 lg:self-start">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                In this profile
-              </p>
-              <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1 lg:flex-col lg:gap-y-1.5">
-                {chapters.map((chapter) => (
-                  <li key={chapter.id}>
-                    <a
-                      href={`#${chapter.id}`}
-                      className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
-                    >
-                      {chapter.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <AtlasSectionNav
+              layout="rail"
+              label="Profile sections"
+              heading="In this profile"
+              sections={chapters.map(({ id, label }) => ({ id, label }))}
+            />
 
             <div className="divide-y divide-slate-200 dark:divide-slate-800">
               {detail?.boundary ? (
@@ -341,6 +347,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                     <figure>
                       <AtlasPlaceMap
                         polygons={polygons}
+                        markers={waterBodyMarkers}
                         point={{
                           id: panchayat.lgdCode,
                           name: panchayat.name,
@@ -353,6 +360,9 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                         {directory.boundary?.publicGeometry
                           ? `Plotted from the centroid of the ${directory.boundary.label} polygon. The marker is the Panchayat, not a settlement; the polygon is indicative (a 2001-era digitisation), not a survey boundary.`
                           : "Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a settlement; the polygon is withheld pending the licence reply."}
+                        {waterBodyMarkers.length > 0
+                          ? ` The ${waterBodyMarkers.length} small markers are the water bodies the First Census of Water Bodies recorded in this Panchayat's villages, at the coordinates its enumerators entered.`
+                          : ""}
                       </figcaption>
                     </figure>
                   </div>
@@ -460,42 +470,104 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                 <Chapter
                   id="water-bodies"
                   title="Tanks and water bodies"
-                  intro="Mapped by TNGIS and assigned to this Panchayat by the register itself, not by a name match."
+                  intro={
+                    detail.waterBodies.register === "water-bodies-census"
+                      ? "Enumerated by the First Census of Water Bodies in this Panchayat's villages and placed here through the LGD's own village list, not by a name match."
+                      : "Mapped by TNGIS and assigned to this Panchayat by the register itself, not by a name match."
+                  }
                 >
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-3">
-                      <AtlasFinding>
-                        {detail.waterBodies.count}{" "}
-                        {detail.waterBodies.count === 1 ? "water body covers" : "water bodies cover"}{" "}
-                        {area(detail.waterBodies.areaHectares)} ha here, the largest of them{" "}
-                        {area(detail.waterBodies.largestAreaHectares)} ha. The register names{" "}
-                        {detail.waterBodies.namedCount} of them; the names and polygons are withheld
-                        pending the TNGIS licence reply.
-                      </AtlasFinding>
-                      <AtlasNote className="mt-0">
-                        Waterspread is the mapped extent, not storage. It says nothing about whether these
-                        hold water through the year, whether they are encroached, or when any one of them
-                        was last surveyed.
-                      </AtlasNote>
+                      {detail.waterBodies.register === "water-bodies-census" ? (
+                        <>
+                          <AtlasFinding>
+                            {detail.waterBodies.count}{" "}
+                            {detail.waterBodies.count === 1 ? "water body is" : "water bodies are"} on the census
+                            return for this Panchayat
+                            {detail.waterBodies.byType && detail.waterBodies.byType.length > 0
+                              ? `: ${detail.waterBodies.byType.map((row) => `${count(row.count)} ${row.type.toLowerCase()}`).join(", ")}`
+                              : ""}
+                            . {detail.waterBodies.pointCount ?? 0} of them carry a recorded coordinate
+                            {waterBodyMarkers.length > 0 ? ", drawn on the map above" : ""}.
+                            {detail.waterBodies.areaBasis === "stated"
+                              ? ` Stated waterspread ${area(detail.waterBodies.areaHectares)} ha, the largest ${area(detail.waterBodies.largestAreaHectares)} ha.`
+                              : ""}
+                          </AtlasFinding>
+                          <AtlasNote className="mt-0">
+                            {detail.waterBodies.areaBasis === "stated"
+                              ? "Waterspread is what the enumerator entered, not a measured polygon, and says nothing about whether these hold water through the year."
+                              : "The state's return enters template values for waterspread, depth, year and cost on every row, so those are not published: a count, a class and an owner are what it can support. It says nothing about whether these hold water through the year."}
+                            {detail.waterBodies.namedCount === 0
+                              ? " None of them is named in the return, which reads as a structure register rather than a survey of tanks and lakes."
+                              : ` The return names ${detail.waterBodies.namedCount} of them.`}
+                          </AtlasNote>
+                        </>
+                      ) : (
+                        <>
+                          <AtlasFinding>
+                            {detail.waterBodies.count}{" "}
+                            {detail.waterBodies.count === 1 ? "water body covers" : "water bodies cover"}{" "}
+                            {area(detail.waterBodies.areaHectares)} ha here, the largest of them{" "}
+                            {area(detail.waterBodies.largestAreaHectares)} ha. The register names{" "}
+                            {detail.waterBodies.namedCount} of them; the names and polygons are withheld
+                            pending the TNGIS licence reply.
+                          </AtlasFinding>
+                          <AtlasNote className="mt-0">
+                            Waterspread is the mapped extent, not storage. It says nothing about whether these
+                            hold water through the year, whether they are encroached, or when any one of them
+                            was last surveyed.
+                          </AtlasNote>
+                        </>
+                      )}
                     </div>
-                    <AtlasTableScroll label="Water bodies by registering department">
-                      <table className={`${TABLE} min-w-[16rem]`}>
-                        <thead className={THEAD}>
-                          <tr>
-                            <th className={TH}>Registered by</th>
-                            <th className={TH}>Water bodies</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {detail.waterBodies.byDepartment.map((row) => (
-                            <tr key={row.department} className={TR}>
-                              <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>{row.department}</td>
-                              <td className={TD}>{count(row.count)}</td>
+                    <div className="space-y-4">
+                      {detail.waterBodies.register === "water-bodies-census" && detail.waterBodies.byType ? (
+                        <AtlasTableScroll label="Water bodies by census class">
+                          <table className={`${TABLE} min-w-[16rem]`}>
+                            <thead className={THEAD}>
+                              <tr>
+                                <th className={TH}>Census class</th>
+                                <th className={TH}>Water bodies</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {detail.waterBodies.byType.map((row) => (
+                                <tr key={row.type} className={TR}>
+                                  <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>{row.type}</td>
+                                  <td className={TD}>{count(row.count)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </AtlasTableScroll>
+                      ) : null}
+                      <AtlasTableScroll
+                        label={
+                          detail.waterBodies.register === "water-bodies-census"
+                            ? "Water bodies by owner"
+                            : "Water bodies by registering department"
+                        }
+                      >
+                        <table className={`${TABLE} min-w-[16rem]`}>
+                          <thead className={THEAD}>
+                            <tr>
+                              <th className={TH}>
+                                {detail.waterBodies.register === "water-bodies-census" ? "Owned by" : "Registered by"}
+                              </th>
+                              <th className={TH}>Water bodies</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </AtlasTableScroll>
+                          </thead>
+                          <tbody>
+                            {detail.waterBodies.byDepartment.map((row) => (
+                              <tr key={row.department} className={TR}>
+                                <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>{row.department}</td>
+                                <td className={TD}>{count(row.count)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </AtlasTableScroll>
+                    </div>
                   </div>
                 </Chapter>
               ) : null}

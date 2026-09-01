@@ -37,6 +37,9 @@ export interface PlaceEvidenceProvenance {
   boundaryLabel: string;
   /** What the state calls the IN-GRES assessment unit: "taluk", "taluka". */
   assessmentUnitLabel: string;
+  /** Registry id of the water-body register a census record cites; absent
+   *  where the register is TNGIS. */
+  waterBodySourceRef?: string;
 }
 
 export const TNRD_PROVENANCE: PlaceEvidenceProvenance = {
@@ -57,6 +60,7 @@ export const LGD_PROVENANCE: PlaceEvidenceProvenance = {
     "DataMeet's polygons are a community digitisation of the 2001 Census village map (ODbL): indicative, not survey grade, and boundaries changed since 2001 are not reflected.",
   boundaryLabel: "DataMeet",
   assessmentUnitLabel: "taluka",
+  waterBodySourceRef: "water-bodies-census-mh",
 };
 
 export interface PlaceEvidenceInputs {
@@ -393,6 +397,35 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
     const departments = waterBodies.byDepartment
       .map((entry) => `${entry.department} ${entry.count}`)
       .join(", ");
+    if (waterBodies.register === "water-bodies-census") {
+      // The census locates each water body in a Census 2011 village and the
+      // LGD coverage register names the village's Panchayat: an identifier
+      // join, not a spatial one, and the enumerator's own placement.
+      const types = (waterBodies.byType ?? []).map((entry) => `${entry.type} ${entry.count}`).join(", ");
+      const points = waterBodies.pointCount ?? 0;
+      return adequate(
+        {
+          id: `${inputs.lgdGramPanchayatCode}-water-bodies`,
+          sourceRefs: [inputs.provenance?.waterBodySourceRef ?? "water-bodies-census-mh"],
+          localityClass: "within-place",
+          projectionMethod: "identifier-crosswalk",
+          evidenceDate: date,
+          notes:
+            `${waterBodies.count} water bodies in the First Census of Water Bodies: ${types}. Owned by ${departments}. ` +
+            `${points} of them carry a recorded coordinate` +
+            (waterBodies.areaBasis === "stated"
+              ? `; stated waterspread ${waterBodies.areaHectares} ha, largest ${waterBodies.largestAreaHectares} ha.`
+              : "; waterspread not published."),
+        },
+        [
+          "The census enumerates by village (reference years 2017-18 to 2020-21) and the LGD coverage register names the village's Panchayat; a village the register lists under two Panchayats, or under none, is counted on the taluka and assigned to no Panchayat.",
+          waterBodies.areaBasis === "stated"
+            ? "Waterspread is what the enumerator entered, not a measured polygon."
+            : "The state's return carries template values for waterspread, depth, year and cost on every row, so those attributes are withheld; the count, class, ownership and coordinates are what the register can support.",
+          `The register names ${named} of ${waterBodies.count}; a return that names none is a structure register rather than a survey of tanks and lakes.`,
+        ],
+      );
+    }
     return adequate(
       {
         id: `${inputs.lgdGramPanchayatCode}-water-bodies`,

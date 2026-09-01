@@ -1,5 +1,5 @@
 {
-  "_doc": "Reviewed refresh plan for Satara (Maharashtra), the first district outside Tamil Nadu. Identity comes from the Local Government Directory as republished on data.gov.in (the lgdirectory.gov.in downloads sit behind a captcha): the Local Bodies resource is the Gram Panchayat list with the village each Panchayat covers, the Villages resource the village enumeration with Census 2011 codes, the Sub-Districts resource the taluka list that serves as the block layer (Satara's eleven Panchayat Samitis are coterminous with its eleven talukas; block codes here are LGD sub-district codes). The Maharashtra DCHB village release carries no Gram Panchayat column, so settlement composition is the LGD coverage register, never a Census name match. Every count below is what the acquisition must find; a drift stops the run for review. Counts as of the 2026-09-01 LGD edition: 11 talukas, 1,764 villages, 1,502 Village Panchayats, 1,577 coverage rows (1,553 distinct villages; 24 villages listed under two Panchayats as Partial coverage), 1,742 JJM villages, 1,745 Census 2011 village rows.",
+  "_doc": "Reviewed refresh plan for Satara (Maharashtra), the first district outside Tamil Nadu. Identity comes from the Local Government Directory as republished on data.gov.in (the lgdirectory.gov.in downloads sit behind a captcha): the Local Bodies resource is the Gram Panchayat list with the village each Panchayat covers, the Villages resource the village enumeration with Census 2011 codes, the Sub-Districts resource the taluka list that serves as the block layer (Satara's eleven Panchayat Samitis are coterminous with its eleven talukas; block codes here are LGD sub-district codes). The Maharashtra DCHB village release carries no Gram Panchayat column, so settlement composition is the LGD coverage register, never a Census name match. Every count below is what the acquisition must find; a drift stops the run for review. Counts as of the 2026-09-01 LGD edition: 11 talukas, 1,764 villages, 1,502 Village Panchayats, 1,577 coverage rows (1,553 distinct villages; 24 villages listed under two Panchayats as Partial coverage), 1,742 JJM villages, 1,745 Census 2011 village rows. Water bodies: the First Census of Water Bodies state return on data.gov.in, 3,756 rows for Satara (3,725 rural, 31 urban); each row's unique_id carries the Census 2011 village code, joined to a Panchayat through the LGD coverage register above.",
   "schemaVersion": 1,
   "id": "mh-satara-v1",
   "identityAdapter": "lgd-directory",
@@ -47,6 +47,14 @@
       "crosswalkUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh.csv",
       "districtName": "Satara",
       "license": "ODbL 1.0"
+    },
+    "waterBodiesCensus": {
+      "resourceId": "e1874d07-a1db-4678-80c1-b64a2924b517",
+      "url": "https://api.data.gov.in/resource/e1874d07-a1db-4678-80c1-b64a2924b517",
+      "catalogUrl": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+      "districtName": "SATARA",
+      "waterspread": "withheld",
+      "waterspreadNote": "The Satara return enters whole-hectare template values on every row (4, 5, 6 or 8 ha on 3,725 rural rows; depth 4 or 5 m; the same four construction year, cost and beneficiary combinations throughout), so the waterspread is an enumerator's default rather than a measurement and is not published. Counts, types, ownership and the recorded coordinates are served."
     }
   },
   "expectedCounts": {
@@ -55,7 +63,8 @@
     "lgdGramPanchayats": 15,
     "lgdCoverageRows": 15,
     "jjmVillages": 16,
-    "censusVillages": 15
+    "censusVillages": 15,
+    "waterBodiesCensusRows": 11
   },
   "targets": [
     {

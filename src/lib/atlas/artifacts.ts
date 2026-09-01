@@ -48,6 +48,7 @@ export const ATLAS_FAMILIES = {
   assessments: "assessments",
   briefs: "briefs",
   curatedBriefs: "curated-briefs",
+  environmentPlan: "environment-plan",
 } as const;
 
 export type AtlasFamily = (typeof ATLAS_FAMILIES)[keyof typeof ATLAS_FAMILIES];
@@ -508,10 +509,22 @@ export interface CensusShard extends AtlasEnvelope, ShardHeader {
 
 export interface WaterBodyFeature {
   type: "Feature";
-  /** Null until TNGIS approves public display; the derived counts and areas
-   *  in properties are what is published meanwhile. */
-  geometry: null;
+  /** TNGIS: null until TNGIS approves public display; the derived counts
+   *  and areas in properties are what is published meanwhile. The census
+   *  register (open licence): the enumerators' points for the Panchayat. */
+  geometry: null | { type: "MultiPoint"; coordinates: Array<[number, number]> };
   properties: TnWaterBodyRecord & { lgdBlockCode: string };
+}
+
+/** Rows of the census register a block holds that no Panchayat receives:
+ *  a village the LGD lists under two Panchayats, under none, a Census
+ *  village with no LGD row, a village the directory does not know, a town. */
+export interface WaterBodiesUnassigned {
+  sharedVillage: number;
+  uncoveredVillage: number;
+  censusVillageWithoutLgdRow: number;
+  unknownVillage: number;
+  urban: number;
 }
 
 export interface WaterBodiesShard extends AtlasEnvelope {
@@ -519,12 +532,14 @@ export interface WaterBodiesShard extends AtlasEnvelope {
   features: WaterBodyFeature[];
   ext: {
     atlas: ShardHeader & {
+      /** Absent on the TNGIS shards, which predate the field. */
+      register?: "water-bodies-census";
       districtLgdCode: string;
       acquiredAt: string;
       layer: string;
       sourceUrl: string;
       rights: {
-        status: "permission-required";
+        status: "permission-required" | "open";
         termsUrl: string;
         termsQuote: string;
         approval: unknown;
@@ -534,6 +549,13 @@ export interface WaterBodiesShard extends AtlasEnvelope {
       featureCount: number;
       recordCount: number;
       recordsSha256: string;
+      /** Census register only: the block's own unassigned rows, and the
+       *  district totals repeated on every shard (urban rows sit in no
+       *  block, so only the district total carries them). */
+      unassigned?: WaterBodiesUnassigned;
+      unassignedDistrict?: WaterBodiesUnassigned;
+      attributes?: { waterspread: "stated" | "withheld"; note: string };
+      pointsOutsideDistrict?: number;
     };
   };
 }

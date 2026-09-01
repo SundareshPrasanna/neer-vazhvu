@@ -5,9 +5,11 @@ import type { WaterBodiesShard } from "./artifacts";
 import { SAMPLE_STALE_AFTER_DAYS } from "./district-aggregate";
 import {
   FIXTURE_DISTRICTS,
+  LGD_FIXTURE_DISTRICTS,
   buildFixtureAggregate,
   buildFixtureDirectory,
   fixtureBriefs,
+  fixtureSlugsPresent,
   readFixture,
 } from "./test-support";
 
@@ -48,7 +50,7 @@ test("block roll-ups sum to the district roll-up", () => {
 });
 
 test("water bodies roll up to the served totals", () => {
-  for (const fixture of FIXTURE_DISTRICTS) {
+  for (const fixture of [...FIXTURE_DISTRICTS, ...LGD_FIXTURE_DISTRICTS.filter((entry) => fixtureSlugsPresent().includes(entry.slug))]) {
     const aggregate = buildFixtureAggregate(fixture.slug, AS_OF);
     const shard = readFixture<WaterBodiesShard>(fixture.slug, "water-bodies", `${fixture.block}.geojson`);
     assert.equal(aggregate.waterBodyCount, shard.ext.atlas.featureCount);

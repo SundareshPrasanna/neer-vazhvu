@@ -37,6 +37,7 @@ import {
   type WaterBodiesShard,
 } from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
+import type { EnvironmentPlanArtifact } from "./environment-plan";
 import type { DataMeetBoundaryExtract } from "./datameet-boundary";
 import {
   validateLgdDistrictRefreshPlan,
@@ -139,6 +140,7 @@ export function readFixtureShards<T>(slug: string, family: AtlasFamily): T[] {
 export interface FixtureArtifacts extends DistrictArtifacts {
   irrigationCurrent: IrrigationCurrentArtifact | undefined;
   curated: CuratedBriefsArtifact | undefined;
+  environmentPlan: EnvironmentPlanArtifact | undefined;
 }
 
 const artifactsBySlug = new Map<string, FixtureArtifacts>();
@@ -161,6 +163,7 @@ export function readFixtureArtifacts(slug: string): FixtureArtifacts {
     assessments: readFixtureShards<AssessmentsShard>(slug, "assessments"),
     briefs: readFixtureShards<BriefsShard>(slug, "briefs"),
     curated: readFixtureArtifact<CuratedBriefsArtifact>(slug, "curated-briefs"),
+    environmentPlan: readFixtureArtifact<EnvironmentPlanArtifact>(slug, "environment-plan"),
   };
   artifactsBySlug.set(slug, artifacts);
   return artifacts;
@@ -227,6 +230,7 @@ export function buildFixtureReading(
     waterBodies: artifacts.waterBodies,
     briefShards: artifacts.briefs,
     curated: district.hasCuratedBriefs ? artifacts.curated : undefined,
+    environmentPlan: artifacts.environmentPlan,
     asOf,
   });
 }

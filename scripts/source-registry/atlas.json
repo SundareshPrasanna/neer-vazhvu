@@ -362,6 +362,92 @@
         "edition": "baselined 2026-09-01 for Satara",
         "acceptedOn": "2026-09-01"
       }
+    },
+    {
+      "id": "water-bodies-census-mh",
+      "scope": "atlas",
+      "publisher": "Department of Water Resources, River Development and Ganga Rejuvenation, Ministry of Jal Shakti, via the Open Government Data Platform (data.gov.in)",
+      "url": "https://api.data.gov.in/lists?format=json&api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&limit=1&filters[index_name]=e1874d07-a1db-4678-80c1-b64a2924b517",
+      "license": "Government Open Data License - India",
+      "type": "api",
+      "cadence": "closed edition (First Census of Water Bodies, reference years 2017-18 to 2020-21, published 2023; the scheme is five-yearly); the portal's own resource stamp is the watch",
+      "tier": 1,
+      "detection": {
+        "method": "api-date",
+        "datePath": "records[0].updated_date"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/satara/water-bodies",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-water-bodies-census-district.ts --district <slug> --as-of <date> --fetch (the resource's rows for the district, limit=all with the portal's own export key read from its metadata at fetch time; fails closed when the row count drifts from pipeline-inputs/atlas/<state>/<district>/refresh-plan.json)",
+      "notes": "The Ministry of Jal Shakti's First Census of Water Bodies as republished per state on data.gov.in (catalog 'State-wise Data of First Census of Water Bodies', GODL-India on the catalog page; the backend licence field is blank). The Maharashtra resource holds 97,062 rows; Satara 3,756 (3,725 rural, 31 urban). Recipe: filter keys are the field ids (district_name, block_tehsil_name, village_name) and the district name is upper case; filters[District%20Name] returns 200 with an empty body, and the public sample key caps every query at ten rows (the bulk WBC_MH.csv behind datafile_url 403s without a portal session). Join: unique_id is <area>/<state>/<Census 2011 district>/<LGD sub-district, six digits>/<Census 2011 village code>/<serial>; the village code joins the LGD village list exactly (Satara: 3,692 of 3,725 rural rows) and the LGD coverage register names the Panchayat; a village listed under two Panchayats or under none is counted, never pooled. Honesty: the Satara return is a WRD structure register rather than a field survey of tanks (3,480 of 3,725 'Water consv schemes/percolation tanks/check-dams', 3,596 State WRD, every row in use, none encroached, all man-made, basin blank) and its attributes are templates (waterspread only 4, 5, 6 or 8 ha; the same four year/cost/beneficiary combinations on every row), so waterspread is withheld by the reviewed plan and only counts, types, ownership and coordinates are served. Fifteen of the 3,756 coordinates fall outside the district and are dropped with a count.",
+      "lastSeen": {
+        "apiDate": "2026-02-10T09:58:41Z",
+        "acceptedOn": "2026-09-01"
+      }
+    },
+    {
+      "id": "mpcb-district-environment-plans",
+      "scope": "atlas",
+      "publisher": "Maharashtra Pollution Control Board with the Environment Department, Government of Maharashtra",
+      "url": "https://mpcb.gov.in/en/state-environment-plan-and-district-environment-plan",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic (the 2018-19 district plans were posted 23 June 2021 under NGT O.A. 360 of 2018; a revised plan would appear as a new link)",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "environmentactionplan/.*\\.pdf$"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/satara/environment-plan.json"
+      ],
+      "refreshMethod": "read the district's PDF, update pipeline-inputs/atlas/<state>/<district>/environment-plan.json (every figure with its sentence and page; review status), then scripts/atlas-environment-plan-district.ts --district <slug> --as-of <date>",
+      "notes": "MPCB's listing of the State Environment Plan and the 36 District Environment Plans, each a PDF under /sites/default/files/environmentactionplan/ labelled '(2018-2019)'. The plans follow CPCB's model plan (profile table plus gap-and-action tables per theme) and carry no NGT-template water balance; the Atlas serves what a plan states about water, transcribed with page citations, and names the missing balance as a next step. Satara (Satara23062021.pdf, 12 pages, file dated 30 December 2019, sha256 b9f6fa18...): rivers and their lengths, ULB sewage 49.75 MLD against 21.5 MLD of STP, 41.83 km of sewers, 85,562 permitted bore-wells (estimate), 94,421 ha m of groundwater available (no year or source stated), 1,538 industries generating 275.97 MLD of effluent with 38 recorded as meeting standards, about 60 MLD of STP called for. The cover page header reads 'Latur' (a template slip; every inner page reads Satara). Terms: MPCB publishes no reuse terms; its disclaimer page states content ownership only ('Content owned, maintained & updated: Maharashtra Pollution Control Board'), so the PDF is cited and linked, not mirrored. Watched as the set of plan links: a re-posted or renamed PDF is an edition.",
+      "lastSeen": {
+        "linksHash": "198b325802ae89f8",
+        "links": [
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Ahmednagar23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Akola23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Amravati23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Aurangabad23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Beed23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Bhandara23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Buldhana23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Chandrapur23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Dhule23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/EnvironmnetActionPlan23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Gadchiroli23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Gondia23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Hingoli23062021_0.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Jalgaon23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Jalna23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Kolhapur23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Latur23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Mumbai23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Nagpur23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Nanded23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Nandurbar23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Nashik23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Osmanabad23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Palghar23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Parbhani23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Pune23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Raigad2362021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Ratnagiri23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Sangli23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Satara23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Sindhudurg23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Solapur23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Thane23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Wardha23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Washim23062021.pdf",
+          "https://mpcb.gov.in/sites/default/files/environmentactionplan/Yavatmal23062021.pdf"
+        ],
+        "acceptedOn": "2026-09-01"
+      }
     }
   ]
 }

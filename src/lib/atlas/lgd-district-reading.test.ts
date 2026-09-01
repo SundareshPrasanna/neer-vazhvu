@@ -28,6 +28,28 @@ for (const fixture of LGD_FIXTURE_DISTRICTS) {
     assert.equal(reading.mettur, null);
   });
 
+  test(`${fixture.slug}: water bodies come from the census register, with the templated attributes withheld`, { skip: !present && "fixture not cut yet" }, () => {
+    const reading = buildFixtureReading(fixture.slug);
+    assert.ok(reading.waterBodies, "the census shard is read");
+    assert.equal(reading.waterBodies.register, "water-bodies-census");
+    assert.equal(reading.waterBodies.areaBasis, "withheld");
+    assert.equal(reading.waterBodies.areaHectares, 0);
+    assert.ok(reading.waterBodies.count > 0 && reading.waterBodies.byType.length > 0);
+    assert.ok(reading.waterBodies.unassigned, "unassigned rows are carried, not dropped");
+    assert.ok(reading.vintages.some((row) => row.label === "Water bodies" && /Census of Water Bodies/.test(row.note)));
+  });
+
+  test(`${fixture.slug}: the District Environment Plan is read figure by figure, and its missing balance stays a named next step`, { skip: !present && "fixture not cut yet" }, () => {
+    const reading = buildFixtureReading(fixture.slug);
+    assert.ok(reading.environmentPlan, "the plan is served");
+    assert.equal(reading.environmentPlan.hasWaterBalance, false);
+    assert.ok(reading.environmentPlan.figures.length >= 5);
+    assert.ok(reading.environmentPlan.figures.every((figure) => figure.quote.length > 0 && figure.pdfPage > 0));
+    assert.ok(reading.verdict.nextSteps.some((step) => /prints no demand, supply or deficit table/.test(step)));
+    assert.ok(!reading.verdict.nextSteps.some((step) => /not yet on file/.test(step)));
+    assert.ok(reading.vintages.some((row) => row.label === "District Environment Plan" && row.historical));
+  });
+
   test(`${fixture.slug}: the aggregate's vintages name DataMeet, not TNGIS`, { skip: !present && "fixture not cut yet" }, () => {
     const aggregate = buildFixtureAggregate(fixture.slug, "2026-09-01");
     const boundaries = aggregate.vintages.find((row) => row.label === "Boundaries");

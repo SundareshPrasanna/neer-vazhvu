@@ -21,9 +21,11 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { dirname, resolve } from "node:path";
 
 import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import type { AtlasDistrict } from "../src/lib/atlas/registry";
 import type {
   AssessmentsShard,
   BoundariesShard,
+  WaterBodiesShard,
   BriefsShard,
   CensusShard,
   DistrictDirectoryArtifact,
@@ -126,6 +128,12 @@ function main(): void {
       lgdCoverageRows: miniExtract.sources.lgdLocalBodies.recordCount,
       jjmVillages: miniExtract.sources.jjm.recordCount,
       censusVillages: miniExtract.sources.census.recordCount,
+      // The census register is not re-fetched for a fixture; the mini plan
+      // keeps the source (so the plan validates) with the served shard's own
+      // assigned count standing in for the district's row count.
+      ...(plan.sources.waterBodiesCensus
+        ? { waterBodiesCensusRows: Math.max(1, waterBodiesRowsInBlock(district, blockCode, codes)) }
+        : {}),
     },
     targets: plan.targets.filter((t) => codes.has(t.lgdGramPanchayatCode)),
   };
@@ -229,10 +237,12 @@ function main(): void {
   }
   const curatedPath = resolve(ROOT, "public/data/atlas", district.stateSlug, district.slug, "curated-briefs.json");
   if (existsSync(curatedPath)) writeJson(resolve(out, "curated-briefs.json"), readJson(curatedPath));
+  const planPath = resolve(ROOT, "public/data/atlas", district.stateSlug, district.slug, "environment-plan.json");
+  if (existsSync(planPath)) writeJson(resolve(out, "environment-plan.json"), readJson(planPath));
 
   // The block's shards, sliced to the chosen Panchayats.
   const shard = <T>(family: string): T | undefined => {
-    const ext = family === "boundaries" ? "geojson" : "json";
+    const ext = family === "boundaries" || family === "water-bodies" ? "geojson" : "json";
     const path = resolve(ROOT, "public/data/atlas", district.stateSlug, district.slug, family, `${blockCode}.${ext}`);
     return existsSync(path) ? readJson<T>(path) : undefined;
   };
@@ -256,6 +266,23 @@ function main(): void {
       records,
       recordCount: records.length,
       recordsSha256: computeRecordsSha256(records),
+    });
+  }
+  const waterBodies = shard<WaterBodiesShard>("water-bodies");
+  if (waterBodies) {
+    const features = waterBodies.features.filter((f) => codes.has(f.properties.lgdGramPanchayatCode));
+    const records = features.map((f) => f.properties);
+    writeJson(resolve(out, "water-bodies", `${blockCode}.geojson`), {
+      ...waterBodies,
+      features,
+      ext: {
+        atlas: {
+          ...waterBodies.ext.atlas,
+          featureCount: records.reduce((total, record) => total + record.count, 0),
+          recordCount: records.length,
+          recordsSha256: computeRecordsSha256(records),
+        },
+      },
     });
   }
   const boundaries = shard<BoundariesShard>("boundaries");
@@ -282,6 +309,15 @@ function main(): void {
       `(${miniExtract.sources.jjm.recordCount} JJM villages, ${miniExtract.sources.census.recordCount} Census rows, ` +
       `${miniBoundary?.recordCount ?? 0} boundaries)`,
   );
+}
+
+/** Water bodies the served census shard assigns to the chosen Panchayats. */
+function waterBodiesRowsInBlock(district: AtlasDistrict, blockCode: string, codes: Set<string>): number {
+  const path = resolve(ROOT, "public/data/atlas", district.stateSlug, district.slug, "water-bodies", `${blockCode}.geojson`);
+  if (!existsSync(path)) return 0;
+  return readJson<WaterBodiesShard>(path)
+    .features.filter((f) => codes.has(f.properties.lgdGramPanchayatCode))
+    .reduce((total, f) => total + f.properties.count, 0);
 }
 
 /** The alignment loader validates against a file on disk; the mini table is

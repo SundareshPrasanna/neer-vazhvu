@@ -47,7 +47,9 @@ function extractFromShard(shard: WaterBodiesShard): TnDistrictWaterBodyExtract {
       sourceUrl: shard.ext.atlas.sourceUrl,
       retrievedAt: shard.ext.atlas.acquiredAt,
       rights: {
-        status: shard.ext.atlas.rights.status,
+        // The Tamil Nadu shards are permission-required by rule; the wider
+        // shard type admits the census register's open status.
+        status: "permission-required",
         termsUrl: shard.ext.atlas.rights.termsUrl,
         termsQuote: shard.ext.atlas.rights.termsQuote,
         publicDisplay: "permission-required",

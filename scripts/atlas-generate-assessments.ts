@@ -84,7 +84,10 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
   const waterShard = corpus.waterBodies.find((shard) => shard.ext.atlas.blockCode === blockCode);
   if (waterShard) {
     sources.push(
-      upstreamSource("tngisWaterBodies", { role: "input", retrieved: waterShard.ext.atlas.acquiredAt }),
+      upstreamSource(waterShard.ext.atlas.register === "water-bodies-census" ? "waterBodiesCensusMh" : "tngisWaterBodies", {
+        role: "input",
+        retrieved: waterShard.ext.atlas.acquiredAt,
+      }),
     );
     internalInputs.push(districtArtifactPath(district, "water-bodies", blockCode));
   }

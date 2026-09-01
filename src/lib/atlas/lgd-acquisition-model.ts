@@ -79,6 +79,9 @@ export interface LgdDistrictRefreshPlan {
       districtName: string;
       license: string;
     };
+    /** The First Census of Water Bodies state resource on data.gov.in, when
+     *  the district's water-body register is read from it. */
+    waterBodiesCensus?: LgdWaterBodiesCensusSource;
   };
   expectedCounts: {
     lgdSubdistricts: number;
@@ -90,8 +93,21 @@ export interface LgdDistrictRefreshPlan {
     lgdCoverageRows: number;
     jjmVillages: number;
     censusVillages: number;
+    /** Rows the census resource returns for the district, rural and urban;
+     *  a closed edition, so the count is exact. Required with the source. */
+    waterBodiesCensusRows?: number;
   };
   targets: LgdDistrictRefreshTarget[];
+}
+
+export interface LgdWaterBodiesCensusSource extends LgdResourceSource {
+  /** The district_name value as the resource spells it (upper case). */
+  districtName: string;
+  /** The reviewer's judgement of the waterspread column: "stated" publishes
+   *  the entered hectares, "withheld" serves counts and points only. The
+   *  producer refuses "stated" on a return that reads as templated. */
+  waterspread: "stated" | "withheld";
+  waterspreadNote: string;
 }
 
 /** A data.gov.in resource: the API resource id, the API url, and the catalog
@@ -251,6 +267,19 @@ export function validateLgdDistrictRefreshPlan(raw: unknown): string[] {
       validateUrl(boundary.geojsonUrl, "sources.boundary.geojsonUrl", errors);
       validateUrl(boundary.crosswalkUrl, "sources.boundary.crosswalkUrl", errors);
       validateStringFields(boundary, ["districtName", "license"], "sources.boundary", errors);
+    }
+    const waterBodies = raw.sources.waterBodiesCensus;
+    if (waterBodies !== undefined) {
+      validateResourceSource(waterBodies, "sources.waterBodiesCensus", errors);
+      if (isRecord(waterBodies)) {
+        validateStringFields(waterBodies, ["districtName", "waterspreadNote"], "sources.waterBodiesCensus", errors);
+        if (waterBodies.waterspread !== "stated" && waterBodies.waterspread !== "withheld") {
+          errors.push("sources.waterBodiesCensus.waterspread: must be stated or withheld");
+        }
+      }
+      if (isRecord(raw.expectedCounts) && !isPositiveInteger(raw.expectedCounts.waterBodiesCensusRows)) {
+        errors.push("expectedCounts.waterBodiesCensusRows: required with sources.waterBodiesCensus");
+      }
     }
   }
   if (!isRecord(raw.expectedCounts)) {

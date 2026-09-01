@@ -99,6 +99,11 @@ export interface BriefDetail {
     areaHectares: number;
     largestAreaHectares: number;
     byDepartment: Array<{ department: string; count: number }>;
+    /** Present on a First Census of Water Bodies record only. */
+    register?: "water-bodies-census";
+    byType?: Array<{ type: string; count: number }>;
+    areaBasis?: "stated" | "withheld";
+    pointCount?: number;
   } | null;
 }
 
@@ -349,6 +354,16 @@ function buildDetail(inputs: PlaceEvidenceInputs): BriefDetail {
           areaHectares: waterBodies.areaHectares,
           largestAreaHectares: waterBodies.largestAreaHectares,
           byDepartment: waterBodies.byDepartment,
+          // The census fields travel only where the record carries them, so
+          // a TNGIS brief is byte-for-byte what it was.
+          ...(waterBodies.register
+            ? {
+                register: waterBodies.register,
+                byType: waterBodies.byType ?? [],
+                areaBasis: waterBodies.areaBasis ?? "withheld",
+                pointCount: waterBodies.pointCount ?? 0,
+              }
+            : {}),
         }
       : null,
   };

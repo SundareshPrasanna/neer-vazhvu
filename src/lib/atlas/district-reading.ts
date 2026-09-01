@@ -24,11 +24,14 @@ import type {
   JjmServiceShard,
   RainfallArtifact,
   WaterBodiesShard,
+  WaterBodiesUnassigned,
 } from "./artifacts";
 import { identityAdapterOf, identityMasterVintage, identityVintage } from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
+import { environmentPlanReading, type EnvironmentPlanArtifact, type EnvironmentPlanReading } from "./environment-plan";
 import {
   loadBriefShards,
+  loadEnvironmentPlan,
   loadCensusShards,
   loadDirectory,
   loadGroundwaterProjection,
@@ -138,6 +141,34 @@ export interface WaterBodiesReading {
   termsQuote: string;
   licence: string;
   retrieved: string;
+  /** Which register the family was read from: TNGIS (Tamil Nadu) or the
+   *  First Census of Water Bodies (states with no open GIS register). */
+  register: WaterBodyRegister["register"];
+  label: string;
+  /** "Registered by" (TNGIS source department) or "Owned by" (census ownership). */
+  holderLabel: string;
+  /** Computed from polygons (TNGIS), entered by an enumerator, or withheld
+   *  because the return reads as a template. */
+  areaBasis: "computed" | "stated" | "withheld";
+  attributeNote: string | null;
+  /** Census register: rows counted on the block shards but assigned to no
+   *  Panchayat (shared, uncovered or unknown villages; towns). */
+  unassigned: WaterBodiesUnassigned | null;
+  byType: Array<{ type: string; count: number }>;
+  pointsServed: number;
+  pointsOutsideDistrict: number;
+}
+
+interface WaterBodyRegister {
+  register: "tngis" | "water-bodies-census";
+  label: string;
+  holderLabel: string;
+}
+
+function waterBodyRegisterOf(shards: WaterBodiesShard[]): WaterBodyRegister {
+  return shards[0]?.ext.atlas.register === "water-bodies-census"
+    ? { register: "water-bodies-census", label: "First Census of Water Bodies", holderLabel: "Owned by" }
+    : { register: "tngis", label: "TNGIS register", holderLabel: "Registered by" };
 }
 
 export interface VintageRow {
@@ -183,8 +214,9 @@ export interface DistrictReading {
   blocks: BlockReading[];
   blockFindings: BlockFindings;
   waterBodies: WaterBodiesReading | null;
-  /** No District Environment Plan artifact exists yet; the page renders the gap. */
-  environmentPlan: null;
+  /** The district's Environment Plan as transcribed, figure by figure with
+   *  page citations; null renders the named gap. */
+  environmentPlan: EnvironmentPlanReading | null;
   vintages: VintageRow[];
 }
 
@@ -283,6 +315,9 @@ export interface VerdictSignals {
    *  district figures rather than the Census 2011 pattern, and the verdict
    *  opens with them. */
   currentMixLabel: string | null;
+  /** The District Environment Plan on file, if any, and whether it prints
+   *  a water balance; absent or null, the plan itself is the next step. */
+  environmentPlan?: { label: string; hasWaterBalance: boolean } | null;
 }
 
 export function classifyIrrigation(
@@ -447,7 +482,13 @@ export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
   if (s.tapPercent === 100) {
     nextSteps.push("A habitation-level check of the 100.0% tap figure against a survey, to tell reported complete from measured.");
   }
-  nextSteps.push("The District Environment Plan water balance (NGT template), not yet on file.");
+  if (!s.environmentPlan) {
+    nextSteps.push("The District Environment Plan water balance (NGT template), not yet on file.");
+  } else if (!s.environmentPlan.hasWaterBalance) {
+    nextSteps.push(
+      `A water balance: the District Environment Plan on file (${s.environmentPlan.label}) is on the CPCB model and prints no demand, supply or deficit table.`,
+    );
+  }
   return { sentence, tone: deriveDistrictTone(s), nextSteps };
 }
 
@@ -705,6 +746,20 @@ function waterBodiesReading(
   const departments = new Set<string>();
   for (const shard of shards) for (const d of shard.ext.atlas.contributingDepartments) departments.add(d);
   const source = sourceOf(first);
+  const register = waterBodyRegisterOf(shards);
+  const census = register.register === "water-bodies-census";
+  const unassigned: WaterBodiesUnassigned = { sharedVillage: 0, uncoveredVillage: 0, censusVillageWithoutLgdRow: 0, unknownVillage: 0, urban: 0 };
+  const types = new Map<string, number>();
+  let pointsServed = 0;
+  for (const shard of shards) {
+    for (const key of Object.keys(unassigned) as Array<keyof WaterBodiesUnassigned>) {
+      unassigned[key] += shard.ext.atlas.unassigned?.[key] ?? 0;
+    }
+    for (const feature of shard.features) {
+      pointsServed += feature.properties.pointCount ?? 0;
+      for (const entry of feature.properties.byType ?? []) types.set(entry.type, (types.get(entry.type) ?? 0) + entry.count);
+    }
+  }
   return {
     count: aggregate.waterBodyCount,
     areaHectares: aggregate.waterBodyAreaHectares,
@@ -716,6 +771,20 @@ function waterBodiesReading(
     termsQuote: first.ext.atlas.rights.termsQuote,
     licence: source?.license ?? "licence unstated",
     retrieved: source?.retrieved ?? first.ext.atlas.acquiredAt,
+    register: register.register,
+    label: register.label,
+    holderLabel: register.holderLabel,
+    areaBasis: census ? (first.ext.atlas.attributes?.waterspread ?? "withheld") : "computed",
+    attributeNote: first.ext.atlas.attributes?.note ?? null,
+    // Urban rows belong to no block, so the district total the producer
+    // stamps on every shard is the honest figure; the block sum is the
+    // fallback for a shard written before the field existed.
+    unassigned: census ? (first.ext.atlas.unassignedDistrict ?? unassigned) : null,
+    byType: [...types.entries()]
+      .map(([type, count]) => ({ type, count }))
+      .sort((left, right) => right.count - left.count || left.type.localeCompare(right.type)),
+    pointsServed,
+    pointsOutsideDistrict: first.ext.atlas.pointsOutsideDistrict ?? 0,
   };
 }
 
@@ -740,6 +809,8 @@ export interface DistrictReadingInputs {
   waterBodies: WaterBodiesShard[];
   briefShards: BriefsShard[];
   curated: CuratedBriefsArtifact | undefined;
+  /** Optional: the Tamil Nadu fixtures predate the family. */
+  environmentPlan?: EnvironmentPlanArtifact | undefined;
   asOf: string;
 }
 
@@ -793,6 +864,12 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     currentMixLabel,
     unitLabel: categories.unitLabel,
     irrigationNextStep: district.irrigationCurrentSource.nextStep,
+    environmentPlan: inputs.environmentPlan
+      ? {
+          label: `${inputs.environmentPlan.document.publisher.split(" and ")[0]}, ${inputs.environmentPlan.document.editionLabel}`,
+          hasWaterBalance: inputs.environmentPlan.waterBalance !== null,
+        }
+      : null,
   };
   const verdict = composeDistrictVerdict(signals);
 
@@ -866,11 +943,15 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     });
   }
   if (facts.length < 3 && aggregate.waterBodyCount > 0) {
+    const register = waterBodyRegisterOf(inputs.waterBodies);
     facts.push({
       value: num(aggregate.waterBodyCount),
-      label: "water bodies in the TNGIS register",
-      asOf: `TNGIS, read ${inputs.waterBodies[0]?.ext.atlas.acquiredAt ?? "unstated"}`,
-      note: `${num(aggregate.waterBodyAreaHectares)} ha of mapped waterspread in ${aggregate.waterBodyPlaces} Panchayats.`,
+      label: `water bodies in the ${register.label}`,
+      asOf: `${register.register === "tngis" ? "TNGIS" : "Census of Water Bodies"}, read ${inputs.waterBodies[0]?.ext.atlas.acquiredAt ?? "unstated"}`,
+      note:
+        register.register === "tngis"
+          ? `${num(aggregate.waterBodyAreaHectares)} ha of mapped waterspread in ${aggregate.waterBodyPlaces} Panchayats.`
+          : `In ${aggregate.waterBodyPlaces} Panchayats, each assigned through the LGD's own village list.`,
     });
   }
 
@@ -971,12 +1052,17 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     sourceOf(inputs.rainfall)?.retrieved,
     "Open-Meteo reanalysis at a grid point inside each Panchayat, not a gauge.",
   );
+  const waterBodyRegister = waterBodyRegisterOf(inputs.waterBodies);
   push(
     "Water bodies",
     inputs.waterBodies[0],
-    "as mapped; the register carries no survey date",
+    waterBodyRegister.register === "tngis"
+      ? "as mapped; the register carries no survey date"
+      : "reference years 2017-18 to 2020-21, published 2023",
     sourceOf(inputs.waterBodies[0])?.retrieved,
-    "TNGIS all-water-bodies register, counts and areas only.",
+    waterBodyRegister.register === "tngis"
+      ? "TNGIS all-water-bodies register, counts and areas only."
+      : "First Census of Water Bodies, assigned to each Panchayat through the LGD's own village list; counts, classes and points.",
   );
   push(
     "Panchayat briefs",
@@ -991,6 +1077,15 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     inputs.curated ? `reviewed ${inputs.curated.provenance.produced_at}` : "unstated",
     inputs.curated?.provenance.produced_at,
     "Written by a person for the places named in them; preferred on those pages over the generated brief.",
+  );
+  push(
+    "District Environment Plan",
+    inputs.environmentPlan,
+    inputs.environmentPlan
+      ? `${inputs.environmentPlan.document.editionLabel} plan, dated ${inputs.environmentPlan.document.documentDate}`
+      : "unstated",
+    inputs.environmentPlan?.document.retrievedAt,
+    "Transcribed from the published PDF with the page each figure sits on; nothing computed from it.",
   );
 
   return {
@@ -1040,7 +1135,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     blocks,
     blockFindings: blockFindings(aggregate, blocks, categories.unitLabel),
     waterBodies: waterBodiesReading(aggregate, inputs.waterBodies),
-    environmentPlan: null,
+    environmentPlan: inputs.environmentPlan ? environmentPlanReading(inputs.environmentPlan) : null,
     vintages,
   };
 }
@@ -1088,6 +1183,7 @@ export function getDistrictReading(stateSlug: string, districtSlug: string): Dis
     curated: district.hasCuratedBriefs
       ? readDistrictArtifact<CuratedBriefsArtifact>(district, "curated-briefs")
       : undefined,
+    environmentPlan: loadEnvironmentPlan(district),
     asOf,
   });
   cache.set(key, built);

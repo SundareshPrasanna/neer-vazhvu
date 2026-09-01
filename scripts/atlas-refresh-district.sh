@@ -27,7 +27,8 @@
 #   4 groundwater  IN-GRES taluk assessment                     (fetch)
 #   5 project-gw   taluk assessment projected onto GPs          (cached polygons; register membership for LGD)
 #   6 rainfall     Open-Meteo 30-day window per GP              (fetch)
-#   7 water-bodies TNGIS counts per block (Tamil Nadu only)     (fetch)
+#   7 water-bodies TNGIS counts per block (Tamil Nadu) or the
+#                  First Census of Water Bodies (LGD-built)     (fetch)
 #   7b boundaries  served Panchayat polygons (LGD-built only)   (cached DataMeet)
 #   8 assess       40-capability assessments + briefs per block (derived)
 #   9 validate     whole-corpus assertions over the served tree
@@ -151,7 +152,16 @@ step "6 rainfall: Open-Meteo 30-day window per Gram Panchayat"
 must npx tsx scripts/atlas-rainfall-tn-district.ts --district "$district" --fetch --as-of "$as_of"
 
 if [ "$adapter" = "lgd-directory" ]; then
-  step "7 water-bodies: not applicable (no state GIS register for this district; named gap on the page)"
+  # The First Census of Water Bodies is a closed edition read from
+  # data.gov.in; the producer joins it through the served directory, so it
+  # follows the identity refresh like the other geometry steps. A plan that
+  # names no census resource makes the producer a no-op.
+  if [ "$identity" = "refreshed" ]; then
+    step "7 water-bodies: First Census of Water Bodies per taluka (data.gov.in)"
+    must npx tsx scripts/atlas-water-bodies-census-district.ts --district "$district" --as-of "$as_of" --fetch
+  else
+    step "7 water-bodies: skipped (closed edition; runs with an identity refresh)"
+  fi
   if [ "$identity" = "refreshed" ]; then
     step "7b boundaries: served Panchayat polygons per taluka (DataMeet, ODbL)"
     must npx tsx scripts/atlas-boundaries-lgd-district.ts --district "$district" --as-of "$as_of"

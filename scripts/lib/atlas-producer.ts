@@ -366,6 +366,8 @@ export const SOURCE_IDS = {
   censusMh: "census-2011-village-amenities-mh",
   datameetMh: "datameet-village-boundaries-mh",
   ingresMh: "ingres-groundwater-maharashtra",
+  waterBodiesCensusMh: "water-bodies-census-mh",
+  mpcbEnvironmentPlans: "mpcb-district-environment-plans",
 } as const;
 
 export type UpstreamKey = keyof typeof SOURCE_IDS;
@@ -440,6 +442,16 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     title: "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
     publisher: "CGWB / IIT-Hyderabad (IN-GRES)",
     url: "https://ingres.iith.ac.in/",
+  },
+  waterBodiesCensusMh: {
+    title: "First Census of Water Bodies, Maharashtra state return (data.gov.in resource e1874d07)",
+    publisher: "Department of Water Resources, River Development and Ganga Rejuvenation, Ministry of Jal Shakti, via the Open Government Data Platform",
+    url: "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+  },
+  mpcbEnvironmentPlans: {
+    title: "MPCB: State Environment Plan and District Environment Plans (district plans on the CPCB model, NGT O.A. 360 of 2018)",
+    publisher: "Maharashtra Pollution Control Board with the Environment Department, Government of Maharashtra",
+    url: "https://mpcb.gov.in/en/state-environment-plan-and-district-environment-plan",
   },
 };
 

@@ -155,7 +155,11 @@ function collectVintages(inputs: DistrictAggregateInputs): SourceVintage[] {
           represents: "2001",
           acquired: directory.vintages.boundary?.retrievedAt ?? "unstated",
           historical: true,
-          note: "DataMeet's digitisation of the 2001 Census village map (ODbL), joined to the 2011 codes and to each Panchayat's LGD-listed villages. No water-body register is wired for this district.",
+          note:
+            "DataMeet's digitisation of the 2001 Census village map (ODbL), joined to the 2011 codes and to each Panchayat's LGD-listed villages. " +
+            (waterBodies?.ext.atlas.register === "water-bodies-census"
+              ? "Water bodies are the First Census of Water Bodies (reference years 2017-18 to 2020-21), assigned through the same village list."
+              : "No water-body register is wired for this district."),
         }
       : {
           label: "Boundaries and water bodies",

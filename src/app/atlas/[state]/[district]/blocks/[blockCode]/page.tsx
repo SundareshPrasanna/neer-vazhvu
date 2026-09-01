@@ -159,8 +159,16 @@ export default async function AtlasBlockPage({ params }: RouteParams) {
               {reading?.waterBodies ? (
                 <StatTile
                   value={num(figures.waterBodyCount)}
-                  label="water bodies in the TNGIS register"
-                  note={`${num(figures.waterBodyAreaHectares)} ha of mapped waterspread. ${figures.stalePlaces} Panchayats untested for 90+ days; longest gap ${figures.worstSampleAgeDays === null ? "not stated" : `${num(figures.worstSampleAgeDays)} days`}.`}
+                  label={
+                    reading.waterBodies.register === "water-bodies-census"
+                      ? "water bodies on the census return"
+                      : "water bodies in the TNGIS register"
+                  }
+                  note={`${
+                    reading.waterBodies.register === "water-bodies-census"
+                      ? "First Census of Water Bodies, assigned through the LGD's village list; waterspread not published."
+                      : `${num(figures.waterBodyAreaHectares)} ha of mapped waterspread.`
+                  } ${figures.stalePlaces} Panchayats untested for 90+ days; longest gap ${figures.worstSampleAgeDays === null ? "not stated" : `${num(figures.worstSampleAgeDays)} days`}.`}
                 />
               ) : (
                 <StatTile

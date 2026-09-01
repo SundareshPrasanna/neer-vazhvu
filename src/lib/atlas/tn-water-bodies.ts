@@ -40,6 +40,18 @@ export interface TnWaterBodyRecord {
   byDepartment: Array<{ department: string; count: number }>;
   /** Fingerprint of the sorted name list. The names themselves are not held. */
   namesSha256: string;
+  /**
+   * Set by the First Census of Water Bodies producer (water-bodies-census.ts)
+   * and absent on a TNGIS record. There the holder axis in byDepartment is
+   * the census ownership class, byType the census water-body class, the
+   * waterspread is what an enumerator entered (or withheld when the return
+   * reads as a template), and pointCount is how many of the count carry a
+   * served coordinate.
+   */
+  register?: "water-bodies-census";
+  byType?: Array<{ type: string; count: number }>;
+  areaBasis?: "stated" | "withheld";
+  pointCount?: number;
 }
 
 export interface TnDistrictWaterBodyExtract {

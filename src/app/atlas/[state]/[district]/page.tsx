@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 import { AtlasBreadcrumbs } from "@/components/atlas/atlas-breadcrumbs";
 import {
   AtlasDirectoryExplorer,
+  AtlasQuickFind,
   type DirectoryRow,
 } from "@/components/atlas/atlas-directory-explorer";
+import { AtlasSectionNav, type AtlasNavSection } from "@/components/atlas/atlas-section-nav";
 import { AtlasDistrictMap, type AtlasMapPoint } from "@/components/atlas/atlas-map";
 import { AtlasMixBar } from "@/components/atlas/atlas-mix-bar";
 import {
@@ -27,7 +29,7 @@ import {
 } from "@/components/atlas/atlas-primitives";
 import { getCuratedBriefs } from "@/lib/atlas/curated-briefs";
 import { getDistrictDirectory } from "@/lib/atlas/district-directory";
-import { displayTalukName, getDistrictReading } from "@/lib/atlas/district-reading";
+import { displayTalukName, getDistrictReading, type DistrictReading } from "@/lib/atlas/district-reading";
 import {
   blockHref,
   districtHref,
@@ -43,6 +45,31 @@ interface RouteParams {
 const num = (value: number): string => Math.round(value).toLocaleString("en-IN");
 const pct = (value: number | null): string => (value === null ? "not stated" : `${value.toFixed(1)}%`);
 const categoryLabel = (value: string | null): string => (value ? value.replace(/_/g, "-") : "not projected");
+
+/** The census register's accounting, as one paragraph: what was assigned,
+ *  what was counted without a Panchayat, what is drawn. */
+function censusWaterBodyNote(waterBodies: NonNullable<DistrictReading["waterBodies"]>, unit: string): string {
+  const parts = [`${num(waterBodies.placesWithout)} Panchayats have none in the return.`];
+  if (waterBodies.unassigned) {
+    const rural =
+      waterBodies.unassigned.sharedVillage +
+      waterBodies.unassigned.uncoveredVillage +
+      waterBodies.unassigned.censusVillageWithoutLgdRow +
+      waterBodies.unassigned.unknownVillage;
+    parts.push(
+      `${num(rural)} rural rows sit in villages the LGD lists under two Panchayats or under none and are counted on the ${unit} without being assigned` +
+        (waterBodies.unassigned.urban > 0 ? `, and ${num(waterBodies.unassigned.urban)} are in towns.` : "."),
+    );
+  }
+  parts.push(
+    `${num(waterBodies.pointsServed)} carry a recorded coordinate and are drawn on the Panchayat pages` +
+      (waterBodies.pointsOutsideDistrict > 0
+        ? `; ${num(waterBodies.pointsOutsideDistrict)} fall outside the district and are not.`
+        : "."),
+  );
+  parts.push(`Owned by ${waterBodies.departments.join(", ")}. Read ${waterBodies.retrieved}.`);
+  return parts.join(" ");
+}
 
 /** Preview districts build on a preview deployment; production leaves them
  *  unlisted and the layout guard 404s them. One function feeds both. */
@@ -106,6 +133,39 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
   // "taluk" in Tamil Nadu, "taluka" in Maharashtra: the assessment unit's own name.
   const unit = groundwater.unitLabel;
   const Unit = unit.charAt(0).toUpperCase() + unit.slice(1);
+  // A real place from this district for the finder's placeholder.
+  const example = (rows.find((row) => row.status === "reviewed") ?? rows.find((row) => row.status === "profile") ?? rows[0])?.name ?? "";
+  // Families with nothing on file fold into one short section rather than
+  // each holding a screen of its own between the reader and the directory.
+  const gaps: Array<{ id: string; title: string; text: string }> = [];
+  if (!reading.waterBodies) {
+    gaps.push({
+      id: "water-bodies",
+      title: "Water bodies",
+      text:
+        directory.identityAdapter === "lgd-directory"
+          ? `No water-body register is wired for ${directory.districtName} yet (the First Census of Water Bodies state return on data.gov.in is the candidate; MRSAC and Bhuvan the GIS leads), so nothing is counted.`
+          : "No TNGIS water-body shard exists for this district yet, so nothing is counted.",
+    });
+  }
+  if (!reading.environmentPlan) {
+    gaps.push({
+      id: "environment-plan",
+      title: "District Environment Plan",
+      text: `Every district files one on the NGT template, with a water balance in it; the plan for ${reading.districtName} has not been acquired, and this stays a named gap rather than an estimate until it is.`,
+    });
+  }
+  const sections: AtlasNavSection[] = [
+    { id: "runs-on", label: "What it runs on" },
+    { id: "groundwater", label: `Groundwater by ${unit}` },
+    { id: "blocks", label: "Blocks compared" },
+    ...(reading.waterBodies ? [{ id: "water-bodies", label: "Water bodies" }] : []),
+    ...(reading.environmentPlan ? [{ id: "environment-plan", label: "Environment Plan" }] : []),
+    ...(gaps.length > 0 ? [{ id: "not-on-file", label: "Not yet on file" }] : []),
+    { id: "find", label: "Find a Panchayat" },
+    { id: "map", label: "Map" },
+    { id: "vintages", label: "How current" },
+  ];
 
   return (
     <div className="bg-white dark:bg-slate-950">
@@ -163,6 +223,10 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             ))}
           </dl>
 
+          <div className="mt-8">
+            <AtlasQuickFind rows={rows} basePath={basePath} example={example} />
+          </div>
+
           {verdict.nextSteps.length > 0 ? (
             <div className="mt-8">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -177,6 +241,8 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
           ) : null}
         </AtlasContainer>
       </header>
+
+      <AtlasSectionNav sections={sections} label="Sections of this page" heading="On this page" />
 
       <main>
         <AtlasContainer className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -348,7 +414,9 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                         Groundwater, IN-GRES
                       </th>
                       <th className={TH} colSpan={1}>
-                        {reading.waterBodies ? "Water bodies, TNGIS" : "Water bodies"}
+                        {reading.waterBodies
+                          ? `Water bodies, ${reading.waterBodies.register === "tngis" ? "TNGIS" : "Census"}`
+                          : "Water bodies"}
                       </th>
                       <th className={TH} colSpan={2}>
                         Water-quality testing, JJM
@@ -417,52 +485,172 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             </div>
           </AtlasSection>
 
-          <AtlasSection
-            id="water-bodies"
-            title="Water bodies"
-            intro={
-              reading.waterBodies
-                ? "The TNGIS all-water-bodies register, joined to each Panchayat by the register's own LGD code rather than by a name match."
-                : "A per-Panchayat water-body register needs a state GIS layer that states which Panchayat each tank belongs to; none is wired for this district yet."
-            }
-          >
-            {reading.waterBodies ? (
-              <div className="max-w-xl">
-                <AtlasCard>
-                  <div className="text-2xl sm:text-3xl font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                    {num(reading.waterBodies.count)}
+          {reading.waterBodies ? (
+            <AtlasSection
+              id="water-bodies"
+              title="Water bodies"
+              intro={
+                reading.waterBodies.register === "water-bodies-census"
+                  ? "The First Census of Water Bodies (Ministry of Jal Shakti, reference years 2017-18 to 2020-21), which locates each water body in a Census village; the LGD's own village list names the Panchayat, so the join is a code match, not a name match."
+                  : "The TNGIS all-water-bodies register, joined to each Panchayat by the register's own LGD code rather than by a name match."
+              }
+            >
+              {reading.waterBodies.register === "water-bodies-census" ? (
+                  <div className="grid gap-4 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
+                    <AtlasCard>
+                      <div className="text-2xl sm:text-3xl font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                        {num(reading.waterBodies.count)}
+                      </div>
+                      <div className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+                        water bodies on the census return, in {num(reading.waterBodies.places)} Panchayats
+                      </div>
+                      <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                        {censusWaterBodyNote(reading.waterBodies, unit)}
+                      </p>
+                    </AtlasCard>
+                    <div>
+                      <AtlasTableScroll label="Water bodies by census class">
+                        <table className={`${TABLE} min-w-[18rem]`}>
+                          <thead className={THEAD}>
+                            <tr>
+                              <th className={TH}>Census class</th>
+                              <th className={TH}>Water bodies</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reading.waterBodies.byType.map((row) => (
+                              <tr key={row.type} className={TR}>
+                                <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>{row.type}</td>
+                                <td className={TD}>{num(row.count)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </AtlasTableScroll>
+                      {reading.waterBodies.attributeNote ? (
+                        <AtlasNote>
+                          {reading.waterBodies.areaBasis === "withheld" ? "Waterspread is not published. " : ""}
+                          {reading.waterBodies.attributeNote}
+                        </AtlasNote>
+                      ) : null}
+                    </div>
                   </div>
-                  <div className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-300">
-                    water bodies, {num(reading.waterBodies.areaHectares)} ha of mapped waterspread
+                ) : (
+                  <div className="max-w-xl">
+                    <AtlasCard>
+                      <div className="text-2xl sm:text-3xl font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                        {num(reading.waterBodies.count)}
+                      </div>
+                      <div className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+                        water bodies, {num(reading.waterBodies.areaHectares)} ha of mapped waterspread
+                      </div>
+                      <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                        In {reading.waterBodies.places} Panchayats; {reading.waterBodies.placesWithout} have
+                        none in the register. Registered by {reading.waterBodies.departments.join(", ")}.
+                        Waterspread is the mapped extent, not storage: it says nothing about whether these
+                        hold water through the year or when any one of them was last surveyed. Read{" "}
+                        {reading.waterBodies.retrieved}.
+                      </p>
+                    </AtlasCard>
                   </div>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                    In {reading.waterBodies.places} Panchayats; {reading.waterBodies.placesWithout} have
-                    none in the register. Registered by {reading.waterBodies.departments.join(", ")}.
-                    Waterspread is the mapped extent, not storage: it says nothing about whether these
-                    hold water through the year or when any one of them was last surveyed. Read{" "}
-                    {reading.waterBodies.retrieved}.
-                  </p>
-                </AtlasCard>
-              </div>
-            ) : (
-              <AtlasGap title="No water-body register acquired">
-                {directory.identityAdapter === "lgd-directory"
-                  ? `No state water-body register is wired for ${directory.districtName} (Maharashtra has no open equivalent of the TNGIS layer; MRSAC and Bhuvan are the leads), so nothing is counted here.`
-                  : "No TNGIS water-body shard exists for this district yet, so nothing is counted here."}
-              </AtlasGap>
-            )}
-          </AtlasSection>
+                )}
+            </AtlasSection>
+          ) : null}
 
-          <AtlasSection
-            id="environment-plan"
-            title="District Environment Plan water balance"
-            intro="Every district files an Environment Plan on the NGT template, with a water balance in it. When the plan for this district is found, its balance is read here."
-          >
-            <AtlasGap title="No District Environment Plan on file for this district">
-              The NGT-template plan and its water balance have not been acquired for{" "}
-              {reading.districtName}. This section stays a named gap rather than an estimate until it is.
-            </AtlasGap>
-          </AtlasSection>
+          {reading.environmentPlan ? (
+            <AtlasSection
+              id="environment-plan"
+              title="District Environment Plan"
+              intro={`${reading.environmentPlan.document.publisher} prepared the plan on the CPCB model under the NGT's 2019 order. What it states about water is transcribed below, each figure with the page it sits on; nothing here is computed from it.`}
+            >
+              {reading.environmentPlan ? (
+                <div className="space-y-4">
+                  <div className="grid gap-4 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
+                    <AtlasCard>
+                      <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {reading.environmentPlan.document.title}, {reading.environmentPlan.document.editionLabel}
+                      </div>
+                      <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                        Dated {reading.environmentPlan.document.documentDate}, {reading.environmentPlan.document.pages} pages.{" "}
+                        <a
+                          href={reading.environmentPlan.document.url}
+                          className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline"
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          Read the plan at MPCB (PDF)
+                        </a>
+                        . {reading.environmentPlan.document.editionNote}
+                      </p>
+                      <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                        {reading.environmentPlan.review.status === "verified"
+                          ? `Transcription checked against the document on ${reading.environmentPlan.review.verifiedAt}.`
+                          : `Transcribed on ${reading.environmentPlan.review.extractedAt} and awaiting a reviewer's check against the document.`}
+                      </p>
+                    </AtlasCard>
+                    {reading.environmentPlan.hasWaterBalance ? null : (
+                      <AtlasGap title="The plan prints no water balance">
+                        {reading.environmentPlan.document.template} A demand, supply and deficit table for {reading.districtName}{" "}
+                        is still to find; the figures the plan does state are below.
+                      </AtlasGap>
+                    )}
+                  </div>
+                  <AtlasTableScroll label="What the plan states about water">
+                    <table className={`${TABLE} min-w-[40rem]`}>
+                      <thead className={THEAD}>
+                        <tr>
+                          <th className={TH}>Figure</th>
+                          <th className={TH}>As stated</th>
+                          <th className={TH}>Where</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reading.environmentPlan.figures.map((figure) => (
+                          <tr key={figure.id} className={TR}>
+                            <td className={`${TD} whitespace-normal`}>
+                              <div className="font-medium text-slate-900 dark:text-slate-100">{figure.label}</div>
+                              {figure.detail ? (
+                                <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{figure.detail}</div>
+                              ) : null}
+                            </td>
+                            <td className={`${TD} whitespace-nowrap`}>
+                              {figure.value.toLocaleString("en-IN")} {figure.unit}
+                            </td>
+                            <td className={`${TD} whitespace-nowrap text-xs`}>
+                              {`p. ${figure.printedPage} (PDF p. ${figure.pdfPage})`}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </AtlasTableScroll>
+                  <AtlasNote>
+                    Action points the plan sets for water:{" "}
+                    {reading.environmentPlan.actionPoints.map((point) => point.text.toLowerCase()).join("; ")}.
+                    {reading.environmentPlan.document.quirks.length > 0
+                      ? ` Two things to know when reading the PDF: ${reading.environmentPlan.document.quirks.join(" ")}`
+                      : ""}
+                  </AtlasNote>
+                </div>
+              ) : null}
+            </AtlasSection>
+          ) : null}
+
+          {gaps.length > 0 ? (
+            <AtlasSection
+              id="not-on-file"
+              title="Not yet on file for this district"
+              intro="Named gaps, kept short: each becomes a section of its own when its source is wired."
+            >
+              <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                {gaps.map((gap) => (
+                  <li key={gap.id} id={gap.id}>
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{gap.title}.</span> {gap.text}
+                  </li>
+                ))}
+              </ul>
+            </AtlasSection>
+          ) : null}
 
           <AtlasSection
             id="find"

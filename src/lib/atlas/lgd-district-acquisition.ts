@@ -62,7 +62,7 @@ export const OGD_RESOURCE_METADATA_URL =
  */
 const PATIENCE_MS = [5_000, 15_000, 45_000, 90_000, 180_000];
 
-async function patientFetchIntoCache(
+export async function patientFetchIntoCache(
   cache: ContentAddressedCache,
   url: string,
 ): Promise<Awaited<ReturnType<typeof fetchIntoCache>>> {
@@ -187,6 +187,19 @@ export async function discoverResourceExport(
     changedOn: new Date(changed * 1000).toISOString().slice(0, 10),
     metadataSha256: response.artifact.sha256,
   };
+}
+
+/**
+ * The portal's own export key, read from the bulk export url it publishes
+ * for a resource. The public sample key caps every query at ten rows; the
+ * export key is what `limit=all` needs. It is read at fetch time from the
+ * portal's metadata and never copied into a plan, a registry or a served
+ * artifact.
+ */
+export function exportKeyOf(exportUrl: string): string {
+  const key = new URL(exportUrl).searchParams.get("api-key");
+  if (!key) throw new Error(`data.gov.in export url ${exportUrl} carries no api-key`);
+  return key;
 }
 
 async function fetchExport(

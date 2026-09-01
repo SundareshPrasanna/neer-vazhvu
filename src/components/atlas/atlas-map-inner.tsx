@@ -7,7 +7,7 @@ import L from "leaflet";
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
-import type { AtlasMapPoint, AtlasMapPolygons } from "./atlas-map";
+import type { AtlasMapMarker, AtlasMapPoint, AtlasMapPolygons } from "./atlas-map";
 
 import "leaflet/dist/leaflet.css";
 
@@ -23,6 +23,18 @@ function markerStyle(isDark: boolean) {
     fillOpacity: 0.85,
     opacity: 1,
     weight: 1.5,
+  };
+}
+
+/** Secondary markers (water bodies): small and amber, so the Panchayat
+ *  marker stays the thing the map is about. */
+function secondaryMarkerStyle(isDark: boolean) {
+  return {
+    color: isDark ? "#fbbf24" : "#b45309",
+    fillColor: isDark ? "#f59e0b" : "#fbbf24",
+    fillOpacity: 0.9,
+    opacity: 1,
+    weight: 1,
   };
 }
 
@@ -103,16 +115,46 @@ export function AtlasDistrictMapInner({
   );
 }
 
-export function AtlasPlaceMapInner({ point, polygons }: { point: AtlasMapPoint; polygons?: AtlasMapPolygons }) {
+export function AtlasPlaceMapInner({
+  point,
+  polygons,
+  markers = [],
+}: {
+  point: AtlasMapPoint;
+  polygons?: AtlasMapPolygons;
+  markers?: AtlasMapMarker[];
+}) {
   const tiles = useMapTiles();
   const center: [number, number] = [point.latitude, point.longitude];
-  const bounds = useMemo(() => polygonsBounds(polygons), [polygons]);
+  // The polygon frames the map where one is served; otherwise the frame
+  // widens to hold the secondary markers, so none sits off the edge.
+  const bounds = useMemo(() => {
+    const own = polygonsBounds(polygons);
+    if (own) return own;
+    if (markers.length === 0) return null;
+    return pointsBounds([
+      [point.latitude, point.longitude],
+      ...markers.map((marker) => [marker.latitude, marker.longitude] as [number, number]),
+    ]);
+  }, [polygons, markers, point.latitude, point.longitude]);
   return (
     <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="h-full w-full">
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {bounds ? <FitToBounds bounds={bounds} padding={[12, 12]} maxZoom={14} /> : null}
       <MapResizer />
       <PolygonLayer polygons={polygons} isDark={tiles.isDark} />
+      {markers.map((marker) => (
+        <CircleMarker
+          key={marker.id}
+          center={[marker.latitude, marker.longitude]}
+          radius={3.5}
+          pathOptions={secondaryMarkerStyle(tiles.isDark)}
+        >
+          <Tooltip direction="top" offset={[0, -3]}>
+            {marker.label}
+          </Tooltip>
+        </CircleMarker>
+      ))}
       <CircleMarker center={center} radius={8} pathOptions={markerStyle(tiles.isDark)}>
         <Tooltip permanent direction="top" offset={[0, -8]}>
           <strong>{point.name}</strong>

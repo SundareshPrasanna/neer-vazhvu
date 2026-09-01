@@ -16,6 +16,15 @@ export interface AtlasMapPoint {
  *  and, on a place map, used as the frame. */
 export type AtlasMapPolygons = FeatureCollection<MultiPolygon, { lgdCode: string; name: string }>;
 
+/** Small secondary markers on a place map: the water bodies a register
+ *  records for the Panchayat, where their coordinates may be served. */
+export interface AtlasMapMarker {
+  id: string;
+  latitude: number;
+  longitude: number;
+  label: string;
+}
+
 function MapLoading() {
   return (
     <div
@@ -46,10 +55,18 @@ export function AtlasDistrictMap({ points, polygons }: { points: AtlasMapPoint[]
   );
 }
 
-export function AtlasPlaceMap({ point, polygons }: { point: AtlasMapPoint; polygons?: AtlasMapPolygons }) {
+export function AtlasPlaceMap({
+  point,
+  polygons,
+  markers,
+}: {
+  point: AtlasMapPoint;
+  polygons?: AtlasMapPolygons;
+  markers?: AtlasMapMarker[];
+}) {
   return (
     <div className="h-64 sm:h-72 w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-      <PlaceMap point={point} polygons={polygons} />
+      <PlaceMap point={point} polygons={polygons} markers={markers} />
     </div>
   );
 }
