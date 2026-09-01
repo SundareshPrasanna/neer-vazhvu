@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-salem-v1",
+  "district": {
+    "displayName": "Salem",
+    "tnrdLgdCode": "538",
+    "tnrdMasterCode": "7",
+    "jjmStateId": "29",
+    "jjmDistrictId": "439",
+    "censusDistrictCode": "608",
+    "lgdDistrictCode": "584",
+    "ingresDistrictName": "SALEM",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 385,
+    "tnrdMasterBlocks": 20,
+    "tnrdMasterGramPanchayats": 385,
+    "jjmVillages": 391,
+    "censusVillages": 585
+  },
+  "targets": [
+    {
+      "id": "vellar",
+      "displayName": "Vellar",
+      "reviewedAt": "2026-09-01",
+      "tnrdLgdGramPanchayatCode": "227684",
+      "tnrdMasterBlockCode": "13",
+      "tnrdMasterGramPanchayatCode": "2",
+      "jjmBlockId": "4528",
+      "jjmGramPanchayatId": "151158",
+      "censusSubdistrictCode": "05736",
+      "censusGramPanchayatCode": "0264",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "633762",
+            "name": "Vellar"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 608; subdistrict 05736; Census GP 0264",
+            "assertion": "The reviewed Census composition contains Vellar 633762."
+          }
+        ]
+      }
+    }
+  ]
+}

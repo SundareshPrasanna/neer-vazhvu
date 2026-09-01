@@ -38,7 +38,7 @@ on:
   workflow_dispatch:
     inputs:
       district:
-        description: "District slug (thanjavur, tiruchirappalli, satara) or 'all'"
+        description: "District slug (thanjavur, tiruchirappalli, salem, tirupathur, satara) or 'all'"
         required: false
         default: "all"
 
@@ -57,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        district: [thanjavur, tiruchirappalli, satara]
+        district: [thanjavur, tiruchirappalli, salem, tirupathur, satara]
     # Serialise the two districts: JJM is a public portal read at a paced
     # rate, and two parallel readers would double the load and race the
     # commit step.

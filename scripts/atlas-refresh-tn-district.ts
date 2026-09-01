@@ -6,6 +6,8 @@
  * served directory artifact public/data/atlas/<state>/<district>/directory.json.
  *
  *   npx tsx scripts/atlas-refresh-tn-district.ts --district thanjavur --fetch --as-of 2026-09-01
+ *   npx tsx scripts/atlas-refresh-tn-district.ts --district salem --fetch --as-of 2026-09-01 \
+ *       --census-sha <sha256> --census-retrieved 2026-07-25   # first run: reuse the cached workbook
  *   npx tsx scripts/atlas-refresh-tn-district.ts --district thanjavur --replay
  *   npx tsx scripts/atlas-refresh-tn-district.ts --district thanjavur --validate
  *
@@ -176,8 +178,17 @@ async function main(): Promise<void> {
     const asOf = argValue(argv, "--as-of");
     if (!asOf) throw new Error("--as-of YYYY-MM-DD is required with --fetch");
     // The previous extract lets the CLOSED census workbook be reused from
-    // the content-addressed cache instead of re-downloaded every month.
+    // the content-addressed cache instead of re-downloaded every month. A
+    // first run has no previous extract: --census-sha names a workbook
+    // already placed under .cache/atlas/<state>/<district>/objects/<sha256>
+    // (the one state workbook serves every district), --census-retrieved
+    // says when it was fetched. Hash-verified either way.
     const previous = readCacheJson<TnDistrictSourceExtract>(district, EXTRACT_CACHE);
+    const censusSha = argValue(argv, "--census-sha");
+    const censusRetrieved = argValue(argv, "--census-retrieved");
+    if ((censusSha === undefined) !== (censusRetrieved === undefined)) {
+      throw new Error("--census-sha and --census-retrieved go together");
+    }
     extract = await acquireTnDistrictSourceExtract(plan, asOf, {
       cacheDir: cacheDir(district),
       censusExtractorPath: resolve(ROOT, "scripts/atlas_extract_census_village_amenities.py"),
@@ -186,7 +197,9 @@ async function main(): Promise<void> {
             artifactSha256: previous.sources.census.artifactSha256s[0],
             retrievedAt: previous.sources.census.retrievedAt,
           }
-        : undefined,
+        : censusSha && censusRetrieved
+          ? { artifactSha256: censusSha, retrievedAt: censusRetrieved }
+          : undefined,
     });
     writeCache(district, EXTRACT_CACHE, extract);
   } else {

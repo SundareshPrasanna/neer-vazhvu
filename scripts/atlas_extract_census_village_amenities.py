@@ -141,6 +141,7 @@ def extract_records(
     district_code: str,
     sheet_name: str = DEFAULT_SHEET,
     allow_empty_gram_panchayat: bool = False,
+    subdistrict_codes: set[str] | None = None,
 ) -> list[dict[str, str | list[dict[str, str]]]]:
     with zipfile.ZipFile(xlsx_path) as archive:
         shared_strings = read_shared_strings(archive)
@@ -177,7 +178,10 @@ def extract_records(
                         output_name: values.get(index, "").strip()
                         for index, output_name in headers.items()
                     }
-                    if raw_record.get("districtCode") == district_code:
+                    if raw_record.get("districtCode") == district_code and (
+                        not subdistrict_codes
+                        or raw_record.get("subdistrictCode") in subdistrict_codes
+                    ):
                         optional = (
                             {"gramPanchayatCode", "gramPanchayatName"}
                             if allow_empty_gram_panchayat
@@ -219,7 +223,10 @@ def extract_records(
                         records.append(record)
                 row.clear()
     if not records:
-        raise ValueError(f"No Census village rows found for district {district_code}")
+        scope = f"district {district_code}"
+        if subdistrict_codes:
+            scope += f" subdistricts {', '.join(sorted(subdistrict_codes))}"
+        raise ValueError(f"No Census village rows found for {scope}")
     records.sort(key=lambda record: int(str(record["villageCode"])))
     village_codes = [record["villageCode"] for record in records]
     if len(set(village_codes)) != len(village_codes):
@@ -241,7 +248,15 @@ def main() -> int:
         action="store_true",
         help="accept rows with no Gram Panchayat code/name (the Maharashtra release leaves the column blank; composition then comes from the LGD register, not from the Census)",
     )
+    parser.add_argument(
+        "--subdistrict-codes",
+        default="",
+        help="comma-separated Census subdistrict codes to keep: the taluks of a district formed after 2011, whose rows sit under the parent district's code (Tirupathur under Vellore)",
+    )
     args = parser.parse_args()
+    subdistrict_codes = {
+        code.strip() for code in args.subdistrict_codes.split(",") if code.strip()
+    }
     try:
         json.dump(
             extract_records(
@@ -249,6 +264,7 @@ def main() -> int:
                 args.district_code,
                 sheet_name=args.sheet,
                 allow_empty_gram_panchayat=args.allow_empty_gram_panchayat,
+                subdistrict_codes=subdistrict_codes or None,
             ),
             sys.stdout,
             ensure_ascii=False,

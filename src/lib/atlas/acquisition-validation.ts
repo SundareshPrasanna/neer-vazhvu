@@ -405,6 +405,20 @@ export function validateTnDistrictRefreshPlan(raw: unknown): string[] {
       "district",
       errors,
     );
+    const subdistricts = raw.district.censusSubdistrictCodes;
+    if (subdistricts !== undefined) {
+      if (
+        !Array.isArray(subdistricts) ||
+        subdistricts.length === 0 ||
+        !subdistricts.every((code) => typeof code === "string" && /^\d{5}$/.test(code))
+      ) {
+        errors.push(
+          "district.censusSubdistrictCodes: must be a non-empty array of five-digit Census subdistrict codes",
+        );
+      } else if (new Set(subdistricts).size !== subdistricts.length) {
+        errors.push("district.censusSubdistrictCodes: duplicate subdistrict code");
+      }
+    }
   }
   if (!isRecord(raw.sources)) {
     errors.push("sources: must be an object");

@@ -71,6 +71,16 @@ function censusReleaseOf(district: ReturnType<typeof requireDistrict>): CensusRe
   return { catalogUrl: "https://censusindia.gov.in/nada/index.php/catalog/45377", sheet: undefined, upstream: "census" };
 }
 
+/** A district formed after 2011 names, in its plan, the Census subdistricts
+ *  that became it (Tirupathur: three taluks of 2011 Vellore); the attribute
+ *  extract keeps only those rows, as the identity extract did. */
+function censusSubdistrictCodesOf(district: ReturnType<typeof requireDistrict>): string[] {
+  const plan = JSON.parse(readFileSync(reviewedInputPath(district, "refresh-plan.json"), "utf8")) as {
+    district: { censusSubdistrictCodes?: string[] };
+  };
+  return plan.district.censusSubdistrictCodes ?? [];
+}
+
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const district = requireDistrict(argv);
@@ -104,6 +114,9 @@ async function main(): Promise<void> {
         "--out",
         out,
         ...(release.sheet ? ["--sheet", release.sheet] : []),
+        ...(censusSubdistrictCodesOf(district).length
+          ? ["--subdistrict-codes", censusSubdistrictCodesOf(district).join(",")]
+          : []),
       ],
       { stdio: ["ignore", "inherit", "inherit"] },
     );
