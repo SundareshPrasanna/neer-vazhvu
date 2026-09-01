@@ -90,6 +90,10 @@ export const KABINI: BasinManifest = {
       ],
     },
     { family: "context-rivers", label: "Kabini river stretch in Kerala", floor: "hydrology", geom: "line", color: "#0284c7", defaultOn: true, context: true },
+    // The Kerala tributary skeleton: trunk streams (order 5+) plus the named
+    // feeders of the two context reservoirs, so those reservoirs sit on their
+    // rivers instead of floating (Sundaresh, 01 Sep).
+    { family: "context-streams", label: "Kabini tributaries in Kerala", floor: "hydrology", geom: "line", color: "#0284c7", defaultOn: true, context: true },
     // WRIS major waterbodies inside the Wayanad share - the Banasura Sagar and
     // Karapuzha reservoirs. Context like the reach above the state line: the
     // headwaters should not read as a lakeless void (Madhuri, 31 Aug).
@@ -165,7 +169,7 @@ export const KABINI: BasinManifest = {
   },
   credits: [
     "Basin boundary: Karnataka WRD basin decomposition (KWRIS), sub-basin C2, carried over from the Cauvery (Karnataka) atlas ingest. Every data layer here is clipped to it, so the atlas is the Karnataka portion of the Kabini; the Wayanad (Kerala) headwaters appear as context only - the full-watershed outline, the river's course above the state line, and the major waterbodies within it.",
-    "Kerala-headwaters context waterbodies: India-WRIS major waterbodies (via Paani Earth's Cauvery hydrology GeoPackage, August 2026), filtered to the Wayanad share of the watershed. Drawn as context; no Kerala-side pressure, station or administrative data is claimed.",
+    "Kerala-headwaters context: India-WRIS major waterbodies and the tributary skeleton (trunk streams of Strahler order 5+, plus each reservoir's own named feeder - the Karaman Todu into Banasurasagar, the Kora Puzha and Oni Puzha at Karapuzha), via Paani Earth's Cauvery hydrology GeoPackage (August 2026), filtered to the Wayanad share. Drawn as context; no Kerala-side pressure, station or administrative data is claimed.",
     "Sub-catchments, river centrelines, drainage network, major waterbodies, dams and anicuts: India-WRIS, via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). WRIS publishes watersheds with codes and no names, so sub-catchments are labelled by code.",
     "Dams: India-WRIS National Register of Large Dams, extract dated 14 April 2026. It disagrees with the older CWC MLRD list on completion year for four minor tanks (Hebballa, Kamarahalli, Kalikatte, Karimuddenahalli); the newer register's years are the ones shown.",
     "Minor irrigation tanks: Karnataka GIS tank inventory (KGIS TIS), via Paani Earth's Cauvery package.",

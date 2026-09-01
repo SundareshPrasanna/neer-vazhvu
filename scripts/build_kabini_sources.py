@@ -418,15 +418,66 @@ def main() -> None:
     # in-basin layer, majority-inside the Kerala share so nothing is drawn
     # twice; still context, so no Kerala-side claim beyond the geometry.
     ctx_wb = []
+    ctx_wb_geoms = []
     for f in _read_vector(hyd, WB_MAJOR_LAYER, None):
         g = _geom(f)
         if g is None or g.area <= 0:
             continue
         if g.intersection(beyond).area / g.area >= 0.5:
             ctx_wb.append(f)
+            ctx_wb_geoms.append(g)
             print(f"    Kerala waterbody: {(f['properties'].get('wbname') or '?').strip()}")
     _write(out / "kabini-context-waterbodies.geojson", _fc(ctx_wb),
            "Kerala-share major waterbodies")
+
+    # The rivers those reservoirs sit on. Without them the two context
+    # reservoirs floated in Wayanad connected to nothing (Sundaresh, 01 Sep):
+    # the only Kerala line was the mainstem, and both dams are on tributaries.
+    # Kept: the trunk network (Strahler ordsh >= 5) plus each context
+    # reservoir's own NAMED feeder river, clipped to the Kerala share - a
+    # skeleton, not the full drainage. Connectivity is asserted at build time:
+    # every context reservoir must touch the staged network.
+    CTX_STREAM_MIN_ORDER = 5
+    join_tol = 0.0005  # ~55 m: simplification slack when testing touch
+    trunk: list = []
+    named_groups: dict[str, list] = {}
+    for f in _read_vector(hyd, DRAINAGE_LAYER, 0.0001):
+        g = _geom(f)
+        if g is None:
+            continue
+        inter = _same_dim(g.intersection(beyond), 1)
+        if inter is None or inter.is_empty:
+            continue
+        name = (f["properties"].get("rivname") or "").strip()
+        order = int(f["properties"].get("ordsh") or 0)
+        if name:
+            named_groups.setdefault(name, []).append((inter, order))
+        if order >= CTX_STREAM_MIN_ORDER:
+            trunk.append((name, order, inter))
+    feeders = sorted(
+        nm for nm, segs in named_groups.items()
+        if any(unary_union([s for s, _ in segs]).distance(r) < join_tol for r in ctx_wb_geoms)
+    )
+    ctx_streams = [{"type": "Feature", "geometry": mapping(geom),
+                    "properties": {"name": nm, "role": "context"}}
+                   for nm, order, geom in trunk]
+    for nm in feeders:
+        for geom, order in named_groups[nm]:
+            if order < CTX_STREAM_MIN_ORDER:  # trunk already carries the rest
+                ctx_streams.append({"type": "Feature", "geometry": mapping(geom),
+                                    "properties": {"name": nm, "role": "context"}})
+    net = unary_union([shape(f["geometry"]) for f in ctx_streams])
+    for f, g in zip(ctx_wb, ctx_wb_geoms):
+        d_km = net.distance(g) * 111
+        nm = (f["properties"].get("wbname") or "?").strip()
+        if d_km > 0.01:
+            sys.exit(f"context reservoir {nm!r} is {d_km:.2f} km from the staged "
+                     "tributary network - the skeleton no longer connects it")
+        print(f"    {nm} connected to the tributary skeleton")
+    km = sum(_hav_length_km(shape(f["geometry"])) for f in ctx_streams)
+    print(f"    feeders: {', '.join(feeders)}; skeleton ~{km:.0f} km")
+    _write(out / "kabini-context-streams.geojson", _fc(ctx_streams),
+           "Kerala tributary skeleton")
 
     # ── 7b. Review round (23 Aug 2026): the corrections Paani sent back ──
     rdir = Path(args.review_dir)

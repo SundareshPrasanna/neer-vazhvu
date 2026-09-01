@@ -26,7 +26,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-08-31",
+    "produced_at": "2026-09-01",
     "produced_by": "scripts/build_kabini_sources.py + scripts/ingest_basin.py (scripts/basin-sources/kabini-ingest.json)"
   },
   "basinId": "kabini",
@@ -399,7 +399,20 @@
           "provenance": "India-WRIS major waterbodies within the Kerala (Wayanad) share of the watershed, via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026) - the same source as the in-basin major-waterbodies layer, filtered to bodies lying mainly outside the C2 clip so nothing is drawn twice. Context, like the reach above the state line: the headwaters should not read as a lakeless void (Madhuri review, 31 Aug 2026)."
         }
       ],
-      "bytes": 172408,
+      "bytes": 173420,
+      "sliced": false
+    },
+    "context-streams": {
+      "featureCount": 626,
+      "sources": [
+        {
+          "file": "kabini-context-streams.geojson",
+          "kind": null,
+          "count": 626,
+          "provenance": "The Kerala tributary skeleton, from India-WRIS drainage (Kabini_Drainage) via Paani Earth's Cauvery hydrology GeoPackage (Aug 2026): the trunk network (Strahler order 5+) plus each context reservoir's own named feeder river (Karaman Todu into Banasurasagar; Kora Puzha and Oni Puzha at Karapuzha), clipped to the Wayanad share. Staged so the two context reservoirs connect to the river system instead of floating (Sundaresh review, 01 Sep 2026); the build asserts the connection. Context only - no Kerala-side claim beyond the geometry."
+        }
+      ],
+      "bytes": 428131,
       "sliced": false
     }
   },

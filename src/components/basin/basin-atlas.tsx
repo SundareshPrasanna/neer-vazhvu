@@ -2001,6 +2001,12 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     // stream against the basemap.
     return { color: l.color, weight: 3, dashArray: "7 4", opacity: faded ? 0.55 : 1 };
   }
+  if (l.family === "context-streams") {
+    // The Kerala tributary skeleton: visibly a level below the mainstem
+    // context line, so the reservoirs read as ON rivers without the
+    // headwaters shouting over the subject.
+    return { color: l.color, weight: 1.25, dashArray: "4 4", opacity: faded ? 0.4 : 0.7 };
+  }
   if (l.family === "prs-drains") {
     // The drains feeding the polluted stretch. Weight-1 amber vanished into
     // the basemap's orange roads (Madhuri, 31 Aug); these are the lines the
