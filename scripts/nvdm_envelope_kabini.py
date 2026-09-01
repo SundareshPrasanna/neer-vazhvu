@@ -156,7 +156,7 @@ ARTIFACTS: dict[str, tuple[str, list[dict], str, str, bool]] = {
     "context-boundary.geojson": ("basins/context-boundary", [paani("India-WRIS Kabini tributary watershed, full extent across Karnataka and Kerala"), KWRIS], "derived", PIPELINE, True),
     "context-rivers.geojson": ("basins/context-rivers", [paani("India-WRIS named river centrelines, the reach above the Karnataka boundary"), KWRIS], "derived", PIPELINE, True),
     "context-waterbodies.geojson": ("basins/context-waterbodies", [paani("India-WRIS major waterbodies, the Kerala (Wayanad) share of the watershed"), KWRIS], "derived", PIPELINE, True),
-    "context-streams.geojson": ("basins/context-streams", [paani("India-WRIS drainage (Kabini_Drainage), the Kerala tributary skeleton: order-5+ trunk plus the context reservoirs' named feeders"), KWRIS], "derived", PIPELINE, True),
+    "context-streams.geojson": ("basins/context-streams", [paani("India-WRIS drainage (Kabini_Drainage), the Kerala tributary skeleton: named watercourses whole, plus unnamed order-5+ trunk segments"), KWRIS], "derived", PIPELINE, True),
     "drainage.geojson": ("basins/drainage", [paani("India-WRIS stream network for the Kabini (Kabini_Drainage)"), KWRIS], "derived", PIPELINE, True),
     "waterbodies-major.geojson": ("basins/waterbodies-major", [paani("India-WRIS major waterbodies"), KWRIS], "derived", PIPELINE, True),
     "waterbodies-minor.geojson": ("basins/waterbodies-minor", [paani("KGIS minor-irrigation tank inventory (KGIS TIS)"), KWRIS], "derived", PIPELINE, True),
