@@ -410,6 +410,10 @@ function drawRank(l: BasinLayer): number {
   if (l.elevation) return -2; // terrain underneath everything, even the gap choropleth
   if (l.gap) return -1; // gap choropleth at the very bottom - all data (incl. STPs) sits above it
   if (l.prs) return 5; // polluted stretch always on top so the thin line stays clickable
+  // Below the basin boundary, always: as an ordinary fill it painted the
+  // out-of-state shade OVER the boundary line, and the shared edge read as a
+  // separate polygon abutting the basin (Madhuri, 31 Aug).
+  if (l.family === "context-boundary") return -0.5;
   if (l.family === "boundary" || l.family.startsWith("admin")) return 0;
   if (l.family === "sub-hydrosheds") return 1;
   if (l.geom === "fill") return 2;
@@ -1793,7 +1797,13 @@ export interface LegendItem { sym: LegendSym; color: string; label: string }
 export function buildLegendItems(layers: BasinLayer[], elevation?: { band: string; color: string }[]): LegendItem[] {
   const items: LegendItem[] = [];
   for (const l of layers) {
-    if (l.elevation) {
+    if (l.legendRows) {
+      // The manifest speaks for itself: a layer whose features carry more than
+      // one visual role declares its own rows (basin-specific prose stays
+      // data, never a hardcoded label here).
+      items.push(...l.legendRows);
+    }
+    else if (l.elevation) {
       // Band labels come from the data (they differ per basin), matching the
       // city elevation legend: never hardcode edges at a call site.
       for (const e of elevation ?? []) items.push({ sym: "box", color: e.color, label: e.band });
@@ -1826,6 +1836,12 @@ export function buildLegendItems(layers: BasinLayer[], elevation?: { band: strin
       items.push({ sym: "outline", color: "#94a3b8", label: "Industrial area - unnamed (no effluent details)" });
     } else if (l.family === "pressures-industrial" && l.kindFilter === "major-industry") {
       items.push({ sym: "dot", color: PRESSURE_KIND_COLOR["major-industry"], label: "17-category industry (KSPCB)" });
+    } else if (l.family === "pressures-industrial" && l.kindFilter && l.kindFilter !== "industrial-area") {
+      // A kind-split entry that is NOT the estate fill (points, units outside
+      // estates, estates outside the basin) draws in its own layer colour -
+      // one row each. Routing these through the CETP trio repeated the same
+      // three rows once per entry (Madhuri, 31 Aug).
+      items.push({ sym: l.geom === "point" ? "dot" : "box", color: l.color, label: l.label });
     } else if (l.family === "pressures-industrial") {
       // The three CETP states are all solid fills (see fillStyle) - the legend
       // rows must mirror that, one box per state.
@@ -1848,20 +1864,46 @@ export function buildLegendItems(layers: BasinLayer[], elevation?: { band: strin
       items.push({ sym: "tri-ring", color: l.color, label: "FSTP (not yet functional)" });
     } else if (l.family.startsWith("admin")) items.push({ sym: "outline", color: l.color, label: l.label });
     else if (l.geom === "point") items.push({ sym: "dot", color: l.color, label: l.label });
+    else if (l.geom === "line") items.push({ sym: "line", color: l.color, label: l.label });
     else items.push({ sym: "box", color: l.color, label: l.label });
   }
-  return items;
+  // Backstop: two layer entries that legitimately produce the same row (a
+  // kind-split family) must not print it twice.
+  const seen = new Set<string>();
+  return items.filter((it) => {
+    const k = `${it.sym}|${it.color}|${it.label}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
 }
+
+/** How the legend last stood, across basins and visits: it opens collapsed
+ *  (a full legend ate most of a small map - Madhuri, 31 Aug) unless the
+ *  reader expanded it last time. */
+const LEGEND_OPEN_KEY = "nv-basin-legend-open";
 
 /** Dynamic legend: reflects what's currently visible on the map. */
 function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[]; elevation?: { band: string; color: string }[]; notes?: string[]; raised?: boolean }) {
-  const [open, setOpen] = useState(true);
+  // Collapsed on first paint even when storage says open - the stored value is
+  // applied in an effect so server and client render the same initial tree.
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (localStorage.getItem(LEGEND_OPEN_KEY) === "1") setOpen(true);
+    } catch { /* storage unavailable: stay collapsed */ }
+  }, []);
+  const toggle = () => setOpen((o) => {
+    try { localStorage.setItem(LEGEND_OPEN_KEY, o ? "0" : "1"); } catch { /* fine */ }
+    return !o;
+  });
   const items = buildLegendItems(layers, elevation);
   if (!items.length) return null;
   return (
     <div className={`absolute ${raised ? "bottom-[156px] md:bottom-3" : "bottom-3"} left-3 z-[800] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px] transition-[bottom] duration-200`}>
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         className="w-full flex items-center justify-between px-2.5 py-1.5 font-semibold text-slate-600 dark:text-slate-300"
       >
         Legend <span className="text-slate-400">{open ? "−" : "+"}</span>
@@ -1969,6 +2011,18 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     // stream against the basemap.
     return { color: l.color, weight: 3, dashArray: "7 4", opacity: faded ? 0.55 : 1 };
   }
+  if (l.family === "context-streams") {
+    // The Kerala tributary skeleton: visibly a level below the mainstem
+    // context line, so the reservoirs read as ON rivers without the
+    // headwaters shouting over the subject.
+    return { color: l.color, weight: 1.25, dashArray: "4 4", opacity: faded ? 0.4 : 0.7 };
+  }
+  if (l.family === "prs-drains") {
+    // The drains feeding the polluted stretch. Weight-1 amber vanished into
+    // the basemap's orange roads (Madhuri, 31 Aug); these are the lines the
+    // outfall dots exist to explain, so they draw like it.
+    return { color: l.color, weight: 3, opacity: faded ? 0.5 : 0.95 };
+  }
   if (l.family === "rivers") {
     const rprops = feat?.properties as Record<string, unknown>;
     const rid = String(rprops?.riverId ?? rprops?.river_id ?? "");
@@ -2072,18 +2126,18 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gap
     return { color: SELECTED_SHED_COLOR, weight: 3, fillColor: l.color, fillOpacity: 0.35, opacity: 1 };
   }
   if (l.family === "context-boundary") {
-    // Two roles. "context" is the full outline: dashed, unfilled, neutral, so
-    // it reads as "there is more basin than this map covers" without competing
-    // with the frame the data is clipped to. "beyond" is the out-of-state
-    // catchment itself, and it gets a FILL - 2,199 sq km drawn as bare outline
-    // is 2,199 sq km nobody can see (review, 27 Aug).
+    // Two roles. "context" is the full outline: dashed, in the layer's
+    // outlineColor - pale enough to defer to the bold clip frame, bright
+    // enough to survive a dark basemap (Madhuri, 31 Aug: the old slate dash
+    // was invisible, so the basin looked like it stopped at Karnataka).
+    // "beyond" is the out-of-state catchment itself, and it gets a FILL -
+    // 2,199 sq km drawn as bare outline is 2,199 sq km nobody can see
+    // (review, 27 Aug) - but NO stroke: its only edges are the full outline
+    // and the basin boundary, which draw themselves.
     if ((feat?.properties as Record<string, unknown> | undefined)?.role === "beyond") {
-      return {
-        color: l.color, weight: 1, dashArray: "3 4", opacity: faded ? 0.4 : 0.75,
-        fillColor: l.color, fillOpacity: faded ? 0.1 : 0.22,
-      };
+      return { stroke: false, fillColor: l.color, fillOpacity: faded ? 0.12 : 0.25 };
     }
-    return { color: l.color, weight: 2, dashArray: "7 5", fill: false, opacity: faded ? 0.5 : 0.9 };
+    return { color: l.outlineColor ?? l.color, weight: 2.5, dashArray: "7 5", fill: false, opacity: faded ? 0.6 : 0.95 };
   }
   if (l.family === "boundary") {
     // Bold SOLID line in the manifest color (fuchsia) - a hue the OSM basemap

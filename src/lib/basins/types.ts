@@ -67,6 +67,14 @@ export interface BasinLayer {
   geom: BasinGeomRole;
   /** Hex color for the layer (rivers override per-river). */
   color: string;
+  /** Stroke colour where a layer draws an outline in a different hue than its
+   *  fill (context-boundary's full-extent frame). Falls back to `color`. */
+  outlineColor?: string;
+  /** Explicit legend rows for this layer, replacing the derived ones - for a
+   *  layer whose features carry more than one visual role (context-boundary's
+   *  outline + shade). Labels are data, so basin-specific prose stays in the
+   *  manifest, never in the shared component. */
+  legendRows?: { sym: "box" | "dot" | "ring" | "line" | "dash" | "outline" | "tri" | "tri-ring"; color: string; label: string }[];
   /** On by default within its floor. The checkbox is the single source of
    *  truth for visibility - nothing else (zoom, etc.) hides a checked layer. */
   defaultOn: boolean;
@@ -133,13 +141,19 @@ export interface ReadingsSeriesBase {
 }
 
 /** [isoDateOrMonth, value] - value is a number except wq-class-series ("A".."E"). */
-export type ReadingsPoint = [string, number | string];
+/** An optional third element is the number of daily readings behind the value
+ *  (aggregated kinds: discharge-monthly, gauge-level-monthly, annual-water-year).
+ *  A month averaged from 3 readings is not a month averaged from 31, and the
+ *  charts should let a reader tell them apart (Madhuri, 31 Aug). Packs built
+ *  before the count existed simply omit it. */
+export type ReadingsPoint = [string, number | string] | [string, number, number];
 
 export interface ReadingsSeries extends ReadingsSeriesBase {
   /** Time series kinds. */
   points?: ReadingsPoint[];
-  /** climatology-monthly: per calendar month 1..12. */
-  months?: { m: number; p25: number; median: number; p75: number }[];
+  /** climatology-monthly: per calendar month 1..12; n = daily readings behind
+   *  the month's quartiles, when the pack carries it. */
+  months?: { m: number; p25: number; median: number; p75: number; n?: number }[];
   /** flow-duration: [exceedance %, value] pairs, ascending exceedance. */
   exceedance?: [number, number][];
   /** wq-param-series: the parameter name + the CPCB criterion drawn on the chart. */

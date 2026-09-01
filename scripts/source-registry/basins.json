@@ -691,9 +691,11 @@
         "public/data/basins/kabini/waterbodies-minor",
         "public/data/basins/kabini/prs-drains.geojson",
         "public/data/basins/kabini/context-boundary.geojson",
-        "public/data/basins/kabini/context-rivers.geojson"
+        "public/data/basins/kabini/context-rivers.geojson",
+        "public/data/basins/kabini/context-waterbodies.geojson",
+        "public/data/basins/kabini/context-streams.geojson"
       ],
-      "refreshMethod": "scripts/ingest_basin_overview.py for cauvery-ka, then scripts/build_kabini_sources.py -> ingest_basin.py -> build_basin_flow_readings.py for the Kabini carry-over (order matters: re-ingest wipes hasReadings)"
+      "refreshMethod": "scripts/ingest_basin_overview.py for cauvery-ka, then scripts/build_kabini_sources.py -> ingest_basin.py -> build_basin_wq_param_packs.py + build_basin_flow_readings.py for the Kabini carry-over (order matters: re-ingest wipes hasReadings on BOTH station families)"
     }
   ]
 }
