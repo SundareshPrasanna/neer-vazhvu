@@ -11,7 +11,9 @@
 // scoreboard.json, reservoirs.geojson) - no source-system knowledge here.
 
 import { Fragment, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
+import { districtHref, listVisibleAtlasDistricts } from "@/lib/atlas/registry";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
@@ -551,6 +553,32 @@ export function BasinOverview({
                   {rows.some((p) => p.readingsPeriod) && (
                     <p className="mt-0.5 text-[10px] text-slate-400">Worst monthly use-based class, {String(rows.find((p) => p.readingsPeriod)?.readingsPeriod)}. A best - E worst.</p>
                   )}
+                </div>
+              );
+            })()}
+            {/* Districts are the administrative projection of this reach.
+                Derived from the Atlas registry (not the manifest) so a
+                preview-gated district is never linked from a live basin. */}
+            {(() => {
+              const districts = listVisibleAtlasDistricts().filter(
+                (d) => d.basin?.basinId === manifest.basinId && d.basin.subBasinKey === selected.key,
+              );
+              if (districts.length === 0) return null;
+              return (
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Districts in this reach</div>
+                  <ul className="mt-0.5 space-y-0.5">
+                    {districts.map((d) => (
+                      <li key={d.scopeId}>
+                        <Link
+                          href={districtHref(d)}
+                          className="text-[12px] font-medium text-cyan-700 dark:text-cyan-400 hover:underline"
+                        >
+                          {d.name} district: blocks, taluk groundwater, every Gram Panchayat
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               );
             })()}

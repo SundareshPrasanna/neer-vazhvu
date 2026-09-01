@@ -148,6 +148,11 @@ CONTRACTS = {
     "data-root/restoration-priority": "restoration-priority.schema.json",
     "geojson-layers/water-bodies-current": "water-bodies-current.schema.json",
     "geojson-layers/rivers": "rivers.schema.json",
+    # Atlas (district scope): per-block shards of the GP-grain families. The
+    # dataset id is the family (build_dataset_catalogue.py's atlas rule), so one
+    # contract covers every shard of every district.
+    "atlas/briefs": "atlas-briefs.schema.json",
+    "atlas/assessments": "atlas-assessments.schema.json",
 }
 
 ENVELOPE_KEYS = {"nvdm", "dataset", "scope", "provenance", "projection", "ext"}
@@ -966,12 +971,19 @@ def selftest(schemas: dict[str, dict]) -> int:
     facts = json.loads((SCHEMA_DIR / "examples/example-facts.json").read_text())
     wb = json.loads((SCHEMA_DIR / "examples/example-water-bodies-current.geojson").read_text())
     semantic = json.loads((SCHEMA_DIR / "examples/example-semantic-records.json").read_text())
+    atlas_briefs = json.loads((SCHEMA_DIR / "examples/example-atlas-briefs.json").read_text())
+    atlas_assessments = json.loads(
+        (SCHEMA_DIR / "examples/example-atlas-assessments.json").read_text()
+    )
 
     # Positives: examples must pass the FULL L3 path (envelope + registry
     # agreement + accountability + contract + claim + unknown-key), with the
     # examples' own source ids treated as registered-and-joined.
     for name, doc, schema in (("example-facts", facts, "facts.schema.json"),
-                              ("example-water-bodies", wb, "water-bodies-current.schema.json")):
+                              ("example-water-bodies", wb, "water-bodies-current.schema.json"),
+                              ("example-atlas-briefs", atlas_briefs, "atlas-briefs.schema.json"),
+                              ("example-atlas-assessments", atlas_assessments,
+                               "atlas-assessments.schema.json")):
         ids = {s["id"] for s in doc["provenance"]["sources"] if s.get("id")}
         errs = env(doc) + validate(doc, schemas[schema], schemas, schema)
         errs += scope_registry_errors(doc, scopes)
@@ -1066,6 +1078,34 @@ def selftest(schemas: dict[str, dict]) -> int:
     check("out-of-range date rejected", bool(env(d)))
     d = dup(facts); d["hyderabad_special"] = {"leak": True}
     check("undeclared top-level key rejected", bool(unknown_key_errors(d, schemas["facts.schema.json"])))
+
+    # Atlas contracts (2026-08-29): a brief with an unknown status, a verdict
+    # tone outside the page vocabulary, a fact without its caveat, an
+    # assessment evidence row with a projection method the model does not
+    # define, and a derived atlas artifact that hides its lineage must all fail.
+    d = dup(atlas_briefs); d["briefs"][0]["status"] = "published"
+    check("atlas brief with unknown status rejected",
+          bool(validate(d, schemas["atlas-briefs.schema.json"], schemas, "atlas-briefs.schema.json")))
+    d = dup(atlas_briefs); d["briefs"][0]["verdict"] = {"title": "t", "body": "b", "tone": "alarming"}
+    check("atlas verdict tone outside vocabulary rejected",
+          bool(validate(d, schemas["atlas-briefs.schema.json"], schemas, "atlas-briefs.schema.json")))
+    d = dup(atlas_briefs); d["briefs"][0]["headlineFacts"] = [{"value": "1", "label": "l", "note": ""}]
+    check("atlas headline fact without its caveat rejected",
+          bool(validate(d, schemas["atlas-briefs.schema.json"], schemas, "atlas-briefs.schema.json")))
+    d = dup(atlas_assessments)
+    d["assessments"][0]["requirements"][0]["evidence"] = [{
+        "id": "x", "sourceRefs": ["jjm-imis"], "localityClass": "direct-place",
+        "projectionMethod": "vibes", "evidenceDate": "2026-07-26", "notes": "n",
+    }]
+    check("atlas evidence with undefined projection method rejected",
+          bool(validate(d, schemas["atlas-assessments.schema.json"], schemas,
+                        "atlas-assessments.schema.json")))
+    d = dup(atlas_assessments); d["provenance"].pop("internal_inputs")
+    check("atlas derived artifact must declare internal_inputs",
+          "internal_inputs" not in d["provenance"] and d["provenance"]["method"] == "derived")
+    d = dup(atlas_briefs); d["scope"] = {"kind": "city", "id": "tn-thanjavur"}
+    check("atlas scope kind contradicting the district registry rejected",
+          bool(scope_registry_errors(d, scopes)))
     d = dup(wb); d["features"] = [dup(wb["features"][0]) for _ in range(501)]
     d["features"].append({"type": "Feature", "geometry": None, "properties": {}})
     errs = validate(d, schemas["water-bodies-current.schema.json"], schemas, "water-bodies-current.schema.json")

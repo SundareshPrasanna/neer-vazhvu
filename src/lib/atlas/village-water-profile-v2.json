@@ -1,0 +1,379 @@
+{
+  "schemaVersion": 2,
+  "id": "village-water-profile-v2",
+  "title": "Village water evidence and capability profile v2",
+  "targetKinds": ["gram-panchayat"],
+  "requirements": [
+    {
+      "id": "place-identity-and-composition",
+      "capabilityId": "place-identity-and-composition",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk"]
+    },
+    {
+      "id": "place-boundary",
+      "capabilityId": "place-boundary",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-spatial-mode",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "expert-mapped"]
+    },
+    {
+      "id": "population-and-settlements",
+      "capabilityId": "population-and-settlements",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "administrative-rollup"]
+    },
+    {
+      "id": "drinking-water-service",
+      "capabilityId": "drinking-water-service",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "service-relation"]
+    },
+    {
+      "id": "drinking-water-source",
+      "capabilityId": "drinking-water-source",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "within-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection", "service-relation"]
+    },
+    {
+      "id": "drinking-water-reliability",
+      "capabilityId": "drinking-water-reliability",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place"],
+      "acceptableProjectionMethods": ["direct-published", "service-relation"]
+    },
+    {
+      "id": "drinking-water-quality",
+      "capabilityId": "drinking-water-quality",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "within-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "station-assignment", "service-relation"],
+      "maxEvidenceAgeDays": 1825
+    },
+    {
+      "id": "historical-water-access",
+      "capabilityId": "historical-water-access",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk"]
+    },
+    {
+      "id": "current-rainfall",
+      "capabilityId": "current-rainfall",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "station-assignment", "interpolation"],
+      "maxEvidenceAgeDays": 30
+    },
+    {
+      "id": "rainfall-anomaly",
+      "capabilityId": "rainfall-anomaly",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["station-assignment", "interpolation"]
+    },
+    {
+      "id": "groundwater-resource-status",
+      "capabilityId": "groundwater-resource-status",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "containing-area"],
+      "acceptableProjectionMethods": ["direct-published", "administrative-rollup", "administrative-proxy"]
+    },
+    {
+      "id": "groundwater-level-observation",
+      "capabilityId": "groundwater-level-observation",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "nearby-observation"],
+      "acceptableProjectionMethods": ["direct-published", "station-assignment"]
+    },
+    {
+      "id": "groundwater-level-trend",
+      "capabilityId": "groundwater-level-trend",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["station-assignment", "interpolation"]
+    },
+    {
+      "id": "aquifer-context",
+      "capabilityId": "aquifer-context",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["connected-system", "containing-area"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "expert-mapped"]
+    },
+    {
+      "id": "catchment-context",
+      "capabilityId": "catchment-context",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-spatial-mode",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["connected-system", "derived-place"],
+      "acceptableProjectionMethods": ["spatial-intersection", "expert-mapped"],
+      "dependencyIds": ["place-boundary"]
+    },
+    {
+      "id": "connected-supply-system",
+      "capabilityId": "connected-supply-system",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "connected-system"],
+      "acceptableProjectionMethods": ["direct-published", "service-relation", "expert-mapped"]
+    },
+    {
+      "id": "water-body-inventory",
+      "capabilityId": "water-body-inventory",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-spatial-mode",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "expert-mapped"],
+      "dependencyIds": ["place-boundary"]
+    },
+    {
+      "id": "water-body-condition",
+      "capabilityId": "water-body-condition",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "within-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection"]
+    },
+    {
+      "id": "surface-water-change",
+      "capabilityId": "surface-water-change",
+      "obligation": "enrichment",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["within-place", "derived-place"],
+      "acceptableProjectionMethods": ["spatial-intersection", "area-weighted", "expert-mapped"],
+      "dependencyIds": ["place-boundary", "water-body-inventory"]
+    },
+    {
+      "id": "waterway-network",
+      "capabilityId": "waterway-network",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "connected-system", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "expert-mapped"],
+      "dependencyIds": ["place-boundary"]
+    },
+    {
+      "id": "river-water-quality",
+      "capabilityId": "river-water-quality",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["within-place", "connected-system", "nearby-observation"],
+      "acceptableProjectionMethods": ["direct-published", "station-assignment", "expert-mapped"]
+    },
+    {
+      "id": "public-water-works",
+      "capabilityId": "public-water-works",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "within-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection"]
+    },
+    {
+      "id": "flood-hazard",
+      "capabilityId": "flood-hazard",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-spatial-mode",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "derived-place"],
+      "acceptableProjectionMethods": ["spatial-intersection", "expert-mapped"],
+      "dependencyIds": ["place-boundary"]
+    },
+    {
+      "id": "observed-flood-events",
+      "capabilityId": "observed-flood-events",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "nearby-observation"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "station-assignment"]
+    },
+    {
+      "id": "natural-drainage",
+      "capabilityId": "natural-drainage",
+      "obligation": "core",
+      "positiveEvidencePolicy": "required-for-spatial-mode",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["within-place", "connected-system", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "expert-mapped"],
+      "dependencyIds": ["place-boundary"]
+    },
+    {
+      "id": "engineered-stormwater-drainage",
+      "capabilityId": "engineered-stormwater-drainage",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection"]
+    },
+    {
+      "id": "wastewater-service",
+      "capabilityId": "wastewater-service",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "connected-system"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "service-relation"]
+    },
+    {
+      "id": "wastewater-treatment-assets",
+      "capabilityId": "wastewater-treatment-assets",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["within-place", "connected-system"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "service-relation"]
+    },
+    {
+      "id": "pollution-pressure-inventory",
+      "capabilityId": "pollution-pressure-inventory",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "connected-system", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection", "expert-mapped"],
+      "dependencyIds": ["place-boundary"]
+    },
+    {
+      "id": "measured-water-pollution",
+      "capabilityId": "measured-water-pollution",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "connected-system", "nearby-observation"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "station-assignment", "service-relation"]
+    },
+    {
+      "id": "coastal-and-estuarine",
+      "capabilityId": "coastal-and-estuarine",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["within-place", "connected-system", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "spatial-intersection", "expert-mapped"]
+    },
+    {
+      "id": "historical-agricultural-baseline",
+      "capabilityId": "historical-agricultural-baseline",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk"]
+    },
+    {
+      "id": "current-crop-and-irrigation-state",
+      "capabilityId": "current-crop-and-irrigation-state",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection"],
+      "maxEvidenceAgeDays": 550
+    },
+    {
+      "id": "soil-water-context",
+      "capabilityId": "soil-water-context",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection", "expert-mapped"]
+    },
+    {
+      "id": "agricultural-water-system-relation",
+      "capabilityId": "agricultural-water-system-relation",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "connected-system"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection", "service-relation", "expert-mapped"]
+    },
+    {
+      "id": "crop-water-demand",
+      "capabilityId": "crop-water-demand",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "area-weighted", "interpolation", "expert-mapped"],
+      "dependencyIds": ["current-crop-and-irrigation-state", "soil-water-context"]
+    },
+    {
+      "id": "agricultural-water-stress-observation",
+      "capabilityId": "agricultural-water-stress-observation",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "station-assignment", "interpolation", "expert-mapped"]
+    },
+    {
+      "id": "agricultural-water-pollution-pressure",
+      "capabilityId": "agricultural-water-pollution-pressure",
+      "obligation": "conditional",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "within-place", "connected-system", "nearby-observation", "derived-place"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "spatial-intersection", "station-assignment", "expert-mapped"]
+    },
+    {
+      "id": "responsibility-and-action",
+      "capabilityId": "responsibility-and-action",
+      "obligation": "core",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "always",
+      "acceptableLocalityClasses": ["direct-place", "containing-area"],
+      "acceptableProjectionMethods": ["direct-published", "identifier-crosswalk", "administrative-rollup", "service-relation"]
+    },
+    {
+      "id": "composite-priority-score",
+      "capabilityId": "composite-priority-score",
+      "obligation": "enrichment",
+      "positiveEvidencePolicy": "not-required-for-launch",
+      "applicabilityPolicy": "evaluate",
+      "acceptableLocalityClasses": ["direct-place", "derived-place"],
+      "acceptableProjectionMethods": ["area-weighted", "interpolation", "expert-mapped"]
+    }
+  ]
+}

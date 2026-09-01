@@ -1,0 +1,188 @@
+{
+  "_doc": "Headwaters source registry - ATLAS-SCOPE sources. The Onboarding Atlas serves Tamil Nadu districts, blocks and Gram Panchayats (schemas/nvdm/scopes.json: tn-thanjavur, tn-tiruchirappalli are district scopes). Identity comes from TNRD (the 2021 LGD-coded PDF for stable codes, the current master for membership), JJM IMIS (service villages) and Census 2011 (settlement composition); TNGIS supplies polygons and water bodies under an UNVERIFIED licence. IN-GRES (chennai.json: ingres-gw-assessment-tn) and Open-Meteo (platform.json: open-meteo-archive) are NOT duplicated here - their dependsOn lists carry the atlas paths. As with every other registry file, cadence and tier are DOCUMENTATION ONLY and do not gate polling - see the note in basins.json.",
+  "sources": [
+    {
+      "id": "tnrd-lgd-directory-2021",
+      "scope": "atlas",
+      "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "license": "TN government publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed edition (PDF dated 2021-03-11; republished in place only if TNRD re-cuts it)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/directory.json",
+        "public/data/atlas/tn/thanjavur/assessments",
+        "public/data/atlas/tn/thanjavur/briefs",
+        "public/data/atlas/tn/thanjavur/curated-briefs.json",
+        "public/data/atlas/tn/tiruchirappalli/directory.json",
+        "public/data/atlas/tn/tiruchirappalli/assessments",
+        "public/data/atlas/tn/tiruchirappalli/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-tn-district.ts --district <slug> --fetch --as-of <date> (pdftotext parse; fails closed when a district's Gram Panchayat count drifts from pipeline-inputs/atlas/<state>/<district>/refresh-plan.json)",
+      "notes": "The stable-code edition: every TNRD village panchayat with its LGD district, block and GP codes, 12,525 rows statewide. The PDF's own CreationDate is 2021-03-11 and the server's Last-Modified agrees (verified 2026-08-29), which is what http-meta watches: a re-cut PDF at the same URL is the only edition event. It is older than the current master (tnrd-panchayat-master) and the two are kept as separate receipts on purpose - current membership and stable codes are never conflated. as_of 2021-03-11 in every envelope that cites it.",
+      "lastSeen": {
+        "lastModified": "Thu, 11 Mar 2021 12:55:53 GMT",
+        "edition": "village_eng.pdf dated 2021-03-11 (Last-Modified Thu, 11 Mar 2021)",
+        "acceptedOn": "2026-08-29"
+      }
+    },
+    {
+      "id": "tnrd-panchayat-master",
+      "scope": "atlas",
+      "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php",
+      "license": "TN government publication, cited with attribution",
+      "type": "page",
+      "cadence": "continuous membership updates; district option set changes only on reorganisation",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": "select#dcode"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/directory.json",
+        "public/data/atlas/tn/thanjavur/assessments",
+        "public/data/atlas/tn/thanjavur/briefs",
+        "public/data/atlas/tn/tiruchirappalli/directory.json",
+        "public/data/atlas/tn/tiruchirappalli/assessments",
+        "public/data/atlas/tn/tiruchirappalli/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-tn-district.ts --district <slug> --fetch --as-of <date> (POST cmd=9 for blocks, cmd=3 per block for Gram Panchayats; fails closed on count drift)",
+      "notes": "The current village panchayat master behind the public property-tax dues form: district > block > Gram Panchayat, each with a local code. The page serves no ETag or Last-Modified (verified 2026-08-29), so http-meta cannot watch it; its own 'last updated' stamp is today's date on every visit (a daily database stamp, not an edition), so page-hash on the whole page would fire daily. What is watched instead is the district option set (select#dcode), which changes only when Tamil Nadu reorganises districts. Block and Gram Panchayat membership can only be seen through AJAX postbacks, so membership drift is caught by the monthly acquisition re-run, which compares counts against the reviewed plan and stops on any difference. The page's own last-updated date is recorded per acquisition as the source's as_of.",
+      "lastSeen": {
+        "pageHash": "64fc283645114e6f",
+        "edition": "district option set as served 2026-08-29 (38 districts)",
+        "acceptedOn": "2026-08-29"
+      }
+    },
+    {
+      "id": "jjm-imis-citizen-corner",
+      "scope": "atlas",
+      "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+      "license": "Government of India publication, cited with attribution",
+      "type": "api",
+      "cadence": "continuous (habitation, source and sample rows update as the programme reports)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": "select#ddState"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/directory.json",
+        "public/data/atlas/tn/thanjavur/jjm-service",
+        "public/data/atlas/tn/thanjavur/assessments",
+        "public/data/atlas/tn/thanjavur/briefs",
+        "public/data/atlas/tn/thanjavur/curated-briefs.json",
+        "public/data/atlas/tn/tiruchirappalli/directory.json",
+        "public/data/atlas/tn/tiruchirappalli/jjm-service",
+        "public/data/atlas/tn/tiruchirappalli/assessments",
+        "public/data/atlas/tn/tiruchirappalli/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-tn-district.ts --fetch (village enumeration via ASP.NET postbacks ddState > ddDistrict) then scripts/atlas-jjm-tn-district.ts --district <slug> --fetch --as-of <date> (JSON page methods BindHabitationInfo, BindSourceInfo, BindSampleTestedInfo per village, serial and paced). Monthly scheduled re-run is the freshness question (follow-up: check-data-freshness.ts is city-keyed).",
+      "notes": "Village information page of the JJM citizen corner. The district option set is only rendered after an ASP.NET __doPostBack on ddState, and the checker fetches with GET, so no method here can see the district set directly (tried 2026-08-29: the initial page carries the 36 state options and an empty ddDistrict; ETag is a Cache-Control string, not a validator; the body carries a per-request ViewState so a whole-page hash is never stable). What IS watchable is the state option set (select#ddState): a change there means the form was rebuilt, which is the same event that would move the district set. District and village enumeration drift is caught by the acquisition itself, which fails closed when the count differs from the reviewed plan. The page methods take state, district and village ids only (no session, no ViewState); encodeTxt-style obfuscation, if introduced, breaks the parser loudly rather than publishing noise. Licence: GoI programme portal, cited with attribution; no explicit reuse terms beyond the standard GoI website policy.",
+      "lastSeen": {
+        "pageHash": "9687f2a676849dc5",
+        "edition": "state option set as served 2026-08-29",
+        "acceptedOn": "2026-08-29"
+      }
+    },
+    {
+      "id": "census-2011-village-amenities",
+      "scope": "atlas",
+      "publisher": "Office of the Registrar General and Census Commissioner, India",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+      "license": "Government of India publication, cited with attribution",
+      "type": "page",
+      "cadence": "closed (Census 2011 release; village reference year 2009). The 2021 census did not take place, so no newer village-level enumeration exists.",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": ".resource-downloads"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/directory.json",
+        "public/data/atlas/tn/thanjavur/census-2011",
+        "public/data/atlas/tn/thanjavur/assessments",
+        "public/data/atlas/tn/thanjavur/briefs",
+        "public/data/atlas/tn/thanjavur/curated-briefs.json",
+        "public/data/atlas/tn/tiruchirappalli/directory.json",
+        "public/data/atlas/tn/tiruchirappalli/census-2011",
+        "public/data/atlas/tn/tiruchirappalli/assessments",
+        "public/data/atlas/tn/tiruchirappalli/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-tn-district.ts --fetch (downloads DH_2011_DCHB_Village_Release_3300.xlsx via system curl - the NADA certificate chain is incomplete for Node's bundled CAs; identity columns via scripts/atlas_extract_census_village_amenities.py) then scripts/atlas-census-tn-district.ts --district <slug> --workbook <xlsx> --as-of <date> (water and land-use columns via scripts/atlas_extract_census_village_attributes.py)",
+      "notes": "District Census Handbook village amenities, Tamil Nadu (state 33) village release, the one NADA catalog entry that carries the statewide XLSX (DH_2011_DCHB_Village_Release_3300.xlsx, 33.7 MB, sha256 ab604ec5...). Closed source: as_of 2011 in every envelope. The NADA page sends no validators (verified 2026-08-29), so page-hash on the resource-downloads block watches the only thing that could change - the file list and versions the catalog offers. Village rows may declare several CD-block and Gram Panchayat memberships; the atlas keeps every pair and never assigns a multi-Panchayat village silently. Reference year for the amenity and land-use tables is 2009: a historical baseline, never current service. TLS: censusindia.gov.in serves a certificate chain that macOS and curl accept but Node's bundled CA verifier does not (fetch fails with 'TypeError: fetch failed' while curl returns 200; the same reason the acquisition downloads the workbook through system curl), so insecureTLS is set the way the NMCG and CPCB entries set it - verification skipped for this host only.",
+      "insecureTLS": true,
+      "lastSeen": {
+        "pageHash": "9a96b7b106e4652d",
+        "edition": "NADA catalog 45377 resource list as served 2026-08-29 (village release xlsx 49381)",
+        "acceptedOn": "2026-08-29"
+      }
+    },
+    {
+      "id": "tngis-generic-viewer-water-bodies",
+      "scope": "atlas",
+      "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+      "url": "https://tngis.tn.gov.in/tngismaps/ows?service=WFS&version=2.0.0&request=DescribeFeatureType&typeNames=generic_viewer:all_water_bodies",
+      "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+      "type": "api",
+      "cadence": "continuous (five departments' registers merged; no survey date published)",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/water-bodies",
+        "public/data/atlas/tn/thanjavur/assessments",
+        "public/data/atlas/tn/thanjavur/briefs",
+        "public/data/atlas/tn/tiruchirappalli/water-bodies",
+        "public/data/atlas/tn/tiruchirappalli/assessments",
+        "public/data/atlas/tn/tiruchirappalli/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-water-bodies-tn-district.ts --district <slug> --as-of <date> --fetch (WFS GetFeature on generic_viewer:all_water_bodies filtered by rd_lgddcod; joins on panchayat_lgdvcode, stops if the join rate drops below half)",
+      "notes": "LICENCE UNVERIFIED - UNRESOLVED. https://tngis.tn.gov.in/user.html states: 'GIS based data available in TNGIS should be used for informational purpose only and Not for legal use/not to be shared / published in the public media in any form or in the social media without any prior approval / permission from TNGIS/TNeGA.' A reuse confirmation was requested on 2026-07-27 (the corridor's D4 blocker) and has had no reply. Until it does, the served water-bodies shards carry null geometry and no water-body names: only per-Panchayat counts, areas computed from the withheld polygons, contributing departments and a digest of the sorted names. The GetCapabilities document is 828 KB and every WFS response is served without ETag or Last-Modified, so content-hash on DescribeFeatureType for this layer is the watch: it is small (3.5 KB), stable, and changes exactly when the schema does - including the panchayat_lgdvcode join column the whole family depends on. A feature-count change is NOT an edition here (the register is continuously edited); re-acquisition cadence is a freshness question. Extraction gotcha: the statewide layer carries town and corporation rows with panchayat_lgdvcode 0; they are dropped, never pooled under a fake Panchayat.",
+      "lastSeen": {
+        "contentHash": "fa7c6739f686a321",
+        "edition": "DescribeFeatureType generic_viewer:all_water_bodies as served 2026-08-29 (panchayat_lgdvcode present)",
+        "acceptedOn": "2026-08-29"
+      }
+    },
+    {
+      "id": "tngis-tnrd-panchayat-boundary",
+      "scope": "atlas",
+      "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+      "url": "https://tngis.tn.gov.in/tngismaps/ows?service=WFS&version=2.0.0&request=DescribeFeatureType&typeNames=tnrd:panchayat_boundary",
+      "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+      "type": "api",
+      "cadence": "episodic (boundaries change at reorganisation; no mapping year published)",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/directory.json",
+        "public/data/atlas/tn/thanjavur/groundwater-projection.json",
+        "public/data/atlas/tn/thanjavur/rainfall.json",
+        "public/data/atlas/tn/thanjavur/assessments",
+        "public/data/atlas/tn/thanjavur/briefs",
+        "public/data/atlas/tn/tiruchirappalli/directory.json",
+        "public/data/atlas/tn/tiruchirappalli/groundwater-projection.json",
+        "public/data/atlas/tn/tiruchirappalli/rainfall.json",
+        "public/data/atlas/tn/tiruchirappalli/assessments",
+        "public/data/atlas/tn/tiruchirappalli/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-tn-district.ts --district <slug> --fetch-boundary --as-of <date> (WFS GetFeature on tnrd:panchayat_boundary filtered by district_lgd_code = the TNRD district code) and scripts/atlas-project-groundwater.ts --fetch (admin_master:administrative_boundary_taluk filtered by the LGD district code)",
+      "notes": "LICENCE UNVERIFIED - same terms and same pending request as tngis-generic-viewer-water-bodies. Two layers ride on this entry because they share the endpoint, the terms and the consumers: tnrd:panchayat_boundary (village_lgd_code, block_lgd_code, district_lgd_code - the join is by LGD code, no name folding) and admin_master:administrative_boundary_taluk (sub_district_code, taluk_name). CODE-SPACE TRAP: the panchayat layer's district_lgd_code is the TNRD district code (Thanjavur 540) while the taluk layer's district_lgd_code is the LGD district code (Thanjavur 586); both come from the reviewed plan, never from the command line, after a neighbouring district's taluks were fetched once by hand. What is published: bbox-centre centroids, areas, vertex counts and geometry digests in directory.json; taluk containment as the groundwater projection; no polygon leaves the cache until approval is recorded. Watched with content-hash on DescribeFeatureType for the panchayat layer (1.6 KB, no validators served).",
+      "lastSeen": {
+        "contentHash": "c57702dc8bc3da05",
+        "edition": "DescribeFeatureType tnrd:panchayat_boundary as served 2026-08-29 (village_lgd_code present)",
+        "acceptedOn": "2026-08-29"
+      }
+    }
+  ]
+}
