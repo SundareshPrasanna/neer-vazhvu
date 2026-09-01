@@ -1,0 +1,207 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-salem"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for SALEM: the district row and its 14 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-salem-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-01",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=SALEM;loctype=DISTRICT;locuuid=244aaccb-c2e9-4191-8129-802b7152f1bf;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "SALEM",
+    "locationUUID": "244aaccb-c2e9-4191-8129-802b7152f1bf",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 147.5262
+  },
+  "recordsSha256": "b212fe644e9251f2d7e538842ead86ff9e3526a19bfc6958d33e5f1eab03c68d",
+  "recordCount": 14,
+  "records": [
+    {
+      "locationName": "ATTUR",
+      "locationUUID": "6a0fa174-e127-4950-b7fd-9373c9ab5fff",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 167.3457,
+      "annualRechargeHam": 1452.14,
+      "totalAvailabilityHam": 4237.76,
+      "availabilityForFutureUseHam": 1083.13,
+      "rainfallMm": 937.3196
+    },
+    {
+      "locationName": "EDAPPADY",
+      "locationUUID": "91762e95-ba66-4a7f-8b1f-dc3a1ad5b13a",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 133.0437,
+      "annualRechargeHam": 1617.22,
+      "totalAvailabilityHam": 3575.51,
+      "availabilityForFutureUseHam": 622.5,
+      "rainfallMm": 793.2163
+    },
+    {
+      "locationName": "GANGAVALLI",
+      "locationUUID": "d6194326-19ed-4029-a20f-d0e37f34bddd",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 192.4879,
+      "annualRechargeHam": 1289.11,
+      "totalAvailabilityHam": 3879.88,
+      "availabilityForFutureUseHam": 739.43,
+      "rainfallMm": 760.3138
+    },
+    {
+      "locationName": "KADAYAMPATTI",
+      "locationUUID": "e2eb8225-8510-4886-9e61-d62a5e5955fa",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 121.6099,
+      "annualRechargeHam": 1510.1,
+      "totalAvailabilityHam": 2880.16,
+      "availabilityForFutureUseHam": 479.31,
+      "rainfallMm": 917.4
+    },
+    {
+      "locationName": "METTUR",
+      "locationUUID": "ba7ddd34-0030-4bbd-bed3-1f4ce950ad01",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 119.0345,
+      "annualRechargeHam": 2825.6,
+      "totalAvailabilityHam": 6591.19,
+      "availabilityForFutureUseHam": 1760.43,
+      "rainfallMm": 782.6206
+    },
+    {
+      "locationName": "OMALUR",
+      "locationUUID": "45758238-aea3-41bb-8ecf-aad7ccf3e7a2",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.8846,
+      "annualRechargeHam": 1688.85,
+      "totalAvailabilityHam": 3094.81,
+      "availabilityForFutureUseHam": 624.62,
+      "rainfallMm": 926.4276
+    },
+    {
+      "locationName": "PEDDANAYAKKANPALAYAM",
+      "locationUUID": "5b446bab-77cb-4b76-ae4c-ace94253649e",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 114.6751,
+      "annualRechargeHam": 1466.37,
+      "totalAvailabilityHam": 3733.34,
+      "availabilityForFutureUseHam": 1353.66,
+      "rainfallMm": 871.4138
+    },
+    {
+      "locationName": "SALEM",
+      "locationUUID": "4b64319b-9bd6-465b-89a4-01b90af9f690",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 151.0746,
+      "annualRechargeHam": 1451.94,
+      "totalAvailabilityHam": 3186.26,
+      "availabilityForFutureUseHam": 537.82,
+      "rainfallMm": 954.7
+    },
+    {
+      "locationName": "SALEM SOUTH",
+      "locationUUID": "905bcd9c-3f90-4a8f-bbb2-96de60425d5e",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 145.5191,
+      "annualRechargeHam": 701.66,
+      "totalAvailabilityHam": 1474.02,
+      "availabilityForFutureUseHam": 156.91,
+      "rainfallMm": 951.8764
+    },
+    {
+      "locationName": "SALEM WEST",
+      "locationUUID": "6bd7f000-3408-4cbf-8f44-f2169671dcd4",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 172.3065,
+      "annualRechargeHam": 597.98,
+      "totalAvailabilityHam": 1111.49,
+      "availabilityForFutureUseHam": 58.99,
+      "rainfallMm": 946.1
+    },
+    {
+      "locationName": "SANKARI",
+      "locationUUID": "b3e879b9-a407-489b-b2e7-7d88633ed608",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 141.1078,
+      "annualRechargeHam": 1829.34,
+      "totalAvailabilityHam": 4339.05,
+      "availabilityForFutureUseHam": 362.13,
+      "rainfallMm": 802.0098
+    },
+    {
+      "locationName": "THALAIVASAL",
+      "locationUUID": "cf55007e-ec53-4228-b63c-cc45cfa2a92b",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 228.583,
+      "annualRechargeHam": 1702.1,
+      "totalAvailabilityHam": 4753.49,
+      "availabilityForFutureUseHam": 445.82,
+      "rainfallMm": 876.7142
+    },
+    {
+      "locationName": "VALAPADY",
+      "locationUUID": "ec3c27c8-aa84-4155-8744-de41cbf64654",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 155.2444,
+      "annualRechargeHam": 1733.44,
+      "totalAvailabilityHam": 3742.46,
+      "availabilityForFutureUseHam": 760.81,
+      "rainfallMm": 848.6087
+    },
+    {
+      "locationName": "YERCAUD",
+      "locationUUID": "f1298e82-4190-47d0-935c-69fab9ef61ff",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 14.1636,
+      "annualRechargeHam": 904.68,
+      "totalAvailabilityHam": 931.4,
+      "availabilityForFutureUseHam": 746.29,
+      "rainfallMm": 1584.2
+    }
+  ]
+}

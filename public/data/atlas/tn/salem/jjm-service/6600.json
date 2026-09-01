@@ -1,0 +1,5722 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/jjm-service",
+  "scope": {
+    "kind": "district",
+    "id": "tn-salem"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-jjm-tn-district.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/salem/directory.json"
+    ],
+    "note": "JJM IMIS citizen-corner village information for 12 of 12 enumerated villages in MAC. CHOULTRY block: habitations (population, households, tap connections), drinking-water sources and the displayed water-quality sample rows, read from the page's JSON methods BindHabitationInfo, BindSourceInfo and BindSampleTestedInfo. Villages are keyed by JJM block/GP/village ids; the directory binds JJM GP ids to LGD Gram Panchayat codes.",
+    "conventions": {
+      "totals": "per-village totals are sums over habitation rows; null when no row states the figure",
+      "samples": "sample rows are the portal's displayed set, not a sampling regime; dates converted from dd-mm-yyyy",
+      "shard": "one file per LGD block; a JJM block aligned to an LGD block places its unbound villages here too"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-salem-v1",
+  "blockCode": "6600",
+  "blockName": "MAC. CHOULTRY",
+  "jjmStateId": "29",
+  "jjmDistrictId": "439",
+  "jjmBlockId": "4532",
+  "acquiredAt": "2026-09-01",
+  "source": {
+    "sourceId": "jjm-citizen-corner-village-service",
+    "sourceUrl": "https://ejalshakti.gov.in/jjm/citizen_corner/VillageInformation.aspx",
+    "pageMethods": [
+      "BindHabitationInfo",
+      "BindSourceInfo",
+      "BindSampleTestedInfo"
+    ]
+  },
+  "coverage": {
+    "villagesInBlock": 12,
+    "villagesAcquired": 12,
+    "partialReason": null
+  },
+  "recordsSha256": "45d1c6c46bcefa7d2713f246b4b0b06f99ac4467240ccad87d80f5f15c5a9e8b",
+  "recordCount": 12,
+  "records": [
+    {
+      "blockId": "4532",
+      "gpId": "151190",
+      "villageId": "375495",
+      "villageName": "Agraharam Talaiyur",
+      "habitations": [
+        {
+          "habitationName": "Dhaandanoor",
+          "totalPopulation": 198,
+          "households": 65,
+          "householdConnections": 65,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karattu Kadu",
+          "totalPopulation": 225,
+          "households": 88,
+          "householdConnections": 88,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karayanur",
+          "totalPopulation": 198,
+          "households": 87,
+          "householdConnections": 87,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Koothadipalayam",
+          "totalPopulation": 137,
+          "households": 45,
+          "householdConnections": 45,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kuravan Kattur",
+          "totalPopulation": 232,
+          "households": 48,
+          "householdConnections": 48,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Lakshmanagoundanur",
+          "totalPopulation": 413,
+          "households": 135,
+          "householdConnections": 135,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mangutta Patty",
+          "totalPopulation": 501,
+          "households": 183,
+          "householdConnections": 183,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mappukadu",
+          "totalPopulation": 97,
+          "households": 46,
+          "householdConnections": 46,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Melkoothandi Palayam",
+          "totalPopulation": 134,
+          "households": 58,
+          "householdConnections": 58,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Moolakadai",
+          "totalPopulation": 90,
+          "households": 24,
+          "householdConnections": 24,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nadar Street",
+          "totalPopulation": 97,
+          "households": 26,
+          "householdConnections": 26,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nallirusampalayam",
+          "totalPopulation": 331,
+          "households": 48,
+          "householdConnections": 48,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nallirusampalayam Ar St",
+          "totalPopulation": 186,
+          "households": 44,
+          "householdConnections": 44,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nathakadu",
+          "totalPopulation": 80,
+          "households": 28,
+          "householdConnections": 28,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pavattampalayam",
+          "totalPopulation": 116,
+          "households": 31,
+          "householdConnections": 31,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pazhakkaaranvalavu",
+          "totalPopulation": 78,
+          "households": 28,
+          "householdConnections": 28,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poosarivalavu",
+          "totalPopulation": 148,
+          "households": 37,
+          "householdConnections": 37,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pudukudiyanur",
+          "totalPopulation": 79,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Varattari",
+          "totalPopulation": 92,
+          "households": 41,
+          "householdConnections": 41,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vellaiyam Palayam",
+          "totalPopulation": 137,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vellayampalayam North Street",
+          "totalPopulation": 443,
+          "households": 168,
+          "householdConnections": 168,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 30,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-01",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-01",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-28",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-28",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 21,
+        "population": 4012,
+        "households": 1290,
+        "householdConnections": 1290,
+        "sourceCount": 0,
+        "sampleRowCount": 30,
+        "latestSampleDate": "2026-07-05",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151191",
+      "villageId": "375496",
+      "villageName": "Pudur",
+      "habitations": [
+        {
+          "habitationName": "A.pudur",
+          "totalPopulation": 325,
+          "households": 102,
+          "householdConnections": 102,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Anna Nagar",
+          "totalPopulation": 65,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Aravankattur",
+          "totalPopulation": 330,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ayyaneri",
+          "totalPopulation": 115,
+          "households": 77,
+          "householdConnections": 77,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Azhagappampaalaiyam",
+          "totalPopulation": 230,
+          "households": 72,
+          "householdConnections": 72,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gandhi Nagar",
+          "totalPopulation": 255,
+          "households": 68,
+          "householdConnections": 68,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kal Mettur",
+          "totalPopulation": 205,
+          "households": 129,
+          "householdConnections": 129,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kallangkaattoor",
+          "totalPopulation": 188,
+          "households": 72,
+          "householdConnections": 72,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanthampalayam",
+          "totalPopulation": 351,
+          "households": 117,
+          "householdConnections": 117,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karayan Kadu",
+          "totalPopulation": 320,
+          "households": 131,
+          "householdConnections": 131,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karuvakkaadu",
+          "totalPopulation": 180,
+          "households": 42,
+          "householdConnections": 42,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kasakaranur",
+          "totalPopulation": 483,
+          "households": 168,
+          "householdConnections": 168,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kattur",
+          "totalPopulation": 58,
+          "households": 20,
+          "householdConnections": 20,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kattur Kattuvalavu",
+          "totalPopulation": 145,
+          "households": 37,
+          "householdConnections": 37,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kiluvakaattoor",
+          "totalPopulation": 93,
+          "households": 51,
+          "householdConnections": 51,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Koilkadu",
+          "totalPopulation": 75,
+          "households": 34,
+          "householdConnections": 34,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Koilkadu Kv",
+          "totalPopulation": 442,
+          "households": 34,
+          "householdConnections": 34,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kongarapalayam",
+          "totalPopulation": 110,
+          "households": 41,
+          "householdConnections": 41,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kootham Palayam",
+          "totalPopulation": 528,
+          "households": 193,
+          "householdConnections": 193,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Korakkadu",
+          "totalPopulation": 98,
+          "households": 33,
+          "householdConnections": 33,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kottaikaran Valavu",
+          "totalPopulation": 65,
+          "households": 55,
+          "householdConnections": 55,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kottaiyur",
+          "totalPopulation": 233,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kunchappanur Kv",
+          "totalPopulation": 125,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kunjappanur",
+          "totalPopulation": 333,
+          "households": 168,
+          "householdConnections": 168,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mettu Kadu",
+          "totalPopulation": 250,
+          "households": 114,
+          "householdConnections": 114,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Moongili Kaadu",
+          "totalPopulation": 218,
+          "households": 68,
+          "householdConnections": 68,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nanthipattan Valavu",
+          "totalPopulation": 130,
+          "households": 76,
+          "householdConnections": 76,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nochikadu",
+          "totalPopulation": 65,
+          "households": 25,
+          "householdConnections": 25,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ondippanai",
+          "totalPopulation": 76,
+          "households": 68,
+          "householdConnections": 68,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Paappaankaadu",
+          "totalPopulation": 85,
+          "households": 37,
+          "householdConnections": 37,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pachivalavu",
+          "totalPopulation": 143,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pattanaa Patti Kattu Valavu",
+          "totalPopulation": 160,
+          "households": 97,
+          "householdConnections": 97,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pattanampatty",
+          "totalPopulation": 420,
+          "households": 167,
+          "householdConnections": 167,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ponnaiyan Koil Kattu Vvalavu",
+          "totalPopulation": 147,
+          "households": 98,
+          "householdConnections": 98,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pudhukkattu Valavu",
+          "totalPopulation": 40,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Punja Kadu",
+          "totalPopulation": 173,
+          "households": 58,
+          "householdConnections": 58,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ravathanur",
+          "totalPopulation": 98,
+          "households": 33,
+          "householdConnections": 33,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ravuthan Kadu",
+          "totalPopulation": 275,
+          "households": 74,
+          "householdConnections": 74,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sellakkutti Valavu",
+          "totalPopulation": 195,
+          "households": 94,
+          "householdConnections": 94,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sundamettu Pudur",
+          "totalPopulation": 360,
+          "households": 104,
+          "householdConnections": 104,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thattaamarakkadu",
+          "totalPopulation": 90,
+          "households": 66,
+          "householdConnections": 66,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vannan Katoor Kattu Valavu",
+          "totalPopulation": 325,
+          "households": 93,
+          "householdConnections": 93,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vannan Kattur",
+          "totalPopulation": 350,
+          "households": 28,
+          "householdConnections": 28,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 32,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-01",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-01",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-28",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-28",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-04-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-04-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-04-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2023-05-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 43,
+        "population": 8952,
+        "households": 3121,
+        "householdConnections": 3121,
+        "sourceCount": 0,
+        "sampleRowCount": 32,
+        "latestSampleDate": "2026-07-05",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151192",
+      "villageId": "375497",
+      "villageName": "Egapuram",
+      "habitations": [
+        {
+          "habitationName": "Alakkottaai",
+          "totalPopulation": 231,
+          "households": 77,
+          "householdConnections": 77,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Amman Koil Kadu",
+          "totalPopulation": 243,
+          "households": 81,
+          "householdConnections": 81,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Annandan Kadu",
+          "totalPopulation": 87,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Arayee Kadu",
+          "totalPopulation": 111,
+          "households": 37,
+          "householdConnections": 37,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Egapuram",
+          "totalPopulation": 603,
+          "households": 201,
+          "householdConnections": 201,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Egapuram Ar Street",
+          "totalPopulation": 66,
+          "households": 22,
+          "householdConnections": 22,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Egapuram Kattuvalavu",
+          "totalPopulation": 207,
+          "households": 69,
+          "householdConnections": 69,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kaliya Goundanur",
+          "totalPopulation": 486,
+          "households": 162,
+          "householdConnections": 162,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kallikattan Valavu",
+          "totalPopulation": 165,
+          "households": 55,
+          "householdConnections": 55,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kamaraj Nagar",
+          "totalPopulation": 75,
+          "households": 25,
+          "householdConnections": 25,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karattur",
+          "totalPopulation": 294,
+          "households": 98,
+          "householdConnections": 98,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kondaiyan Kadu",
+          "totalPopulation": 66,
+          "households": 22,
+          "householdConnections": 22,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kottamedu",
+          "totalPopulation": 258,
+          "households": 79,
+          "householdConnections": 79,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mottur",
+          "totalPopulation": 453,
+          "households": 175,
+          "householdConnections": 175,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nallaaranpoosaarivalavu",
+          "totalPopulation": 159,
+          "households": 53,
+          "householdConnections": 53,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pandarathankadu",
+          "totalPopulation": 168,
+          "households": 56,
+          "householdConnections": 56,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pandithakaranur",
+          "totalPopulation": 363,
+          "households": 121,
+          "householdConnections": 121,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pandithakaranur Kattuvalavu",
+          "totalPopulation": 159,
+          "households": 53,
+          "householdConnections": 53,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Reddiyur",
+          "totalPopulation": 381,
+          "households": 127,
+          "householdConnections": 127,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Reddiyur Maraattiyaankaadu",
+          "totalPopulation": 177,
+          "households": 59,
+          "householdConnections": 59,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sengattu Valavu",
+          "totalPopulation": 153,
+          "households": 51,
+          "householdConnections": 51,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Senguttapatty Arunthathiyar Theru",
+          "totalPopulation": 351,
+          "households": 117,
+          "householdConnections": 117,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thailampatti Kattu Valavu",
+          "totalPopulation": 195,
+          "households": 65,
+          "householdConnections": 65,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thailampatty",
+          "totalPopulation": 402,
+          "households": 134,
+          "householdConnections": 134,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thailampatty Ar St,sidhar Kovil",
+          "totalPopulation": 72,
+          "households": 24,
+          "householdConnections": 24,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vaathiyar Kadu",
+          "totalPopulation": 54,
+          "households": 18,
+          "householdConnections": 18,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 30,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 26,
+        "population": 5979,
+        "households": 2010,
+        "householdConnections": 2010,
+        "sourceCount": 0,
+        "sampleRowCount": 30,
+        "latestSampleDate": "2026-07-04",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151193",
+      "villageId": "375498",
+      "villageName": "Gudalur",
+      "habitations": [
+        {
+          "habitationName": "Addapakadu",
+          "totalPopulation": 112,
+          "households": 40,
+          "householdConnections": 40,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Andi Palayam",
+          "totalPopulation": 1183,
+          "households": 420,
+          "householdConnections": 420,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Davarampalayam",
+          "totalPopulation": 1219,
+          "households": 415,
+          "householdConnections": 415,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gudalur",
+          "totalPopulation": 125,
+          "households": 42,
+          "householdConnections": 42,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gudalur Ad Street",
+          "totalPopulation": 510,
+          "households": 115,
+          "householdConnections": 115,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gudalur Ar Street",
+          "totalPopulation": 215,
+          "households": 70,
+          "householdConnections": 70,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gudalur Pudu Valavu",
+          "totalPopulation": 230,
+          "households": 67,
+          "householdConnections": 67,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Jogi Street, Ambethk",
+          "totalPopulation": 185,
+          "households": 60,
+          "householdConnections": 60,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kalleriyankadu",
+          "totalPopulation": 115,
+          "households": 40,
+          "householdConnections": 40,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kallu Karan Kadu",
+          "totalPopulation": 215,
+          "households": 120,
+          "householdConnections": 120,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karattukadu,mettukad",
+          "totalPopulation": 150,
+          "households": 67,
+          "householdConnections": 67,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karayeri Pallam Ar S",
+          "totalPopulation": 125,
+          "households": 46,
+          "householdConnections": 46,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Killakku Palayam Netukadu",
+          "totalPopulation": 210,
+          "households": 85,
+          "householdConnections": 85,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Killaku Palayam",
+          "totalPopulation": 305,
+          "households": 75,
+          "householdConnections": 75,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kolantha Goundan Kadu,vengan Kadu",
+          "totalPopulation": 315,
+          "households": 88,
+          "householdConnections": 88,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kunni Palayam",
+          "totalPopulation": 415,
+          "households": 220,
+          "householdConnections": 220,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kuttimani Nagar(mettumachine)",
+          "totalPopulation": 165,
+          "households": 80,
+          "householdConnections": 80,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mamarathu Kadu, Vall",
+          "totalPopulation": 370,
+          "households": 101,
+          "householdConnections": 101,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Metukadu",
+          "totalPopulation": 300,
+          "households": 77,
+          "householdConnections": 77,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Moopan Palayam",
+          "totalPopulation": 165,
+          "households": 50,
+          "householdConnections": 50,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nayakkar Valavu",
+          "totalPopulation": 215,
+          "households": 76,
+          "householdConnections": 76,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Neliyan Kadu",
+          "totalPopulation": 145,
+          "households": 70,
+          "householdConnections": 70,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thasan Kadu",
+          "totalPopulation": 215,
+          "households": 70,
+          "householdConnections": 70,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 34,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-11-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-20",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 23,
+        "population": 7204,
+        "households": 2494,
+        "householdConnections": 2494,
+        "sourceCount": 0,
+        "sampleRowCount": 34,
+        "latestSampleDate": "2026-07-04",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151194",
+      "villageId": "375499",
+      "villageName": "Kalikavundanpalayam",
+      "habitations": [
+        {
+          "habitationName": "Ammamankoil Kadu",
+          "totalPopulation": 42,
+          "households": 13,
+          "householdConnections": 13,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Aranmanai Kadu",
+          "totalPopulation": 240,
+          "households": 80,
+          "householdConnections": 80,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Aravan Kadu",
+          "totalPopulation": 36,
+          "households": 9,
+          "householdConnections": 9,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Athimarapatty",
+          "totalPopulation": 193,
+          "households": 59,
+          "householdConnections": 59,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chettiyur",
+          "totalPopulation": 180,
+          "households": 52,
+          "householdConnections": 52,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Edayan Kadu",
+          "totalPopulation": 625,
+          "households": 183,
+          "householdConnections": 183,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "K.g.palayam",
+          "totalPopulation": 132,
+          "households": 38,
+          "householdConnections": 38,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kallayee Valavu",
+          "totalPopulation": 183,
+          "households": 46,
+          "householdConnections": 46,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Komarapalayam",
+          "totalPopulation": 62,
+          "households": 15,
+          "householdConnections": 15,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Koothadipalayam",
+          "totalPopulation": 192,
+          "households": 46,
+          "householdConnections": 46,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mettu Valavu",
+          "totalPopulation": 192,
+          "households": 55,
+          "householdConnections": 55,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mottandi Palayam",
+          "totalPopulation": 396,
+          "households": 121,
+          "householdConnections": 121,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Muthumari Thottam",
+          "totalPopulation": 34,
+          "households": 15,
+          "householdConnections": 15,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Norukupalayam",
+          "totalPopulation": 232,
+          "households": 56,
+          "householdConnections": 56,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Norukupalayam Adstreet",
+          "totalPopulation": 132,
+          "households": 41,
+          "householdConnections": 41,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Panangkottaikkaadu",
+          "totalPopulation": 84,
+          "households": 22,
+          "householdConnections": 22,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Panankadu",
+          "totalPopulation": 186,
+          "households": 48,
+          "householdConnections": 48,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pappankadu",
+          "totalPopulation": 84,
+          "households": 28,
+          "householdConnections": 28,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Punja Kadu",
+          "totalPopulation": 249,
+          "households": 89,
+          "householdConnections": 89,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Rangamuthanoor",
+          "totalPopulation": 196,
+          "households": 68,
+          "householdConnections": 68,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ujakkadu",
+          "totalPopulation": 733,
+          "households": 253,
+          "householdConnections": 253,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Veerapankadu@sayabukadu",
+          "totalPopulation": 104,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 29,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-20",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-20",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-20",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 22,
+        "population": 4507,
+        "households": 1367,
+        "householdConnections": 1367,
+        "sourceCount": 0,
+        "sampleRowCount": 29,
+        "latestSampleDate": "2026-07-04",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151195",
+      "villageId": "375500",
+      "villageName": "Kanagagiri",
+      "habitations": [
+        {
+          "habitationName": "Alankudaku",
+          "totalPopulation": 94,
+          "households": 54,
+          "householdConnections": 54,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ammankoi Kadu",
+          "totalPopulation": 71,
+          "households": 52,
+          "householdConnections": 52,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Amsavel Colony",
+          "totalPopulation": 229,
+          "households": 68,
+          "householdConnections": 68,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Annai Sathya Nagar",
+          "totalPopulation": 159,
+          "households": 82,
+          "householdConnections": 82,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Annanagar",
+          "totalPopulation": 460,
+          "households": 177,
+          "householdConnections": 177,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chettiar Kadu",
+          "totalPopulation": 355,
+          "households": 208,
+          "householdConnections": 208,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Indira Nagar",
+          "totalPopulation": 34,
+          "households": 14,
+          "householdConnections": 14,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kakapalayam",
+          "totalPopulation": 351,
+          "households": 119,
+          "householdConnections": 119,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanagagiri Colony(ko",
+          "totalPopulation": 141,
+          "households": 55,
+          "householdConnections": 55,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanagagri",
+          "totalPopulation": 35,
+          "households": 13,
+          "householdConnections": 13,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kothukaran Kadu",
+          "totalPopulation": 149,
+          "households": 80,
+          "householdConnections": 80,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Malai Adivaram",
+          "totalPopulation": 136,
+          "households": 64,
+          "householdConnections": 64,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Malaikattikadu",
+          "totalPopulation": 154,
+          "households": 62,
+          "householdConnections": 62,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Malaipriyam Palayam",
+          "totalPopulation": 292,
+          "households": 89,
+          "householdConnections": 89,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palaiyur Nadar Street",
+          "totalPopulation": 172,
+          "households": 66,
+          "householdConnections": 66,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palamandi",
+          "totalPopulation": 127,
+          "households": 32,
+          "householdConnections": 32,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sengan Kadu",
+          "totalPopulation": 172,
+          "households": 62,
+          "householdConnections": 62,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sengattu Valavu",
+          "totalPopulation": 159,
+          "households": 59,
+          "householdConnections": 59,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sorangan Kadu",
+          "totalPopulation": 112,
+          "households": 40,
+          "householdConnections": 40,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thalaikadaimedu",
+          "totalPopulation": 39,
+          "households": 14,
+          "householdConnections": 14,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thalukkan Kaadu",
+          "totalPopulation": 40,
+          "households": 21,
+          "householdConnections": 21,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Velappan Kovil Valavu",
+          "totalPopulation": 427,
+          "households": 171,
+          "householdConnections": 171,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 34,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-20",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-02-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 22,
+        "population": 3908,
+        "households": 1602,
+        "householdConnections": 1602,
+        "sourceCount": 0,
+        "sampleRowCount": 34,
+        "latestSampleDate": "2026-07-04",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151196",
+      "villageId": "375501",
+      "villageName": "Kandarakulamanickam",
+      "habitations": [
+        {
+          "habitationName": "Aathi Thiravidar Colony",
+          "totalPopulation": 115,
+          "households": 35,
+          "householdConnections": 35,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Amman Nagar",
+          "totalPopulation": 146,
+          "households": 25,
+          "householdConnections": 25,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Andipatty",
+          "totalPopulation": 321,
+          "households": 121,
+          "householdConnections": 121,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ariyampalayam",
+          "totalPopulation": 251,
+          "households": 77,
+          "householdConnections": 77,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Devan Kadu",
+          "totalPopulation": 109,
+          "households": 17,
+          "householdConnections": 17,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "K.k.manickam",
+          "totalPopulation": 459,
+          "households": 120,
+          "householdConnections": 120,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "K.k.manickam Quarters",
+          "totalPopulation": 293,
+          "households": 98,
+          "householdConnections": 98,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kandarkulamanickam. Ar.street",
+          "totalPopulation": 408,
+          "households": 135,
+          "householdConnections": 135,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kangeyam Palayam",
+          "totalPopulation": 216,
+          "households": 77,
+          "householdConnections": 77,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kangeyampalayam Ar C",
+          "totalPopulation": 90,
+          "households": 35,
+          "householdConnections": 35,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kangeyampalayam Pallathur Chetty Kattu Valavu",
+          "totalPopulation": 118,
+          "households": 25,
+          "householdConnections": 25,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Koil Palayam",
+          "totalPopulation": 155,
+          "households": 45,
+          "householdConnections": 45,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kulanthaigoundanar Kadu",
+          "totalPopulation": 115,
+          "households": 44,
+          "householdConnections": 44,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kurukalam Palayam",
+          "totalPopulation": 229,
+          "households": 71,
+          "householdConnections": 71,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Melkadu Pinjakuttai",
+          "totalPopulation": 48,
+          "households": 15,
+          "householdConnections": 15,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Navapmedu",
+          "totalPopulation": 146,
+          "households": 52,
+          "householdConnections": 52,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Panang Kaadu",
+          "totalPopulation": 337,
+          "households": 98,
+          "householdConnections": 98,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poosari Kadu",
+          "totalPopulation": 114,
+          "households": 25,
+          "householdConnections": 25,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Saravanan Kadu",
+          "totalPopulation": 84,
+          "households": 21,
+          "householdConnections": 21,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Shekku Medu",
+          "totalPopulation": 213,
+          "households": 71,
+          "householdConnections": 71,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Veppamarathu Kadu",
+          "totalPopulation": 120,
+          "households": 37,
+          "householdConnections": 37,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 30,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-27",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-31",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-06",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-03",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-08-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 21,
+        "population": 4087,
+        "households": 1244,
+        "householdConnections": 1244,
+        "sourceCount": 0,
+        "sampleRowCount": 30,
+        "latestSampleDate": "2026-07-04",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151197",
+      "villageId": "375502",
+      "villageName": "Kannanderi",
+      "habitations": [
+        {
+          "habitationName": "Angalappanur",
+          "totalPopulation": 334,
+          "households": 102,
+          "householdConnections": 102,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Erikadu",
+          "totalPopulation": 251,
+          "households": 56,
+          "householdConnections": 56,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Erikattanur",
+          "totalPopulation": 92,
+          "households": 22,
+          "householdConnections": 22,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kalpurikadu",
+          "totalPopulation": 32,
+          "households": 8,
+          "householdConnections": 8,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kannantheri",
+          "totalPopulation": 1380,
+          "households": 317,
+          "householdConnections": 317,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karaiyanur",
+          "totalPopulation": 360,
+          "households": 70,
+          "householdConnections": 70,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karattu Kadu",
+          "totalPopulation": 52,
+          "households": 9,
+          "householdConnections": 9,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karattukadu",
+          "totalPopulation": 140,
+          "households": 35,
+          "householdConnections": 35,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karungkaradu",
+          "totalPopulation": 80,
+          "households": 31,
+          "householdConnections": 31,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kattur",
+          "totalPopulation": 420,
+          "households": 106,
+          "householdConnections": 106,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kollampalayam",
+          "totalPopulation": 376,
+          "households": 117,
+          "householdConnections": 117,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kosaripatty",
+          "totalPopulation": 280,
+          "households": 63,
+          "householdConnections": 63,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kosaripatty Kv",
+          "totalPopulation": 340,
+          "households": 102,
+          "householdConnections": 102,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kottaikaranvalavu",
+          "totalPopulation": 180,
+          "households": 48,
+          "householdConnections": 48,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mamarathukadu",
+          "totalPopulation": 84,
+          "households": 21,
+          "householdConnections": 21,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Maniaaran Valavu",
+          "totalPopulation": 106,
+          "households": 33,
+          "householdConnections": 33,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Metukatanur",
+          "totalPopulation": 210,
+          "households": 65,
+          "householdConnections": 65,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Musaran Valavu",
+          "totalPopulation": 88,
+          "households": 31,
+          "householdConnections": 31,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Muthayur",
+          "totalPopulation": 110,
+          "households": 34,
+          "householdConnections": 34,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ondikkadai",
+          "totalPopulation": 521,
+          "households": 110,
+          "householdConnections": 110,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "PALAYA AR STREET",
+          "totalPopulation": 35,
+          "households": 18,
+          "householdConnections": 18,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pandaranur",
+          "totalPopulation": 80,
+          "households": 33,
+          "householdConnections": 33,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Periyakadu",
+          "totalPopulation": 128,
+          "households": 38,
+          "householdConnections": 38,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pondanur",
+          "totalPopulation": 170,
+          "households": 43,
+          "householdConnections": 43,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poosari Kadu",
+          "totalPopulation": 126,
+          "households": 31,
+          "householdConnections": 31,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poosariyur",
+          "totalPopulation": 102,
+          "households": 36,
+          "householdConnections": 36,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poovagoundanur",
+          "totalPopulation": 84,
+          "households": 19,
+          "householdConnections": 19,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poovanur",
+          "totalPopulation": 568,
+          "households": 111,
+          "householdConnections": 111,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ramagoundan Valavu",
+          "totalPopulation": 218,
+          "households": 54,
+          "householdConnections": 54,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Selamban Kv",
+          "totalPopulation": 68,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sengodanur",
+          "totalPopulation": 204,
+          "households": 33,
+          "householdConnections": 33,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sundakkal",
+          "totalPopulation": 270,
+          "households": 71,
+          "householdConnections": 71,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thanner Panthal Ar Colony",
+          "totalPopulation": 164,
+          "households": 44,
+          "householdConnections": 44,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thoonganur",
+          "totalPopulation": 96,
+          "households": 41,
+          "householdConnections": 41,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Urumbikkaran Valavu",
+          "totalPopulation": 48,
+          "households": 12,
+          "householdConnections": 12,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Val Kadu",
+          "totalPopulation": 36,
+          "households": 9,
+          "householdConnections": 9,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Valamuthan Valavu",
+          "totalPopulation": 233,
+          "households": 60,
+          "householdConnections": 60,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vettaikaran Valavu",
+          "totalPopulation": 310,
+          "households": 62,
+          "householdConnections": 62,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 35,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-14",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-14",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-14",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-14",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-16",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 38,
+        "population": 8376,
+        "households": 2125,
+        "householdConnections": 2125,
+        "sourceCount": 0,
+        "sampleRowCount": 35,
+        "latestSampleDate": "2026-07-08",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151198",
+      "villageId": "375503",
+      "villageName": "Eranapuram (Ct)",
+      "habitations": [
+        {
+          "habitationName": "Alaganur",
+          "totalPopulation": 540,
+          "households": 155,
+          "householdConnections": 155,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ernapuram Ad Street",
+          "totalPopulation": 320,
+          "households": 65,
+          "householdConnections": 65,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Goundaneri",
+          "totalPopulation": 510,
+          "households": 172,
+          "householdConnections": 172,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kalar Patti",
+          "totalPopulation": 269,
+          "households": 65,
+          "householdConnections": 65,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kaspapatty",
+          "totalPopulation": 345,
+          "households": 185,
+          "householdConnections": 185,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kaspapattyarunthathiar Theru",
+          "totalPopulation": 120,
+          "households": 35,
+          "householdConnections": 35,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kattapulian Kadu",
+          "totalPopulation": 210,
+          "households": 85,
+          "householdConnections": 85,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kottamedu",
+          "totalPopulation": 643,
+          "households": 145,
+          "householdConnections": 145,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kuppanda Palayam",
+          "totalPopulation": 1020,
+          "households": 252,
+          "householdConnections": 252,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mac.donald Choultry",
+          "totalPopulation": 1105,
+          "households": 425,
+          "householdConnections": 425,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mettu Kattu Valavu",
+          "totalPopulation": 521,
+          "households": 340,
+          "householdConnections": 340,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mettu Street",
+          "totalPopulation": 800,
+          "households": 225,
+          "householdConnections": 225,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nampiyam Patty",
+          "totalPopulation": 575,
+          "households": 195,
+          "householdConnections": 195,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Netaiyanur",
+          "totalPopulation": 300,
+          "households": 104,
+          "householdConnections": 104,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palaiya Sandaipettai",
+          "totalPopulation": 1260,
+          "households": 385,
+          "householdConnections": 385,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pattakaran Kadu",
+          "totalPopulation": 175,
+          "households": 52,
+          "householdConnections": 52,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pattappan Nagar",
+          "totalPopulation": 320,
+          "households": 131,
+          "householdConnections": 131,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Settukarankadu",
+          "totalPopulation": 135,
+          "households": 45,
+          "householdConnections": 45,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Shanmugapuram",
+          "totalPopulation": 1350,
+          "households": 425,
+          "householdConnections": 425,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Suriyam Patti",
+          "totalPopulation": 210,
+          "households": 86,
+          "householdConnections": 86,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thathan Kadu",
+          "totalPopulation": 364,
+          "households": 174,
+          "householdConnections": 174,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ulagappanur",
+          "totalPopulation": 1150,
+          "households": 420,
+          "householdConnections": 420,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 30,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-01",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-07-01",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-28",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-28",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-07-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 22,
+        "population": 12242,
+        "households": 4166,
+        "householdConnections": 4166,
+        "sourceCount": 0,
+        "sampleRowCount": 30,
+        "latestSampleDate": "2026-07-05",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151199",
+      "villageId": "375504",
+      "villageName": "Naduvaneri (Ct)",
+      "habitations": [
+        {
+          "habitationName": "Alan Kattaanur Aathi Thiravidat Theru",
+          "totalPopulation": 132,
+          "households": 45,
+          "householdConnections": 45,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Alankattanur",
+          "totalPopulation": 460,
+          "households": 151,
+          "householdConnections": 151,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chinna Pethanur",
+          "totalPopulation": 347,
+          "households": 132,
+          "householdConnections": 132,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chinnerik Karai Arunthathiar Theru",
+          "totalPopulation": 380,
+          "households": 109,
+          "householdConnections": 109,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karungal Kattu Valavu",
+          "totalPopulation": 380,
+          "households": 132,
+          "householdConnections": 132,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kottai Pudur",
+          "totalPopulation": 380,
+          "households": 124,
+          "householdConnections": 124,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kulanthaan Valavu",
+          "totalPopulation": 380,
+          "households": 87,
+          "householdConnections": 87,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "N.kattur",
+          "totalPopulation": 430,
+          "households": 140,
+          "householdConnections": 140,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "N.vembadithalam",
+          "totalPopulation": 890,
+          "households": 364,
+          "householdConnections": 364,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nadar Theru",
+          "totalPopulation": 160,
+          "households": 54,
+          "householdConnections": 54,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Naduvaneri Anjakkadu",
+          "totalPopulation": 250,
+          "households": 86,
+          "householdConnections": 86,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Naduvaneri Karuppanar Koil",
+          "totalPopulation": 120,
+          "households": 69,
+          "householdConnections": 69,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Naduvaneri Mettukadu",
+          "totalPopulation": 420,
+          "households": 130,
+          "householdConnections": 130,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Naduvaneri Pudur",
+          "totalPopulation": 720,
+          "households": 244,
+          "householdConnections": 244,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palaya Munseep Kaadu",
+          "totalPopulation": 230,
+          "households": 70,
+          "householdConnections": 70,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pattakaranvalavu",
+          "totalPopulation": 430,
+          "households": 140,
+          "householdConnections": 140,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Peruchalinatham Ar",
+          "totalPopulation": 390,
+          "households": 135,
+          "householdConnections": 135,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pusaari Kaadu",
+          "totalPopulation": 160,
+          "households": 50,
+          "householdConnections": 50,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "T.p. Mettu Kadu",
+          "totalPopulation": 397,
+          "households": 149,
+          "householdConnections": 149,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thirumoorthy Nagar",
+          "totalPopulation": 192,
+          "households": 62,
+          "householdConnections": 62,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thiruvalipatty K.v.",
+          "totalPopulation": 370,
+          "households": 120,
+          "householdConnections": 120,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Toongkaan Valavu",
+          "totalPopulation": 390,
+          "households": 120,
+          "householdConnections": 120,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Velagoundampalayam",
+          "totalPopulation": 420,
+          "households": 142,
+          "householdConnections": 142,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 26,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-13",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-05",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-20",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 23,
+        "population": 8428,
+        "households": 2855,
+        "householdConnections": 2855,
+        "sourceCount": 0,
+        "sampleRowCount": 26,
+        "latestSampleDate": "2026-04-12",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151200",
+      "villageId": "375505",
+      "villageName": "Thappakuttai (Ct)",
+      "habitations": [
+        {
+          "habitationName": "Athanur",
+          "totalPopulation": 315,
+          "households": 126,
+          "householdConnections": 126,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ayyanur",
+          "totalPopulation": 460,
+          "households": 187,
+          "householdConnections": 187,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ayyanur Therku Theru",
+          "totalPopulation": 396,
+          "households": 174,
+          "householdConnections": 174,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chinnamaariyammankovil",
+          "totalPopulation": 302,
+          "households": 130,
+          "householdConnections": 130,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chinnamariammankoil Ar St",
+          "totalPopulation": 408,
+          "households": 157,
+          "householdConnections": 157,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "ESWARAN KOIL AD STREET",
+          "totalPopulation": 27,
+          "households": 14,
+          "householdConnections": 14,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kalinganur",
+          "totalPopulation": 605,
+          "households": 245,
+          "householdConnections": 245,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanimar Koil Kattu Valavu",
+          "totalPopulation": 165,
+          "households": 63,
+          "householdConnections": 63,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanthapilliyar Kovil,pottiamma Valavu",
+          "totalPopulation": 535,
+          "households": 204,
+          "householdConnections": 204,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karuppa Goundanur",
+          "totalPopulation": 618,
+          "households": 283,
+          "householdConnections": 283,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karuppasamy Koil",
+          "totalPopulation": 102,
+          "households": 41,
+          "householdConnections": 41,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Krishna Reddiyur",
+          "totalPopulation": 371,
+          "households": 143,
+          "householdConnections": 143,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kuruvagoundanur",
+          "totalPopulation": 208,
+          "households": 81,
+          "householdConnections": 81,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "M.g.r.nagar",
+          "totalPopulation": 172,
+          "households": 64,
+          "householdConnections": 64,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Malankadu",
+          "totalPopulation": 158,
+          "households": 63,
+          "householdConnections": 63,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Muthu Kuttiyur",
+          "totalPopulation": 372,
+          "households": 179,
+          "householdConnections": 179,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Navithar Theru",
+          "totalPopulation": 24,
+          "households": 9,
+          "householdConnections": 9,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palakkaran Valavu",
+          "totalPopulation": 80,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palayur",
+          "totalPopulation": 202,
+          "households": 79,
+          "householdConnections": 79,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Palikannan Kv",
+          "totalPopulation": 178,
+          "households": 69,
+          "householdConnections": 69,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poochi Rediyur",
+          "totalPopulation": 112,
+          "households": 53,
+          "householdConnections": 53,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poosariyur Ar Street",
+          "totalPopulation": 49,
+          "households": 20,
+          "householdConnections": 20,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Poosariyur,kambarikadu,pudatthikadu",
+          "totalPopulation": 876,
+          "households": 358,
+          "householdConnections": 358,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Ramasamy Valavu",
+          "totalPopulation": 201,
+          "households": 79,
+          "householdConnections": 79,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Reddiyur Ponusamy Kadu",
+          "totalPopulation": 157,
+          "households": 63,
+          "householdConnections": 63,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Sundeli Perumal Koil",
+          "totalPopulation": 456,
+          "households": 242,
+          "householdConnections": 242,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thadikaranur",
+          "totalPopulation": 511,
+          "households": 243,
+          "householdConnections": 243,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thappakuttai",
+          "totalPopulation": 298,
+          "households": 116,
+          "householdConnections": 116,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thirvalipatti Mettukadu",
+          "totalPopulation": 195,
+          "households": 77,
+          "householdConnections": 77,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Veerakaran Koil",
+          "totalPopulation": 62,
+          "households": 26,
+          "householdConnections": 26,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Velamarathan Kattuvalavu",
+          "totalPopulation": 189,
+          "households": 75,
+          "householdConnections": 75,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vellakaradu Medu",
+          "totalPopulation": 408,
+          "households": 200,
+          "householdConnections": 200,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 28,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-15",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-23",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-23",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-14",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-14",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-07",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2023-01-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2023-01-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2023-01-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2023-01-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2023-01-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 32,
+        "population": 9212,
+        "households": 3892,
+        "householdConnections": 3892,
+        "sourceCount": 0,
+        "sampleRowCount": 28,
+        "latestSampleDate": "2026-06-25",
+        "latestSampleStatus": "Safe"
+      }
+    },
+    {
+      "blockId": "4532",
+      "gpId": "151201",
+      "villageId": "375506",
+      "villageName": "Vaikuntam",
+      "habitations": [
+        {
+          "habitationName": "Agraharam Sadaya Goundan Valavu",
+          "totalPopulation": 502,
+          "households": 208,
+          "householdConnections": 208,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Alampalayam",
+          "totalPopulation": 222,
+          "households": 73,
+          "householdConnections": 73,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Alampalayam Elavankadu @muniyappankoil",
+          "totalPopulation": 206,
+          "households": 61,
+          "householdConnections": 61,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Athithiravidar Colony",
+          "totalPopulation": 293,
+          "households": 97,
+          "householdConnections": 97,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Bodinaickanvalavu",
+          "totalPopulation": 97,
+          "households": 32,
+          "householdConnections": 32,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chellappampatty",
+          "totalPopulation": 601,
+          "households": 206,
+          "householdConnections": 206,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Chinnathandanoor",
+          "totalPopulation": 156,
+          "households": 48,
+          "householdConnections": 48,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Echampallam, Kollukadu",
+          "totalPopulation": 92,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Edayapatty Ar",
+          "totalPopulation": 236,
+          "households": 72,
+          "householdConnections": 72,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Edayapatty Konaar Theru",
+          "totalPopulation": 405,
+          "households": 152,
+          "householdConnections": 152,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gundalapatty",
+          "totalPopulation": 65,
+          "households": 22,
+          "householdConnections": 22,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gundalapatty Arunthathiyar Theru",
+          "totalPopulation": 79,
+          "households": 25,
+          "householdConnections": 25,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Gundalapatty Gounder Pakuthi (arumaikkaran Valavu)",
+          "totalPopulation": 55,
+          "households": 19,
+          "householdConnections": 19,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kalikuttai Ar",
+          "totalPopulation": 28,
+          "households": 9,
+          "householdConnections": 9,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kalipatty Pirivu Road",
+          "totalPopulation": 253,
+          "households": 75,
+          "householdConnections": 75,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanakachipalayam",
+          "totalPopulation": 367,
+          "households": 167,
+          "householdConnections": 167,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kanakachipalayam K V",
+          "totalPopulation": 55,
+          "households": 17,
+          "householdConnections": 17,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kapparaiyaan Valavu",
+          "totalPopulation": 81,
+          "households": 32,
+          "householdConnections": 32,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Karattur Ganthinagar",
+          "totalPopulation": 692,
+          "households": 252,
+          "householdConnections": 252,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kasimariyur",
+          "totalPopulation": 302,
+          "households": 117,
+          "householdConnections": 117,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kedikaval",
+          "totalPopulation": 342,
+          "households": 99,
+          "householdConnections": 99,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kedikaval Arunthathiyar Theru",
+          "totalPopulation": 253,
+          "households": 79,
+          "householdConnections": 79,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Keechiyanvalavu",
+          "totalPopulation": 76,
+          "households": 22,
+          "householdConnections": 22,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Korattivalavu",
+          "totalPopulation": 83,
+          "households": 26,
+          "householdConnections": 26,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kozhigikattur",
+          "totalPopulation": 189,
+          "households": 55,
+          "householdConnections": 55,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Kozhigikattur Arunthathiyar Theru",
+          "totalPopulation": 154,
+          "households": 46,
+          "householdConnections": 46,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Maniyaranvalavu",
+          "totalPopulation": 135,
+          "households": 47,
+          "householdConnections": 47,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mettukadu",
+          "totalPopulation": 309,
+          "households": 102,
+          "householdConnections": 102,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mgr Nagar",
+          "totalPopulation": 148,
+          "households": 50,
+          "householdConnections": 50,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mosakavundanvalavu",
+          "totalPopulation": 109,
+          "households": 36,
+          "householdConnections": 36,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mottaiyanvalavu",
+          "totalPopulation": 36,
+          "households": 13,
+          "householdConnections": 13,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Mukkonam Konganapuram Road",
+          "totalPopulation": 299,
+          "households": 102,
+          "householdConnections": 102,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Murangaikkaadu",
+          "totalPopulation": 57,
+          "households": 19,
+          "householdConnections": 19,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nallagoundenvalavu",
+          "totalPopulation": 101,
+          "households": 31,
+          "householdConnections": 31,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Nallathaneerkuttai",
+          "totalPopulation": 52,
+          "households": 16,
+          "householdConnections": 16,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pachiyur Vinayagar Koil",
+          "totalPopulation": 43,
+          "households": 18,
+          "householdConnections": 18,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pallikondanvalavu",
+          "totalPopulation": 80,
+          "households": 28,
+          "householdConnections": 28,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Pattakkaranvalavu",
+          "totalPopulation": 116,
+          "households": 35,
+          "householdConnections": 35,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Periathandanoor",
+          "totalPopulation": 99,
+          "households": 40,
+          "householdConnections": 40,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Peruma Goundan Kv",
+          "totalPopulation": 127,
+          "households": 43,
+          "householdConnections": 43,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Peruma Goundan Valavu",
+          "totalPopulation": 125,
+          "households": 43,
+          "householdConnections": 43,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Rangan Kv",
+          "totalPopulation": 62,
+          "households": 19,
+          "householdConnections": 19,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Renganvalavu",
+          "totalPopulation": 152,
+          "households": 48,
+          "householdConnections": 48,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Southaayakkadu",
+          "totalPopulation": 62,
+          "households": 19,
+          "householdConnections": 19,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Tholkaran Valavu",
+          "totalPopulation": 51,
+          "households": 15,
+          "householdConnections": 15,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Thooti Naickan Valavu",
+          "totalPopulation": 61,
+          "households": 29,
+          "householdConnections": 29,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Uppiliar Theru",
+          "totalPopulation": 36,
+          "households": 7,
+          "householdConnections": 7,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Usavankaadu",
+          "totalPopulation": 50,
+          "households": 14,
+          "householdConnections": 14,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vaikundam",
+          "totalPopulation": 517,
+          "households": 188,
+          "householdConnections": 188,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vaikundam Mettu Kadu",
+          "totalPopulation": 21,
+          "households": 7,
+          "householdConnections": 7,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Valakuttai",
+          "totalPopulation": 98,
+          "households": 30,
+          "householdConnections": 30,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vedichivalavu",
+          "totalPopulation": 37,
+          "households": 14,
+          "householdConnections": 14,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        },
+        {
+          "habitationName": "Vellayampalayam",
+          "totalPopulation": 421,
+          "households": 117,
+          "householdConnections": 117,
+          "qualityStatus": "None",
+          "qualityContamination": "None"
+        }
+      ],
+      "sources": [],
+      "sampleSummary": {
+        "samplesTaken": 31,
+        "samplesContaminated": 0,
+        "remedialActionTaken": 0
+      },
+      "samples": [
+        {
+          "sampleDate": "2026-07-08",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-06-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-05-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-04-12",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-18",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-02-18",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2026-01-09",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-12-25",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-17",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-11-17",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-10-10",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2025-08-04",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2024-07-19",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        },
+        {
+          "sampleDate": "2022-12-26",
+          "contaminationTested": "Chemical and bacteriological both",
+          "status": "Safe",
+          "remedialAction": "Not required",
+          "location": "Individual Household"
+        }
+      ],
+      "totals": {
+        "habitationCount": 53,
+        "population": 9288,
+        "households": 3170,
+        "householdConnections": 3170,
+        "sourceCount": 0,
+        "sampleRowCount": 31,
+        "latestSampleDate": "2026-07-08",
+        "latestSampleStatus": "Safe"
+      }
+    }
+  ]
+}
