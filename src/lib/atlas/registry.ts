@@ -83,7 +83,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Satara",
     hook: "Koyna country with a dry eastern edge: the same district holds talukas at 20% and talukas at 76% of their groundwater.",
     hasCuratedBriefs: true,
-    published: false,
+    published: true,
     irrigationCurrentSource: {
       label: "District Socio-Economic Review",
       nextStep:
