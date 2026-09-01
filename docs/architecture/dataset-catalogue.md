@@ -13,7 +13,7 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | geojson-layers | 161 | 100.3 | 11 | 154 | 6 |
 | atlas | 151 | 66.1 | 2 | 151 | 0 |
 | basins | 160 | 52.2 | 5 | 61 | 13 |
-| data-root | 173 | 30.6 | 10 | 141 | 31 |
+| data-root | 173 | 30.7 | 10 | 141 | 31 |
 | rich-bodies | 259 | 2.8 | 8 | 259 | 0 |
 | waterways | 14 | 0.5 | 2 | 8 | 6 |
 | corridors | 1 | 0.1 | 1 | 1 | 0 |
