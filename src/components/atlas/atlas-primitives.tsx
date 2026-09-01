@@ -62,7 +62,7 @@ export function AtlasSection({
 }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className={cn("scroll-mt-20 py-8 sm:py-10", className)}>
-      <header className="mb-4 max-w-3xl">
+      <header className="mb-4">
         <h2 id={`${id}-title`} className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
           {title}
         </h2>
@@ -76,7 +76,7 @@ export function AtlasSection({
 /** A method or provenance note under a table or figure. */
 export function AtlasNote({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={cn("mt-3 max-w-3xl text-xs sm:text-sm leading-relaxed text-slate-500 dark:text-slate-400", className)}>
+    <p className={cn("mt-3 text-xs sm:text-sm leading-relaxed text-slate-500 dark:text-slate-400", className)}>
       {children}
     </p>
   );
@@ -85,7 +85,7 @@ export function AtlasNote({ children, className }: { children: ReactNode; classN
 /** A finding written as text: the reading above a table, not a caption under it. */
 export function AtlasFinding({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={cn("max-w-3xl text-sm sm:text-base leading-relaxed text-slate-800 dark:text-slate-200", className)}>
+    <p className={cn("text-sm sm:text-base leading-relaxed text-slate-800 dark:text-slate-200", className)}>
       {children}
     </p>
   );
