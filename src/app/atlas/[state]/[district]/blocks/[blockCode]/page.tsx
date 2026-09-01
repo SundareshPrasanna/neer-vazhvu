@@ -104,7 +104,7 @@ export default async function AtlasBlockPage({ params }: RouteParams) {
           <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             {block.name} block
           </h1>
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-400">
+          <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-400">
             {block.panchayatCount} Gram Panchayats, {block.waterProfileCount} of them with a water
             profile{reviewedHere > 0 ? `, ${reviewedHere} reviewed by a person` : ""}. Figures below are the
             block&rsquo;s share of the district roll-up

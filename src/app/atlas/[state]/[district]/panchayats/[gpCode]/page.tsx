@@ -109,7 +109,7 @@ function Chapter({
 }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-20 py-6 first:pt-0">
-      <header className="mb-3 max-w-2xl">
+      <header className="mb-3">
         <h2 id={`${id}-title`} className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
           {title}
         </h2>
@@ -222,7 +222,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
             .{curated ? ` Reviewed by a person on ${curated.reviewedAt}.` : ""}
           </p>
 
-          <div className="mt-6 max-w-3xl">
+          <div className="mt-6">
             {verdict ? (
               <>
                 <ToneBadge tone={tone} />

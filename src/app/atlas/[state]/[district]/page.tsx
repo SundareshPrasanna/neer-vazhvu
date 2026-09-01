@@ -135,7 +135,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
           <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             {reading.districtName} district
           </h1>
-          <div className="mt-5 max-w-3xl">
+          <div className="mt-5">
             <ToneBadge tone={verdict.tone} />
             <p className="mt-3 text-lg sm:text-xl leading-relaxed text-slate-800 dark:text-slate-200">
               {verdict.sentence}
@@ -161,7 +161,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
           </dl>
 
           {verdict.nextSteps.length > 0 ? (
-            <div className="mt-8 max-w-3xl">
+            <div className="mt-8">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 What would sharpen this reading
               </h2>
