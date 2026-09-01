@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-tiruchirappalli-v1",
+  "district": {
+    "displayName": "Tiruchirappalli",
+    "tnrdLgdCode": "545",
+    "tnrdMasterCode": "16",
+    "jjmStateId": "29",
+    "jjmDistrictId": "445",
+    "censusDistrictCode": "614",
+    "lgdDistrictCode": "591",
+    "ingresDistrictName": "TIRUCHIRAPPALLI",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 15,
+    "tnrdMasterBlocks": 1,
+    "tnrdMasterGramPanchayats": 1,
+    "jjmVillages": 15,
+    "censusVillages": 5
+  },
+  "targets": [
+    {
+      "id": "panaiyakuruchi",
+      "displayName": "Panaiyakuruchi",
+      "reviewedAt": "2026-07-24",
+      "tnrdLgdGramPanchayatCode": "230382",
+      "tnrdMasterBlockCode": "3",
+      "tnrdMasterGramPanchayatCode": "17",
+      "jjmBlockId": "4611",
+      "jjmGramPanchayatId": "153878",
+      "censusSubdistrictCode": "05780",
+      "censusGramPanchayatCode": "0064",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "636015",
+            "name": "Panayakurichy"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 614; subdistrict 05780; Census GP 0064",
+            "assertion": "The reviewed Census composition contains Panayakurichy 636015."
+          }
+        ]
+      }
+    }
+  ]
+}

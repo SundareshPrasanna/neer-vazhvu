@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-thanjavur-v1",
+  "district": {
+    "displayName": "Thanjavur",
+    "tnrdLgdCode": "540",
+    "tnrdMasterCode": "13",
+    "jjmStateId": "29",
+    "jjmDistrictId": "441",
+    "censusDistrictCode": "620",
+    "lgdDistrictCode": "586",
+    "ingresDistrictName": "THANJAVUR",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 589,
+    "tnrdMasterBlocks": 14,
+    "tnrdMasterGramPanchayats": 589,
+    "jjmVillages": 612,
+    "censusVillages": 805
+  },
+  "targets": [
+    {
+      "id": "thogur",
+      "displayName": "Thogur",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228453",
+      "tnrdMasterBlockCode": "2",
+      "tnrdMasterGramPanchayatCode": "37",
+      "jjmBlockId": "4561",
+      "jjmGramPanchayatId": "152180",
+      "censusSubdistrictCode": "05813",
+      "censusGramPanchayatCode": "0097",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 2
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 2,
+        "members": [
+          {
+            "kind": "village",
+            "code": "638711",
+            "name": "Koviladi"
+          },
+          {
+            "kind": "village",
+            "code": "638712",
+            "name": "Thogur"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05813; Census GP 0097",
+            "assertion": "The reviewed Census composition contains Koviladi 638711 and Thogur 638712."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sethubavachatram",
+      "displayName": "Sethubavachatram",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228730",
+      "tnrdMasterBlockCode": "14",
+      "tnrdMasterGramPanchayatCode": "28",
+      "jjmBlockId": "4567",
+      "jjmGramPanchayatId": "152441",
+      "censusSubdistrictCode": "05817",
+      "censusGramPanchayatCode": "0582",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639187",
+            "name": "Sethubavachatram"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05817; Census GP 0582",
+            "assertion": "The reviewed Census composition contains Sethubavachatram 639187."
+          }
+        ]
+      }
+    },
+    {
+      "id": "poondi",
+      "displayName": "Poondi",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228400",
+      "tnrdMasterBlockCode": "10",
+      "tnrdMasterGramPanchayatCode": "30",
+      "jjmBlockId": "4559",
+      "jjmGramPanchayatId": "152086",
+      "censusSubdistrictCode": "05812",
+      "censusGramPanchayatCode": "0434",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 2
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "manual-audit",
+        "expectedRecordCount": 2,
+        "members": [
+          {
+            "kind": "village",
+            "code": "638660",
+            "name": "Poondi II"
+          },
+          {
+            "kind": "village",
+            "code": "638661",
+            "name": "Poondi I"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05812; Census GP 0434",
+            "assertion": "The reviewed Census composition contains Poondi II 638660 and Poondi I 638661."
+          }
+        ]
+      }
+    },
+    {
+      "id": "kuruvikkarambai",
+      "displayName": "Kuruvikkarambai",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228711",
+      "tnrdMasterBlockCode": "14",
+      "tnrdMasterGramPanchayatCode": "11",
+      "jjmBlockId": "4567",
+      "jjmGramPanchayatId": "152422",
+      "censusSubdistrictCode": "05817",
+      "censusGramPanchayatCode": "0565",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 2
+        },
+        "census": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 2
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "manual-audit",
+        "expectedRecordCount": 2,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639145",
+            "name": "Kuruvikarambai II"
+          },
+          {
+            "kind": "village",
+            "code": "639147",
+            "name": "Kuruvikarambai I"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05817; Census GP 0565",
+            "assertion": "The reviewed Census composition contains Kuruvikarambai II 639145 and Kuruvikarambai I 639147."
+          }
+        ]
+      }
+    },
+    {
+      "id": "vettuvakkottai",
+      "displayName": "Vettuvakkottai",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228911",
+      "tnrdMasterBlockCode": "5",
+      "tnrdMasterGramPanchayatCode": "30",
+      "jjmBlockId": "4564",
+      "jjmGramPanchayatId": "152334",
+      "censusSubdistrictCode": "05815",
+      "censusGramPanchayatCode": "0231",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 3
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "manual-audit",
+        "expectedRecordCount": 3,
+        "members": [
+          {
+            "kind": "village",
+            "code": "638954",
+            "name": "Pandipalamanaikadu"
+          },
+          {
+            "kind": "village",
+            "code": "638955",
+            "name": "Ooranipuram"
+          },
+          {
+            "kind": "village",
+            "code": "638956",
+            "name": "Vettuvakottai I"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05815; Census GP 0231",
+            "assertion": "The reviewed Census composition contains Pandipalamanaikadu 638954, Ooranipuram 638955, and Vettuvakottai I 638956."
+          }
+        ]
+      }
+    },
+    {
+      "id": "nanjikkottai",
+      "displayName": "Nanjikkottai",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228767",
+      "tnrdMasterBlockCode": "1",
+      "tnrdMasterGramPanchayatCode": "28",
+      "jjmBlockId": "4562",
+      "jjmGramPanchayatId": "152212",
+      "censusSubdistrictCode": "05814",
+      "censusGramPanchayatCode": "0031",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "partial",
+          "basis": "manual-audit",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-crosswalk",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "census-town",
+            "code": "638846",
+            "name": "Nanjikottai (CT)"
+          }
+        ],
+        "exclusions": [
+          {
+            "kind": "village",
+            "code": "638832",
+            "name": "Nanjikottai Vallundanpattu",
+            "reason": "belongs-to-other-gram-panchayat",
+            "ownerLgdGramPanchayatCode": "228764"
+          }
+        ],
+        "evidence": [
+          {
+            "id": "tnrd-panchayat-population",
+            "sourceId": "tnrd-census-2011-panchayat-table",
+            "sourceUrl": "https://tnrd.tn.gov.in/databases/census_of_india_2011TN/pdf/15Thanjavur.pdf",
+            "sourceAsOf": "Census 2011 Panchayat population table",
+            "method": "authoritative-crosswalk",
+            "locator": "Thanjavur Panchayat Union rows 30 and 31",
+            "assertion": "Nanjikottai and Nanjikottai Vallundanpattu are separate Panchayat population rows."
+          },
+          {
+            "id": "gazette-census-unit-crosswalk",
+            "sourceId": "tn-gazette-pmfby-2021",
+            "sourceUrl": "https://www.stationeryprinting.tn.gov.in/gazette/2021/7_II_2_A_Sup.pdf",
+            "sourceAsOf": "Tamil Nadu Gazette 2021",
+            "method": "authoritative-crosswalk",
+            "locator": "Nanjikottai firka settlement enumeration",
+            "assertion": "The official enumeration distinguishes Census Town 638846 from Nanjikottai Vallundanpattu village 638832."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { districtHref, listPublishedAtlasDistricts } from "@/lib/atlas/registry";
 import { listEnabledPlaces } from "@/lib/cities";
 import { FEATURE_AVAILABILITY } from "@/lib/cities/routing";
 
@@ -51,6 +52,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: hint.priority,
       });
     }
+  }
+
+  // Atlas districts: published ones only, never preview-gated ones, the same
+  // rule the route guard applies. Only the district page is listed; block and
+  // Gram Panchayat pages are reached through it. This reads the registry
+  // alone, deliberately: importing the artifact loaders here made Turbopack
+  // trace the whole project into this route's file list.
+  for (const district of listPublishedAtlasDistricts()) {
+    entries.push({
+      url: `${BASE}${districtHref(district)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
   }
 
   return entries;

@@ -1,0 +1,83 @@
+{
+  "$id": "atlas-briefs.schema.json",
+  "title": "atlas/briefs contract (Tier A)",
+  "description": "Generated place briefs for the Gram Panchayats of one LGD block, sharded per block under public/data/atlas/<state>/<district>/briefs/<blockCode>.json. The verdict is derived from the tension between tap coverage and the containing taluk's groundwater category; a brief that could not clear the identity, population and drinking-water floor is directory-only and carries no verdict and no headline facts. Curated (human-reviewed) briefs live in curated-briefs.json and override by LGD code at page time, never here.",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": ["schemaVersion", "planId", "blockCode", "blockName", "assessedAt", "recordCount", "briefs"],
+  "properties": {
+    "schemaVersion": { "type": "integer" },
+    "planId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "blockCode": { "type": "string", "pattern": "^[0-9]+$" },
+    "blockName": { "type": "string", "minLength": 1 },
+    "assessedAt": { "$ref": "envelope.schema.json#/$defs/date" },
+    "recordCount": { "type": "integer" },
+    "briefs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "schemaVersion", "placeId", "name", "blockCode", "status", "statusReason",
+          "verdict", "headlineFacts", "gaps", "adequateCapabilities", "assessedCapabilities", "detail"
+        ],
+        "properties": {
+          "schemaVersion": { "type": "integer" },
+          "placeId": { "type": "string", "pattern": "^[0-9]{6}$", "description": "LGD Gram Panchayat code." },
+          "name": { "type": "string", "minLength": 1 },
+          "blockCode": { "type": "string", "pattern": "^[0-9]+$" },
+          "status": { "enum": ["brief-ready", "directory-only"] },
+          "statusReason": { "type": "string", "minLength": 1 },
+          "verdict": {
+            "type": ["object", "null"],
+            "required": ["title", "body", "tone"],
+            "properties": {
+              "title": { "type": "string", "minLength": 1 },
+              "body": { "type": "string", "minLength": 1 },
+              "tone": { "enum": ["positive", "warning", "neutral", "blocked"] }
+            }
+          },
+          "headlineFacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["value", "label", "note"],
+              "properties": {
+                "value": { "type": "string", "minLength": 1 },
+                "label": { "type": "string", "minLength": 1 },
+                "note": { "type": "string", "minLength": 1, "description": "The caveat travels with the number." }
+              }
+            }
+          },
+          "gaps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["capabilityId", "reason"],
+              "properties": {
+                "capabilityId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+                "reason": { "enum": ["unavailable", "not-assessed"] }
+              }
+            }
+          },
+          "adequateCapabilities": { "type": "integer" },
+          "assessedCapabilities": { "type": "integer" },
+          "detail": {
+            "type": "object",
+            "required": ["habitations", "sources", "sampling", "land", "seasonal", "boundary", "rainfall", "waterBodies"],
+            "properties": {
+              "habitations": { "type": "array" },
+              "sources": { "type": "array" },
+              "sampling": { "type": ["object", "null"] },
+              "land": { "type": ["object", "null"] },
+              "seasonal": { "type": ["object", "null"] },
+              "boundary": { "type": ["object", "null"] },
+              "rainfall": { "type": ["object", "null"] },
+              "waterBodies": { "type": ["object", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -3,6 +3,13 @@ import Link from "next/link";
 import { listAllPlaces } from "@/lib/cities";
 import { liveCityPhrase } from "@/lib/cities/roster";
 import { CityLandmark, CITY_ACCENT, DEFAULT_ACCENT } from "@/components/landing/city-landmark";
+import { PlaceBoard } from "@/components/landing/place-board";
+import {
+  districtHref,
+  listAtlasDistricts,
+  listVisibleAtlasDistricts,
+  type AtlasDistrict,
+} from "@/lib/atlas/registry";
 
 // The landing page kept its OWN three copies of the city roster, so it was
 // still advertising three live cities on the day the sixth launched - the same
@@ -72,7 +79,7 @@ const CITY_HOOKS: Record<string, string> = {
     "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
 };
 
-type CityStatus = "live" | "onboarding" | "upnext";
+type CityStatus = "live" | "onboarding" | "upnext" | "preview";
 
 type BoardCity = {
   cityId: string;
@@ -83,7 +90,7 @@ type BoardCity = {
   status: CityStatus;
 };
 
-const STATUS_ORDER: Record<CityStatus, number> = { live: 0, onboarding: 1, upnext: 2 };
+const STATUS_ORDER: Record<CityStatus, number> = { live: 0, preview: 1, onboarding: 2, upnext: 3 };
 
 /**
  * Build the city status board from the registry. A registered place with
@@ -165,6 +172,14 @@ const STATUS_BADGE: Record<CityStatus, { label: string; classes: string; dot: st
     classes:
       "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-500/20 dark:ring-slate-400/30",
     dot: "bg-slate-400",
+  },
+  // A district exposed through NEXT_PUBLIC_PREVIEW_DISTRICTS: linkable on
+  // this deployment, not yet published.
+  preview: {
+    label: "Preview",
+    classes:
+      "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 ring-cyan-600/20 dark:ring-cyan-500/30",
+    dot: "bg-cyan-500",
   },
 };
 
@@ -260,8 +275,133 @@ function CityCard({ city }: { city: BoardCity }) {
   );
 }
 
+type DistrictStatus = Extract<CityStatus, "live" | "preview" | "onboarding">;
+
+type BoardDistrict = { district: AtlasDistrict; status: DistrictStatus };
+
+/**
+ * The district board reads the Atlas registry the way the city board reads
+ * src/lib/cities: a published district is live, a district exposed through
+ * NEXT_PUBLIC_PREVIEW_DISTRICTS is a linkable preview, the rest are
+ * onboarding cards without a link. One registry, no static fallback list.
+ */
+function buildDistrictBoard(): BoardDistrict[] {
+  const visible = new Set(listVisibleAtlasDistricts().map((d) => d.scopeId));
+  return listAtlasDistricts()
+    .map(
+      (district): BoardDistrict => ({
+        district,
+        status: district.published
+          ? "live"
+          : visible.has(district.scopeId)
+            ? "preview"
+            : "onboarding",
+      }),
+    )
+    .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+}
+
+const DISTRICT_ACCENT = "from-teal-500 to-emerald-700";
+
+/** Canals, tanks and a field bund: the rural twin of CityLandmark. */
+function DistrictMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 200 80"
+      preserveAspectRatio="xMidYMax meet"
+      aria-hidden="true"
+      className={className}
+    >
+      <g fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+        <path d="M0 58 C 30 46, 55 70, 85 58 S 135 46, 165 58 S 190 66, 200 60" />
+        <path d="M0 68 C 40 58, 65 78, 105 68 S 165 58, 200 70" strokeOpacity={0.55} />
+        <path d="M22 42 V 24 H 62 V 42" strokeOpacity={0.85} />
+        <path d="M112 38 V 20 H 152 V 38" strokeOpacity={0.85} />
+        <path d="M30 33 h24 M120 29 h24" strokeOpacity={0.35} />
+        <path d="M0 78 H 200" strokeOpacity={0.25} />
+      </g>
+    </svg>
+  );
+}
+
+function DistrictCard({ district, status }: BoardDistrict) {
+  const linkable = status !== "onboarding";
+  const accent = linkable
+    ? DISTRICT_ACCENT
+    : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
+
+  const banner = (
+    <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
+      <DistrictMark
+        className={`absolute inset-0 h-full w-full ${linkable ? "text-white/85" : "text-white/60"}`}
+      />
+      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
+      <div className="absolute top-3 right-3">
+        <CityBadge status={status} />
+      </div>
+    </div>
+  );
+
+  const body = (
+    <div className="p-5 sm:p-6">
+      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+        {district.name}
+      </h3>
+      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        District
+        <span className="mx-1 text-slate-300 dark:text-slate-600">|</span>
+        {district.stateCode}
+        {district.basin && (
+          <>
+            <span className="mx-1 text-slate-300 dark:text-slate-600">|</span>
+            {district.basin.subBasinName}
+          </>
+        )}
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+        {district.hook}
+      </p>
+      {linkable ? (
+        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
+          Open district
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+      ) : (
+        <span className="mt-4 inline-flex items-center text-sm font-medium text-slate-400 dark:text-slate-500">
+          Onboarding
+        </span>
+      )}
+    </div>
+  );
+
+  const baseClass =
+    "block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900";
+
+  if (linkable) {
+    return (
+      <Link
+        href={districtHref(district)}
+        className={`${baseClass} transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500`}
+      >
+        {banner}
+        {body}
+      </Link>
+    );
+  }
+
+  return (
+    <div className={baseClass}>
+      {banner}
+      {body}
+    </div>
+  );
+}
+
 export default function Page() {
   const cities = buildCityBoard();
+  const districts = buildDistrictBoard();
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
@@ -281,16 +421,16 @@ export default function Page() {
             Urban Water Intelligence
           </p>
           <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-            An open-source platform that makes India&apos;s urban water systems
+            An open-source platform that makes India&apos;s water systems
             legible - reservoirs, groundwater, rivers, floods, and water bodies
-            - city by city.
+            - city by city, and district by district.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#cities"
               className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
             >
-              Explore the cities
+              Explore cities and districts
             </a>
             <a
               href={GITHUB_URL}
@@ -312,47 +452,64 @@ export default function Page() {
         </div>
       </section>
 
-      {/* CITY STATUS BOARD */}
+      {/* PLACES BOARD: cities and districts in one section, one switch.
+          The section keeps id="cities" so every existing #cities deep link
+          still lands here; #districts lands on the switch itself. */}
       <section
         id="cities"
         className="scroll-mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
-          <div className="max-w-2xl">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
-              Cities
-            </h2>
-            <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
-              Each city is its own dashboard, built on whatever public data can
-              carry an honest picture.
-            </p>
-          </div>
+          <PlaceBoard
+            counts={{ cities: cities.length, districts: districts.length }}
+            cities={
+              <>
+                <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  Live now
+                </h3>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {cities
+                    .filter((c) => c.status === "live")
+                    .map((city) => (
+                      <CityCard key={city.cityId} city={city} />
+                    ))}
+                </div>
 
-          <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            Live now
-          </h3>
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {cities
-              .filter((c) => c.status === "live")
-              .map((city) => (
-                <CityCard key={city.cityId} city={city} />
-              ))}
-          </div>
-
-          <h3 className="mt-12 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            <span className="h-2 w-2 rounded-full bg-slate-400" />
-            Coming soon
-          </h3>
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {cities
-              .filter((c) => c.status !== "live")
-              .map((city) => (
-                <CityCard key={city.cityId} city={city} />
-              ))}
-          </div>
+                <h3 className="mt-12 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <span className="h-2 w-2 rounded-full bg-slate-400" />
+                  Coming soon
+                </h3>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {cities
+                    .filter((c) => c.status !== "live")
+                    .map((city) => (
+                      <CityCard key={city.cityId} city={city} />
+                    ))}
+                </div>
+              </>
+            }
+            districts={
+              <>
+                <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+                  <span className="h-2 w-2 rounded-full bg-teal-500" />
+                  In the Atlas
+                </h3>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {districts.map((d) => (
+                    <DistrictCard key={d.district.scopeId} {...d} />
+                  ))}
+                </div>
+                <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
+                  A district opens as one reading of the whole district, then a
+                  directory of its blocks and Gram Panchayats. Each hangs off the
+                  river basin it sits in.
+                </p>
+              </>
+            }
+          />
           <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
-            Want your city, or a dataset, on this map sooner? Email{" "}
+            Want your city or district, or a dataset, on this map sooner? Email{" "}
             <a
               href={CONTACT_MAILTO}
               className="font-medium text-cyan-700 dark:text-cyan-400 underline-offset-2 hover:underline"

@@ -1,0 +1,226 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-projection",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tiruchirappalli"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-07-25"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-07-25",
+    "produced_by": "scripts/atlas-project-groundwater.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/tiruchirappalli/directory.json",
+      "public/data/atlas/tn/tiruchirappalli/groundwater-taluks.json"
+    ],
+    "note": "IN-GRES 2024-2025 taluk assessment projected onto 403 of 404 Gram Panchayats across 9 taluks; 1 deferred with a reason in review[]."
+  },
+  "projection": {
+    "of": {
+      "kind": "district",
+      "id": "tn-tiruchirappalli"
+    },
+    "method": "spatial-intersection",
+    "limitations": [
+      "The assessment unit is a revenue taluk, not the Gram Panchayat: each Panchayat inherits its containing taluk's category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.",
+      "Containment is decided by the TNGIS polygon centroid (vertex fallback for concave polygons); a Panchayat that falls in no taluk or in a taluk without an assessment is deferred, never guessed.",
+      "1 TNRD blocks span more than one revenue taluk, so a block-to-taluk name match would have been wrong."
+    ]
+  },
+  "schemaVersion": 1,
+  "planId": "tn-tiruchirappalli-v1",
+  "assessmentYear": "2024-2025",
+  "projectedAt": "2026-07-25",
+  "projectionMethod": "spatial-intersection",
+  "source": {
+    "talukLayer": "admin_master:administrative_boundary_taluk",
+    "talukDistrictLgdCode": "591",
+    "groundwaterSourceId": "ingres-gec-dynamic-groundwater",
+    "boundarySourceId": "tngis-tnrd-panchayat-boundary"
+  },
+  "recordsSha256": "f82331262256de673bb6641dabfafb5e3d98696947fdac8ac72512863f07d770",
+  "recordCount": 15,
+  "records": [
+    {
+      "lgdGramPanchayatCode": "230370",
+      "lgdGramPanchayatName": "Asoor",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230371",
+      "lgdGramPanchayatName": "Gundur",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230372",
+      "lgdGramPanchayatName": "Kanthalur",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230373",
+      "lgdGramPanchayatName": "Keela Kuruchi",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230374",
+      "lgdGramPanchayatName": "Keelamullakudi",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230375",
+      "lgdGramPanchayatName": "Kiliyur",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230376",
+      "lgdGramPanchayatName": "Krishnasamuthram",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230379",
+      "lgdGramPanchayatName": "Natarajapuram",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230380",
+      "lgdGramPanchayatName": "Navalpattu",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230381",
+      "lgdGramPanchayatName": "Palanganangudi",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230382",
+      "lgdGramPanchayatName": "Panaiyakuruchi",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230383",
+      "lgdGramPanchayatName": "Pathalapettai",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230385",
+      "lgdGramPanchayatName": "Suriyur",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230386",
+      "lgdGramPanchayatName": "Thirunedungulam",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    },
+    {
+      "lgdGramPanchayatCode": "230387",
+      "lgdGramPanchayatName": "Valavanthankottai",
+      "lgdBlockCode": "6684",
+      "talukName": "Thiruverumbur",
+      "subDistrictCode": "5780",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 3.8417
+    }
+  ],
+  "review": [],
+  "summary": {
+    "gramPanchayats": 15,
+    "projected": 15,
+    "deferred": 0,
+    "byCategory": {
+      "safe": 15
+    },
+    "blocksSpanningTaluks": 0,
+    "talukCoverage": 1
+  }
+}

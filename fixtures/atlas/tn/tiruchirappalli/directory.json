@@ -1,0 +1,962 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/directory",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tiruchirappalli"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnrd-lgd-directory-2021",
+        "title": "TNRD village panchayat directory with LGD codes (village_eng.pdf, 2021 edition)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+        "as_of": "2021-03-11",
+        "retrieved": "2026-07-24"
+      },
+      {
+        "id": "tnrd-panchayat-master",
+        "title": "TNRD current village panchayat master (vptax public dues enquiry)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php",
+        "as_of": "2026-07-24",
+        "retrieved": "2026-07-24"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-07-24"
+      },
+      {
+        "id": "census-2011-village-amenities",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Tamil Nadu village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        "as_of": "2011",
+        "retrieved": "2026-07-24"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "asserts",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-07-25"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-07-24",
+    "produced_by": "scripts/atlas-refresh-tn-district.ts",
+    "internal_inputs": [],
+    "note": "Identity directory for Tiruchirappalli: 404 LGD-coded Gram Panchayats in 14 blocks. LGD codes come from the 2021 TNRD PDF (pdf-extract), current membership from the TNRD master (scrape), the JJM village enumeration from the citizen corner (scrape), Census 2011 identity columns from the DCHB village release (xlsx extract), and centroids from the TNGIS panchayat boundary layer (WFS). JJM and Census bindings are the crosswalk's: machine matches plus staged pairings, each labelled proposed until a reviewer verifies it. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
+    "conventions": {
+      "key": "lgdCode is the LGD Gram Panchayat code; every other identifier is a binding to it",
+      "bindings": "jjm and census bindings carry matchClass (how the pairing was made) and status (proposed | verified); a proposed binding is usable but has not been checked by someone with local knowledge",
+      "composition": "reviewed = a plan target a person checked; crosswalk = the bound Census unit's village set, unreviewed; unbound = no Census unit bound, 2011 composition not established",
+      "centroid": "[longitude, latitude] of the TNGIS polygon's bounding-box centre",
+      "tngis": "TNGIS terms require prior approval for public display or redistribution; only derived centroids, areas and digests of the polygons are published here"
+    }
+  },
+  "schemaVersion": 1,
+  "district": {
+    "slug": "tiruchirappalli",
+    "name": "Tiruchirappalli",
+    "stateSlug": "tn",
+    "stateName": "Tamil Nadu",
+    "planId": "tn-tiruchirappalli-v1",
+    "tnrdLgdCode": "545",
+    "tnrdMasterCode": "16",
+    "jjmStateId": "29",
+    "jjmDistrictId": "445",
+    "censusDistrictCode": "614",
+    "lgdDistrictCode": "591",
+    "ingresDistrictName": "TIRUCHIRAPPALLI"
+  },
+  "acquiredAt": "2026-07-24",
+  "vintages": {
+    "tnrdLgd": {
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)",
+      "retrievedAt": "2026-07-24",
+      "recordCount": 15
+    },
+    "tnrdMaster": {
+      "sourceAsOf": "2026-07-24",
+      "retrievedAt": "2026-07-24",
+      "recordCount": 1
+    },
+    "jjm": {
+      "sourceAsOf": "2026-07-24",
+      "retrievedAt": "2026-07-24",
+      "recordCount": 15
+    },
+    "census": {
+      "sourceAsOf": "Census 2011 release; village reference year 2009",
+      "retrievedAt": "2026-07-24",
+      "recordCount": 5
+    },
+    "boundary": {
+      "layer": "tnrd:panchayat_boundary",
+      "retrievedAt": "2026-07-25",
+      "recordCount": 15
+    }
+  },
+  "crosswalk": {
+    "proposalId": "tiruchirappalli-crosswalk-v1",
+    "foldingVersion": "tn-transliteration-v2",
+    "matchProcedureVersion": "raw-exact-then-fold-v1",
+    "resolutionIds": [
+      "tiruchirappalli-crosswalk-resolution-v1"
+    ],
+    "summary": {
+      "lgdGramPanchayats": 15,
+      "jjmBound": 15,
+      "censusBound": 4,
+      "bothBound": 4,
+      "unbound": 0,
+      "verifiedBindings": 0,
+      "proposedBindings": 19,
+      "byMatchClass": {
+        "exact": 19
+      }
+    }
+  },
+  "blocks": [
+    {
+      "code": "6684",
+      "name": "THIRUVERAMBUR",
+      "jjmBlockId": "4611",
+      "jjmBlockName": "Thiruverambur",
+      "censusCdBlockCode": "0165",
+      "censusCdBlockName": "Thiruverambur",
+      "panchayatCount": 15
+    }
+  ],
+  "panchayats": [
+    {
+      "lgdCode": "230370",
+      "name": "Asoor",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153884",
+        "blockId": "4611",
+        "gpId": "153884",
+        "gpName": "Asoor",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378189",
+            "villageName": "Asur"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1297.668,
+        "centroid": [
+          78.8589,
+          10.71195
+        ],
+        "bbox": [
+          78.8441,
+          10.6873,
+          78.8737,
+          10.7366
+        ],
+        "geometrySha256": "a534dfba06ca33467a7410c30eb14465b84a54d7b1ee4a37de34cfca6c8dce37",
+        "ringCount": 1,
+        "vertexCount": 159
+      }
+    },
+    {
+      "lgdCode": "230371",
+      "name": "Gundur",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153874",
+        "blockId": "4611",
+        "gpId": "153874",
+        "gpName": "Gundur",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378179",
+            "villageName": "Gundur"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0165/0052",
+        "cdBlockCode": "0165",
+        "gramPanchayatCode": "0052",
+        "gramPanchayatName": "Gundur",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "636030",
+            "villageName": "Gundur",
+            "subdistrictCode": "05780"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "636030",
+            "name": "Gundur"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1445.7499,
+        "centroid": [
+          78.7312,
+          10.73015
+        ],
+        "bbox": [
+          78.708,
+          10.708,
+          78.7544,
+          10.7523
+        ],
+        "geometrySha256": "90d8c675c2554c73e71d1708787c8f9ae9bf67b9cf713af1d713ea32e42665f9",
+        "ringCount": 1,
+        "vertexCount": 152
+      }
+    },
+    {
+      "lgdCode": "230372",
+      "name": "Kanthalur",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153882",
+        "blockId": "4611",
+        "gpId": "153882",
+        "gpName": "Kanthalur",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378187",
+            "villageName": "Kandalur"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 901.2417,
+        "centroid": [
+          78.80225,
+          10.68905
+        ],
+        "bbox": [
+          78.7861,
+          10.6698,
+          78.8184,
+          10.7083
+        ],
+        "geometrySha256": "818fdd0950bc09a546f8584230eab3577a96fa15f12bc863baee02770f822981",
+        "ringCount": 1,
+        "vertexCount": 278
+      }
+    },
+    {
+      "lgdCode": "230373",
+      "name": "Keela Kuruchi",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153881",
+        "blockId": "4611",
+        "gpId": "153881",
+        "gpName": "Keela Kuruchi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378186",
+            "villageName": "Kilakurichy"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1023.4023,
+        "centroid": [
+          78.73515,
+          10.75685
+        ],
+        "bbox": [
+          78.7158,
+          10.738,
+          78.7545,
+          10.7757
+        ],
+        "geometrySha256": "5c8aaf1e4719db7ef2a85901164893473eba2adbc8f5cbfb6cd355f9d1c811bf",
+        "ringCount": 1,
+        "vertexCount": 187
+      }
+    },
+    {
+      "lgdCode": "230374",
+      "name": "Keelamullakudi",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153877",
+        "blockId": "4611",
+        "gpId": "153877",
+        "gpName": "Keelamullakudi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378182",
+            "villageName": "Kilamullakudy"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 288.5007,
+        "centroid": [
+          78.7444,
+          10.8313
+        ],
+        "bbox": [
+          78.7323,
+          10.8247,
+          78.7565,
+          10.8379
+        ],
+        "geometrySha256": "0c9eee21a4106f27ce9a82ece8aee28412dd803cce0fa87e71ea0a071f14f72c",
+        "ringCount": 1,
+        "vertexCount": 76
+      }
+    },
+    {
+      "lgdCode": "230375",
+      "name": "Kiliyur",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153870",
+        "blockId": "4611",
+        "gpId": "153870",
+        "gpName": "Kiliyur",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378175",
+            "villageName": "Kiliyur"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0165/0057",
+        "cdBlockCode": "0165",
+        "gramPanchayatCode": "0057",
+        "gramPanchayatName": "Kiliyur",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "636021",
+            "villageName": "Kiliyur",
+            "subdistrictCode": "05780"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "636021",
+            "name": "Kiliyur"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 897.1795,
+        "centroid": [
+          78.8444,
+          10.8155
+        ],
+        "bbox": [
+          78.8199,
+          10.8046,
+          78.8689,
+          10.8264
+        ],
+        "geometrySha256": "f0d9fea4b10b92ae7f1f489f3a06f2ae7cd560884f9ca2c4998276c54819233d",
+        "ringCount": 1,
+        "vertexCount": 100
+      }
+    },
+    {
+      "lgdCode": "230376",
+      "name": "Krishnasamuthram",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153887",
+        "blockId": "4611",
+        "gpId": "153887",
+        "gpName": "Krishnasamuthram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378192",
+            "villageName": "Krishnasamudram (Ct)"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 828.1637,
+        "centroid": [
+          78.80585,
+          10.7913
+        ],
+        "bbox": [
+          78.7864,
+          10.7754,
+          78.8253,
+          10.8072
+        ],
+        "geometrySha256": "00cc1e4a441d5089fb4a4e45050b97027912eda0f0fcc9860b89c69ec203174b",
+        "ringCount": 1,
+        "vertexCount": 241
+      }
+    },
+    {
+      "lgdCode": "230379",
+      "name": "Natarajapuram",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153871",
+        "blockId": "4611",
+        "gpId": "153871",
+        "gpName": "Natarajapuram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378176",
+            "villageName": "Natarajapuram"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0165/0061",
+        "cdBlockCode": "0165",
+        "gramPanchayatCode": "0061",
+        "gramPanchayatName": "Natarajapuram",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "636019",
+            "villageName": "Natarajapuram",
+            "subdistrictCode": "05780"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "636019",
+            "name": "Natarajapuram"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 572.5746,
+        "centroid": [
+          78.7922,
+          10.8167
+        ],
+        "bbox": [
+          78.7768,
+          10.8049,
+          78.8076,
+          10.8285
+        ],
+        "geometrySha256": "6d9fe3add5197dac6547fe40ca2d9268690f84958594ca59227d234e55b60ae8",
+        "ringCount": 1,
+        "vertexCount": 119
+      }
+    },
+    {
+      "lgdCode": "230380",
+      "name": "Navalpattu",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153892",
+        "blockId": "4611",
+        "gpId": "153892",
+        "gpName": "Navalpattu",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378197",
+            "villageName": "Navalpattu (Ct)"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1644.4403,
+        "centroid": [
+          78.76565,
+          10.7501
+        ],
+        "bbox": [
+          78.7401,
+          10.7214,
+          78.7912,
+          10.7788
+        ],
+        "geometrySha256": "ec52a5a2373089f7a8e1a0a63c4d6574d4c8dfa3d4d071d3945d22c572ada64b",
+        "ringCount": 1,
+        "vertexCount": 312
+      }
+    },
+    {
+      "lgdCode": "230381",
+      "name": "Palanganangudi",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153885",
+        "blockId": "4611",
+        "gpId": "153885",
+        "gpName": "Palanganangudi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378190",
+            "villageName": "Palaganangudy (Ct)"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 2806.2201,
+        "centroid": [
+          78.81435,
+          10.71515
+        ],
+        "bbox": [
+          78.7796,
+          10.6874,
+          78.8491,
+          10.7429
+        ],
+        "geometrySha256": "32c3ef12c9f2666351e45eaa336c6cc1fb34f34fdb6c9cbd39c50163d5ac0099",
+        "ringCount": 1,
+        "vertexCount": 470
+      }
+    },
+    {
+      "lgdCode": "230382",
+      "name": "Panaiyakuruchi",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": {
+        "blockLocalCode": "3",
+        "gramPanchayatLocalCode": "17",
+        "name": "பனையகுறிச்சி"
+      },
+      "jjm": {
+        "sourceUnitId": "4611/153878",
+        "blockId": "4611",
+        "gpId": "153878",
+        "gpName": "Panaiyakuruchi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378183",
+            "villageName": "Panayakurichy"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "reviewed",
+        "completeness": "complete",
+        "basis": "authoritative-enumeration",
+        "reviewedAt": "2026-07-24",
+        "members": [
+          {
+            "kind": "village",
+            "code": "636015",
+            "name": "Panayakurichy"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 376.5841,
+        "centroid": [
+          78.71875,
+          10.8287
+        ],
+        "bbox": [
+          78.7048,
+          10.8216,
+          78.7327,
+          10.8358
+        ],
+        "geometrySha256": "7293682b5cb5fc46c20ff9295d10e343f32cf656dea01c5868bc4804b77bd572",
+        "ringCount": 1,
+        "vertexCount": 52
+      }
+    },
+    {
+      "lgdCode": "230383",
+      "name": "Pathalapettai",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153888",
+        "blockId": "4611",
+        "gpId": "153888",
+        "gpName": "Pathalapettai",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378193",
+            "villageName": "Pathalapattai"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "0165/0066",
+        "cdBlockCode": "0165",
+        "gramPanchayatCode": "0066",
+        "gramPanchayatName": "Pathalapettai",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "636022",
+            "villageName": "Pathalapattai",
+            "subdistrictCode": "05780"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "636022",
+            "name": "Pathalapattai"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1300.3182,
+        "centroid": [
+          78.84675,
+          10.7935
+        ],
+        "bbox": [
+          78.8238,
+          10.7749,
+          78.8697,
+          10.8121
+        ],
+        "geometrySha256": "62093ab4f6cfab075e441cf65e17550a31d7ddcf5a7381944493a43be9340f43",
+        "ringCount": 1,
+        "vertexCount": 110
+      }
+    },
+    {
+      "lgdCode": "230385",
+      "name": "Suriyur",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153876",
+        "blockId": "4611",
+        "gpId": "153876",
+        "gpName": "Suriyur",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378181",
+            "villageName": "Sooriyur"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 3211.7678,
+        "centroid": [
+          78.7677,
+          10.6803
+        ],
+        "bbox": [
+          78.7355,
+          10.6419,
+          78.7999,
+          10.7187
+        ],
+        "geometrySha256": "4d59de05fe19c225b9e33cf65c4ea2e6bafb9c035e3de62f9997dcde7a7bc443",
+        "ringCount": 1,
+        "vertexCount": 397
+      }
+    },
+    {
+      "lgdCode": "230386",
+      "name": "Thirunedungulam",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153889",
+        "blockId": "4611",
+        "gpId": "153889",
+        "gpName": "Thirunedungulam",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378194",
+            "villageName": "Tirunedunkulam"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1422.0784,
+        "centroid": [
+          78.85985,
+          10.76295
+        ],
+        "bbox": [
+          78.8392,
+          10.7346,
+          78.8805,
+          10.7913
+        ],
+        "geometrySha256": "033b8280edede25383b30575e3fd6ef3e261c1131ada117883e7f66fe0a48925",
+        "ringCount": 1,
+        "vertexCount": 152
+      }
+    },
+    {
+      "lgdCode": "230387",
+      "name": "Valavanthankottai",
+      "blockCode": "6684",
+      "blockName": "THIRUVERAMBUR",
+      "tnrdMaster": null,
+      "jjm": {
+        "sourceUnitId": "4611/153890",
+        "blockId": "4611",
+        "gpId": "153890",
+        "gpName": "Valavanthankottai",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "378195",
+            "villageName": "Valavandankottai (Ct)"
+          }
+        ]
+      },
+      "census": null,
+      "composition": {
+        "status": "unbound",
+        "completeness": "unknown",
+        "basis": null,
+        "reviewedAt": null,
+        "members": [],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village panchayat",
+        "areaHectares": 1363.7338,
+        "centroid": [
+          78.83255,
+          10.76555
+        ],
+        "bbox": [
+          78.8114,
+          10.7399,
+          78.8537,
+          10.7912
+        ],
+        "geometrySha256": "ab26893dcc2577bd10f85f529be3bdefc6d0b577e468135a43cf922363ad0ee1",
+        "ringCount": 1,
+        "vertexCount": 166
+      }
+    }
+  ],
+  "unbound": {
+    "jjm": [],
+    "census": [
+      {
+        "sourceUnitId": "0165/0064",
+        "cdBlockCode": "0165",
+        "cdBlockName": "Thiruverambur",
+        "gramPanchayatCode": "0064",
+        "gramPanchayatName": "Panayakurichy",
+        "villages": [
+          {
+            "villageCode": "636015",
+            "villageName": "Panayakurichy",
+            "subdistrictCode": "05780"
+          }
+        ]
+      }
+    ]
+  }
+}

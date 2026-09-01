@@ -14,7 +14,17 @@
     "test:watch": "find src -name '*.test.ts' | xargs tsx --test --watch",
     "db:check": "node scripts/check-db-city-scoped-keys.mjs",
     "i18n:check": "tsx scripts/check-i18n.ts",
-    "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate && tsx scripts/check-upstream-editions.ts --validate && python3 scripts/check-mirrored-documents.py && tsx scripts/build-exemptions-register.ts --check"
+    "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate && tsx scripts/check-upstream-editions.ts --validate && python3 scripts/check-mirrored-documents.py && tsx scripts/build-exemptions-register.ts --check",
+    "atlas:refresh": "tsx scripts/atlas-refresh-tn-district.ts",
+    "atlas:stage-blocks": "tsx scripts/atlas-stage-blocks.ts",
+    "atlas:stage-resolution": "tsx scripts/atlas-stage-resolution.ts",
+    "atlas:groundwater": "tsx scripts/atlas-groundwater-tn-district.ts",
+    "atlas:project-gw": "tsx scripts/atlas-project-groundwater.ts",
+    "atlas:rainfall": "tsx scripts/atlas-rainfall-tn-district.ts",
+    "atlas:jjm": "tsx scripts/atlas-jjm-tn-district.ts",
+    "atlas:census": "tsx scripts/atlas-census-tn-district.ts",
+    "atlas:water-bodies": "tsx scripts/atlas-water-bodies-tn-district.ts",
+    "atlas:assess": "tsx scripts/atlas-generate-assessments.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

@@ -1,0 +1,152 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-thanjavur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-08-31"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-08-31",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for THANJAVUR: the district row and its 9 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-thanjavur-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-08-31",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=THANJAVUR;loctype=DISTRICT;locuuid=c72ed640-bd58-400d-a30e-6bddc3b05d35;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "THANJAVUR",
+    "locationUUID": "c72ed640-bd58-400d-a30e-6bddc3b05d35",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 100.8433
+  },
+  "recordsSha256": "adf994bd65f2701607a1a946bfa649fa86704acc37d30ab73c3cb633e333d1dc",
+  "recordCount": 9,
+  "records": [
+    {
+      "locationName": "BUDALUR",
+      "locationUUID": "94ddd9fd-4387-470f-a80a-10824c57c4a3",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.0695,
+      "annualRechargeHam": 3408.03,
+      "totalAvailabilityHam": 7047.63,
+      "availabilityForFutureUseHam": 1954.44,
+      "rainfallMm": 914.2975
+    },
+    {
+      "locationName": "KUMBAKONAM",
+      "locationUUID": "30ee7197-bdd9-4b53-8303-5f6f460bb99b",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 109.5619,
+      "annualRechargeHam": 5361.97,
+      "totalAvailabilityHam": 9220.31,
+      "availabilityForFutureUseHam": 845.74,
+      "rainfallMm": 1102.4
+    },
+    {
+      "locationName": "ORATHANADU",
+      "locationUUID": "b508c7eb-e457-4154-b11f-8e0083e6bcda",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.1597,
+      "annualRechargeHam": 12032.48,
+      "totalAvailabilityHam": 18261.29,
+      "availabilityForFutureUseHam": 2046.89,
+      "rainfallMm": 1047.4745
+    },
+    {
+      "locationName": "PAPANASAM",
+      "locationUUID": "0460c882-21aa-48a6-b81b-03429a522d47",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 100.7308,
+      "annualRechargeHam": 7749.6,
+      "totalAvailabilityHam": 14263.13,
+      "availabilityForFutureUseHam": 1150.83,
+      "rainfallMm": 1062.5735
+    },
+    {
+      "locationName": "PATTUKKOTTAI",
+      "locationUUID": "659d5e81-ec4d-42d4-a119-070add60affd",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 100.103,
+      "annualRechargeHam": 14397.19,
+      "totalAvailabilityHam": 22815.94,
+      "availabilityForFutureUseHam": 2473.57,
+      "rainfallMm": 1113.7089
+    },
+    {
+      "locationName": "PERAVURANI",
+      "locationUUID": "048ec8db-4c06-423e-9810-fae7ef1aa20c",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 84.0272,
+      "annualRechargeHam": 5488.16,
+      "totalAvailabilityHam": 10039.15,
+      "availabilityForFutureUseHam": 2814.73,
+      "rainfallMm": 927.5439
+    },
+    {
+      "locationName": "THANJAVUR",
+      "locationUUID": "9898226f-9cf1-408b-8b96-0c723c2dfc49",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 92.3051,
+      "annualRechargeHam": 6533.27,
+      "totalAvailabilityHam": 10431.34,
+      "availabilityForFutureUseHam": 1878.76,
+      "rainfallMm": 888.5892
+    },
+    {
+      "locationName": "THIRUVAIYARU",
+      "locationUUID": "79c5299d-21bc-4b8d-97f8-6084d74dc1f8",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 110.883,
+      "annualRechargeHam": 2490.89,
+      "totalAvailabilityHam": 4457.98,
+      "availabilityForFutureUseHam": 200.9,
+      "rainfallMm": 891.4931
+    },
+    {
+      "locationName": "THIRUVIDAIMARUDHUR",
+      "locationUUID": "9fb72a96-e6a8-4c0f-af01-b391cd523045",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 124.7696,
+      "annualRechargeHam": 5560.86,
+      "totalAvailabilityHam": 8034.04,
+      "availabilityForFutureUseHam": 255,
+      "rainfallMm": 1225.3362
+    }
+  ]
+}
