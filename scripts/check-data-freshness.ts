@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
 import { listAllPlaces } from "../src/lib/cities";
 import type { PlaceConfig } from "../src/lib/cities/types";
+import { listPublishedAtlasDistricts } from "../src/lib/atlas/registry";
 import { FRESHNESS_EXEMPTIONS } from "./lib/exemptions";
 
 const ROOT = resolve(__dirname, "..");
@@ -333,6 +334,39 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
     checks.push({ ...f, kind: "file" });
   }
 
+  // Atlas districts: derived from the registry like cities, keyed by the
+  // district's NVDM scope id (tn-thanjavur). PUBLISHED districts only: a
+  // preview-gated district is not in the served corpus yet, so the locked-
+  // corpus job would report its files missing, and its staleness is not a
+  // production fact. Two feeds stand for the monthly chain
+  // (scripts/atlas-refresh-district.sh): directory.json is rewritten by the
+  // identity refresh that starts it, rainfall.json by a fetch near its end,
+  // so both dates moving together is the chain having run to completion.
+  // Tolerance = monthly + two weeks' grace.
+  for (const d of listPublishedAtlasDistricts()) {
+    const base = `public/data/atlas/${d.stateSlug}/${d.slug}`;
+    for (const feed of [
+      { id: "atlas-directory", file: `${base}/directory.json`, note: "identity refresh (TNRD, JJM, Census bindings)" },
+      { id: "atlas-rainfall", file: `${base}/rainfall.json`, note: "Open-Meteo 30-day window per Gram Panchayat" },
+    ]) {
+      const key = `${d.scopeId}:${feed.id}`;
+      if (EXEMPTIONS[key]) continue;
+      if (!existsSync(resolve(ROOT, feed.file))) {
+        problems.push(`${d.scopeId}: missing ${feed.file} - run scripts/atlas-refresh-district.sh ${d.slug}`);
+        continue;
+      }
+      checks.push({
+        id: key,
+        cityId: d.scopeId,
+        kind: "file",
+        file: feed.file,
+        maxAgeDays: 45,
+        dateFrom: "json:provenance.produced_at",
+        note: feed.note,
+      });
+    }
+  }
+
   return { checks, problems };
 }
 
@@ -341,8 +375,12 @@ function extractFileDate(check: Check): string | null {
   const raw = readFileSync(resolve(ROOT, check.file!), "utf-8");
   const spec = check.dateFrom!;
   if (spec.startsWith("json:")) {
-    const field = spec.slice(5);
-    const v = JSON.parse(raw)[field];
+    // A dotted path reaches into the NVDM envelope ("json:provenance.produced_at");
+    // a bare field keeps reading top-level legacy stamps ("json:generated_at").
+    const v = spec
+      .slice(5)
+      .split(".")
+      .reduce<unknown>((node, key) => (node && typeof node === "object" ? (node as Record<string, unknown>)[key] : undefined), JSON.parse(raw));
     return typeof v === "string" ? v.slice(0, 10) : null;
   }
   if (spec.startsWith("regex:")) {

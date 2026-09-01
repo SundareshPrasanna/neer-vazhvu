@@ -28,6 +28,11 @@ const GROUPS = [
   "public/geojson/rich-bodies",
   "public/data/cascade",
   "public/data/basins",
+  // Atlas districts: per-block shards of one family carry the same upstreams,
+  // and every family joins scripts/source-registry/atlas.json by directory
+  // prefix (the catalogue resolves the prefix per file; this gate collapses
+  // the tree the way it does the basin packs).
+  "public/data/atlas",
 ];
 
 /**

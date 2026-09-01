@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-thanjavur-v1",
+  "district": {
+    "displayName": "Thanjavur",
+    "tnrdLgdCode": "540",
+    "tnrdMasterCode": "13",
+    "jjmStateId": "29",
+    "jjmDistrictId": "441",
+    "censusDistrictCode": "620",
+    "lgdDistrictCode": "586",
+    "ingresDistrictName": "THANJAVUR",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 15,
+    "tnrdMasterBlocks": 1,
+    "tnrdMasterGramPanchayats": 2,
+    "jjmVillages": 16,
+    "censusVillages": 13
+  },
+  "targets": [
+    {
+      "id": "sethubavachatram",
+      "displayName": "Sethubavachatram",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228730",
+      "tnrdMasterBlockCode": "14",
+      "tnrdMasterGramPanchayatCode": "28",
+      "jjmBlockId": "4567",
+      "jjmGramPanchayatId": "152441",
+      "censusSubdistrictCode": "05817",
+      "censusGramPanchayatCode": "0582",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639187",
+            "name": "Sethubavachatram"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05817; Census GP 0582",
+            "assertion": "The reviewed Census composition contains Sethubavachatram 639187."
+          }
+        ]
+      }
+    },
+    {
+      "id": "kuruvikkarambai",
+      "displayName": "Kuruvikkarambai",
+      "reviewedAt": "2026-07-25",
+      "tnrdLgdGramPanchayatCode": "228711",
+      "tnrdMasterBlockCode": "14",
+      "tnrdMasterGramPanchayatCode": "11",
+      "jjmBlockId": "4567",
+      "jjmGramPanchayatId": "152422",
+      "censusSubdistrictCode": "05817",
+      "censusGramPanchayatCode": "0565",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 2
+        },
+        "census": {
+          "status": "complete",
+          "basis": "manual-audit",
+          "expectedRecordCount": 2
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "manual-audit",
+        "expectedRecordCount": 2,
+        "members": [
+          {
+            "kind": "village",
+            "code": "639145",
+            "name": "Kuruvikarambai II"
+          },
+          {
+            "kind": "village",
+            "code": "639147",
+            "name": "Kuruvikarambai I"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 620; subdistrict 05817; Census GP 0565",
+            "assertion": "The reviewed Census composition contains Kuruvikarambai II 639145 and Kuruvikarambai I 639147."
+          }
+        ]
+      }
+    }
+  ]
+}

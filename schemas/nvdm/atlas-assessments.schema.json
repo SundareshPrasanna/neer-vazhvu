@@ -1,0 +1,94 @@
+{
+  "$id": "atlas-assessments.schema.json",
+  "title": "atlas/assessments contract (Tier A)",
+  "description": "Generated 40-capability assessments for the Gram Panchayats of one LGD block, sharded per block under public/data/atlas/<state>/<district>/assessments/<blockCode>.json. Every requirement carries its outcome, its applicability, the evidence with locality class and projection method, and limitations. The vocabulary is src/lib/atlas/capabilities.json (capability ids) and src/lib/atlas/village-water-profile-v2.json (the profile); the locality and projection enums are place-water-system-model.md's.",
+  "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
+  "type": "object",
+  "required": [
+    "schemaVersion", "planId", "blockCode", "blockName", "profileId", "assessedAt",
+    "generatorVersion", "requirementIds", "recordCount", "assessments"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer" },
+    "planId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "blockCode": { "type": "string", "pattern": "^[0-9]+$" },
+    "blockName": { "type": "string", "minLength": 1 },
+    "profileId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "assessedAt": { "$ref": "envelope.schema.json#/$defs/date" },
+    "generatorVersion": { "type": "string", "minLength": 1 },
+    "requirementIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+    },
+    "recordCount": { "type": "integer" },
+    "assessments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "schemaVersion", "profileId", "placeId", "placeKind", "assessedAt", "mode",
+          "generatorVersion", "requirements", "summary"
+        ],
+        "properties": {
+          "schemaVersion": { "type": "integer" },
+          "profileId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "placeId": { "type": "string", "pattern": "^[0-9]{6}$", "description": "LGD Gram Panchayat code." },
+          "placeKind": { "enum": ["gram-panchayat"] },
+          "assessedAt": { "$ref": "envelope.schema.json#/$defs/date" },
+          "mode": { "enum": ["generated"] },
+          "generatorVersion": { "type": "string", "minLength": 1 },
+          "requirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["requirementId", "applicability", "state", "evidence", "limitations"],
+              "properties": {
+                "requirementId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+                "applicability": { "enum": ["applicable", "not-applicable", "not-assessed"] },
+                "state": { "enum": ["adequate", "unavailable", "not-applicable", "not-assessed"] },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["id", "sourceRefs", "localityClass", "projectionMethod", "evidenceDate", "notes"],
+                    "properties": {
+                      "id": { "type": "string", "minLength": 1 },
+                      "sourceRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+                      "localityClass": {
+                        "enum": ["direct-place", "within-place", "connected-system", "containing-area", "nearby-observation", "derived-place"]
+                      },
+                      "projectionMethod": {
+                        "enum": [
+                          "direct-published", "identifier-crosswalk", "spatial-intersection", "area-weighted",
+                          "station-assignment", "interpolation", "service-relation", "administrative-rollup",
+                          "administrative-proxy", "expert-mapped"
+                        ]
+                      },
+                      "evidenceDate": { "$ref": "envelope.schema.json#/$defs/date" },
+                      "notes": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                },
+                "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "required": ["adequate", "unavailable", "not-applicable", "not-assessed"],
+            "properties": {
+              "adequate": { "type": "integer" },
+              "unavailable": { "type": "integer" },
+              "not-applicable": { "type": "integer" },
+              "not-assessed": { "type": "integer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

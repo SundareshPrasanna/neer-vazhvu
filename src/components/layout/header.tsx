@@ -233,12 +233,15 @@ function SiteHeader() {
       (i) => rewriteNavHref(i.href, cityId) === pathname,
     );
 
-  // The root path "/" is the project landing page, not a city, and
-  // /waterways/* pages span city boundaries. Render a minimal header on
-  // both: brand + theme toggle, with no per-city feature nav
-  // (Dashboard/Groundwater/... only make sense inside a city, and
-  // parsePath would silently resolve these routes to Chennai).
-  if (pathname === "/" || pathname.startsWith("/waterways")) {
+  // The root path "/" is the project landing page, not a city, /waterways/*
+  // pages span city boundaries, and /atlas/* is the district hierarchy.
+  // Render a minimal header on all of them: brand + theme toggle, with no
+  // per-city feature nav (Dashboard/Groundwater/... only make sense inside a
+  // city, and parsePath would silently resolve these routes to Chennai).
+  // The Atlas keeps the place switcher so a reader can move between a
+  // district and any city without going back to the landing page.
+  const isAtlas = pathname.startsWith("/atlas");
+  if (pathname === "/" || pathname.startsWith("/waterways") || isAtlas) {
     return (
       <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -267,10 +270,12 @@ function SiteHeader() {
                 </span>
               </div>
             </Link>
-            {/* No CitySwitcher or LanguageToggle here: the landing page is not
+            {/* No CitySwitcher or LanguageToggle on the landing page: it is not
                 a city (a switcher defaulting to Chennai would mislead), and the
-                regional-language toggle is a per-city UI concern. */}
+                regional-language toggle is a per-city UI concern. The Atlas
+                gets the switcher, which lists districts as well as cities. */}
             <div className="flex items-center gap-1 sm:gap-2">
+              {isAtlas && <CitySwitcher />}
               <ThemeToggle />
             </div>
           </div>
