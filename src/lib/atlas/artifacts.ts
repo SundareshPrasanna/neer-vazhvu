@@ -36,6 +36,7 @@ export const ATLAS_DATA_ROOT = "public/data/atlas";
 
 export const ATLAS_FAMILIES = {
   directory: "directory",
+  irrigationCurrent: "irrigation-current",
   groundwaterTaluks: "groundwater-taluks",
   groundwaterProjection: "groundwater-projection",
   rainfall: "rainfall",
@@ -278,6 +279,51 @@ export interface DistrictDirectoryArtifact extends AtlasEnvelope {
 }
 
 /* ── district-grain families ───────────────────────────────────────────── */
+
+/** One source's slice of the current district irrigation mix. Percent is the
+ *  share of the printed net total, to one decimal. */
+export interface IrrigationCurrentShare {
+  key: "canals" | "tanks" | "tube-bore-wells" | "open-wells" | "other-sources";
+  label: string;
+  netHectares: number;
+  percent: number;
+}
+
+/**
+ * The current district irrigation source mix, from the DES Season and Crop
+ * Report's Table III-B ("Area irrigated by different sources"). District
+ * grain, one edition per artifact; the Census 2011 village pattern stays the
+ * block-level baseline beside it. Produced by
+ * scripts/atlas-irrigation-tn-district.ts from a reviewed extraction under
+ * pipeline-inputs/atlas/<state>/<district>/irrigation-des.json.
+ */
+export interface IrrigationCurrentArtifact extends AtlasEnvelope {
+  schemaVersion: number;
+  planId: string;
+  /** The report edition, e.g. "2024-25" (an agricultural year, not a date). */
+  edition: string;
+  district: {
+    name: string;
+    /** As the report prints it (it spells "Tiruchirapalli"). */
+    reportSpelling: string;
+    /** The district's Sl. No. row in Table III-B. */
+    rowNumber: number;
+  };
+  bySource: IrrigationCurrentShare[];
+  /** The report's printed net total, the denominator of every share. */
+  netAreaIrrigatedHectares: number;
+  /** What the five components sum to; may miss the printed total by a
+   *  hectare or two of rounding in the report itself. */
+  componentSumHectares: number;
+  grossAreaIrrigatedHectares: number;
+  areaIrrigatedMoreThanOnceHectares: number;
+  irrigationIntensity: number;
+  /** NOT additive to the net total: supplementary wells water land already
+   *  counted under another source. */
+  supplementaryWells: { netHectares: number; note: string };
+  extractedOn: string;
+  notes: string[];
+}
 
 export interface GroundwaterTaluksArtifact extends AtlasEnvelope {
   schemaVersion: number;

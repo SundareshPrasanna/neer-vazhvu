@@ -20,6 +20,7 @@ import type {
   DistrictDirectoryArtifact,
   GroundwaterProjectionArtifact,
   GroundwaterTaluksArtifact,
+  IrrigationCurrentArtifact,
   JjmServiceShard,
   RainfallArtifact,
   WaterBodiesShard,
@@ -31,6 +32,7 @@ import {
   loadDirectory,
   loadGroundwaterProjection,
   loadGroundwaterTaluks,
+  loadIrrigationCurrent,
   loadJjmServiceShards,
   loadRainfall,
   loadWaterBodyShards,
@@ -156,6 +158,22 @@ export interface DistrictReading {
   verdict: DistrictVerdict;
   facts: HeadlineFact[];
   irrigation: { source: IrrigationSource | null; shares: MixShare[]; irrigatedHectares: number; places: number; describes: string };
+  /** The current district mix (DES Season and Crop Report), when served.
+   *  The Census 2011 pattern above stays beside it as the block-level
+   *  baseline; when this is null the page renders exactly as before. */
+  irrigationCurrent: {
+    edition: string;
+    /** "Season and Crop Report 2024-25", built from the artifact's edition. */
+    label: string;
+    netHectares: number;
+    grossHectares: number;
+    moreThanOnceHectares: number;
+    intensity: number;
+    shares: MixShare[];
+    /** Only when the report records supplementary wells: their net area is
+     *  NOT additive to the net total, and the note says so. */
+    supplementaryWellsNote: string | null;
+  } | null;
   drinking: { shares: MixShare[]; topTypes: MixShare[]; total: number; sentence: string; describes: string };
   mettur: MetturReading | null;
   groundwater: GroundwaterReading;
@@ -246,6 +264,11 @@ export interface VerdictSignals {
   gapBlocks: Array<{ name: string; tapPercent: number; canalPercent: number | null; inDeficitTaluk: boolean }>;
   /** True when the district sits in the Cauvery (TN) basin, where the canal head is Mettur. */
   metturBasin: boolean;
+  /** Non-null when a current irrigation mix is served ("Season and Crop
+   *  Report 2024-25"); canalPercent and wellPercent then carry the current
+   *  district figures rather than the Census 2011 pattern, and the verdict
+   *  opens with them. */
+  currentMixLabel: string | null;
 }
 
 export function classifyIrrigation(
@@ -355,18 +378,39 @@ function capitalise(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+/** The verdict's opening clause when a current mix is served: the Season and
+ *  Crop Report district figure, labelled inline so the vintage travels with
+ *  the number. */
+function currentMixClause(s: VerdictSignals): string {
+  const label = s.currentMixLabel ?? "";
+  const head = s.metturBasin ? "canal water released at Mettur" : "canal water released upstream";
+  switch (s.source) {
+    case "canal":
+      return `${whole(s.canalPercent)} of the irrigated farmland runs on ${head} (${label})`;
+    case "well":
+      return `${whole(s.wellPercent)} of the irrigated farmland is watered from wells (${label})`;
+    default:
+      return `irrigation is split between canals (${whole(s.canalPercent)}) and wells (${whole(s.wellPercent)}) (${label})`;
+  }
+}
+
 /**
- * The verdict leads with what is current: the IN-GRES taluk balance and the
- * JJM service register. The irrigation source mix is the Census 2011 pattern
- * (reference year 2009) and stays out of the opening sentence and the
- * headline facts until a current reading is wired; it is the first named
- * gap instead, and the "what the district runs on" section carries it as a
- * labelled baseline.
+ * The verdict leads with what is current. When the Season and Crop Report
+ * mix is served (currentMixLabel non-null), it is the FIRST clause - the
+ * standing rule that the first metric a reader meets must be a current
+ * reading - with the IN-GRES taluk balance and the JJM service register
+ * following as before. Without it, the verdict opens on the taluk balance,
+ * the Census 2011 pattern stays out of the opening sentence and the
+ * headline facts, and the missing current reading is the first named gap.
  */
 export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
-  const sentence = `${capitalise(groundwaterClause(s))}, and ${serviceClause(s)}.`;
+  const opening =
+    s.currentMixLabel !== null && s.source !== null
+      ? `${currentMixClause(s)}, ${groundwaterClause(s)}`
+      : groundwaterClause(s);
+  const sentence = `${capitalise(opening)}, and ${serviceClause(s)}.`;
   const nextSteps: string[] = [];
-  if (s.source !== null) {
+  if (s.source !== null && s.currentMixLabel === null) {
     nextSteps.push(
       "A current irrigation reading by source: the canal, well and tank shares below are the Census 2011 pattern (reference year 2009); the Season and Crop Report 2024-25 is published and not yet wired.",
     );
@@ -669,6 +713,7 @@ export interface DistrictReadingInputs {
   aggregate: DistrictAggregate;
   briefs: PlaceBrief[];
   directory: DistrictDirectoryArtifact | undefined;
+  irrigationCurrent: IrrigationCurrentArtifact | undefined;
   groundwater: GroundwaterTaluksArtifact | undefined;
   projection: GroundwaterProjectionArtifact | undefined;
   rainfall: RainfallArtifact | undefined;
@@ -684,6 +729,26 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
   const { district, aggregate, briefs, directory, groundwater, projection, asOf } = inputs;
   const blocks = blockReadings(aggregate, projection);
   const source = classifyIrrigation(aggregate.canalPercent, aggregate.wellPercent);
+  // District-grain current mix, when served. Wells are tube/bore plus open
+  // wells; the Census-derived BLOCK gradient below stays 2011 on purpose,
+  // because the report carries no grain below the district.
+  const current = inputs.irrigationCurrent;
+  const decimal = (value: number): number => Number(value.toFixed(1));
+  const currentShares = current
+    ? {
+        canal: decimal(
+          current.bySource
+            .filter((share) => share.key === "canals")
+            .reduce((sum, share) => sum + share.percent, 0),
+        ),
+        well: decimal(
+          current.bySource
+            .filter((share) => share.key === "tube-bore-wells" || share.key === "open-wells")
+            .reduce((sum, share) => sum + share.percent, 0),
+        ),
+      }
+    : null;
+  const currentMixLabel = current ? `Season and Crop Report ${current.edition}` : null;
   const categories = groundwaterReading(aggregate, groundwater, projection);
   const gapBlocks = blocks
     .filter((b) => b.tapPercent !== null && b.tapPercent < 99)
@@ -695,9 +760,9 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       inDeficitTaluk: b.dominantCategory !== null && DEFICIT_CATEGORIES.has(b.dominantCategory),
     }));
   const signals: VerdictSignals = {
-    source,
-    canalPercent: aggregate.canalPercent,
-    wellPercent: aggregate.wellPercent,
+    source: currentShares ? classifyIrrigation(currentShares.canal, currentShares.well) : source,
+    canalPercent: currentShares ? currentShares.canal : aggregate.canalPercent,
+    wellPercent: currentShares ? currentShares.well : aggregate.wellPercent,
     taluks: aggregate.taluks.length,
     overExploited: categories.categories.over_exploited ?? 0,
     critical: categories.categories.critical ?? 0,
@@ -707,6 +772,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     households: aggregate.households.value,
     gapBlocks,
     metturBasin: district.basin?.basinId === "cauvery-tn",
+    currentMixLabel,
   };
   const verdict = composeDistrictVerdict(signals);
 
@@ -716,11 +782,35 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
   const groundwaterShare = drinking.byCategory.find((s) => /ground/i.test(s.label));
   const surfaceShare = drinking.byCategory.find((s) => /surface/i.test(s.label));
   const topType = drinking.byType[0];
-  // Headline facts are current readings only: the IN-GRES taluk balance and
-  // the JJM register. The Census 2011 irrigation mix (reference year 2009)
-  // is a labelled baseline in "what the district runs on", never the first
+  // Headline facts are current readings only: the Season and Crop Report
+  // mix when served (always first), the IN-GRES taluk balance and the JJM
+  // register. The Census 2011 irrigation mix (reference year 2009) is a
+  // labelled baseline in "what the district runs on", never the first
   // number a reader meets.
   const facts: HeadlineFact[] = [];
+  if (current && currentShares && currentMixLabel && signals.source !== null) {
+    const sharesText = current.bySource
+      .map((share) => `${share.label.toLowerCase()} ${share.percent}%`)
+      .join(", ");
+    const supplementary =
+      current.supplementaryWells.netHectares > 0
+        ? ` Supplementary wells (${num(current.supplementaryWells.netHectares)} ha net) supplement other sources and are not additive.`
+        : "";
+    const mixFact =
+      signals.source === "canal"
+        ? { value: whole(currentShares.canal), label: "of irrigated farmland runs on canal water" }
+        : signals.source === "well"
+          ? { value: whole(currentShares.well), label: "of irrigated farmland is watered from wells" }
+          : {
+              value: `${whole(currentShares.canal)} / ${whole(currentShares.well)}`,
+              label: "of irrigated farmland on canals / wells",
+            };
+    facts.push({
+      ...mixFact,
+      asOf: currentMixLabel,
+      note: `${num(current.netAreaIrrigatedHectares)} ha net irrigated: ${sharesText}.${supplementary}`,
+    });
+  }
   if (aggregate.taluks.length > 0) {
     const deficit = signals.overExploited + signals.critical;
     facts.push({
@@ -769,7 +859,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     drinkingSentence = "JJM records no drinking-water sources for the Panchayats here.";
   } else {
     const lead =
-      source === "canal" && groundwaterShare && groundwaterShare.percent >= 80
+      signals.source === "canal" && groundwaterShare && groundwaterShare.percent >= 80
         ? "The district irrigates from the canal and drinks from the aquifer: "
         : "";
     drinkingSentence =
@@ -813,11 +903,20 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     "Jal Jeevan Mission citizen corner: habitations, tap connections, sources, sample rows.",
   );
   push(
+    "Irrigation by source, district",
+    current,
+    currentMixLabel ?? "unstated",
+    sourceOf(current)?.retrieved,
+    "DES Season and Crop Report Table III-B: net area irrigated per source at district grain. The block gradient below stays Census 2011 until a taluk-grain source is wired.",
+  );
+  push(
     "Land, irrigation and seasonal sources",
     inputs.census[0],
     censusDescribes,
     sourceOf(inputs.census[0])?.retrieved,
-    "Census 2011 village tables, the newest village-level irrigation enumeration served here. Newer official readings exist at coarser grain and are not wired yet: the annual Season and Crop Report (district totals by source, 2024-25 edition published) and the 2017-18 Minor Irrigation Census (wells and tanks by village).",
+    current
+      ? "Census 2011 village tables, the newest village-level irrigation enumeration served here. The Season and Crop Report district mix above is the current reading; the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet."
+      : "Census 2011 village tables, the newest village-level irrigation enumeration served here. Newer official readings exist at coarser grain and are not wired yet: the annual Season and Crop Report (district totals by source, 2024-25 edition published) and the 2017-18 Minor Irrigation Census (wells and tanks by village).",
   );
   push(
     "Groundwater assessment",
@@ -878,6 +977,25 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       places: aggregate.landPlaces,
       describes: censusDescribes,
     },
+    irrigationCurrent:
+      current && currentMixLabel
+        ? {
+            edition: current.edition,
+            label: currentMixLabel,
+            netHectares: current.netAreaIrrigatedHectares,
+            grossHectares: current.grossAreaIrrigatedHectares,
+            moreThanOnceHectares: current.areaIrrigatedMoreThanOnceHectares,
+            intensity: current.irrigationIntensity,
+            shares: current.bySource.map((share) => ({
+              key: share.key,
+              label: share.label,
+              value: share.netHectares,
+              percent: share.percent,
+            })),
+            supplementaryWellsNote:
+              current.supplementaryWells.netHectares > 0 ? current.supplementaryWells.note : null,
+          }
+        : null,
     drinking: {
       shares: drinking.byCategory,
       topTypes: drinking.byType.slice(0, 4),
@@ -927,6 +1045,7 @@ export function getDistrictReading(stateSlug: string, districtSlug: string): Dis
     aggregate,
     briefs: getDistrictBriefs(district.slug),
     directory,
+    irrigationCurrent: loadIrrigationCurrent(district),
     groundwater: loadGroundwaterTaluks(district),
     projection: loadGroundwaterProjection(district),
     rainfall: loadRainfall(district),

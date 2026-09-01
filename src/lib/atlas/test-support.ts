@@ -31,6 +31,7 @@ import {
   type DistrictIdentity,
   type GroundwaterProjectionArtifact,
   type GroundwaterTaluksArtifact,
+  type IrrigationCurrentArtifact,
   type JjmServiceShard,
   type RainfallArtifact,
   type WaterBodiesShard,
@@ -102,6 +103,7 @@ export function readFixtureShards<T>(slug: string, family: AtlasFamily): T[] {
 }
 
 export interface FixtureArtifacts extends DistrictArtifacts {
+  irrigationCurrent: IrrigationCurrentArtifact | undefined;
   curated: CuratedBriefsArtifact | undefined;
 }
 
@@ -115,6 +117,7 @@ export function readFixtureArtifacts(slug: string): FixtureArtifacts {
   if (!directory) throw new Error(`fixtures/atlas/tn/${slug} has no directory.json`);
   const artifacts: FixtureArtifacts = {
     directory,
+    irrigationCurrent: readFixtureArtifact<IrrigationCurrentArtifact>(slug, "irrigation-current"),
     jjm: readFixtureShards<JjmServiceShard>(slug, "jjm-service"),
     census: readFixtureShards<CensusShard>(slug, "census-2011"),
     groundwater: readFixtureArtifact<GroundwaterTaluksArtifact>(slug, "groundwater-taluks"),
@@ -166,8 +169,13 @@ export function buildFixtureAggregate(slug: string, asOf: string): DistrictAggre
   });
 }
 
-/** What getDistrictReading builds, from the fixture corpus. */
-export function buildFixtureReading(slug: string): DistrictReading {
+/** What getDistrictReading builds, from the fixture corpus. Options exist so
+ *  a test can read the district WITHOUT a served family (the absent-artifact
+ *  fallback), which the pinned fixture corpus otherwise always carries. */
+export function buildFixtureReading(
+  slug: string,
+  options: { omitIrrigationCurrent?: boolean } = {},
+): DistrictReading {
   const district = districtBySlug(slug);
   const artifacts = readFixtureArtifacts(slug);
   const asOf = districtAsOf(artifacts.briefs, artifacts.directory);
@@ -176,6 +184,7 @@ export function buildFixtureReading(slug: string): DistrictReading {
     aggregate: buildFixtureAggregate(slug, asOf),
     briefs: fixtureBriefs(slug),
     directory: artifacts.directory,
+    irrigationCurrent: options.omitIrrigationCurrent ? undefined : artifacts.irrigationCurrent,
     groundwater: artifacts.groundwater,
     projection: artifacts.projection,
     rainfall: artifacts.rainfall,

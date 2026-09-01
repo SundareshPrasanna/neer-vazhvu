@@ -30,10 +30,13 @@ const SWATCHES = [
 
 export function AtlasMixBar({ title, shares, caption }: { title: string; shares: MixBarShare[]; caption?: string }) {
   const visible = shares.filter((s) => s.percent > 0);
+  // Colour by the share's slot in the FULL list, not among the visible ones:
+  // the legend below shows every share, zeros included, and a zero sitting
+  // between two visible shares must not shift the bar off the legend.
   const segments = visible.map((share, index) => ({
     ...share,
     x: visible.slice(0, index).reduce((sum, prior) => sum + prior.percent, 0),
-    index: Math.min(index, FILLS.length - 1),
+    index: Math.min(shares.indexOf(share), FILLS.length - 1),
   }));
   return (
     <figure>

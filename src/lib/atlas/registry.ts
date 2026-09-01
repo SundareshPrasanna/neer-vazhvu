@@ -44,7 +44,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "The rice bowl: 80% of irrigation is canal water released at Mettur, so the district's water year is decided upstream.",
     basin: { basinId: "cauvery-tn", subBasinKey: "116", subBasinName: "Cauvery Delta" },
     hasCuratedBriefs: true,
-    published: false,
+    published: true,
   },
   {
     slug: "tiruchirappalli",
@@ -56,7 +56,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "Thanjavur's inverse: 60% of irrigation is from wells, so its water security is a groundwater question.",
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
   },
 ];
 
