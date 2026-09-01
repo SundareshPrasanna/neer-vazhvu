@@ -11,6 +11,7 @@
  */
 import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
 import {
+  boundaryProvenance,
   districtArtifactPath,
   identityFromDirectory,
   type DistrictDirectoryArtifact,
@@ -333,7 +334,7 @@ async function main(): Promise<void> {
         latitude: panchayat.boundary!.centroid[1],
       }));
     if (points.length === 0) {
-      throw new Error("the directory carries no centroids; acquire the TNGIS boundary first");
+      throw new Error("the directory carries no centroids; acquire the boundary layer first (TNGIS for Tamil Nadu, DataMeet for an LGD-built district)");
     }
     rainfall = await acquire(points, directory.district.planId, asOf);
     writeCache(district, CACHE, rainfall);
@@ -363,7 +364,7 @@ async function main(): Promise<void> {
     note:
       `Open-Meteo daily precipitation summed over ${rainfall.window.start} to ` +
       `${rainfall.window.end} for ${rainfall.recordCount} Gram Panchayats, queried at the ` +
-      "bounding-box centre of each TNGIS polygon (from the directory), " +
+      `bounding-box centre of each ${boundaryProvenance(directory)?.label ?? "boundary"} polygon (from the directory), ` +
       `collapsed to ${gridCells} reanalysis grid cells: Panchayats whose centroids share ` +
       "a cell share its series, which the per-record grid coordinates and offset state. " +
       (summary.withNormal > 0

@@ -25,6 +25,7 @@ import type { PlaceBrief } from "./place-brief";
 import type { CensusVillageAttributes, GramPanchayatCensusRollup } from "./tn-census-attributes";
 import type { GroundwaterAssessmentUnit, GroundwaterCategory } from "./tn-groundwater";
 import type {
+  GroundwaterProjectionMethod,
   GroundwaterProjectionRecord,
   GroundwaterProjectionReviewEntry,
 } from "./tn-groundwater-projection";
@@ -36,6 +37,7 @@ export const ATLAS_DATA_ROOT = "public/data/atlas";
 
 export const ATLAS_FAMILIES = {
   directory: "directory",
+  boundaries: "boundaries",
   irrigationCurrent: "irrigation-current",
   groundwaterTaluks: "groundwater-taluks",
   groundwaterProjection: "groundwater-projection",
@@ -46,12 +48,14 @@ export const ATLAS_FAMILIES = {
   assessments: "assessments",
   briefs: "briefs",
   curatedBriefs: "curated-briefs",
+  environmentPlan: "environment-plan",
 } as const;
 
 export type AtlasFamily = (typeof ATLAS_FAMILIES)[keyof typeof ATLAS_FAMILIES];
 
 /** Families sharded per LGD block: one file per block, keyed by block code. */
 export const SHARDED_FAMILIES: readonly AtlasFamily[] = [
+  "boundaries",
   "jjm-service",
   "census-2011",
   "water-bodies",
@@ -73,7 +77,7 @@ export function districtArtifactPath(
 ): string {
   const dir = districtDataDir(district);
   if (shard === undefined) return `${dir}/${family}.json`;
-  const extension = family === "water-bodies" ? "geojson" : "json";
+  const extension = family === "water-bodies" || family === "boundaries" ? "geojson" : "json";
   return `${dir}/${family}/${shard}.${extension}`;
 }
 
@@ -188,9 +192,23 @@ export interface DirectoryBoundary {
   vertexCount: number;
 }
 
+/** The villages the LGD register lists under a Panchayat (LGD adapter only).
+ *  The register names one covering village for most Panchayats rather than
+ *  every member, so this is an authoritative but partial composition. */
+export interface DirectoryLgdCoverage {
+  villages: Array<{
+    villageCode: string;
+    villageName: string;
+    census2011Code: string;
+    coverageType: string;
+  }>;
+}
+
 export interface DirectoryPanchayat {
   lgdCode: string;
   name: string;
+  /** The LGD's own local-language name, where the register carries one. */
+  nameLocal?: string;
   blockCode: string;
   blockName: string;
   tnrdMaster: {
@@ -198,6 +216,7 @@ export interface DirectoryPanchayat {
     gramPanchayatLocalCode: string;
     name: string;
   } | null;
+  lgdCoverage?: DirectoryLgdCoverage | null;
   jjm: DirectoryJjmBinding | null;
   census: DirectoryCensusBinding | null;
   composition: DirectoryComposition;
@@ -210,6 +229,28 @@ export interface DirectorySourceVintage {
   recordCount: number;
 }
 
+/**
+ * Which register is the identity master. Tamil Nadu districts were built from
+ * TNRD (the served artifacts carry no adapter field and read as "tnrd");
+ * every later state comes from the Local Government Directory as republished
+ * on data.gov.in. The adapter decides which vintage keys a directory carries
+ * and which upstream ids its consumers cite.
+ */
+export type IdentityAdapter = "tnrd" | "lgd-directory";
+
+export interface DirectoryBoundaryVintage {
+  layer: string;
+  retrievedAt: string;
+  recordCount: number;
+  /** Registry id of the geometry source; absent on the TNGIS-built
+   *  directories, which predate the field. */
+  sourceId?: string;
+  license?: string;
+  /** True when the polygons themselves are served (boundaries/<block>.geojson);
+   *  false when only derived centroids, areas and digests are published. */
+  publicGeometry?: boolean;
+}
+
 export interface DistrictDirectoryArtifact extends AtlasEnvelope {
   schemaVersion: number;
   district: {
@@ -218,21 +259,37 @@ export interface DistrictDirectoryArtifact extends AtlasEnvelope {
     stateSlug: string;
     stateName: string;
     planId: string;
-    tnrdLgdCode: string;
-    tnrdMasterCode: string;
+    /** Absent on TNRD-built directories. */
+    identityAdapter?: IdentityAdapter;
+    /** TNRD's own district codes; Tamil Nadu only. */
+    tnrdLgdCode?: string;
+    tnrdMasterCode?: string;
     jjmStateId: string;
     jjmDistrictId: string;
     censusDistrictCode: string;
     lgdDistrictCode: string;
+    lgdStateCode?: string;
     ingresDistrictName: string;
+    ingresStateName?: string;
+    ingresAssessmentUnitType?: string;
+    /** "sub-district" when the block layer is the LGD taluka (Maharashtra). */
+    blockModel?: string;
   };
   acquiredAt: string;
   vintages: {
-    tnrdLgd: DirectorySourceVintage;
-    tnrdMaster: DirectorySourceVintage;
+    /** Tamil Nadu: the 2021 LGD-coded TNRD list and the current TNRD master. */
+    tnrdLgd?: DirectorySourceVintage;
+    tnrdMaster?: DirectorySourceVintage;
+    /** LGD adapter: the Local Bodies (Panchayat) list, the village list and
+     *  the sub-district list, each with the portal's own edition date. */
+    lgdLocalBodies?: DirectorySourceVintage;
+    /** The coverage rows (Panchayat-village pairs) behind the Panchayat list. */
+    lgdCoverage?: DirectorySourceVintage;
+    lgdVillages?: DirectorySourceVintage;
+    lgdSubdistricts?: DirectorySourceVintage;
     jjm: DirectorySourceVintage;
     census: DirectorySourceVintage;
-    boundary: { layer: string; retrievedAt: string; recordCount: number } | null;
+    boundary: DirectoryBoundaryVintage | null;
   };
   crosswalk: {
     proposalId: string;
@@ -252,6 +309,28 @@ export interface DistrictDirectoryArtifact extends AtlasEnvelope {
   };
   blocks: DirectoryBlock[];
   panchayats: DirectoryPanchayat[];
+  /** LGD adapter: villages of the district the Local Bodies register lists
+   *  under no Panchayat (uninhabited or forest villages, urban villages, and
+   *  members the register's one-village-per-Panchayat coverage omits). Kept
+   *  so the enumeration stays complete and the gap is visible. */
+  uncoveredVillages?: Array<{
+    villageCode: string;
+    villageName: string;
+    /** As the LGD states it; a code the Census release has no row for is
+     *  kept as stated and flagged below. */
+    census2011Code: string;
+    subdistrictCode: string;
+    /** True when the district's Census 2011 release has a row for that code. */
+    censusRow: boolean;
+  }>;
+  /** LGD adapter: Census 2011 village rows of the district that no current
+   *  LGD village carries as its 2011 code (merged, renumbered or urbanised
+   *  since 2011). Kept so the Census enumeration stays complete. */
+  censusVillagesWithoutLgdRow?: Array<{
+    villageCode: string;
+    villageName: string;
+    subdistrictCode: string;
+  }>;
   /** Source units no LGD Gram Panchayat is bound to; kept so the enumeration
    *  stays complete and a later review can bind them. */
   unbound: {
@@ -353,7 +432,7 @@ export interface GroundwaterProjectionArtifact extends AtlasEnvelope {
   planId: string;
   assessmentYear: string;
   projectedAt: string;
-  projectionMethod: "spatial-intersection";
+  projectionMethod: GroundwaterProjectionMethod;
   source: {
     talukLayer: string;
     talukDistrictLgdCode: string;
@@ -430,10 +509,22 @@ export interface CensusShard extends AtlasEnvelope, ShardHeader {
 
 export interface WaterBodyFeature {
   type: "Feature";
-  /** Null until TNGIS approves public display; the derived counts and areas
-   *  in properties are what is published meanwhile. */
-  geometry: null;
+  /** TNGIS: null until TNGIS approves public display; the derived counts
+   *  and areas in properties are what is published meanwhile. The census
+   *  register (open licence): the enumerators' points for the Panchayat. */
+  geometry: null | { type: "MultiPoint"; coordinates: Array<[number, number]> };
   properties: TnWaterBodyRecord & { lgdBlockCode: string };
+}
+
+/** Rows of the census register a block holds that no Panchayat receives:
+ *  a village the LGD lists under two Panchayats, under none, a Census
+ *  village with no LGD row, a village the directory does not know, a town. */
+export interface WaterBodiesUnassigned {
+  sharedVillage: number;
+  uncoveredVillage: number;
+  censusVillageWithoutLgdRow: number;
+  unknownVillage: number;
+  urban: number;
 }
 
 export interface WaterBodiesShard extends AtlasEnvelope {
@@ -441,12 +532,14 @@ export interface WaterBodiesShard extends AtlasEnvelope {
   features: WaterBodyFeature[];
   ext: {
     atlas: ShardHeader & {
+      /** Absent on the TNGIS shards, which predate the field. */
+      register?: "water-bodies-census";
       districtLgdCode: string;
       acquiredAt: string;
       layer: string;
       sourceUrl: string;
       rights: {
-        status: "permission-required";
+        status: "permission-required" | "open";
         termsUrl: string;
         termsQuote: string;
         approval: unknown;
@@ -456,6 +549,44 @@ export interface WaterBodiesShard extends AtlasEnvelope {
       featureCount: number;
       recordCount: number;
       recordsSha256: string;
+      /** Census register only: the block's own unassigned rows, and the
+       *  district totals repeated on every shard (urban rows sit in no
+       *  block, so only the district total carries them). */
+      unassigned?: WaterBodiesUnassigned;
+      unassignedDistrict?: WaterBodiesUnassigned;
+      attributes?: { waterspread: "stated" | "withheld"; note: string };
+      pointsOutsideDistrict?: number;
+    };
+  };
+}
+
+/** Served Panchayat polygons (LGD-built districts, DataMeet ODbL): one
+ *  FeatureCollection per block, the envelope at the top level beside
+ *  type/features and the atlas metadata under ext.atlas, the water-bodies
+ *  convention. */
+export interface BoundaryFeature {
+  type: "Feature";
+  properties: {
+    lgdCode: string;
+    name: string;
+    blockCode: string;
+    blockName: string;
+    areaHectares: number;
+    memberVillagesDrawn: string[];
+    memberVillagesNotDrawn: string[];
+  };
+  geometry: { type: "MultiPolygon"; coordinates: number[][][][] };
+}
+
+export interface BoundariesShard extends AtlasEnvelope {
+  type: "FeatureCollection";
+  features: BoundaryFeature[];
+  ext: {
+    atlas: ShardHeader & {
+      acquiredAt: string;
+      sourceSha256: string;
+      featureCount: number;
+      rights: { status: "share-alike"; license: string; attribution: string };
     };
   };
 }
@@ -562,6 +693,14 @@ export function identityFromDirectory(
   for (const unit of directory.unbound.census) {
     for (const village of unit.villages) censusVillageCodes.add(village.villageCode);
   }
+  // LGD adapter: the Census villages under no Panchayat are tracked too, so a
+  // Census roll-up neither drops nor invents a row.
+  for (const village of directory.uncoveredVillages ?? []) {
+    if (village.censusRow) censusVillageCodes.add(village.census2011Code);
+  }
+  for (const village of directory.censusVillagesWithoutLgdRow ?? []) {
+    censusVillageCodes.add(village.villageCode);
+  }
   return {
     planId: directory.district.planId,
     gramPanchayats,
@@ -574,4 +713,68 @@ export function identityFromDirectory(
 /** LGD block code of a Gram Panchayat, for choosing its shard. */
 export function blockCodeOf(identity: DistrictIdentity, lgdCode: string): string | undefined {
   return identity.gramPanchayats.get(lgdCode)?.blockCode;
+}
+
+/* ── adapter-aware readers of the directory ────────────────────────────── */
+
+export function identityAdapterOf(directory: DistrictDirectoryArtifact): IdentityAdapter {
+  return directory.district.identityAdapter ?? "tnrd";
+}
+
+/** The vintage of the identity master: the LGD-coded TNRD list in Tamil
+ *  Nadu, the LGD Local Bodies list elsewhere. Every directory carries one. */
+export function identityVintage(directory: DistrictDirectoryArtifact): DirectorySourceVintage {
+  const vintage =
+    identityAdapterOf(directory) === "tnrd"
+      ? directory.vintages.tnrdLgd
+      : directory.vintages.lgdLocalBodies;
+  if (!vintage) {
+    throw new Error(`${directory.district.slug}: directory carries no identity vintage`);
+  }
+  return vintage;
+}
+
+/** The current-membership check beside the identity master: the TNRD master
+ *  in Tamil Nadu; for an LGD directory the register is itself current, so the
+ *  identity vintage answers. */
+export function identityMasterVintage(directory: DistrictDirectoryArtifact): DirectorySourceVintage {
+  return directory.vintages.tnrdMaster ?? identityVintage(directory);
+}
+
+/** The district code of the identity master (TNRD's for Tamil Nadu, the LGD
+ *  district code otherwise). */
+export function identityDistrictCode(directory: DistrictDirectoryArtifact): string {
+  return directory.district.tnrdLgdCode ?? directory.district.lgdDistrictCode;
+}
+
+export interface BoundaryProvenance {
+  /** Registry id of the polygon source. */
+  sourceId: string;
+  /** Short name for prose: "TNGIS", "DataMeet". */
+  label: string;
+  /** What the polygons are: a survey layer or a community digitisation. */
+  description: string;
+  publicGeometry: boolean;
+}
+
+/** Who drew the polygons a directory's centroids come from, with the copy
+ *  the pages need. TNGIS-built directories predate the vintage's sourceId. */
+export function boundaryProvenance(directory: DistrictDirectoryArtifact): BoundaryProvenance | null {
+  const boundary = directory.vintages.boundary;
+  if (!boundary) return null;
+  if (boundary.sourceId === "datameet-village-boundaries-mh") {
+    return {
+      sourceId: boundary.sourceId,
+      label: "DataMeet",
+      description:
+        "DataMeet's community digitisation of the 2001 Census village map (ODbL), joined to the 2011 codes and dissolved to each Panchayat's member villages",
+      publicGeometry: boundary.publicGeometry ?? false,
+    };
+  }
+  return {
+    sourceId: boundary.sourceId ?? "tngis-tnrd-panchayat-boundary",
+    label: "TNGIS",
+    description: "the TNGIS Panchayat boundary layer",
+    publicGeometry: boundary.publicGeometry ?? false,
+  };
 }

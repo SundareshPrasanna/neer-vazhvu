@@ -1,0 +1,3735 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/briefs",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "lgd-local-bodies-datagovin",
+        "title": "Local Government Directory: local bodies with the villages they cover (data.gov.in resource 1a6c26ed)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "as_of": "2026-09-01",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "lgd-villages-datagovin",
+        "title": "Local Government Directory: villages with Census 2011 codes (data.gov.in resource c967fe8f)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "lgd-subdistricts-datagovin",
+        "title": "Local Government Directory: sub-districts (data.gov.in resource 6be51a29)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "census-2011-village-amenities-mh",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Maharashtra village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/828",
+        "as_of": "2011",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo daily precipitation (forecast past_days and ERA5 archive)",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "input",
+        "url": "https://open-meteo.com/",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "water-bodies-census-mh",
+        "title": "First Census of Water Bodies, Maharashtra state return (data.gov.in resource e1874d07)",
+        "publisher": "Department of Water Resources, River Development and Ganga Rejuvenation, Ministry of Jal Shakti, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "url": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "datameet-village-boundaries-mh",
+        "title": "DataMeet indian_village_boundaries, Maharashtra (mh2.geojson with the mh.csv 2001-to-2011 crosswalk)",
+        "publisher": "DataMeet community",
+        "license": "ODbL 1.0",
+        "role": "input",
+        "url": "https://github.com/datameet/indian_village_boundaries",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-generate-assessments.ts",
+    "internal_inputs": [
+      "public/data/atlas/mh/satara/directory.json",
+      "public/data/atlas/mh/satara/jjm-service/4264.json",
+      "public/data/atlas/mh/satara/census-2011/4264.json",
+      "public/data/atlas/mh/satara/groundwater-taluks.json",
+      "public/data/atlas/mh/satara/groundwater-projection.json",
+      "public/data/atlas/mh/satara/rainfall.json",
+      "public/data/atlas/mh/satara/water-bodies/4264.geojson",
+      "public/data/atlas/mh/satara/assessments/4264.json"
+    ],
+    "note": "Place briefs for 240 Gram Panchayats in Patan block: the verdict derived from the tension between tap coverage and the containing taluk's groundwater category, headline facts each carrying their caveat, the named capability gaps, and the detail behind them (habitations, sources, sampling, land, seasonal sources, boundary, rainfall, water bodies). Briefs fail closed: a place must hold identity, population and drinking-water service before it gets a verdict; otherwise it is directory-only and publishes no numbers.",
+    "conventions": {
+      "status": "brief-ready | directory-only; a directory-only brief carries no verdict and no headline facts by rule",
+      "tone": "positive | warning | neutral | blocked, the same vocabulary the district page uses",
+      "groundwater": "every taluk-grain figure says it describes the taluk, not the Panchayat"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "mh-satara-v1",
+  "blockCode": "4264",
+  "blockName": "Patan",
+  "assessedAt": "2026-09-01",
+  "recordCount": 15,
+  "briefs": [
+    {
+      "schemaVersion": 1,
+      "placeId": "189818",
+      "name": "Addev",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 360 households report a tap connection and Patan remains assessed safe at 56.4 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "360 of 360 households, across 2 habitations."
+        },
+        {
+          "value": "2",
+          "label": "Drinking-water sources",
+          "note": "Open Well, River"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "232.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "68d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-25. 52 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Adadev",
+            "population": 650,
+            "households": 150,
+            "connections": 150
+          },
+          {
+            "name": "Aadev Kh. (n.v.)",
+            "population": 895,
+            "households": 210,
+            "connections": 210
+          }
+        ],
+        "sources": [
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 52,
+          "unsafe": 0,
+          "atSource": 51,
+          "atHousehold": 1,
+          "earliest": "2022-11-27",
+          "latest": "2026-06-25",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 2
+            },
+            {
+              "year": "2023",
+              "count": 14
+            },
+            {
+              "year": "2024",
+              "count": 16
+            },
+            {
+              "year": "2025",
+              "count": 10
+            },
+            {
+              "year": "2026",
+              "count": 10
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 151,
+          "netSownHectares": 117.4,
+          "irrigatedHectares": 117.4,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 7,
+          "culturableWasteHectares": 13
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 2,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 157.221,
+          "latitude": 17.333771,
+          "longitude": 73.897079
+        },
+        "rainfall": {
+          "windowMm": 232.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-12",
+          "wettestDayMm": 12.4
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 0,
+          "areaHectares": 0,
+          "largestAreaHectares": 0,
+          "byDepartment": [
+            {
+              "department": "State WRD/State Irrigation",
+              "count": 1
+            }
+          ],
+          "register": "water-bodies-census",
+          "byType": [
+            {
+              "type": "Water consv schemes/percolation tanks/check-dams",
+              "count": 1
+            }
+          ],
+          "areaBasis": "withheld",
+          "pointCount": 1
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189819",
+      "name": "Atoli",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "28.77 percent of 351 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "28.77%",
+          "label": "Households with a tap connection",
+          "note": "101 of 351 households, across 7 habitations."
+        },
+        {
+          "value": "9",
+          "label": "Drinking-water sources",
+          "note": "Open Well, Shallow Tubewell, Spring"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "627.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "78d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-15. 28 samples over 4 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Atoli",
+            "population": 680,
+            "households": 149,
+            "connections": 24
+          },
+          {
+            "name": "Bhakarmali",
+            "population": 75,
+            "households": 15,
+            "connections": 0
+          },
+          {
+            "name": "Boudhawasti",
+            "population": 172,
+            "households": 36,
+            "connections": 14
+          },
+          {
+            "name": "Nagawantek",
+            "population": 70,
+            "households": 14,
+            "connections": 6
+          },
+          {
+            "name": "Pandharepani",
+            "population": 482,
+            "households": 82,
+            "connections": 19
+          },
+          {
+            "name": "Penichawada",
+            "population": 42,
+            "households": 8,
+            "connections": 0
+          },
+          {
+            "name": "Gureghar",
+            "population": 315,
+            "households": 47,
+            "connections": 38
+          }
+        ],
+        "sources": [
+          {
+            "type": "Spring",
+            "category": "Surface Water",
+            "count": 4
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 4
+          },
+          {
+            "type": "Shallow Tubewell",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 28,
+          "unsafe": 0,
+          "atSource": 28,
+          "atHousehold": 0,
+          "earliest": "2023-04-27",
+          "latest": "2026-06-15",
+          "byYear": [
+            {
+              "year": "2023",
+              "count": 2
+            },
+            {
+              "year": "2024",
+              "count": 8
+            },
+            {
+              "year": "2025",
+              "count": 9
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1711.9,
+          "netSownHectares": 473.63,
+          "irrigatedHectares": 473.63,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 1209.97,
+          "barrenHectares": 26.38,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 3,
+          "summerSourceTypes": 3,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1735.982,
+          "latitude": 17.278858,
+          "longitude": 73.773654
+        },
+        "rainfall": {
+          "windowMm": 627.7,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 32.1
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189820",
+      "name": "Awarde",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 299 households report a tap connection and Patan remains assessed safe at 56.4 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "299 of 299 households, across 1 habitations."
+        },
+        {
+          "value": "2",
+          "label": "Drinking-water sources",
+          "note": "Open Well"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "290.8 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "70d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-23. 34 samples over 4 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Awarde",
+            "population": 1750,
+            "households": 299,
+            "connections": 299
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 2
+          }
+        ],
+        "sampling": {
+          "total": 34,
+          "unsafe": 0,
+          "atSource": 34,
+          "atHousehold": 0,
+          "earliest": "2023-01-01",
+          "latest": "2026-06-23",
+          "byYear": [
+            {
+              "year": "2023",
+              "count": 7
+            },
+            {
+              "year": "2024",
+              "count": 8
+            },
+            {
+              "year": "2025",
+              "count": 10
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 518,
+          "netSownHectares": 493,
+          "irrigatedHectares": 468,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 6,
+          "lostInSummer": [
+            "tubeWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 527.1904,
+          "latitude": 17.518366,
+          "longitude": 73.943278
+        },
+        "rainfall": {
+          "windowMm": 290.8,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 16.5
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189821",
+      "name": "Abdarwadi",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 215 households report a tap connection and Patan remains assessed safe at 56.4 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "215 of 215 households, across 1 habitations."
+        },
+        {
+          "value": "5",
+          "label": "Drinking-water sources",
+          "note": "Open Well, River"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "86.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "64d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-29. 31 samples over 4 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Abdarwadi",
+            "population": 953,
+            "households": 215,
+            "connections": 215
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          }
+        ],
+        "sampling": {
+          "total": 31,
+          "unsafe": 0,
+          "atSource": 31,
+          "atHousehold": 0,
+          "earliest": "2023-03-13",
+          "latest": "2026-06-29",
+          "byYear": [
+            {
+              "year": "2023",
+              "count": 8
+            },
+            {
+              "year": "2024",
+              "count": 12
+            },
+            {
+              "year": "2025",
+              "count": 7
+            },
+            {
+              "year": "2026",
+              "count": 4
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 71.9,
+          "netSownHectares": 66.71,
+          "irrigatedHectares": 16.71,
+          "canalHectares": 0,
+          "wellHectares": 10,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 2.44,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 4,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 70.2319,
+          "latitude": 17.352663,
+          "longitude": 74.021772
+        },
+        "rainfall": {
+          "windowMm": 86.9,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-22",
+          "wettestDayMm": 7.4
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189822",
+      "name": "Adul Gaon",
+      "blockCode": "4264",
+      "status": "directory-only",
+      "statusReason": "Held back because place-identity-and-composition, population-and-settlements, drinking-water-service are not established for this place.",
+      "verdict": null,
+      "headlineFacts": [],
+      "gaps": [
+        {
+          "capabilityId": "place-identity-and-composition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "population-and-settlements",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-source",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-quality",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "connected-supply-system",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "public-water-works",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "responsibility-and-action",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 6,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [],
+        "sources": [],
+        "sampling": null,
+        "land": {
+          "totalAreaHectares": 198.3,
+          "netSownHectares": 132.42,
+          "irrigatedHectares": 104.12,
+          "canalHectares": 0,
+          "wellHectares": 8.15,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 47.58,
+          "culturableWasteHectares": 3.2
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 2,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 120.5068,
+          "latitude": 17.351881,
+          "longitude": 73.94302
+        },
+        "rainfall": {
+          "windowMm": 155.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 9.4
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189823",
+      "name": "Adul Peth",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 476 households report a tap connection and Patan remains assessed safe at 56.4 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "476 of 476 households, across 2 habitations."
+        },
+        {
+          "value": "2",
+          "label": "Drinking-water sources",
+          "note": "Open Well, River"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "155.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "61d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-07-02. 25 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Adul Peth",
+            "population": 2167,
+            "households": 441,
+            "connections": 441
+          },
+          {
+            "name": "KENDE WADI",
+            "population": 152,
+            "households": 35,
+            "connections": 35
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 25,
+          "unsafe": 0,
+          "atSource": 25,
+          "atHousehold": 0,
+          "earliest": "2022-12-21",
+          "latest": "2026-07-02",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 1
+            },
+            {
+              "year": "2023",
+              "count": 8
+            },
+            {
+              "year": "2024",
+              "count": 3
+            },
+            {
+              "year": "2025",
+              "count": 10
+            },
+            {
+              "year": "2026",
+              "count": 3
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 420.5,
+          "netSownHectares": 340.5,
+          "irrigatedHectares": 241.5,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 10
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 4,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 202.4361,
+          "latitude": 17.345767,
+          "longitude": 73.956387
+        },
+        "rainfall": {
+          "windowMm": 155.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 9.4
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 0,
+          "areaHectares": 0,
+          "largestAreaHectares": 0,
+          "byDepartment": [
+            {
+              "department": "State WRD/State Irrigation",
+              "count": 1
+            }
+          ],
+          "register": "water-bodies-census",
+          "byType": [
+            {
+              "type": "Water consv schemes/percolation tanks/check-dams",
+              "count": 1
+            }
+          ],
+          "areaBasis": "withheld",
+          "pointCount": 1
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189824",
+      "name": "Ambale",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 165 households report a tap connection and Patan remains assessed safe at 56.4 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "165 of 165 households, across 2 habitations."
+        },
+        {
+          "value": "3",
+          "label": "Drinking-water sources",
+          "note": "Open Well"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "290.8 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "68d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-25. 48 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ambale",
+            "population": 458,
+            "households": 103,
+            "connections": 103
+          },
+          {
+            "name": "Kalakutwadi",
+            "population": 218,
+            "households": 62,
+            "connections": 62
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 3
+          }
+        ],
+        "sampling": {
+          "total": 48,
+          "unsafe": 0,
+          "atSource": 48,
+          "atHousehold": 0,
+          "earliest": "2022-11-23",
+          "latest": "2026-06-25",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 8
+            },
+            {
+              "year": "2023",
+              "count": 13
+            },
+            {
+              "year": "2024",
+              "count": 13
+            },
+            {
+              "year": "2025",
+              "count": 7
+            },
+            {
+              "year": "2026",
+              "count": 7
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 216,
+          "netSownHectares": 206,
+          "irrigatedHectares": 202,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 7,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 221.6137,
+          "latitude": 17.501039,
+          "longitude": 73.944606
+        },
+        "rainfall": {
+          "windowMm": 290.8,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 16.5
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 0,
+          "areaHectares": 0,
+          "largestAreaHectares": 0,
+          "byDepartment": [
+            {
+              "department": "State WRD/State Irrigation",
+              "count": 1
+            }
+          ],
+          "register": "water-bodies-census",
+          "byType": [
+            {
+              "type": "Water consv schemes/percolation tanks/check-dams",
+              "count": 1
+            }
+          ],
+          "areaBasis": "withheld",
+          "pointCount": 1
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189825",
+      "name": "Ambavade Kh.",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "65.46 percent of 249 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "65.46%",
+          "label": "Households with a tap connection",
+          "note": "163 of 249 households, across 5 habitations."
+        },
+        {
+          "value": "4",
+          "label": "Drinking-water sources",
+          "note": "Open Well, Treated Surface Water"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "232.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "67d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-26. 55 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ambavade Kh.",
+            "population": 464,
+            "households": 113,
+            "connections": 113
+          },
+          {
+            "name": "CHORAGE WADI",
+            "population": 132,
+            "households": 32,
+            "connections": 12
+          },
+          {
+            "name": "DONYACHI WADI",
+            "population": 177,
+            "households": 42,
+            "connections": 3
+          },
+          {
+            "name": "Shindewadi",
+            "population": 168,
+            "households": 40,
+            "connections": 20
+          },
+          {
+            "name": "Takyachiwadi",
+            "population": 98,
+            "households": 22,
+            "connections": 15
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 55,
+          "unsafe": 0,
+          "atSource": 55,
+          "atHousehold": 0,
+          "earliest": "2022-09-21",
+          "latest": "2026-06-26",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 5
+            },
+            {
+              "year": "2023",
+              "count": 19
+            },
+            {
+              "year": "2024",
+              "count": 11
+            },
+            {
+              "year": "2025",
+              "count": 11
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 502.91,
+          "netSownHectares": 249,
+          "irrigatedHectares": 249,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 57.83,
+          "barrenHectares": 9.09,
+          "culturableWasteHectares": 45
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 1,
+          "lostInSummer": [
+            "tapTreated"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 522.079,
+          "latitude": 17.243928,
+          "longitude": 73.92202
+        },
+        "rainfall": {
+          "windowMm": 232.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-12",
+          "wettestDayMm": 12.4
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189826",
+      "name": "Ambavane",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "21.83 percent of 142 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "21.83%",
+          "label": "Households with a tap connection",
+          "note": "31 of 142 households, across 2 habitations."
+        },
+        {
+          "value": "4",
+          "label": "Drinking-water sources",
+          "note": "Open Well, Spring"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "155.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "63d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-30. 78 samples over 5 years, 1 recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ambavane",
+            "population": 387,
+            "households": 81,
+            "connections": 19
+          },
+          {
+            "name": "Shedwasti",
+            "population": 296,
+            "households": 61,
+            "connections": 12
+          }
+        ],
+        "sources": [
+          {
+            "type": "Spring",
+            "category": "Surface Water",
+            "count": 3
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 78,
+          "unsafe": 1,
+          "atSource": 78,
+          "atHousehold": 0,
+          "earliest": "2022-11-26",
+          "latest": "2026-06-30",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 4
+            },
+            {
+              "year": "2023",
+              "count": 25
+            },
+            {
+              "year": "2024",
+              "count": 16
+            },
+            {
+              "year": "2025",
+              "count": 17
+            },
+            {
+              "year": "2026",
+              "count": 16
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 275,
+          "netSownHectares": 114.9,
+          "irrigatedHectares": 114.9,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 144
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 1,
+          "lostInSummer": [
+            "uncoveredWell",
+            "handPump",
+            "tubeWell",
+            "riverCanal"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 273.5312,
+          "latitude": 17.425541,
+          "longitude": 73.868705
+        },
+        "rainfall": {
+          "windowMm": 155.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 9.4
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189827",
+      "name": "Ambeghar T Marali",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "95.31 percent of 192 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "95.31%",
+          "label": "Households with a tap connection",
+          "note": "183 of 192 households, across 3 habitations."
+        },
+        {
+          "value": "5",
+          "label": "Drinking-water sources",
+          "note": "Open Well, Spring"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "232.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "141d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-04-13. 21 samples over 3 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ambeghar Tarf Marli",
+            "population": 436,
+            "households": 86,
+            "connections": 86
+          },
+          {
+            "name": "Boudhwasti",
+            "population": 150,
+            "households": 30,
+            "connections": 30
+          },
+          {
+            "name": "Warandewadi",
+            "population": 380,
+            "households": 76,
+            "connections": 67
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 4
+          },
+          {
+            "type": "Spring",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 21,
+          "unsafe": 0,
+          "atSource": 21,
+          "atHousehold": 0,
+          "earliest": "2024-07-05",
+          "latest": "2026-04-13",
+          "byYear": [
+            {
+              "year": "2024",
+              "count": 5
+            },
+            {
+              "year": "2025",
+              "count": 6
+            },
+            {
+              "year": "2026",
+              "count": 10
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 719,
+          "netSownHectares": 348,
+          "irrigatedHectares": 344,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 50,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 117
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 2,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 438.846,
+          "latitude": 17.280662,
+          "longitude": 73.830832
+        },
+        "rainfall": {
+          "windowMm": 232.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-12",
+          "wettestDayMm": 12.4
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189828",
+      "name": "Ambrag",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "85.85 percent of 318 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "85.85%",
+          "label": "Households with a tap connection",
+          "note": "273 of 318 households, across 7 habitations."
+        },
+        {
+          "value": "4",
+          "label": "Drinking-water sources",
+          "note": "Open Well, Spring"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "232.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "141d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-04-13. 27 samples over 4 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ambrag",
+            "population": 458,
+            "households": 96,
+            "connections": 96
+          },
+          {
+            "name": "Andharwadi",
+            "population": 186,
+            "households": 38,
+            "connections": 38
+          },
+          {
+            "name": "Boudhavasti",
+            "population": 47,
+            "households": 9,
+            "connections": 9
+          },
+          {
+            "name": "Kadamwadi",
+            "population": 212,
+            "households": 45,
+            "connections": 45
+          },
+          {
+            "name": "Manewadi",
+            "population": 105,
+            "households": 22,
+            "connections": 22
+          },
+          {
+            "name": "Patilwadi",
+            "population": 321,
+            "households": 67,
+            "connections": 38
+          },
+          {
+            "name": "Sambhapur",
+            "population": 198,
+            "households": 41,
+            "connections": 25
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "Spring",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 27,
+          "unsafe": 0,
+          "atSource": 27,
+          "atHousehold": 0,
+          "earliest": "2023-04-27",
+          "latest": "2026-04-13",
+          "byYear": [
+            {
+              "year": "2023",
+              "count": 2
+            },
+            {
+              "year": "2024",
+              "count": 6
+            },
+            {
+              "year": "2025",
+              "count": 12
+            },
+            {
+              "year": "2026",
+              "count": 7
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 453.68,
+          "netSownHectares": 213.28,
+          "irrigatedHectares": 211.28,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 5.58,
+          "barrenHectares": 22.82,
+          "culturableWasteHectares": 210
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 3,
+          "lostInSummer": [
+            "handPump"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 452.8757,
+          "latitude": 17.301411,
+          "longitude": 73.857094
+        },
+        "rainfall": {
+          "windowMm": 232.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-12",
+          "wettestDayMm": 12.4
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 0,
+          "areaHectares": 0,
+          "largestAreaHectares": 0,
+          "byDepartment": [
+            {
+              "department": "State WRD/State Irrigation",
+              "count": 1
+            }
+          ],
+          "register": "water-bodies-census",
+          "byType": [
+            {
+              "type": "Water consv schemes/percolation tanks/check-dams",
+              "count": 1
+            }
+          ],
+          "areaBasis": "withheld",
+          "pointCount": 1
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189829",
+      "name": "Ambrule",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "60.22 percent of 357 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "60.22%",
+          "label": "Households with a tap connection",
+          "note": "215 of 357 households, across 3 habitations."
+        },
+        {
+          "value": "4",
+          "label": "Drinking-water sources",
+          "note": "Open Well, Spring"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "155.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "68d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-25. 61 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ambrule",
+            "population": 1370,
+            "households": 312,
+            "connections": 200
+          },
+          {
+            "name": "Boudh Wasti",
+            "population": 106,
+            "households": 24,
+            "connections": 5
+          },
+          {
+            "name": "DHOPARE WADI",
+            "population": 98,
+            "households": 21,
+            "connections": 10
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "Spring",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 61,
+          "unsafe": 0,
+          "atSource": 58,
+          "atHousehold": 3,
+          "earliest": "2022-11-27",
+          "latest": "2026-06-25",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 5
+            },
+            {
+              "year": "2023",
+              "count": 15
+            },
+            {
+              "year": "2024",
+              "count": 18
+            },
+            {
+              "year": "2025",
+              "count": 12
+            },
+            {
+              "year": "2026",
+              "count": 11
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 438,
+          "netSownHectares": 318,
+          "irrigatedHectares": 298,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 11
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 2,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 425.8264,
+          "latitude": 17.333889,
+          "longitude": 73.911635
+        },
+        "rainfall": {
+          "windowMm": 155.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-02",
+          "wettestDayMm": 9.4
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189830",
+      "name": "Asavalewadi",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "84.68 percent of 124 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "84.68%",
+          "label": "Households with a tap connection",
+          "note": "105 of 124 households, across 1 habitations."
+        },
+        {
+          "value": "1",
+          "label": "Drinking-water sources",
+          "note": "Open Well"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "99.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "82d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-11. 14 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Asawalewadi",
+            "population": 486,
+            "households": 124,
+            "connections": 105
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 14,
+          "unsafe": 0,
+          "atSource": 14,
+          "atHousehold": 0,
+          "earliest": "2022-11-30",
+          "latest": "2026-06-11",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 2
+            },
+            {
+              "year": "2023",
+              "count": 4
+            },
+            {
+              "year": "2024",
+              "count": 1
+            },
+            {
+              "year": "2025",
+              "count": 4
+            },
+            {
+              "year": "2026",
+              "count": 3
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 283,
+          "netSownHectares": 100,
+          "irrigatedHectares": 100,
+          "canalHectares": 0,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 10,
+          "culturableWasteHectares": 172
+        },
+        "seasonal": {
+          "annualSourceTypes": 3,
+          "summerSourceTypes": 0,
+          "lostInSummer": [
+            "tapTreated",
+            "uncoveredWell",
+            "handPump"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 296.4232,
+          "latitude": 17.278658,
+          "longitude": 73.962604
+        },
+        "rainfall": {
+          "windowMm": 99.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 7.2
+        },
+        "waterBodies": {
+          "count": 3,
+          "namedCount": 0,
+          "areaHectares": 0,
+          "largestAreaHectares": 0,
+          "byDepartment": [
+            {
+              "department": "State WRD/State Irrigation",
+              "count": 2
+            },
+            {
+              "department": "Co-operative",
+              "count": 1
+            }
+          ],
+          "register": "water-bodies-census",
+          "byType": [
+            {
+              "type": "Water consv schemes/percolation tanks/check-dams",
+              "count": 2
+            },
+            {
+              "type": "Tank",
+              "count": 1
+            }
+          ],
+          "areaBasis": "withheld",
+          "pointCount": 3
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189831",
+      "name": "Bacholi",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "89.76 percent of 205 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "89.76%",
+          "label": "Households with a tap connection",
+          "note": "184 of 205 households, across 2 habitations."
+        },
+        {
+          "value": "5",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "232.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "69d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-24. 12 samples over 4 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Bacholi",
+            "population": 1355,
+            "households": 175,
+            "connections": 174
+          },
+          {
+            "name": "Boudh Wasti",
+            "population": 155,
+            "households": 30,
+            "connections": 10
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 2
+          }
+        ],
+        "sampling": {
+          "total": 12,
+          "unsafe": 0,
+          "atSource": 12,
+          "atHousehold": 0,
+          "earliest": "2023-03-24",
+          "latest": "2026-06-24",
+          "byYear": [
+            {
+              "year": "2023",
+              "count": 2
+            },
+            {
+              "year": "2024",
+              "count": 2
+            },
+            {
+              "year": "2025",
+              "count": 5
+            },
+            {
+              "year": "2026",
+              "count": 3
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 338.56,
+          "netSownHectares": 175.1,
+          "irrigatedHectares": 158.1,
+          "canalHectares": 0,
+          "wellHectares": 17,
+          "tankHectares": 0,
+          "forestHectares": 107.24,
+          "barrenHectares": 10.53,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 2,
+          "lostInSummer": [
+            "tapTreated",
+            "tapUntreated",
+            "riverCanal"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 340.0615,
+          "latitude": 17.278287,
+          "longitude": 73.914864
+        },
+        "rainfall": {
+          "windowMm": 232.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-12",
+          "wettestDayMm": 12.4
+        },
+        "waterBodies": {
+          "count": 4,
+          "namedCount": 0,
+          "areaHectares": 0,
+          "largestAreaHectares": 0,
+          "byDepartment": [
+            {
+              "department": "Co-operative",
+              "count": 4
+            }
+          ],
+          "register": "water-bodies-census",
+          "byType": [
+            {
+              "type": "Tank",
+              "count": 4
+            }
+          ],
+          "areaBasis": "withheld",
+          "pointCount": 4
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "189960",
+      "name": "Marul Haveli",
+      "blockCode": "4264",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 718 households report a tap connection and Patan remains assessed safe at 56.4 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "718 of 718 households, across 2 habitations."
+        },
+        {
+          "value": "1",
+          "label": "Drinking-water sources",
+          "note": "Open Well"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction, containing taluka",
+          "note": "Patan is assessed safe. This describes the taluka, not this Panchayat."
+        },
+        {
+          "value": "99.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+        },
+        {
+          "value": "82d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-11. 21 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Magas Wasti",
+            "population": 421,
+            "households": 93,
+            "connections": 93
+          },
+          {
+            "name": "Marul Haveli",
+            "population": 2857,
+            "households": 625,
+            "connections": 625
+          }
+        ],
+        "sources": [
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 21,
+          "unsafe": 0,
+          "atSource": 21,
+          "atHousehold": 0,
+          "earliest": "2022-10-13",
+          "latest": "2026-06-11",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 2
+            },
+            {
+              "year": "2023",
+              "count": 4
+            },
+            {
+              "year": "2024",
+              "count": 7
+            },
+            {
+              "year": "2025",
+              "count": 4
+            },
+            {
+              "year": "2026",
+              "count": 4
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 467,
+          "netSownHectares": 231.12,
+          "irrigatedHectares": 31.12,
+          "canalHectares": 0,
+          "wellHectares": 57.6,
+          "tankHectares": 0,
+          "forestHectares": 184.88,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 31
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 3,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 461.3112,
+          "latitude": 17.30406,
+          "longitude": 74.006591
+        },
+        "rainfall": {
+          "windowMm": 99.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 7.2
+        },
+        "waterBodies": null
+      }
+    }
+  ]
+}

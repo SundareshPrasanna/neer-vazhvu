@@ -11,6 +11,7 @@ import {
 import {
   FIXTURE_DISTRICTS,
   buildAllFixtureDirectories,
+  fixtureSlugsPresent,
   districtBySlug,
   fixtureBriefs,
   readFixtureArtifacts,
@@ -59,5 +60,5 @@ test("unregistered districts and states resolve to nothing", () => {
   assert.equal(getDistrictDirectory("tn", "madurai"), undefined);
   assert.equal(getDistrictDirectory("ka", "thanjavur"), undefined);
   assert.equal(getDistrictBriefs("madurai").length, 0);
-  assert.equal(buildAllFixtureDirectories().length, FIXTURE_DISTRICTS.length);
+  assert.equal(buildAllFixtureDirectories().length, fixtureSlugsPresent().length);
 });

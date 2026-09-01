@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 
+DEFAULT_SHEET = "Village_Data_3300"
 IDENTITY_HEADERS = {
     "State Code": "stateCode",
     "District Code": "districtCode",
@@ -174,7 +175,9 @@ def to_status(raw: str) -> str:
     return "not-stated"
 
 
-def extract(xlsx_path: str, district_code: str) -> list[dict]:
+def extract(
+    xlsx_path: str, district_code: str, sheet_name: str = DEFAULT_SHEET
+) -> list[dict]:
     wanted = {
         **{normalize_header(k): v for k, v in IDENTITY_HEADERS.items()},
         **{normalize_header(k): v for k, v in MEASURE_HEADERS.items()},
@@ -185,7 +188,7 @@ def extract(xlsx_path: str, district_code: str) -> list[dict]:
 
     with zipfile.ZipFile(xlsx_path) as archive:
         shared_strings = read_shared_strings(archive)
-        sheet_path = worksheet_path(archive, "Village_Data_3300")
+        sheet_path = worksheet_path(archive, sheet_name)
         headers: dict[int, str] | None = None
         records: list[dict] = []
         with archive.open(sheet_path) as source:
@@ -252,9 +255,14 @@ def main() -> int:
     parser.add_argument("--as-of", required=True)
     parser.add_argument("--source-url", required=True)
     parser.add_argument("--out", required=True)
+    parser.add_argument(
+        "--sheet",
+        default=DEFAULT_SHEET,
+        help="worksheet name; the state release number is in it (Village_Data_3300 for Tamil Nadu, Village_Data_2700 for Maharashtra)",
+    )
     args = parser.parse_args()
 
-    records = extract(args.workbook, args.district_code)
+    records = extract(args.workbook, args.district_code, sheet_name=args.sheet)
     if not records:
         print(f"No village rows for district {args.district_code}", file=sys.stderr)
         return 1

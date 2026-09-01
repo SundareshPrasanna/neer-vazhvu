@@ -29,20 +29,22 @@ const USER_AGENT =
   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 " +
   "Safari/537.36 NeerVazhvu-Onboarding-Atlas/1.0";
 const FETCH_TIMEOUT_MS = 60_000;
-// The DCHB workbook is 33.7 MB and censusindia.gov.in has served it at about
-// 200 KB/s (measured 2026-08-31: three 60 s attempts each moved 10-12 MB), so
-// its download gets its own ceiling instead of the shared one.
-const CENSUS_WORKBOOK_TIMEOUT_MS = 300_000;
+// The DCHB workbook is 33.7 MB for Tamil Nadu and 82 MB for Maharashtra, and
+// censusindia.gov.in has served it at about 200 KB/s (measured 2026-08-31:
+// three 60 s attempts each moved 10-12 MB; the Maharashtra file needs about
+// seven minutes), so its download gets its own ceiling instead of the shared
+// one. A CLOSED release is downloaded once and reused from the cache after.
+const CENSUS_WORKBOOK_TIMEOUT_MS = 900_000;
 const FETCH_ATTEMPTS = 3;
 const MAX_TEXT_BUFFER = 64 * 1024 * 1024;
 
-interface FetchResult {
+export interface FetchResult {
   artifact: CachedArtifact;
   responseUrl: string;
   contentType: string;
 }
 
-interface AcquisitionOptions {
+export interface AcquisitionOptions {
   cacheDir: string;
   pythonExecutable?: string;
   censusExtractorPath?: string;
@@ -79,7 +81,7 @@ function compareNumericStrings(left: string, right: string): number {
   return left.localeCompare(right, "en", { numeric: true });
 }
 
-class ContentAddressedCache {
+export class ContentAddressedCache {
   readonly objectDir: string;
 
   constructor(cacheDir: string) {
@@ -109,7 +111,7 @@ class ContentAddressedCache {
   }
 }
 
-class CookieJar {
+export class CookieJar {
   private readonly values = new Map<string, string>();
 
   capture(headers: Headers): void {
@@ -135,7 +137,7 @@ class CookieJar {
   }
 }
 
-async function fetchIntoCache(
+export async function fetchIntoCache(
   cache: ContentAddressedCache,
   url: string,
   init: RequestInit = {},
@@ -182,10 +184,11 @@ async function fetchIntoCache(
   );
 }
 
-async function fetchWithSystemCurlIntoCache(
+export async function fetchWithSystemCurlIntoCache(
   cache: ContentAddressedCache,
   url: string,
   timeoutMs: number = FETCH_TIMEOUT_MS,
+  options: { globoff?: boolean; userAgent?: string } = {},
 ): Promise<FetchResult> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
@@ -197,6 +200,10 @@ async function fetchWithSystemCurlIntoCache(
           "--location",
           "--silent",
           "--show-error",
+          // data.gov.in export urls carry filters[...]; without --globoff curl
+          // reads the brackets as a range.
+          ...(options.globoff ? ["--globoff"] : []),
+          ...(options.userAgent ? ["--user-agent", options.userAgent] : []),
           "--proto",
           "=https",
           "--max-time",
@@ -229,11 +236,11 @@ async function fetchWithSystemCurlIntoCache(
   );
 }
 
-function artifactText(result: FetchResult): string {
+export function artifactText(result: FetchResult): string {
   return new TextDecoder("utf-8").decode(result.artifact.bytes);
 }
 
-function parseOptions(html: string, selector = "option"): NamedOption[] {
+export function parseOptions(html: string, selector = "option"): NamedOption[] {
   const $ = load(html);
   return $(selector)
     .toArray()
@@ -244,7 +251,7 @@ function parseOptions(html: string, selector = "option"): NamedOption[] {
     .filter((option) => option.value.length > 0);
 }
 
-function requiredOption(
+export function requiredOption(
   options: NamedOption[],
   value: string,
   label: string,
@@ -256,7 +263,7 @@ function requiredOption(
   return matches[0];
 }
 
-function validateRecordCount(
+export function validateRecordCount(
   label: string,
   expected: number,
   records: unknown[],
@@ -268,7 +275,7 @@ function validateRecordCount(
   }
 }
 
-async function withSourceContext<T>(
+export async function withSourceContext<T>(
   sourceName: string,
   acquisition: () => Promise<T>,
 ): Promise<T> {
@@ -469,7 +476,7 @@ function collectWebFormsFields(html: string): URLSearchParams {
   return fields;
 }
 
-async function webFormsPostBack(
+export async function webFormsPostBack(
   cache: ContentAddressedCache,
   url: string,
   html: string,
@@ -517,12 +524,16 @@ export function parseJjmDistrictHtml(
     const value = normalizeWhitespace($(element).attr("value") ?? "");
     if (!value || value === "-1") return;
     const ids = value.split("/").map(normalizeWhitespace);
+    // The text is "Block / GP / Village". A village name can itself hold a
+    // slash (Satara: "Maparwadi / Vapanwadi (n.v.)"), so the first two parts
+    // are the block and the Panchayat and everything after is the village;
+    // the identifiers, which never carry a slash, are what the join keys on.
     const names = normalizeWhitespace($(element).text())
       .split("/")
       .map(normalizeWhitespace);
     if (
       ids.length !== 3 ||
-      names.length !== 3 ||
+      names.length < 3 ||
       !ids.every((id) => /^\d+$/.test(id))
     ) {
       throw new Error(`Malformed JJM district option ${JSON.stringify(value)}`);
@@ -535,7 +546,7 @@ export function parseJjmDistrictHtml(
       gpId: ids[1],
       gpName: names[1],
       villageId: ids[2],
-      villageName: names[2],
+      villageName: names.slice(2).join(" / "),
     });
   });
   records.sort((left, right) => compareNumericStrings(left.villageId, right.villageId));
@@ -548,55 +559,52 @@ export function parseJjmDistrictHtml(
   return records;
 }
 
-async function acquireJjm(
-  plan: TnDistrictRefreshPlan,
+/** What the JJM citizen-corner enumeration needs to know: the same three
+ *  identifiers for every state, which is why the Maharashtra adapter calls
+ *  this directly rather than carrying a copy. */
+export interface JjmEnumerationSpec {
+  url: string;
+  stateId: string;
+  districtId: string;
+  expectedVillages: number;
+}
+
+export async function acquireJjmEnumeration(
+  spec: JjmEnumerationSpec,
   acquiredAt: string,
   cache: ContentAddressedCache,
 ): Promise<AcquiredSourceRecordSet<JjmVillageRecord>> {
   const cookies = new CookieJar();
-  const initial = await fetchIntoCache(
-    cache,
-    plan.sources.jjm.url,
-    {},
-    cookies,
-  );
+  const initial = await fetchIntoCache(cache, spec.url, {}, cookies);
   const state = await webFormsPostBack(
     cache,
-    plan.sources.jjm.url,
+    spec.url,
     artifactText(initial),
     "ddState",
     {
-      ddState: plan.district.jjmStateId,
+      ddState: spec.stateId,
       ddDistrict: "-1",
     },
     cookies,
   );
   requiredOption(
     parseOptions(artifactText(state), "select#ddDistrict option"),
-    plan.district.jjmDistrictId,
+    spec.districtId,
     "JJM district after state selection",
   );
   const district = await webFormsPostBack(
     cache,
-    plan.sources.jjm.url,
+    spec.url,
     artifactText(state),
     "ddDistrict",
     {
-      ddState: plan.district.jjmStateId,
-      ddDistrict: plan.district.jjmDistrictId,
+      ddState: spec.stateId,
+      ddDistrict: spec.districtId,
     },
     cookies,
   );
-  const records = parseJjmDistrictHtml(
-    artifactText(district),
-    plan.district.jjmStateId,
-    plan.district.jjmDistrictId,
-  );
-  validateRecordCount(
-    "JJM district villages",
-    plan.expectedCounts.jjmVillages,
-    records,
-  );
+  const records = parseJjmDistrictHtml(artifactText(district), spec.stateId, spec.districtId);
+  validateRecordCount("JJM district villages", spec.expectedVillages, records);
   const artifactSha256s = [
     initial.artifact.sha256,
     state.artifact.sha256,
@@ -604,7 +612,7 @@ async function acquireJjm(
   ];
   return {
     sourceId: "jjm-citizen-corner",
-    sourceUrl: plan.sources.jjm.url,
+    sourceUrl: spec.url,
     retrievedAt: acquiredAt,
     sourceAsOf: acquiredAt,
     snapshotSha256: computeArtifactSetSha256(artifactSha256s),
@@ -615,8 +623,39 @@ async function acquireJjm(
   };
 }
 
-async function acquireCensus(
+async function acquireJjm(
   plan: TnDistrictRefreshPlan,
+  acquiredAt: string,
+  cache: ContentAddressedCache,
+): Promise<AcquiredSourceRecordSet<JjmVillageRecord>> {
+  return acquireJjmEnumeration(
+    {
+      url: plan.sources.jjm.url,
+      stateId: plan.district.jjmStateId,
+      districtId: plan.district.jjmDistrictId,
+      expectedVillages: plan.expectedCounts.jjmVillages,
+    },
+    acquiredAt,
+    cache,
+  );
+}
+
+/** The DCHB village release is one workbook per state: which sheet it
+ *  carries (the state release number is in the name) and whether the Gram
+ *  Panchayat columns are filled differ by state. Maharashtra leaves them
+ *  blank, so its adapter passes allowEmptyGramPanchayat and takes settlement
+ *  composition from the LGD register instead. */
+export interface CensusWorkbookSpec {
+  url: string;
+  sourceAsOf: string;
+  districtCode: string;
+  expectedVillages: number;
+  sheet?: string;
+  allowEmptyGramPanchayat?: boolean;
+}
+
+export async function acquireCensusVillages(
+  spec: CensusWorkbookSpec,
   acquiredAt: string,
   cache: ContentAddressedCache,
   options: AcquisitionOptions,
@@ -640,7 +679,7 @@ async function acquireCensus(
       }
       response = {
         artifact: { sha256: options.previousCensus.artifactSha256, path: cachedPath, bytes },
-        responseUrl: plan.sources.census.url,
+        responseUrl: spec.url,
         contentType: "",
       };
       retrievedAt = options.previousCensus.retrievedAt;
@@ -658,11 +697,7 @@ async function acquireCensus(
     // but is incomplete for Node's bundled CA verifier. curl still performs
     // normal TLS verification here; this is not an insecure-certificate
     // fallback.
-    response = await fetchWithSystemCurlIntoCache(
-      cache,
-      plan.sources.census.url,
-      CENSUS_WORKBOOK_TIMEOUT_MS,
-    );
+    response = await fetchWithSystemCurlIntoCache(cache, spec.url, CENSUS_WORKBOOK_TIMEOUT_MS);
   }
   const signature = Buffer.from(response.artifact.bytes.subarray(0, 2)).toString("ascii");
   if (signature !== "PK") {
@@ -678,7 +713,9 @@ async function acquireCensus(
       "--xlsx",
       response.artifact.path,
       "--district-code",
-      plan.district.censusDistrictCode,
+      spec.districtCode,
+      ...(spec.sheet ? ["--sheet", spec.sheet] : []),
+      ...(spec.allowEmptyGramPanchayat ? ["--allow-empty-gram-panchayat"] : []),
     ],
     {
       encoding: "utf8",
@@ -686,23 +723,38 @@ async function acquireCensus(
     },
   );
   const records = JSON.parse(output) as CensusVillageRecord[];
-  validateRecordCount(
-    "Census district villages",
-    plan.expectedCounts.censusVillages,
-    records,
-  );
+  validateRecordCount("Census district villages", spec.expectedVillages, records);
   return {
     sourceId: "census-2011-village-amenities",
-    sourceUrl: plan.sources.census.url,
+    sourceUrl: spec.url,
     retrievedAt,
     ...(reused ? { reusedCachedArtifact: true as const } : {}),
-    sourceAsOf: plan.sources.census.sourceAsOf,
+    sourceAsOf: spec.sourceAsOf,
     snapshotSha256: response.artifact.sha256,
     artifactSha256s: [response.artifact.sha256],
     recordsSha256: computeRecordsSha256(records),
     recordCount: records.length,
     records,
   };
+}
+
+async function acquireCensus(
+  plan: TnDistrictRefreshPlan,
+  acquiredAt: string,
+  cache: ContentAddressedCache,
+  options: AcquisitionOptions,
+): Promise<AcquiredSourceRecordSet<CensusVillageRecord>> {
+  return acquireCensusVillages(
+    {
+      url: plan.sources.census.url,
+      sourceAsOf: plan.sources.census.sourceAsOf,
+      districtCode: plan.district.censusDistrictCode,
+      expectedVillages: plan.expectedCounts.censusVillages,
+    },
+    acquiredAt,
+    cache,
+    options,
+  );
 }
 
 export async function acquireTnDistrictSourceExtract(

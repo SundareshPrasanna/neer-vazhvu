@@ -21,7 +21,20 @@ export const TALUK_BOUNDARY_LAYER =
 export const CONTAINMENT_METHODS = [
   "centroid-in-taluk",
   "vertex-in-taluk",
+  /** The register places the Panchayat's villages in a taluka by code (LGD
+   *  adapter): no geometry is consulted, and none is needed. */
+  "village-subdistrict-code",
 ] as const;
+
+/**
+ * How a taluk figure reaches a Panchayat. Tamil Nadu intersects TNGIS
+ * polygons because TNRD blocks cut across revenue taluks and no register
+ * says which taluk a Panchayat is in. Where the identity register itself
+ * lists each Panchayat's villages with their sub-district (the LGD), the
+ * membership is administrative fact and the projection says so.
+ */
+export const PROJECTION_METHODS = ["spatial-intersection", "administrative-membership"] as const;
+export type GroundwaterProjectionMethod = (typeof PROJECTION_METHODS)[number];
 
 export type ContainmentMethod = (typeof CONTAINMENT_METHODS)[number];
 
@@ -76,7 +89,7 @@ export interface TnGroundwaterProjection {
    * direct-published evidence: the Panchayat inherits its containing revenue
    * taluk's figure.
    */
-  projectionMethod: "spatial-intersection";
+  projectionMethod: GroundwaterProjectionMethod;
   source: {
     talukLayer: string;
     talukDistrictLgdCode: string;
@@ -311,6 +324,95 @@ export function buildGroundwaterProjection(options: {
   };
 }
 
+/** A Panchayat to place by its register-stated taluka (LGD adapter). */
+export interface MembershipProjectionPlace extends ProjectionPlace {
+  subDistrictCode: string;
+  subDistrictName: string;
+}
+
+/**
+ * The register already says which taluka each Panchayat's villages sit in,
+ * so the projection is a code join: no polygon, no centroid, and nothing to
+ * defer except a taluka IN-GRES does not assess.
+ */
+export function buildMembershipGroundwaterProjection(options: {
+  planId: string;
+  projectedAt: string;
+  talukDistrictLgdCode: string;
+  talukLayer: string;
+  places: MembershipProjectionPlace[];
+  boundarySourceId: string;
+  groundwater: TnDistrictGroundwaterExtract;
+}): TnGroundwaterProjection {
+  const assessments = new Map(
+    options.groundwater.records.map((record) => [foldTamilPlaceName(record.locationName), record]),
+  );
+  const records: GroundwaterProjectionRecord[] = [];
+  const review: GroundwaterProjectionReviewEntry[] = [];
+  for (const place of options.places) {
+    const base = {
+      lgdGramPanchayatCode: place.lgdGramPanchayatCode,
+      lgdGramPanchayatName: place.lgdGramPanchayatName,
+      lgdBlockCode: place.lgdBlockCode,
+    };
+    const assessment = assessments.get(foldTamilPlaceName(place.subDistrictName));
+    if (!assessment) {
+      review.push({
+        ...base,
+        reason: "taluk-has-no-assessment",
+        detail: `Taluka ${place.subDistrictName} has no IN-GRES assessment record.`,
+      });
+      continue;
+    }
+    records.push({
+      ...base,
+      talukName: place.subDistrictName,
+      subDistrictCode: place.subDistrictCode,
+      containment: "village-subdistrict-code",
+      category: assessment.category,
+      stageOfExtractionPercent: assessment.stageOfExtractionPercent,
+    });
+  }
+  records.sort((left, right) => left.lgdGramPanchayatCode.localeCompare(right.lgdGramPanchayatCode));
+  review.sort((left, right) => left.lgdGramPanchayatCode.localeCompare(right.lgdGramPanchayatCode));
+  const byCategory: Record<string, number> = {};
+  for (const record of records) {
+    const key = record.category ?? "not-stated";
+    byCategory[key] = (byCategory[key] ?? 0) + 1;
+  }
+  const taluksByBlock = new Map<string, Set<string>>();
+  for (const record of records) {
+    const bucket = taluksByBlock.get(record.lgdBlockCode) ?? new Set<string>();
+    bucket.add(record.talukName);
+    taluksByBlock.set(record.lgdBlockCode, bucket);
+  }
+  return {
+    schemaVersion: GROUNDWATER_PROJECTION_SCHEMA_VERSION,
+    planId: options.planId,
+    assessmentYear: options.groundwater.assessmentYear,
+    projectedAt: options.projectedAt,
+    projectionMethod: "administrative-membership",
+    source: {
+      talukLayer: options.talukLayer,
+      talukDistrictLgdCode: options.talukDistrictLgdCode,
+      groundwaterSourceId: options.groundwater.source.sourceId,
+      boundarySourceId: options.boundarySourceId,
+    },
+    recordsSha256: computeRecordsSha256(records),
+    recordCount: records.length,
+    records,
+    review,
+    summary: {
+      gramPanchayats: options.places.length,
+      projected: records.length,
+      deferred: review.length,
+      byCategory,
+      blocksSpanningTaluks: [...taluksByBlock.values()].filter((taluks) => taluks.size > 1).length,
+      talukCoverage: new Set(records.map((record) => record.talukName)).size,
+    },
+  };
+}
+
 export function validateGroundwaterProjection(
   projection: TnGroundwaterProjection,
   identity: DistrictIdentity,
@@ -322,11 +424,21 @@ export function validateGroundwaterProjection(
       `schemaVersion: expected ${GROUNDWATER_PROJECTION_SCHEMA_VERSION}, found ${projection.schemaVersion}`,
     );
   }
-  if (projection.projectionMethod !== "spatial-intersection") {
+  if (!PROJECTION_METHODS.includes(projection.projectionMethod)) {
     errors.push(
       "projectionMethod: a taluk figure reaches a Panchayat by spatial " +
-        "intersection only; any other method would overstate the evidence",
+        "intersection or by the register's own sub-district membership; " +
+        "any other method would overstate the evidence",
     );
+  }
+  for (const record of projection.records) {
+    const spatial = record.containment !== "village-subdistrict-code";
+    if (spatial !== (projection.projectionMethod === "spatial-intersection")) {
+      errors.push(
+        `records[${record.lgdGramPanchayatCode}]: containment ${record.containment} ` +
+          `does not belong to a ${projection.projectionMethod} projection`,
+      );
+    }
   }
   if (projection.assessmentYear !== groundwater.assessmentYear) {
     errors.push(

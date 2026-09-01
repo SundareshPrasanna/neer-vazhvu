@@ -1,5 +1,12 @@
 import { loadBriefs, loadDirectory } from "./data";
-import type { DistrictDirectoryArtifact } from "./artifacts";
+import type { BoundaryProvenance, DistrictDirectoryArtifact, IdentityAdapter } from "./artifacts";
+import {
+  boundaryProvenance,
+  identityAdapterOf,
+  identityDistrictCode,
+  identityMasterVintage,
+  identityVintage,
+} from "./artifacts";
 import type { PlaceBrief } from "./place-brief";
 import { findAtlasDistrict, listAtlasDistricts, type AtlasDistrict } from "./registry";
 import { validateDirectoryPayload } from "./tn-district-refresh";
@@ -32,12 +39,15 @@ export interface DistrictDirectory {
   districtCode: string;
   districtName: string;
   stateName: string;
+  identityAdapter: IdentityAdapter;
   lgdSourceAsOf: string;
   currentMasterAsOf: string;
   currentMasterCount: number;
   blocks: BlockDirectoryEntry[];
   panchayats: PanchayatDirectoryEntry[];
   waterProfileCount: number;
+  /** Who drew the polygons behind the centroids, for the pages' copy. */
+  boundary: BoundaryProvenance | null;
 }
 
 function normalizedName(value: string): string {
@@ -126,12 +136,14 @@ export function buildDistrictDirectory(
   return {
     slug: district.slug,
     stateSlug: district.stateSlug,
-    districtCode: artifact.district.tnrdLgdCode,
+    districtCode: identityDistrictCode(artifact),
     districtName: artifact.district.name,
     stateName: district.stateName,
-    lgdSourceAsOf: artifact.vintages.tnrdLgd.sourceAsOf,
-    currentMasterAsOf: artifact.vintages.tnrdMaster.sourceAsOf,
-    currentMasterCount: artifact.vintages.tnrdMaster.recordCount,
+    identityAdapter: identityAdapterOf(artifact),
+    lgdSourceAsOf: identityVintage(artifact).sourceAsOf,
+    currentMasterAsOf: identityMasterVintage(artifact).sourceAsOf,
+    currentMasterCount: identityMasterVintage(artifact).recordCount,
+    boundary: boundaryProvenance(artifact),
     blocks,
     panchayats,
     waterProfileCount: panchayats.filter(

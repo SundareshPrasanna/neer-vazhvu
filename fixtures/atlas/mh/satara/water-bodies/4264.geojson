@@ -1,0 +1,328 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/water-bodies",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "water-bodies-census-mh",
+        "title": "First Census of Water Bodies, Maharashtra state return (data.gov.in resource e1874d07)",
+        "publisher": "Department of Water Resources, River Development and Ganga Rejuvenation, Ministry of Jal Shakti, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "asserts",
+        "url": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+        "as_of": "2026-02-10",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-water-bodies-census-district.ts",
+    "internal_inputs": [
+      "public/data/atlas/mh/satara/directory.json"
+    ],
+    "note": "First Census of Water Bodies rows for Patan taluka: 109 water bodies assigned to 47 Gram Panchayats through the LGD coverage register (the census locates each in a Census 2011 village; a village under exactly one Panchayat is assigned), rolled up per Panchayat (count, named count, type and ownership classes, a digest of the sorted names) with the enumerators' coordinates served as MultiPoint geometry under the Government Open Data License. 56 rows of the taluka are counted and not assigned (ext.atlas.unassigned: a village listed under two Panchayats, under none, a Census village with no LGD row, a town). Waterspread is withheld: The Satara return enters whole-hectare template values on every row (4, 5, 6 or 8 ha on 3,725 rural rows; depth 4 or 5 m; the same four construction year, cost and beneficiary combinations throughout), so the waterspread is an enumerator's default rather than a measurement and is not published. Counts, types, ownership and the recorded coordinates are served. A Panchayat absent here has no row in the return.",
+    "conventions": {
+      "geometry": "MultiPoint of the recorded coordinates, five decimals, points outside the district's own bounding box dropped and counted in ext.atlas.pointsOutsideDistrict (a district total)",
+      "join": "unique_id part 5 is the Census 2011 village code; the directory's LGD coverage register names the Panchayat; shared, uncovered and unknown villages and urban rows are counted in ext.atlas.unassigned, never pooled",
+      "holder": "byDepartment carries the census ownership class (the register's holder axis); byType the census water-body class",
+      "vintage": "reference years 2017-18 to 2020-21, published 2023; the portal's resource stamp is the edition watched"
+    }
+  },
+  "ext": {
+    "atlas": {
+      "schemaVersion": 1,
+      "planId": "mh-satara-v1",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "register": "water-bodies-census",
+      "districtLgdCode": "494",
+      "acquiredAt": "2026-09-01",
+      "layer": "First Census of Water Bodies, Maharashtra return (data.gov.in resource e1874d07-a1db-4678-80c1-b64a2924b517)",
+      "sourceUrl": "https://api.data.gov.in/resource/e1874d07-a1db-4678-80c1-b64a2924b517?format=json&limit=all&filters[district_name]=SATARA",
+      "rights": {
+        "status": "open",
+        "termsUrl": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+        "termsQuote": "Government Open Data License - India",
+        "approval": null
+      },
+      "contributingDepartments": [
+        "Co-operative",
+        "State WRD/State Irrigation"
+      ],
+      "snapshotSha256": "7ef0e20d895eaf6118bb6ceb3b7ce213ab20accdf232d831bab98f9003ffa06e",
+      "featureCount": 11,
+      "recordCount": 6,
+      "recordsSha256": "5f2bea6893ed343326722cd14bd82b2ed534efe42ec6204dda9ed7ef38883823",
+      "unassigned": {
+        "sharedVillage": 0,
+        "uncoveredVillage": 51,
+        "censusVillageWithoutLgdRow": 5,
+        "unknownVillage": 0,
+        "urban": 0
+      },
+      "unassignedDistrict": {
+        "sharedVillage": 39,
+        "uncoveredVillage": 230,
+        "censusVillageWithoutLgdRow": 33,
+        "unknownVillage": 0,
+        "urban": 31
+      },
+      "attributes": {
+        "waterspread": "withheld",
+        "note": "The Satara return enters whole-hectare template values on every row (4, 5, 6 or 8 ha on 3,725 rural rows; depth 4 or 5 m; the same four construction year, cost and beneficiary combinations throughout), so the waterspread is an enumerator's default rather than a measurement and is not published. Counts, types, ownership and the recorded coordinates are served."
+      },
+      "pointsOutsideDistrict": 7
+    }
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            73.96667,
+            17.35222
+          ]
+        ]
+      },
+      "properties": {
+        "lgdGramPanchayatCode": "189818",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0,
+        "largestAreaHectares": 0,
+        "byDepartment": [
+          {
+            "department": "State WRD/State Irrigation",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "register": "water-bodies-census",
+        "lgdBlockCode": "4264",
+        "byType": [
+          {
+            "type": "Water consv schemes/percolation tanks/check-dams",
+            "count": 1
+          }
+        ],
+        "areaBasis": "withheld",
+        "pointCount": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            73.96139,
+            17.34694
+          ]
+        ]
+      },
+      "properties": {
+        "lgdGramPanchayatCode": "189823",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0,
+        "largestAreaHectares": 0,
+        "byDepartment": [
+          {
+            "department": "State WRD/State Irrigation",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "register": "water-bodies-census",
+        "lgdBlockCode": "4264",
+        "byType": [
+          {
+            "type": "Water consv schemes/percolation tanks/check-dams",
+            "count": 1
+          }
+        ],
+        "areaBasis": "withheld",
+        "pointCount": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            73.90167,
+            17.61806
+          ]
+        ]
+      },
+      "properties": {
+        "lgdGramPanchayatCode": "189824",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0,
+        "largestAreaHectares": 0,
+        "byDepartment": [
+          {
+            "department": "State WRD/State Irrigation",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "register": "water-bodies-census",
+        "lgdBlockCode": "4264",
+        "byType": [
+          {
+            "type": "Water consv schemes/percolation tanks/check-dams",
+            "count": 1
+          }
+        ],
+        "areaBasis": "withheld",
+        "pointCount": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            73.855,
+            17.30694
+          ]
+        ]
+      },
+      "properties": {
+        "lgdGramPanchayatCode": "189828",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0,
+        "largestAreaHectares": 0,
+        "byDepartment": [
+          {
+            "department": "State WRD/State Irrigation",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "register": "water-bodies-census",
+        "lgdBlockCode": "4264",
+        "byType": [
+          {
+            "type": "Water consv schemes/percolation tanks/check-dams",
+            "count": 1
+          }
+        ],
+        "areaBasis": "withheld",
+        "pointCount": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            73.96639,
+            17.285
+          ],
+          [
+            73.96806,
+            17.28583
+          ],
+          [
+            73.97083,
+            17.2725
+          ]
+        ]
+      },
+      "properties": {
+        "lgdGramPanchayatCode": "189830",
+        "count": 3,
+        "namedCount": 0,
+        "areaHectares": 0,
+        "largestAreaHectares": 0,
+        "byDepartment": [
+          {
+            "department": "State WRD/State Irrigation",
+            "count": 2
+          },
+          {
+            "department": "Co-operative",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "register": "water-bodies-census",
+        "lgdBlockCode": "4264",
+        "byType": [
+          {
+            "type": "Water consv schemes/percolation tanks/check-dams",
+            "count": 2
+          },
+          {
+            "type": "Tank",
+            "count": 1
+          }
+        ],
+        "areaBasis": "withheld",
+        "pointCount": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [
+          [
+            73.91861,
+            17.28722
+          ],
+          [
+            73.92028,
+            17.28556
+          ],
+          [
+            73.92028,
+            17.28611
+          ],
+          [
+            73.92139,
+            17.28611
+          ]
+        ]
+      },
+      "properties": {
+        "lgdGramPanchayatCode": "189831",
+        "count": 4,
+        "namedCount": 0,
+        "areaHectares": 0,
+        "largestAreaHectares": 0,
+        "byDepartment": [
+          {
+            "department": "Co-operative",
+            "count": 4
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "register": "water-bodies-census",
+        "lgdBlockCode": "4264",
+        "byType": [
+          {
+            "type": "Tank",
+            "count": 4
+          }
+        ],
+        "areaBasis": "withheld",
+        "pointCount": 4
+      }
+    }
+  ]
+}

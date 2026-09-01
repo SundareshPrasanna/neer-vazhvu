@@ -22,7 +22,7 @@ function usage(): string {
     "Usage:",
     "  npm run atlas:stage-resolution -- --district <slug> [--axis jjm] [--force]",
     "",
-    "Reads the cached extract and crosswalk proposal the refresh wrote and",
+    "Reads the cached extract (crosswalk-extract.json for an LGD-built district) and crosswalk proposal the refresh wrote and",
     "writes pipeline-inputs/atlas/<state>/<district>/crosswalk-resolution.json",
     "plus review-queue.md beside it.",
     "",
@@ -53,7 +53,8 @@ async function main(): Promise<void> {
     );
   }
 
-  const extract = readCacheJson<TnDistrictSourceExtract>(district, "source-extract.json");
+  const extract = (readCacheJson<TnDistrictSourceExtract>(district, "crosswalk-extract.json") ??
+    readCacheJson<TnDistrictSourceExtract>(district, "source-extract.json"));
   const proposal = readCacheJson<TnDistrictCrosswalkProposal>(district, "crosswalk-proposal.json");
   if (!extract || !proposal) {
     throw new Error(
@@ -61,8 +62,12 @@ async function main(): Promise<void> {
         "run atlas-refresh-tn-district.ts first",
     );
   }
+  // An LGD-built district's crosswalk-extract.json is the identity list in
+  // the crosswalk's shape with an empty Census axis; its real extract was
+  // validated by the refresh, and the TNRD rules do not describe it.
+  const crosswalkShaped = readCacheJson<unknown>(district, "crosswalk-extract.json") !== undefined;
   const inputErrors = [
-    ...validateTnDistrictSourceExtract(extract),
+    ...(crosswalkShaped ? [] : validateTnDistrictSourceExtract(extract)),
     ...validateTnDistrictCrosswalkProposal(proposal, extract),
   ];
   if (inputErrors.length > 0) {

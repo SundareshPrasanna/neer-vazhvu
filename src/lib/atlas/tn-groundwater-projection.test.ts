@@ -85,7 +85,17 @@ test("a projected category may not drift from its taluk", () => {
 test("the projection method cannot be overstated", () => {
   const tampered = { ...projection, projectionMethod: "direct-published" as never };
   assert.ok(
-    validateGroundwaterProjection(tampered, identity, groundwater).some((error) => error.includes("spatial intersection only")),
+    validateGroundwaterProjection(tampered, identity, groundwater).some((error) =>
+      error.includes("projectionMethod"),
+    ),
+  );
+  // A membership projection (LGD-built districts) may not carry spatial
+  // containments, and a spatial one may not carry register memberships.
+  const relabelled = { ...projection, projectionMethod: "administrative-membership" as const };
+  assert.ok(
+    validateGroundwaterProjection(relabelled, identity, groundwater).some((error) =>
+      error.includes("does not belong to a administrative-membership projection"),
+    ),
   );
 });
 

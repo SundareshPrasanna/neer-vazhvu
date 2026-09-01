@@ -16,6 +16,7 @@ import {
   type DistrictDirectoryArtifact,
   type GroundwaterTaluksArtifact,
 } from "../src/lib/atlas/artifacts";
+import { DATAMEET_BOUNDARY_SOURCE_ID } from "../src/lib/atlas/datameet-boundary";
 import { BOUNDARY_SOURCE_ID } from "../src/lib/atlas/tn-boundary";
 import { validateTnDistrictGroundwaterExtract } from "../src/lib/atlas/tn-groundwater";
 import {
@@ -24,6 +25,7 @@ import {
   validateGroundwaterProjection,
 } from "../src/lib/atlas/tn-groundwater-projection";
 import type { TalukPolygon } from "../src/lib/atlas/tn-groundwater-projection";
+import { buildMembershipGroundwaterProjection } from "../src/lib/atlas/tn-groundwater-projection";
 import {
   atlasEnvelope,
   cachePath,
@@ -35,6 +37,7 @@ import {
   requireDistrict,
   upstreamSource,
   writeAtlasArtifact,
+  planIdentityAdapter,
 } from "./lib/atlas-producer";
 import { districtArtifactPath } from "../src/lib/atlas/artifacts";
 
@@ -119,6 +122,11 @@ async function main(): Promise<void> {
   // reviewed plan). Passing them by hand is how a neighbouring district's
   // taluks got fetched once, silently.
   const talukDistrictLgdCode = directory.district.lgdDistrictCode;
+
+  if (planIdentityAdapter(district) === "lgd-directory") {
+    await projectByMembership(district, directory, identity, groundwater, asOf, talukDistrictLgdCode);
+    return;
+  }
   const snapshot = await readWfsSnapshot({
     district,
     cacheName: TALUK_CACHE,
@@ -199,6 +207,80 @@ async function main(): Promise<void> {
         .map(([category, count]) => `  ${category}: ${count}`)
         .join("\n"),
       `TNRD blocks whose Panchayats span more than one revenue taluk: ${summary.blocksSpanningTaluks}`,
+    ].join("\n"),
+  );
+}
+
+/**
+ * LGD-built districts: the register states each Panchayat's taluka (its
+ * covered villages carry the sub-district code and the block layer is the
+ * taluka), so the taluka figure reaches the Panchayat by membership, not by
+ * intersecting polygons. Nothing is fetched.
+ */
+async function projectByMembership(
+  district: ReturnType<typeof requireDistrict>,
+  directory: DistrictDirectoryArtifact,
+  identity: ReturnType<typeof identityFromDirectory>,
+  groundwater: GroundwaterTaluksArtifact,
+  asOf: string,
+  talukDistrictLgdCode: string,
+): Promise<void> {
+  const blockNames = new Map(directory.blocks.map((block) => [block.code, block.name]));
+  const projection = buildMembershipGroundwaterProjection({
+    planId: directory.district.planId,
+    projectedAt: asOf,
+    talukDistrictLgdCode,
+    talukLayer: "lgd-subdistricts-datagovin",
+    places: directory.panchayats.map((panchayat) => ({
+      lgdGramPanchayatCode: panchayat.lgdCode,
+      lgdGramPanchayatName: panchayat.name,
+      lgdBlockCode: panchayat.blockCode,
+      subDistrictCode: panchayat.blockCode,
+      subDistrictName: blockNames.get(panchayat.blockCode) ?? panchayat.blockName,
+    })),
+    boundarySourceId: DATAMEET_BOUNDARY_SOURCE_ID,
+    groundwater,
+  });
+  const errors = validateGroundwaterProjection(projection, identity, groundwater);
+  if (errors.length > 0) throw new Error(`Invalid groundwater projection:\n- ${errors.join("\n- ")}`);
+  const summary = projection.summary;
+  const unit = (groundwater.source.assessmentUnitType || "taluka").toLowerCase();
+  const envelope = atlasEnvelope({
+    district,
+    family: "groundwater-projection",
+    sources: [
+      upstreamSource("ingresMh", { role: "input", retrieved: groundwater.acquiredAt }),
+      upstreamSource("lgdSubdistricts", { role: "input", retrieved: directory.acquiredAt }),
+    ],
+    method: "derived",
+    producedAt: asOf,
+    producedBy: PRODUCED_BY,
+    internalInputs: [
+      districtArtifactPath(district, "directory"),
+      districtArtifactPath(district, "groundwater-taluks"),
+    ],
+    projection: {
+      of: { kind: "district", id: district.scopeId },
+      method: "administrative-rollup",
+      limitations: [
+        `The assessment unit is a revenue ${unit}, not the Gram Panchayat: each Panchayat inherits its ${unit}'s category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.`,
+        `Membership is the Local Government Directory's own statement: the ${unit} the Panchayat's covered villages sit in, joined to the IN-GRES unit by name. No polygon is intersected; a Panchayat whose ${unit} IN-GRES does not assess is deferred, never guessed.`,
+        summary.blocksSpanningTaluks === 0
+          ? `Blocks are the ${unit}s themselves in this district, so no block spans more than one assessment unit.`
+          : `${summary.blocksSpanningTaluks} blocks span more than one ${unit}.`,
+      ],
+    },
+    note:
+      `IN-GRES ${projection.assessmentYear} ${unit} assessment attached to ${summary.projected} of ` +
+      `${summary.gramPanchayats} Gram Panchayats across ${summary.talukCoverage} ${unit}s by register membership; ` +
+      `${summary.deferred} deferred with a reason in review[].`,
+  });
+  const rel = writeAtlasArtifact(district, "groundwater-projection", undefined, envelope, projection);
+  console.log(
+    [
+      `Wrote ${rel}`,
+      `Attached ${summary.projected} of ${summary.gramPanchayats} Gram Panchayats across ${summary.talukCoverage} ${unit}s by membership, ${summary.deferred} deferred`,
+      Object.entries(summary.byCategory).sort().map(([category, count]) => `  ${category}: ${count}`).join("\n"),
     ].join("\n"),
   );
 }

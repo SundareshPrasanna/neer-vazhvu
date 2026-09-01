@@ -20,9 +20,9 @@ import {
   RECORD_SET_COMPLETENESS_STATUSES,
 } from "./acquisition-model";
 
-const ID_PATTERN = /^[a-z][a-z0-9-]*$/;
+export const ID_PATTERN = /^[a-z][a-z0-9-]*$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-const SHA256_PATTERN = /^[a-f0-9]{64}$/;
+export const SHA256_PATTERN = /^[a-f0-9]{64}$/;
 
 export function computeArtifactSetSha256(digests: string[]): string {
   if (digests.length === 1) return digests[0];
@@ -35,25 +35,25 @@ export function computeRecordsSha256(records: unknown[]): string {
     .digest("hex");
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isNonEmptyString(value: unknown): value is string {
+export function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function isValidDate(value: unknown): value is string {
+export function isValidDate(value: unknown): value is string {
   if (!isNonEmptyString(value) || !DATE_PATTERN.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
 }
 
-function isPositiveInteger(value: unknown): value is number {
+export function isPositiveInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= 1;
 }
 
-function validateMappingExpectation(
+export function validateMappingExpectation(
   raw: unknown,
   label: string,
   errors: string[],
@@ -94,7 +94,7 @@ function validateMappingExpectation(
   }
 }
 
-function validateCensusComposition(
+export function validateCensusComposition(
   raw: unknown,
   targetLgdCode: unknown,
   label: string,
@@ -269,7 +269,7 @@ function validateCensusComposition(
   }
 }
 
-function validateUrl(value: unknown, label: string, errors: string[]): void {
+export function validateUrl(value: unknown, label: string, errors: string[]): void {
   if (!isNonEmptyString(value)) {
     errors.push(`${label}: must be a non-empty URL`);
     return;
@@ -284,7 +284,7 @@ function validateUrl(value: unknown, label: string, errors: string[]): void {
   }
 }
 
-function validateStringFields(
+export function validateStringFields(
   record: Record<string, unknown>,
   fields: string[],
   label: string,
@@ -449,7 +449,7 @@ type RecordValidator<T> = (
   errors: string[],
 ) => T;
 
-function validateAcquiredSource<T>(
+export function validateAcquiredSource<T>(
   raw: unknown,
   label: string,
   validateRecord: RecordValidator<T>,
@@ -573,7 +573,7 @@ function validateTnrdMasterRecord(
   return raw as unknown as TnrdMasterGramPanchayatRecord;
 }
 
-function validateJjmRecord(
+export function validateJjmRecord(
   raw: Record<string, unknown>,
   label: string,
   errors: string[],
@@ -596,7 +596,7 @@ function validateJjmRecord(
   return raw as unknown as JjmVillageRecord;
 }
 
-function validateCensusRecord(
+export function validateCensusRecord(
   raw: Record<string, unknown>,
   label: string,
   errors: string[],
@@ -641,7 +641,7 @@ function validateCensusRecord(
   return raw as unknown as CensusVillageRecord;
 }
 
-function validateUniqueValues(
+export function validateUniqueValues(
   records: Array<Record<string, string>>,
   fields: string[],
   label: string,

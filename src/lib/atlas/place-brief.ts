@@ -99,6 +99,11 @@ export interface BriefDetail {
     areaHectares: number;
     largestAreaHectares: number;
     byDepartment: Array<{ department: string; count: number }>;
+    /** Present on a First Census of Water Bodies record only. */
+    register?: "water-bodies-census";
+    byType?: Array<{ type: string; count: number }>;
+    areaBasis?: "stated" | "withheld";
+    pointCount?: number;
   } | null;
 }
 
@@ -145,7 +150,8 @@ export function deriveVerdict(inputs: PlaceEvidenceInputs): BriefVerdict | null 
   if (coverage === null && category === null) return null;
 
   const overdrawn = category === "over_exploited" || category === "critical";
-  const taluk = inputs.groundwater?.talukName ?? "the containing taluk";
+  const unit = inputs.provenance?.assessmentUnitLabel ?? "taluk";
+  const taluk = inputs.groundwater?.talukName ?? `the containing ${unit}`;
 
   if (coverage !== null && coverage >= 100 && overdrawn) {
     return {
@@ -197,7 +203,7 @@ export function deriveVerdict(inputs: PlaceEvidenceInputs): BriefVerdict | null 
   }
   if (category !== null) {
     return {
-      title: `Containing taluk assessed ${String(category).replace(/_/g, " ")}`,
+      title: `Containing ${unit} assessed ${String(category).replace(/_/g, " ")}`,
       body:
         `${taluk} is assessed ${String(category).replace(/_/g, " ")} at ${stage} percent ` +
         "of extraction. This is containing-area context, not a measurement of this place.",
@@ -232,11 +238,11 @@ export function buildHeadlineFacts(
   if (inputs.groundwater?.stageOfExtractionPercent !== undefined) {
     facts.push({
       value: `${formatExtractionStage(inputs.groundwater.stageOfExtractionPercent)}%`,
-      label: "Groundwater extraction, containing taluk",
+      label: `Groundwater extraction, containing ${inputs.provenance?.assessmentUnitLabel ?? "taluk"}`,
       note:
         `${inputs.groundwater.talukName} is assessed ` +
         `${String(inputs.groundwater.category).replace(/_/g, " ")}. This describes the ` +
-        "taluk, not this Panchayat.",
+        `${inputs.provenance?.assessmentUnitLabel ?? "taluk"}, not this Panchayat.`,
     });
   }
   if (inputs.rainfall && inputs.rainfallWindow) {
@@ -348,6 +354,16 @@ function buildDetail(inputs: PlaceEvidenceInputs): BriefDetail {
           areaHectares: waterBodies.areaHectares,
           largestAreaHectares: waterBodies.largestAreaHectares,
           byDepartment: waterBodies.byDepartment,
+          // The census fields travel only where the record carries them, so
+          // a TNGIS brief is byte-for-byte what it was.
+          ...(waterBodies.register
+            ? {
+                register: waterBodies.register,
+                byType: waterBodies.byType ?? [],
+                areaBasis: waterBodies.areaBasis ?? "withheld",
+                pointCount: waterBodies.pointCount ?? 0,
+              }
+            : {}),
         }
       : null,
   };

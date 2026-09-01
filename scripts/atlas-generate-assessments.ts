@@ -14,8 +14,16 @@
  * directory by LGD code, cardinalities match the reviewed plan, every brief
  * validates, shards partition the blocks) and exits non-zero on any failure.
  */
+import { readFileSync } from "node:fs";
+
 import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/acquisition-validation";
-import { districtArtifactPath, type AssessmentsShard, type BriefsShard } from "../src/lib/atlas/artifacts";
+import {
+  districtArtifactPath,
+  identityAdapterOf,
+  identityVintage,
+  type AssessmentsShard,
+  type BriefsShard,
+} from "../src/lib/atlas/artifacts";
 import type { GeneratedAssessment } from "../src/lib/atlas/capability-evidence";
 import {
   generateDistrictAssessments,
@@ -27,6 +35,7 @@ import type { PlaceBrief } from "../src/lib/atlas/place-brief";
 import {
   atlasEnvelope,
   hasFlag,
+  planIdentityAdapter,
   pruneShards,
   requireAsOf,
   requireDistrict,
@@ -41,12 +50,21 @@ const PRODUCED_BY = "scripts/atlas-generate-assessments.ts";
 
 function inputSources(corpus: DistrictCorpus, blockCode: string, district: AtlasDistrict) {
   const directory = corpus.directory;
-  const sources = [
-    upstreamSource("tnrdLgd", { role: "input", as_of: "2021-03-11", retrieved: directory.acquiredAt }),
-    upstreamSource("tnrdMaster", { role: "input", retrieved: directory.acquiredAt }),
-    upstreamSource("jjm", { role: "input", retrieved: directory.acquiredAt }),
-    upstreamSource("census", { role: "input", as_of: "2011", retrieved: directory.acquiredAt }),
-  ];
+  const lgd = identityAdapterOf(directory) === "lgd-directory";
+  const sources = lgd
+    ? [
+        upstreamSource("lgdLocalBodies", { role: "input", as_of: identityVintage(directory).sourceAsOf, retrieved: directory.acquiredAt }),
+        upstreamSource("lgdVillages", { role: "input", retrieved: directory.acquiredAt }),
+        upstreamSource("lgdSubdistricts", { role: "input", retrieved: directory.acquiredAt }),
+        upstreamSource("jjm", { role: "input", retrieved: directory.acquiredAt }),
+        upstreamSource("censusMh", { role: "input", as_of: "2011", retrieved: directory.vintages.census.retrievedAt }),
+      ]
+    : [
+        upstreamSource("tnrdLgd", { role: "input", as_of: "2021-03-11", retrieved: directory.acquiredAt }),
+        upstreamSource("tnrdMaster", { role: "input", retrieved: directory.acquiredAt }),
+        upstreamSource("jjm", { role: "input", retrieved: directory.acquiredAt }),
+        upstreamSource("census", { role: "input", as_of: "2011", retrieved: directory.acquiredAt }),
+      ];
   const internalInputs = [districtArtifactPath(district, "directory")];
   if (corpus.jjm.some((shard) => shard.blockCode === blockCode)) {
     internalInputs.push(districtArtifactPath(district, "jjm-service", blockCode));
@@ -55,7 +73,7 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
     internalInputs.push(districtArtifactPath(district, "census-2011", blockCode));
   }
   if (corpus.groundwater && corpus.projection) {
-    sources.push(upstreamSource("ingres", { role: "input", retrieved: corpus.groundwater.acquiredAt }));
+    sources.push(upstreamSource(lgd ? "ingresMh" : "ingres", { role: "input", retrieved: corpus.groundwater.acquiredAt }));
     internalInputs.push(districtArtifactPath(district, "groundwater-taluks"));
     internalInputs.push(districtArtifactPath(district, "groundwater-projection"));
   }
@@ -66,27 +84,40 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
   const waterShard = corpus.waterBodies.find((shard) => shard.ext.atlas.blockCode === blockCode);
   if (waterShard) {
     sources.push(
-      upstreamSource("tngisWaterBodies", { role: "input", retrieved: waterShard.ext.atlas.acquiredAt }),
+      upstreamSource(waterShard.ext.atlas.register === "water-bodies-census" ? "waterBodiesCensusMh" : "tngisWaterBodies", {
+        role: "input",
+        retrieved: waterShard.ext.atlas.acquiredAt,
+      }),
     );
     internalInputs.push(districtArtifactPath(district, "water-bodies", blockCode));
   }
   if (directory.vintages.boundary) {
     sources.push(
-      upstreamSource("tngisBoundary", { role: "input", retrieved: directory.vintages.boundary.retrievedAt }),
+      upstreamSource(lgd ? "datameetMh" : "tngisBoundary", {
+        role: "input",
+        retrieved: directory.vintages.boundary.retrievedAt,
+      }),
     );
   }
   return { sources, internalInputs };
 }
 
+/** The Panchayat count the reviewed plan expects, from either plan shape. */
+function expectedGramPanchayats(district: AtlasDistrict): number {
+  const path = reviewedInputPath(district, "refresh-plan.json");
+  if (planIdentityAdapter(district) === "lgd-directory") {
+    const plan = JSON.parse(readFileSync(path, "utf8")) as { expectedCounts: { lgdGramPanchayats: number } };
+    return plan.expectedCounts.lgdGramPanchayats;
+  }
+  return loadTnDistrictRefreshPlan(path).expectedCounts.tnrdLgdGramPanchayats;
+}
+
 function validateCorpus(district: AtlasDistrict): void {
-  const plan = loadTnDistrictRefreshPlan(reviewedInputPath(district, "refresh-plan.json"));
+  const expected = expectedGramPanchayats(district);
   const { corpus, errors } = loadDistrictCorpus(district);
   const { directory, identity } = corpus;
-  if (directory.panchayats.length !== plan.expectedCounts.tnrdLgdGramPanchayats) {
-    errors.push(
-      `directory: ${directory.panchayats.length} Gram Panchayats, plan expects ` +
-        plan.expectedCounts.tnrdLgdGramPanchayats,
-    );
+  if (directory.panchayats.length !== expected) {
+    errors.push(`directory: ${directory.panchayats.length} Gram Panchayats, plan expects ${expected}`);
   }
   // Every family shard must sit in a block the directory lists, and the
   // GP-grain families must cover the directory exactly once.

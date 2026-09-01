@@ -24,6 +24,7 @@ import {
   districtArtifactPath,
   type AtlasFamily,
   type AssessmentsShard,
+  type BoundariesShard,
   type BriefsShard,
   type CensusShard,
   type DistrictDirectoryArtifact,
@@ -35,6 +36,7 @@ import {
   type RainfallArtifact,
   type WaterBodiesShard,
 } from "./artifacts";
+import type { EnvironmentPlanArtifact } from "./environment-plan";
 import type { PlaceBrief } from "./place-brief";
 
 const DATA_DIR = join(process.cwd(), "public", "data", "atlas");
@@ -115,6 +117,11 @@ export function loadRainfall(district: DistrictRef): RainfallArtifact | undefine
   return readDistrictArtifact<RainfallArtifact>(district, "rainfall");
 }
 
+/** The district's Environment Plan transcription, where one is served. */
+export function loadEnvironmentPlan(district: DistrictRef): EnvironmentPlanArtifact | undefined {
+  return readDistrictArtifact<EnvironmentPlanArtifact>(district, "environment-plan");
+}
+
 export function loadJjmServiceShards(district: DistrictRef): JjmServiceShard[] {
   return readShards<JjmServiceShard>(district, "jjm-service");
 }
@@ -125,6 +132,16 @@ export function loadCensusShards(district: DistrictRef): CensusShard[] {
 
 export function loadWaterBodyShards(district: DistrictRef): WaterBodiesShard[] {
   return readShards<WaterBodiesShard>(district, "water-bodies");
+}
+
+/** The water bodies of one block, for a page that draws them. */
+export function loadWaterBodyShard(district: DistrictRef, blockCode: string): WaterBodiesShard | undefined {
+  return readDistrictArtifact<WaterBodiesShard>(district, "water-bodies", blockCode);
+}
+
+/** The served polygons of one block, where a district publishes them. */
+export function loadBoundaryShard(district: DistrictRef, blockCode: string): BoundariesShard | undefined {
+  return readDistrictArtifact<BoundariesShard>(district, "boundaries", blockCode);
 }
 
 export function loadAssessmentShards(district: DistrictRef): AssessmentsShard[] {

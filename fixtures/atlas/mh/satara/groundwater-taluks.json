@@ -1,0 +1,174 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for Satara: the district row and its 11 TALUKA assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (talukas), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "mh-satara-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-01",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=Satara;loctype=DISTRICT;locuuid=ef1da758-3804-42e4-b4de-166cace8fe28;year=2024-2025",
+    "assessmentUnitType": "TALUKA",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "Satara",
+    "locationUUID": "ef1da758-3804-42e4-b4de-166cace8fe28",
+    "category": "safe",
+    "stageOfExtractionPercent": 57.9015
+  },
+  "recordsSha256": "19798d7bb0c27cd4ddc6d596e6c0a2f53efde19f870c93c4719dbed082a07445",
+  "recordCount": 11,
+  "records": [
+    {
+      "locationName": "Jaoli",
+      "locationUUID": "458355c8-5680-4cb0-90c9-a514381c85b0",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 20.1258,
+      "annualRechargeHam": 4659.8487,
+      "totalAvailabilityHam": 5218.8758,
+      "availabilityForFutureUseHam": 4177.6776,
+      "rainfallMm": 3185.1874
+    },
+    {
+      "locationName": "Karad",
+      "locationUUID": "380f776b-4cf2-43c4-801e-b23e2b53b1de",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 58.1856,
+      "annualRechargeHam": 7224.5975,
+      "totalAvailabilityHam": 13165.0053,
+      "availabilityForFutureUseHam": 5635.7818,
+      "rainfallMm": 1099.5523
+    },
+    {
+      "locationName": "Khandala",
+      "locationUUID": "1bf3724f-51d9-4cb4-bc75-e647c02c01d6",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 66.4861,
+      "annualRechargeHam": 2404.9372,
+      "totalAvailabilityHam": 4485.2661,
+      "availabilityForFutureUseHam": 1503.1863,
+      "rainfallMm": 547.5683
+    },
+    {
+      "locationName": "Khatav",
+      "locationUUID": "5e91c233-93d9-4e21-9e89-299bc067c8af",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.1428,
+      "annualRechargeHam": 8262.9856,
+      "totalAvailabilityHam": 12188.0055,
+      "availabilityForFutureUseHam": 2907.7288,
+      "rainfallMm": 597.3994
+    },
+    {
+      "locationName": "Koregaon",
+      "locationUUID": "2392e7f5-593d-44bd-bdd3-22061b5f8e4a",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 52.2834,
+      "annualRechargeHam": 7355.6728,
+      "totalAvailabilityHam": 13854.0619,
+      "availabilityForFutureUseHam": 6610.6808,
+      "rainfallMm": 927.5433
+    },
+    {
+      "locationName": "Mahabaleshwar",
+      "locationUUID": "de06cde1-52a0-4e78-be29-96035012a685",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 47.1227,
+      "annualRechargeHam": 228.9816,
+      "totalAvailabilityHam": 284.4835,
+      "availabilityForFutureUseHam": 150.4273,
+      "rainfallMm": 5709.63
+    },
+    {
+      "locationName": "Man",
+      "locationUUID": "ce61c6b1-3145-43e2-ad11-9a9c0da23c97",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3208,
+      "annualRechargeHam": 10346.7732,
+      "totalAvailabilityHam": 14255.6729,
+      "availabilityForFutureUseHam": 3375.6339,
+      "rainfallMm": 608.341
+    },
+    {
+      "locationName": "Patan",
+      "locationUUID": "86ae25ef-4c0a-4e9e-8f66-56bfd45bc048",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779,
+      "annualRechargeHam": 2645.2248,
+      "totalAvailabilityHam": 3720.3471,
+      "availabilityForFutureUseHam": 1746.4899,
+      "rainfallMm": 1755.2292
+    },
+    {
+      "locationName": "Phaltan",
+      "locationUUID": "c28e5a3f-8f16-4ded-ba7f-ef1fb25c6708",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 61.5405,
+      "annualRechargeHam": 7311.8097,
+      "totalAvailabilityHam": 17168.6809,
+      "availabilityForFutureUseHam": 6602.9898,
+      "rainfallMm": 579.5548
+    },
+    {
+      "locationName": "Satara",
+      "locationUUID": "8e86428d-9f12-4a53-a956-1ef868215bec",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 40.58,
+      "annualRechargeHam": 10604.7551,
+      "totalAvailabilityHam": 19955.1318,
+      "availabilityForFutureUseHam": 11857.5315,
+      "rainfallMm": 1818.3505
+    },
+    {
+      "locationName": "Wai",
+      "locationUUID": "f3d3be4a-3ae2-4b97-8b95-5cc8c6541d45",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 62.212,
+      "annualRechargeHam": 4417.7038,
+      "totalAvailabilityHam": 9218.709,
+      "availabilityForFutureUseHam": 3483.5623,
+      "rainfallMm": 2193.9357
+    }
+  ]
+}

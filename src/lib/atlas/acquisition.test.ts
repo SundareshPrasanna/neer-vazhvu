@@ -61,6 +61,27 @@ test("JJM parser preserves parent paths when a leaf village ID is reused", () =>
   assert.notEqual(records[0].gpId, records[1].gpId);
 });
 
+test("JJM parser keeps a slash inside a village name (Satara: Maparwadi / Vapanwadi)", () => {
+  const html = `
+    <select id="ddState"><option value="18">Maharashtra</option></select>
+    <select id="ddDistrict"><option value="282">Satara</option></select>
+    <select id="ddList">
+      <option value="3226/97842/605939">Wai / Lagadwadi / Maparwadi / Vapanwadi (n.v.)</option>
+    </select>
+  `;
+  const [record] = parseJjmDistrictHtml(html, "18", "282");
+  assert.equal(record.blockName, "Wai");
+  assert.equal(record.gpName, "Lagadwadi");
+  assert.equal(record.villageName, "Maparwadi / Vapanwadi (n.v.)");
+  assert.throws(() =>
+    parseJjmDistrictHtml(
+      `<select id="ddState"><option value="18">M</option></select><select id="ddDistrict"><option value="282">S</option></select><select id="ddList"><option value="1/2/3">Only / Two</option></select>`,
+      "18",
+      "282",
+    ),
+  );
+});
+
 test("JJM parser rejects an exact duplicate source path", () => {
   const html = `
     <select id="ddState"><option value="29">Tamil Nadu</option></select>

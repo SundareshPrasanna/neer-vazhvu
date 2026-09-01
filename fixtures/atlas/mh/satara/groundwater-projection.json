@@ -1,0 +1,226 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-projection",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "lgd-subdistricts-datagovin",
+        "title": "Local Government Directory: sub-districts (data.gov.in resource 6be51a29)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-project-groundwater.ts",
+    "internal_inputs": [
+      "public/data/atlas/mh/satara/directory.json",
+      "public/data/atlas/mh/satara/groundwater-taluks.json"
+    ],
+    "note": "IN-GRES 2024-2025 taluka assessment attached to 1502 of 1502 Gram Panchayats across 11 talukas by register membership; 0 deferred with a reason in review[]."
+  },
+  "projection": {
+    "of": {
+      "kind": "district",
+      "id": "mh-satara"
+    },
+    "method": "administrative-rollup",
+    "limitations": [
+      "The assessment unit is a revenue taluka, not the Gram Panchayat: each Panchayat inherits its taluka's category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.",
+      "Membership is the Local Government Directory's own statement: the taluka the Panchayat's covered villages sit in, joined to the IN-GRES unit by name. No polygon is intersected; a Panchayat whose taluka IN-GRES does not assess is deferred, never guessed.",
+      "Blocks are the talukas themselves in this district, so no block spans more than one assessment unit."
+    ]
+  },
+  "schemaVersion": 1,
+  "planId": "mh-satara-v1",
+  "assessmentYear": "2024-2025",
+  "projectedAt": "2026-09-01",
+  "projectionMethod": "administrative-membership",
+  "source": {
+    "talukLayer": "lgd-subdistricts-datagovin",
+    "talukDistrictLgdCode": "494",
+    "groundwaterSourceId": "ingres-gec-dynamic-groundwater",
+    "boundarySourceId": "datameet-village-boundaries-mh"
+  },
+  "recordsSha256": "71e42aa3ab89c31297eb8b119b95c116be4aa58da9cfaded414af7fcb71c198f",
+  "recordCount": 15,
+  "records": [
+    {
+      "lgdGramPanchayatCode": "189818",
+      "lgdGramPanchayatName": "Addev",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189819",
+      "lgdGramPanchayatName": "Atoli",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189820",
+      "lgdGramPanchayatName": "Awarde",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189821",
+      "lgdGramPanchayatName": "Abdarwadi",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189822",
+      "lgdGramPanchayatName": "Adul Gaon",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189823",
+      "lgdGramPanchayatName": "Adul Peth",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189824",
+      "lgdGramPanchayatName": "Ambale",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189825",
+      "lgdGramPanchayatName": "Ambavade Kh.",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189826",
+      "lgdGramPanchayatName": "Ambavane",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189827",
+      "lgdGramPanchayatName": "Ambeghar T Marali",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189828",
+      "lgdGramPanchayatName": "Ambrag",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189829",
+      "lgdGramPanchayatName": "Ambrule",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189830",
+      "lgdGramPanchayatName": "Asavalewadi",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189831",
+      "lgdGramPanchayatName": "Bacholi",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    },
+    {
+      "lgdGramPanchayatCode": "189960",
+      "lgdGramPanchayatName": "Marul Haveli",
+      "lgdBlockCode": "4264",
+      "talukName": "Patan",
+      "subDistrictCode": "4264",
+      "containment": "village-subdistrict-code",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.3779
+    }
+  ],
+  "review": [],
+  "summary": {
+    "gramPanchayats": 15,
+    "projected": 15,
+    "deferred": 0,
+    "byCategory": {
+      "safe": 15
+    },
+    "blocksSpanningTaluks": 0,
+    "talukCoverage": 1
+  }
+}

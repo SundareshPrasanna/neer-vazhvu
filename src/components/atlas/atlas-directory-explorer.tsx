@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
@@ -178,6 +179,106 @@ export function AtlasDirectoryExplorer({
             Show {Math.min(pageSize, remaining)} more of {remaining}
           </button>
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+const QUICK_FIND_LIMIT = 8;
+
+/**
+ * The hero-level way in: type a Panchayat, open it. Fed the same light rows
+ * as the explorer, so the two can never disagree; the explorer further down
+ * stays the place to browse by block and read the brief status per row.
+ */
+export function AtlasQuickFind({
+  rows,
+  basePath,
+  example,
+  browseHref = "#find",
+}: {
+  rows: DirectoryRow[];
+  basePath: string;
+  /** A real name from this district for the placeholder, never a Tamil Nadu one. */
+  example: string;
+  browseHref?: string;
+}) {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const normalized = query.trim().toLocaleLowerCase("en-IN");
+  const all = useMemo(
+    () => (normalized.length < 2 ? [] : rows.filter((row) => searchText(row).includes(normalized))),
+    [rows, normalized],
+  );
+  const matches = all.slice(0, QUICK_FIND_LIMIT);
+  const hrefOf = (row: DirectoryRow) => `${basePath}/panchayats/${row.lgdCode}`;
+
+  return (
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 p-4">
+      <label htmlFor="atlas-quick-find" className="block text-sm font-semibold text-slate-900 dark:text-slate-100">
+        Go straight to a Gram Panchayat
+      </label>
+      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+        Type a name, a block or an LGD code; all {rows.length.toLocaleString("en-IN")} are listed. Press Enter to open the
+        first match, or{" "}
+        <a href={browseHref} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline">
+          browse by block
+        </a>{" "}
+        further down.
+      </p>
+      <div className="relative mt-2">
+        <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <input
+          id="atlas-quick-find"
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && matches[0]) {
+              event.preventDefault();
+              router.push(hrefOf(matches[0]));
+            }
+          }}
+          placeholder={`${example} or an LGD code`}
+          autoComplete="off"
+          aria-describedby="atlas-quick-find-status"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 py-2 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
+        />
+      </div>
+      <p id="atlas-quick-find-status" aria-live="polite" className="sr-only">
+        {normalized.length < 2 ? "" : `${all.length} Gram Panchayats match.`}
+      </p>
+      {normalized.length >= 2 ? (
+        matches.length > 0 ? (
+          <ul className="mt-2 divide-y divide-slate-200 dark:divide-slate-700 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+            {matches.map((row) => (
+              <li key={row.lgdCode}>
+                <Link
+                  href={hrefOf(row)}
+                  className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                >
+                  <span className="font-medium text-cyan-700 dark:text-cyan-400">{row.name}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{row.blockName} block</span>
+                  <span className="font-mono text-xs text-slate-400 dark:text-slate-500">{row.lgdCode}</span>
+                  <StatusPill status={row.status} />
+                </Link>
+              </li>
+            ))}
+            {all.length > matches.length ? (
+              <li className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400">
+                {all.length - matches.length} more match. Keep typing, or{" "}
+                <a href={browseHref} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline">
+                  browse the full list
+                </a>
+                .
+              </li>
+            ) : null}
+          </ul>
+        ) : (
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            No Gram Panchayat matches. Try part of the English directory name or an LGD code.
+          </p>
+        )
       ) : null}
     </div>
   );
