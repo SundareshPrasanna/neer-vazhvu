@@ -181,25 +181,59 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             id="runs-on"
             title="What the district runs on"
             intro={
-              <>
-                Irrigation from the Census village tables ({irrigation.describes}), drinking water from
-                the sources JJM records today. A Panchayat without a measure lowers that measure&rsquo;s
-                denominator rather than counting as a zero.
-              </>
+              reading.irrigationCurrent ? (
+                <>
+                  Irrigation from the district tables of the {reading.irrigationCurrent.label},
+                  with the Census 2011 village pattern beneath it as the block-level baseline;
+                  drinking water from the sources JJM records today. A Panchayat without a measure lowers that
+                  measure&rsquo;s denominator rather than counting as a zero.
+                </>
+              ) : (
+                <>
+                  Irrigation from the Census village tables ({irrigation.describes}), drinking water from
+                  the sources JJM records today. A Panchayat without a measure lowers that measure&rsquo;s
+                  denominator rather than counting as a zero.
+                </>
+              )
             }
           >
             <div className="grid gap-4 lg:grid-cols-2">
               <AtlasCard>
-                <AtlasMixBar
-                  title={`Irrigated farmland by source, ${num(irrigation.irrigatedHectares)} ha`}
-                  shares={irrigation.shares.map((share) => ({
-                    key: share.key,
-                    label: share.label,
-                    percent: share.percent,
-                    detail: `${num(share.value)} ha`,
-                  }))}
-                  caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. A historical baseline, not current cropping.`}
-                />
+                {reading.irrigationCurrent ? (
+                  <div className="space-y-6">
+                    <AtlasMixBar
+                      title={`Irrigated farmland by source, ${num(reading.irrigationCurrent.netHectares)} ha net (${reading.irrigationCurrent.label})`}
+                      shares={reading.irrigationCurrent.shares.map((share) => ({
+                        key: share.key,
+                        label: share.label,
+                        percent: share.percent,
+                        detail: `${num(share.value)} ha`,
+                      }))}
+                      caption={`${reading.irrigationCurrent.label}, Table III-B, the district total: gross ${num(reading.irrigationCurrent.grossHectares)} ha with ${num(reading.irrigationCurrent.moreThanOnceHectares)} ha irrigated more than once (intensity ${reading.irrigationCurrent.intensity}).${reading.irrigationCurrent.supplementaryWellsNote ? ` ${reading.irrigationCurrent.supplementaryWellsNote}` : ""}`}
+                    />
+                    <AtlasMixBar
+                      title={`The block-level baseline: Census 2011, ${num(irrigation.irrigatedHectares)} ha`}
+                      shares={irrigation.shares.map((share) => ({
+                        key: share.key,
+                        label: share.label,
+                        percent: share.percent,
+                        detail: `${num(share.value)} ha`,
+                      }))}
+                      caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. Kept beneath the current reading because it is the only served source with a block gradient.`}
+                    />
+                  </div>
+                ) : (
+                  <AtlasMixBar
+                    title={`Irrigated farmland by source, ${num(irrigation.irrigatedHectares)} ha`}
+                    shares={irrigation.shares.map((share) => ({
+                      key: share.key,
+                      label: share.label,
+                      percent: share.percent,
+                      detail: `${num(share.value)} ha`,
+                    }))}
+                    caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. A historical baseline, not current cropping.`}
+                  />
+                )}
               </AtlasCard>
               <AtlasCard>
                 <AtlasMixBar

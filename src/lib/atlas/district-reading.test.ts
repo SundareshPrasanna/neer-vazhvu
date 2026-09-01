@@ -26,6 +26,7 @@ function signals(overrides: Partial<VerdictSignals>): VerdictSignals {
     households: 1000,
     gapBlocks: [],
     metturBasin: true,
+    currentMixLabel: null,
     ...overrides,
   };
 }
@@ -118,6 +119,43 @@ test("both fixture districts produce a complete reading from the same code", () 
       assert.doesNotMatch(text, /—/, `em-dash in: ${text}`);
     }
   }
+});
+
+test("a served current mix opens the verdict, dated inline, and leads the facts", () => {
+  const thanjavur = buildFixtureReading("thanjavur");
+  assert.match(
+    thanjavur.verdict.sentence,
+    /^71% of the irrigated farmland runs on canal water released at Mettur \(Season and Crop Report 2024-25\), /,
+  );
+  const trichy = buildFixtureReading("tiruchirappalli");
+  assert.match(
+    trichy.verdict.sentence,
+    /^66% of the irrigated farmland is watered from wells \(Season and Crop Report 2024-25\), /,
+  );
+  for (const reading of [thanjavur, trichy]) {
+    // Headline fact #1 is the current mix; the Census pattern never leads.
+    assert.equal(reading.facts[0].asOf, "Season and Crop Report 2024-25");
+    assert.match(reading.facts[0].note, /ha net irrigated/);
+    // The named gap is only for the absent-artifact state.
+    assert.ok(!reading.verdict.nextSteps.some((step) => /not yet wired/.test(step) && /Season and Crop/.test(step)));
+    // The panel data the page renders beneath the current bar stays Census.
+    assert.ok(reading.irrigationCurrent);
+    assert.equal(reading.irrigationCurrent!.shares.length, 5);
+  }
+  assert.match(thanjavur.facts[0].note, /Supplementary wells/);
+  assert.equal(thanjavur.facts[0].value, "71%");
+  assert.equal(trichy.facts[0].value, "66%");
+});
+
+test("without the current-mix artifact the reading still leads with groundwater and names the gap", () => {
+  const reading = buildFixtureReading("thanjavur", { omitIrrigationCurrent: true });
+  assert.match(reading.verdict.sentence, /^\d+ of \d+ taluks /);
+  assert.equal(reading.irrigationCurrent, null);
+  assert.notEqual(reading.facts[0].asOf, "Season and Crop Report 2024-25");
+  assert.ok(
+    reading.verdict.nextSteps.some((step) => /^A current irrigation reading by source/.test(step)),
+    "the absent artifact is the first named gap",
+  );
 });
 
 test("Thanjavur's fixture block reads as canal-fed on an over-drawn aquifer with the 100.0% artifact named", () => {
