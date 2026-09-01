@@ -125,6 +125,40 @@
       }
     },
     {
+      "id": "tn-des-season-crop-report",
+      "scope": "atlas",
+      "publisher": "Department of Economics and Statistics, Government of Tamil Nadu",
+      "url": "https://des.tn.gov.in/en/node/18",
+      "license": "TN government publication, cited with attribution",
+      "type": "page",
+      "cadence": "yearly (a new edition appears as a new year row with a Drive 'View' link on the listing)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": "table.table-bordered"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/thanjavur/irrigation-current.json",
+        "public/data/atlas/tn/tiruchirappalli/irrigation-current.json"
+      ],
+      "refreshMethod": "update pipeline-inputs/atlas/<state>/<district>/irrigation-des.json from the new edition's Table III-B (a person re-verifies every figure against the PDF), then npm run atlas:irrigation -- --district <slug> per district",
+      "playbook": [
+        "A new edition appears on the DES listing as a new year row whose Download cell is a Google Drive 'View' link; the Drive file id is in that link's href.",
+        "Download the PDF via drive.usercontent.google.com/download?id=<fileid>&export=download&confirm=t (the drive.google.com viewer URL does not serve the bytes directly); record its sha256.",
+        "pdftotext -layout on the PDF, then find 'AREA IRRIGATED BY DIFFERENT SOURCES': Table III-B runs seven printed pages (2024-25 edition: pages 125-131), one column group per page - canals, tanks, tube/bore wells, open wells, supplementary wells, other sources, then the totals page (gross, net, area irrigated more than once, intensity).",
+        "Read each district's NET total column per source plus its totals-page row. Supplementary wells ('by all other types of wells') water land already counted under another source: record them in the separate field, never as a sixth component of the net total.",
+        "Component sums can miss the printed net total by a hectare of the report's own rounding (Tiruchirapalli 2024-25: components 90284 vs printed 90283); the producer tolerates 2 ha and requires a note stating any discrepancy. More than 2 ha apart means a misread row - stop and re-verify.",
+        "Spelling drift: the report prints 'Tiruchirapalli'; find district rows by Sl. No. and name together, and cross-check the STATE row against the report's own state totals before trusting the extraction.",
+        "Update pipeline-inputs/atlas/tn/<district>/irrigation-des.json with the new figures, page cites, PDF sha256 and extractedOn, then npm run atlas:irrigation -- --district <slug> for both districts."
+      ],
+      "notes": "The annual Season and Crop Report of the TN Directorate of Economics and Statistics: the current district irrigation source mix (Table III-B, net area irrigated by canals, tanks, tube/bore wells, open wells and other sources), the reading that replaced Census 2011 at the head of the district pages. The listing page is a stable Drupal node (two fetches hash identically, verified 2026-09-01) whose edition table is watched with page-hash on table.table-bordered: a new edition is a new year row. The report itself lives behind a Google Drive link, so http-meta has nothing to watch; the 2024-25 edition is Drive file 1uONHRwuvU9-EhDGD1v0XC0OWqAVOZtV6, PDF sha256 49bbd356b1aab315a53e9a62ef0ba9a124a90c5975231146fb1bab0498f7eb75.",
+      "lastSeen": {
+        "pageHash": "68de0882338dea08",
+        "edition": "Season and Crop Report 2024-25 (year rows 2014-2015 through 2024-2025)",
+        "acceptedOn": "2026-09-01"
+      }
+    },
+    {
       "id": "tngis-generic-viewer-water-bodies",
       "scope": "atlas",
       "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",

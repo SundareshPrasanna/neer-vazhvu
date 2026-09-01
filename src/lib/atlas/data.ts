@@ -30,6 +30,7 @@ import {
   type DistrictRef,
   type GroundwaterProjectionArtifact,
   type GroundwaterTaluksArtifact,
+  type IrrigationCurrentArtifact,
   type JjmServiceShard,
   type RainfallArtifact,
   type WaterBodiesShard,
@@ -87,6 +88,12 @@ export function readShards<T>(district: DistrictRef, family: AtlasFamily): T[] {
 
 export function loadDirectory(district: DistrictRef): DistrictDirectoryArtifact | undefined {
   return readDistrictArtifact<DistrictDirectoryArtifact>(district, "directory");
+}
+
+export function loadIrrigationCurrent(
+  district: DistrictRef,
+): IrrigationCurrentArtifact | undefined {
+  return readDistrictArtifact<IrrigationCurrentArtifact>(district, "irrigation-current");
 }
 
 export function loadGroundwaterTaluks(
