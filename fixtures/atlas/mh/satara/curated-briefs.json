@@ -1,0 +1,264 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/curated-briefs",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "lgd-local-bodies-datagovin",
+        "title": "Local Government Directory: local bodies with the villages they cover (data.gov.in resource 1a6c26ed)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "license": "Government Open Data License - India",
+        "role": "input",
+        "as_of": "2026-09-01",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "census-2011-village-amenities-mh",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Maharashtra village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/828",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "as_of": "2011",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "url": "https://ingres.iith.ac.in/",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "input",
+        "as_of": "2024-2025",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "closed": true,
+        "title": "Dynamic Ground Water Resources of Maharashtra 2022-23 (GSDA and CGWB, GEC 2015 method), taluka table",
+        "publisher": "Groundwater Surveys and Development Agency, Government of Maharashtra, with the Central Ground Water Board",
+        "url": "https://gsda.maharashtra.gov.in/wp-content/uploads/2025/02/GWRE-State-Report-2022-23_compressed.pdf",
+        "license": "Government of Maharashtra publication, cited with attribution",
+        "role": "input",
+        "as_of": "2023"
+      },
+      {
+        "closed": true,
+        "title": "Maharain revenue-circle rainfall, Patan taluka, 1 June to 24 July 2026 against normal",
+        "publisher": "Agriculture Department, Government of Maharashtra (Maharain, Mahavedh automatic weather stations)",
+        "url": "https://maharain.maharashtra.gov.in/test/maharain/",
+        "license": "Government of Maharashtra publication, cited with attribution",
+        "role": "input",
+        "as_of": "2026-07-24"
+      },
+      {
+        "id": "datameet-village-boundaries-mh",
+        "title": "DataMeet indian_village_boundaries, Maharashtra (mh2.geojson with the mh.csv 2001-to-2011 crosswalk)",
+        "publisher": "DataMeet community",
+        "url": "https://github.com/datameet/indian_village_boundaries",
+        "license": "ODbL 1.0",
+        "role": "input",
+        "as_of": "2001",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-09-01",
+    "produced_by": "manual",
+    "internal_inputs": [],
+    "note": "Reviewed brief written by a person for the Panchayat that started the platform's village work: the July 2026 Marul Haveli research (docs/research/marul-haveli-village-water-data-2026-07.md) re-read against the district's served artifacts. Every figure names its source and date; the JJM habitation, source and sample figures were re-read from the citizen corner on 1 September 2026 and agree with the 24 July 2026 village-profile read except the sample count, which the citizen corner carries as 21 rows (latest 11 June 2026) where the profile page showed 19 (last 8 July 2026); both are stated. Where the generated brief and this one differ, this one is preferred on the page and the generated brief stays underneath for the named gaps.",
+    "conventions": {
+      "identity": "LGD Gram Panchayat 189960 covers revenue village 564320; Marul Tarf Patan (564162, GP 189959) and Marali (564369) in the same taluka are different places and are never joined by name",
+      "groundwater": "taluka figures describe Patan taluka, not the Panchayat; the 2024-2025 IN-GRES stage is the served figure, the 2022-23 GWRE stage is the earlier edition the July research read"
+    }
+  },
+  "schemaVersion": 1,
+  "briefs": [
+    {
+      "lgdCode": "189960",
+      "placeId": "marul-haveli",
+      "name": "Marul Haveli",
+      "blockName": "Patan",
+      "status": "brief-ready",
+      "thesis": "A fully tapped village on an open-well source in the dry eastern belt of a wet Koyna taluka: service is complete, the source is a single shallow aquifer, and the rainfall that recharges it fell to half of normal in the 2026 monsoon.",
+      "verdictTitle": "Every household has a tap; the well behind them sits where Patan's rain does not.",
+      "verdictBody": "JJM records Marul Haveli as Har Ghar Jal certified: 718 households across two habitations (Marul Haveli and Magas Wasti), every one with a connection, and twenty-one water samples on the citizen-corner register, none contaminated (the village profile page read on 24 July 2026 showed nineteen, the last taken on 8 July 2026). The whole supply draws on one open well near the Gram Panchayat. Patan taluka as a whole is assessed safe by IN-GRES (56.4 percent of extractable groundwater drawn in 2024-2025; 65.4 percent in the 2022-23 GWRE), but the taluka averages the wet Koyna west with the dry east, and Marul Haveli lies in the eastern revenue circles (Malharpeth and Marali) that recorded 41 to 43 percent of normal rain between 1 June and 24 July 2026 while Helwak in the west recorded 112 percent. The taluka's headroom does not describe this village's well.",
+      "headlineFacts": [
+        {
+          "value": "718 of 718",
+          "label": "Households with a tap connection",
+          "note": "JJM citizen corner, read 1 Sep 2026, agreeing with the 24 Jul 2026 village profile (Har Ghar Jal certified)"
+        },
+        {
+          "value": "1 open well",
+          "label": "Source of the whole piped supply",
+          "note": "JJM source register: open well (groundwater), Marul Haveli habitation · read 1 Sep 2026"
+        },
+        {
+          "value": "21 / 0",
+          "label": "Water samples tested / contaminated",
+          "note": "JJM citizen-corner sample rows, read 1 Sep 2026 (latest row 11 Jun 2026); the village profile page showed 19 tested, last 8 Jul 2026, on 24 Jul 2026"
+        },
+        {
+          "value": "41 to 43%",
+          "label": "Monsoon rain against normal, eastern Patan circles",
+          "note": "Maharain, Malharpeth and Marali revenue circles, 1 Jun to 24 Jul 2026 · one gauge stands for a whole circle"
+        },
+        {
+          "value": "56.4%",
+          "label": "Groundwater extraction stage, Patan taluka",
+          "note": "IN-GRES 2024-2025, assessed safe · taluka projection, not a village measurement"
+        }
+      ],
+      "insights": [
+        {
+          "id": "identity",
+          "domain": "identity",
+          "title": "Administrative identity",
+          "text": "Marul Haveli is LGD Gram Panchayat 189960 in Patan taluka (LGD sub-district 4264), covering the single revenue village 564320, whose LGD code is also its Census 2011 code. JJM knows it as block 3233, Gram Panchayat 98701, village 237683. Two neighbours share the name stem and are different places: Marul Tarf Patan (village 564162, Gram Panchayat 189959) and Marali (564369). Every join here is by code."
+        },
+        {
+          "id": "drinking-water",
+          "domain": "drinking-water",
+          "title": "Drinking-water service",
+          "text": "JJM lists two habitations (citizen corner read 1 September 2026; profile page read 24 July 2026), Marul Haveli (2,857 people, 625 households, 625 connected) and Magas Wasti (421 people, 93 households, 93 connected), a service level of 55 litres per person per day, all five schools and the anganwadi with a tap, no open grievances and a village action plan prepared. Two schemes carry the supply: the Marul Haveli PWSS sanctioned in 2008-09 (Rs 35.50 lakh, completed and functional) and its retrofitting sanctioned in 2021-22 (Rs 104.62 lakh, Rs 18.23 lakh spent, ongoing and functional)."
+        },
+        {
+          "id": "source",
+          "domain": "groundwater",
+          "title": "One well, one aquifer",
+          "text": "The JJM source register names a single source: an open well, categorised as groundwater, near the Gram Panchayat office. The Census 2011 amenity row already recorded treated and untreated tap water, hand pumps and an uncovered well as sources in 2009, with the uncovered well not functioning through the summer months. A piped supply from one shallow well has no second source to fall back on in a dry year."
+        },
+        {
+          "id": "rainfall",
+          "domain": "groundwater",
+          "title": "The dry side of a wet taluka",
+          "text": "Patan is Koyna country and reads as high-rainfall at taluka grain, which is why it sits outside NAQUIM's Satara coverage (Khatav, Man, Phaltan, Satara and Wai talukas only), the Paani Foundation Water Cup rounds and, on the July 2026 reading, Atal Bhujal's targeting. Maharain's revenue-circle gauges split the taluka in two for the 2026 monsoon to 24 July: Helwak 112 percent of normal, Patan 103, Morgiri 99, Mhawashi 90 in the west; Marali 41, Malharpeth 43, Kuthare 52 and Talmawale 53 in the east. Marul Haveli lies in the Malharpeth and Marali circles. Maharain publishes no village-to-circle key, so the circle is inferred from position."
+        },
+        {
+          "id": "groundwater",
+          "domain": "groundwater",
+          "title": "Taluka headroom, village well",
+          "text": "IN-GRES assesses Patan taluka safe at 56.4 percent stage of extraction for 2024-2025, down from 65.4 percent in the 2022-23 GWRE (extractable 3,292.7 hectare-metres, 2,153.5 drawn, of which 1,810.0 for irrigation and 343.4 for domestic use, 1,139.3 left for future use). Both are taluka averages that pool the Koyna west with the eastern belt; neither is a measurement of the well Marul Haveli drinks from. Satara's semi-critical talukas are Khatav and Man, in the east; Patan's east shares their rain shadow but not their assessment unit."
+        },
+        {
+          "id": "land",
+          "domain": "agriculture",
+          "title": "Land and irrigation baseline",
+          "text": "The Census 2011 village row (reference year 2009) records 467 hectares in all, 184.9 under forest, 231.1 net sown and 31.1 irrigated, 57.6 of them credited to wells and 142.4 to other sources in the amenity columns, against 200 hectares unirrigated. A fifteen-year-old baseline: no newer village-level irrigation enumeration is served here, and the Satara District Socio-Economic Review's irrigation-by-source table stops at 2015-16 with the wells column not stated."
+        }
+      ],
+      "nextEvidence": [
+        "Which revenue circle Maharain assigns Marul Haveli to, from the LGD revenue-circle master, so the gauge is named rather than inferred.",
+        "A water-level record for the open well or a nearby GSDA observation well; the taluka assessment does not reach it.",
+        "Whether the 2021-22 retrofitting scheme added a second source or only distribution.",
+        "A current village irrigation reading: the 6th Minor Irrigation Census (2017-18) village schedule for 564320, or the Land Use Statistics district table, neither wired yet."
+      ],
+      "reviewedAt": "2026-09-01",
+      "evidence": [
+        {
+          "id": "satara-lgd-identity-pack",
+          "name": "Local Government Directory (data.gov.in republication)",
+          "sourceUrl": "https://data.gov.in/catalog/local-government-directory-lgd",
+          "sourceAsOf": "LGD edition 2026-09-01",
+          "supports": [
+            "place identity",
+            "local administration",
+            "settlement composition"
+          ],
+          "limitations": [
+            "Records are joined by LGD code; similar names are never treated as interchangeable.",
+            "The Local Bodies export names one covering village for most Panchayats, so a Panchayat's full member list is not always shown."
+          ]
+        },
+        {
+          "id": "satara-jjm-village-profile",
+          "name": "Jal Jeevan Mission citizen corner (village information) and village profile page methods",
+          "sourceUrl": "https://ejalshakti.gov.in/jjmreport/JJMVillage_Profile.aspx",
+          "sourceAsOf": "citizen corner read 2026-09-01; village profile read 2026-07-24",
+          "supports": [
+            "population and settlements",
+            "drinking-water service",
+            "drinking-water sources",
+            "drinking-water samples",
+            "water-supply systems"
+          ],
+          "limitations": [
+            "Connection counts do not establish quantity, continuity, pressure or seasonal reliability.",
+            "Sample results are programme sampling, not a claim that all environmental water is safe.",
+            "Figures are state-reported into the IMIS and carry its documented verification gaps."
+          ]
+        },
+        {
+          "id": "satara-census-baseline-pack",
+          "name": "Census 2011 village baseline (Maharashtra DCHB village release)",
+          "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/828",
+          "sourceAsOf": "Census 2011 release; village reference year 2009",
+          "supports": [
+            "population and settlements",
+            "historical water access",
+            "historical land and irrigation"
+          ],
+          "limitations": [
+            "A historical baseline that cannot represent current service or irrigation conditions.",
+            "The Maharashtra release carries no Gram Panchayat column; the village is attached to the Panchayat through the LGD register."
+          ]
+        },
+        {
+          "id": "satara-taluka-groundwater-pack",
+          "name": "IN-GRES 2024-2025 and GWRE 2022-23 taluka assessments",
+          "sourceUrl": "https://ingres.iith.ac.in/",
+          "sourceAsOf": "IN-GRES 2024-2025 read 2026-09-01; GWRE 2022-23 report",
+          "supports": [
+            "groundwater resource status",
+            "aquifer context"
+          ],
+          "limitations": [
+            "The assessment unit is Patan taluka, which pools the wet Koyna west with the dry east; it is containing-area context, not a measurement of this village.",
+            "The stage of extraction is a ratio of two estimated volumes, shown to one decimal."
+          ]
+        },
+        {
+          "id": "satara-maharain-circles",
+          "name": "Maharain revenue-circle rainfall, Patan taluka",
+          "sourceUrl": "https://maharain.maharashtra.gov.in/test/maharain/",
+          "sourceAsOf": "season 1 June to 24 July 2026",
+          "supports": [
+            "current rainfall",
+            "rainfall anomaly"
+          ],
+          "limitations": [
+            "One automatic weather station stands for a whole revenue circle, and station tampering has been documented elsewhere in the network.",
+            "Maharain publishes no village-to-circle key; Marul Haveli's circle is inferred from its position in eastern Patan."
+          ]
+        },
+        {
+          "id": "satara-datameet-boundary",
+          "name": "DataMeet village boundary for 564320",
+          "sourceUrl": "https://github.com/datameet/indian_village_boundaries",
+          "sourceAsOf": "2001 Census village map, digitised by DataMeet; joined to the 2011 code through DataMeet's crosswalk",
+          "supports": [
+            "place boundary"
+          ],
+          "limitations": [
+            "Indicative, not survey grade: a community digitisation of the 2001 map, about 4.6 square kilometres, centroid near 17.30 N 74.01 E.",
+            "The MoRD planner placemark agrees to within about 500 m; no state survey boundary is available to compare."
+          ]
+        }
+      ]
+    }
+  ]
+}

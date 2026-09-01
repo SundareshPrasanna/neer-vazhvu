@@ -1,0 +1,117 @@
+{
+  "_doc": "Reviewed refresh plan for Satara (Maharashtra), the first district outside Tamil Nadu. Identity comes from the Local Government Directory as republished on data.gov.in (the lgdirectory.gov.in downloads sit behind a captcha): the Local Bodies resource is the Gram Panchayat list with the village each Panchayat covers, the Villages resource the village enumeration with Census 2011 codes, the Sub-Districts resource the taluka list that serves as the block layer (Satara's eleven Panchayat Samitis are coterminous with its eleven talukas; block codes here are LGD sub-district codes). The Maharashtra DCHB village release carries no Gram Panchayat column, so settlement composition is the LGD coverage register, never a Census name match. Every count below is what the acquisition must find; a drift stops the run for review. Counts as of the 2026-09-01 LGD edition: 11 talukas, 1,764 villages, 1,502 Village Panchayats, 1,577 coverage rows (1,553 distinct villages; 24 villages listed under two Panchayats as Partial coverage), 1,742 JJM villages, 1,745 Census 2011 village rows.",
+  "schemaVersion": 1,
+  "id": "mh-satara-v1",
+  "identityAdapter": "lgd-directory",
+  "district": {
+    "displayName": "Satara",
+    "lgdStateCode": "27",
+    "lgdDistrictCode": "494",
+    "jjmStateId": "18",
+    "jjmDistrictId": "282",
+    "censusStateCode": "27",
+    "censusDistrictCode": "527",
+    "censusWorkbookSheet": "Village_Data_2700",
+    "ingresStateName": "MAHARASHTRA",
+    "ingresStateUuid": "e7b3f02d-2497-4bcd-9e20-baa4b621822b",
+    "ingresDistrictName": "Satara",
+    "ingresAssessmentUnitType": "TALUKA",
+    "blockModel": "sub-district"
+  },
+  "sources": {
+    "lgdLocalBodies": {
+      "resourceId": "1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "url": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdVillages": {
+      "resourceId": "c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "url": "https://api.data.gov.in/resource/c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdSubdistricts": {
+      "resourceId": "6be51a29-876a-403a-a6da-42fde795e751",
+      "url": "https://api.data.gov.in/resource/6be51a29-876a-403a-a6da-42fde795e751",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/828/download/36182/DH_2011_DCHB_Village_Release_2700.xlsx",
+      "catalogUrl": "https://censusindia.gov.in/nada/index.php/catalog/828",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    },
+    "boundary": {
+      "geojsonUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh2.geojson",
+      "crosswalkUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh.csv",
+      "districtName": "Satara",
+      "license": "ODbL 1.0"
+    }
+  },
+  "expectedCounts": {
+    "lgdSubdistricts": 11,
+    "lgdVillages": 1764,
+    "lgdGramPanchayats": 1502,
+    "lgdCoverageRows": 1577,
+    "jjmVillages": 1742,
+    "censusVillages": 1745
+  },
+  "targets": [
+    {
+      "id": "marul-haveli",
+      "displayName": "Marul Haveli",
+      "reviewedAt": "2026-09-01",
+      "lgdGramPanchayatCode": "189960",
+      "lgdSubdistrictCode": "4264",
+      "jjmBlockId": "3233",
+      "jjmGramPanchayatId": "98701",
+      "censusSubdistrictCode": "04264",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-crosswalk",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-crosswalk",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564320",
+            "name": "Marul Haveli"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "lgd-coverage",
+            "sourceId": "lgd-local-bodies-datagovin",
+            "sourceUrl": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+            "sourceAsOf": "2026-09-01 (monthly LGD republication on data.gov.in)",
+            "method": "authoritative-crosswalk",
+            "locator": "localBodyCode 189960 (Marul Haveli, Village Panchayat) covers entityCode 564320 (Marul Haveli), coverageType Full",
+            "assertion": "The Gram Panchayat Marul Haveli covers the single revenue village Marul Haveli 564320. Marul Tarf Patan (564162, GP 189959) and Marali (564369) in the same taluka are different places and are never joined by name."
+          },
+          {
+            "id": "census-village",
+            "sourceId": "census-2011-village-amenities-mh",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/828",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 527; subdistrict 04264; village 564320 (LGD village code equals the Census 2011 code)",
+            "assertion": "The Census 2011 village row for 564320 (3,253 people, 719 households) is the one the LGD register attaches to this Panchayat."
+          }
+        ]
+      }
+    }
+  ]
+}

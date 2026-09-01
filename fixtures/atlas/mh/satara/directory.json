@@ -1,0 +1,1349 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/directory",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "lgd-local-bodies-datagovin",
+        "title": "Local Government Directory: local bodies with the villages they cover (data.gov.in resource 1a6c26ed)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "asserts",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "as_of": "2026-09-01",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "lgd-villages-datagovin",
+        "title": "Local Government Directory: villages with Census 2011 codes (data.gov.in resource c967fe8f)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "asserts",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "as_of": "2026-09-01",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "lgd-subdistricts-datagovin",
+        "title": "Local Government Directory: sub-districts (data.gov.in resource 6be51a29)",
+        "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+        "license": "Government Open Data License - India",
+        "role": "asserts",
+        "url": "https://data.gov.in/catalog/local-government-directory-lgd",
+        "as_of": "2026-09-01",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "census-2011-village-amenities-mh",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Maharashtra village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/828",
+        "as_of": "2011",
+        "retrieved": "2026-09-01"
+      },
+      {
+        "id": "datameet-village-boundaries-mh",
+        "title": "DataMeet indian_village_boundaries, Maharashtra (mh2.geojson with the mh.csv 2001-to-2011 crosswalk)",
+        "publisher": "DataMeet community",
+        "license": "ODbL 1.0",
+        "role": "asserts",
+        "url": "https://github.com/datameet/indian_village_boundaries",
+        "as_of": "2001",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "mixed",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-refresh-lgd-district.ts",
+    "internal_inputs": [],
+    "note": "Identity directory for Satara: 1502 LGD-coded Gram Panchayats in 11 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
+    "conventions": {
+      "key": "lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (taluka) code",
+      "bindings": "jjm bindings carry matchClass (how the pairing was made) and status (proposed | verified); a census binding with matchClass lgd-coverage is the LGD register's own statement of which villages the Panchayat covers, joined to Census 2011 rows by village code, and is marked proposed only because no person has re-checked it",
+      "composition": "reviewed = a plan target a person checked; crosswalk = the LGD-covered villages, authoritative but possibly incomplete; unbound = the register lists no village with a Census row",
+      "uncoveredVillages": "district villages the Local Bodies register lists under no Panchayat, kept so the enumeration stays complete",
+      "centroid": "[longitude, latitude] of the DataMeet MultiPolygon's bounding-box centre",
+      "datameet": "ODbL 1.0: attribution required, share-alike on the derived polygons, which are served under boundaries/<block>.geojson"
+    }
+  },
+  "schemaVersion": 1,
+  "district": {
+    "slug": "satara",
+    "name": "Satara",
+    "stateSlug": "mh",
+    "stateName": "Maharashtra",
+    "planId": "mh-satara-v1",
+    "identityAdapter": "lgd-directory",
+    "jjmStateId": "18",
+    "jjmDistrictId": "282",
+    "censusDistrictCode": "527",
+    "lgdDistrictCode": "494",
+    "lgdStateCode": "27",
+    "ingresDistrictName": "Satara",
+    "ingresStateName": "MAHARASHTRA",
+    "ingresAssessmentUnitType": "TALUKA",
+    "blockModel": "sub-district"
+  },
+  "acquiredAt": "2026-09-01",
+  "vintages": {
+    "lgdLocalBodies": {
+      "sourceAsOf": "2026-09-01",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 15
+    },
+    "lgdCoverage": {
+      "sourceAsOf": "2026-09-01",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 15
+    },
+    "lgdVillages": {
+      "sourceAsOf": "2026-09-01",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 15
+    },
+    "lgdSubdistricts": {
+      "sourceAsOf": "2026-09-01",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 1
+    },
+    "jjm": {
+      "sourceAsOf": "2026-09-01",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 16
+    },
+    "census": {
+      "sourceAsOf": "Census 2011 release; village reference year 2009",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 15
+    },
+    "boundary": {
+      "layer": "datameet/indian_village_boundaries mh2.geojson",
+      "retrievedAt": "2026-09-01",
+      "recordCount": 15,
+      "sourceId": "datameet-village-boundaries-mh",
+      "license": "ODbL 1.0",
+      "publicGeometry": true
+    }
+  },
+  "crosswalk": {
+    "proposalId": "satara-crosswalk-v1",
+    "foldingVersion": "tn-transliteration-v2",
+    "matchProcedureVersion": "raw-exact-then-fold-v1",
+    "resolutionIds": [
+      "satara-crosswalk-resolution-v1"
+    ],
+    "summary": {
+      "lgdGramPanchayats": 15,
+      "jjmBound": 14,
+      "censusBound": 15,
+      "bothBound": 14,
+      "unbound": 0,
+      "verifiedBindings": 0,
+      "proposedBindings": 29,
+      "byMatchClass": {
+        "exact": 11,
+        "unique-folded": 3,
+        "lgd-coverage": 15
+      }
+    }
+  },
+  "blocks": [
+    {
+      "code": "4264",
+      "name": "Patan",
+      "jjmBlockId": "3233",
+      "jjmBlockName": "Patan",
+      "censusCdBlockCode": "0315",
+      "censusCdBlockName": "Patan",
+      "panchayatCount": 15
+    }
+  ],
+  "panchayats": [
+    {
+      "lgdCode": "189818",
+      "name": "Addev",
+      "nameLocal": "आडदेव",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564345",
+            "villageName": "Aadev Kh.",
+            "census2011Code": "564345",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98824",
+        "blockId": "3233",
+        "gpId": "98824",
+        "gpName": "Addev",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237857",
+            "villageName": "Aaddev Bk."
+          },
+          {
+            "villageId": "237858",
+            "villageName": "Aadev Kh. (n.v.)"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189818",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189818",
+        "gramPanchayatName": "Addev",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564345",
+            "villageName": "Aadev Kh.",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564345",
+            "name": "Aadev Kh."
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 157.221,
+        "centroid": [
+          73.897079,
+          17.333771
+        ],
+        "bbox": [
+          73.889697,
+          17.324799,
+          73.904461,
+          17.342744
+        ],
+        "geometrySha256": "4575e8e35cdfe48ed3659cbce3941a54fd85ac2dfc8c3feebe3aa95cb0a88146",
+        "ringCount": 1,
+        "vertexCount": 78
+      }
+    },
+    {
+      "lgdCode": "189819",
+      "name": "Atoli",
+      "nameLocal": "आटोली",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564326",
+            "villageName": "Atoli",
+            "census2011Code": "564326",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98817",
+        "blockId": "3233",
+        "gpId": "98817",
+        "gpName": "Atoli",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237847",
+            "villageName": "Aatoli"
+          },
+          {
+            "villageId": "237848",
+            "villageName": "Gureghar"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189819",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189819",
+        "gramPanchayatName": "Atoli",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564326",
+            "villageName": "Atoli",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564326",
+            "name": "Atoli"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 1735.982,
+        "centroid": [
+          73.773654,
+          17.278858
+        ],
+        "bbox": [
+          73.745364,
+          17.25393,
+          73.801945,
+          17.303787
+        ],
+        "geometrySha256": "05e9d32527e37c1f3d50a3d6f1a91f570842e7c2370046ac58424ff865a6cf48",
+        "ringCount": 1,
+        "vertexCount": 114
+      }
+    },
+    {
+      "lgdCode": "189820",
+      "name": "Awarde",
+      "nameLocal": "आवर्डे",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564205",
+            "villageName": "Awarde",
+            "census2011Code": "564205",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98739",
+        "blockId": "3233",
+        "gpId": "98739",
+        "gpName": "Awarde",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237738",
+            "villageName": "Awarde"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189820",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189820",
+        "gramPanchayatName": "Awarde",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564205",
+            "villageName": "Awarde",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564205",
+            "name": "Awarde"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 527.1904,
+        "centroid": [
+          73.943278,
+          17.518366
+        ],
+        "bbox": [
+          73.923914,
+          17.50597,
+          73.962643,
+          17.530763
+        ],
+        "geometrySha256": "a8fbbc3de24d2a729a4b31fc8804c45cbed509eb3110fd01ad5fefc4c91a635f",
+        "ringCount": 1,
+        "vertexCount": 84
+      }
+    },
+    {
+      "lgdCode": "189821",
+      "name": "Abdarwadi",
+      "nameLocal": "आबदारवाडी",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564308",
+            "villageName": "Abdarwadi",
+            "census2011Code": "564308",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98689",
+        "blockId": "3233",
+        "gpId": "98689",
+        "gpName": "Abdarwadi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237671",
+            "villageName": "Abdarwadi"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189821",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189821",
+        "gramPanchayatName": "Abdarwadi",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564308",
+            "villageName": "Abdarwadi",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564308",
+            "name": "Abdarwadi"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 70.2319,
+        "centroid": [
+          74.021772,
+          17.352663
+        ],
+        "bbox": [
+          74.017291,
+          17.347212,
+          74.026253,
+          17.358114
+        ],
+        "geometrySha256": "347cc9711ec3fd5376cab475e43da1b232a6abd58adccdc297c6c72e59340f2f",
+        "ringCount": 1,
+        "vertexCount": 37
+      }
+    },
+    {
+      "lgdCode": "189822",
+      "name": "Adul Gaon",
+      "nameLocal": "अडूळ गाव",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564276",
+            "villageName": "Subhashnagar",
+            "census2011Code": "564276",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": null,
+      "census": {
+        "sourceUnitId": "lgd/189822",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189822",
+        "gramPanchayatName": "Adul Gaon",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564276",
+            "villageName": "Subhashnagar",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564276",
+            "name": "Subhashnagar"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 120.5068,
+        "centroid": [
+          73.94302,
+          17.351881
+        ],
+        "bbox": [
+          73.936505,
+          17.344557,
+          73.949536,
+          17.359204
+        ],
+        "geometrySha256": "4226dbe29acd4df0926c4fee57bed0f82e63f75c2393b8aab570d3474b4a053e",
+        "ringCount": 1,
+        "vertexCount": 34
+      }
+    },
+    {
+      "lgdCode": "189823",
+      "name": "Adul Peth",
+      "nameLocal": "अडूळ पेठ",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564275",
+            "villageName": "Adul",
+            "census2011Code": "564275",
+            "coverageType": "Partial"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98678",
+        "blockId": "3233",
+        "gpId": "98678",
+        "gpName": "Adulpeth",
+        "matchClass": "unique-folded",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237657",
+            "villageName": "Adul Peth"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189823",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189823",
+        "gramPanchayatName": "Adul Peth",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564275",
+            "villageName": "Adul",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564275",
+            "name": "Adul"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 202.4361,
+        "centroid": [
+          73.956387,
+          17.345767
+        ],
+        "bbox": [
+          73.947982,
+          17.335089,
+          73.964792,
+          17.356445
+        ],
+        "geometrySha256": "5f97e59f686219cebc118250f1e65f3f7ec773f240c0084d481a7a2f67d43f7d",
+        "ringCount": 1,
+        "vertexCount": 69
+      }
+    },
+    {
+      "lgdCode": "189824",
+      "name": "Ambale",
+      "nameLocal": "आंबळे",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564213",
+            "villageName": "Ambale",
+            "census2011Code": "564213",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98724",
+        "blockId": "3233",
+        "gpId": "98724",
+        "gpName": "Ambale",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237712",
+            "villageName": "Ambale"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189824",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189824",
+        "gramPanchayatName": "Ambale",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564213",
+            "villageName": "Ambale",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564213",
+            "name": "Ambale"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 221.6137,
+        "centroid": [
+          73.944606,
+          17.501039
+        ],
+        "bbox": [
+          73.935965,
+          17.490669,
+          73.953248,
+          17.511409
+        ],
+        "geometrySha256": "4d28398ce367f1b8ac78f9ae37065bbce4c4ff424df5ea67ac8fe1dcd01b6175",
+        "ringCount": 1,
+        "vertexCount": 64
+      }
+    },
+    {
+      "lgdCode": "189825",
+      "name": "Ambavade Kh.",
+      "nameLocal": "अंबवडे खूर्द",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564397",
+            "villageName": "Ambavade Kh.",
+            "census2011Code": "564397",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98658",
+        "blockId": "3233",
+        "gpId": "98658",
+        "gpName": "Ambawade Kh.",
+        "matchClass": "unique-folded",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237633",
+            "villageName": "Ambavade Kh."
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189825",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189825",
+        "gramPanchayatName": "Ambavade Kh.",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564397",
+            "villageName": "Ambavade kh.",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564397",
+            "name": "Ambavade kh."
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 522.079,
+        "centroid": [
+          73.92202,
+          17.243928
+        ],
+        "bbox": [
+          73.908871,
+          17.232135,
+          73.935168,
+          17.255721
+        ],
+        "geometrySha256": "5be51c9cfa4ade6d57552d9237c1c5eadfc0b3e06c194b31abb3bb2f3f6c4fe5",
+        "ringCount": 1,
+        "vertexCount": 76
+      }
+    },
+    {
+      "lgdCode": "189826",
+      "name": "Ambavane",
+      "nameLocal": "आंबवणे",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564249",
+            "villageName": "Ambavane",
+            "census2011Code": "564249",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98837",
+        "blockId": "3233",
+        "gpId": "98837",
+        "gpName": "Ambavane",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237876",
+            "villageName": "Ambavane"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189826",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189826",
+        "gramPanchayatName": "Ambavane",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564249",
+            "villageName": "Ambavane",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564249",
+            "name": "Ambavane"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 273.5312,
+        "centroid": [
+          73.868705,
+          17.425541
+        ],
+        "bbox": [
+          73.856267,
+          17.418184,
+          73.881143,
+          17.432897
+        ],
+        "geometrySha256": "46b518ee5faf0d9a1f50667b876e5c04cbf2cbff89c93024cba2ce03b9eea584",
+        "ringCount": 1,
+        "vertexCount": 50
+      }
+    },
+    {
+      "lgdCode": "189827",
+      "name": "Ambeghar T Marali",
+      "nameLocal": "आंबेघर तर्फ मरळी",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564353",
+            "villageName": "Ambeghar Tarf Marli",
+            "census2011Code": "564353",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98812",
+        "blockId": "3233",
+        "gpId": "98812",
+        "gpName": "Ambeghar T Marali",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237841",
+            "villageName": "Ambeghar Tarf Marli"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189827",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189827",
+        "gramPanchayatName": "Ambeghar T Marali",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564353",
+            "villageName": "Ambeghar tarf Marli",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564353",
+            "name": "Ambeghar tarf Marli"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 438.846,
+        "centroid": [
+          73.830832,
+          17.280662
+        ],
+        "bbox": [
+          73.818544,
+          17.268837,
+          73.843119,
+          17.292486
+        ],
+        "geometrySha256": "88bccfdc0434ce1728a51d65bf717e9194e9482ecb07629854708d366d942509",
+        "ringCount": 1,
+        "vertexCount": 68
+      }
+    },
+    {
+      "lgdCode": "189828",
+      "name": "Ambrag",
+      "nameLocal": "आंब्रग",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564355",
+            "villageName": "Ambrag",
+            "census2011Code": "564355",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98809",
+        "blockId": "3233",
+        "gpId": "98809",
+        "gpName": "Ambrag",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237836",
+            "villageName": "Ambrag"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189828",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189828",
+        "gramPanchayatName": "Ambrag",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564355",
+            "villageName": "Ambrag",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564355",
+            "name": "Ambrag"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 452.8757,
+        "centroid": [
+          73.857094,
+          17.301411
+        ],
+        "bbox": [
+          73.844742,
+          17.287016,
+          73.869447,
+          17.315806
+        ],
+        "geometrySha256": "edbecb297ae907f04fd5e2e6d8d4360bdd7b6dfbb477d272fd1e63cfb8107e9c",
+        "ringCount": 1,
+        "vertexCount": 95
+      }
+    },
+    {
+      "lgdCode": "189829",
+      "name": "Ambrule",
+      "nameLocal": "आंब्रुळे",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564343",
+            "villageName": "Ambrule",
+            "census2011Code": "564343",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98825",
+        "blockId": "3233",
+        "gpId": "98825",
+        "gpName": "Ambrule",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237860",
+            "villageName": "Ambrule"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189829",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189829",
+        "gramPanchayatName": "Ambrule",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564343",
+            "villageName": "Ambrule",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564343",
+            "name": "Ambrule"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 425.8264,
+        "centroid": [
+          73.911635,
+          17.333889
+        ],
+        "bbox": [
+          73.902087,
+          17.321902,
+          73.921183,
+          17.345875
+        ],
+        "geometrySha256": "0b522c8ce17d3c3c51f886fd515f1b7be1ffbff8b7a178ed1fa4218f17a6638b",
+        "ringCount": 1,
+        "vertexCount": 55
+      }
+    },
+    {
+      "lgdCode": "189830",
+      "name": "Asavalewadi",
+      "nameLocal": "असवलेवाडी",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564322",
+            "villageName": "Asawalewadi",
+            "census2011Code": "564322",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98711",
+        "blockId": "3233",
+        "gpId": "98711",
+        "gpName": "Asawalewadi",
+        "matchClass": "unique-folded",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237695",
+            "villageName": "Asawalewadi"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189830",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189830",
+        "gramPanchayatName": "Asavalewadi",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564322",
+            "villageName": "Asawalewadi",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564322",
+            "name": "Asawalewadi"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 296.4232,
+        "centroid": [
+          73.962604,
+          17.278658
+        ],
+        "bbox": [
+          73.951207,
+          17.268885,
+          73.974001,
+          17.288432
+        ],
+        "geometrySha256": "10179e3e23c1ad8ec9cc3954e786dfaa2846d669380b634253aec295e1fc5411",
+        "ringCount": 1,
+        "vertexCount": 105
+      }
+    },
+    {
+      "lgdCode": "189831",
+      "name": "Bacholi",
+      "nameLocal": "बाचोली",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564382",
+            "villageName": "Bacholi",
+            "census2011Code": "564382",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98656",
+        "blockId": "3233",
+        "gpId": "98656",
+        "gpName": "Bacholi",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237631",
+            "villageName": "Bacholi"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189831",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189831",
+        "gramPanchayatName": "Bacholi",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564382",
+            "villageName": "Bacholi",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "crosswalk",
+        "completeness": "unknown",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": null,
+        "members": [
+          {
+            "kind": "village",
+            "code": "564382",
+            "name": "Bacholi"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 340.0615,
+        "centroid": [
+          73.914864,
+          17.278287
+        ],
+        "bbox": [
+          73.905344,
+          17.267019,
+          73.924384,
+          17.289554
+        ],
+        "geometrySha256": "d561d69354685296c4b7903c211b10e4c7fabee2d686412877885a81bde1f97d",
+        "ringCount": 1,
+        "vertexCount": 70
+      }
+    },
+    {
+      "lgdCode": "189960",
+      "name": "Marul Haveli",
+      "nameLocal": "मारुल हवेली",
+      "blockCode": "4264",
+      "blockName": "Patan",
+      "tnrdMaster": null,
+      "lgdCoverage": {
+        "villages": [
+          {
+            "villageCode": "564320",
+            "villageName": "Marul Haveli",
+            "census2011Code": "564320",
+            "coverageType": "Full"
+          }
+        ]
+      },
+      "jjm": {
+        "sourceUnitId": "3233/98701",
+        "blockId": "3233",
+        "gpId": "98701",
+        "gpName": "Marul Haveli",
+        "matchClass": "exact",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageId": "237683",
+            "villageName": "Marul Haveli"
+          }
+        ]
+      },
+      "census": {
+        "sourceUnitId": "lgd/189960",
+        "cdBlockCode": "0315",
+        "gramPanchayatCode": "189960",
+        "gramPanchayatName": "Marul Haveli",
+        "matchClass": "lgd-coverage",
+        "status": "proposed",
+        "villages": [
+          {
+            "villageCode": "564320",
+            "villageName": "Marul Haveli",
+            "subdistrictCode": "04264"
+          }
+        ]
+      },
+      "composition": {
+        "status": "reviewed",
+        "completeness": "complete",
+        "basis": "authoritative-crosswalk",
+        "reviewedAt": "2026-09-01",
+        "members": [
+          {
+            "kind": "village",
+            "code": "564320",
+            "name": "Marul Haveli"
+          }
+        ],
+        "exclusions": []
+      },
+      "boundary": {
+        "type": "Village Panchayat (union of DataMeet village polygons)",
+        "areaHectares": 461.3112,
+        "centroid": [
+          74.006591,
+          17.30406
+        ],
+        "bbox": [
+          73.993862,
+          17.291295,
+          74.01932,
+          17.316826
+        ],
+        "geometrySha256": "daa9b90fcb8092287c062eafcefa4dddc48e032d4aeb78458c659a003a850b3d",
+        "ringCount": 1,
+        "vertexCount": 77
+      }
+    }
+  ],
+  "uncoveredVillages": [],
+  "censusVillagesWithoutLgdRow": [],
+  "unbound": {
+    "jjm": [],
+    "census": []
+  }
+}
