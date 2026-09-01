@@ -20,8 +20,9 @@ import type {
 } from "./artifacts";
 import { identityFromDirectory } from "./artifacts";
 import { villageWaterProfileV2 } from "./capability-assessment";
-import { generateCapabilityAssessment } from "./capability-evidence";
+import { LGD_PROVENANCE, generateCapabilityAssessment } from "./capability-evidence";
 import type { GeneratedAssessment, PlaceEvidenceInputs } from "./capability-evidence";
+import { identityAdapterOf } from "./artifacts";
 import {
   loadAssessmentShards,
   loadBriefShards,
@@ -237,9 +238,14 @@ export function assembleEvidenceInputs(corpus: DistrictCorpus): PlaceEvidenceInp
       .flatMap((shard) => shard.features)
       .map((feature) => [feature.properties.lgdGramPanchayatCode, feature.properties]),
   );
+  // The Tamil Nadu corpus predates the provenance field and its fixtures
+  // are byte-compared, so only an LGD-built directory sets it.
+  const provenance =
+    identityAdapterOf(corpus.directory) === "lgd-directory" ? LGD_PROVENANCE : undefined;
   return corpus.directory.panchayats.map((panchayat) => ({
     lgdGramPanchayatCode: panchayat.lgdCode,
     lgdGramPanchayatName: panchayat.name,
+    ...(provenance ? { provenance } : {}),
     identity: identityRecord(panchayat),
     boundary: boundaryRecord(panchayat),
     jjm: panchayat.jjm ? jjmByGp.get(panchayat.jjm.gpId) : undefined,

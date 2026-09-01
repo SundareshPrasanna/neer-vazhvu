@@ -24,6 +24,7 @@ import {
   districtArtifactPath,
   type AtlasFamily,
   type AssessmentsShard,
+  type BoundariesShard,
   type BriefsShard,
   type CensusShard,
   type DistrictDirectoryArtifact,
@@ -125,6 +126,11 @@ export function loadCensusShards(district: DistrictRef): CensusShard[] {
 
 export function loadWaterBodyShards(district: DistrictRef): WaterBodiesShard[] {
   return readShards<WaterBodiesShard>(district, "water-bodies");
+}
+
+/** The served polygons of one block, where a district publishes them. */
+export function loadBoundaryShard(district: DistrictRef, blockCode: string): BoundariesShard | undefined {
+  return readDistrictArtifact<BoundariesShard>(district, "boundaries", blockCode);
 }
 
 export function loadAssessmentShards(district: DistrictRef): AssessmentsShard[] {

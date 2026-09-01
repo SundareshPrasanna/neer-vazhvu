@@ -9,7 +9,9 @@
  *
  * Adding a district is one entry here plus its artifacts: the route tree,
  * directory and brief pages are shared and take the district as
- * configuration (the same rule as src/lib/cities for cities).
+ * configuration (the same rule as src/lib/cities for cities). Which identity
+ * adapter built a district's artifacts (TNRD for Tamil Nadu, the LGD
+ * directory elsewhere) is recorded in the served directory, not here.
  */
 export interface AtlasDistrict {
   /** URL slug under /atlas/<state>/, e.g. "thanjavur". */
@@ -31,7 +33,19 @@ export interface AtlasDistrict {
   /** Preview gate, the Surat/Pune pattern: false hides the routes and the
    *  landing card link until a named consumer exists. */
   published: boolean;
+  /** Where a CURRENT irrigation-by-source reading comes from in this state,
+   *  named on the page whether or not the artifact is served: the label of
+   *  the report that carries it, and the sentence to print when it is not
+   *  wired. Copy, not data: the numbers come from irrigation-current.json. */
+  irrigationCurrentSource: { label: string; gapNote: string; nextStep: string };
 }
+
+const TN_IRRIGATION_SOURCE = {
+  label: "Season and Crop Report",
+  nextStep: "the Season and Crop Report 2024-25 is published and not yet wired.",
+  gapNote:
+    "Newer official readings exist at coarser grain and are not wired yet: the annual Season and Crop Report (district totals by source, 2024-25 edition published) and the 2017-18 Minor Irrigation Census (wells and tanks by village).",
+};
 
 export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
@@ -45,6 +59,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     basin: { basinId: "cauvery-tn", subBasinKey: "116", subBasinName: "Cauvery Delta" },
     hasCuratedBriefs: true,
     published: true,
+    irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
     slug: "tiruchirappalli",
@@ -57,6 +72,25 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
     hasCuratedBriefs: false,
     published: true,
+    irrigationCurrentSource: TN_IRRIGATION_SOURCE,
+  },
+  {
+    slug: "satara",
+    scopeId: "mh-satara",
+    stateSlug: "mh",
+    stateCode: "MH",
+    stateName: "Maharashtra",
+    name: "Satara",
+    hook: "Koyna country with a dry eastern edge: the same district holds talukas at 20% and talukas at 76% of their groundwater.",
+    hasCuratedBriefs: true,
+    published: false,
+    irrigationCurrentSource: {
+      label: "District Socio-Economic Review",
+      nextStep:
+        "the Satara District Socio-Economic Review's irrigation-by-source table stops at 2015-16 with the wells column not stated, and the Land Use Statistics and Minor Irrigation Census tables are not wired.",
+      gapNote:
+        "No current reading is wired: the Satara District Socio-Economic Review 2024 prints area irrigated by source only for 2015-16 with the wells column not stated, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
+    },
   },
 ];
 

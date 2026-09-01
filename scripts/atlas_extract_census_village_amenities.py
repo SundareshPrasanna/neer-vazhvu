@@ -20,6 +20,7 @@ import zipfile
 RELATIONSHIP_ID = (
     "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"
 )
+DEFAULT_SHEET = "Village_Data_3300"
 REQUIRED_HEADERS = {
     "State Code": "stateCode",
     "State Name": "stateName",
@@ -138,10 +139,12 @@ def paired_values(
 def extract_records(
     xlsx_path: str,
     district_code: str,
+    sheet_name: str = DEFAULT_SHEET,
+    allow_empty_gram_panchayat: bool = False,
 ) -> list[dict[str, str | list[dict[str, str]]]]:
     with zipfile.ZipFile(xlsx_path) as archive:
         shared_strings = read_shared_strings(archive)
-        sheet_path = worksheet_path(archive, "Village_Data_3300")
+        sheet_path = worksheet_path(archive, sheet_name)
         headers: dict[int, str] | None = None
         records: list[dict[str, str | list[dict[str, str]]]] = []
         with archive.open(sheet_path) as source:
@@ -166,7 +169,7 @@ def extract_records(
                     )
                     if missing:
                         raise ValueError(
-                            "Village_Data_3300 is missing required identity columns: "
+                            f"{sheet_name} is missing required identity columns: "
                             + ", ".join(missing)
                         )
                 else:
@@ -175,7 +178,16 @@ def extract_records(
                         for index, output_name in headers.items()
                     }
                     if raw_record.get("districtCode") == district_code:
-                        if not all(raw_record.values()):
+                        optional = (
+                            {"gramPanchayatCode", "gramPanchayatName"}
+                            if allow_empty_gram_panchayat
+                            else set()
+                        )
+                        if not all(
+                            value
+                            for name, value in raw_record.items()
+                            if name not in optional
+                        ):
                             missing = sorted(
                                 name for name, value in raw_record.items() if not value
                             )
@@ -219,10 +231,25 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--xlsx", required=True)
     parser.add_argument("--district-code", required=True)
+    parser.add_argument(
+        "--sheet",
+        default=DEFAULT_SHEET,
+        help="worksheet name; the state release number is in it (Village_Data_3300 for Tamil Nadu, Village_Data_2700 for Maharashtra)",
+    )
+    parser.add_argument(
+        "--allow-empty-gram-panchayat",
+        action="store_true",
+        help="accept rows with no Gram Panchayat code/name (the Maharashtra release leaves the column blank; composition then comes from the LGD register, not from the Census)",
+    )
     args = parser.parse_args()
     try:
         json.dump(
-            extract_records(args.xlsx, args.district_code),
+            extract_records(
+                args.xlsx,
+                args.district_code,
+                sheet_name=args.sheet,
+                allow_empty_gram_panchayat=args.allow_empty_gram_panchayat,
+            ),
             sys.stdout,
             ensure_ascii=False,
             separators=(",", ":"),

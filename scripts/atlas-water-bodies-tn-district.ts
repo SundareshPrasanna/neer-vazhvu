@@ -46,7 +46,12 @@ async function main(): Promise<void> {
   const asOf = requireAsOf(argv);
   const directory = readArtifact<DistrictDirectoryArtifact>(district, "directory");
   const identity = identityFromDirectory(directory);
+  // TNGIS keys its layers on TNRD's district code; a directory built by
+  // another adapter has no TNGIS layer to read.
   const districtLgdCode = directory.district.tnrdLgdCode;
+  if (!districtLgdCode) {
+    throw new Error(`${district.slug}: not a TNRD-built directory; TNGIS water bodies do not apply`);
+  }
 
   const snapshot = await readWfsSnapshot({
     district,

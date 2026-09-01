@@ -11,6 +11,8 @@
  * them as containing-area context, which atlas-project-groundwater.ts does.
  */
 import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/acquisition-validation";
+import { validateLgdDistrictRefreshPlan, type LgdDistrictRefreshPlan } from "../src/lib/atlas/lgd-acquisition-model";
+import { readFileSync } from "node:fs";
 import {
   INDIA_LOCATION_UUID,
   INGRES_API_URL,
@@ -24,6 +26,7 @@ import {
   atlasEnvelope,
   cachePath,
   hasFlag,
+  planIdentityAdapter,
   readCacheJson,
   requireAsOf,
   requireDistrict,
@@ -35,7 +38,45 @@ import {
 
 const PRODUCED_BY = "scripts/atlas-groundwater-tn-district.ts";
 const CACHE = "groundwater.json";
-const STATE_NAME = "TAMILNADU";
+
+/** What IN-GRES needs from either plan shape. Tamil Nadu plans predate the
+ *  state fields and read as TAMILNADU / TALUK; an LGD-built plan states its
+ *  own (MAHARASHTRA / TALUKA). */
+interface IngresPlan {
+  id: string;
+  districtName: string;
+  stateUuid: string;
+  stateName: string;
+  unitType: string;
+  upstream: "ingres" | "ingresMh";
+}
+
+function loadIngresPlan(district: ReturnType<typeof requireDistrict>): IngresPlan {
+  const path = reviewedInputPath(district, "refresh-plan.json");
+  if (planIdentityAdapter(district) === "lgd-directory") {
+    const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
+    const errors = validateLgdDistrictRefreshPlan(parsed);
+    if (errors.length > 0) throw new Error(`Invalid LGD district refresh plan:\n- ${errors.join("\n- ")}`);
+    const plan = parsed as LgdDistrictRefreshPlan;
+    return {
+      id: plan.id,
+      districtName: plan.district.ingresDistrictName,
+      stateUuid: plan.district.ingresStateUuid,
+      stateName: plan.district.ingresStateName,
+      unitType: plan.district.ingresAssessmentUnitType,
+      upstream: "ingresMh",
+    };
+  }
+  const plan = loadTnDistrictRefreshPlan(path);
+  return {
+    id: plan.id,
+    districtName: plan.district.ingresDistrictName,
+    stateUuid: plan.district.ingresStateUuid,
+    stateName: "TAMILNADU",
+    unitType: "TALUK",
+    upstream: "ingres",
+  };
+}
 
 /**
  * `parentLocName` is always INDIA and `stateuuid` is always null, even when
@@ -101,17 +142,17 @@ async function main(): Promise<void> {
   const fetchNow = hasFlag(argv, "--fetch");
   const replay = hasFlag(argv, "--replay");
   if (fetchNow === replay) throw new Error("choose exactly one of --fetch or --replay");
-  const plan = loadTnDistrictRefreshPlan(reviewedInputPath(district, "refresh-plan.json"));
+  const plan = loadIngresPlan(district);
 
   let groundwater: TnDistrictGroundwaterExtract;
   if (fetchNow) {
     const asOf = requireAsOf(argv);
     const year = argValue(argv, "--year") ?? "2024-2025";
-    const districtName = plan.district.ingresDistrictName;
+    const districtName = plan.districtName;
     const stateRows = await readLevel({
-      locName: STATE_NAME,
+      locName: plan.stateName,
       locType: "STATE",
-      locUuid: plan.district.ingresStateUuid,
+      locUuid: plan.stateUuid,
       parentUuid: INDIA_LOCATION_UUID,
       year,
     });
@@ -122,21 +163,21 @@ async function main(): Promise<void> {
     if (!districtRow) {
       throw new Error(
         `${districtName} is not among the ${stateRows.length - 1} districts ` +
-          `IN-GRES reports for ${STATE_NAME}`,
+          `IN-GRES reports for ${plan.stateName}`,
       );
     }
     const unitRows = await readLevel({
       locName: districtName,
       locType: "DISTRICT",
       locUuid: String(districtRow.locationUUID),
-      parentUuid: plan.district.ingresStateUuid,
+      parentUuid: plan.stateUuid,
       year,
     });
     groundwater = buildTnDistrictGroundwaterExtract({
       planId: plan.id,
       assessmentYear: year,
       acquiredAt: asOf,
-      assessmentUnitType: "TALUK",
+      assessmentUnitType: plan.unitType,
       portalUrl:
         `https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=${districtName}` +
         `;loctype=DISTRICT;locuuid=${String(districtRow.locationUUID)};year=${year}`,
@@ -162,7 +203,7 @@ async function main(): Promise<void> {
   const envelope = atlasEnvelope({
     district,
     family: "groundwater-taluks",
-    sources: [upstreamSource("ingres", { retrieved: groundwater.acquiredAt })],
+    sources: [upstreamSource(plan.upstream, { retrieved: groundwater.acquiredAt })],
     method: "api",
     producedAt: groundwater.acquiredAt,
     producedBy: PRODUCED_BY,
@@ -176,7 +217,7 @@ async function main(): Promise<void> {
       "district figure and is not counted as a unit.",
     conventions: {
       assessment_year: `${groundwater.assessmentYear} is IN-GRES's hydrological-year label, not an edition year`,
-      hierarchy: "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      hierarchy: `assessment units sit on the revenue hierarchy (${groundwater.source.assessmentUnitType.toLowerCase()}s), not the panchayat hierarchy`,
       categories: "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
       units: "stage of extraction in percent; recharge and availability in ham; rainfall in mm",
     },

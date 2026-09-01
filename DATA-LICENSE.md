@@ -109,6 +109,7 @@ date.
 | `dpcc-monthly-analysis-delhi` (DPCC) | Permission required | "Contents of this website may not be reproduced partially or fully, without due permission." |
 | `osm-overpass`, `overture-buildings`, `google-open-buildings` | ODbL 1.0 (Overture varies by theme) | Commercial use permitted. ShareAlike applies to a redistributed derivative database, not to a rendered map or report. |
 | `datameet-mumbai-spatial` (DataMeet) | CC BY-SA 2.5 IN | ShareAlike. |
+| `datameet-village-boundaries-mh` (DataMeet indian_village_boundaries) | ODbL 1.0 | ShareAlike on a redistributed derivative database. The Satara Panchayat polygons served under `public/data/atlas/mh/satara/boundaries/` are such a derivative (the MultiPolygon of each Panchayat's LGD-listed member villages) and are published under ODbL 1.0 with attribution to DataMeet; they are a 2001-era community digitisation, indicative and not survey grade. |
 | `ingres-gw-assessment-*` (IN-GRES) | None published | The IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere, verified by reading its full application bundle. Nothing is established about who may redistribute this material. It is not asserted that CGWB's website policy governs a portal hosted by IIT Hyderabad, because no evidence establishes that. |
 | OpenCity-mirrored datasets (20 entries) | Portal metadata only | The OpenCity CKAN metadata labels most of these "Other (Public Domain)" and one "Creative Commons Attribution". Those are records of a **portal's metadata field**, not findings that the material is public domain: no upstream publisher issued a dedication, and OpenCity's own site-wide terms say "Data are licensed under: CC BY-NC-SA 4.0 and ODbL" and permit download "for non-commercial and / or personal use only". Treated as unproven. |
 
@@ -152,6 +153,14 @@ Citation: Hawker, L., Uhe, P., Paulo, L., Sosa, J., Savage, J., Sampson, C.,
 Neal, J. (2022): A 30 m global map of elevation with forests and buildings
 removed. *Environmental Research Letters*, 17(2), 024016.
 
+### DataMeet indian_village_boundaries
+
+Village boundaries for Maharashtra are from DataMeet's indian_village_boundaries
+(github.com/datameet/indian_village_boundaries), Open Database License (ODbL)
+1.0. The served Panchayat polygons derived from them carry the same licence and
+this attribution in their envelope; anyone redistributing them as a database
+must do so under ODbL.
+
 ### OpenStreetMap
 
 Water body polygons, river geometry and locality indices derive from
@@ -177,6 +186,13 @@ courtesy of NASA/JPL/USGS.
 `datagovin-waterbodies-census-tn` (First Census of Water Bodies, 2018-19) is
 published by the Ministry of Jal Shakti on data.gov.in under the Government Open
 Data License - India, which requires attribution to the provider.
+
+`lgd-local-bodies-datagovin`, `lgd-villages-datagovin` and
+`lgd-subdistricts-datagovin` are the Local Government Directory as republished
+monthly on data.gov.in by the Ministry of Panchayati Raj, under the same licence
+and with attribution to that Ministry. They are the identity master for every
+Atlas district outside Tamil Nadu (Satara first): Panchayat codes and names, the
+villages a Panchayat covers, and the taluka list.
 
 ### Asian Development Bank
 

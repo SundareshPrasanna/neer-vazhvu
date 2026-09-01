@@ -236,6 +236,12 @@ export function writeAtlasArtifact(
   shard: string | undefined,
   envelope: AtlasEnvelope,
   payload: object,
+  options: {
+    /** Geometry-heavy families (served polygons) are written without
+     *  indentation: pretty-printing puts every coordinate on its own line and
+     *  quadruples the file. Everything else stays readable in a diff. */
+    compact?: boolean;
+  } = {},
 ): string {
   for (const key of Object.keys(payload)) {
     if (key in envelope) {
@@ -245,7 +251,8 @@ export function writeAtlasArtifact(
   const rel = districtArtifactPath(district, family, shard);
   const path = resolve(ROOT, rel);
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, `${JSON.stringify({ ...envelope, ...payload }, null, 2)}\n`, "utf8");
+  const body = { ...envelope, ...payload };
+  writeFileSync(path, `${options.compact ? JSON.stringify(body) : JSON.stringify(body, null, 2)}\n`, "utf8");
   return rel;
 }
 
@@ -352,6 +359,13 @@ export const SOURCE_IDS = {
   tngisBoundary: "tngis-tnrd-panchayat-boundary",
   ingres: "ingres-gw-assessment-tn",
   openMeteo: "open-meteo-archive",
+  // Districts built from the Local Government Directory (Maharashtra first).
+  lgdLocalBodies: "lgd-local-bodies-datagovin",
+  lgdVillages: "lgd-villages-datagovin",
+  lgdSubdistricts: "lgd-subdistricts-datagovin",
+  censusMh: "census-2011-village-amenities-mh",
+  datameetMh: "datameet-village-boundaries-mh",
+  ingresMh: "ingres-groundwater-maharashtra",
 } as const;
 
 export type UpstreamKey = keyof typeof SOURCE_IDS;
@@ -397,7 +411,53 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     publisher: "Open-Meteo",
     url: "https://open-meteo.com/",
   },
+  lgdLocalBodies: {
+    title: "Local Government Directory: local bodies with the villages they cover (data.gov.in resource 1a6c26ed)",
+    publisher: "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+    url: "https://data.gov.in/catalog/local-government-directory-lgd",
+  },
+  lgdVillages: {
+    title: "Local Government Directory: villages with Census 2011 codes (data.gov.in resource c967fe8f)",
+    publisher: "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+    url: "https://data.gov.in/catalog/local-government-directory-lgd",
+  },
+  lgdSubdistricts: {
+    title: "Local Government Directory: sub-districts (data.gov.in resource 6be51a29)",
+    publisher: "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform",
+    url: "https://data.gov.in/catalog/local-government-directory-lgd",
+  },
+  censusMh: {
+    title: "Census of India 2011 District Census Handbook: village amenities (Maharashtra village release)",
+    publisher: "Office of the Registrar General and Census Commissioner, India",
+    url: "https://censusindia.gov.in/nada/index.php/catalog/828",
+  },
+  datameetMh: {
+    title: "DataMeet indian_village_boundaries, Maharashtra (mh2.geojson with the mh.csv 2001-to-2011 crosswalk)",
+    publisher: "DataMeet community",
+    url: "https://github.com/datameet/indian_village_boundaries",
+  },
+  ingresMh: {
+    title: "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
+    publisher: "CGWB / IIT-Hyderabad (IN-GRES)",
+    url: "https://ingres.iith.ac.in/",
+  },
 };
+
+/* ── which adapter built a district ────────────────────────────────────── */
+
+export type PlanIdentityAdapter = "tnrd" | "lgd-directory";
+
+/** Read from the reviewed plan, so a producer that must branch by adapter
+ *  (groundwater unit type, projection method, boundary source) asks the plan
+ *  rather than guessing from the state slug. Absent field = TNRD. */
+export function planIdentityAdapter(district: AtlasDistrict): PlanIdentityAdapter {
+  const path = reviewedInputPath(district, "refresh-plan.json");
+  if (!existsSync(path)) {
+    throw new Error(`${district.slug}: no reviewed refresh plan at ${path}`);
+  }
+  const plan = JSON.parse(readFileSync(path, "utf8")) as { identityAdapter?: string };
+  return plan.identityAdapter === "lgd-directory" ? "lgd-directory" : "tnrd";
+}
 
 export function upstreamSource(
   key: UpstreamKey,

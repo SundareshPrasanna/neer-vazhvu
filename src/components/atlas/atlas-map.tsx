@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { FeatureCollection, MultiPolygon } from "geojson";
 
 export interface AtlasMapPoint {
   id: string;
@@ -10,6 +11,10 @@ export interface AtlasMapPoint {
   longitude: number;
   href?: string;
 }
+
+/** Served Panchayat polygons (LGD-built districts). Drawn under the markers
+ *  and, on a place map, used as the frame. */
+export type AtlasMapPolygons = FeatureCollection<MultiPolygon, { lgdCode: string; name: string }>;
 
 function MapLoading() {
   return (
@@ -33,18 +38,18 @@ const PlaceMap = dynamic(() => import("./atlas-map-inner").then((m) => m.AtlasPl
 });
 
 /** Every mapped Panchayat as a point, framed to the district's own extent. */
-export function AtlasDistrictMap({ points }: { points: AtlasMapPoint[] }) {
+export function AtlasDistrictMap({ points, polygons }: { points: AtlasMapPoint[]; polygons?: AtlasMapPolygons }) {
   return (
     <div className="h-[22rem] sm:h-[28rem] w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-      <DistrictMap points={points} />
+      <DistrictMap points={points} polygons={polygons} />
     </div>
   );
 }
 
-export function AtlasPlaceMap({ point }: { point: AtlasMapPoint }) {
+export function AtlasPlaceMap({ point, polygons }: { point: AtlasMapPoint; polygons?: AtlasMapPolygons }) {
   return (
     <div className="h-64 sm:h-72 w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-      <PlaceMap point={point} />
+      <PlaceMap point={point} polygons={polygons} />
     </div>
   );
 }

@@ -37,6 +37,13 @@ import {
   type WaterBodiesShard,
 } from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
+import type { DataMeetBoundaryExtract } from "./datameet-boundary";
+import {
+  validateLgdDistrictRefreshPlan,
+  validateLgdDistrictSourceExtract,
+  type LgdDistrictRefreshPlan,
+  type LgdDistrictSourceExtract,
+} from "./lgd-acquisition-model";
 import { buildDistrictAggregate, type DistrictAggregate } from "./district-aggregate";
 import type { DistrictArtifacts } from "./district-assessment";
 import { buildDistrictDirectory, type DistrictDirectory } from "./district-directory";
@@ -64,11 +71,38 @@ export interface FixtureDistrict {
 }
 
 /** One block per district: Sethubavachatram (Thanjavur) and Thiruverambur
- *  (Tiruchirappalli), fifteen Gram Panchayats each. */
+ *  (Tiruchirappalli), fifteen Gram Panchayats each. These are the TNRD-built
+ *  fixtures; the TNRD-shaped tests (plan, extract, boundary) iterate them. */
 export const FIXTURE_DISTRICTS: FixtureDistrict[] = [
   { slug: "thanjavur", block: "6633", blockName: "SETHUBAVACHATRAM", panchayats: 15 },
   { slug: "tiruchirappalli", block: "6684", blockName: "THIRUVERAMBUR", panchayats: 15 },
 ];
+
+export interface LgdFixtureDistrict {
+  slug: "satara";
+  block: string;
+  blockName: string;
+  panchayats: number;
+  /** A reviewed plan target the slice must hold. */
+  reviewedTarget: string;
+}
+
+/** Districts built from the Local Government Directory: Patan taluka of
+ *  Satara sliced to fifteen Panchayats around Marul Haveli (189960), cut by
+ *  scripts/atlas-cut-fixture.ts. Their mini inputs are LGD-shaped, so they
+ *  have their own loaders below and their own tests; the served-corpus tests
+ *  (directory, aggregate, reading) read them through the same readers as the
+ *  Tamil Nadu fixtures. */
+export const LGD_FIXTURE_DISTRICTS: LgdFixtureDistrict[] = [
+  { slug: "satara", block: "4264", blockName: "Patan", panchayats: 15, reviewedTarget: "189960" },
+];
+
+/** Fixture districts whose corpus is on disk, TNRD- and LGD-built alike. */
+export function fixtureSlugsPresent(): string[] {
+  return [...FIXTURE_DISTRICTS, ...LGD_FIXTURE_DISTRICTS]
+    .map((entry) => entry.slug)
+    .filter((slug) => existsSync(fixturePath(slug, "directory.json")));
+}
 
 export function districtBySlug(slug: string): AtlasDistrict {
   const district = ATLAS_DISTRICTS.find((entry) => entry.slug === slug);
@@ -77,7 +111,7 @@ export function districtBySlug(slug: string): AtlasDistrict {
 }
 
 export function fixturePath(slug: string, ...parts: string[]): string {
-  return resolve(FIXTURE_ROOT, "tn", slug, ...parts);
+  return resolve(FIXTURE_ROOT, districtBySlug(slug).stateSlug, slug, ...parts);
 }
 
 export function readFixture<T>(slug: string, ...parts: string[]): T {
@@ -231,6 +265,27 @@ export function buildMiniProposal(
     proposedAt: extract.acquiredAt,
     reviewedBlockAlignments,
   });
+}
+
+/* ── the LGD-built fixture's mini inputs ───────────────────────────────── */
+
+export function loadMiniLgdPlan(slug: string): LgdDistrictRefreshPlan {
+  const parsed: unknown = JSON.parse(readFileSync(fixturePath(slug, "refresh-plan.json"), "utf8"));
+  const errors = validateLgdDistrictRefreshPlan(parsed);
+  if (errors.length > 0) throw new Error(`Invalid LGD fixture plan:\n- ${errors.join("\n- ")}`);
+  return parsed as LgdDistrictRefreshPlan;
+}
+
+export function loadMiniLgdExtract(slug: string): LgdDistrictSourceExtract {
+  const parsed: unknown = JSON.parse(readFileSync(fixturePath(slug, "source-extract.json"), "utf8"));
+  const errors = validateLgdDistrictSourceExtract(parsed);
+  if (errors.length > 0) throw new Error(`Invalid LGD fixture extract:\n- ${errors.join("\n- ")}`);
+  return parsed as LgdDistrictSourceExtract;
+}
+
+export function loadMiniDataMeetBoundary(slug: string): DataMeetBoundaryExtract | undefined {
+  const path = fixturePath(slug, "boundary-extract.json");
+  return existsSync(path) ? (JSON.parse(readFileSync(path, "utf8")) as DataMeetBoundaryExtract) : undefined;
 }
 
 export function loadMiniResolution(

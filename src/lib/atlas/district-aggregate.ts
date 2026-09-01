@@ -4,6 +4,7 @@ import type {
   RainfallArtifact,
   WaterBodiesShard,
 } from "./artifacts";
+import { identityAdapterOf, identityMasterVintage, identityVintage } from "./artifacts";
 import {
   loadDirectory,
   loadGroundwaterTaluks,
@@ -148,13 +149,21 @@ function collectVintages(inputs: DistrictAggregateInputs): SourceVintage[] {
       ),
       note: "IN-GRES, assessed per revenue taluk rather than per Panchayat.",
     },
-    {
-      label: "Boundaries and water bodies",
-      represents: "as mapped",
-      acquired: waterBodies?.ext.atlas.acquiredAt ?? "unstated",
-      historical: false,
-      note: "TNGIS. The register carries no survey date, so the vintage of any one polygon is unstated.",
-    },
+    directory && identityAdapterOf(directory) === "lgd-directory"
+      ? {
+          label: "Boundaries",
+          represents: "2001",
+          acquired: directory.vintages.boundary?.retrievedAt ?? "unstated",
+          historical: true,
+          note: "DataMeet's digitisation of the 2001 Census village map (ODbL), joined to the 2011 codes and to each Panchayat's LGD-listed villages. No water-body register is wired for this district.",
+        }
+      : {
+          label: "Boundaries and water bodies",
+          represents: "as mapped",
+          acquired: waterBodies?.ext.atlas.acquiredAt ?? "unstated",
+          historical: false,
+          note: "TNGIS. The register carries no survey date, so the vintage of any one polygon is unstated.",
+        },
     {
       label: "Rainfall",
       represents: rainfall?.window
@@ -171,13 +180,21 @@ function collectVintages(inputs: DistrictAggregateInputs): SourceVintage[] {
       historical: true,
       note: "Census 2011 village tables, reference year 2009. The 2021 census did not take place, so no newer village-level enumeration exists.",
     },
-    {
-      label: "Panchayat list and codes",
-      represents: "2021",
-      acquired: directory?.vintages.tnrdMaster.sourceAsOf ?? "unstated",
-      historical: true,
-      note: "TNRD LGD list dated 2021, cross-checked against the current TNRD master.",
-    },
+    directory && identityAdapterOf(directory) === "lgd-directory"
+      ? {
+          label: "Panchayat list and codes",
+          represents: identityVintage(directory).sourceAsOf,
+          acquired: identityVintage(directory).retrievedAt,
+          historical: false,
+          note: "Local Government Directory as republished monthly on data.gov.in: Panchayats, villages and talukas with their LGD codes.",
+        }
+      : {
+          label: "Panchayat list and codes",
+          represents: "2021",
+          acquired: directory ? identityMasterVintage(directory).sourceAsOf : "unstated",
+          historical: true,
+          note: "TNRD LGD list dated 2021, cross-checked against the current TNRD master.",
+        },
   ];
 }
 

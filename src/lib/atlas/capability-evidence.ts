@@ -20,9 +20,49 @@ export const GENERATED_ASSESSMENT_SCHEMA_VERSION = 1;
  * something absent from this record cannot be written, which keeps generated
  * evidence tied to acquired sources rather than to assumption.
  */
+/**
+ * Which registers the identity and the boundary came from, so a rule cites
+ * the district's own sources rather than Tamil Nadu's. Absent on the Tamil
+ * Nadu corpus (the fixtures predate the field) and read as TNRD + TNGIS.
+ */
+export interface PlaceEvidenceProvenance {
+  identityAdapter: "tnrd" | "lgd-directory";
+  /** Registry ids the identity binding rests on, in citation order. */
+  identitySourceRefs: string[];
+  /** Registry id of the polygon source. */
+  boundarySourceRef: string;
+  /** The polygon source's own caveat, stated on every boundary evidence row. */
+  boundaryLimitation: string;
+  /** "TNGIS", "DataMeet": the source's short name for prose. */
+  boundaryLabel: string;
+  /** What the state calls the IN-GRES assessment unit: "taluk", "taluka". */
+  assessmentUnitLabel: string;
+}
+
+export const TNRD_PROVENANCE: PlaceEvidenceProvenance = {
+  identityAdapter: "tnrd",
+  identitySourceRefs: ["tnrd-lgd-snapshot", "jjm-imis"],
+  boundarySourceRef: "tngis-tnrd-panchayat-boundary",
+  boundaryLimitation:
+    "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year.",
+  boundaryLabel: "TNGIS",
+  assessmentUnitLabel: "taluk",
+};
+
+export const LGD_PROVENANCE: PlaceEvidenceProvenance = {
+  identityAdapter: "lgd-directory",
+  identitySourceRefs: ["lgd-local-bodies-datagovin", "lgd-villages-datagovin", "jjm-imis"],
+  boundarySourceRef: "datameet-village-boundaries-mh",
+  boundaryLimitation:
+    "DataMeet's polygons are a community digitisation of the 2001 Census village map (ODbL): indicative, not survey grade, and boundaries changed since 2001 are not reflected.",
+  boundaryLabel: "DataMeet",
+  assessmentUnitLabel: "taluka",
+};
+
 export interface PlaceEvidenceInputs {
   lgdGramPanchayatCode: string;
   lgdGramPanchayatName: string;
+  provenance?: PlaceEvidenceProvenance;
   identity: CanonicalCrosswalkRecord | undefined;
   boundary: TnBoundaryRecord | undefined;
   jjm: JjmGramPanchayatService | undefined;
@@ -98,10 +138,18 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
   "place-identity-and-composition": (inputs, date) => {
     const identity = inputs.identity;
     if (!identity?.jjm) return null;
+    const provenance = inputs.provenance ?? TNRD_PROVENANCE;
+    const lgd = provenance.identityAdapter === "lgd-directory";
     const limitations: string[] = [];
     if (!identity.census) {
       limitations.push(
-        "No Census Gram Panchayat membership is bound, so the 2011 settlement composition is not established.",
+        lgd
+          ? "The LGD register lists no village with a Census 2011 row under this Panchayat, so the 2011 settlement composition is not established."
+          : "No Census Gram Panchayat membership is bound, so the 2011 settlement composition is not established.",
+      );
+    } else if (lgd) {
+      limitations.push(
+        "The Census composition is the LGD register's own coverage list, which names one covering village for most Panchayats; member villages the register omits are not shown.",
       );
     }
     if (identity.jjm.status !== "verified") {
@@ -113,15 +161,19 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
       {
         id: `${inputs.lgdGramPanchayatCode}-identity`,
         sourceRefs: identity.census
-          ? ["tnrd-lgd-snapshot", "jjm-imis", "census-village-directory"]
-          : ["tnrd-lgd-snapshot", "jjm-imis"],
+          ? [...provenance.identitySourceRefs, "census-village-directory"]
+          : provenance.identitySourceRefs,
         localityClass: "direct-place",
         projectionMethod: "identifier-crosswalk",
         evidenceDate: date,
         notes:
-          `TNRD/LGD Gram Panchayat ${inputs.lgdGramPanchayatCode} bound to JJM unit ` +
+          `${lgd ? "LGD" : "TNRD/LGD"} Gram Panchayat ${inputs.lgdGramPanchayatCode} bound to JJM unit ` +
           `${identity.jjm.sourceUnitId}` +
-          (identity.census ? ` and Census unit ${identity.census.sourceUnitId}.` : "."),
+          (identity.census
+            ? lgd
+              ? ` and to Census 2011 rows through the register's coverage (${identity.census.sourceUnitId}).`
+              : ` and Census unit ${identity.census.sourceUnitId}.`
+            : "."),
       },
       limitations,
     );
@@ -130,20 +182,20 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
   "place-boundary": (inputs, date) => {
     const boundary = inputs.boundary;
     if (!boundary) return null;
+    const provenance = inputs.provenance ?? TNRD_PROVENANCE;
+    const lgd = provenance.identityAdapter === "lgd-directory";
     return adequate(
       {
         id: `${inputs.lgdGramPanchayatCode}-boundary`,
-        sourceRefs: ["tngis-tnrd-panchayat-boundary"],
+        sourceRefs: [provenance.boundarySourceRef],
         localityClass: "within-place",
-        projectionMethod: "direct-published",
+        projectionMethod: lgd ? "identifier-crosswalk" : "direct-published",
         evidenceDate: date,
-        notes:
-          `TNGIS publishes an exact Gram Panchayat polygon of ${boundary.areaHectares} ha ` +
-          `keyed to LGD ${boundary.lgdGramPanchayatCode}.`,
+        notes: lgd
+          ? `${provenance.boundaryLabel} village polygons joined to the LGD-listed member villages give a Panchayat extent of ${boundary.areaHectares} ha for LGD ${boundary.lgdGramPanchayatCode}.`
+          : `${provenance.boundaryLabel} publishes an exact Gram Panchayat polygon of ${boundary.areaHectares} ha keyed to LGD ${boundary.lgdGramPanchayatCode}.`,
       },
-      [
-        "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year.",
-      ],
+      [provenance.boundaryLimitation],
     );
   },
 
@@ -367,6 +419,7 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
   "groundwater-resource-status": (inputs, date) => {
     const groundwater = inputs.groundwater;
     if (!groundwater?.category) return null;
+    const unit = inputs.provenance?.assessmentUnitLabel ?? "taluk";
     return adequate(
       {
         id: `${inputs.lgdGramPanchayatCode}-groundwater`,
@@ -375,13 +428,13 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
         projectionMethod: "administrative-proxy",
         evidenceDate: date,
         notes:
-          `The containing revenue taluk ${groundwater.talukName} is assessed ` +
+          `The containing revenue ${unit} ${groundwater.talukName} is assessed ` +
           `${groundwater.category} at ` +
           `${formatExtractionStage(groundwater.stageOfExtractionPercent)} percent ` +
           "stage of extraction.",
       },
       [
-        "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place.",
+        `The assessment unit is a revenue ${unit}, not this Panchayat, so the category is containing-area context rather than a measurement of this place.`,
       ],
     );
   },

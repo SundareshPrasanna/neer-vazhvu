@@ -19,7 +19,7 @@ function usage(): string {
     "Usage:",
     "  npm run atlas:stage-blocks -- --district <slug> [--force]",
     "",
-    "Reads the cached source extract the refresh acquired and writes",
+    "Reads the cached source extract the refresh acquired (crosswalk-extract.json for an LGD-built district) and writes",
     "pipeline-inputs/atlas/<state>/<district>/block-alignment.json.",
     "",
     "Proposes a block alignment table: which JJM block and which Census CD",
@@ -47,14 +47,20 @@ async function main(): Promise<void> {
     );
   }
 
-  const extract = readCacheJson<TnDistrictSourceExtract>(district, "source-extract.json");
+  const extract = (readCacheJson<TnDistrictSourceExtract>(district, "crosswalk-extract.json") ??
+    readCacheJson<TnDistrictSourceExtract>(district, "source-extract.json"));
   if (!extract) {
     throw new Error(
       `No cached extract at ${cachePath(district, "source-extract.json")}; ` +
         "run atlas-refresh-tn-district.ts --fetch first",
     );
   }
-  const extractErrors = validateTnDistrictSourceExtract(extract);
+  // An LGD-built district's crosswalk-extract.json is the identity list in
+  // the crosswalk's shape with an empty Census axis; its real extract was
+  // validated by the refresh, and the TNRD rules (non-empty Census units) do
+  // not describe it.
+  const crosswalkShaped = readCacheJson<unknown>(district, "crosswalk-extract.json") !== undefined;
+  const extractErrors = crosswalkShaped ? [] : validateTnDistrictSourceExtract(extract);
   if (extractErrors.length > 0) {
     throw new Error(`Cached extract is invalid:\n- ${extractErrors.join("\n- ")}`);
   }

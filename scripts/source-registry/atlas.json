@@ -1,5 +1,5 @@
 {
-  "_doc": "Headwaters source registry - ATLAS-SCOPE sources. The Onboarding Atlas serves Tamil Nadu districts, blocks and Gram Panchayats (schemas/nvdm/scopes.json: tn-thanjavur, tn-tiruchirappalli are district scopes). Identity comes from TNRD (the 2021 LGD-coded PDF for stable codes, the current master for membership), JJM IMIS (service villages) and Census 2011 (settlement composition); TNGIS supplies polygons and water bodies under an UNVERIFIED licence. IN-GRES (chennai.json: ingres-gw-assessment-tn) and Open-Meteo (platform.json: open-meteo-archive) are NOT duplicated here - their dependsOn lists carry the atlas paths. As with every other registry file, cadence and tier are DOCUMENTATION ONLY and do not gate polling - see the note in basins.json.",
+  "_doc": "Headwaters source registry - ATLAS-SCOPE sources. The Onboarding Atlas serves Tamil Nadu districts, blocks and Gram Panchayats (schemas/nvdm/scopes.json: tn-thanjavur, tn-tiruchirappalli are district scopes). Identity comes from TNRD (the 2021 LGD-coded PDF for stable codes, the current master for membership), JJM IMIS (service villages) and Census 2011 (settlement composition); TNGIS supplies polygons and water bodies under an UNVERIFIED licence. IN-GRES (chennai.json: ingres-gw-assessment-tn) and Open-Meteo (platform.json: open-meteo-archive) are NOT duplicated here - their dependsOn lists carry the atlas paths. As with every other registry file, cadence and tier are DOCUMENTATION ONLY and do not gate polling - see the note in basins.json. 2026-09-01: Satara (Maharashtra, mh-satara) joins as the first district outside Tamil Nadu. Its identity comes from the Local Government Directory as republished on data.gov.in (three resources below), its Census rows from the Maharashtra DCHB release, its polygons from DataMeet (ODbL, served); IN-GRES Maharashtra is pune.json's ingres-groundwater-maharashtra with atlas dependsOn added there.",
   "sources": [
     {
       "id": "tnrd-lgd-directory-2021",
@@ -81,7 +81,12 @@
         "public/data/atlas/tn/tiruchirappalli/directory.json",
         "public/data/atlas/tn/tiruchirappalli/jjm-service",
         "public/data/atlas/tn/tiruchirappalli/assessments",
-        "public/data/atlas/tn/tiruchirappalli/briefs"
+        "public/data/atlas/tn/tiruchirappalli/briefs",
+        "public/data/atlas/mh/satara/directory.json",
+        "public/data/atlas/mh/satara/jjm-service",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs",
+        "public/data/atlas/mh/satara/curated-briefs.json"
       ],
       "refreshMethod": "scripts/atlas-refresh-tn-district.ts --fetch (village enumeration via ASP.NET postbacks ddState > ddDistrict) then scripts/atlas-jjm-tn-district.ts --district <slug> --fetch --as-of <date> (JSON page methods BindHabitationInfo, BindSourceInfo, BindSampleTestedInfo per village, serial and paced). Monthly scheduled re-run is the freshness question (follow-up: check-data-freshness.ts is city-keyed).",
       "notes": "Village information page of the JJM citizen corner. The district option set is only rendered after an ASP.NET __doPostBack on ddState, and the checker fetches with GET, so no method here can see the district set directly (tried 2026-08-29: the initial page carries the 36 state options and an empty ddDistrict; ETag is a Cache-Control string, not a validator; the body carries a per-request ViewState so a whole-page hash is never stable). What IS watchable is the state option set (select#ddState): a change there means the form was rebuilt, which is the same event that would move the district set. District and village enumeration drift is caught by the acquisition itself, which fails closed when the count differs from the reviewed plan. The page methods take state, district and village ids only (no session, no ViewState); encodeTxt-style obfuscation, if introduced, breaks the parser loudly rather than publishing noise. Licence: GoI programme portal, cited with attribution; no explicit reuse terms beyond the standard GoI website policy.",
@@ -216,6 +221,145 @@
         "contentHash": "c57702dc8bc3da05",
         "edition": "DescribeFeatureType tnrd:panchayat_boundary as served 2026-08-29 (village_lgd_code present)",
         "acceptedOn": "2026-08-29"
+      }
+    },
+    {
+      "scope": "atlas",
+      "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform (data.gov.in)",
+      "license": "Government Open Data License - India",
+      "type": "api",
+      "tier": 1,
+      "id": "lgd-local-bodies-datagovin",
+      "url": "https://api.data.gov.in/lists?format=json&api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&limit=1&filters[index_name]=1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "cadence": "monthly (the portal republishes the LGD on the 1st of each month)",
+      "detection": {
+        "method": "api-date",
+        "datePath": "records[0].updated_date"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/satara/directory.json",
+        "public/data/atlas/mh/satara/boundaries",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs",
+        "public/data/atlas/mh/satara/curated-briefs.json"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch --as-of <date> (bulk CSV export discovered from the portal's resource metadata; fails closed when the Panchayat or coverage count drifts from pipeline-inputs/atlas/<state>/<district>/refresh-plan.json)",
+      "notes": "The identity master for districts outside Tamil Nadu: every rural local body with the village(s) it covers, LGD codes throughout. lgdirectory.gov.in itself is captcha-gated on every view and download, so this republication is what a machine reads. Watched through the portal's own list API (updated_date of the resource), with the repository's public sample key (ten rows a call is enough to read one date). The export lists ONE covering village for most Panchayats rather than every member (Maharashtra: 29,460 coverage rows for 28,045 Panchayats against 43,705 village-to-Panchayat rows in the 2022 captcha download), so it settles the Panchayat list and a Panchayat's taluka, and only partially its settlement composition; the full mapping is the captcha download 'Village To Gram Panchayat Mapping', a reviewed input when a person supplies it. Licence: data.gov.in publishes under the Government Open Data License - India, attribution to the Ministry of Panchayati Raj.",
+      "lastSeen": {
+        "apiDate": "2026-09-01T06:02:47Z",
+        "edition": "baselined 2026-09-01 for Satara",
+        "acceptedOn": "2026-09-01"
+      }
+    },
+    {
+      "scope": "atlas",
+      "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform (data.gov.in)",
+      "license": "Government Open Data License - India",
+      "type": "api",
+      "tier": 1,
+      "id": "lgd-villages-datagovin",
+      "url": "https://api.data.gov.in/lists?format=json&api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&limit=1&filters[index_name]=c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "cadence": "monthly by declaration; the resource's own updated_date last moved 2022-11-17, its rows carry 2026 last_updated stamps",
+      "detection": {
+        "method": "api-date",
+        "datePath": "records[0].updated_date"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/satara/directory.json",
+        "public/data/atlas/mh/satara/boundaries",
+        "public/data/atlas/mh/satara/census-2011",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch --as-of <date> (district filter on the bulk export)",
+      "notes": "Every LGD village with its Census 2011 code, sub-district and district: the join between the LGD register, the Census workbook and the DataMeet polygons. The export header labels the local-name column 'VillageCode' a second time, so the parser reads positions and checks the header as published. Satara 2026-09: 1,764 villages, 1,693 with an LGD code equal to the Census 2011 code, the rest newer villages. The sibling 'Villages with PIN Codes' resource (f17a1608) updates daily and agreed on 1,763 of them; it is not registered because it adds nothing the identity needs.",
+      "lastSeen": {
+        "apiDate": "2022-11-17T16:06:43Z",
+        "edition": "baselined 2026-09-01 for Satara",
+        "acceptedOn": "2026-09-01"
+      }
+    },
+    {
+      "scope": "atlas",
+      "publisher": "Ministry of Panchayati Raj, Government of India, via the Open Government Data Platform (data.gov.in)",
+      "license": "Government Open Data License - India",
+      "type": "api",
+      "tier": 1,
+      "id": "lgd-subdistricts-datagovin",
+      "url": "https://api.data.gov.in/lists?format=json&api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&limit=1&filters[index_name]=6be51a29-876a-403a-a6da-42fde795e751",
+      "cadence": "monthly",
+      "detection": {
+        "method": "api-date",
+        "datePath": "records[0].updated_date"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/satara/directory.json",
+        "public/data/atlas/mh/satara/groundwater-projection.json",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch --as-of <date> (district filter on the bulk export)",
+      "notes": "The taluka list. It is the block layer where a state's Panchayat Samitis are coterminous with its talukas (Satara: eleven of each, same names; the refresh plan records blockModel 'sub-district'), and the unit IN-GRES assesses in Maharashtra, so the groundwater projection there is a code join through this list rather than a polygon intersection. The LGD development-block resource is not on data.gov.in.",
+      "lastSeen": {
+        "apiDate": "2026-09-01T03:57:26Z",
+        "edition": "baselined 2026-09-01 for Satara",
+        "acceptedOn": "2026-09-01"
+      }
+    },
+    {
+      "id": "census-2011-village-amenities-mh",
+      "scope": "atlas",
+      "publisher": "Office of the Registrar General and Census Commissioner, India",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/828",
+      "license": "Government of India publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed edition (Census 2011; the 2021 census did not take place)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": ".resource-downloads"
+      },
+      "insecureTLS": true,
+      "dependsOn": [
+        "public/data/atlas/mh/satara/directory.json",
+        "public/data/atlas/mh/satara/census-2011",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs",
+        "public/data/atlas/mh/satara/curated-briefs.json"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch (downloads DH_2011_DCHB_Village_Release_2700.xlsx, 82 MB, once into the content-addressed cache and reuses it hash-verified) then scripts/atlas-census-tn-district.ts --district <slug> --workbook <cached xlsx> --as-of <date>",
+      "notes": "The Maharashtra village release (worksheet Village_Data_2700) of the same DCHB series Tamil Nadu uses (catalog 45377, release 3300). One trap and one gap: the Tamil Nadu catalog's download id will serve a file under a Maharashtra filename, so the Maharashtra workbook is pinned to catalog 828 download 36182 and its sha256 6697776f33d6a08f6eeaf77c1f7652bf56c32d51f87ea40277f39c2fae1eca67; and this release leaves the Gram Panchayat code and name columns blank for every village (1,745 of 1,745 in Satara), so settlement composition comes from the LGD coverage register and the Census rows join by village code alone. censusindia.gov.in serves an incomplete TLS chain (insecureTLS for the checker; the producer downloads with curl and the system trust store).",
+      "lastSeen": {
+        "pageHash": "a241788c1d3c657d",
+        "edition": "baselined 2026-09-01 for Satara (catalog 828, Maharashtra village release 2700)",
+        "acceptedOn": "2026-09-01"
+      }
+    },
+    {
+      "id": "datameet-village-boundaries-mh",
+      "scope": "atlas",
+      "publisher": "DataMeet community (indian_village_boundaries)",
+      "url": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh2.geojson",
+      "license": "ODbL 1.0",
+      "type": "file",
+      "cadence": "closed edition in practice (a 2001 Census village map digitised by volunteers; the repository moved once, 2026-07, and was found again on GitHub 2026-09)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/satara/directory.json",
+        "public/data/atlas/mh/satara/boundaries",
+        "public/data/atlas/mh/satara/rainfall.json",
+        "public/data/atlas/mh/satara/assessments",
+        "public/data/atlas/mh/satara/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch-boundary --as-of <date> (mh2.geojson 78 MB plus mh/mh.csv, content-addressed; the district's features are sliced by DISTRICT and joined to the 2011 codes through the CEN_2001 crosswalk) then scripts/atlas-boundaries-lgd-district.ts --district <slug> --as-of <date>",
+      "notes": "Village polygons keyed on the 2001 Census code (CEN_2001), with DataMeet's own mh.csv mapping them to the 2011 village code the LGD carries. A Panchayat's geometry is the MultiPolygon of its LGD-listed member villages, never dissolved, so the parts stay auditable; Satara 2026-09: 1,865 features, 1,665 of the 1,764 LGD villages drawn. Indicative, not survey grade: a 2001-era community digitisation, 2001-to-2011 splits and merges resolved by the crosswalk only. ODbL: attribution required and share-alike on the derived database, which is why the derived Panchayat polygons are served (boundaries/<block>.geojson) under the same licence, unlike the TNGIS layer. GitHub raw serves an ETag, so http-meta sees a re-cut file.",
+      "lastSeen": {
+        "etag": "W/\"63644c2a0623ad5549e846bc56c162ca0f791b0701bdf7b8218a1af89306449b\"",
+        "edition": "baselined 2026-09-01 for Satara",
+        "acceptedOn": "2026-09-01"
       }
     }
   ]

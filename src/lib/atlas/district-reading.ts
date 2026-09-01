@@ -25,6 +25,7 @@ import type {
   RainfallArtifact,
   WaterBodiesShard,
 } from "./artifacts";
+import { identityAdapterOf, identityMasterVintage, identityVintage } from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
 import {
   loadBriefShards,
@@ -89,6 +90,8 @@ export interface TalukReading extends TalukGroundwater {
 }
 
 export interface GroundwaterReading {
+  /** What the state calls the assessment unit: "taluk" (Tamil Nadu), "taluka" (Maharashtra). */
+  unitLabel: string;
   assessmentYear: string | null;
   districtCategory: string | null;
   districtStagePercent: number | null;
@@ -217,6 +220,13 @@ function categoryLabel(category: string): string {
   return category.replace(/_/g, "-");
 }
 
+/** What the state calls the unit IN-GRES assesses: TALUK in Tamil Nadu,
+ *  TALUKA in Maharashtra. Read from the served artifact, lower-cased. */
+export function unitLabelOf(taluks: { source?: { assessmentUnitType?: string } } | undefined): string {
+  const raw = taluks?.source?.assessmentUnitType?.trim().toLowerCase();
+  return raw && raw.length > 0 ? raw : "taluk";
+}
+
 /** IN-GRES shouts taluk names ("THIRUCHIRAPALLI-EAST"); the page does not. */
 export function displayTalukName(name: string): string {
   return name
@@ -264,6 +274,10 @@ export interface VerdictSignals {
   gapBlocks: Array<{ name: string; tapPercent: number; canalPercent: number | null; inDeficitTaluk: boolean }>;
   /** True when the district sits in the Cauvery (TN) basin, where the canal head is Mettur. */
   metturBasin: boolean;
+  /** The assessment unit's name in this state; "taluk" when unstated. */
+  unitLabel?: string;
+  /** The state's own sentence on the missing current irrigation reading. */
+  irrigationNextStep?: string;
   /** Non-null when a current irrigation mix is served ("Season and Crop
    *  Report 2024-25"); canalPercent and wellPercent then carry the current
    *  district figures rather than the Census 2011 pattern, and the verdict
@@ -336,22 +350,23 @@ export function sourceClause(s: VerdictSignals): string {
 }
 
 function groundwaterClause(s: VerdictSignals): string {
-  if (s.taluks === 0) return "no IN-GRES taluk assessment is on file";
+  const unit = s.unitLabel ?? "taluk";
+  if (s.taluks === 0) return `no IN-GRES ${unit} assessment is on file`;
   const n = s.taluks;
   if (s.overExploited > 0 && s.critical > 0) {
     return (
-      `${s.overExploited} of ${n} taluks already draw more groundwater than recharges ` +
+      `${s.overExploited} of ${n} ${unit}s already draw more groundwater than recharges ` +
       `and ${s.critical} more ${plural(s.critical, "is", "are")} close to that line`
     );
   }
   if (s.overExploited > 0) {
-    return `${s.overExploited} of ${n} taluks already draw more groundwater than recharges`;
+    return `${s.overExploited} of ${n} ${unit}s already draw more groundwater than recharges`;
   }
-  if (s.critical > 0) return `${s.critical} of ${n} taluks ${plural(s.critical, "is", "are")} assessed critical`;
+  if (s.critical > 0) return `${s.critical} of ${n} ${unit}s ${plural(s.critical, "is", "are")} assessed critical`;
   if (s.semiCritical > 0) {
-    return `none of the ${n} taluks is over-exploited, though ${s.semiCritical} ${plural(s.semiCritical, "is", "are")} semi-critical`;
+    return `none of the ${n} ${unit}s is over-exploited, though ${s.semiCritical} ${plural(s.semiCritical, "is", "are")} semi-critical`;
   }
-  return `every one of the ${n} assessed taluks is within its recharge`;
+  return `every one of the ${n} assessed ${unit}s is within its recharge`;
 }
 
 function serviceClause(s: VerdictSignals): string {
@@ -412,7 +427,8 @@ export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
   const nextSteps: string[] = [];
   if (s.source !== null && s.currentMixLabel === null) {
     nextSteps.push(
-      "A current irrigation reading by source: the canal, well and tank shares below are the Census 2011 pattern (reference year 2009); the Season and Crop Report 2024-25 is published and not yet wired.",
+      "A current irrigation reading by source: the canal, well and tank shares below are the Census 2011 pattern (reference year 2009); " +
+        (s.irrigationNextStep ?? "the Season and Crop Report 2024-25 is published and not yet wired."),
     );
   }
   if (s.metturBasin && (s.canalPercent ?? 0) > 0) {
@@ -420,7 +436,7 @@ export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
   }
   if (s.overExploited + s.critical > 0) {
     nextSteps.push(
-      "A measured groundwater level series for the taluks in deficit, so the assessment can be read against observation.",
+      `A measured groundwater level series for the ${s.unitLabel ?? "taluk"}s in deficit, so the assessment can be read against observation.`,
     );
   }
   if (s.gapBlocks.length > 0) {
@@ -523,6 +539,7 @@ function groundwaterReading(
   const availabilityByTaluk = new Map(
     (taluksArtifact?.records ?? []).map((record) => [record.locationName, record.totalAvailabilityHam]),
   );
+  const unit = unitLabelOf(taluksArtifact);
   const taluks: TalukReading[] = aggregate.taluks.map((taluk) => ({
     ...taluk,
     totalAvailabilityHam: availabilityByTaluk.get(taluk.name) ?? null,
@@ -538,7 +555,7 @@ function groundwaterReading(
 
   let finding: string;
   if (taluks.length === 0) {
-    finding = "No IN-GRES taluk assessment is on file for this district, so the headroom is unstated rather than estimated.";
+    finding = `No IN-GRES ${unit} assessment is on file for this district, so the headroom is unstated rather than estimated.`;
   } else {
     const byFuture = [...taluks].sort((a, b) => b.availabilityForFutureUseHam - a.availabilityForFutureUseHam);
     const most = byFuture[0];
@@ -556,15 +573,16 @@ function groundwaterReading(
         ? `${num(futureUseHam)} ham left for future use`
         : `${num(futureUseHam)} ham (${headroomPercent}%) left for future use`;
     finding =
-      `IN-GRES ${year ?? ""} puts total groundwater availability across the ${taluks.length} taluks at ` +
+      `IN-GRES ${year ?? ""} puts total groundwater availability across the ${taluks.length} ${unit}s at ` +
       `${num(availabilityHam)} ham a year, ${num(rechargeHam)} ham of it rainfall recharge, with ${headroom}. ` +
-      `Of the ${taluks.length} taluks, ${listNames(counts)}.${districtRow} ` +
+      `Of the ${taluks.length} ${unit}s, ${listNames(counts)}.${districtRow} ` +
       `Headroom sits mostly in ${displayTalukName(most.name)} (${num(most.availabilityForFutureUseHam)} ham) ` +
       `and is thinnest in ${displayTalukName(least.name)} (${num(least.availabilityForFutureUseHam)} ham).`;
   }
 
   return {
     assessmentYear: year,
+    unitLabel: unit,
     districtCategory: taluksArtifact?.district.category ?? null,
     districtStagePercent: taluksArtifact?.district.stageOfExtractionPercent ?? null,
     taluks,
@@ -613,7 +631,7 @@ function blockReadings(
   });
 }
 
-function blockFindings(aggregate: DistrictAggregate, blocks: BlockReading[]): BlockFindings {
+function blockFindings(aggregate: DistrictAggregate, blocks: BlockReading[], unit: string): BlockFindings {
   const withCanal = blocks
     .filter((b) => b.canalPercent !== null)
     .sort((a, b) => (b.canalPercent ?? 0) - (a.canalPercent ?? 0));
@@ -661,7 +679,7 @@ function blockFindings(aggregate: DistrictAggregate, blocks: BlockReading[]): Bl
     }
     if (gapBlocks.every((b) => b.dominantCategory !== null && DEFICIT_CATEGORIES.has(b.dominantCategory))) {
       tapGap +=
-        " Each of these blocks sits mostly in a taluk assessed over-exploited or critical, so closing the gap draws on a source already in deficit.";
+        ` Each of these blocks sits mostly in a ${unit} assessed over-exploited or critical, so closing the gap draws on a source already in deficit.`;
     }
   }
 
@@ -748,7 +766,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
         ),
       }
     : null;
-  const currentMixLabel = current ? `Season and Crop Report ${current.edition}` : null;
+  const currentMixLabel = current ? `${district.irrigationCurrentSource.label} ${current.edition}` : null;
   const categories = groundwaterReading(aggregate, groundwater, projection);
   const gapBlocks = blocks
     .filter((b) => b.tapPercent !== null && b.tapPercent < 99)
@@ -773,6 +791,8 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     gapBlocks,
     metturBasin: district.basin?.basinId === "cauvery-tn",
     currentMixLabel,
+    unitLabel: categories.unitLabel,
+    irrigationNextStep: district.irrigationCurrentSource.nextStep,
   };
   const verdict = composeDistrictVerdict(signals);
 
@@ -815,12 +835,12 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     const deficit = signals.overExploited + signals.critical;
     facts.push({
       value: `${deficit} of ${aggregate.taluks.length}`,
-      label: "taluks over-exploited or critical",
+      label: `${categories.unitLabel}s over-exploited or critical`,
       asOf: `IN-GRES ${aggregate.groundwaterAssessmentYear ?? ""}`.trim(),
       note:
         (categories.districtCategory
           ? `District stage of extraction ${formatExtractionStage(categories.districtStagePercent)}%, assessed ${categoryLabel(categories.districtCategory)}. `
-          : "") + "Assessed per revenue taluk, not per block or Panchayat.",
+          : "") + `Assessed per revenue ${categories.unitLabel}, not per block or Panchayat.`,
     });
   }
   if (aggregate.tapPercent !== null) {
@@ -888,13 +908,23 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       note,
     });
   };
-  push(
-    "Panchayat list and codes",
-    directory,
-    directory?.vintages.tnrdLgd.sourceAsOf ?? "unstated",
-    directory?.vintages.tnrdMaster.retrievedAt,
-    "TNRD LGD directory, cross-checked against the current TNRD master on the retrieval date.",
-  );
+  if (directory && identityAdapterOf(directory) === "lgd-directory") {
+    push(
+      "Panchayat list and codes",
+      directory,
+      `LGD edition ${identityVintage(directory).sourceAsOf}`,
+      identityVintage(directory).retrievedAt,
+      "Local Government Directory (Ministry of Panchayati Raj) as republished on data.gov.in: the Panchayat list, its covered villages and the taluka list, refreshed monthly.",
+    );
+  } else {
+    push(
+      "Panchayat list and codes",
+      directory,
+      directory ? identityVintage(directory).sourceAsOf : "unstated",
+      directory ? identityMasterVintage(directory).retrievedAt : undefined,
+      "TNRD LGD directory, cross-checked against the current TNRD master on the retrieval date.",
+    );
+  }
   push(
     "Drinking-water service, sources, testing",
     inputs.jjm[0],
@@ -916,21 +946,23 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     sourceOf(inputs.census[0])?.retrieved,
     current
       ? "Census 2011 village tables, the newest village-level irrigation enumeration served here. The Season and Crop Report district mix above is the current reading; the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet."
-      : "Census 2011 village tables, the newest village-level irrigation enumeration served here. Newer official readings exist at coarser grain and are not wired yet: the annual Season and Crop Report (district totals by source, 2024-25 edition published) and the 2017-18 Minor Irrigation Census (wells and tanks by village).",
+      : `Census 2011 village tables, the newest village-level irrigation enumeration served here. ${district.irrigationCurrentSource.gapNote}`,
   );
   push(
     "Groundwater assessment",
     groundwater,
     groundwater?.assessmentYear ?? "unstated",
     sourceOf(groundwater)?.retrieved,
-    "IN-GRES, assessed per revenue taluk. The year is the hydrological-year label.",
+    `IN-GRES, assessed per revenue ${categories.unitLabel}. The year is the hydrological-year label.`,
   );
   push(
     "Groundwater projected to Panchayats",
     projection,
     projection?.assessmentYear ?? "unstated",
     projection?.projectedAt,
-    "Each Panchayat inherits its containing taluk's category by spatial intersection.",
+    projection?.projectionMethod === "administrative-membership"
+      ? `Each Panchayat inherits its ${categories.unitLabel}'s category through the register's own membership.`
+      : `Each Panchayat inherits its containing ${categories.unitLabel}'s category by spatial intersection.`,
   );
   push(
     "Rainfall",
@@ -1006,7 +1038,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     mettur: metturReading(district, aggregate, blocks),
     groundwater: categories,
     blocks,
-    blockFindings: blockFindings(aggregate, blocks),
+    blockFindings: blockFindings(aggregate, blocks, categories.unitLabel),
     waterBodies: waterBodiesReading(aggregate, inputs.waterBodies),
     environmentPlan: null,
     vintages,

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { AtlasBreadcrumbs } from "@/components/atlas/atlas-breadcrumbs";
-import { AtlasPlaceMap } from "@/components/atlas/atlas-map";
+import { AtlasPlaceMap, type AtlasMapPolygons } from "@/components/atlas/atlas-map";
 import {
   AtlasCard,
   AtlasContainer,
@@ -24,9 +24,9 @@ import {
   type Tone,
 } from "@/components/atlas/atlas-primitives";
 import { getCuratedBrief } from "@/lib/atlas/curated-briefs";
-import { loadGroundwaterProjection } from "@/lib/atlas/data";
+import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks } from "@/lib/atlas/data";
 import { getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
-import { displayTalukName } from "@/lib/atlas/district-reading";
+import { displayTalukName, unitLabelOf } from "@/lib/atlas/district-reading";
 import {
   blockHref,
   districtHref,
@@ -67,6 +67,7 @@ const area = (value: number): string => Number(value.toFixed(1)).toLocaleString(
 function grainFlag(fact: { label: string; note: string }): string | undefined {
   const text = `${fact.label} ${fact.note}`;
   if (/firka/i.test(text)) return "firka assessment";
+  if (/taluka/i.test(text)) return "taluka projection";
   if (/taluk/i.test(text)) return "taluk projection";
   return undefined;
 }
@@ -137,6 +138,25 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
   // A reviewer's brief is preferred where one exists. It carries what a
   // person understood about the place, which no rule derives.
   const curated = entry.hasCuratedBriefs ? getCuratedBrief(entry.slug, gpCode) : undefined;
+  // Served polygons exist only where the licence allows (DataMeet, ODbL);
+  // the TNGIS-built districts carry none and the map keeps its marker.
+  const boundaryFeature = directory.boundary?.publicGeometry
+    ? loadBoundaryShard(entry, panchayat.blockCode)?.features.find(
+        (feature) => feature.properties.lgdCode === gpCode,
+      )
+    : undefined;
+  const polygons: AtlasMapPolygons | undefined = boundaryFeature
+    ? {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: { lgdCode: boundaryFeature.properties.lgdCode, name: boundaryFeature.properties.name },
+            geometry: boundaryFeature.geometry,
+          },
+        ],
+      }
+    : undefined;
   const projection = loadGroundwaterProjection(entry)?.records.find(
     (record) => record.lgdGramPanchayatCode === gpCode,
   );
@@ -162,11 +182,13 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
 
   // One list drives both the contents rail and the chapters, so a section
   // can never appear in one and be missing from the other.
+  // "taluk" in Tamil Nadu, "taluka" in Maharashtra: the assessment unit's own name.
+  const unit = unitLabelOf(loadGroundwaterTaluks(entry));
   const chapters = [
     { id: "where", label: "Place and boundary", show: Boolean(detail?.boundary) },
     { id: "habitations", label: "Habitations", show: Boolean(detail && detail.habitations.length > 0) },
     { id: "water-sources", label: "Where the water comes from", show: Boolean(detail && detail.sources.length > 0) },
-    { id: "groundwater", label: "Groundwater, projected from the taluk", show: Boolean(projection) },
+    { id: "groundwater", label: `Groundwater, projected from the ${unit}`, show: Boolean(projection) },
     { id: "water-bodies", label: "Tanks and water bodies", show: Boolean(detail?.waterBodies) },
     { id: "sampling", label: "Water-quality testing", show: Boolean(detail?.sampling) },
     { id: "land", label: "Land and irrigation", show: Boolean(detail?.land) },
@@ -293,7 +315,11 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                 <Chapter
                   id="where"
                   title="Place and boundary"
-                  intro="The mapped extent comes from the TNGIS Panchayat polygon for this LGD code, so the place on the map is the place the records describe."
+                  intro={
+                    directory.boundary?.publicGeometry
+                      ? `The mapped extent is ${directory.boundary.description}, so the place on the map is the place the register describes.`
+                      : "The mapped extent comes from the TNGIS Panchayat polygon for this LGD code, so the place on the map is the place the records describe."
+                  }
                 >
                   <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
                     <AtlasCard>
@@ -314,6 +340,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                     </AtlasCard>
                     <figure>
                       <AtlasPlaceMap
+                        polygons={polygons}
                         point={{
                           id: panchayat.lgdCode,
                           name: panchayat.name,
@@ -323,8 +350,9 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                         }}
                       />
                       <figcaption className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                        Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a
-                        settlement; the polygon is withheld pending the licence reply.
+                        {directory.boundary?.publicGeometry
+                          ? `Plotted from the centroid of the ${directory.boundary.label} polygon. The marker is the Panchayat, not a settlement; the polygon is indicative (a 2001-era digitisation), not a survey boundary.`
+                          : "Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a settlement; the polygon is withheld pending the licence reply."}
                       </figcaption>
                     </figure>
                   </div>
@@ -394,28 +422,32 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
               {projection ? (
                 <Chapter
                   id="groundwater"
-                  title="Groundwater, projected from the taluk"
-                  intro="IN-GRES assesses revenue taluks. This Panchayat inherits its containing taluk's category unchanged, as containing-area context rather than a measurement of the place."
+                  title={`Groundwater, projected from the ${unit}`}
+                  intro={`IN-GRES assesses revenue ${unit}s. This Panchayat inherits its containing ${unit}'s category unchanged, as containing-area context rather than a measurement of the place.`}
                 >
                   <dl className="grid gap-4 sm:grid-cols-3">
                     <StatTile
                       value={projection.category ? projection.category.replace(/_/g, "-") : "not stated"}
-                      label="taluk category"
-                      flag="taluk projection"
-                      note={`${displayTalukName(projection.talukName)} taluk, by ${projection.containment.replace(/-/g, " ")}.`}
+                      label={`${unit} category`}
+                      flag={`${unit} projection`}
+                      note={`${displayTalukName(projection.talukName)} ${unit}, by ${projection.containment.replace(/-/g, " ")}.`}
                       primary
                     />
                     <StatTile
                       value={`${formatExtractionStage(projection.stageOfExtractionPercent)}%`}
-                      label="stage of extraction, taluk"
-                      flag="taluk projection"
-                      note="Groundwater drawn each year as a share of what recharges, for the whole taluk. Above 100 is more drawn than recharges."
+                      label={`stage of extraction, ${unit}`}
+                      flag={`${unit} projection`}
+                      note={`Groundwater drawn each year as a share of what recharges, for the whole ${unit}. Above 100 is more drawn than recharges.`}
                     />
                     <StatTile
                       value={displayTalukName(projection.talukName)}
-                      label="containing revenue taluk"
-                      flag="taluk projection"
-                      note="Sub-district on the revenue hierarchy, which the Panchayat hierarchy does not nest inside."
+                      label={`containing revenue ${unit}`}
+                      flag={`${unit} projection`}
+                      note={
+                        projection.containment === "village-subdistrict-code"
+                          ? "Sub-district on the revenue hierarchy, which the register itself places this Panchayat's villages in."
+                          : "Sub-district on the revenue hierarchy, which the Panchayat hierarchy does not nest inside."
+                      }
                     />
                   </dl>
                   {projectionLimitations.length > 0 ? (

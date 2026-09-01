@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# The Atlas refresh chain for one Tamil Nadu district, in the order the
-# producers depend on each other. One script, shared by the monthly
+# The Atlas refresh chain for one district, in the order the producers
+# depend on each other. Two identity adapters share it: Tamil Nadu districts
+# read TNRD (atlas-refresh-tn-district.ts), districts elsewhere read the
+# Local Government Directory as republished on data.gov.in
+# (atlas-refresh-lgd-district.ts); the reviewed plan's identityAdapter field
+# decides, and the geometry steps follow it (TNGIS for Tamil Nadu, DataMeet
+# for an LGD-built district, whose polygons are served). One script, shared by the monthly
 # workflow (.github/workflows/atlas-refresh.yml), the launchd fallback when
 # a government host blocks GitHub runners, and a person at a terminal.
 #
@@ -20,9 +25,10 @@
 #   2 jjm          JJM service per block                        (fetch, paced)
 #   3 census       Census 2011 roll-up per block                (replay: closed source)
 #   4 groundwater  IN-GRES taluk assessment                     (fetch)
-#   5 project-gw   taluk assessment projected onto GPs          (cached polygons)
+#   5 project-gw   taluk assessment projected onto GPs          (cached polygons; register membership for LGD)
 #   6 rainfall     Open-Meteo 30-day window per GP              (fetch)
-#   7 water-bodies TNGIS counts per block                       (fetch)
+#   7 water-bodies TNGIS counts per block (Tamil Nadu only)     (fetch)
+#   7b boundaries  served Panchayat polygons (LGD-built only)   (cached DataMeet)
 #   8 assess       40-capability assessments + briefs per block (derived)
 #   9 validate     whole-corpus assertions over the served tree
 #
@@ -38,9 +44,27 @@
 #                alert. Every other step stops on any failure.
 set -uo pipefail
 
-district="${1:?district slug required (thanjavur, tiruchirappalli)}"
+district="${1:?district slug required (thanjavur, tiruchirappalli, satara)}"
 as_of="${2:-$(date -u +%Y-%m-%d)}"
 cd "$(dirname "$0")/.."
+
+# The reviewed plan names the adapter; the state directory names the tree.
+plan="$(ls pipeline-inputs/atlas/*/"$district"/refresh-plan.json 2>/dev/null | head -1)"
+[ -n "$plan" ] || { printf '!! [%s] no reviewed refresh plan under pipeline-inputs/atlas/*/%s/\n' "$district" "$district"; exit 1; }
+state="$(basename "$(dirname "$(dirname "$plan")")")"
+adapter="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("identityAdapter","tnrd"))' "$plan")"
+identity_flags=""
+if [ "$adapter" = "lgd-directory" ]; then
+  identity_script="scripts/atlas-refresh-lgd-district.ts"
+  # The DataMeet polygons (78 MB from GitHub) are fetched once into the cache;
+  # a fresh runner has none, and a directory built without them would lose
+  # every centroid, so the flag follows the cache rather than the host.
+  if [ ! -f ".cache/atlas/$state/$district/datameet-boundary-extract.json" ]; then
+    identity_flags="--fetch-boundary"
+  fi
+else
+  identity_script="scripts/atlas-refresh-tn-district.ts"
+fi
 
 step() { printf '\n== [%s] %s (%s)\n' "$district" "$1" "$(date -u +%H:%M:%SZ)"; }
 must() { "$@" || { printf '\n!! [%s] stopped at: %s\n' "$district" "$*"; exit 1; }; }
@@ -48,7 +72,7 @@ must() { "$@" || { printf '\n!! [%s] stopped at: %s\n' "$district" "$*"; exit 1;
 identity="refreshed"
 step "1 refresh: identity sources -> directory.json"
 log="$(mktemp)"
-if npx tsx scripts/atlas-refresh-tn-district.ts --district "$district" --fetch --as-of "$as_of" 2>&1 | tee "$log"; then
+if npx tsx "$identity_script" --district "$district" --fetch --as-of "$as_of" $identity_flags 2>&1 | tee "$log"; then
   :
 elif grep -q -E 'Fetch failed after|curl failed after|Connect Timeout|ECONNREFUSED|ENOTFOUND|ETIMEDOUT' "$log"; then
   identity="skipped: identity host unreachable; served directory reused"
@@ -70,7 +94,15 @@ must npx tsx scripts/atlas-jjm-tn-district.ts --district "$district" --fetch --a
 # refresh; otherwise the served shards stand.
 if [ "$identity" = "refreshed" ]; then
   step "3 census: 2011 roll-up per block (closed source, replayed after an identity refresh)"
-  must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --replay
+  if [ "$adapter" = "lgd-directory" ]; then
+    # The identity refresh downloaded (or reused) the state workbook into the
+    # content-addressed cache; its digest is in the extract, so the roll-up
+    # reads that object rather than a replay cache a fresh runner lacks.
+    workbook_sha="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sources"]["census"]["artifactSha256s"][0])' ".cache/atlas/$state/$district/source-extract.json")"
+    must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --workbook ".cache/atlas/$state/$district/objects/$workbook_sha" --as-of "$as_of"
+  else
+    must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --replay
+  fi
 else
   step "3 census: skipped (closed source; identity not refreshed this run)"
 fi
@@ -93,7 +125,7 @@ must npx tsx scripts/atlas-groundwater-tn-district.ts --district "$district" --f
 # dry runs fired on those). The artifact carries a digest of its records and
 # the assessment year; those two are what "the taluk assessment changed"
 # means.
-gw_file="public/data/atlas/tn/$district/groundwater-taluks.json"
+gw_file="public/data/atlas/$state/$district/groundwater-taluks.json"
 gw_changed=$(python3 - "$gw_file" <<'PY'
 import json, subprocess, sys
 path = sys.argv[1]
@@ -118,7 +150,15 @@ fi
 step "6 rainfall: Open-Meteo 30-day window per Gram Panchayat"
 must npx tsx scripts/atlas-rainfall-tn-district.ts --district "$district" --fetch --as-of "$as_of"
 
-if [ "$identity" = "refreshed" ]; then
+if [ "$adapter" = "lgd-directory" ]; then
+  step "7 water-bodies: not applicable (no state GIS register for this district; named gap on the page)"
+  if [ "$identity" = "refreshed" ]; then
+    step "7b boundaries: served Panchayat polygons per taluka (DataMeet, ODbL)"
+    must npx tsx scripts/atlas-boundaries-lgd-district.ts --district "$district" --as-of "$as_of"
+  else
+    step "7b boundaries: skipped (geometry step; runs with an identity refresh)"
+  fi
+elif [ "$identity" = "refreshed" ]; then
   step "7 water-bodies: TNGIS counts per block"
   must npx tsx scripts/atlas-water-bodies-tn-district.ts --district "$district" --as-of "$as_of" --fetch
 else

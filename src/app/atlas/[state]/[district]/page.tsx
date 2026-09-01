@@ -103,6 +103,9 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
     }));
 
   const { verdict, facts, irrigation, drinking, mettur, groundwater, blockFindings } = reading;
+  // "taluk" in Tamil Nadu, "taluka" in Maharashtra: the assessment unit's own name.
+  const unit = groundwater.unitLabel;
+  const Unit = unit.charAt(0).toUpperCase() + unit.slice(1);
 
   return (
     <div className="bg-white dark:bg-slate-950">
@@ -264,17 +267,17 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
 
           <AtlasSection
             id="groundwater"
-            title="Groundwater by taluk"
-            intro="IN-GRES assesses revenue taluks, not blocks or Panchayats. These are the units the district is actually assessed in, and the headroom reading is written from them."
+            title={`Groundwater by ${unit}`}
+            intro={`IN-GRES assesses revenue ${unit}s, not blocks or Panchayats. These are the units the district is actually assessed in, and the headroom reading is written from them.`}
           >
             <AtlasFinding>{groundwater.finding}</AtlasFinding>
             {groundwater.taluks.length > 0 ? (
               <div className="mt-4">
-                <AtlasTableScroll label="Groundwater assessment by taluk">
+                <AtlasTableScroll label={`Groundwater assessment by ${unit}`}>
                   <table className={TABLE}>
                     <thead className={THEAD}>
                       <tr>
-                        <th className={TH}>Taluk</th>
+                        <th className={TH}>{Unit}</th>
                         <th className={TH}>Stage of extraction</th>
                         <th className={TH}>Category</th>
                         <th className={TH}>Rainfall recharge (ham)</th>
@@ -304,11 +307,11 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                 </AtlasTableScroll>
                 <AtlasNote>
                   IN-GRES {groundwater.assessmentYear}. The stage of extraction is annual draft as a share of
-                  total availability; above 100 percent, more is drawn each year than the taluk is assessed
+                  total availability; above 100 percent, more is drawn each year than the {unit} is assessed
                   to have. Rainfall recharge is one component of that availability. The year is the
                   hydrological-year label, not an edition date.
                   {groundwater.projection
-                    ? ` ${groundwater.projection.projected} of ${groundwater.projection.gramPanchayats} Panchayats inherit their containing taluk's category by ${groundwater.projection.method.replace(/-/g, " ")}, as containing-area context rather than a measurement of the place; ${groundwater.projection.deferred} ${groundwater.projection.deferred === 1 ? "is" : "are"} deferred rather than guessed.`
+                    ? ` ${groundwater.projection.projected} of ${groundwater.projection.gramPanchayats} Panchayats inherit their containing ${unit}'s category by ${groundwater.projection.method.replace(/-/g, " ")}, as containing-area context rather than a measurement of the place; ${groundwater.projection.deferred} ${groundwater.projection.deferred === 1 ? "is" : "are"} deferred rather than guessed.`
                     : ""}
                 </AtlasNote>
               </div>
@@ -345,7 +348,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                         Groundwater, IN-GRES
                       </th>
                       <th className={TH} colSpan={1}>
-                        Water bodies, TNGIS
+                        {reading.waterBodies ? "Water bodies, TNGIS" : "Water bodies"}
                       </th>
                       <th className={TH} colSpan={2}>
                         Water-quality testing, JJM
@@ -359,7 +362,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                       <th className={TH}>from canals</th>
                       <th className={TH}>from wells</th>
                       <th className={TH}>from tanks</th>
-                      <th className={TH}>Taluk category, projected</th>
+                      <th className={TH}>{Unit} category, projected</th>
                       <th className={TH}>Mapped</th>
                       <th className={TH}>Untested 90+ d</th>
                       <th className={TH}>Longest since tested</th>
@@ -405,8 +408,8 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                 households and not of drinking water. They come from Census 2011 ({irrigation.describes})
                 and cover only the {irrigation.places}{" "}Panchayats with a Census land record, so a block
                 with few such records shows a share of a small area. Tap and testing figures are JJM and
-                current at the read date. The taluk category is the one most of the block&rsquo;s
-                Panchayats inherit by projection, since blocks and revenue taluks do not nest.
+                current at the read date. The {unit} category is the one most of the block&rsquo;s
+                Panchayats inherit by projection{groundwater.projection?.method === "administrative-membership" ? `, which here is the ${unit} the register places them in` : `, since blocks and revenue ${unit}s do not nest`}.
                 Untested counts Panchayats whose most recent water-quality sample is more than 90 days
                 before {reading.asOf}; ninety days is the Atlas&rsquo;s own threshold for calling a series
                 stale, not a statutory testing interval.
@@ -417,7 +420,11 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
           <AtlasSection
             id="water-bodies"
             title="Water bodies"
-            intro="The TNGIS all-water-bodies register, joined to each Panchayat by the register's own LGD code rather than by a name match."
+            intro={
+              reading.waterBodies
+                ? "The TNGIS all-water-bodies register, joined to each Panchayat by the register's own LGD code rather than by a name match."
+                : "A per-Panchayat water-body register needs a state GIS layer that states which Panchayat each tank belongs to; none is wired for this district yet."
+            }
           >
             {reading.waterBodies ? (
               <div className="max-w-xl">
@@ -439,7 +446,9 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               </div>
             ) : (
               <AtlasGap title="No water-body register acquired">
-                No TNGIS water-body shard exists for this district yet, so nothing is counted here.
+                {directory.identityAdapter === "lgd-directory"
+                  ? `No state water-body register is wired for ${directory.districtName} (Maharashtra has no open equivalent of the TNGIS layer; MRSAC and Bhuvan are the leads), so nothing is counted here.`
+                  : "No TNGIS water-body shard exists for this district yet, so nothing is counted here."}
               </AtlasGap>
             )}
           </AtlasSection>
@@ -473,12 +482,14 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
           <AtlasSection
             id="map"
             title="The district on a map"
-            intro="Every Panchayat with a mapped boundary is plotted from the centre of its own TNGIS polygon, not from a hand-entered coordinate. The marker is the Panchayat, not a settlement."
+            intro={`Every Panchayat with a mapped boundary is plotted from the centre of its own ${directory.boundary?.label ?? "boundary"} polygon, not from a hand-entered coordinate. The marker is the Panchayat, not a settlement.`}
           >
             <AtlasDistrictMap points={points} />
             <AtlasNote>
-              {points.length} of {directory.panchayats.length} Panchayats have a mapped boundary. The
-              polygons themselves are withheld pending the TNGIS licence reply.
+              {points.length} of {directory.panchayats.length} Panchayats have a mapped boundary.{" "}
+              {directory.boundary?.publicGeometry
+                ? `The polygons are ${directory.boundary.description}; each taluka and Panchayat page draws them.`
+                : "The polygons themselves are withheld pending the TNGIS licence reply."}
             </AtlasNote>
           </AtlasSection>
 

@@ -1,5 +1,6 @@
 # Monthly refresh of the Atlas districts from their upstream registers: the
-# TNRD Panchayat master, JJM Citizen Corner, IN-GRES, Open-Meteo and the
+# TNRD Panchayat master (Tamil Nadu) or the Local Government Directory on
+# data.gov.in (elsewhere), JJM Citizen Corner, IN-GRES, Open-Meteo and the
 # TNGIS registers, through the one chain in scripts/atlas-refresh-district.sh.
 # JJM and TNRD move continuously, so a monthly read keeps a district honest
 # without pacing a public portal every day; IN-GRES changes once a year and
@@ -37,7 +38,7 @@ on:
   workflow_dispatch:
     inputs:
       district:
-        description: "District slug (thanjavur, tiruchirappalli) or 'all'"
+        description: "District slug (thanjavur, tiruchirappalli, satara) or 'all'"
         required: false
         default: "all"
 
@@ -50,12 +51,13 @@ jobs:
     runs-on: ubuntu-latest
     # JJM is read serially and paced (three page methods per village, about
     # 4-5 s each measured on 2026-08-29): 612 villages is about 45 minutes
-    # on a normal day, so the ceiling leaves room for a slow one.
-    timeout-minutes: 180
+    # on a normal day; Satara's 1,742 villages run two to three hours, so
+    # the ceiling leaves room for a slow one.
+    timeout-minutes: 300
     strategy:
       fail-fast: false
       matrix:
-        district: [thanjavur, tiruchirappalli]
+        district: [thanjavur, tiruchirappalli, satara]
     # Serialise the two districts: JJM is a public portal read at a paced
     # rate, and two parallel readers would double the load and race the
     # commit step.
@@ -83,8 +85,9 @@ jobs:
         with:
           python-version: '3.12'
 
-      # pdftotext reads the TNRD LGD directory PDF; the Census extractor is
-      # stdlib Python; everything else is Node.
+      # pdftotext reads the TNRD LGD directory PDF; the Census extractor and
+      # the adapter switch in the chain script are stdlib Python; everything
+      # else is Node.
       - name: Install poppler and dependencies
         if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.district == 'all' || github.event.inputs.district == matrix.district }}
         run: |
@@ -136,5 +139,5 @@ jobs:
             "" \
             "Run: ${run_url}" \
             "" \
-            "To resolve: read the step log, then either update pipeline-inputs/atlas/tn/${district}/refresh-plan.json (expected counts, new units) after reviewing the drift, or rerun once the host is reachable. If the host blocks GitHub runners, run scripts/atlas-refresh-district.sh ${district} from the launchd job instead.")
+            "To resolve: read the step log, then either update pipeline-inputs/atlas/<state>/${district}/refresh-plan.json (expected counts, new units) after reviewing the drift, or rerun once the host is reachable. If the host blocks GitHub runners, run scripts/atlas-refresh-district.sh ${district} from the launchd job instead.")
           gh issue create --title "$title" --body "$body" --label pipeline-alert || echo "issue creation failed; the run log carries the failure"

@@ -36,17 +36,40 @@ import {
   atlasEnvelope,
   cachePath,
   hasFlag,
+  planIdentityAdapter,
   pruneShards,
   readArtifact,
   readCacheJson,
   requireAsOf,
   requireDistrict,
+  reviewedInputPath,
   upstreamSource,
   writeAtlasArtifact,
 } from "./lib/atlas-producer";
+import { readFileSync } from "node:fs";
 
 const PRODUCED_BY = "scripts/atlas-census-tn-district.ts";
 const CACHE = "census-village-attributes.json";
+
+/** Which state release the district's rows sit in: the worksheet name and
+ *  the catalog page differ per state, and the registry id with them. Tamil
+ *  Nadu plans predate these fields. */
+interface CensusRelease {
+  catalogUrl: string;
+  sheet: string | undefined;
+  upstream: "census" | "censusMh";
+}
+
+function censusReleaseOf(district: ReturnType<typeof requireDistrict>): CensusRelease {
+  if (planIdentityAdapter(district) === "lgd-directory") {
+    const plan = JSON.parse(readFileSync(reviewedInputPath(district, "refresh-plan.json"), "utf8")) as {
+      district: { censusWorkbookSheet: string };
+      sources: { census: { catalogUrl: string } };
+    };
+    return { catalogUrl: plan.sources.census.catalogUrl, sheet: plan.district.censusWorkbookSheet, upstream: "censusMh" };
+  }
+  return { catalogUrl: "https://censusindia.gov.in/nada/index.php/catalog/45377", sheet: undefined, upstream: "census" };
+}
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
@@ -58,6 +81,7 @@ async function main(): Promise<void> {
   }
   const directory = readArtifact<DistrictDirectoryArtifact>(district, "directory");
   const identity = identityFromDirectory(directory);
+  const release = censusReleaseOf(district);
 
   let attributes: TnDistrictCensusAttributes;
   if (workbook !== undefined) {
@@ -76,9 +100,10 @@ async function main(): Promise<void> {
         "--as-of",
         asOf,
         "--source-url",
-        "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        release.catalogUrl,
         "--out",
         out,
+        ...(release.sheet ? ["--sheet", release.sheet] : []),
       ],
       { stdio: ["ignore", "inherit", "inherit"] },
     );
@@ -125,7 +150,7 @@ async function main(): Promise<void> {
       district,
       family: "census-2011",
       sources: [
-        upstreamSource("census", { role: "input", as_of: "2011", retrieved: attributes.acquiredAt }),
+        upstreamSource(release.upstream, { role: "input", as_of: "2011", retrieved: attributes.acquiredAt }),
       ],
       method: "derived",
       producedAt: attributes.acquiredAt,

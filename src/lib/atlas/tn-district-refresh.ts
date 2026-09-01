@@ -31,6 +31,7 @@ import type {
   DirectoryPanchayat,
   DistrictDirectoryArtifact,
 } from "./artifacts";
+import { identityVintage } from "./artifacts";
 import type { AtlasDistrict } from "./registry";
 import type { TnDistrictBoundaryExtract } from "./tn-boundary";
 import { collectCensusSourceUnits, collectJjmSourceUnits } from "./tn-crosswalk";
@@ -611,9 +612,10 @@ export function validateDirectoryPayload(directory: DirectoryPayload): string[] 
   for (const code of perBlock.keys()) {
     if (!blockCodes.has(code)) errors.push(`blocks: Panchayats in unlisted block ${code}`);
   }
-  if (directory.vintages.tnrdLgd.recordCount !== directory.panchayats.length) {
+  const identity = identityVintage(directory as DistrictDirectoryArtifact);
+  if (identity.recordCount !== directory.panchayats.length) {
     errors.push(
-      `vintages.tnrdLgd.recordCount ${directory.vintages.tnrdLgd.recordCount} does not ` +
+      `identity vintage recordCount ${identity.recordCount} does not ` +
         `match ${directory.panchayats.length} Panchayats`,
     );
   }
