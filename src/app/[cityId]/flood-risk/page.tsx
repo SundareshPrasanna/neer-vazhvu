@@ -33,7 +33,7 @@ const FLOOD_META_DESC: Record<string, string> = {
   hyderabad:
     "Hyderabad flood risk - the GHMC nala network, major water-logging locations, and the encroachment data the city defines but does not publish.",
   pune:
-    "Pune flood risk - 1,014 km of PMC nalla network, the 1961 Panshet breach with no official death toll, and 518 scanned flood-line sheets that exist as paper only.",
+    "Pune flood risk - 1,014 km of PMC nalla network, the 1961 Panshet breach with no official death toll, and statutory flood lines that exist only as scanned paper sheets.",
   surat:
     "Surat flood risk - the Ukai release chain, the weir-cum-causeway, five khadis against SMC's published danger levels, and what the corporation does not publish.",
 };
@@ -526,8 +526,8 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
   // exactly the failure those optional fields were made to avoid.
   //
   // The route was OFF until this landed, on the recorded reason that Maharashtra
-  // WRD publishes Pune's statutory flood lines as 518 SCANNED PDF SHEETS with no
-  // vector form, so the hazard layer does not exist. That reason was about the
+  // WRD publishes Pune's statutory flood lines only inside a statewide register
+  // of SCANNED PDF SHEETS with no vector form, so the hazard layer does not exist. That reason was about the
   // wrong variant: the narrative stack needs no hazard polygons, and Pune holds
   // 1,014 km of nalla geometry that was rendering nowhere. The flood-line gap
   // stays, as a data gap on the page.
@@ -540,7 +540,7 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
       water_bodies_desc: { en: "791 lakes, tanks and reservoirs, from OpenStreetMap because no authority publishes a register for this city" },
     },
     headline: {
-      en: "Pune's flood risk is drainage-driven, and the city cannot see it happen. PMC's nalla network is 3,075 open storm-water channels carrying 1,014 km, and every flood in the record below came down one of them. What the city lacks is instruments and maps. Dattawadi, the ONLY telemetric gauge inside Pune city, has an 84-day recording hole running 29 May to 22 August 2024, so it did not capture the 25 July 2024 flood at all - a gauge at Nighoje outside the city did, peaking at 568.92 m against a 563.02 m median. And Maharashtra's water resources department publishes the city's statutory red and blue flood lines as 518 scanned map sheets with no vector file behind them, so the legal boundary of the floodplain cannot be drawn on any map, including this one.",
+      en: "Pune's flood risk is drainage-driven, and the city cannot see it happen. PMC's nalla network is 3,075 open storm-water channels carrying 1,014 km, and every flood in the record below came down one of them. What the city lacks is instruments and maps. Dattawadi, the ONLY telemetric gauge inside Pune city, has an 84-day recording hole running 29 May to 22 August 2024, so it did not capture the 25 July 2024 flood at all - a gauge at Nighoje outside the city did, peaking at 568.92 m against a 563.02 m median. And Maharashtra's water resources department publishes the city's statutory red and blue flood lines only as scanned map sheets inside a statewide register - organised by river, no vector file behind any of them - so the legal boundary of the floodplain cannot be drawn on any map, including this one.",
     },
     drainage_map: {
       heading: { en: "The nalla network, and the rivers it drains into" },
@@ -612,7 +612,7 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
       {
         name: "Maharashtra WRD flood line maps",
         description: {
-          en: "The statutory red (100-year) and blue (25-year) flood lines for Pune. 518 scanned PDF map sheets, no vector form - see the data gaps below.",
+          en: "The statutory red (100-year) and blue (25-year) flood lines, published as one statewide register of scanned PDF map sheets (513 as of September 2026, all districts, organised by river) with Pune's sheets inside it. No vector form - see the data gaps below.",
         },
         url: "https://wrd.maharashtra.gov.in/Site/1315/Flood-Line-Maps",
         cadence: "irregular",
@@ -628,7 +628,7 @@ const FLOOD_CONFIG_BY_CITY: Record<string, FloodConfig> = {
     ],
     data_gaps: [
       {
-        en: "NO VECTOR FLOOD LINE, and this is the largest gap on the page. Maharashtra WRD publishes Pune's statutory red and blue flood lines as 518 scanned PDF map sheets with no shapefile, GeoJSON or KML anywhere; text extraction returns no characters at all from the Mutha sheets. So the legal floodplain boundary cannot be drawn, joined to a ward, or compared against what is built inside it. Digitising 518 raster sheets is a project rather than a fetch. Retire this gap when the redraw the Bombay High Court ordered in June 2025 produces a vector file.",
+        en: "NO VECTOR FLOOD LINE, and this is the largest gap on the page. Maharashtra WRD publishes its statutory red and blue flood lines as one statewide register of scanned PDF map sheets - 513 sheets across all districts as of September 2026, organised by river, with Pune's Mula, Mutha, Pawna and Indrayani sheets inside it - and no shapefile, GeoJSON or KML anywhere; text extraction returns no characters at all from the Mutha sheets. So the legal floodplain boundary cannot be drawn, joined to a ward, or compared against what is built inside it. Digitising the raster sheets is a project rather than a fetch. Retire this gap when the redraw the Bombay High Court ordered in June 2025 produces a vector file.",
       },
       {
         en: "NO NAMED NALLAS. PMC's storm-water layer carries an id, an object id, a project phase and a length, and no name on any of its 3,075 segments. Ambil Odha, Nagzari and Bhairoba nalla are what the flood reporting is about, and none of them can be identified in the data.",

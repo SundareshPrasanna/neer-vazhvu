@@ -33,9 +33,13 @@ import type { FloodChainConfig } from "@/lib/cities/types";
  *     `surat-flood-chain.json`, scraped from the publisher. None is in config,
  *     precisely so config and source cannot drift apart silently.
  *  2. Headroom is the only derived number and it is a subtraction. Negative
- *     headroom is rendered as such (the causeway routinely sits above its
- *     overflow level and is closed) rather than clamped to zero, because
- *     "submerged" is the true state and hiding it would be a lie of omission.
+ *     headroom is never clamped to zero (the causeway routinely sits above
+ *     its overflow level and is closed), because "submerged" is the true
+ *     state and hiding it would be a lie of omission. It renders as a
+ *     distance with the direction in the unit label, never as a signed
+ *     number against a directional label.
+ *  2b. The "live" badge is gated on the data: readings older than 48 hours
+ *     show their date instead.
  *  3. The archive has no pre-history. SMC publishes a rolling ~10-reading
  *     window with no archive, so the series starts the day the scraper first
  *     ran. The hero never implies a longer record than exists.
@@ -128,6 +132,31 @@ function fmtTime(iso: string | null | undefined): string {
   });
 }
 
+function fmtDay(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    timeZone: "Asia/Kolkata",
+  });
+}
+
+/** Distance plus a direction word - never "-0.86 m over the crest". */
+function directedHeadroom(
+  headroom: number | null,
+  unit: string,
+  belowWord: string,
+  overWord: string,
+): { value: string; unit: string } {
+  if (headroom === null) return { value: "n/a", unit: `${unit} ${belowWord}` };
+  return {
+    value: fmt(Math.abs(headroom)),
+    unit: headroom < 0 ? `${unit} ${overWord}` : `${unit} ${belowWord}`,
+  };
+}
+
 function LinkRow({
   step,
   label,
@@ -190,13 +219,18 @@ export function FloodHeadroomHero({
 }) {
   const [data, setData] = useState<ChainData | null>(null);
   const [failed, setFailed] = useState(false);
+  // Clock read stays out of render; one read is enough for day-scale staleness.
+  const [loadedAt, setLoadedAt] = useState<number | null>(null);
 
   useEffect(() => {
     let live = true;
     fetch(`/data/${cityId}-flood-chain.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((d: ChainData) => {
-        if (live) setData(d);
+        if (live) {
+          setData(d);
+          setLoadedAt(Date.now());
+        }
       })
       .catch(() => {
         if (live) setFailed(true);
@@ -234,8 +268,39 @@ export function FloodHeadroomHero({
     rainZones.length > 0
       ? rainZones.reduce((a, b) => (a[1] >= b[1] ? a : b))
       : null;
+  // All-zero reading: don't crown a "wettest zone" out of a tie at nothing.
+  const anyRain = wettest !== null && wettest[1] > 0;
 
   const causewayOpen = (weir.causewayState ?? "").toUpperCase() === "OPEN";
+
+  // "live" is gated on the data: past 48h the badge shows the reading date.
+  const newestIso =
+    ukai.observedAt ??
+    weir.observedAt ??
+    rainfall.observedAt ??
+    data.generatedAt ??
+    null;
+  const ageMs =
+    loadedAt !== null && newestIso
+      ? loadedAt - new Date(newestIso).getTime()
+      : NaN;
+  const isStale = Number.isFinite(ageMs) && ageMs > 48 * 60 * 60 * 1000;
+
+  const weirHeadroom = directedHeadroom(
+    weir.headroomM,
+    "m",
+    "below crest",
+    "over the crest",
+  );
+  const ukaiHeadroom = directedHeadroom(
+    ukai.headroomFt,
+    "ft",
+    "below full",
+    "over full",
+  );
+  const tightestHeadroom = tightest
+    ? directedHeadroom(tightest.headroomM, "m", "below danger", "past danger")
+    : null;
 
   return (
     <Card className="overflow-hidden">
@@ -250,7 +315,7 @@ export function FloodHeadroomHero({
             </p>
           </div>
           <Badge variant="outline" className="shrink-0">
-            live
+            {isStale ? `as of ${fmtDay(newestIso)}` : "live"}
           </Badge>
         </div>
 
@@ -274,10 +339,10 @@ export function FloodHeadroomHero({
                     tightest.dangerLevelM,
                   )}`}
                 >
-                  {fmt(tightest.headroomM)}
+                  {tightestHeadroom?.value}
                 </span>
                 <span className="ml-1 text-sm text-muted-foreground">
-                  m below danger
+                  {tightestHeadroom?.unit}
                 </span>
               </div>
             </div>
@@ -294,9 +359,11 @@ export function FloodHeadroomHero({
             step={1}
             label="Rain over the city"
             sublabel={
-              wettest
-                ? `Wettest zone in the last reading: ${wettest[0]}`
-                : "Zone-wise, as reported by SMC"
+              anyRain
+                ? `Wettest zone in the last reading: ${wettest![0]}`
+                : wettest
+                  ? "No rain in the last reading, in any zone"
+                  : "Zone-wise, as reported by SMC"
             }
             reading={wettest ? `${fmt(wettest[1], 1)} mm` : "n/a"}
             threshold={
@@ -321,8 +388,8 @@ export function FloodHeadroomHero({
             reading={`${fmt(ukai.levelFt)} ft`}
             threshold={`${fmt(ukai.fullReservoirLevelFt)} ft`}
             thresholdLabel="full at"
-            headroom={fmt(ukai.headroomFt)}
-            headroomUnit="ft below full"
+            headroom={ukaiHeadroom.value}
+            headroomUnit={ukaiHeadroom.unit}
             tone={headroomTone(ukai.headroomFt, ukai.fullReservoirLevelFt ?? 345)}
           />
 
@@ -335,10 +402,8 @@ export function FloodHeadroomHero({
             reading={`${fmt(weir.levelM)} m`}
             threshold={`${fmt(weir.overflowLevelM)} m`}
             thresholdLabel="overflows at"
-            headroom={fmt(weir.headroomM)}
-            headroomUnit={
-              (weir.headroomM ?? 0) < 0 ? "m over the crest" : "m below crest"
-            }
+            headroom={weirHeadroom.value}
+            headroomUnit={weirHeadroom.unit}
             tone={headroomTone(weir.headroomM, weir.overflowLevelM ?? 6)}
           />
         </div>
@@ -393,6 +458,13 @@ export function FloodHeadroomHero({
             A level past a danger mark is a trigger for the corporation to act,
             not a forecast that a given street will flood.
           </p>
+          {isStale && (
+            <p>
+              The most recent captured reading is from {fmtDay(newestIso)}.
+              Until a newer capture ships, read this card as that day&apos;s
+              snapshot rather than the live state of the chain.
+            </p>
+          )}
           {config.upstreamOperator?.note && <p>{config.upstreamOperator.note}</p>}
           <p>
             Readings as of{" "}

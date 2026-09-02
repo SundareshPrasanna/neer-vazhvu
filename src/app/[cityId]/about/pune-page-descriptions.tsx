@@ -342,9 +342,14 @@ export function PunePageDescriptions({ cityId, cityName }: Props) {
             The event register is not the problem - the 1961 Panshet dam breach,
             the 2019 Ambil Odha flash flood, and the July and August 2024
             releases are all dated and sourced. The hazard layer is. Maharashtra
-            WRD publishes {cityName}&apos;s red and blue flood lines as{" "}
-            <strong>518 scanned map sheets and no vector files</strong>. There is
-            nothing to draw without digitising paper.
+            WRD publishes {cityName}&apos;s red and blue flood lines only inside
+            a{" "}
+            <strong>
+              statewide register of scanned map sheets, with no vector files
+            </strong>{" "}
+            - about 500 sheets covering all of Maharashtra, organised by river,
+            with Pune&apos;s sheets among them. There is nothing to draw without
+            digitising paper.
           </p>
         </Gap>
         <Gap title="No tanker page - yet">

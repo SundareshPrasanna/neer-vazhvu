@@ -317,8 +317,9 @@ def reservoir_facts(dams: dict) -> list[dict]:
         )
     return [
         {
+            # Tier 2, not 1: static snapshot, so no "Live" badge.
             "id": "khadakwasla-chain-today",
-            "tier": 1,
+            "tier": 2,
             "category": "Reservoirs",
             "title": "Water in the four dams Pune drinks from",
             "value": fmt(pct, 1),
@@ -539,8 +540,9 @@ def tanker_facts(t: dict) -> list[dict]:
     top = max(points, key=lambda p: p["deliveries"])
     return [
         {
+            # Tier 2, not 1: static snapshot, so no "Live" badge.
             "id": "tanker-register-on-demand-share",
-            "tier": 1,
+            "tier": 2,
             "category": "Supply",
             "title": "Most municipal tanker water in Pune is unscheduled",
             "value": fmt(require(od, "on_demand_share_pct"), 1),
@@ -605,24 +607,29 @@ def tanker_facts(t: dict) -> list[dict]:
 def gap_facts(wb: dict) -> list[dict]:
     return [
         {
+            # The sheet register is Maharashtra-wide, so its count never
+            # headlines as a Pune figure. Old id slug kept: it is an anchor.
             "id": "flood-lines-are-518-scanned-sheets",
             "tier": 2,
             "category": "Flood",
-            "title": "Pune's flood lines exist, as 518 scanned map sheets and no vector file",
-            "value": "518",
-            "unit": "scanned PDF map sheets, zero machine-readable flood lines",
+            "title": "Pune's flood lines exist as scanned sheets in a statewide register, not as data",
+            "value": "0",
+            "unit": "machine-readable flood-line files, for Pune or any Maharashtra city",
             "interpretation": (
-                "Maharashtra's water resources department publishes Pune's red (100-year) and blue "
-                "(25-year) flood lines as scanned PDF map sheets. There are 518 of them and no "
-                "shapefile, GeoJSON or KML; text extraction returns no characters at all from the "
-                "Mutha sheets. So the city's own statutory flood boundary cannot be put on a map "
-                "or joined to anything. The flood record itself is well documented - the Panshet "
-                "breach of 12 July 1961, the Ambil Odha flash flood of 2019, July and August 2024, "
-                "August 2025 - but there is nothing to draw. This is the single largest capability "
-                "gap against Chennai here, and it is a publishing decision rather than a data "
-                "engineering task."
+                "Maharashtra's water resources department publishes red (100-year) and blue "
+                "(25-year) flood lines for the whole state as one register of scanned PDF map "
+                "sheets - 513 sheets across every district as checked on 2 September 2026, "
+                "organised by river rather than by city, with Pune's Mula, Mutha, Pawna and "
+                "Indrayani sheets inside it. None of it comes as a shapefile, GeoJSON or KML; "
+                "text extraction returns no characters at all from the Mutha sheets. So the "
+                "city's own statutory flood boundary cannot be put on a map or joined to "
+                "anything. The flood record itself is well documented - the Panshet breach of "
+                "12 July 1961, the Ambil Odha flash flood of 2019, July and August 2024, "
+                "August 2025 - but there is nothing to draw. This is the single largest "
+                "capability gap against Chennai here, and it is a publishing decision rather "
+                "than a data engineering task."
             ),
-            "data_date": "2026-08",
+            "data_date": "2026-09-02",
             "source_url": WRD_FLOOD,
             "source_label": "Maharashtra Water Resources Department, flood line maps",
         },

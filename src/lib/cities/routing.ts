@@ -195,8 +195,9 @@ export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   // fulfilment rate that page is built on does not exist here.
   //
   // `flood-risk` is in on the NARRATIVE variant, which needs no hazard
-  // polygons. It was off on the reasoning that WRD publishes Pune's flood lines
-  // as 518 scanned PDF sheets so the hazard layer does not exist - true, but
+  // polygons. It was off on the reasoning that WRD publishes Pune's flood
+  // lines only as scanned sheets in a statewide register so the hazard
+  // layer does not exist - true, but
   // that was an argument about the INTERACTIVE variant. The narrative stack
   // carries the event register plus PMC's 1,014 km nalla network, and the
   // flood-line absence ships as a data gap on the page.

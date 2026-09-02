@@ -80,7 +80,8 @@ def facts():
     return [
         {
             "id": "ekw-treats-65pc",
-            "tier": 1,
+            # Tier 2, not 1: dated documents, not live feeds (same below).
+            "tier": 2,
             "category": "Sewage",
             "title": "A wetland is the city's largest sewage treatment plant",
             "value": "910",
@@ -99,7 +100,8 @@ def facts():
         },
         {
             "id": "drains-6mm",
-            "tier": 1,
+            # Structural: a design standard, not a reading.
+            "tier": 4,
             "category": "Drainage",
             "title": "Victorian drains rated for 6 mm of rain an hour",
             "value": "6",
@@ -118,7 +120,7 @@ def facts():
         },
         {
             "id": "adi-ganga-zero-do",
-            "tier": 1,
+            "tier": 2,
             "category": "Rivers",
             "title": "The Adi Ganga runs at zero dissolved oxygen",
             "value": "0",
@@ -137,7 +139,8 @@ def facts():
         },
         {
             "id": "no-impounded-storage",
-            "tier": 1,
+            # Structural: a permanent property of the city.
+            "tier": 4,
             "category": "Supply",
             "title": "Kolkata stores none of its water",
             "value": "0",
@@ -155,7 +158,7 @@ def facts():
         },
         {
             "id": "contested-denominator",
-            "tier": 1,
+            "tier": 2,
             "category": "Gap",
             "title": "The corporation contests its own population",
             "value": "4.5m vs 6m",
