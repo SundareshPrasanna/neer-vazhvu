@@ -61,6 +61,12 @@ export interface TnDistrictRefreshPlan {
     jjmStateId: string;
     jjmDistrictId: string;
     censusDistrictCode: string;
+    /** For a district formed after 2011 (Tirupathur out of Vellore in 2019):
+     *  the Census 2011 subdistricts (taluks) whose villages became this
+     *  district. censusDistrictCode is then the parent district's, and the
+     *  extract keeps only these subdistricts' rows. Absent for a district
+     *  the Census already knew. */
+    censusSubdistrictCodes?: string[];
     /** LGD district code, used by the TNGIS taluk layer. Not the TNRD code. */
     lgdDistrictCode: string;
     ingresDistrictName: string;

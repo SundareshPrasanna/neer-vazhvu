@@ -1,0 +1,32 @@
+{
+  "_doc": "Reviewed extraction of Table III-B, 'Area irrigated by different sources', from the DES Season and Crop Report. Every figure here was read from the report PDF by a person and is re-verified against the PDF before this file changes; scripts/atlas-irrigation-tn-district.ts validates it and writes the served artifact. Net area by source is what the report prints per column group; supplementary wells water land already counted under another source and are NOT additive to the net total.",
+  "schemaVersion": 1,
+  "district": "tirupathur",
+  "reportSpelling": "Tirupathur",
+  "rowNumber": 10,
+  "edition": "2024-25",
+  "source": {
+    "listingUrl": "https://des.tn.gov.in/en/node/18",
+    "driveFileId": "1uONHRwuvU9-EhDGD1v0XC0OWqAVOZtV6",
+    "pdfSha256": "49bbd356b1aab315a53e9a62ef0ba9a124a90c5975231146fb1bab0498f7eb75",
+    "table": "III-B, Area irrigated by different sources, pages 125-131"
+  },
+  "netAreaIrrigatedHectares": {
+    "canals": 0,
+    "tanks": 0,
+    "tubeAndBoreWells": 3939,
+    "openWells": 26402,
+    "otherSources": 0,
+    "total": 30341
+  },
+  "grossAreaIrrigatedHectares": 36205,
+  "areaIrrigatedMoreThanOnceHectares": 5864,
+  "irrigationIntensity": 1.19,
+  "supplementaryWellsNetHectares": 0,
+  "supplementaryWellsNote": "The report's supplementary-wells column ('by all other types of wells') records 0 ha net for this district in 2024-25.",
+  "extractedOn": "2026-09-01",
+  "notes": [
+    "The two well components sum exactly to the printed net total of 30341 ha; canals, tanks and other sources are all printed as 0, so every irrigated hectare in the district is watered from a well.",
+    "The report's percentage table prints 0.00% for canals and tanks against the same 30341 ha net total."
+  ]
+}

@@ -512,7 +512,12 @@ export function buildDistrictDirectoryPayload(options: {
       tnrdLgd: vintage(extract.sources.tnrdLgd),
       tnrdMaster: vintage(extract.sources.tnrdMaster),
       jjm: vintage(extract.sources.jjm),
-      census: vintage(extract.sources.census),
+      census: {
+        ...vintage(extract.sources.census),
+        ...(plan.district.censusSubdistrictCodes
+          ? { scope: censusScopeSentence(plan, extract) }
+          : {}),
+      },
       boundary: boundary
         ? {
             layer: boundary.source.layer,
@@ -571,6 +576,36 @@ function vintage(source: AcquiredSourceRecordSet<unknown>) {
     retrievedAt: source.retrievedAt,
     recordCount: source.recordCount,
   };
+}
+
+/** For a district the 2011 Census did not know: which parent district and
+ *  which of its taluks the rows were read from, named from the rows
+ *  themselves so the sentence cannot drift from the extract. */
+function censusScopeSentence(
+  plan: TnDistrictRefreshPlan,
+  extract: TnDistrictSourceExtract,
+): string {
+  const records = extract.sources.census.records;
+  const parent = records[0]?.districtName ?? plan.district.censusDistrictCode;
+  const taluks = [...new Map(records.map((r) => [r.subdistrictCode, r.subdistrictName])).entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, name]) => titleCase(name));
+  const list =
+    taluks.length > 1
+      ? `${taluks.slice(0, -1).join(", ")} and ${taluks.at(-1)}`
+      : taluks.join("");
+  return (
+    `Census 2011 rows are read from ${titleCase(parent)} district (code ` +
+    `${plan.district.censusDistrictCode}), taluks ${list}: the parts of it that ` +
+    `became ${plan.district.displayName} after the Census.`
+  );
+}
+
+function titleCase(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/(^|[\s.-])([a-z])/g, (_m, sep: string, ch: string) => sep + ch.toUpperCase());
 }
 
 /**

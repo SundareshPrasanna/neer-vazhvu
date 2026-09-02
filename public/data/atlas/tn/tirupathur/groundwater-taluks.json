@@ -1,0 +1,97 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tirupathur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for TIRUPATHUR: the district row and its 4 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-tirupathur-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-01",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=TIRUPATHUR;loctype=DISTRICT;locuuid=95c58d7f-5c9a-4448-9d6b-1a55356b3a1b;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "TIRUPATHUR",
+    "locationUUID": "95c58d7f-5c9a-4448-9d6b-1a55356b3a1b",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 142.8742
+  },
+  "recordsSha256": "fdfea6e00d2062cd013a85f10177cc7b67fc2c9661f8a38953159d3a0466ef93",
+  "recordCount": 4,
+  "records": [
+    {
+      "locationName": "AMBUR",
+      "locationUUID": "6ca37202-4dba-422f-8ffd-8f6f4f898408",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 150.0414,
+      "annualRechargeHam": 1341.91,
+      "totalAvailabilityHam": 1933.14,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 774.8827
+    },
+    {
+      "locationName": "NATRAMPALLI",
+      "locationUUID": "1d420697-359a-4d8a-8473-c58093ffdcc2",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 165.5202,
+      "annualRechargeHam": 567.65,
+      "totalAvailabilityHam": 811.75,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 781.5619
+    },
+    {
+      "locationName": "TIRUPATTUR",
+      "locationUUID": "38c95bcb-a1eb-4b9a-b108-10fee7e0e0b5",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 141.2815,
+      "annualRechargeHam": 2797.65,
+      "totalAvailabilityHam": 4805.66,
+      "availabilityForFutureUseHam": 124.52,
+      "rainfallMm": 803.082
+    },
+    {
+      "locationName": "VANIYAMBADI",
+      "locationUUID": "1249d66c-b9b2-4a3f-88b3-85dbd6b4c387",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 131.5051,
+      "annualRechargeHam": 991.59,
+      "totalAvailabilityHam": 2162.35,
+      "availabilityForFutureUseHam": 33.16,
+      "rainfallMm": 834.2535
+    }
+  ]
+}

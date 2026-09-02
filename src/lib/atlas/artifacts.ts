@@ -227,6 +227,11 @@ export interface DirectorySourceVintage {
   sourceAsOf: string;
   retrievedAt: string;
   recordCount: number;
+  /** When the register was read for less than the whole district, one
+   *  sentence saying what was read: a district formed after 2011 takes its
+   *  Census rows from the parent district's taluks (Tirupathur from Vellore).
+   *  Absent when the register covers the district as it is today. */
+  scope?: string;
 }
 
 /**

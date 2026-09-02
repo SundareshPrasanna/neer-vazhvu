@@ -45,6 +45,23 @@ test("TNRD PDF parser accepts the source's one-space name boundary", () => {
   assert.equal(records[1].gramPanchayatName, "Panaiyakuruchi");
 });
 
+test("TNRD PDF parser reads the six-digit codes of the districts formed in 2019", () => {
+  const records = parseTnrdLgdText(
+    [
+      "296958 TIRUPATHUR            6750    NATRAMPALLI          232607 KATHERI",
+      "296958 TIRUPATHUR            6750    NATRAMPALLI          232610    KOTHUR",
+      "  549      VELLORE           6756    VELLORE           232862 Abdullapuram",
+    ].join("\n"),
+    "296958",
+  );
+  assert.equal(records.length, 2);
+  assert.equal(records[0].districtCode, "296958");
+  assert.equal(records[0].blockCode, "6750");
+  assert.equal(records[0].gramPanchayatCode, "232607");
+  assert.equal(records[1].gramPanchayatName, "KOTHUR");
+  assert.equal(parseTnrdLgdText("296958 TIRUPATHUR 6750 NATRAMPALLI 232607 KATHERI", "958").length, 0);
+});
+
 test("JJM parser preserves parent paths when a leaf village ID is reused", () => {
   const html = `
     <select id="ddState"><option value="29">Tamil Nadu</option></select>

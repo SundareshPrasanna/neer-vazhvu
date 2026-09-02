@@ -1025,9 +1025,10 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     inputs.census[0],
     censusDescribes,
     sourceOf(inputs.census[0])?.retrieved,
-    current
+    (current
       ? "Census 2011 village tables, the newest village-level irrigation enumeration served here. The Season and Crop Report district mix above is the current reading; the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet."
-      : `Census 2011 village tables, the newest village-level irrigation enumeration served here. ${district.irrigationCurrentSource.gapNote}`,
+      : `Census 2011 village tables, the newest village-level irrigation enumeration served here. ${district.irrigationCurrentSource.gapNote}`) +
+      (directory?.vintages.census.scope ? ` ${directory.vintages.census.scope}` : ""),
   );
   push(
     "Groundwater assessment",

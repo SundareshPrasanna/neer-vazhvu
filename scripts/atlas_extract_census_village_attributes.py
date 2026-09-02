@@ -28,6 +28,7 @@ DEFAULT_SHEET = "Village_Data_3300"
 IDENTITY_HEADERS = {
     "State Code": "stateCode",
     "District Code": "districtCode",
+    "Sub District Code": "subdistrictCode",
     "Village Code": "villageCode",
     "Village Name": "villageName",
     "Reference Year": "referenceYear",
@@ -176,7 +177,10 @@ def to_status(raw: str) -> str:
 
 
 def extract(
-    xlsx_path: str, district_code: str, sheet_name: str = DEFAULT_SHEET
+    xlsx_path: str,
+    district_code: str,
+    sheet_name: str = DEFAULT_SHEET,
+    subdistrict_codes: set[str] | None = None,
 ) -> list[dict]:
     wanted = {
         **{normalize_header(k): v for k, v in IDENTITY_HEADERS.items()},
@@ -228,7 +232,10 @@ def extract(
                     name: values.get(index, "").strip()
                     for index, name in headers.items()
                 }
-                if record.get("districtCode") != district_code:
+                if record.get("districtCode") != district_code or (
+                    subdistrict_codes
+                    and record.get("subdistrictCode") not in subdistrict_codes
+                ):
                     row.clear()
                     continue
                 output = {
@@ -260,9 +267,22 @@ def main() -> int:
         default=DEFAULT_SHEET,
         help="worksheet name; the state release number is in it (Village_Data_3300 for Tamil Nadu, Village_Data_2700 for Maharashtra)",
     )
+    parser.add_argument(
+        "--subdistrict-codes",
+        default="",
+        help="comma-separated Census subdistrict codes to keep: the taluks of a district formed after 2011, whose rows sit under the parent district's code (Tirupathur under Vellore)",
+    )
     args = parser.parse_args()
+    subdistrict_codes = {
+        code.strip() for code in args.subdistrict_codes.split(",") if code.strip()
+    }
 
-    records = extract(args.workbook, args.district_code, sheet_name=args.sheet)
+    records = extract(
+        args.workbook,
+        args.district_code,
+        sheet_name=args.sheet,
+        subdistrict_codes=subdistrict_codes or None,
+    )
     if not records:
         print(f"No village rows for district {args.district_code}", file=sys.stderr)
         return 1

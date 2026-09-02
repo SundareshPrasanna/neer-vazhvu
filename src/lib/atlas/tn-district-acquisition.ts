@@ -295,8 +295,12 @@ export function parseTnrdLgdText(
 ): TnrdLgdGramPanchayatRecord[] {
   const records: TnrdLgdGramPanchayatRecord[] = [];
   for (const rawLine of text.replaceAll("\f", "\n").split(/\r?\n/)) {
+    // A district code is three digits for the districts that existed when
+    // TNRD numbered them (Salem 538) and six for the ones formed in the 2019
+    // reorganisation (Tirupathur 296958, Ranipet 296957, Tenkasi 296956):
+    // the 2021 PDF prints both kinds on the same page.
     const match = rawLine.match(
-      /^\s*(\d{3})\s+(.+?)\s+(\d{4})\s+(.+?)\s+(\d{6})\s+(.+?)\s*$/,
+      /^\s*(\d{3}|\d{6})\s+(.+?)\s+(\d{4})\s+(.+?)\s+(\d{6})\s+(.+?)\s*$/,
     );
     if (!match || match[1] !== districtCode) continue;
     records.push({
@@ -652,6 +656,9 @@ export interface CensusWorkbookSpec {
   expectedVillages: number;
   sheet?: string;
   allowEmptyGramPanchayat?: boolean;
+  /** Keep only these Census subdistricts of districtCode: the villages of a
+   *  district the Census did not yet know (formed after 2011). */
+  subdistrictCodes?: string[];
 }
 
 export async function acquireCensusVillages(
@@ -716,6 +723,9 @@ export async function acquireCensusVillages(
       spec.districtCode,
       ...(spec.sheet ? ["--sheet", spec.sheet] : []),
       ...(spec.allowEmptyGramPanchayat ? ["--allow-empty-gram-panchayat"] : []),
+      ...(spec.subdistrictCodes?.length
+        ? ["--subdistrict-codes", spec.subdistrictCodes.join(",")]
+        : []),
     ],
     {
       encoding: "utf8",
@@ -750,6 +760,7 @@ async function acquireCensus(
       sourceAsOf: plan.sources.census.sourceAsOf,
       districtCode: plan.district.censusDistrictCode,
       expectedVillages: plan.expectedCounts.censusVillages,
+      subdistrictCodes: plan.district.censusSubdistrictCodes,
     },
     acquiredAt,
     cache,

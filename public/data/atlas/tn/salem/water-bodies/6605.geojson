@@ -1,0 +1,599 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/water-bodies",
+  "scope": {
+    "kind": "district",
+    "id": "tn-salem"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tngis-generic-viewer-water-bodies",
+        "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "asserts",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-01"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-01",
+    "produced_by": "scripts/atlas-water-bodies-tn-district.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/salem/directory.json"
+    ],
+    "note": "TNGIS all-water-bodies register for PEDDANAICKENPALAYAM block: 26 Gram Panchayats with 59 water bodies between them, rolled up per Panchayat (count, named count, summed and largest waterspread computed from the geometry, contributing departments, a digest of the sorted names). Geometry is null and names are withheld: TNGIS terms require prior approval for public display or redistribution and the confirmation requested on 2026-07-27 has no reply. A Panchayat absent here has no water body in the register.",
+    "conventions": {
+      "geometry": "null by rule until TNGIS/TNeGA approval is recorded; areas are hectares computed from the withheld polygons",
+      "join": "panchayat_lgdvcode is the LGD Gram Panchayat code; features with code 0 (towns, corporations) are dropped, never pooled",
+      "vintage": "the layer merges five departments' registers and carries no survey date"
+    }
+  },
+  "ext": {
+    "atlas": {
+      "schemaVersion": 1,
+      "planId": "tn-salem-v1",
+      "blockCode": "6605",
+      "blockName": "PEDDANAICKENPALAYAM",
+      "districtLgdCode": "538",
+      "acquiredAt": "2026-09-01",
+      "layer": "generic_viewer:all_water_bodies",
+      "sourceUrl": "https://tngis.tn.gov.in/tngismaps/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=generic_viewer%3Aall_water_bodies&CQL_FILTER=rd_lgddcod%3D538&outputFormat=application%2Fjson",
+      "rights": {
+        "status": "permission-required",
+        "termsUrl": "https://tngis.tn.gov.in/user.html",
+        "termsQuote": "GIS based data available in TNGIS should be used for informational purpose only and Not for legal use/not to be shared / published in the public media in any form or in the social media without any prior approval / permission from TNGIS/TNeGA.",
+        "approval": null
+      },
+      "contributingDepartments": [
+        "AED",
+        "DOSS",
+        "NRSC",
+        "TNRD",
+        "WRD"
+      ],
+      "snapshotSha256": "90b295c7908db6f3adc6f0f6f9accb59c9ee48a4247703f85ffdeb9577a999d5",
+      "featureCount": 59,
+      "recordCount": 26,
+      "recordsSha256": "2193bc6c26f113ef343bd1af594160457b8fd8cf55b4f937340a3fc808fb9069"
+    }
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227749",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 0.3996,
+        "largestAreaHectares": 0.3996,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 1
+          }
+        ],
+        "namesSha256": "25881d1807e2840702053611ac7a7788faebfe6c31f3c3d674601e21ad98292f",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227750",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 0.3694,
+        "largestAreaHectares": 0.3694,
+        "byDepartment": [
+          {
+            "department": "DOSS",
+            "count": 1
+          }
+        ],
+        "namesSha256": "5ad1e873ac3cc6ac2504f92010b05c6ad3a64cd90a3ecaba58134e7bcff46f8f",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227752",
+        "count": 8,
+        "namedCount": 8,
+        "areaHectares": 4.992,
+        "largestAreaHectares": 1.3071,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 8
+          }
+        ],
+        "namesSha256": "df44bfea3c6ab0b87bedfc5851946aeafaa40d3685b6486a6184ae47e6c86717",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227753",
+        "count": 4,
+        "namedCount": 4,
+        "areaHectares": 1.5734,
+        "largestAreaHectares": 0.7141,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 4
+          }
+        ],
+        "namesSha256": "6c71d285b2b53fac08ab8e8e26336ceee269a69b5f10e8bb1ae7becce730fd8e",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227756",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 1.8823,
+        "largestAreaHectares": 1.8823,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 1
+          }
+        ],
+        "namesSha256": "25881d1807e2840702053611ac7a7788faebfe6c31f3c3d674601e21ad98292f",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227757",
+        "count": 3,
+        "namedCount": 3,
+        "areaHectares": 8.6852,
+        "largestAreaHectares": 5.136,
+        "byDepartment": [
+          {
+            "department": "DOSS",
+            "count": 3
+          }
+        ],
+        "namesSha256": "7ccd62fdbc7535e16c4057a9e258e47ca66793997ef057eb777258f7b633aedd",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227758",
+        "count": 3,
+        "namedCount": 3,
+        "areaHectares": 1.1143,
+        "largestAreaHectares": 0.648,
+        "byDepartment": [
+          {
+            "department": "DOSS",
+            "count": 3
+          }
+        ],
+        "namesSha256": "7c97bbaecaccfd52ae5d7e1762deb844376f8fd32e7ff0602dd65bccc95b124d",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227759",
+        "count": 2,
+        "namedCount": 1,
+        "areaHectares": 25.6401,
+        "largestAreaHectares": 25.1013,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 1
+          },
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "222e1227ec97d49ad3f79aec5bbd16c68ac872a066665ab2901e45da7cd763a4",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227760",
+        "count": 4,
+        "namedCount": 3,
+        "areaHectares": 9.6138,
+        "largestAreaHectares": 3.6385,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 2
+          },
+          {
+            "department": "NRSC",
+            "count": 1
+          },
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "1fa426a40cccb5c1b01ac86fd8f8477586b52a197ebc35d1e8b0524f99b6676b",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227761",
+        "count": 3,
+        "namedCount": 3,
+        "areaHectares": 0.7265,
+        "largestAreaHectares": 0.4601,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 2
+          },
+          {
+            "department": "DOSS",
+            "count": 1
+          }
+        ],
+        "namesSha256": "0c3acea993026d861c0d4c07f51c6523a1e7e22e129a5582d6f02dd1ba4c2fa5",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227764",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 31.0759,
+        "largestAreaHectares": 31.0759,
+        "byDepartment": [
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "015b88bd7ac03354623a0e2355293cc9229246717f86a0228cb77f586086cfc5",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227765",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 7.1696,
+        "largestAreaHectares": 7.1696,
+        "byDepartment": [
+          {
+            "department": "TNRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "fc2a93c6ca835efb9b91c1494e7341cefcf2420292861aa83b70e55646b2bca5",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227767",
+        "count": 2,
+        "namedCount": 2,
+        "areaHectares": 0.4479,
+        "largestAreaHectares": 0.2724,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 2
+          }
+        ],
+        "namesSha256": "e920addae943d508c0aaabad761426f6824d56b07e49b3022ec42bca62a42de4",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227769",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0.4419,
+        "largestAreaHectares": 0.4419,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227770",
+        "count": 4,
+        "namedCount": 3,
+        "areaHectares": 79.8875,
+        "largestAreaHectares": 79.7483,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 3
+          },
+          {
+            "department": "AED",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4aa83b1666c98915f6d78ab7b43b1ad8fddf2ba69777e546fa7ea51abecc6099",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227771",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 8.9184,
+        "largestAreaHectares": 8.9184,
+        "byDepartment": [
+          {
+            "department": "TNRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "80334776675d91d70ed8dd3ad228b454e6429e730aacbcfa6a0421cf2c4611bd",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227772",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 24.9225,
+        "largestAreaHectares": 24.9225,
+        "byDepartment": [
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "0b243a9c252937b04ac39dfbb5f709c644fb9cbf95863fc835d9fe43b11bcbd2",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227775",
+        "count": 2,
+        "namedCount": 1,
+        "areaHectares": 0.7022,
+        "largestAreaHectares": 0.5024,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 1
+          },
+          {
+            "department": "NRSC",
+            "count": 1
+          }
+        ],
+        "namesSha256": "25881d1807e2840702053611ac7a7788faebfe6c31f3c3d674601e21ad98292f",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227776",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 7.6542,
+        "largestAreaHectares": 7.6542,
+        "byDepartment": [
+          {
+            "department": "TNRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "31b35ed00ce07599e4568084e125a813212695190551155e3f71e16249a39b57",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227777",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 1.4039,
+        "largestAreaHectares": 1.4039,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227778",
+        "count": 5,
+        "namedCount": 5,
+        "areaHectares": 47.662,
+        "largestAreaHectares": 43.2598,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 3
+          },
+          {
+            "department": "TNRD",
+            "count": 1
+          },
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "aa8bd216a793cb2eaa6d65725c7293b51f3c27713ec4e279b5834b1263f7c4bc",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227779",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 0.1938,
+        "largestAreaHectares": 0.1938,
+        "byDepartment": [
+          {
+            "department": "DOSS",
+            "count": 1
+          }
+        ],
+        "namesSha256": "dcc2da6d2449564b290fb6fe6f01fc4c5f3791db6aca4d686617c2f73ae7809f",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227780",
+        "count": 2,
+        "namedCount": 2,
+        "areaHectares": 9.6631,
+        "largestAreaHectares": 8.6096,
+        "byDepartment": [
+          {
+            "department": "DOSS",
+            "count": 1
+          },
+          {
+            "department": "TNRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "0ad8cddf36d0b93ddf1df1d4566d8e17de979eac761fa6895e7925ca1a35abaf",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227781",
+        "count": 1,
+        "namedCount": 1,
+        "areaHectares": 136.1545,
+        "largestAreaHectares": 136.1545,
+        "byDepartment": [
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "cd578a661ffa58434e8c7744820829400d200b9ab2e4e9b88aedcbac3ce92486",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227782",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0.1089,
+        "largestAreaHectares": 0.1089,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lgdBlockCode": "6605"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "227783",
+        "count": 4,
+        "namedCount": 1,
+        "areaHectares": 26.7107,
+        "largestAreaHectares": 16.1741,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 3
+          },
+          {
+            "department": "TNRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "b3a4d2a6ce9c3703bc8c97b282897e48266d7d2ab825d230de4cacda095b2be3",
+        "lgdBlockCode": "6605"
+      }
+    }
+  ]
+}
