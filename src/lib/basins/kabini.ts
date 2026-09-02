@@ -167,7 +167,7 @@ export const KABINI: BasinManifest = {
     label: "Developed in collaboration with",
     name: "Paani Earth Foundation",
     logo: "/partners/paani-earth-foundation.png",
-    url: "https://paani.earth",
+    url: "https://forrivers.life",
     sub: "Cauvery basin spatial data and review",
   },
   credits: [
