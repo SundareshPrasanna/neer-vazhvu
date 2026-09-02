@@ -84,7 +84,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "Holds Mettur, the delta's canal head, and irrigates almost none of its own farmland from it: 13 of 14 taluks draw more groundwater than recharges.",
     basin: { basinId: "cauvery-tn", subBasinKey: "129", subBasinName: "Tirumanimuttar" },
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -96,7 +96,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Tirupathur",
     hook: "The Palar tannery belt without a canal: every taluk is over-exploited and all irrigation is from wells.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {

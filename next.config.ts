@@ -78,6 +78,13 @@ const nextConfig: NextConfig = {
       "./public/tiles/**",
       "./public/images/**",
       "./public/data/rich-bodies/**",
+      // The Atlas corpus is read only at build time by SSG district, block
+      // and Panchayat pages (src/lib/atlas/data.ts); no serverless function
+      // reads it. At 163 MB and growing with every district, leaving it in
+      // the whole-public trace pushed [cityId]/water-bodies to 270 MB
+      // uncompressed - past Vercel's 250 MB limit - when Salem and
+      // Tirupathur's corpus landed (2026-09-02).
+      "./public/data/atlas/**",
     ],
   },
   outputFileTracingIncludes: {
