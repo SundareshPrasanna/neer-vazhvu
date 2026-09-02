@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AtlasBreadcrumbs } from "@/components/atlas/atlas-breadcrumbs";
-import { AtlasContainer, AtlasNote } from "@/components/atlas/atlas-primitives";
+import { AtlasContainer, AtlasNote, AtlasSection } from "@/components/atlas/atlas-primitives";
+import { FloodStatement, ScarcityStateTable } from "@/components/atlas/scarcity-flood";
+import { loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
+import { latestScarcityWeek, stateFloodReading } from "@/lib/atlas/hazards";
 import { DistrictCard, buildStateBoard } from "@/components/atlas/district-card";
 import { listVisibleAtlasStates } from "@/lib/atlas/registry";
 
 /**
  * The state tier of the Atlas: /atlas/tn, /atlas/mh. The Districts view
  * opens at states, and a state opens to the districts inside it - the
- * hierarchy a reader expects, and the page where state-level reads (the
- * district signal ledger's sourced columns, once each passes review) will
- * live. Until then this page is deliberately thin: a doorway, not a surface
- * inventing content it does not have.
+ * hierarchy a reader expects, and the page where the state-level reads
+ * live: the columns of the district signal ledger, each rendered only when
+ * its served artifact exists. Today that is the week's tanker register
+ * (Maharashtra) and the disaster plan's flood classification; the rest of
+ * the ledger lands a column at a time.
  */
 
 interface RouteParams {
@@ -42,6 +46,12 @@ export default async function StatePage({ params }: RouteParams) {
   const cards = (board?.board ?? []).filter((b) => b.status !== "onboarding");
   const onboarding = (board?.board ?? []).filter((b) => b.status === "onboarding");
 
+  // State-level reads, gated on the served artifacts and nothing else.
+  const scarcityArtifact = loadStateScarcityTankers(entry.stateSlug);
+  const week = scarcityArtifact ? latestScarcityWeek(scarcityArtifact) : null;
+  const floodArtifact = loadStateFloodClassification(entry.stateSlug);
+  const flood = floodArtifact ? stateFloodReading(floodArtifact) : null;
+
   return (
     <div className="bg-white dark:bg-slate-950 min-h-screen">
       <AtlasContainer className="pt-4 sm:pt-6">
@@ -68,15 +78,36 @@ export default async function StatePage({ params }: RouteParams) {
               <DistrictCard key={b.district.scopeId} {...b} />
             ))}
           </div>
-          <div className="mt-8">
-            <AtlasNote>
-              State-level readings are not served yet: the columns of the district
-              signal ledger (groundwater by taluka, polluted stretches, tanker
-              deployments, drought declarations, flood classifications) each enter
-              here only after their source, mapping and licence pass review. Until
-              then this page is the doorway to the districts, nothing more.
-            </AtlasNote>
-          </div>
+        </AtlasContainer>
+        {week || flood ? (
+          <AtlasContainer className="divide-y divide-slate-200 dark:divide-slate-800 border-t border-slate-200 dark:border-slate-800">
+            {week ? (
+              <AtlasSection
+                id="scarcity"
+                title="Tankers this week"
+                intro="The Water Supply and Sanitation Department publishes a weekly report of every village and wadi on tanker supply, district by district. This is that report's latest week, served as the department prints it."
+              >
+                <ScarcityStateTable week={week} />
+              </AtlasSection>
+            ) : null}
+            {flood ? (
+              <AtlasSection
+                id="flood"
+                title="What the disaster plan says about floods"
+                intro="The state's own disaster management plan, quoted with its page. The Atlas classifies nothing itself; each district page carries the plan's statement for that district."
+              >
+                <FloodStatement reading={flood} />
+              </AtlasSection>
+            ) : null}
+          </AtlasContainer>
+        ) : null}
+        <AtlasContainer className="py-8">
+          <AtlasNote>
+            The remaining columns of the district signal ledger (groundwater by
+            taluka, polluted river stretches, drought declarations) land here one
+            at a time, each as its source, mapping and licence are pinned down;
+            the page never invents a column it cannot source.
+          </AtlasNote>
         </AtlasContainer>
       </main>
     </div>

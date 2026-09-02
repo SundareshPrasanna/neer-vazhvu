@@ -1,0 +1,89 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/flood-classification",
+  "scope": {
+    "kind": "state",
+    "id": "maharashtra"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "mh-sdmp-2023",
+        "title": "Maharashtra State Disaster Management Plan, 2023",
+        "publisher": "Maharashtra State Disaster Management Authority, Government of Maharashtra",
+        "license": "Maharashtra government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://maharashtra.gov.in/Site/Upload/PDF/SDMP.pdf",
+        "as_of": "2023-09-05",
+        "retrieved": "2026-09-02"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-09-02",
+    "produced_by": "scripts/atlas-flood-classification.ts",
+    "internal_inputs": [],
+    "note": "The state disaster management plan's own flood classification, transcribed with the sentence and page it comes from; the Atlas classifies nothing itself. Maharashtra's plan names the districts that are NOT flood-prone; Tamil Nadu's names fourteen coastal districts as highly vulnerable and leaves inland flood exposure unclassified per district, so absence from the Tamil Nadu list is not a statement of safety."
+  },
+  "schemaVersion": 1,
+  "state": "mh",
+  "source": {
+    "title": "Maharashtra State Disaster Management Plan, 2023",
+    "publisher": "Maharashtra State Disaster Management Authority, Government of Maharashtra",
+    "url": "https://maharashtra.gov.in/Site/Upload/PDF/SDMP.pdf",
+    "pdfSha256": "46bbb2dd54be77cc04b1a6d2b42443a9175ffb31540abae149045628d8cbc1cb",
+    "bytes": 2604966,
+    "pages": 204,
+    "documentDate": "2023-09-05",
+    "retrievedAt": "2026-09-02"
+  },
+  "classification": {
+    "kind": "flood-prone-except",
+    "statement": "Every district is flood-prone except the eight the plan names.",
+    "exceptions": [
+      {
+        "sdmpName": "Ahmednagar",
+        "currentName": "Ahilyanagar",
+        "registrySlug": "ahilyanagar"
+      },
+      {
+        "sdmpName": "Beed",
+        "currentName": "Beed"
+      },
+      {
+        "sdmpName": "Solapur",
+        "currentName": "Solapur"
+      },
+      {
+        "sdmpName": "Latur",
+        "currentName": "Latur"
+      },
+      {
+        "sdmpName": "Osmanabad",
+        "currentName": "Dharashiv"
+      },
+      {
+        "sdmpName": "Jalna",
+        "currentName": "Jalna"
+      },
+      {
+        "sdmpName": "Aurangabad",
+        "currentName": "Chhatrapati Sambhajinagar"
+      },
+      {
+        "sdmpName": "Buldhana",
+        "currentName": "Buldhana"
+      }
+    ],
+    "quote": "All districts in the State except Ahmednagar, Beed, Solapur, Latur, Osmanabad, Jalna, Aurangabad, and Buldhana are flood prone.",
+    "section": "7.1 Flood",
+    "pdfPage": 61,
+    "printedPage": 51
+  },
+  "review": {
+    "status": "verified",
+    "transcribedAt": "2026-09-02",
+    "transcribedBy": "read from the plan's PDF text by the maintainer's assistant",
+    "verifiedAt": "2026-09-02",
+    "verifiedBy": "Sundaresh, read against the SDMP 2023 PDF"
+  }
+}
