@@ -57,10 +57,19 @@
         "url": "https://indiawris.gov.in/wris/",
         "license": "India-WRIS website policy: material 'may be reproduced free of charge in any format or media without requiring specific permission', subject to accurate reproduction and prominent acknowledgement of the source; third-party material on the site excluded - GoI publication, cited with attribution",
         "role": "asserts"
+      },
+      {
+        "title": "CPCB OCEMS public portal - industry details for Jubilant Generics (Nanjangud) and the realtime connectivity dashboard entry for Jubilant Pharmova Limited",
+        "publisher": "Central Pollution Control Board",
+        "url": "https://cems.cpcb.gov.in/public/#/l/site-info/eyJvYmoiOiJpbmR1c3RyeV8zNjIwIn0%3D",
+        "closed": true,
+        "as_of": "2026-09-02",
+        "role": "input",
+        "license": "government portal, cited with attribution"
       }
     ],
     "method": "manual",
-    "produced_at": "2026-08-27",
+    "produced_at": "2026-09-02",
     "produced_by": "Authored from the documents' own tables, page-cited; the 2018 stretch length is KSPCB's own figure because the delivered geometry maps only part of it. Nanjangud industrial-register counts come from scripts/build_kabini_fregister.py."
   },
   "river": "Kabini",
@@ -256,13 +265,13 @@
           "label": "The same taluk, on the board's own register",
           "level": "taluk",
           "layerRef": "pressures-industrial",
-          "body": "The plan's table of 140 units can be read against KSPCB's own F-register for Regional Office Mysore-2, the 2020-21 edition as on 31 March 2021. That register carries 345 consented units in Nanjangud taluk, 217 of them recorded as operating. The two records agree on the categories that matter most for a polluted stretch, and part company lower down the scale.",
+          "body": "The action plan's table of 140 units can be read against KSPCB's own F-register for Regional Office Mysore-2, the 2020-21 edition as on 31 March 2021. That register carries 345 consented units in Nanjangud taluk, 217 of them recorded as operating. On operating units the two records broadly agree for the Red and Green categories, and diverge on Orange and White.",
           "points": [
             "Red category: 71 consented on the register, 30 of them operating, against 29 in the plan's table. Green: 135 consented, 87 operating, against 84. On operating units the two records line up.",
             "Orange: 64 consented, 32 operating, against 17 in the plan. White: 75 consented, 68 operating, against 10. These two categories are where the plan's table and the register diverge.",
-            "Nanjangud carries the largest Red-category list of the seven taluks in this register (71 of 197), which is consistent with the belt sitting at the head of the stretch.",
+            "Nanjangud carries the largest Red-category list of the seven taluks in this register, 71 of 197 - the belt at the head of the polluted stretch is also where the register's highest-pollution-potential units concentrate.",
             "The register is a 31 March 2021 snapshot and the plan is earlier still, so neither speaks to units consented since. A current count needs the 2025-26 edition.",
-            "The register's 17-category flag is incomplete (only five rows carry it), so the count of 17-category units on this stretch is not available from it."
+            "The register's 17-category flag is incomplete: only five rows in the whole register carry it - Bannari Amman Sugars, Chamundi Distilleries, Gemini Distillery, Jubilant Generics and Solara Active Pharma Sciences, the two distilleries recorded as closed - so a 17-category count for this stretch cannot be read from this source."
           ],
           "sourceTier": "other"
         },
@@ -270,13 +279,17 @@
           "key": "check",
           "label": "What would let anyone check it",
           "level": "stretch",
-          "body": "The zero-discharge position is the board's own assertion. For a sugar, distillery, pulp-and-paper and pharmaceutical cluster upstream of a polluted stretch, no published effluent data exists to test it: there is no public OCEMS-style feed for these units, and the compliance table reports a count, not a measurement.",
+          "body": "The zero-discharge position is the board's own assertion. For a sugar, distillery, pulp-and-paper and pharmaceutical cluster upstream of a polluted stretch, no published effluent data exists to test it: the one unit with a public OCEMS enrolment reports no data through it, and the compliance table reports a count, not a measurement.",
           "noData": true,
           "sourceTier": "other",
           "link": {
-            "url": "https://cems.cpcb.gov.in/public/#/l/realtime-connectivity-status-dashboard",
-            "label": "Open CPCB's live connectivity dashboard"
-          }
+            "url": "https://cems.cpcb.gov.in/public/#/l/site-info/eyJvYmoiOiJpbmR1c3RyeV8zNjIwIn0%3D",
+            "label": "Jubilant Pharmova on CPCB's connectivity dashboard"
+          },
+          "points": [
+            "One concrete check exists: Jubilant Generics (KIADB Nanjangud) is enrolled on CPCB's public OCEMS portal to report BOD, COD, pH, TSS and treated-water flow, and every value reads NA with no last-updated date (checked 2 September 2026).",
+            "CPCB's live connectivity dashboard lists the same site as Jubilant Pharmova Limited with a blank connection status and no date of last data received, while neighbouring entries show live same-day feeds."
+          ]
         }
       ]
     },
