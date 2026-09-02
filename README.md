@@ -1,6 +1,6 @@
 # Neer Vazhvu
 
-**India's Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for India's cities, districts and river basins. Live for Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune and Surat today.
+**India's Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for India's cities, districts and river basins. Live for Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune and Surat today - plus the [District Atlas](#district-atlas): Thanjavur, Tiruchirappalli, Salem, Tirupathur and Satara at district, block and Gram Panchayat grain.
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 
@@ -14,7 +14,7 @@ Every city dashboard, where the data exists, surfaces:
 - **Groundwater** - CGWB block exploitation classification, station-level depth time-series, and (where well density supports it) ward-level depth interpolation
 - **Rivers** - CPCB NWMP DO/BOD time-series with status badges derived from current readings via the shared CPCB Designated Best-Use classifier
 - **Water bodies** - OSM polygons, lost-tank inventory, restoration priority scoring (algorithm varies per city)
-- **Rich-data deep-zoom panel** - 21 flagship bodies onboarded (8 in Chennai + 13 in Bangalore). A click opens a full-screen panel with yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints over the polygon and 1 km halo, per-year stats (water surface, built share, building counts in body vs halo), a play/pause timeline with event stamps, and a sources & methodology modal. Water-fraction series splices JRC GSW v1.4 (1984-2021) with Dynamic World V1 (2022-present) so the chart doesn't truncate at JRC's cutoff
+- **Rich-data deep-zoom panel** - 43 flagship bodies onboarded across all 8 rich-body cities (7 Chennai, 14 Bengaluru, 5 Mumbai, 5 Hyderabad, 5 Pune, 3 Delhi, 3 Kolkata, 1 Gurugram). A click opens a full-screen panel with yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints over the polygon and 1 km halo, per-year stats (water surface, built share, building counts in body vs halo), a play/pause timeline with event stamps, and a sources & methodology modal. Water-fraction series splices JRC GSW v1.4 (1984-2021) with Dynamic World V1 (2022-present) so the chart doesn't truncate at JRC's cutoff
 - **Flood risk** - Hazard zones / drainage / sewerage where layers are public; narrative-only stub where they're not
 - **Shoreline change** (`/shoreline`, Chennai + Mumbai today) - Erosion/accretion along the Chennai coast, Mahabalipuram to Pulicat. The primary layer is our own MNDWI/DSAS satellite measurement (Landsat 5/7/8 + Sentinel-2 via Earth Engine, ~1,200 transects, **1990-2026** - extending past the study's 2024 cutoff), with a per-transect movement-over-time chart, an early-vs-recent acceleration check (≈72% of the eroding coast is eroding faster than before), and a per-transect confidence flag. The six study zones + named port hotspots from Anagha, Singh & Frappart (2026, *Environmental Challenges*) are drawn as faint context that validates the measurement
 - **My Ward** - Per-ward report aggregating every layer above with comparison + uplift planner (Chennai, Madurai, Bengaluru, Delhi). Deliberately withheld where the geometry is not public or nothing is joined to it: Mumbai until the ward build lands, Hyderabad because the 300-ward delimitation gazetted 25 Dec 2025 has no published boundaries, Kolkata because the only public ward geometry covers 141 of 144 wards - the three missing ones are 9.2% of the city - Pune because no ward rows exist in the database, and Gurugram because although all 36 ward polygons are harvested, GMDA's layer publishes a ward number and a zone code with no ward name and nothing is joined to them. Every omission and its reason is in [docs/architecture/exemptions.md](docs/architecture/exemptions.md)
@@ -79,6 +79,10 @@ Per-city deep-dives:
 
 **Place-config-driven multi-city.** Adding a city = adding a `CityConfig` in `src/lib/cities/`. The routes at `src/app/[cityId]/...` resolve it via `tryGetPlaceConfig(cityId)`. `heroMode` (`days-left` | `allocation` | `cauvery-pumping` | `none`) picks the dashboard hero variant. Per-city water sources, ward counts, `urbanSupply` allocation context, capability flags (`hasCommitments`, `hasAllocationLedger`, `hasShoreline`, ...), language state (`availableLanguages` + `upcomingLanguages` for greyed coming-soon toggles), and region structure (`placeKind: 'region'` + `corporations[]` for the MMR) all flow from the same config. See [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-city) for the full walkthrough.
 
+**Corpus-pinned serving.** `public/data` + `public/geojson` are developed in this repo but production does not read them from the checkout: `npm run build` starts with `scripts/fetch-corpus.sh`, and with `CORPUS_SOURCE=remote` (Vercel, the locked-corpus CI job) it replaces both roots wholesale with the private data repo (`neer-vazhvu-data`) at the exact commit pinned in [corpus.lock](corpus.lock). Deploys are reproducible and rolling back the site rolls back the data - and a data change only reaches production through a release: a data-repo PR, an immutable `corpus-YYYY-MM-DD-<slug>` tag, and a pin PR here moving `corpus.lock` (helper: `scripts/release_corpus.py`). Locally the default `CORPUS_SOURCE=repo` is a no-op and the checkout serves as-is.
+
+**District Atlas routing.** Districts are places too, but they resolve through their own registry (`src/lib/atlas/registry.ts`) rather than `src/lib/cities/`: routes live at `/atlas/[state]/[district]` with block and Gram Panchayat pages beneath, all statically generated from the corpus at build time. See the [District Atlas](#district-atlas) section below.
+
 Earth Engine Phase 1 jobs live under `neer-vazhvu-api/app/gee/` and write small summary tables into Supabase instead of serving raster layers directly to the frontend.
 
 ## Data Sources
@@ -93,6 +97,8 @@ We integrate 50+ distinct sources across the cities we cover - from utility-publ
 - [docs/cities/hyderabad/data-sources.md](docs/cities/hyderabad/data-sources.md)
 - [docs/cities/kolkata/data-sources.md](docs/cities/kolkata/data-sources.md)
 - [docs/cities/gurugram/data-sources.md](docs/cities/gurugram/data-sources.md)
+- [docs/cities/pune/data-sources.md](docs/cities/pune/data-sources.md)
+- [docs/cities/surat/data-sources.md](docs/cities/surat/data-sources.md)
 - [DATA_SOURCES.md](DATA_SOURCES.md) - top-level index with a cross-city parity matrix (the contributor cheat-sheet for what each city has covered)
 
 ## Tech Stack
@@ -113,12 +119,12 @@ We integrate 50+ distinct sources across the cities we cover - from utility-publ
 Earth Engine is used as a summary layer (catchment rainfall context, water-body NDWI seasonality) and as the build-time source for the rich-data deep-zoom panel's yearly chips and zonal stats — not a raster explorer. Methodology, guardrails, and operations live in dedicated docs:
 
 - [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md), [GEE_PHASE2_CHECKLIST.md](GEE_PHASE2_CHECKLIST.md)
-- Shipped-method write-ups: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md), [docs/methodology/coastal-shoreline-change-v1.md](docs/methodology/coastal-shoreline-change-v1.md), [docs/methodology/cascade-reconstruction-v1.md](docs/methodology/cascade-reconstruction-v1.md)
+- Shipped-method write-ups: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md), [docs/methodology/coastal-shoreline-change-v1.md](docs/methodology/coastal-shoreline-change-v1.md), [docs/methodology/cascade-reconstruction-v1.md](docs/methodology/cascade-reconstruction-v1.md), [docs/methodology/district-atlas-v1.md](docs/methodology/district-atlas-v1.md)
 - (The phase-1 planning documents were retired to local archives once the work shipped; the methodology folder is the maintained record.)
 
 ## Rich-Data Deep-Zoom Panel
 
-21 flagship bodies have a dedicated deep-zoom experience layered on top of the standard `/water-bodies` map. Onboarded bodies today: 8 in Chennai (Pallikaranai Marsh, Sholavaram, Red Hills/Puzhal, Chembarambakkam, Porur, Velachery, Perumbakkam, Chitlapakkam) + 13 in Bengaluru (Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka).
+43 flagship bodies have a dedicated deep-zoom experience layered on top of the standard `/water-bodies` map. Onboarded today: 7 in Chennai (Pallikaranai Marsh, Sholavaram, Red Hills/Puzhal, Chembarambakkam, Porur, Velachery, Perumbakkam), 14 in Bengaluru (Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka), 5 in Mumbai (Powai, Vihar, Tulsi, Tansa, Bhatsa), 5 in Hyderabad (Hussain Sagar, Osman Sagar, Himayat Sagar, Durgam Cheruvu, Ameenpur), 5 in Pune (Khadakwasla, Panshet, Warasgaon, Temghar, Pawana), 3 in Delhi (Najafgarh Jheel, Bhalswa, Sanjay), 3 in Kolkata (Rabindra Sarobar, Subhash Sarobar, Santragachi Jheel) and 1 in Gurugram (Sultanpur).
 
 For each body the build-time pipeline produces:
 
@@ -137,6 +143,20 @@ To onboard a new body, see [docs/cities/chennai/features.md](docs/cities/chennai
 The "Catchments" view mode on `/[city]/water-bodies` makes every lake clickable to show its **area of influence**: the catchment that drains into it, the feeder streams, the upstream/downstream tanks, the downstream flow path to the river, and a rooftop rainwater-harvest estimate. Live for Chennai, Madurai, and Bengaluru; quality bar is the Hyderabad Lake Atlas.
 
 Catchments are delineated from a 30 m bare-earth DEM (FABDEM) with WhiteboxTools hydrology - a threshold-free own / received / total contributing-area model, plus a per-lake downstream flow path traced through the cascade to the river. Lake names are backfilled from authoritative open sources where OSM is sparse (Bengaluru: the ATREE/CSEI named-lake census on OpenCity), and the downstream river is named by snapping the flow path to the mapped river network. Full methodology: [docs/methodology/catchment-atlas-v1.md](docs/methodology/catchment-atlas-v1.md).
+
+## District Atlas
+
+The platform's rural surface: a page per district at `/atlas/[state]/[district]`, a page per block (TN) or taluka (MH), and a page per Gram Panchayat - 3,088 GP pages across five districts today. Where a city dashboard reads utility feeds, a district's water state lives in government registers, and the Atlas turns those registers into place pages without inventing anything between them: every joined identity is either exact or a human-reviewed proposal, and every page states which registers could not be bound and why.
+
+| District | State | GPs | Blocks/Talukas | The hook |
+|---|---|---|---|---|
+| [Thanjavur](https://neervazhvu.org/atlas/tn/thanjavur) | TN | 589 | 14 | The rice bowl: the district's water year is decided upstream at Mettur |
+| [Tiruchirappalli](https://neervazhvu.org/atlas/tn/tiruchirappalli) | TN | 404 | 14 | Thanjavur's inverse: water security is a groundwater question |
+| [Salem](https://neervazhvu.org/atlas/tn/salem) | TN | 385 | 20 | Holds Mettur, the delta's canal head - and 13 of 14 taluks are over-exploited |
+| [Tirupathur](https://neervazhvu.org/atlas/tn/tirupathur) | TN | 208 | 6 | The Palar tannery belt without a canal: all irrigation is from wells |
+| [Satara](https://neervazhvu.org/atlas/mh/satara) | MH | 1,502 | 11 | Koyna country with a dry eastern edge |
+
+Two identity adapters exist - Tamil Nadu's register adapter (TNRD directory, JJM Citizen Corner, Census 2011 DCHB, TNGIS boundaries, IN-GRES taluks, Season and Crop Report irrigation) and the LGD adapter that onboarded Maharashtra (LGD catalog on data.gov.in, DataMeet village polygons, First Census of Water Bodies, MPCB District Environment Plan) - so a new district on an existing adapter is roughly a day of register fetches plus human review of the staged name-resolution proposals. District verdicts are composed, never scored: the severest present reading leads and unmeasured dimensions are named on the page. A monthly GitHub Actions run ([.github/workflows/atlas-refresh.yml](.github/workflows/atlas-refresh.yml)) re-fetches registers whose upstream editions moved. Full methodology: [docs/methodology/district-atlas-v1.md](docs/methodology/district-atlas-v1.md).
 
 ## Getting Started
 

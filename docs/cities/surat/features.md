@@ -36,8 +36,14 @@ Load-bearing behaviours, all deliberate:
 
 - **No threshold is ours.** Every one is scraped from the publisher into `surat-flood-chain.json`.
   None is in config, precisely so config and source cannot drift apart silently.
-- **Negative headroom renders as negative.** The causeway routinely sits above its overflow level
-  during the monsoon and is closed; clamping that to zero would hide the true state.
+- **Negative headroom is never clamped to zero.** The causeway routinely sits above its overflow
+  level during the monsoon and is closed; hiding that would hide the true state. It renders as a
+  distance with the direction in the label ("0.86 m over the crest"), never as a signed number
+  against a directional label.
+- **The "live" badge is gated on the data, not asserted.** Production serves this JSON from the
+  corpus pin, so readings age between releases; past 48 hours the badge switches to the reading's
+  date and the footer says the card is that day's snapshot. An all-zero rainfall pass says no rain
+  fell instead of naming a "wettest zone".
 - **No storage-history chart.** `reservoirHistoryAbsentNote` explains that Surat will never have
   one, rather than promising a chart that "fills in automatically" (the Delhi lesson: a live feed
   does not imply a storage series).
