@@ -3,7 +3,7 @@ import { liveCityPhrase } from "@/lib/cities/roster";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Neer Vazhvu - Urban Water Intelligence",
+    name: "Neer Vazhvu - India's Water Intelligence",
     short_name: "Neer Vazhvu",
     description:
       `Open-source platform tracking reservoirs, groundwater, river health, flood risk, ` +

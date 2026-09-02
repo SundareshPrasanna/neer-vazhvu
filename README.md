@@ -1,6 +1,6 @@
 # Neer Vazhvu
 
-**Urban Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for Indian cities. Live for Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune and Surat today.
+**India's Water Intelligence** - An open-source platform that turns public water data into actionable intelligence for India's cities, districts and river basins. Live for Chennai, Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune and Surat today.
 
 **Live:** [neervazhvu.org](https://neervazhvu.org)
 

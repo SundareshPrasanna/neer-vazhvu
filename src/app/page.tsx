@@ -17,18 +17,18 @@ import {
 // most likely to see it. Derived from the registry now, like layout.tsx and
 // manifest.ts. A new city needs no edit here.
 const CITIES = liveCityPhrase();
-const SHORT_DESCRIPTION = `Open-source urban water intelligence across ${CITIES}.`;
+const SHORT_DESCRIPTION = `Open-source water intelligence across ${CITIES}.`;
 
 export const metadata: Metadata = {
-  title: "Neer Vazhvu | Urban Water Intelligence",
+  title: "Neer Vazhvu | India's Water Intelligence",
   description:
-    `Open-source urban water intelligence across ${CITIES}. Reservoirs, groundwater, ` +
-    `rivers, floods, and water bodies made legible city by city.`,
+    `Open-source water intelligence across ${CITIES}. Reservoirs, groundwater, ` +
+    `rivers, floods, and water bodies made legible city by city and district by district.`,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Neer Vazhvu | Urban Water Intelligence",
+    title: "Neer Vazhvu | India's Water Intelligence",
     description: SHORT_DESCRIPTION,
     type: "website",
     locale: "en_IN",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Neer Vazhvu | Urban Water Intelligence",
+    title: "Neer Vazhvu | India's Water Intelligence",
     description: SHORT_DESCRIPTION,
   },
 };
@@ -418,7 +418,7 @@ export default function Page() {
             Neer Vazhvu
           </h1>
           <p className="mt-3 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-lg sm:text-xl font-semibold text-transparent">
-            Urban Water Intelligence
+            Where India&apos;s water stands, place by place
           </p>
           <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
             An open-source platform that makes India&apos;s water systems

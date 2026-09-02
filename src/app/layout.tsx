@@ -12,13 +12,13 @@ const CITIES_WITH_ONBOARDING = liveCityPhraseWithOnboarding();
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neervazhvu.org"),
-  title: "Neer Vazhvu | Urban Water Intelligence",
+  title: "Neer Vazhvu | India's Water Intelligence",
   description:
     `Open-source platform tracking reservoirs, groundwater, river health, flood risk, drainage, ` +
     `and water bodies across ${CITIES}, with AI-powered summaries in ` +
     `English and regional languages.`,
   keywords: [
-    "urban water",
+    "water intelligence",
     ...cityKeywords(),
     "reservoir levels",
     "groundwater",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "civic tech",
   ],
   openGraph: {
-    title: "Neer Vazhvu | Urban Water Intelligence",
+    title: "Neer Vazhvu | India's Water Intelligence",
     description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across ${CITIES_WITH_ONBOARDING}.`,
     type: "website",
     locale: "en_IN",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Neer Vazhvu | Urban Water Intelligence",
+    title: "Neer Vazhvu | India's Water Intelligence",
     description: `Reservoirs, groundwater, rivers, flood risk, and water bodies across ${CITIES_WITH_ONBOARDING}.`,
   },
   icons: {
