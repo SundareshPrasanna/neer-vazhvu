@@ -461,8 +461,10 @@ export function BasinOverview({
     return {
       // Separators must survive same-colour neighbours (most sub-basins share
       // a fill class): dark hairlines on the light basemap, light on dark.
-      // The selected outline flips too - near-black vanishes in dark mode.
-      color: isSel ? (tiles.isDark ? "#f8fafc" : "#0f172a") : tiles.isDark ? "#e2e8f0" : "#1e293b",
+      // The selected outline is amber - the old white pick was one shade off
+      // the light hairlines beside it, so a selection never visibly changed
+      // the map (Sundaresh, 2 Sep).
+      color: isSel ? (tiles.isDark ? "#facc15" : "#d97706") : tiles.isDark ? "#e2e8f0" : "#1e293b",
       weight: isSel ? 3 : 1.8,
       opacity: isSel ? 1 : 0.75,
       fillColor:
@@ -512,6 +514,25 @@ export function BasinOverview({
   const basinLine = tiles.isDark ? "#f0abfc" : "#d946ef";
   const beyondEdge = tiles.isDark ? "#94a3b8" : "#475569";
   const beyondFill = tiles.isDark ? "#94a3b8" : "#64748b";
+  // Live-storage reservoirs wear this ring: the old near-black ring sank into
+  // the dark imagery, so every teal dot read as "has live storage"
+  // (Sundaresh, 2 Sep).
+  const liveRing = tiles.isDark ? "#f8fafc" : "#0f172a";
+
+  // Legend gates - a row appears only when its symbol is actually drawn. The
+  // sub-basin block was advertising tanks and stations that C8/C9 don't have,
+  // and the basin-wide reservoir key hid until a selection was made.
+  const hasInSub = (fc: FeatureCollection | null) =>
+    !!selectedKey && !!fc?.features.some((f) =>
+      (f.properties as Record<string, unknown>)?.subBasin === selectedKey && f.geometry?.type === "Point");
+  const subHasTanks = hasInSub(tanks);
+  const subHasStations = hasInSub(stations);
+  const isLiveFeature = (f: Feature) => {
+    const code = (f.properties as Record<string, unknown>)?.liveCode;
+    return !!(code && live[code as string]);
+  };
+  const hasLiveReservoirs = !!reservoirs?.features.some(isLiveFeature);
+  const hasLocationOnly = !!reservoirs?.features.some((f) => f.geometry?.type === "Point" && !isLiveFeature(f));
 
   // Selected sub-basin profile - rendered INLINE under its card in the
   // list (clicking the bottom card must not teleport focus to the top).
@@ -920,7 +941,7 @@ export function BasinOverview({
                 // as markers, not data - the grey fill was muddying into the
                 // choropleth colours.
                 pathOptions={isLive
-                  ? { color: "#0f172a", weight: 1, fillColor: "#0891b2", fillOpacity: 0.9 }
+                  ? { color: liveRing, weight: 1.5, fillColor: "#0891b2", fillOpacity: 0.9 }
                   : { color: "#334155", weight: 1.5, fillColor: "#ffffff", fillOpacity: 0.85 }}
               >
                 <LeafletTooltip>{reservoirInfo}</LeafletTooltip>
@@ -988,6 +1009,11 @@ export function BasinOverview({
                 no data
               </div>
             )}
+            {/* The choropleth's provenance, in the frame where it's read - the
+                sources section is a whole panel-scroll away (Sundaresh, 2 Sep). */}
+            {manifest.metricSources?.[metric] && (
+              <div className="text-slate-400 dark:text-slate-500">Source: {manifest.metricSources[metric]}</div>
+            )}
             {/* Line layers - rows appear only when the data files exist.
                 Labels name the frame in full (Madhuri, 31 Aug): "stretch
                 drawn to CPCB length" and "named rivers" said how the lines
@@ -1017,7 +1043,7 @@ export function BasinOverview({
                     .filter(Boolean))].join(" & ") || "river";
                   const km = contextRivers.features.reduce(
                     (a, f) => a + Number((f.properties as Record<string, unknown>)?.lengthKm ?? 0), 0);
-                  return `${names} river stretch above the state line${km ? ` (${Math.round(km)} km)` : ""}`;
+                  return `${names} river stretch beyond the state line${km ? ` (${Math.round(km)} km)` : ""}`;
                 })()}
               </div>
             )}
@@ -1091,23 +1117,36 @@ export function BasinOverview({
                 </>
               );
             })()}
-            {/* Marker key - shown while a sub-basin is in focus and its own
-                points are on the map. Every rendered symbol gets a legend row. */}
-            {selectedKey && (
+            {/* Reservoir markers draw basin-wide, selection or not, so their
+                key lives here rather than in the sub-basin block below. */}
+            {hasLiveReservoirs && (
+              <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full border-2 shrink-0" style={{ backgroundColor: "#0891b2", borderColor: liveRing }} />Reservoir - live storage</div>
+            )}
+            {hasLocationOnly && (
+              <div className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-full border-2 border-slate-600 bg-white shrink-0" />Reservoir / tank - location only</div>
+            )}
+            {/* Marker key - a row appears only when the focused sub-basin
+                actually has that symbol on the map (gate on data, not the
+                selection). */}
+            {(subHasTanks || subHasStations) && (
               <>
                 <div className="pt-1 mt-0.5 border-t border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-200">In this sub-basin</div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: "#0284c7" }} />MI tank</div>
+                {subHasTanks && (
+                  <div className="flex items-center gap-1.5"><span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: "#0284c7" }} />MI tank</div>
+                )}
                 {/* Diamonds, one per class band, matching the markers - a
                     single red dot claiming "colour = worst class" made the
                     reader do the mapping themselves (Madhuri, 31 Aug). */}
-                <div>WQ station - worst recorded class:</div>
-                <div className="flex items-center gap-2 flex-wrap pl-1">
-                  {([["A-B", "#10b981"], ["C", "#f59e0b"], ["D", "#f97316"], ["E", "#dc2626"], ["none", "#94a3b8"]] as [string, string][]).map(([label, color]) => (
-                    <span key={label} className="flex items-center gap-0.5"><LegendDiamond color={color} />{label}</span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full border border-slate-900 shrink-0" style={{ backgroundColor: "#0891b2" }} />Reservoir - live storage</div>
-                <div className="flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 rounded-full border-2 border-slate-600 bg-white shrink-0" />Reservoir / tank - location only</div>
+                {subHasStations && (
+                  <>
+                    <div>WQ station - worst recorded class:</div>
+                    <div className="flex items-center gap-2 flex-wrap pl-1">
+                      {([["A-B", "#10b981"], ["C", "#f59e0b"], ["D", "#f97316"], ["E", "#dc2626"], ["none", "#94a3b8"]] as [string, string][]).map(([label, color]) => (
+                        <span key={label} className="flex items-center gap-0.5"><LegendDiamond color={color} />{label}</span>
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
             )}
             </div>
