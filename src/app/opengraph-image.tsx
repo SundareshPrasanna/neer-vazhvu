@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Neer Vazhvu | Urban Water Intelligence";
+export const alt = "Neer Vazhvu | India's Water Intelligence";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -113,7 +113,7 @@ export default function OGImage() {
           }}
         >
           <span style={{ fontSize: "18px", color: "#475569" }}>
-            Urban Water Intelligence
+            {"India's Water Intelligence"}
           </span>
           <span style={{ fontSize: "16px", color: "#475569" }}>
             neervazhvu.org
