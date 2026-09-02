@@ -1045,6 +1045,230 @@ export function CityAboutContent({
               />
             </>
           )}
+          {isHyderabad && (
+            <>
+              <DataSource
+                name="HMWSSB daily reservoir statement"
+                url="https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx"
+                description="Level, storage and draw-off per source, published daily by the water board with a 12.5-year archive. This is the series behind the draw-growth fact and the GO 111 dependence figure: the twin reservoirs' share of the city's draw is computed from the publisher's own rows, not asserted."
+                frequency="daily"
+              />
+              <DataSource
+                name="HMWSSB tanker bookings (via OpenCity)"
+                url="https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data"
+                description="1.32 million tanker bookings across 201 HMWSSB sections, January 2022 to February 2024. Powers the tanker surfaces and the tanker-geography fact: demand concentrates in Madhapur, Kondapur and Hafeezpet, not the old city. A fixed archival window rather than a live feed, and dated as such wherever it appears."
+                frequency="archival window (Jan 2022 to Feb 2024)"
+              />
+              <DataSource
+                name="HMWSSB billing and collection ledger (data.telangana.gov.in)"
+                url="https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-billing-and-collection-data"
+                description="Monthly billed demand against collection per division, January 2022 to June 2026, under GODL-India. The collection-efficiency fact is a straight division of the board's own columns."
+                frequency="monthly"
+              />
+              <DataSource
+                name="HMDA Lake Protection Committee gazetted lake register"
+                url="https://lakes.hmda.gov.in/"
+                description="The register of 2,978 gazetted lakes with each one's FTL notification status - preliminary versus final - and district. Powers the water-bodies and restoration surfaces, including the lake-register and Rangareddy facts. FTL boundaries themselves are published as raster sheets, not vectors."
+                frequency="register (read July 2026)"
+              />
+              <DataSource
+                name="TGRAC study of ORR water-body encroachment, 2014-2023"
+                url="https://www.siasat.com/171-lakes-encroached-in-hyderabad-betwee-2014-and-2023-report-3109650/"
+                description="The Telangana Remote Sensing Applications Centre compared imagery of all 920 water bodies inside the ORR between 2014 and 2023. The report was submitted to the Deputy Chief Minister and is not itself published; the figures here come from press reporting of that submission and are labelled accordingly."
+                frequency="one-time study (reported October 2024)"
+              />
+              <DataSource
+                name="TGPCB sewage treatment plant monitoring (data.telangana.gov.in)"
+                url="https://data.telangana.gov.in/dataset/telangana-pollution-control-board-stp-sewage-treatment-plant-data"
+                description="Per-plant treated-effluent readings under GODL-India, through November 2024 - the series behind the Amberpet effluent fact."
+                frequency="monthly (through Nov 2024)"
+              />
+              <DataSource
+                name="CGWB / IN-GRES groundwater assessment + India-WRIS levels"
+                url="https://ingres.iith.ac.in/"
+                description="The annual district assessment - Hyderabad is Telangana's one Critical district, at 98.32% extraction in 2025 - plus CGWB observation-well levels from the India-WRIS API for the point map."
+                frequency="annual assessment; well levels as published"
+              />
+              <DataSource
+                name="GHMC storm-water drain (nala) layer (via OpenCity)"
+                url="https://data.opencity.in/dataset/hyderabad-canals-drains-and-tanks-lakes"
+                description="96 nalas with per-nala encroachment fields in the schema. The fields are empty in the published extract, which the flood page states as a data gap rather than papering over. The extract itself is undated."
+                frequency="undated extract"
+              />
+            </>
+          )}
+          {isKolkata && (
+            <>
+              <DataSource
+                name="KMC District Environment Plan 2021"
+                url="https://www.kmcgov.in/KMCPortal/downloads/EnvironmentPlan_KMC_2021.pdf"
+                description="The corporation's own statutory environment plan: the 1,400 MLD sewage balance, the East Kolkata Wetlands' 910 MLD share, and the resident-plus-floating population figures behind the contested-denominator fact."
+                frequency="one-time (2021 edition)"
+              />
+              <DataSource
+                name="KMC, Sewerage and Drainage (2009)"
+                url="https://www.kmcgov.in/KMCPortal/downloads/SewerageAndDrainage.pdf"
+                description="States the main network 'was designed to discharge a rainfall of 6 mm. per hour' - the design standard the drainage page measures hourly rainfall against, paired with Open-Meteo ERA5."
+                frequency="one-time (2009)"
+              />
+              <DataSource
+                name="WBPCB EMIS surface-water quality"
+                url="http://emis.wbpcb.gov.in/waterquality/showwqprevdatachoosedist.do"
+                description="Twelve years of quarterly samples, taken separately at high and low tide - which is how the Adi Ganga's NIL dissolved oxygen at Bansdroni is visible tide by tide."
+                frequency="quarterly"
+              />
+              <DataSource
+                name="KMC Water Supply Department"
+                url="http://www.kmc-wd.com/"
+                description="Treatment capacities, the run-of-river supply chain from Palta, and the 'static population' the department frames demand against. Kolkata impounds nothing, so there is no reservoir feed to scrape - the structural fact the dashboard leads with."
+                frequency="static pages"
+              />
+              <DataSource
+                name="KMC Weekly Drainage Activity Chart"
+                url="https://www.kmcgov.in/KMCPortal/downloads/Weekly_Drainage_Activity_Chart.pdf"
+                description="Replaced in place every week with no archive kept upstream, so the series exists only because it is captured here weekly."
+                frequency="weekly (captured; no upstream archive)"
+              />
+              <DataSource
+                name="East Kolkata Wetlands Management Authority"
+                url="http://ekwma.in/ek/index.php"
+                description="The Ramsar-site authority for the wetland that does most of the city's sewage treatment - boundary and management context for the EKW surfaces."
+                frequency="manual"
+              />
+              <DataSource
+                name="British Geological Survey / ADB groundwater study (2018)"
+                url="https://www.adb.org/sites/default/files/linked-documents/49107-006-sd-01.pdf"
+                description="Groundwater context built on PHED IMIS records to April 2016 - the best public depth picture for the city's tube-well belt."
+                frequency="one-time (2018)"
+              />
+            </>
+          )}
+          {isGurugram && (
+            <>
+              <DataSource
+                name="GMDA OneMap asset register (ArcGIS REST)"
+                url="https://onemapdepts.gmda.gov.in/server/rest/services"
+                description="The authority's own GIS: treatment plants with capacities (Chandu Budhera 300 + Basai 272 MLD), the network, ward boundaries, and the water-body register with its own 1956/2012 cross-survey flags. Capacities are read from this register at build time rather than transcribed, so the dashboard cannot drift from what GMDA publishes; where the press says 670 MLD, both figures appear with their sourcing. No licence is served with the directory and gmda.gov.in asserts all rights reserved - open to read, unlicensed to reuse, so derived aggregates only."
+                frequency="read at build time"
+              />
+              <DataSource
+                name="GMDA Water Tanker MIS (bulk-water sales ledger)"
+                url="https://www.gmda.gov.in/onlineservices/water-tanker.html"
+                description="Every tanker load GMDA sold - date, buyer, volume, price - one XLSX per year across three years. Aggregated on build and never republished row-for-row: counts, sums and shares only, the delivery-address column dropped, buyers as a ranked top-15 by volume."
+                frequency="annual XLSX, aggregated on build"
+              />
+              <DataSource
+                name="IN-GRES groundwater assessment (Haryana districts)"
+                url="https://ingres.iith.ac.in/"
+                description="Extraction against availability, stage and category per district across every published assessment year. This is not depth-to-water - measured levels are a separate India-WRIS series."
+                frequency="annual"
+              />
+              <DataSource
+                name="India-WRIS Ground Water Level API"
+                url="https://indiawris.gov.in/wris/"
+                description="CGWB observation-well depth readings for the point map."
+                frequency="as published"
+              />
+            </>
+          )}
+          {isPune && (
+            <>
+              <DataSource
+                name="PMC Draft Environment Status Report 2025-26"
+                url="https://webadmin.pmc.gov.in/sites/default/files/2026-08/PMC%20Draft%20ESR%202025-26_compressed.pdf"
+                description="The corporation's own current-year environment report - the supply, sewage and per-source figures the facts page cites."
+                frequency="annual"
+              />
+              <DataSource
+                name="PMC daily tanker delivery registers (JSON:API)"
+                url="https://webadmin.pmc.gov.in/en/jsonapi/node/water_tanker"
+                description="A spreadsheet per filling point per working day, one row per tanker sent. Aggregated to counts and shares; the source rows carry recipient addresses and phone numbers and none of that is republished."
+                frequency="daily registers, aggregated on build"
+              />
+              <DataSource
+                name="Maharashtra WRD Pravah daily dam-safety bulletin"
+                url="https://mwrdpravah.in/damsafety/control/pdfLatestReportEng"
+                description="The state's daily all-dams bulletin, from which the Khadakwasla chain's four dams are read for the reservoir surfaces."
+                frequency="daily"
+              />
+              <DataSource
+                name="MWRRA allocation orders (19/2018 and 01/2025)"
+                url="https://mwrra.maharashtra.gov.in/"
+                description="The regulator's orders on Pune's water entitlement, with PMC's and WRD's affidavits on record - the paper trail behind the allocation surfaces."
+                frequency="episodic (orders)"
+              />
+              <DataSource
+                name="IN-GRES groundwater assessment (2025-2026 edition)"
+                url="https://ingres.iith.ac.in/"
+                description="District and taluka assessment for Pune. IN-GRES publishes per-state editions on different cycles, so the vintage is stated on the page rather than assumed."
+                frequency="annual (per-state editions)"
+              />
+              <DataSource
+                name="India-WRIS / NWDP groundwater level telemetry (Maharashtra)"
+                url="https://nwdp.nwic.gov.in/dataset/ground-water-level-telemetry-6-hourly-maharashtra"
+                description="Six-hourly telemetric depth-to-water for the point map."
+                frequency="6-hourly telemetry"
+              />
+              <DataSource
+                name="CPCB Polluted River Stretches (October 2025)"
+                url="https://cpcb.gov.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTc3N18xNzYwNjgxNDA4X21lZGlhcGhvdG80MzkyLnBkZg=="
+                description="The Mula-Mutha's priority classification in CPCB's national polluted-stretches list."
+                frequency="episodic (CPCB updates)"
+              />
+              <DataSource
+                name="Maharashtra WRD flood line maps"
+                url="https://wrd.maharashtra.gov.in/Site/1315/Flood-Line-Maps"
+                description="The statewide register of red and blue flood-line sheets - scanned PDFs organised by river, with Pune's Mula, Mutha, Pawna and Indrayani sheets inside it. Nothing in it is machine-readable, which is why no flood-line layer can be drawn for Pune."
+                frequency="as published (scans)"
+              />
+              <DataSource
+                name="OpenStreetMap water bodies"
+                url="https://www.openstreetmap.org/copyright"
+                description="Every lake, tank and reservoir polygon on the Pune map is OSM (ODbL 1.0), because no government register exists to use instead - PMC's only water-body file is twelve polygons of river channel."
+                frequency="as edited (ODbL)"
+              />
+            </>
+          )}
+          {isSurat && (
+            <>
+              <DataSource
+                name="SMC flood chain page (Ukai, causeway, khadis, zone rainfall)"
+                url="https://www.suratmunicipal.gov.in/Home/RainfallInfo"
+                description="The city's one live feed, and the only page on this platform where the publisher supplies both the reading and the operational threshold at every link: Ukai's full reservoir level, the causeway's overflow level, and a danger level for each of five khadis. SMC publishes a rolling window of about ten readings with no archive, so the series here starts the day capture began. Dam and weir rows are credited by SMC to the Irrigation Department and the Collector's office."
+                frequency="daily (scraped; rolling upstream window)"
+              />
+              <DataSource
+                name="SMC, 'Reuse of Treated Used Water: A Successful Model' (8 March 2024)"
+                url="https://cdn.cseindia.org/attachments/0.84371800_1709877539_surat-municipal-corporation.pdf"
+                description="The corporation's own account of its reuse programme, presented at a CSE convening: 330 MLD reused across eleven named uses, Rs 496.23 crore cumulative revenue to January 2024, 249 industrial buyers. Dated document figures, labelled with their vintage rather than as live numbers."
+                frequency="one-time (Mar 2024)"
+              />
+              <DataSource
+                name="Smart Cities Mission (Surat) water-supply release, data.gov.in"
+                url="https://www.data.gov.in/resource/water-supply-surat"
+                description="48 monthly rows under GODL-India. Two of its columns are synthetic - 'losses including NRW' is a constant 20% and 'actual supplied' equals total supply on every row - so nothing on this platform is derived from either; the release is cited for what it measures and flagged for what it assumes."
+                frequency="monthly release (as published)"
+              />
+              <DataSource
+                name="CPCB National Water Quality Monitoring Programme 2022 (Tapi)"
+                url="https://cpcb.gov.in/nwmp-data-2022/"
+                description="Seven Gujarat Tapi stations from Ukai to ONGC Hazira forming an upstream-to-sea profile - the conductivity series behind the salinity fact."
+                frequency="annual"
+              />
+              <DataSource
+                name="SMC wardwise area and population"
+                url="https://www.suratmunicipal.gov.in/TheCity/City/Stml2"
+                description="134 ward rows with area and census population 1961-2011 - the record of the city growing fifty-fold onto an estuarine flood plain."
+                frequency="per census / annexation"
+              />
+              <DataSource
+                name="India-WRIS groundwater level exports (Surat district)"
+                url="https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
+                description="About 94 stations and 6,563 readings, 1970 to 2026 - deep in time, thin in space, so the groundwater page renders the points themselves rather than an interpolated surface."
+                frequency="as published (manual to telemetric)"
+              />
+            </>
+          )}
           <DataSource
             name="Open-Meteo"
             url="https://open-meteo.com/"

@@ -258,8 +258,9 @@ export const PUNE: CityConfig = {
 
   // NARRATIVE, not interactive. Pune's flooding is drainage-driven and the
   // hazard layers the interactive variant defaults to do not exist for this
-  // city: Maharashtra WRD publishes the statutory red and blue flood lines as
-  // 518 SCANNED PDF SHEETS with no vector form anywhere. The narrative stack
+  // city: Maharashtra WRD publishes the statutory red and blue flood lines
+  // only inside a STATEWIDE register of ~500 scanned PDF sheets, no vector
+  // form anywhere. The narrative stack
   // needs none of them, and Pune holds the thing that matters here instead -
   // PMC's own nalla network, 3,075 open storm-water channels carrying 1,014 km,
   // which the drainage_map section renders. The flood-line absence ships as a

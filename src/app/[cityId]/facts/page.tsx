@@ -177,7 +177,9 @@ export default async function CityFactsPage({ params }: PageProps) {
     );
   }
 
-  const retrievedAt = new Date().toISOString();
+  // Snapshot date, not render date: undated facts fall back to this for
+  // their "as of" label, and render time would post-date the page header.
+  const retrievedAt = factsFile.generated_at ?? new Date().toISOString();
   const facts: Fact[] = factsFile.facts.map((f) => hydrate(f, retrievedAt));
   const jsonLd = buildJsonLd(facts, config.displayName, cityId);
 

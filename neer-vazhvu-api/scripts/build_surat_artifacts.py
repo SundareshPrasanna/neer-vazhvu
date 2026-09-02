@@ -1014,12 +1014,15 @@ def build_facts(root: Path) -> int:
     """
     facts = [
         {
+            # Tier 2, not 1: dated SMC publication, not a live feed. Same
+            # for the other re-tiers below; data_date carries the vintage.
             "id": "surat-treated-wastewater-reused",
-            "tier": 1,
+            "tier": 2,
             "category": "Reuse",
             "title": "Treated wastewater reused",
             "value": "330",
             "unit": "MLD",
+            "data_date": "2024-03-08",
             "interpretation": (
                 "SMC reuses 330 MLD of the roughly 1,018 MLD of sewage it collects and "
                 "treats, about a third, itemised across eleven named uses from textile "
@@ -1032,11 +1035,12 @@ def build_facts(root: Path) -> int:
         },
         {
             "id": "surat-reuse-revenue",
-            "tier": 1,
+            "tier": 2,
             "category": "Reuse",
             "title": "Cumulative revenue from selling treated water to industry",
             "value": "496.23",
             "unit": "Rs crore to January 2024",
+            "data_date": "2024-01",
             "interpretation": (
                 "Against a capital cost of Rs 314.39 crore for three tertiary treatment "
                 "plants. The tariff started at Rs 18.20 per kilolitre in 2014 and is now "
@@ -1054,6 +1058,7 @@ def build_facts(root: Path) -> int:
             "title": "Industrial units buying tertiary-treated sewage",
             "value": "249",
             "unit": "units across Pandesara and Sachin",
+            "data_date": "2024-03-08",
             "interpretation": (
                 "178 units in Pandesara Industrial Estate and 71 in the Sachin Textile "
                 "Process Industries association, taking 115 MLD of tertiary-treated "
@@ -1066,7 +1071,7 @@ def build_facts(root: Path) -> int:
         },
         {
             "id": "surat-no-measured-nrw",
-            "tier": 1,
+            "tier": 2,
             "category": "Supply",
             "title": "Measured non-revenue water",
             "value": "Not published",
@@ -1083,12 +1088,14 @@ def build_facts(root: Path) -> int:
             "source_url": "https://www.data.gov.in/resource/water-supply-surat",
         },
         {
+            # Structural: changes by annexation, not by feed.
             "id": "surat-city-growth",
-            "tier": 2,
+            "tier": 4,
             "category": "Governance",
             "title": "Municipal area, 1961 to today",
             "value": "8 to 462.149",
             "unit": "sq km",
+            "data_date": "2020-06",
             "interpretation": (
                 "SMC's own wardwise table records the city growing from 8 sq km across "
                 "12 wards to 462.149 sq km across 134, in six annexations, the most "
@@ -1106,6 +1113,7 @@ def build_facts(root: Path) -> int:
             "title": "Tapi conductivity, Ukai to the sea",
             "value": "513 to 49,720",
             "unit": "umhos/cm (2022 maxima)",
+            "data_date": "2022",
             "interpretation": (
                 "The Tapi's problem at Surat is not sewage. CPCB's 2022 monitoring finds "
                 "BOD at or below detection limit at most Surat stations, while "
