@@ -18,7 +18,6 @@ import {
   AtlasGap,
   AtlasNote,
   AtlasSection,
-  AtlasTableScroll,
   StatTile,
   TABLE,
   TD,
@@ -27,6 +26,7 @@ import {
   TR,
   ToneBadge,
 } from "@/components/atlas/atlas-primitives";
+import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { FloodStatement, ScarcityDistrictRead } from "@/components/atlas/scarcity-flood";
 import { getCuratedBriefs } from "@/lib/atlas/curated-briefs";
 import { loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
@@ -363,7 +363,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             <AtlasFinding>{groundwater.finding}</AtlasFinding>
             {groundwater.taluks.length > 0 ? (
               <div className="mt-4">
-                <AtlasTableScroll label={`Groundwater assessment by ${unit}`}>
+                <AtlasSortableTable label={`Groundwater assessment by ${unit}`}>
                   <table className={TABLE}>
                     <thead className={THEAD}>
                       <tr>
@@ -394,7 +394,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                       ))}
                     </tbody>
                   </table>
-                </AtlasTableScroll>
+                </AtlasSortableTable>
                 <AtlasNote>
                   IN-GRES {groundwater.assessmentYear}. The stage of extraction is annual draft as a share of
                   total availability; above 100 percent, more is drawn each year than the {unit} is assessed
@@ -423,7 +423,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               ) : null}
             </div>
             <div className="mt-5">
-              <AtlasTableScroll label="Blocks compared">
+              <AtlasSortableTable label="Blocks compared">
                 <table className={`${TABLE} min-w-[64rem]`}>
                   <thead className={THEAD}>
                     <tr className="border-b border-slate-200 dark:border-slate-700">
@@ -494,7 +494,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                     ))}
                   </tbody>
                 </table>
-              </AtlasTableScroll>
+              </AtlasSortableTable>
               <AtlasNote>
                 Canal, well and tank figures are shares of the irrigated farmland beside them, not of
                 households and not of drinking water. They come from Census 2011 ({irrigation.describes})
@@ -546,7 +546,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                       </p>
                     </AtlasCard>
                     <div>
-                      <AtlasTableScroll label="Water bodies by census class">
+                      <AtlasSortableTable label="Water bodies by census class">
                         <table className={`${TABLE} min-w-[18rem]`}>
                           <thead className={THEAD}>
                             <tr>
@@ -563,7 +563,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                             ))}
                           </tbody>
                         </table>
-                      </AtlasTableScroll>
+                      </AtlasSortableTable>
                       {reading.waterBodies.attributeNote ? (
                         <AtlasNote>
                           {reading.waterBodies.areaBasis === "withheld" ? "Waterspread is not published. " : ""}
@@ -632,7 +632,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                       </AtlasGap>
                     )}
                   </div>
-                  <AtlasTableScroll label="What the plan states about water">
+                  <AtlasSortableTable label="What the plan states about water">
                     <table className={`${TABLE} min-w-[40rem]`}>
                       <thead className={THEAD}>
                         <tr>
@@ -660,7 +660,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                         ))}
                       </tbody>
                     </table>
-                  </AtlasTableScroll>
+                  </AtlasSortableTable>
                   <AtlasNote>
                     Action points the plan sets for water:{" "}
                     {reading.environmentPlan.actionPoints.map((point) => point.text.toLowerCase()).join("; ")}.
@@ -723,7 +723,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             title="How current these figures are"
             intro="Not everything on this page is from the same year, and the gap is large. What each figure describes is listed separately from when the Atlas last read it, straight from each artifact's own record."
           >
-            <AtlasTableScroll label="Figure vintages">
+            <AtlasSortableTable label="Figure vintages">
               <table className={TABLE}>
                 <thead className={THEAD}>
                   <tr>
@@ -754,7 +754,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                   ))}
                 </tbody>
               </table>
-            </AtlasTableScroll>
+            </AtlasSortableTable>
             <AtlasNote>
               The land, irrigation and seasonal-source figures are the oldest thing here by a wide
               margin. India&rsquo;s 2021 census did not take place, so Census 2011 remains the most

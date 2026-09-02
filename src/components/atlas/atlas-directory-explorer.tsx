@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+
+import { cellSortValue, compareCells, firstClickDescending, type ColumnKind } from "@/lib/atlas/table-sort";
 import { Search } from "lucide-react";
 
 import { STATUS_LABELS, StatusPill, type BriefStatusKey } from "./atlas-primitives";
@@ -53,6 +55,18 @@ export function AtlasDirectoryExplorer({
   const [limit, setLimit] = useState(pageSize);
 
   const normalized = query.trim().toLocaleLowerCase("en-IN");
+  type SortColumn = "name" | "blockName" | "lgdCode" | "status";
+  const SORT_KIND: Record<SortColumn, ColumnKind> = { name: "text", blockName: "text", lgdCode: "number", status: "text" };
+  // The pill ranks by how much is on file, not by its label's alphabet.
+  const STATUS_RANK: Record<BriefStatusKey, string> = { reviewed: "1", profile: "2", directory: "3" };
+  const [sort, setSort] = useState<{ column: SortColumn; descending: boolean } | null>(null);
+  const toggleSort = (column: SortColumn) =>
+    setSort((current) =>
+      current?.column === column
+        ? { column, descending: !current.descending }
+        : { column, descending: firstClickDescending(SORT_KIND[column]) },
+    );
+
   const matches = useMemo(() => {
     return rows.filter(
       (row) =>
@@ -60,8 +74,21 @@ export function AtlasDirectoryExplorer({
         (normalized.length === 0 || searchText(row).includes(normalized)),
     );
   }, [rows, blockCode, normalized]);
-  const visible = matches.slice(0, limit);
-  const remaining = matches.length - visible.length;
+  const sorted = useMemo(() => {
+    if (!sort) return matches;
+    const kind = SORT_KIND[sort.column];
+    return [...matches].sort((a, b) =>
+      compareCells(
+        cellSortValue(sort.column === "status" ? STATUS_RANK[a.status] : a[sort.column]),
+        cellSortValue(sort.column === "status" ? STATUS_RANK[b.status] : b[sort.column]),
+        kind,
+        sort.descending,
+      ),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matches, sort]);
+  const visible = sorted.slice(0, limit);
+  const remaining = sorted.length - visible.length;
 
   const statusCounts = matches.reduce<Record<BriefStatusKey, number>>(
     (acc, row) => {
@@ -136,10 +163,31 @@ export function AtlasDirectoryExplorer({
           <table className="w-full min-w-[32rem] border-collapse text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/80 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               <tr>
-                <th className="px-3 py-2.5 font-semibold">Gram Panchayat</th>
-                <th className="px-3 py-2.5 font-semibold">Block</th>
-                <th className="px-3 py-2.5 font-semibold">LGD code</th>
-                <th className="px-3 py-2.5 font-semibold">Brief</th>
+                {(
+                  [
+                    ["name", "Gram Panchayat"],
+                    ["blockName", "Block"],
+                    ["lgdCode", "LGD code"],
+                    ["status", "Brief"],
+                  ] as Array<[SortColumn, string]>
+                ).map(([column, heading]) => (
+                  <th
+                    key={column}
+                    className="px-3 py-2.5 font-semibold"
+                    aria-sort={sort?.column === column ? (sort.descending ? "descending" : "ascending") : undefined}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleSort(column)}
+                      className="inline-flex items-center gap-1 cursor-pointer select-none text-left font-semibold uppercase tracking-wider hover:text-slate-900 dark:hover:text-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600"
+                    >
+                      {heading}
+                      <span aria-hidden="true" className="text-[10px] leading-none text-slate-400 dark:text-slate-500">
+                        {sort?.column === column ? (sort.descending ? "\u25bc" : "\u25b2") : "\u2195"}
+                      </span>
+                    </button>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>

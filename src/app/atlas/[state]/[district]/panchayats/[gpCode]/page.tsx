@@ -12,7 +12,6 @@ import {
   AtlasFinding,
   AtlasGap,
   AtlasNote,
-  AtlasTableScroll,
   StatTile,
   StatusPill,
   TABLE,
@@ -24,6 +23,7 @@ import {
   type BriefStatusKey,
   type Tone,
 } from "@/components/atlas/atlas-primitives";
+import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { getCuratedBrief } from "@/lib/atlas/curated-briefs";
 import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks, loadWaterBodyShard } from "@/lib/atlas/data";
 import { getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
@@ -376,7 +376,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                   title="Habitations"
                   intro="JJM records service for each habitation separately. A Panchayat total can hide a habitation that is behind."
                 >
-                  <AtlasTableScroll label="Habitations">
+                  <AtlasSortableTable label="Habitations">
                     <table className={`${TABLE} min-w-[28rem]`}>
                       <thead className={THEAD}>
                         <tr>
@@ -397,7 +397,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                         ))}
                       </tbody>
                     </table>
-                  </AtlasTableScroll>
+                  </AtlasSortableTable>
                 </Chapter>
               ) : null}
 
@@ -407,7 +407,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                   title="Where the water comes from"
                   intro="The schemes JJM records as serving this Panchayat, grouped by the kind of source they draw on."
                 >
-                  <AtlasTableScroll label="Drinking-water sources">
+                  <AtlasSortableTable label="Drinking-water sources">
                     <table className={`${TABLE} min-w-[24rem]`}>
                       <thead className={THEAD}>
                         <tr>
@@ -426,7 +426,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                         ))}
                       </tbody>
                     </table>
-                  </AtlasTableScroll>
+                  </AtlasSortableTable>
                 </Chapter>
               ) : null}
 
@@ -523,7 +523,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                     </div>
                     <div className="space-y-4">
                       {detail.waterBodies.register === "water-bodies-census" && detail.waterBodies.byType ? (
-                        <AtlasTableScroll label="Water bodies by census class">
+                        <AtlasSortableTable label="Water bodies by census class">
                           <table className={`${TABLE} min-w-[16rem]`}>
                             <thead className={THEAD}>
                               <tr>
@@ -540,9 +540,9 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                               ))}
                             </tbody>
                           </table>
-                        </AtlasTableScroll>
+                        </AtlasSortableTable>
                       ) : null}
-                      <AtlasTableScroll
+                      <AtlasSortableTable
                         label={
                           detail.waterBodies.register === "water-bodies-census"
                             ? "Water bodies by owner"
@@ -567,7 +567,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                             ))}
                           </tbody>
                         </table>
-                      </AtlasTableScroll>
+                      </AtlasSortableTable>
                     </div>
                   </div>
                 </Chapter>
@@ -589,7 +589,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                           : `${detail.sampling.unsafe} were recorded unsafe.`}
                       </AtlasNote>
                     </div>
-                    <AtlasTableScroll label="Samples by year">
+                    <AtlasSortableTable label="Samples by year">
                       <table className={`${TABLE} min-w-[12rem]`}>
                         <thead className={THEAD}>
                           <tr>
@@ -606,7 +606,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                           ))}
                         </tbody>
                       </table>
-                    </AtlasTableScroll>
+                    </AtlasSortableTable>
                   </div>
                 </Chapter>
               ) : null}
