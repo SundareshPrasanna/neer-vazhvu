@@ -4039,6 +4039,42 @@
    "flags": []
   },
   {
+   "path": "public/data/atlas/mh/flood-classification.json",
+   "family": "atlas",
+   "scope": "maharashtra",
+   "dataset": "flood-classification",
+   "bytes": 2976,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "classification",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "review",
+     "schemaVersion",
+     "scope",
+     "source",
+     "state"
+    ]
+   },
+   "consumers": [
+    "src/lib/atlas/data.ts"
+   ],
+   "producer_refs": [
+    "scripts/atlas-flood-classification.ts"
+   ],
+   "headwaters_sources": [
+    "mh-sdmp-2023"
+   ],
+   "licenses": [
+    "Maharashtra government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/atlas/mh/kolhapur/assessments/4283.json",
    "family": "atlas",
    "scope": "mh-kolhapur",
@@ -10301,6 +10337,79 @@
    ],
    "licenses": [
     "Government Open Data License - India"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/atlas/mh/scarcity-tankers.json",
+   "family": "atlas",
+   "scope": "maharashtra",
+   "dataset": "scarcity-tankers",
+   "bytes": 11880,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "districtCount",
+     "editions",
+     "latestReportDate",
+     "nvdm",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "state"
+    ]
+   },
+   "consumers": [
+    "src/lib/atlas/data.ts"
+   ],
+   "producer_refs": [
+    "scripts/atlas-scarcity-tankers-fetch.ts",
+    "scripts/atlas-scarcity-tankers-mh.ts"
+   ],
+   "headwaters_sources": [
+    "wssd-weekly-tanker-report"
+   ],
+   "licenses": [
+    "Maharashtra government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/atlas/tn/flood-classification.json",
+   "family": "atlas",
+   "scope": "tamil-nadu",
+   "dataset": "flood-classification",
+   "bytes": 3919,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "classification",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "review",
+     "schemaVersion",
+     "scope",
+     "source",
+     "state"
+    ]
+   },
+   "consumers": [
+    "src/lib/atlas/data.ts"
+   ],
+   "producer_refs": [
+    "scripts/atlas-flood-classification.ts"
+   ],
+   "headwaters_sources": [
+    "tn-sdmp-2023"
+   ],
+   "licenses": [
+    "Tamil Nadu government publication, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -56858,6 +56967,19 @@
   },
   {
    "family": "atlas",
+   "dataset": "flood-classification",
+   "files": 2,
+   "scopes": [
+    "maharashtra",
+    "tamil-nadu"
+   ],
+   "bytes": 6895,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "atlas",
    "dataset": "groundwater-projection",
    "files": 7,
    "scopes": [
@@ -56939,6 +57061,18 @@
     "tn-tirupathur"
    ],
    "bytes": 2326929,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "atlas",
+   "dataset": "scarcity-tankers",
+   "files": 1,
+   "scopes": [
+    "maharashtra"
+   ],
+   "bytes": 11880,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
