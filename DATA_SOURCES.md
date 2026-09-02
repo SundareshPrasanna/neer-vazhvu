@@ -22,6 +22,10 @@ Per-city *features* live alongside in the same folder: [docs/cities/chennai/feat
 
 When adding a city, copy the Surat, Pune, Kolkata or Delhi folder as a template - those docs reflect the multi-city naming convention (per-city `-<cityId>` suffix on data files). Chennai's docs predate that and use unsuffixed legacy paths for back-compat.
 
+## District Atlas
+
+Districts (Thanjavur, Tiruchirappalli, Salem, Tirupathur, Satara) draw from government registers rather than utility feeds: the TNRD panchayat directory / the LGD catalog on data.gov.in, the JJM Citizen Corner service ledger, Census 2011 DCHB village tables, IN-GRES taluk assessments, TNGIS / DataMeet boundaries, the Season and Crop Report, the First Census of Water Bodies, and MPCB District Environment Plans. Their sources are documented per adapter rather than per district - the full breakdown, including the identity-resolution discipline and per-family provenance, is [docs/methodology/district-atlas-v1.md](docs/methodology/district-atlas-v1.md); reviewed inputs live under `pipeline-inputs/atlas/`.
+
 ## Documentation principle: record what the source refuses to say
 
 Kolkata added a second discipline alongside the hedging rule below. Where a publisher contradicts
