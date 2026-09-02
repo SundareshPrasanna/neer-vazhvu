@@ -199,3 +199,48 @@ export function CityLandmark({ cityId, className }: { cityId: string; className?
     </svg>
   );
 }
+
+/** Shared place-status vocabulary: the same badge on city, district and
+ *  state cards, so live-vs-preview-vs-onboarding reads identically
+ *  everywhere. Moved here from the landing page when the district cards
+ *  became shared with the state tier. */
+export type CityStatus = "live" | "onboarding" | "upnext" | "preview";
+
+export const STATUS_BADGE: Record<CityStatus, { label: string; classes: string; dot: string }> = {
+  live: {
+    label: "Live",
+    classes:
+      "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 ring-emerald-600/20 dark:ring-emerald-500/30",
+    dot: "bg-emerald-500",
+  },
+  onboarding: {
+    label: "Onboarding",
+    classes:
+      "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 ring-amber-600/20 dark:ring-amber-500/30",
+    dot: "bg-amber-500",
+  },
+  upnext: {
+    label: "Up next",
+    classes:
+      "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-500/20 dark:ring-slate-400/30",
+    dot: "bg-slate-400",
+  },
+  // A district exposed through NEXT_PUBLIC_PREVIEW_DISTRICTS: linkable on
+  // this deployment, not yet published.
+  preview: {
+    label: "Preview",
+    classes:
+      "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 ring-cyan-600/20 dark:ring-cyan-500/30",
+    dot: "bg-cyan-500",
+  },
+};
+
+export function CityBadge({ status }: { status: CityStatus }) {
+  const b = STATUS_BADGE[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${b.classes}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${b.dot}`} />
+      {b.label}
+    </span>
+  );
+}

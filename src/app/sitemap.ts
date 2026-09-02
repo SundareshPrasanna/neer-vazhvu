@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { districtHref, listPublishedAtlasDistricts } from "@/lib/atlas/registry";
+import { districtHref, groupAtlasStates, listPublishedAtlasDistricts, stateHref } from "@/lib/atlas/registry";
 import { listEnabledPlaces } from "@/lib/cities";
 import { FEATURE_AVAILABILITY } from "@/lib/cities/routing";
 
@@ -59,6 +59,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Gram Panchayat pages are reached through it. This reads the registry
   // alone, deliberately: importing the artifact loaders here made Turbopack
   // trace the whole project into this route's file list.
+  // The state tier sits above the districts: one page per state with at
+  // least one published district.
+  for (const state of groupAtlasStates(listPublishedAtlasDistricts())) {
+    entries.push({
+      url: `${BASE}${stateHref(state.stateSlug)}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
   for (const district of listPublishedAtlasDistricts()) {
     entries.push({
       url: `${BASE}${districtHref(district)}`,

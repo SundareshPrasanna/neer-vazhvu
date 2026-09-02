@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listAllPlaces } from "@/lib/cities";
 import { liveCityPhrase } from "@/lib/cities/roster";
-import { CityLandmark, CITY_ACCENT, DEFAULT_ACCENT } from "@/components/landing/city-landmark";
+import { CityBadge, CityLandmark, CITY_ACCENT, DEFAULT_ACCENT, type CityStatus } from "@/components/landing/city-landmark";
 import { PlaceBoard } from "@/components/landing/place-board";
 import {
-  districtHref,
-  listAtlasDistricts,
-  listVisibleAtlasDistricts,
-  type AtlasDistrict,
-} from "@/lib/atlas/registry";
+  StateCard,
+  buildDistrictBoard,
+  buildStateBoard,
+} from "@/components/atlas/district-card";
 
 // The landing page kept its OWN three copies of the city roster, so it was
 // still advertising three live cities on the day the sixth launched - the same
@@ -78,8 +77,6 @@ const CITY_HOOKS: Record<string, string> = {
   gurugram:
     "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
 };
-
-type CityStatus = "live" | "onboarding" | "upnext" | "preview";
 
 type BoardCity = {
   cityId: string;
@@ -154,44 +151,7 @@ const CAPABILITIES: { label: string; detail: string }[] = [
   },
 ];
 
-const STATUS_BADGE: Record<CityStatus, { label: string; classes: string; dot: string }> = {
-  live: {
-    label: "Live",
-    classes:
-      "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 ring-emerald-600/20 dark:ring-emerald-500/30",
-    dot: "bg-emerald-500",
-  },
-  onboarding: {
-    label: "Onboarding",
-    classes:
-      "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 ring-amber-600/20 dark:ring-amber-500/30",
-    dot: "bg-amber-500",
-  },
-  upnext: {
-    label: "Up next",
-    classes:
-      "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-500/20 dark:ring-slate-400/30",
-    dot: "bg-slate-400",
-  },
-  // A district exposed through NEXT_PUBLIC_PREVIEW_DISTRICTS: linkable on
-  // this deployment, not yet published.
-  preview: {
-    label: "Preview",
-    classes:
-      "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 ring-cyan-600/20 dark:ring-cyan-500/30",
-    dot: "bg-cyan-500",
-  },
-};
 
-function CityBadge({ status }: { status: CityStatus }) {
-  const b = STATUS_BADGE[status];
-  return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${b.classes}`}>
-      <span className={`h-1.5 w-1.5 rounded-full ${b.dot}`} />
-      {b.label}
-    </span>
-  );
-}
 
 function CityCard({ city }: { city: BoardCity }) {
   const isLive = city.status === "live";
@@ -275,133 +235,10 @@ function CityCard({ city }: { city: BoardCity }) {
   );
 }
 
-type DistrictStatus = Extract<CityStatus, "live" | "preview" | "onboarding">;
-
-type BoardDistrict = { district: AtlasDistrict; status: DistrictStatus };
-
-/**
- * The district board reads the Atlas registry the way the city board reads
- * src/lib/cities: a published district is live, a district exposed through
- * NEXT_PUBLIC_PREVIEW_DISTRICTS is a linkable preview, the rest are
- * onboarding cards without a link. One registry, no static fallback list.
- */
-function buildDistrictBoard(): BoardDistrict[] {
-  const visible = new Set(listVisibleAtlasDistricts().map((d) => d.scopeId));
-  return listAtlasDistricts()
-    .map(
-      (district): BoardDistrict => ({
-        district,
-        status: district.published
-          ? "live"
-          : visible.has(district.scopeId)
-            ? "preview"
-            : "onboarding",
-      }),
-    )
-    .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
-}
-
-const DISTRICT_ACCENT = "from-teal-500 to-emerald-700";
-
-/** Canals, tanks and a field bund: the rural twin of CityLandmark. */
-function DistrictMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 200 80"
-      preserveAspectRatio="xMidYMax meet"
-      aria-hidden="true"
-      className={className}
-    >
-      <g fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-        <path d="M0 58 C 30 46, 55 70, 85 58 S 135 46, 165 58 S 190 66, 200 60" />
-        <path d="M0 68 C 40 58, 65 78, 105 68 S 165 58, 200 70" strokeOpacity={0.55} />
-        <path d="M22 42 V 24 H 62 V 42" strokeOpacity={0.85} />
-        <path d="M112 38 V 20 H 152 V 38" strokeOpacity={0.85} />
-        <path d="M30 33 h24 M120 29 h24" strokeOpacity={0.35} />
-        <path d="M0 78 H 200" strokeOpacity={0.25} />
-      </g>
-    </svg>
-  );
-}
-
-function DistrictCard({ district, status }: BoardDistrict) {
-  const linkable = status !== "onboarding";
-  const accent = linkable
-    ? DISTRICT_ACCENT
-    : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
-
-  const banner = (
-    <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
-      <DistrictMark
-        className={`absolute inset-0 h-full w-full ${linkable ? "text-white/85" : "text-white/60"}`}
-      />
-      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
-      <div className="absolute top-3 right-3">
-        <CityBadge status={status} />
-      </div>
-    </div>
-  );
-
-  const body = (
-    <div className="p-5 sm:p-6">
-      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-        {district.name}
-      </h3>
-      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-        District
-        <span className="mx-1 text-slate-300 dark:text-slate-600">|</span>
-        {district.stateCode}
-        {district.basin && (
-          <>
-            <span className="mx-1 text-slate-300 dark:text-slate-600">|</span>
-            {district.basin.subBasinName}
-          </>
-        )}
-      </p>
-      <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-        {district.hook}
-      </p>
-      {linkable ? (
-        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-cyan-700 dark:text-cyan-400">
-          Open district
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </span>
-      ) : (
-        <span className="mt-4 inline-flex items-center text-sm font-medium text-slate-400 dark:text-slate-500">
-          Onboarding
-        </span>
-      )}
-    </div>
-  );
-
-  const baseClass =
-    "block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900";
-
-  if (linkable) {
-    return (
-      <Link
-        href={districtHref(district)}
-        className={`${baseClass} transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500`}
-      >
-        {banner}
-        {body}
-      </Link>
-    );
-  }
-
-  return (
-    <div className={baseClass}>
-      {banner}
-      {body}
-    </div>
-  );
-}
-
 export default function Page() {
   const cities = buildCityBoard();
   const districts = buildDistrictBoard();
+  const states = buildStateBoard();
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
@@ -493,17 +330,17 @@ export default function Page() {
               <>
                 <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
                   <span className="h-2 w-2 rounded-full bg-teal-500" />
-                  In the Atlas
+                  By state
                 </h3>
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {districts.map((d) => (
-                    <DistrictCard key={d.district.scopeId} {...d} />
+                  {states.map((s) => (
+                    <StateCard key={s.state.stateSlug} {...s} />
                   ))}
                 </div>
                 <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
-                  A district opens as one reading of the whole district, then a
-                  directory of its blocks and Gram Panchayats. Each hangs off the
-                  river basin it sits in.
+                  A state opens to its districts; a district opens as one reading
+                  of the whole district, then a directory of its blocks and Gram
+                  Panchayats. Each hangs off the river basin it sits in.
                 </p>
               </>
             }

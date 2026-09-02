@@ -35,6 +35,7 @@ import {
   isAtlasDistrictVisible,
   listVisibleAtlasDistricts,
   panchayatHref,
+  stateHref,
 } from "@/lib/atlas/registry";
 import { formatExtractionStage } from "@/lib/atlas/tn-groundwater-projection";
 
@@ -221,7 +222,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
         <AtlasBreadcrumbs
           items={[
             { label: "India", href: "/" },
-            { label: entry.stateName },
+            { label: entry.stateName, href: stateHref(entry.stateSlug) },
             { label: directory.districtName, href: basePath },
             { label: panchayat.blockName, href: blockPath },
             { label: panchayat.name },

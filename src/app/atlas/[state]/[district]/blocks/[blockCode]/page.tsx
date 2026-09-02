@@ -24,6 +24,7 @@ import {
   findAtlasDistrict,
   isAtlasDistrictVisible,
   listVisibleAtlasDistricts,
+  stateHref,
 } from "@/lib/atlas/registry";
 
 interface RouteParams {
@@ -111,7 +112,7 @@ export default async function AtlasBlockPage({ params }: RouteParams) {
         <AtlasBreadcrumbs
           items={[
             { label: "India", href: "/" },
-            { label: entry.stateName },
+            { label: entry.stateName, href: stateHref(entry.stateSlug) },
             { label: directory.districtName, href: basePath },
             { label: block.name },
           ]}
