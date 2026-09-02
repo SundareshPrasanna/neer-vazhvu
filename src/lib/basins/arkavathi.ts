@@ -175,8 +175,8 @@ export const ARKAVATHI: BasinManifest = {
     label: "Developed in collaboration with",
     name: "Paani Earth Foundation",
     logo: "/partners/paani-earth-foundation.png",
-    url: "https://paani.earth",
-    sub: "Basin spatial data, field evidence and review - paani.earth ↗",
+    url: "https://forrivers.life",
+    sub: "Basin spatial data, field evidence and review - forrivers.life ↗",
   },
   credits: [
     "Spatial data: Paani Earth Foundation - Arkavathi River Basin GIS package (Feb 2026).",
