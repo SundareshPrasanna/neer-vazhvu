@@ -159,6 +159,62 @@ export function findAtlasDistrict(
   return ATLAS_DISTRICTS.find((x) => x.stateSlug === s && x.slug === d);
 }
 
+/** One state of the Atlas: its visible districts, in registry order. The
+ *  Districts view opens at states (the hierarchy Sundaresh asked for on
+ *  2026-09-02): a reader sees states first and districts only inside one,
+ *  and the state page is where state-level reads (the signal ledger's
+ *  columns, once they pass review) will live. A state with no visible
+ *  district exists nowhere in the UI: the tier gates on data like
+ *  everything else. */
+export interface AtlasStateEntry {
+  stateSlug: string;
+  stateCode: string;
+  stateName: string;
+  /** One line for the state card, same register as the district hooks. */
+  hook: string;
+  districts: AtlasDistrict[];
+}
+
+const STATE_HOOKS: Record<string, string> = {
+  tn: "Where the Atlas began: the Cauvery delta's canal country and the over-exploited west, read district by district.",
+  mh: "The first state beyond Tamil Nadu: Koyna country first, with the drought and tanker belt to come.",
+};
+
+/** Group districts into state entries, preserving each state's first
+ *  appearance in the input. Pure, so it is testable without the env-driven
+ *  visibility gate. */
+export function groupAtlasStates(districts: AtlasDistrict[]): AtlasStateEntry[] {
+  const out: AtlasStateEntry[] = [];
+  for (const d of districts) {
+    let entry = out.find((s) => s.stateSlug === d.stateSlug);
+    if (!entry) {
+      entry = {
+        stateSlug: d.stateSlug,
+        stateCode: d.stateCode,
+        stateName: d.stateName,
+        hook: STATE_HOOKS[d.stateSlug] ?? "",
+        districts: [],
+      };
+      out.push(entry);
+    }
+    entry.districts.push(d);
+  }
+  return out;
+}
+
+/** The states a reader can enter: those with at least one visible district. */
+export function listVisibleAtlasStates(): AtlasStateEntry[] {
+  return groupAtlasStates(listVisibleAtlasDistricts());
+}
+
+export function findAtlasState(stateSlug: string): AtlasStateEntry | undefined {
+  return listVisibleAtlasStates().find((s) => s.stateSlug === stateSlug.toLowerCase());
+}
+
+export function stateHref(stateSlug: string): string {
+  return `/atlas/${stateSlug}`;
+}
+
 export function districtHref(d: AtlasDistrict): string {
   return `/atlas/${d.stateSlug}/${d.slug}`;
 }

@@ -11,7 +11,7 @@ import {
   knownCityIds,
   parsePath,
 } from "@/lib/cities/routing";
-import { districtHref, listVisibleAtlasDistricts } from "@/lib/atlas/registry";
+import { districtHref, listVisibleAtlasDistricts, listVisibleAtlasStates, stateHref } from "@/lib/atlas/registry";
 
 /** /atlas/<state>/<district>[/...] -> the district, or null. */
 function parseAtlasPath(pathname: string) {
@@ -140,25 +140,35 @@ export function CitySwitcher() {
           {districts.length > 0 && (
             <>
               <div className="my-1 border-t border-slate-200 dark:border-slate-700" />
-              <div className={GROUP_LABEL}>Districts</div>
-              {districts.map((d) => {
-                const isCurrent = currentDistrict?.scopeId === d.scopeId;
-                return (
+              {listVisibleAtlasStates().map((st) => (
+                <div key={st.stateSlug}>
                   <Link
-                    key={d.scopeId}
-                    href={districtHref(d)}
+                    href={stateHref(st.stateSlug)}
                     onClick={() => setOpen(false)}
-                    className={itemClass(isCurrent)}
+                    className={`${GROUP_LABEL} block hover:text-cyan-700 dark:hover:text-cyan-400`}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-medium">{d.name}</span>
-                      <span className="text-[10px] text-slate-400 uppercase">
-                        {d.stateCode}
-                      </span>
-                    </div>
+                    {st.stateName} districts
                   </Link>
-                );
-              })}
+                  {st.districts.map((d) => {
+                    const isCurrent = currentDistrict?.scopeId === d.scopeId;
+                    return (
+                      <Link
+                        key={d.scopeId}
+                        href={districtHref(d)}
+                        onClick={() => setOpen(false)}
+                        className={itemClass(isCurrent)}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-medium">{d.name}</span>
+                          <span className="text-[10px] text-slate-400 uppercase">
+                            {d.stateCode}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ))}
             </>
           )}
         </div>
