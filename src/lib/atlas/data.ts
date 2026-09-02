@@ -37,6 +37,7 @@ import {
   type WaterBodiesShard,
 } from "./artifacts";
 import type { EnvironmentPlanArtifact } from "./environment-plan";
+import type { FloodClassificationArtifact, ScarcityTankersArtifact } from "./hazards";
 import type { PlaceBrief } from "./place-brief";
 
 const DATA_DIR = join(process.cwd(), "public", "data", "atlas");
@@ -155,4 +156,25 @@ export function loadBriefShards(district: DistrictRef): BriefsShard[] {
 /** Every generated brief in the district, across its block shards. */
 export function loadBriefs(district: DistrictRef): PlaceBrief[] {
   return loadBriefShards(district).flatMap((shard) => shard.briefs);
+}
+
+/* ── state-scoped artifacts ────────────────────────────────────────────── */
+
+function readStateArtifact<T>(stateSlug: string, filename: string): T | undefined {
+  const path = join(DATA_DIR, stateSlug, filename);
+  if (cache.has(path)) return cache.get(path) as T;
+  if (!existsSync(path)) return undefined;
+  const parsed = JSON.parse(readFileSync(path, "utf8")) as T;
+  cache.set(path, parsed);
+  return parsed;
+}
+
+/** The WSSD weekly tanker register (Maharashtra only, so far). */
+export function loadStateScarcityTankers(stateSlug: string): ScarcityTankersArtifact | undefined {
+  return readStateArtifact<ScarcityTankersArtifact>(stateSlug, "scarcity-tankers.json");
+}
+
+/** The state disaster plan's flood classification. */
+export function loadStateFloodClassification(stateSlug: string): FloodClassificationArtifact | undefined {
+  return readStateArtifact<FloodClassificationArtifact>(stateSlug, "flood-classification.json");
 }

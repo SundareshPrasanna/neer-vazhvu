@@ -554,6 +554,61 @@
         ],
         "acceptedOn": "2026-09-01"
       }
+    },
+    {
+      "id": "wssd-weekly-tanker-report",
+      "scope": "atlas",
+      "publisher": "Water Supply and Sanitation Department, Government of Maharashtra",
+      "url": "https://water.maharashtra.gov.in/en/document-category/tanker-report/",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "weekly (a new scanned PDF most Mondays; the 31 Aug 2026 edition covers 24-30 Aug)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "uploads/\\d{4}/\\d{2}/\\d+\\.pdf$"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/scarcity-tankers.json"
+      ],
+      "refreshMethod": "transcribe the new edition's latest-week block into pipeline-inputs/atlas/mh/scarcity-tankers/<report-date>.json (34 district rows + the report's own state totals, worst lines and prose count), then scripts/atlas-scarcity-tankers-mh.ts --as-of <date>; the producer's arithmetic harness refuses any edition whose rows do not reproduce the report's own printed totals exactly. The weekly workflow files an issue with the new PDF; the machine reader that drafts the transcription is the plan-3.7 follow-up.",
+      "notes": "The state's live scarcity register: villages and wadis on drinking-water tankers per district per week, government/private split. The PDFs are scans with no text layer (pdftotext yields nothing; grid-cell OCR is close but not harness-grade yet - spike notes in the plan). Zeros are the report's zeros: Konkan and Vidarbha rows print 0 through the monsoon."
+    },
+    {
+      "id": "mh-sdmp-2023",
+      "scope": "atlas",
+      "publisher": "Maharashtra State Disaster Management Authority, Government of Maharashtra",
+      "url": "https://maharashtra.gov.in/Site/Upload/PDF/SDMP.pdf",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic (the 2023 plan; a revision replaces the PDF at the same path)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/atlas/mh/flood-classification.json"
+      ],
+      "refreshMethod": "re-read the flood chapter, update pipeline-inputs/atlas/flood-classification/mh.json (quote, page, exceptions), then scripts/atlas-flood-classification.ts --as-of <date>",
+      "notes": "The SDMP 2023's flood-proneness statement (section 7.1, printed page 51): every district flood-prone except the eight it names. Predates the 2024 district renamings; the reviewed input carries both spellings."
+    },
+    {
+      "id": "tn-sdmp-2023",
+      "scope": "atlas",
+      "publisher": "Tamil Nadu State Disaster Management Authority, Government of Tamil Nadu",
+      "url": "http://tnsdma.tn.gov.in/app/webroot/img/document/dm_plan_2023.pdf",
+      "license": "Tamil Nadu government publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic (the 2023 plan)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/atlas/tn/flood-classification.json"
+      ],
+      "refreshMethod": "re-read the hazard profile, update pipeline-inputs/atlas/flood-classification/tn.json, then scripts/atlas-flood-classification.ts --as-of <date>",
+      "notes": "The SDMP 2023's fourteen-district coastal high-vulnerability list. The host completes only plain-http requests (the TLS handshake fails from every network tried on 2026-09-02), hence the http URL; treat a sudden https-only switch as an edition event."
     }
   ]
 }

@@ -27,7 +27,15 @@ import {
   TR,
   ToneBadge,
 } from "@/components/atlas/atlas-primitives";
+import { FloodStatement, ScarcityDistrictRead } from "@/components/atlas/scarcity-flood";
 import { getCuratedBriefs } from "@/lib/atlas/curated-briefs";
+import { loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
+import {
+  districtFloodReading,
+  districtScarcityReading,
+  floodVintageRow,
+  scarcityVintageRow,
+} from "@/lib/atlas/hazards";
 import { getDistrictDirectory } from "@/lib/atlas/district-directory";
 import { displayTalukName, getDistrictReading, type DistrictReading } from "@/lib/atlas/district-reading";
 import {
@@ -104,6 +112,20 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
     : null;
   const reviewed = new Set(getCuratedBriefs(entry.slug).map((brief) => brief.lgdCode));
 
+  // The state-scoped hazard families: rendered only when the artifact for
+  // this district's state exists and carries this district - the section,
+  // its nav entry and its vintage rows all gate on the data, never on
+  // configuration.
+  const scarcityArtifact = loadStateScarcityTankers(entry.stateSlug);
+  const floodArtifact = loadStateFloodClassification(entry.stateSlug);
+  const scarcity = scarcityArtifact ? districtScarcityReading(scarcityArtifact, entry.name) : null;
+  const flood = floodArtifact ? districtFloodReading(floodArtifact, { name: entry.name, slug: entry.slug }) : null;
+  const vintages = [
+    ...reading.vintages,
+    ...(scarcity && scarcityArtifact ? [scarcityVintageRow(scarcityArtifact)] : []),
+    ...(flood && floodArtifact ? [floodVintageRow(floodArtifact)] : []),
+  ];
+
   const rows: DirectoryRow[] = directory.panchayats.map((place) => ({
     lgdCode: place.lgdCode,
     name: place.name,
@@ -160,6 +182,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
     { id: "runs-on", label: "What it runs on" },
     { id: "groundwater", label: `Groundwater by ${unit}` },
     { id: "blocks", label: "Blocks compared" },
+    ...(flood || scarcity ? [{ id: "hazards", label: "Floods and scarcity" }] : []),
     ...(reading.waterBodies ? [{ id: "water-bodies", label: "Water bodies" }] : []),
     ...(reading.environmentPlan ? [{ id: "environment-plan", label: "Environment Plan" }] : []),
     ...(gaps.length > 0 ? [{ id: "not-on-file", label: "Not yet on file" }] : []),
@@ -486,6 +509,19 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             </div>
           </AtlasSection>
 
+          {flood || scarcity ? (
+            <AtlasSection
+              id="hazards"
+              title="Floods and scarcity"
+              intro="Two readings the directory families cannot carry: what the state's own disaster plan says about flood exposure here, and - where the state publishes one - the week's tanker register. Both are the state's documents, quoted and dated, not the Atlas's assessment."
+            >
+              <div className="space-y-8">
+                {scarcity ? <ScarcityDistrictRead reading={scarcity} /> : null}
+                {flood ? <FloodStatement reading={flood} /> : null}
+              </div>
+            </AtlasSection>
+          ) : null}
+
           {reading.waterBodies ? (
             <AtlasSection
               id="water-bodies"
@@ -699,7 +735,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                   </tr>
                 </thead>
                 <tbody>
-                  {reading.vintages.map((row) => (
+                  {vintages.map((row) => (
                     <tr key={row.label} className={TR}>
                       <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>{row.label}</td>
                       <td className={TD}>

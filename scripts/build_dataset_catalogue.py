@@ -169,6 +169,13 @@ def detect_scope_and_stem(rel: Path, rich_slugs: dict[str, str]) -> tuple[str, s
         if len(parts) > i + 3:
             sub = parts[i + 3 : -1]
             return f"{parts[i + 1]}-{parts[i + 2]}", ("/".join(sub) if sub else stem_full)
+        if len(parts) == i + 3:
+            # atlas/<state>/<artifact>.json: the state tier's own artifacts
+            # (the first is the Maharashtra scarcity register). The scope is
+            # the registered STATE scope, not a district.
+            state = {"tn": "tamil-nadu", "mh": "maharashtra"}.get(parts[i + 1])
+            if state:
+                return state, stem_full
         return "unknown", stem_full
     if "rich-bodies" in parts:
         for slug, city in sorted(rich_slugs.items(), key=lambda kv: -len(kv[0])):
