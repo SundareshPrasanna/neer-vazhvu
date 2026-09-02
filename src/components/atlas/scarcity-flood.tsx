@@ -8,7 +8,6 @@
 import {
   AtlasFinding,
   AtlasNote,
-  AtlasTableScroll,
   StatTile,
   TABLE,
   TD,
@@ -16,6 +15,7 @@ import {
   THEAD,
   TR,
 } from "@/components/atlas/atlas-primitives";
+import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import type { DistrictFloodReading, DistrictScarcityReading, ScarcityWeek } from "@/lib/atlas/hazards";
 
 const num = (value: number): string => Math.round(value).toLocaleString("en-IN");
@@ -79,7 +79,7 @@ export function ScarcityStateTable({ week }: { week: ScarcityWeek }) {
         most of any division ({num(week.worstDivision.tankersTotal)}).
       </AtlasFinding>
       <div className="mt-4">
-        <AtlasTableScroll label="Districts on tanker supply, worst first">
+        <AtlasSortableTable label="Districts on tanker supply, worst first">
           <table className={TABLE}>
             <thead className={THEAD}>
               <tr>
@@ -106,7 +106,7 @@ export function ScarcityStateTable({ week }: { week: ScarcityWeek }) {
               ))}
             </tbody>
           </table>
-        </AtlasTableScroll>
+        </AtlasSortableTable>
       </div>
       <div className="mt-4">
         <AtlasNote>
