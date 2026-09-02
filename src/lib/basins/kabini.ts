@@ -126,7 +126,9 @@ export const KABINI: BasinManifest = {
     { family: "prs-drains", label: "Drains reaching them", floor: "hydrology", geom: "line", color: "#facc15", defaultOn: false, kindFilter: "drain-line" },
 
     // ── Floor 2: Monitoring - the station-readings pilot ──
-    { family: "flow-stations", label: "CWC monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#0e7490", defaultOn: true, readings: true },
+    // cyan-500, not the old cyan-700: the darker dot sank into the dark
+    // imagery (Sundaresh, 2 Sep).
+    { family: "flow-stations", label: "CWC monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#06b6d4", defaultOn: true, readings: true },
     // readings: the 5 river-table stations carry CPCB annual BOD/DO/FC trend
     // packs (build_basin_wq_param_packs.py); lake stations stay location-only.
     { family: "monitoring-points", label: "KSPCB monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },

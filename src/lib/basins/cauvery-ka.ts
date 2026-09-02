@@ -30,6 +30,12 @@ export const CAUVERY_KA: BasinManifest = {
   relatedBasins: [
     { basinId: "cauvery-tn", label: "Tamil Nadu side of the Cauvery" },
   ],
+  // Same KWRIS views feed both metrics - the sources list at the panel foot
+  // carries the fuller note (period under verification).
+  metricSources: {
+    rainfallDeviationPct: "KWRIS geomGIS sub-basin views (KSNDMC/IMD basis)",
+    gwLevelM: "KWRIS geomGIS sub-basin views (KSNDMC/IMD basis)",
+  },
   rivers: [],
   layers: [
     // Not read on this basin's surface: overview mode (basin-overview.tsx)

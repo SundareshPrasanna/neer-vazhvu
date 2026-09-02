@@ -194,6 +194,10 @@ export interface BasinManifest {
   /** Sibling basins worth cross-linking (e.g. the other state's share of the
    *  same river). Rendered as navigation links in overview mode. */
   relatedBasins?: { basinId: string; label: string }[];
+  /** Overview-mode choropleths: one-line source attribution shown in the map
+   *  legend while that metric is active, keyed by metric ("rainfallDeviationPct",
+   *  "gwLevelM"). Prose stays here in data, never hardcoded in the component. */
+  metricSources?: Record<string, string>;
   displayName: string;
   displayNameLocal?: string;
   /** Landing blurb (plain text). */
