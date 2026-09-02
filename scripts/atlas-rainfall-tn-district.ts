@@ -73,23 +73,35 @@ interface Point {
  * on a thrown "fetch failed" that no status check could catch). Eight
  * doublings reach about eight and a half minutes in total.
  */
-async function fetchWithPatience(url: string, label: string): Promise<Response> {
-  let last: Response | Error | null = null;
+/**
+ * Fetch and PARSE inside one retry ladder. The quota can surface three ways:
+ * an HTTP 429, a thrown network error, or - learned on the Ahilyanagar run,
+ * 2026-09-02 - a plain-text quota page under a success status, which used to
+ * escape to JSON.parse and stop the chain. All three now back off together.
+ */
+async function fetchJsonWithPatience(url: string, label: string): Promise<unknown> {
+  let last = "no attempt";
   for (let attempt = 0; attempt < 8; attempt += 1) {
     try {
       const response = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
-      if (response.status !== 429) return response;
-      last = response;
+      const text = await response.text();
+      if (response.ok) {
+        try {
+          return JSON.parse(text) as unknown;
+        } catch {
+          last = `non-JSON body: ${text.slice(0, 80).replace(/\s+/g, " ")}`;
+        }
+      } else {
+        last = response.status === 429 ? "rate limited" : `HTTP ${response.status}`;
+      }
     } catch (error) {
-      last = error instanceof Error ? error : new Error(String(error));
+      last = error instanceof Error ? error.message : String(error);
     }
     const wait = 2000 * 2 ** attempt;
-    console.error(`    ${label}: ${last instanceof Error ? last.message : "rate limited"}, waiting ${wait / 1000}s`);
+    console.error(`    ${label}: ${last}, waiting ${wait / 1000}s`);
     await sleep(wait);
   }
-  throw new Error(
-    `${label}: gave up after retries (${last instanceof Error ? last.message : `HTTP ${last?.status}`})`,
-  );
+  throw new Error(`${label}: gave up after retries (${last})`);
 }
 
 async function readBatch(points: Point[]): Promise<DailyResponse[]> {
@@ -101,9 +113,10 @@ async function readBatch(points: Point[]): Promise<DailyResponse[]> {
     forecast_days: "1",
     timezone: "Asia/Kolkata",
   });
-  const response = await fetchWithPatience(`${RAINFALL_API_URL}?${params.toString()}`, "Open-Meteo");
-  if (!response.ok) throw new Error(`Open-Meteo returned HTTP ${response.status}`);
-  const body = (await response.json()) as DailyResponse | DailyResponse[];
+  const body = (await fetchJsonWithPatience(
+    `${RAINFALL_API_URL}?${params.toString()}`,
+    "Open-Meteo",
+  )) as DailyResponse | DailyResponse[];
   const rows = Array.isArray(body) ? body : [body];
   if (rows.length !== points.length) {
     throw new Error(`Open-Meteo returned ${rows.length} results for ${points.length} points`);
@@ -125,14 +138,10 @@ async function readArchiveWindow(points: Point[], start: string, end: string): P
     end_date: end,
     timezone: "Asia/Kolkata",
   });
-  const response = await fetchWithPatience(
+  const body = (await fetchJsonWithPatience(
     `${RAINFALL_ARCHIVE_URL}?${params.toString()}`,
     "Open-Meteo archive",
-  );
-  if (!response.ok) {
-    throw new Error(`Open-Meteo archive returned HTTP ${response.status} after retries`);
-  }
-  const body = (await response.json()) as DailyResponse | DailyResponse[];
+  )) as DailyResponse | DailyResponse[];
   const rows = Array.isArray(body) ? body : [body];
   if (rows.length !== points.length) {
     throw new Error(`Archive returned ${rows.length} results for ${points.length} points`);

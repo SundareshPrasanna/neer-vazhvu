@@ -64,6 +64,9 @@ export interface LgdDistrictRefreshPlan {
     ingresDistrictName: string;
     /** What IN-GRES calls the assessment unit in this state (TALUK, TALUKA, BLOCK, MANDAL). */
     ingresAssessmentUnitType: string;
+  /** Reviewed spelling bridges from LGD sub-district names to IN-GRES taluka
+   *  names, where the fold cannot (transpositions: Rahta / Rhata). */
+  ingresTalukaAliases?: Record<string, string>;
     blockModel: LgdBlockModel;
   };
   sources: {

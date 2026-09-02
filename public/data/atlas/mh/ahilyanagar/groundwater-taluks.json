@@ -1,0 +1,207 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "mh-ahilyanagar"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES dynamic groundwater resource assessment, Maharashtra talukas",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-02"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-02",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for Ahilyanagar: the district row and its 14 TALUKA assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (talukas), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "mh-ahilyanagar-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-02",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=Ahilyanagar;loctype=DISTRICT;locuuid=39479641-fa67-4329-b39d-4d011c142305;year=2024-2025",
+    "assessmentUnitType": "TALUKA",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "Ahilyanagar",
+    "locationUUID": "39479641-fa67-4329-b39d-4d011c142305",
+    "category": "semi_critical",
+    "stageOfExtractionPercent": 76.6507
+  },
+  "recordsSha256": "1356706e07ca9141b4c300eb7a09a007b66b10b4ce96488037b0cce8f7bd3f28",
+  "recordCount": 14,
+  "records": [
+    {
+      "locationName": "Akola",
+      "locationUUID": "1b25351a-070b-4e10-a868-3c386bca3454",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.8933,
+      "annualRechargeHam": 5928.3573,
+      "totalAvailabilityHam": 8367.7414,
+      "availabilityForFutureUseHam": 2507.8274,
+      "rainfallMm": 593.4605
+    },
+    {
+      "locationName": "Jamkhed",
+      "locationUUID": "abdaa034-7c60-4a2c-83ad-585d25f42802",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 61.7071,
+      "annualRechargeHam": 5124.87,
+      "totalAvailabilityHam": 6284.45,
+      "availabilityForFutureUseHam": 2406.5,
+      "rainfallMm": 652
+    },
+    {
+      "locationName": "Karjat",
+      "locationUUID": "0d475487-385a-4eb5-8c59-f9b4d8a28c0f",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 59.5336,
+      "annualRechargeHam": 9350.8923,
+      "totalAvailabilityHam": 12369.8873,
+      "availabilityForFutureUseHam": 5005.6402,
+      "rainfallMm": 555.5291
+    },
+    {
+      "locationName": "Kopargaon",
+      "locationUUID": "d103c1e3-4f1f-45b3-8a8d-9ff8b1b50817",
+      "locationType": "TALUKA",
+      "category": "critical",
+      "stageOfExtractionPercent": 92.1575,
+      "annualRechargeHam": 4068.9452,
+      "totalAvailabilityHam": 7695.4635,
+      "availabilityForFutureUseHam": 1500.29,
+      "rainfallMm": 512
+    },
+    {
+      "locationName": "Nagar",
+      "locationUUID": "b66bf1c0-ca19-4ccb-8f85-01465eeaf2a1",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 66.5121,
+      "annualRechargeHam": 9835.2663,
+      "totalAvailabilityHam": 12464.9427,
+      "availabilityForFutureUseHam": 4501.9304,
+      "rainfallMm": 616.652
+    },
+    {
+      "locationName": "Newasa",
+      "locationUUID": "de757a8d-5185-4c98-9ed1-cad66af9d79d",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 86.4032,
+      "annualRechargeHam": 9521.6746,
+      "totalAvailabilityHam": 16921.1383,
+      "availabilityForFutureUseHam": 3304.6313,
+      "rainfallMm": 597.1328
+    },
+    {
+      "locationName": "Parner",
+      "locationUUID": "f799d511-4190-4de2-97fb-78824dc36a26",
+      "locationType": "TALUKA",
+      "category": "safe",
+      "stageOfExtractionPercent": 41.2815,
+      "annualRechargeHam": 12341.2817,
+      "totalAvailabilityHam": 16831.4736,
+      "availabilityForFutureUseHam": 10092.0449,
+      "rainfallMm": 574.6767
+    },
+    {
+      "locationName": "Pathardi",
+      "locationUUID": "2d34df5c-7c64-45fe-a366-98063a4f8790",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 81.8741,
+      "annualRechargeHam": 8638.2008,
+      "totalAvailabilityHam": 11032.4023,
+      "availabilityForFutureUseHam": 2857.346,
+      "rainfallMm": 673.9792
+    },
+    {
+      "locationName": "Rahuri",
+      "locationUUID": "d2db1681-37db-4e04-8778-d53f0a748e37",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.3162,
+      "annualRechargeHam": 5850.3829,
+      "totalAvailabilityHam": 12626.505,
+      "availabilityForFutureUseHam": 3240.7418,
+      "rainfallMm": 522.7121
+    },
+    {
+      "locationName": "Rhata",
+      "locationUUID": "772c0dac-8890-4e5f-9bc0-379d79d7cd9b",
+      "locationType": "TALUKA",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 106.3668,
+      "annualRechargeHam": 3716.7147,
+      "totalAvailabilityHam": 7441.597,
+      "availabilityForFutureUseHam": 480.0022,
+      "rainfallMm": 515.045
+    },
+    {
+      "locationName": "Sangamner",
+      "locationUUID": "88a9a54b-77bc-41ff-ad35-3ab9b068182c",
+      "locationType": "TALUKA",
+      "category": "critical",
+      "stageOfExtractionPercent": 91.7302,
+      "annualRechargeHam": 9996.2583,
+      "totalAvailabilityHam": 13738.417,
+      "availabilityForFutureUseHam": 2719.1726,
+      "rainfallMm": 501.4374
+    },
+    {
+      "locationName": "Shevgaon",
+      "locationUUID": "0ca6a18b-5f51-4121-b588-ee1ad234f088",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 82.1822,
+      "annualRechargeHam": 7196.7804,
+      "totalAvailabilityHam": 8897.6955,
+      "availabilityForFutureUseHam": 2265.9043,
+      "rainfallMm": 637.8562
+    },
+    {
+      "locationName": "Shrigonda",
+      "locationUUID": "64dce5d6-a825-4511-9571-2181b95d895b",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 71.8019,
+      "annualRechargeHam": 8237.626,
+      "totalAvailabilityHam": 11843.7096,
+      "availabilityForFutureUseHam": 3826.7416,
+      "rainfallMm": 517.4548
+    },
+    {
+      "locationName": "Shrirampur",
+      "locationUUID": "e8a3deff-e853-4cec-9818-0947046ae19f",
+      "locationType": "TALUKA",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 87.8321,
+      "annualRechargeHam": 3884.8497,
+      "totalAvailabilityHam": 7888.5267,
+      "availabilityForFutureUseHam": 1649.4673,
+      "rainfallMm": 574.6528
+    }
+  ]
+}

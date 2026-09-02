@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 /**
  * Projects the IN-GRES taluk assessment onto Gram Panchayats by spatial
  * intersection (centroid in taluk, vertex fallback) and serves the result as
@@ -38,6 +39,7 @@ import {
   upstreamSource,
   writeAtlasArtifact,
   planIdentityAdapter,
+  reviewedInputPath,
 } from "./lib/atlas-producer";
 import { districtArtifactPath } from "../src/lib/atlas/artifacts";
 
@@ -226,7 +228,11 @@ async function projectByMembership(
   talukDistrictLgdCode: string,
 ): Promise<void> {
   const blockNames = new Map(directory.blocks.map((block) => [block.code, block.name]));
+  const plan = JSON.parse(
+    readFileSync(reviewedInputPath(district, "refresh-plan.json"), "utf8"),
+  ) as { district: { ingresTalukaAliases?: Record<string, string> } };
   const projection = buildMembershipGroundwaterProjection({
+    talukaAliases: plan.district.ingresTalukaAliases,
     planId: directory.district.planId,
     projectedAt: asOf,
     talukDistrictLgdCode,
