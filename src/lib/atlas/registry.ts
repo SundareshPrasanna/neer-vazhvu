@@ -47,6 +47,18 @@ const TN_IRRIGATION_SOURCE = {
     "Newer official readings exist at coarser grain and are not wired yet: the annual Season and Crop Report (district totals by source, 2024-25 edition published) and the 2017-18 Minor Irrigation Census (wells and tanks by village).",
 };
 
+/** The Maharashtra current-irrigation gap, shared by the districts whose
+ *  DSER tables are not yet extracted: named honestly, wired per district
+ *  only when a reviewed extraction exists (the Satara entry above shows the
+ *  district-specific form). */
+const MH_IRRIGATION_GAP = {
+  label: "District Socio-Economic Review",
+  nextStep: "the District Socio-Economic Review's irrigation tables are not yet extracted for this district.",
+  gapNote:
+    "No current reading is wired: the District Socio-Economic Review's irrigation-by-source tables are not yet extracted for this district, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
+};
+
+
 export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "thanjavur",
@@ -117,7 +129,32 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
         "No current reading is wired: the Satara District Socio-Economic Review 2024 prints area irrigated by source only for 2015-16 with the wells column not stated, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
     },
   },
+  {
+    slug: "ahilyanagar",
+    scopeId: "mh-ahilyanagar",
+    stateSlug: "mh",
+    stateCode: "MH",
+    stateName: "Maharashtra",
+    name: "Ahilyanagar",
+    hook: "The tanker district: 97 tankers were running in monsoon August 2026 while the assessment still reads semi-critical - the scarcity register sees what the annual number cannot.",
+    hasCuratedBriefs: false,
+    published: false,
+    irrigationCurrentSource: MH_IRRIGATION_GAP,
+  },
+  {
+    slug: "kolhapur",
+    scopeId: "mh-kolhapur",
+    stateSlug: "mh",
+    stateCode: "MH",
+    stateName: "Maharashtra",
+    name: "Kolhapur",
+    hook: "Every taluka is within its groundwater; the water story here is the flood - the Krishna-Panchganga backwater that submerged the district in 2019 and 2021.",
+    hasCuratedBriefs: false,
+    published: false,
+    irrigationCurrentSource: MH_IRRIGATION_GAP,
+  },
 ];
+
 
 export function listAtlasDistricts(): AtlasDistrict[] {
   return ATLAS_DISTRICTS;

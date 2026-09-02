@@ -1,0 +1,121 @@
+{
+  "_doc": "Reviewed refresh plan for Kolhapur (Maharashtra), the Atlas's flood flagship: every taluka reads groundwater-safe in IN-GRES 2024-25 and the district's water story is the Krishna-Panchganga flood, which the deep flood family will carry as a follow-up. Identity as for Satara: data.gov.in LGD resources; composition from the LGD coverage register. Counts as of the 2026-09-02 read: 12 talukas, 1,245 villages, 1,025 Village Panchayats, 1,034 coverage rows, 1,191 JJM villages, 1,216 Census 2011 village rows, 1,338 water-body rows.",
+  "schemaVersion": 1,
+  "id": "mh-kolhapur-v1",
+  "identityAdapter": "lgd-directory",
+  "district": {
+    "displayName": "Kolhapur",
+    "lgdStateCode": "27",
+    "lgdDistrictCode": "480",
+    "jjmStateId": "18",
+    "jjmDistrictId": "285",
+    "censusStateCode": "27",
+    "censusDistrictCode": "530",
+    "censusWorkbookSheet": "Village_Data_2700",
+    "ingresStateName": "MAHARASHTRA",
+    "ingresStateUuid": "e7b3f02d-2497-4bcd-9e20-baa4b621822b",
+    "ingresDistrictName": "Kolhapur",
+    "ingresAssessmentUnitType": "TALUKA",
+    "blockModel": "sub-district",
+    "ingresTalukaAliases": {
+      "Ajra": "Ajara",
+      "Hatkanangle": "Hatkanangale"
+    }
+  },
+  "sources": {
+    "lgdLocalBodies": {
+      "resourceId": "1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "url": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdVillages": {
+      "resourceId": "c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "url": "https://api.data.gov.in/resource/c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdSubdistricts": {
+      "resourceId": "6be51a29-876a-403a-a6da-42fde795e751",
+      "url": "https://api.data.gov.in/resource/6be51a29-876a-403a-a6da-42fde795e751",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/828/download/36182/DH_2011_DCHB_Village_Release_2700.xlsx",
+      "catalogUrl": "https://censusindia.gov.in/nada/index.php/catalog/828",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    },
+    "boundary": {
+      "geojsonUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh2.geojson",
+      "crosswalkUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh.csv",
+      "districtName": "Kolhapur",
+      "license": "ODbL 1.0"
+    },
+    "waterBodiesCensus": {
+      "resourceId": "e1874d07-a1db-4678-80c1-b64a2924b517",
+      "url": "https://api.data.gov.in/resource/e1874d07-a1db-4678-80c1-b64a2924b517",
+      "catalogUrl": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+      "districtName": "KOLHAPUR",
+      "waterspread": "withheld",
+      "waterspreadNote": "The Kolhapur return shows the template pattern in a 1,200-row sample: 16 distinct whole-number waterspread values with 5 ha on four rows in five and depth 4 m on five in six, an enumerator's default rather than a measurement, so the waterspread is not published. Counts, types, ownership and recorded coordinates are served."
+    }
+  },
+  "expectedCounts": {
+    "lgdSubdistricts": 12,
+    "lgdVillages": 1245,
+    "lgdGramPanchayats": 1025,
+    "lgdCoverageRows": 1034,
+    "jjmVillages": 1191,
+    "censusVillages": 1216,
+    "waterBodiesCensusRows": 1338
+  },
+  "targets": [
+    {
+      "id": "arjunwad",
+      "displayName": "Arjunwad",
+      "reviewedAt": "2026-09-02",
+      "lgdGramPanchayatCode": "179176",
+      "lgdSubdistrictCode": "4286",
+      "jjmBlockId": "3260",
+      "jjmGramPanchayatId": "101103",
+      "censusSubdistrictCode": "04286",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-crosswalk",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-crosswalk",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "567332",
+            "name": "Arjunwad"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "lgd-coverage",
+            "sourceId": "lgd-local-bodies-datagovin",
+            "sourceUrl": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+            "sourceAsOf": "2026-09-02 (monthly LGD republication on data.gov.in)",
+            "method": "authoritative-crosswalk",
+            "locator": "localBodyCode 179176 (Arjunwad, Village Panchayat) covers entityCode 567332 (Arjunwad), coverageType Full",
+            "assertion": "The Gram Panchayat Arjunwad covers the single village Arjunwad (567332), coverage Full."
+          }
+        ]
+      }
+    }
+  ]
+}

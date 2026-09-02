@@ -1,0 +1,120 @@
+{
+  "_doc": "Reviewed refresh plan for Ahilyanagar (Maharashtra), the district LGD renamed from Ahmednagar (the 2026 villages edition carries Ahilyanagar; older editions and the Census say Ahmednagar/Ahmadnagar, and the First Census of Water Bodies return files the district as AHMADNAGAR - codes, not names, drive every join). Identity as for Satara: data.gov.in LGD resources; the DCHB Maharashtra release has no Gram Panchayat column so composition is the LGD coverage register. Counts as of the 2026-09-02 read: 14 talukas, 1,613 villages, 1,325 Village Panchayats, 1,349 coverage rows, 1,575 JJM villages, 1,584 Census 2011 village rows, 4,994 water-body rows.",
+  "schemaVersion": 1,
+  "id": "mh-ahilyanagar-v1",
+  "identityAdapter": "lgd-directory",
+  "district": {
+    "displayName": "Ahilyanagar",
+    "lgdStateCode": "27",
+    "lgdDistrictCode": "466",
+    "jjmStateId": "18",
+    "jjmDistrictId": "280",
+    "censusStateCode": "27",
+    "censusDistrictCode": "522",
+    "censusWorkbookSheet": "Village_Data_2700",
+    "ingresStateName": "MAHARASHTRA",
+    "ingresStateUuid": "e7b3f02d-2497-4bcd-9e20-baa4b621822b",
+    "ingresDistrictName": "Ahilyanagar",
+    "ingresAssessmentUnitType": "TALUKA",
+    "blockModel": "sub-district",
+    "ingresTalukaAliases": {
+      "Rahta": "Rhata"
+    }
+  },
+  "sources": {
+    "lgdLocalBodies": {
+      "resourceId": "1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "url": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdVillages": {
+      "resourceId": "c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "url": "https://api.data.gov.in/resource/c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdSubdistricts": {
+      "resourceId": "6be51a29-876a-403a-a6da-42fde795e751",
+      "url": "https://api.data.gov.in/resource/6be51a29-876a-403a-a6da-42fde795e751",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/828/download/36182/DH_2011_DCHB_Village_Release_2700.xlsx",
+      "catalogUrl": "https://censusindia.gov.in/nada/index.php/catalog/828",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    },
+    "boundary": {
+      "geojsonUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh2.geojson",
+      "crosswalkUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/mh/mh.csv",
+      "districtName": "Ahmadnagar",
+      "license": "ODbL 1.0"
+    },
+    "waterBodiesCensus": {
+      "resourceId": "e1874d07-a1db-4678-80c1-b64a2924b517",
+      "url": "https://api.data.gov.in/resource/e1874d07-a1db-4678-80c1-b64a2924b517",
+      "catalogUrl": "https://data.gov.in/resource/state-wise-data-first-census-water-bodies-maharashtra",
+      "districtName": "AHMADNAGAR",
+      "waterspread": "withheld",
+      "waterspreadNote": "The Ahmadnagar return shows the template pattern in a 1,200-row sample: 20 distinct whole-number waterspread values with 0 on a majority of rows and depth NA on half, an enumerator's default rather than a measurement, so the waterspread is not published. Counts, types, ownership and recorded coordinates are served."
+    }
+  },
+  "expectedCounts": {
+    "lgdSubdistricts": 14,
+    "lgdVillages": 1613,
+    "lgdGramPanchayats": 1325,
+    "lgdCoverageRows": 1349,
+    "jjmVillages": 1575,
+    "censusVillages": 1584,
+    "waterBodiesCensusRows": 4994
+  },
+  "targets": [
+    {
+      "id": "ralegan-siddhi",
+      "displayName": "Ralegan Siddhi",
+      "reviewedAt": "2026-09-02",
+      "lgdGramPanchayatCode": "168224",
+      "lgdSubdistrictCode": "4211",
+      "jjmBlockId": "3207",
+      "jjmGramPanchayatId": "95666",
+      "censusSubdistrictCode": "04211",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-crosswalk",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-crosswalk",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "558324",
+            "name": "Ralegan Shindhi"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "lgd-coverage",
+            "sourceId": "lgd-local-bodies-datagovin",
+            "sourceUrl": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+            "sourceAsOf": "2026-09-02 (monthly LGD republication on data.gov.in)",
+            "method": "authoritative-crosswalk",
+            "locator": "localBodyCode 168224 (Ralegan Siddhi, Village Panchayat) covers entityCode 558324 (Ralegan Shindhi), coverageType Full",
+            "assertion": "The Gram Panchayat Ralegan Siddhi covers the single village Ralegan Shindhi (558324), coverage Full."
+          }
+        ]
+      }
+    }
+  ]
+}

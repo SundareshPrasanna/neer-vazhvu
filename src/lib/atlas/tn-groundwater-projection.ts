@@ -52,6 +52,9 @@ export interface GroundwaterProjectionRecord {
   lgdGramPanchayatName: string;
   lgdBlockCode: string;
   talukName: string;
+  /** The IN-GRES unit name, only when a reviewed alias bridged a spelling
+   *  the fold cannot (Rahta / Rhata); otherwise the taluk name is the unit. */
+  assessmentUnitName?: string;
   subDistrictCode: string;
   containment: ContainmentMethod;
   category: GroundwaterCategory | null;
@@ -336,6 +339,8 @@ export interface MembershipProjectionPlace extends ProjectionPlace {
  * defer except a taluka IN-GRES does not assess.
  */
 export function buildMembershipGroundwaterProjection(options: {
+  /** Reviewed LGD-name to IN-GRES-name bridges, from the refresh plan. */
+  talukaAliases?: Record<string, string>;
   planId: string;
   projectedAt: string;
   talukDistrictLgdCode: string;
@@ -355,7 +360,12 @@ export function buildMembershipGroundwaterProjection(options: {
       lgdGramPanchayatName: place.lgdGramPanchayatName,
       lgdBlockCode: place.lgdBlockCode,
     };
-    const assessment = assessments.get(foldTamilPlaceName(place.subDistrictName));
+    // A reviewed alias bridges spellings the fold cannot: the LGD and
+    // IN-GRES disagree by transposition on some talukas (Rahta / Rhata in
+    // Ahilyanagar; Ajra / Ajara and Hatkanangle / Hatkanangale in Kolhapur),
+    // and guessing at transpositions in the fold would over-merge elsewhere.
+    const aliased = options.talukaAliases?.[place.subDistrictName] ?? place.subDistrictName;
+    const assessment = assessments.get(foldTamilPlaceName(aliased));
     if (!assessment) {
       review.push({
         ...base,
@@ -367,6 +377,11 @@ export function buildMembershipGroundwaterProjection(options: {
     records.push({
       ...base,
       talukName: place.subDistrictName,
+      // Self-describing when a reviewed alias bridged the spelling: the
+      // record names the IN-GRES unit it drew from, so the validator (and a
+      // reader) needs no plan to check the join. Absent when the names fold
+      // to the same key.
+      ...(aliased !== place.subDistrictName ? { assessmentUnitName: aliased } : {}),
       subDistrictCode: place.subDistrictCode,
       containment: "village-subdistrict-code",
       category: assessment.category,
@@ -471,7 +486,9 @@ export function validateGroundwaterProjection(
         `records: ${record.lgdGramPanchayatCode} is not a mapped Gram Panchayat`,
       );
     }
-    const assessment = categories.get(foldTamilPlaceName(record.talukName));
+    const assessment = categories.get(
+      foldTamilPlaceName(record.assessmentUnitName ?? record.talukName),
+    );
     if (!assessment) {
       errors.push(
         `records[${record.lgdGramPanchayatCode}]: taluk ${record.talukName} has no assessment`,
