@@ -25,7 +25,7 @@
       }
     ],
     "method": "manual",
-    "produced_at": "2026-08-26",
+    "produced_at": "2026-09-02",
     "produced_by": "Authored on the cauvery-ka overview (accountability-C2.json) and carried verbatim by scripts/build_kabini_sources.py."
   },
   "question": "Do the Action Plan and the MPRs address all potential pollution contributors on the Kabini stretch?",
@@ -1478,7 +1478,7 @@
       "categories": [
         {
           "key": "effluent",
-          "label": "Industrial effluent",
+          "label": "Industrial effluent / CETP",
           "verdict": "tracked",
           "actionPlan": {
             "status": "addressed",
@@ -1492,7 +1492,7 @@
           },
           "gaps": [
             "The zero-discharge claim is the board's own assertion, unverified by any published effluent data - for a sugar/distillery/pharma cluster upstream of a Priority-IV stretch, that is the matrix's biggest open question.",
-            "No OCEMS-style public feed exists for these units to check the claim against."
+            "The one public OCEMS enrolment among these units (Jubilant Generics) reports every parameter as NA, and the same site shows no connection on CPCB's live dashboard - there is no working public feed to check the claim against (checked 2 September 2026)."
           ],
           "legalRef": "effluent"
         },
@@ -1516,6 +1516,59 @@
             "No public return reports what any unit on this stretch actually generated, so the ceiling is the only figure in the public record."
           ],
           "legalRef": "hazardous-waste"
+        },
+        {
+          "key": "solid-waste",
+          "label": "Solid waste",
+          "verdict": "silent",
+          "actionPlan": {
+            "status": "absent",
+            "summary": "No solid-waste commitment for the industrial areas found in the Kabini Action Plan."
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "Not reported for the estates in any ingested MPR edition.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Solid waste for the Nanjangud industrial areas appears in neither the action plan nor the MPRs - the reporting gap is the finding."
+          ]
+        },
+        {
+          "key": "sewage",
+          "label": "Sewage",
+          "verdict": "in-plan-not-reported",
+          "actionPlan": {
+            "status": "addressed",
+            "summary": "The plan's blanket assertion covers sewage as well: every industry in the taluk has an effluent or sewage treatment plant, with treated water used on land within premises.",
+            "cite": "Kabini Action Plan, section 2.5"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "The MPR compliance table counts ETPs and effluent volumes; no separate sewage figure is reported for the estates.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "Estate sewage rides the same unverified zero-discharge assertion as effluent; no published measurement separates the two."
+          ]
+        },
+        {
+          "key": "reuse",
+          "label": "Treated-water reuse",
+          "verdict": "in-plan-not-reported",
+          "actionPlan": {
+            "status": "addressed",
+            "summary": "Treated water is stated to be used on land for gardening within premises - reuse is the mechanism behind the plan's zero-discharge position.",
+            "cite": "Kabini Action Plan, section 2.5"
+          },
+          "mpr": {
+            "status": "not-reported",
+            "summary": "No MPR edition reports reuse volumes for these estates.",
+            "asOf": "September 2025"
+          },
+          "gaps": [
+            "The reuse claim carries no reported volume, so the share of the 9.03 MLD of effluent actually returned to land is not in the public record."
+          ]
         }
       ],
       "mapMatch": {
