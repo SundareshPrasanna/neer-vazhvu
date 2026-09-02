@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "tngis-generic-viewer-water-bodies",
@@ -83,7 +83,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-01",
+    "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -106,7 +106,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6606",
   "blockName": "SALEM",
-  "assessedAt": "2026-09-01",
+  "assessedAt": "2026-09-02",
   "recordCount": 14,
   "briefs": [
     {
@@ -128,7 +128,7 @@
           "note": "1,100 of 1,375 households, across 8 habitations."
         },
         {
-          "value": "1",
+          "value": "16",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -138,14 +138,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "133.6 mm",
+          "value": "116.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "10d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-22. 42 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 155 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -311,32 +311,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 16
           }
         ],
         "sampling": {
-          "total": 42,
+          "total": 155,
           "unsafe": 0,
-          "atSource": 7,
-          "atHousehold": 35,
+          "atSource": 119,
+          "atHousehold": 36,
           "earliest": "2023-01-07",
-          "latest": "2026-08-22",
+          "latest": "2026-08-30",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 42
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 36
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 32
             },
             {
               "year": "2026",
-              "count": 13
+              "count": 45
             }
           ]
         },
@@ -365,10 +365,10 @@
           "longitude": 78.0916
         },
         "rainfall": {
-          "windowMm": 133.6,
+          "windowMm": 116.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 19.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.6
         },
         "waterBodies": null
       }
@@ -392,9 +392,9 @@
           "note": "769 of 1,084 households, across 9 habitations."
         },
         {
-          "value": "2",
+          "value": "14",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "172.3%",
@@ -402,14 +402,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "131.3 mm",
+          "value": "128.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "10d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-22. 47 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 60 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -575,34 +575,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 12
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 47,
+          "total": 60,
           "unsafe": 0,
-          "atSource": 13,
-          "atHousehold": 34,
-          "earliest": "2023-01-07",
-          "latest": "2026-08-22",
+          "atSource": 24,
+          "atHousehold": 36,
+          "earliest": "2022-09-03",
+          "latest": "2026-08-30",
           "byYear": [
             {
+              "year": "2022",
+              "count": 1
+            },
+            {
               "year": "2023",
-              "count": 10
-            },
-            {
-              "year": "2024",
-              "count": 10
-            },
-            {
-              "year": "2025",
               "count": 12
             },
             {
+              "year": "2024",
+              "count": 12
+            },
+            {
+              "year": "2025",
+              "count": 14
+            },
+            {
               "year": "2026",
-              "count": 15
+              "count": 21
             }
           ]
         },
@@ -628,7 +637,7 @@
           "longitude": 78.0846
         },
         "rainfall": {
-          "windowMm": 131.3,
+          "windowMm": 128.8,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 23.7
@@ -670,9 +679,9 @@
           "note": "1,781 of 1,781 households, across 10 habitations."
         },
         {
-          "value": "1",
+          "value": "26",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River"
         },
         {
           "value": "172.3%",
@@ -680,14 +689,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.7 mm",
+          "value": "98.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "33d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-30. 31 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 279 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -859,34 +868,48 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 20
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 5
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 31,
+          "total": 279,
           "unsafe": 0,
-          "atSource": 7,
-          "atHousehold": 24,
-          "earliest": "2023-01-07",
-          "latest": "2026-07-30",
+          "atSource": 252,
+          "atHousehold": 27,
+          "earliest": "2022-12-27",
+          "latest": "2026-08-30",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 7
+              "count": 95
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 54
             },
             {
               "year": "2025",
-              "count": 5
+              "count": 56
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 70
             }
           ]
         },
@@ -912,7 +935,7 @@
           "longitude": 78.14085
         },
         "rainfall": {
-          "windowMm": 98.7,
+          "windowMm": 98.1,
           "daysWithRain": 30,
           "wettestDate": "2026-08-03",
           "wettestDayMm": 12.2
@@ -954,9 +977,9 @@
           "note": "2,220 of 2,423 households, across 19 habitations."
         },
         {
-          "value": "7",
+          "value": "28",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "172.3%",
@@ -964,14 +987,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "131.3 mm",
+          "value": "128.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "33d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-30. 72 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 252 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1205,34 +1228,39 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 21
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 7
           }
         ],
         "sampling": {
-          "total": 72,
+          "total": 252,
           "unsafe": 0,
-          "atSource": 48,
-          "atHousehold": 24,
+          "atSource": 226,
+          "atHousehold": 26,
           "earliest": "2023-01-07",
-          "latest": "2026-07-30",
+          "latest": "2026-08-30",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 55
             },
             {
               "year": "2024",
-              "count": 23
+              "count": 59
             },
             {
               "year": "2025",
-              "count": 17
+              "count": 63
             },
             {
               "year": "2026",
-              "count": 22
+              "count": 75
             }
           ]
         },
@@ -1244,7 +1272,7 @@
           "longitude": 78.08045
         },
         "rainfall": {
-          "windowMm": 131.3,
+          "windowMm": 128.8,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 23.7
@@ -1282,9 +1310,9 @@
           "note": "2,967 of 2,967 households, across 14 habitations."
         },
         {
-          "value": "6",
+          "value": "30",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, Treated Surface Water"
         },
         {
           "value": "151.1%",
@@ -1292,14 +1320,14 @@
           "note": "Salem is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "104.5 mm",
+          "value": "92.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "10d ago",
+          "value": "11d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-22. 62 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-22. 214 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1503,34 +1531,44 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 23
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 6
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 62,
+          "total": 214,
           "unsafe": 0,
-          "atSource": 36,
+          "atSource": 188,
           "atHousehold": 26,
           "earliest": "2023-01-08",
           "latest": "2026-08-22",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 61
             },
             {
               "year": "2024",
-              "count": 18
+              "count": 46
             },
             {
               "year": "2025",
-              "count": 20
+              "count": 48
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 59
             }
           ]
         },
@@ -1542,7 +1580,7 @@
           "longitude": 78.18805
         },
         "rainfall": {
-          "windowMm": 104.5,
+          "windowMm": 92.8,
           "daysWithRain": 29,
           "wettestDate": "2026-08-11",
           "wettestDayMm": 11.6
@@ -1588,9 +1626,9 @@
           "note": "1,376 of 1,491 households, across 13 habitations."
         },
         {
-          "value": "4",
+          "value": "20",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River, Treated Surface Water"
         },
         {
           "value": "172.3%",
@@ -1598,14 +1636,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "133.6 mm",
+          "value": "116.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "10d ago",
+          "value": "9d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-22. 57 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-24. 215 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1803,34 +1841,49 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 11
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 4
+            "count": 5
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 57,
+          "total": 215,
           "unsafe": 0,
-          "atSource": 29,
+          "atSource": 187,
           "atHousehold": 28,
-          "earliest": "2023-01-07",
-          "latest": "2026-08-22",
+          "earliest": "2023-01-05",
+          "latest": "2026-08-24",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 64
             },
             {
               "year": "2024",
-              "count": 10
+              "count": 39
             },
             {
               "year": "2025",
-              "count": 16
+              "count": 48
             },
             {
               "year": "2026",
-              "count": 21
+              "count": 64
             }
           ]
         },
@@ -1842,10 +1895,10 @@
           "longitude": 78.0839
         },
         "rainfall": {
-          "windowMm": 133.6,
+          "windowMm": 116.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 19.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.6
         },
         "waterBodies": {
           "count": 1,
@@ -1880,9 +1933,9 @@
           "note": "2,285 of 2,285 households, across 7 habitations."
         },
         {
-          "value": "2",
+          "value": "26",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River"
         },
         {
           "value": "151.1%",
@@ -1890,14 +1943,14 @@
           "note": "Salem is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.7 mm",
+          "value": "98.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "10d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-22. 33 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 222 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2059,34 +2112,44 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 19
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 5
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 33,
+          "total": 222,
           "unsafe": 0,
-          "atSource": 11,
-          "atHousehold": 22,
+          "atSource": 199,
+          "atHousehold": 23,
           "earliest": "2023-01-10",
-          "latest": "2026-08-22",
+          "latest": "2026-08-30",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 82
             },
             {
               "year": "2024",
-              "count": 10
+              "count": 46
             },
             {
               "year": "2025",
-              "count": 2
+              "count": 38
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 56
             }
           ]
         },
@@ -2098,7 +2161,7 @@
           "longitude": 78.1748
         },
         "rainfall": {
-          "windowMm": 98.7,
+          "windowMm": 98.1,
           "daysWithRain": 30,
           "wettestDate": "2026-08-03",
           "wettestDayMm": 12.2
@@ -2140,26 +2203,27 @@
           "note": "1,193 of 1,263 households, across 6 habitations."
         },
         {
+          "value": "8",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "172.3%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "131.3 mm",
+          "value": "128.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "751d ago",
+          "value": "77d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2024-08-11. 11 samples over 2 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-17. 97 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -2185,10 +2249,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -2207,10 +2267,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2281,7 +2337,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 9,
+      "adequateCapabilities": 12,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2322,22 +2378,40 @@
             "connections": 212
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 8
+          }
+        ],
         "sampling": {
-          "total": 11,
+          "total": 97,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 86,
           "atHousehold": 11,
-          "earliest": "2023-01-10",
-          "latest": "2024-08-11",
+          "earliest": "2022-12-27",
+          "latest": "2026-06-17",
           "byYear": [
             {
+              "year": "2022",
+              "count": 3
+            },
+            {
               "year": "2023",
-              "count": 5
+              "count": 34
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 14
+            },
+            {
+              "year": "2025",
+              "count": 30
+            },
+            {
+              "year": "2026",
+              "count": 16
             }
           ]
         },
@@ -2349,7 +2423,7 @@
           "longitude": 78.06975
         },
         "rainfall": {
-          "windowMm": 131.3,
+          "windowMm": 128.8,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 23.7
@@ -2376,9 +2450,9 @@
           "note": "2,863 of 2,983 households, across 11 habitations."
         },
         {
-          "value": "7",
+          "value": "39",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, Treated Surface Water"
         },
         {
           "value": "172.3%",
@@ -2386,14 +2460,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "131.3 mm",
+          "value": "128.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "8d ago",
+          "value": "9d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-24. 75 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-24. 288 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2579,34 +2653,48 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 31
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 7
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 75,
+          "total": 288,
           "unsafe": 0,
-          "atSource": 49,
+          "atSource": 262,
           "atHousehold": 26,
-          "earliest": "2023-01-07",
+          "earliest": "2022-12-24",
           "latest": "2026-08-24",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 12
+              "count": 74
             },
             {
               "year": "2024",
-              "count": 20
+              "count": 66
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 60
             },
             {
               "year": "2026",
-              "count": 29
+              "count": 86
             }
           ]
         },
@@ -2618,7 +2706,7 @@
           "longitude": 78.09515
         },
         "rainfall": {
-          "windowMm": 131.3,
+          "windowMm": 128.8,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 23.7
@@ -2664,9 +2752,9 @@
           "note": "1,898 of 1,898 households, across 9 habitations."
         },
         {
-          "value": "5",
+          "value": "19",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "151.1%",
@@ -2674,14 +2762,14 @@
           "note": "Salem is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "104.5 mm",
+          "value": "92.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "1d ago",
+          "value": "2d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-31. 66 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-31. 178 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2855,34 +2943,39 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 14
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 5
           }
         ],
         "sampling": {
-          "total": 66,
+          "total": 178,
           "unsafe": 0,
-          "atSource": 38,
+          "atSource": 150,
           "atHousehold": 28,
           "earliest": "2023-01-10",
           "latest": "2026-08-31",
           "byYear": [
             {
               "year": "2023",
-              "count": 5
+              "count": 40
             },
             {
               "year": "2024",
-              "count": 13
+              "count": 26
             },
             {
               "year": "2025",
-              "count": 23
+              "count": 56
             },
             {
               "year": "2026",
-              "count": 25
+              "count": 56
             }
           ]
         },
@@ -2894,7 +2987,7 @@
           "longitude": 78.1729
         },
         "rainfall": {
-          "windowMm": 104.5,
+          "windowMm": 92.8,
           "daysWithRain": 29,
           "wettestDate": "2026-08-11",
           "wettestDayMm": 11.6
@@ -2940,9 +3033,9 @@
           "note": "1,007 of 1,124 households, across 7 habitations."
         },
         {
-          "value": "2",
+          "value": "11",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "172.3%",
@@ -2950,14 +3043,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "131.3 mm",
+          "value": "128.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "8d ago",
+          "value": "9d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-24. 35 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-24. 110 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3111,34 +3204,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 9
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 35,
+          "total": 110,
           "unsafe": 0,
-          "atSource": 15,
+          "atSource": 90,
           "atHousehold": 20,
-          "earliest": "2023-01-10",
+          "earliest": "2022-12-27",
           "latest": "2026-08-24",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 5
+              "count": 22
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 16
             },
             {
               "year": "2025",
-              "count": 7
+              "count": 36
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 34
             }
           ]
         },
@@ -3164,7 +3266,7 @@
           "longitude": 78.0725
         },
         "rainfall": {
-          "windowMm": 131.3,
+          "windowMm": 128.8,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 23.7
@@ -3206,9 +3308,9 @@
           "note": "1,498 of 1,850 households, across 8 habitations."
         },
         {
-          "value": "3",
+          "value": "14",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "172.3%",
@@ -3216,14 +3318,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "133.6 mm",
+          "value": "116.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "8d ago",
+          "value": "9d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-24. 44 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-24. 167 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3391,34 +3493,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 11
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 3
           }
         ],
         "sampling": {
-          "total": 44,
+          "total": 167,
           "unsafe": 0,
-          "atSource": 24,
+          "atSource": 147,
           "atHousehold": 20,
-          "earliest": "2023-01-07",
+          "earliest": "2022-12-27",
           "latest": "2026-08-24",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 5
+              "count": 35
             },
             {
               "year": "2024",
-              "count": 14
+              "count": 47
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 43
             }
           ]
         },
@@ -3430,10 +3541,10 @@
           "longitude": 78.0995
         },
         "rainfall": {
-          "windowMm": 133.6,
+          "windowMm": 116.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 19.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.6
         },
         "waterBodies": {
           "count": 3,
@@ -3476,9 +3587,9 @@
           "note": "1,513 of 1,588 households, across 11 habitations."
         },
         {
-          "value": "3",
+          "value": "17",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "172.3%",
@@ -3486,14 +3597,14 @@
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "133.6 mm",
+          "value": "116.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "8d ago",
+          "value": "9d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-24. 58 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-24. 165 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3671,34 +3782,39 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 14
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 3
           }
         ],
         "sampling": {
-          "total": 58,
+          "total": 165,
           "unsafe": 0,
-          "atSource": 24,
+          "atSource": 131,
           "atHousehold": 34,
           "earliest": "2023-01-10",
           "latest": "2026-08-24",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 34
             },
             {
               "year": "2024",
-              "count": 15
+              "count": 39
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 38
             },
             {
               "year": "2026",
-              "count": 19
+              "count": 54
             }
           ]
         },
@@ -3724,10 +3840,10 @@
           "longitude": 78.07145
         },
         "rainfall": {
-          "windowMm": 133.6,
+          "windowMm": 116.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 19.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.6
         },
         "waterBodies": {
           "count": 1,
@@ -3762,26 +3878,27 @@
           "note": "1,392 of 1,392 households, across 8 habitations."
         },
         {
+          "value": "11",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "172.3%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Salem West is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "133.6 mm",
+          "value": "116.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "33d ago",
+          "value": "8d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-30. 37 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-25. 143 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3803,10 +3920,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -3825,10 +3938,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3895,7 +4004,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 11,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3948,30 +4057,41 @@
             "connections": 13
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 10
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 37,
+          "total": 143,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 106,
           "atHousehold": 37,
-          "earliest": "2023-01-10",
-          "latest": "2026-07-30",
+          "earliest": "2023-01-05",
+          "latest": "2026-08-25",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 46
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 30
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 28
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 39
             }
           ]
         },
@@ -3997,10 +4117,10 @@
           "longitude": 78.07285
         },
         "rainfall": {
-          "windowMm": 133.6,
+          "windowMm": 116.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 19.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.6
         },
         "waterBodies": null
       }

@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "tngis-generic-viewer-water-bodies",
@@ -83,7 +83,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-01",
+    "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -106,7 +106,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6605",
   "blockName": "PEDDANAICKENPALAYAM",
-  "assessedAt": "2026-09-01",
+  "assessedAt": "2026-09-02",
   "recordCount": 36,
   "briefs": [
     {
@@ -128,7 +128,7 @@
           "note": "411 of 411 households, across 5 habitations."
         },
         {
-          "value": "7",
+          "value": "20",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -138,14 +138,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "48d ago",
+          "value": "49d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-15. 114 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-15. 199 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -301,32 +301,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 7
+            "count": 20
           }
         ],
         "sampling": {
-          "total": 114,
+          "total": 199,
           "unsafe": 0,
-          "atSource": 69,
+          "atSource": 154,
           "atHousehold": 45,
-          "earliest": "2023-01-20",
+          "earliest": "2022-11-10",
           "latest": "2026-07-15",
           "byYear": [
             {
+              "year": "2022",
+              "count": 5
+            },
+            {
               "year": "2023",
-              "count": 9
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 39
+              "count": 78
             },
             {
               "year": "2025",
-              "count": 46
+              "count": 61
             },
             {
               "year": "2026",
-              "count": 20
+              "count": 32
             }
           ]
         },
@@ -338,7 +342,7 @@
           "longitude": 78.455
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -365,26 +369,27 @@
           "note": "273 of 515 households, across 4 habitations."
         },
         {
+          "value": "7",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "114.7%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79.4 mm",
+          "value": "67.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 30 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 48 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -410,10 +415,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -428,10 +429,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -502,7 +499,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -531,30 +528,36 @@
             "connections": 20
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 7
+          }
+        ],
         "sampling": {
-          "total": 30,
+          "total": 48,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 18,
           "atHousehold": 30,
           "earliest": "2023-01-20",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 17
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 8
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 16
             },
             {
               "year": "2026",
-              "count": 3
+              "count": 7
             }
           ]
         },
@@ -566,10 +569,10 @@
           "longitude": 78.45005
         },
         "rainfall": {
-          "windowMm": 79.4,
+          "windowMm": 67.5,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 13.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 9.5
         },
         "waterBodies": {
           "count": 1,
@@ -604,7 +607,7 @@
           "note": "359 of 745 households, across 7 habitations."
         },
         {
-          "value": "10",
+          "value": "24",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -614,14 +617,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 91 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 135 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -777,32 +780,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 10
+            "count": 24
           }
         ],
         "sampling": {
-          "total": 91,
+          "total": 135,
           "unsafe": 0,
-          "atSource": 57,
+          "atSource": 101,
           "atHousehold": 34,
-          "earliest": "2023-01-20",
+          "earliest": "2022-09-06",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 3
+            },
+            {
               "year": "2023",
-              "count": 11
+              "count": 26
             },
             {
               "year": "2024",
-              "count": 34
+              "count": 50
             },
             {
               "year": "2025",
-              "count": 29
+              "count": 32
             },
             {
               "year": "2026",
-              "count": 17
+              "count": 24
             }
           ]
         },
@@ -828,10 +835,10 @@
           "longitude": 78.47405
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 1,
@@ -866,26 +873,27 @@
           "note": "256 of 592 households, across 3 habitations."
         },
         {
+          "value": "6",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "114.7%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "81.3 mm",
+          "value": "68.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 23 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 44 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -911,10 +919,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -933,10 +937,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1007,7 +1007,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 9,
+      "adequateCapabilities": 12,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1030,30 +1030,45 @@
             "connections": 60
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 5
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 23,
+          "total": 44,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 21,
           "atHousehold": 23,
-          "earliest": "2023-01-20",
+          "earliest": "2022-10-12",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 1
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 20
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 9
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 10
             },
             {
               "year": "2026",
-              "count": 2
+              "count": 4
             }
           ]
         },
@@ -1065,10 +1080,10 @@
           "longitude": 78.42935
         },
         "rainfall": {
-          "windowMm": 81.3,
+          "windowMm": 68.9,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 16.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 8.7
         },
         "waterBodies": null
       }
@@ -1092,9 +1107,9 @@
           "note": "1,173 of 1,626 households, across 23 habitations."
         },
         {
-          "value": "1",
+          "value": "45",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "114.7%",
@@ -1102,14 +1117,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.7 mm",
+          "value": "84.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 66 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 106 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1369,13 +1384,18 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 41
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 4
           }
         ],
         "sampling": {
-          "total": 66,
+          "total": 106,
           "unsafe": 0,
-          "atSource": 6,
+          "atSource": 46,
           "atHousehold": 60,
           "earliest": "2022-12-31",
           "latest": "2026-07-02",
@@ -1386,19 +1406,19 @@
             },
             {
               "year": "2023",
-              "count": 10
+              "count": 24
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 16
             },
             {
               "year": "2025",
-              "count": 44
+              "count": 55
             },
             {
               "year": "2026",
-              "count": 4
+              "count": 9
             }
           ]
         },
@@ -1410,7 +1430,7 @@
           "longitude": 78.6452
         },
         "rainfall": {
-          "windowMm": 95.7,
+          "windowMm": 84.6,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 15.4
@@ -1448,7 +1468,7 @@
           "note": "3,041 of 3,610 households, across 35 habitations."
         },
         {
-          "value": "9",
+          "value": "65",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -1458,14 +1478,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.7 mm",
+          "value": "84.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 78 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 131 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1797,18 +1817,18 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 8
+            "count": 63
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 78,
+          "total": 131,
           "unsafe": 0,
-          "atSource": 44,
+          "atSource": 97,
           "atHousehold": 34,
           "earliest": "2022-12-30",
           "latest": "2026-07-02",
@@ -1819,19 +1839,19 @@
             },
             {
               "year": "2023",
-              "count": 21
+              "count": 48
             },
             {
               "year": "2024",
-              "count": 29
+              "count": 43
             },
             {
               "year": "2025",
-              "count": 16
+              "count": 22
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 17
             }
           ]
         },
@@ -1843,7 +1863,7 @@
           "longitude": 78.6235
         },
         "rainfall": {
-          "windowMm": 95.7,
+          "windowMm": 84.6,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 15.4
@@ -1881,9 +1901,9 @@
           "note": "375 of 375 households, across 4 habitations."
         },
         {
-          "value": "2",
+          "value": "12",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -1891,14 +1911,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 40 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 102 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2048,32 +2068,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 11
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 40,
+          "total": 102,
           "unsafe": 0,
-          "atSource": 9,
+          "atSource": 71,
           "atHousehold": 31,
-          "earliest": "2023-01-20",
+          "earliest": "2022-08-17",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 12
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 28
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 27
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 20
             },
             {
               "year": "2026",
-              "count": 6
+              "count": 15
             }
           ]
         },
@@ -2085,7 +2114,7 @@
           "longitude": 78.4246
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -2112,9 +2141,9 @@
           "note": "537 of 653 households, across 7 habitations."
         },
         {
-          "value": "10",
+          "value": "22",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, River, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -2122,14 +2151,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "89d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-04. 98 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 171 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2297,36 +2326,46 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 10
+            "count": 20
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 98,
+          "total": 171,
           "unsafe": 0,
-          "atSource": 69,
+          "atSource": 142,
           "atHousehold": 29,
-          "earliest": "2022-12-07",
-          "latest": "2026-06-04",
+          "earliest": "2022-12-04",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 5
             },
             {
               "year": "2023",
-              "count": 17
+              "count": 43
             },
             {
               "year": "2024",
-              "count": 33
+              "count": 50
             },
             {
               "year": "2025",
-              "count": 31
+              "count": 48
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 25
             }
           ]
         },
@@ -2338,10 +2377,10 @@
           "longitude": 78.5229
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": null
       }
@@ -2365,7 +2404,7 @@
           "note": "1,656 of 1,656 households, across 12 habitations."
         },
         {
-          "value": "7",
+          "value": "26",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -2375,14 +2414,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.1 mm",
+          "value": "85.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 59 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 101 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2574,39 +2613,39 @@
         ],
         "sources": [
           {
-            "type": "Open Well",
-            "category": "Ground Water",
-            "count": 6
-          },
-          {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 17
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 9
           }
         ],
         "sampling": {
-          "total": 59,
+          "total": 101,
           "unsafe": 0,
-          "atSource": 31,
+          "atSource": 73,
           "atHousehold": 28,
           "earliest": "2023-01-06",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2023",
-              "count": 16
+              "count": 32
             },
             {
               "year": "2024",
-              "count": 19
+              "count": 32
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 21
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 16
             }
           ]
         },
@@ -2618,10 +2657,10 @@
           "longitude": 78.50005
         },
         "rainfall": {
-          "windowMm": 103.1,
+          "windowMm": 85.7,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 21.7
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 10.6
         },
         "waterBodies": {
           "count": 1,
@@ -2656,7 +2695,7 @@
           "note": "445 of 1,062 households, across 4 habitations."
         },
         {
-          "value": "8",
+          "value": "20",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -2666,14 +2705,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "43d ago",
+          "value": "44d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-20. 80 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-20. 133 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2811,32 +2850,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 8
+            "count": 20
           }
         ],
         "sampling": {
-          "total": 80,
+          "total": 133,
           "unsafe": 0,
-          "atSource": 46,
+          "atSource": 99,
           "atHousehold": 34,
-          "earliest": "2023-01-19",
+          "earliest": "2023-01-05",
           "latest": "2026-07-20",
           "byYear": [
             {
               "year": "2023",
-              "count": 16
+              "count": 36
             },
             {
               "year": "2024",
-              "count": 21
+              "count": 34
             },
             {
               "year": "2025",
-              "count": 28
+              "count": 37
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 26
             }
           ]
         },
@@ -2862,10 +2901,10 @@
           "longitude": 78.4602
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 3,
@@ -2900,7 +2939,7 @@
           "note": "515 of 579 households, across 4 habitations."
         },
         {
-          "value": "8",
+          "value": "16",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -2910,14 +2949,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "43d ago",
+          "value": "44d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-20. 86 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-20. 132 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3055,32 +3094,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 8
+            "count": 16
           }
         ],
         "sampling": {
-          "total": 86,
+          "total": 132,
           "unsafe": 0,
-          "atSource": 53,
+          "atSource": 99,
           "atHousehold": 33,
-          "earliest": "2023-01-19",
+          "earliest": "2023-01-05",
           "latest": "2026-07-20",
           "byYear": [
             {
               "year": "2023",
-              "count": 15
-            },
-            {
-              "year": "2024",
-              "count": 21
-            },
-            {
-              "year": "2025",
               "count": 29
             },
             {
+              "year": "2024",
+              "count": 32
+            },
+            {
+              "year": "2025",
+              "count": 41
+            },
+            {
               "year": "2026",
-              "count": 21
+              "count": 30
             }
           ]
         },
@@ -3106,10 +3145,10 @@
           "longitude": 78.46235
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 3,
@@ -3144,7 +3183,7 @@
           "note": "518 of 518 households, across 3 habitations."
         },
         {
-          "value": "3",
+          "value": "8",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -3154,14 +3193,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79.4 mm",
+          "value": "67.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "43d ago",
+          "value": "44d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-20. 49 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-20. 80 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3293,32 +3332,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 8
           }
         ],
         "sampling": {
-          "total": 49,
+          "total": 80,
           "unsafe": 0,
-          "atSource": 21,
+          "atSource": 52,
           "atHousehold": 28,
-          "earliest": "2023-01-19",
+          "earliest": "2023-01-05",
           "latest": "2026-07-20",
           "byYear": [
             {
               "year": "2023",
-              "count": 17
+              "count": 29
             },
             {
               "year": "2024",
-              "count": 13
+              "count": 21
             },
             {
               "year": "2025",
-              "count": 10
+              "count": 14
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 16
             }
           ]
         },
@@ -3344,10 +3383,10 @@
           "longitude": 78.46245
         },
         "rainfall": {
-          "windowMm": 79.4,
+          "windowMm": 67.5,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 13.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 9.5
         },
         "waterBodies": {
           "count": 2,
@@ -3386,26 +3425,27 @@
           "note": "485 of 539 households, across 2 habitations."
         },
         {
+          "value": "4",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
           "value": "114.7%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79.4 mm",
+          "value": "67.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 26 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 53 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3427,10 +3467,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -3445,10 +3481,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3515,7 +3547,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3532,30 +3564,45 @@
             "connections": 241
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 26,
+          "total": 53,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 27,
           "atHousehold": 26,
-          "earliest": "2023-01-19",
-          "latest": "2026-07-02",
+          "earliest": "2022-10-10",
+          "latest": "2026-08-11",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 21
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 9
             },
             {
               "year": "2025",
-              "count": 2
+              "count": 6
             },
             {
               "year": "2026",
-              "count": 6
+              "count": 13
             }
           ]
         },
@@ -3581,10 +3628,10 @@
           "longitude": 78.4533
         },
         "rainfall": {
-          "windowMm": 79.4,
+          "windowMm": 67.5,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 13.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 9.5
         },
         "waterBodies": {
           "count": 4,
@@ -3627,9 +3674,9 @@
           "note": "334 of 755 households, across 5 habitations."
         },
         {
-          "value": "3",
+          "value": "14",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -3637,14 +3684,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "81.3 mm",
+          "value": "68.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "43d ago",
+          "value": "44d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-20. 49 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-20. 76 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3788,32 +3835,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 13
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 49,
+          "total": 76,
           "unsafe": 0,
-          "atSource": 20,
+          "atSource": 47,
           "atHousehold": 29,
-          "earliest": "2023-01-19",
+          "earliest": "2022-10-13",
           "latest": "2026-07-20",
           "byYear": [
             {
+              "year": "2022",
+              "count": 3
+            },
+            {
               "year": "2023",
-              "count": 17
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 20
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 12
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 18
             }
           ]
         },
@@ -3839,10 +3895,10 @@
           "longitude": 78.43575
         },
         "rainfall": {
-          "windowMm": 81.3,
+          "windowMm": 68.9,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 16.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 8.7
         },
         "waterBodies": {
           "count": 3,
@@ -3881,9 +3937,9 @@
           "note": "466 of 466 households, across 5 habitations."
         },
         {
-          "value": "4",
+          "value": "19",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -3891,14 +3947,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 44 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 107 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4054,32 +4110,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 18
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 44,
+          "total": 107,
           "unsafe": 0,
-          "atSource": 17,
+          "atSource": 80,
           "atHousehold": 27,
-          "earliest": "2023-01-19",
+          "earliest": "2022-10-08",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 37
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 31
             },
             {
               "year": "2025",
-              "count": 10
+              "count": 19
             },
             {
               "year": "2026",
-              "count": 7
+              "count": 16
             }
           ]
         },
@@ -4091,7 +4156,7 @@
           "longitude": 78.4368
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -4118,7 +4183,7 @@
           "note": "305 of 387 households, across 3 habitations."
         },
         {
-          "value": "4",
+          "value": "11",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -4128,14 +4193,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 45 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 83 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4279,32 +4344,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 11
           }
         ],
         "sampling": {
-          "total": 45,
+          "total": 83,
           "unsafe": 0,
-          "atSource": 17,
+          "atSource": 55,
           "atHousehold": 28,
-          "earliest": "2023-01-19",
+          "earliest": "2023-01-05",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2023",
-              "count": 12
+              "count": 30
             },
             {
               "year": "2024",
-              "count": 11
+              "count": 19
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 21
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 13
             }
           ]
         },
@@ -4316,10 +4381,10 @@
           "longitude": 78.4858
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": null
       }
@@ -4343,7 +4408,7 @@
           "note": "517 of 827 households, across 7 habitations."
         },
         {
-          "value": "14",
+          "value": "26",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -4353,14 +4418,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 115 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 186 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4524,32 +4589,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 14
+            "count": 26
           }
         ],
         "sampling": {
-          "total": 115,
+          "total": 186,
           "unsafe": 0,
-          "atSource": 82,
+          "atSource": 153,
           "atHousehold": 33,
-          "earliest": "2023-01-19",
+          "earliest": "2023-01-05",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2023",
-              "count": 23
+              "count": 51
             },
             {
               "year": "2024",
-              "count": 49
+              "count": 71
             },
             {
               "year": "2025",
-              "count": 24
+              "count": 34
             },
             {
               "year": "2026",
-              "count": 19
+              "count": 30
             }
           ]
         },
@@ -4561,10 +4626,10 @@
           "longitude": 78.5032
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 1,
@@ -4599,7 +4664,7 @@
           "note": "215 of 297 households, across 2 habitations."
         },
         {
-          "value": "5",
+          "value": "8",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -4609,14 +4674,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 47 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 67 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4742,32 +4807,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 5
+            "count": 8
           }
         ],
         "sampling": {
-          "total": 47,
+          "total": 67,
           "unsafe": 0,
-          "atSource": 23,
+          "atSource": 43,
           "atHousehold": 24,
-          "earliest": "2023-01-19",
+          "earliest": "2022-10-12",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 3
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 15
             },
             {
               "year": "2024",
-              "count": 14
+              "count": 20
             },
             {
               "year": "2025",
-              "count": 12
+              "count": 15
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 14
             }
           ]
         },
@@ -4793,10 +4862,10 @@
           "longitude": 78.5115
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 1,
@@ -4831,9 +4900,9 @@
           "note": "1,768 of 2,111 households, across 23 habitations."
         },
         {
-          "value": "5",
+          "value": "40",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "114.7%",
@@ -4841,14 +4910,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77.5 mm",
+          "value": "72.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 66 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 129 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5112,32 +5181,37 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 5
+            "count": 36
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 4
           }
         ],
         "sampling": {
-          "total": 66,
+          "total": 129,
           "unsafe": 0,
-          "atSource": 25,
+          "atSource": 88,
           "atHousehold": 41,
-          "earliest": "2023-01-20",
+          "earliest": "2023-01-05",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2023",
-              "count": 15
+              "count": 39
             },
             {
               "year": "2024",
-              "count": 21
+              "count": 42
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 24
             },
             {
               "year": "2026",
-              "count": 12
+              "count": 24
             }
           ]
         },
@@ -5149,7 +5223,7 @@
           "longitude": 78.61295
         },
         "rainfall": {
-          "windowMm": 77.5,
+          "windowMm": 72.5,
           "daysWithRain": 30,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 14.1
@@ -5176,9 +5250,9 @@
           "note": "1,293 of 1,318 households, across 18 habitations."
         },
         {
-          "value": "4",
+          "value": "39",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "114.7%",
@@ -5186,14 +5260,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "96 mm",
+          "value": "88.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 66 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 155 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5423,36 +5497,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 37
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 66,
+          "total": 155,
           "unsafe": 0,
-          "atSource": 28,
+          "atSource": 117,
           "atHousehold": 38,
           "earliest": "2022-12-04",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2022",
-              "count": 3
+              "count": 4
             },
             {
               "year": "2023",
-              "count": 15
+              "count": 45
             },
             {
               "year": "2024",
-              "count": 18
+              "count": 49
             },
             {
               "year": "2025",
-              "count": 15
+              "count": 24
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 33
             }
           ]
         },
@@ -5464,10 +5543,10 @@
           "longitude": 78.5721
         },
         "rainfall": {
-          "windowMm": 96,
+          "windowMm": 88.3,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12
+          "wettestDate": "2026-08-10",
+          "wettestDayMm": 9.3
         },
         "waterBodies": {
           "count": 2,
@@ -5502,7 +5581,7 @@
           "note": "252 of 450 households, across 3 habitations."
         },
         {
-          "value": "2",
+          "value": "8",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -5512,14 +5591,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 51 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 75 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5655,36 +5734,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 8
           }
         ],
         "sampling": {
-          "total": 51,
+          "total": 75,
           "unsafe": 0,
-          "atSource": 16,
+          "atSource": 40,
           "atHousehold": 35,
           "earliest": "2022-12-05",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 2
             },
             {
               "year": "2023",
-              "count": 18
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 19
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 18
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 13
             }
           ]
         },
@@ -5710,10 +5789,10 @@
           "longitude": 78.53375
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": null
       }
@@ -5737,26 +5816,27 @@
           "note": "1,191 of 1,608 households, across 7 habitations."
         },
         {
+          "value": "16",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
           "value": "114.7%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79.4 mm",
+          "value": "67.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 50 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 117 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -5778,10 +5858,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -5796,10 +5872,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -5866,7 +5938,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -5913,14 +5985,25 @@
             "connections": 300
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 14
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          }
+        ],
         "sampling": {
-          "total": 50,
+          "total": 117,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 67,
           "atHousehold": 50,
           "earliest": "2022-12-05",
-          "latest": "2026-07-02",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
@@ -5928,19 +6011,19 @@
             },
             {
               "year": "2023",
-              "count": 21
+              "count": 41
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 18
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 27
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 27
             }
           ]
         },
@@ -5966,10 +6049,10 @@
           "longitude": 78.4756
         },
         "rainfall": {
-          "windowMm": 79.4,
+          "windowMm": 67.5,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 13.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 9.5
         },
         "waterBodies": {
           "count": 1,
@@ -6004,26 +6087,27 @@
           "note": "832 of 1,321 households, across 12 habitations."
         },
         {
+          "value": "15",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "114.7%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "96 mm",
+          "value": "88.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 29 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 75 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -6045,10 +6129,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -6063,10 +6143,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -6133,7 +6209,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -6210,34 +6286,40 @@
             "connections": 1
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 15
+          }
+        ],
         "sampling": {
-          "total": 29,
+          "total": 75,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 46,
           "atHousehold": 29,
           "earliest": "2022-12-04",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 5
             },
             {
               "year": "2023",
-              "count": 10
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 14
             },
             {
               "year": "2025",
-              "count": 7
+              "count": 18
             },
             {
               "year": "2026",
-              "count": 5
+              "count": 15
             }
           ]
         },
@@ -6263,10 +6345,10 @@
           "longitude": 78.55905
         },
         "rainfall": {
-          "windowMm": 96,
+          "windowMm": 88.3,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12
+          "wettestDate": "2026-08-10",
+          "wettestDayMm": 9.3
         },
         "waterBodies": {
           "count": 4,
@@ -6305,9 +6387,9 @@
           "note": "1,696 of 1,847 households, across 9 habitations."
         },
         {
-          "value": "2",
+          "value": "27",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, River, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -6315,14 +6397,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 56 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 217 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -6498,36 +6580,46 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 23
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 3
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 56,
+          "total": 217,
           "unsafe": 0,
-          "atSource": 6,
+          "atSource": 167,
           "atHousehold": 50,
-          "earliest": "2022-12-04",
-          "latest": "2026-07-02",
+          "earliest": "2022-08-18",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
-            },
-            {
-              "year": "2023",
               "count": 23
             },
             {
+              "year": "2023",
+              "count": 59
+            },
+            {
               "year": "2024",
-              "count": 3
+              "count": 44
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 35
             },
             {
               "year": "2026",
-              "count": 13
+              "count": 56
             }
           ]
         },
@@ -6539,7 +6631,7 @@
           "longitude": 78.42755
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -6577,9 +6669,9 @@
           "note": "944 of 944 households, across 5 habitations."
         },
         {
-          "value": "6",
+          "value": "22",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -6587,14 +6679,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "89d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-04. 78 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 176 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -6746,36 +6838,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 6
+            "count": 20
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 78,
+          "total": 176,
           "unsafe": 0,
-          "atSource": 49,
+          "atSource": 147,
           "atHousehold": 29,
           "earliest": "2022-12-04",
-          "latest": "2026-06-04",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 3
+              "count": 7
             },
             {
               "year": "2023",
-              "count": 16
+              "count": 38
             },
             {
               "year": "2024",
-              "count": 23
+              "count": 58
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 32
             },
             {
               "year": "2026",
-              "count": 18
+              "count": 41
             }
           ]
         },
@@ -6787,10 +6884,10 @@
           "longitude": 78.47535
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 1,
@@ -6825,7 +6922,7 @@
           "note": "1,680 of 1,680 households, across 12 habitations."
         },
         {
-          "value": "12",
+          "value": "34",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -6835,14 +6932,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "81.3 mm",
+          "value": "68.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 126 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 204 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -7030,43 +7127,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 26
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 8
-          },
-          {
-            "type": "Deep Tubewell",
-            "category": "Ground Water",
-            "count": 4
           }
         ],
         "sampling": {
-          "total": 126,
+          "total": 204,
           "unsafe": 0,
-          "atSource": 76,
+          "atSource": 154,
           "atHousehold": 50,
-          "earliest": "2022-12-07",
+          "earliest": "2022-12-04",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 6
             },
             {
               "year": "2023",
-              "count": 33
+              "count": 54
             },
             {
               "year": "2024",
-              "count": 37
+              "count": 65
             },
             {
               "year": "2025",
-              "count": 28
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 26
+              "count": 39
             }
           ]
         },
@@ -7092,10 +7189,10 @@
           "longitude": 78.4369
         },
         "rainfall": {
-          "windowMm": 81.3,
+          "windowMm": 68.9,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 16.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 8.7
         },
         "waterBodies": null
       }
@@ -7119,7 +7216,7 @@
           "note": "231 of 417 households, across 4 habitations."
         },
         {
-          "value": "3",
+          "value": "14",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -7129,14 +7226,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "89d ago",
+          "value": "90d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-04. 42 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-04. 80 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -7284,43 +7381,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 12
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
-          },
-          {
-            "type": "Deep Tubewell",
-            "category": "Ground Water",
-            "count": 1
           }
         ],
         "sampling": {
-          "total": 42,
+          "total": 80,
           "unsafe": 0,
-          "atSource": 16,
+          "atSource": 54,
           "atHousehold": 26,
-          "earliest": "2022-12-07",
+          "earliest": "2022-11-09",
           "latest": "2026-06-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 6
             },
             {
               "year": "2023",
-              "count": 10
+              "count": 15
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 15
             },
             {
               "year": "2025",
-              "count": 16
+              "count": 26
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 18
             }
           ]
         },
@@ -7332,7 +7429,7 @@
           "longitude": 78.4389
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -7359,26 +7456,27 @@
           "note": "1,191 of 1,608 households, across 7 habitations."
         },
         {
+          "value": "16",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
           "value": "114.7%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79.4 mm",
+          "value": "67.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 50 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 117 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -7404,10 +7502,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -7422,10 +7516,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -7496,7 +7586,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -7543,14 +7633,25 @@
             "connections": 300
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 14
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          }
+        ],
         "sampling": {
-          "total": 50,
+          "total": 117,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 67,
           "atHousehold": 50,
           "earliest": "2022-12-05",
-          "latest": "2026-07-02",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
@@ -7558,19 +7659,19 @@
             },
             {
               "year": "2023",
-              "count": 21
+              "count": 41
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 18
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 27
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 27
             }
           ]
         },
@@ -7582,10 +7683,10 @@
           "longitude": 78.4783
         },
         "rainfall": {
-          "windowMm": 79.4,
+          "windowMm": 67.5,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 13.3
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 9.5
         },
         "waterBodies": {
           "count": 2,
@@ -7624,7 +7725,7 @@
           "note": "474 of 474 households, across 4 habitations."
         },
         {
-          "value": "7",
+          "value": "20",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -7634,14 +7735,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 69 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 129 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -7779,32 +7880,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 7
+            "count": 20
           }
         ],
         "sampling": {
-          "total": 69,
+          "total": 129,
           "unsafe": 0,
-          "atSource": 43,
+          "atSource": 103,
           "atHousehold": 26,
-          "earliest": "2023-01-21",
+          "earliest": "2022-11-08",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 7
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 16
             },
             {
               "year": "2024",
-              "count": 25
+              "count": 53
             },
             {
               "year": "2025",
-              "count": 15
+              "count": 23
             },
             {
               "year": "2026",
-              "count": 19
+              "count": 30
             }
           ]
         },
@@ -7830,10 +7935,10 @@
           "longitude": 78.49035
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 1,
@@ -7868,7 +7973,7 @@
           "note": "1,124 of 1,672 households, across 7 habitations."
         },
         {
-          "value": "4",
+          "value": "17",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -7878,14 +7983,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "96 mm",
+          "value": "88.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 51 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 65 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8041,7 +8146,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 16
           },
           {
             "type": "Open Well",
@@ -8050,9 +8155,9 @@
           }
         ],
         "sampling": {
-          "total": 51,
+          "total": 65,
           "unsafe": 0,
-          "atSource": 20,
+          "atSource": 34,
           "atHousehold": 31,
           "earliest": "2022-12-07",
           "latest": "2026-07-02",
@@ -8063,19 +8168,19 @@
             },
             {
               "year": "2023",
-              "count": 11
+              "count": 16
             },
             {
               "year": "2024",
-              "count": 7
+              "count": 10
             },
             {
               "year": "2025",
-              "count": 17
+              "count": 21
             },
             {
               "year": "2026",
-              "count": 12
+              "count": 14
             }
           ]
         },
@@ -8101,10 +8206,10 @@
           "longitude": 78.5205
         },
         "rainfall": {
-          "windowMm": 96,
+          "windowMm": 88.3,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12
+          "wettestDate": "2026-08-10",
+          "wettestDayMm": 9.3
         },
         "waterBodies": {
           "count": 1,
@@ -8139,7 +8244,7 @@
           "note": "941 of 941 households, across 8 habitations."
         },
         {
-          "value": "11",
+          "value": "22",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -8149,14 +8254,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "60d ago",
+          "value": "61d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-03. 92 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-03. 152 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8318,36 +8423,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 11
+            "count": 22
           }
         ],
         "sampling": {
-          "total": 92,
+          "total": 152,
           "unsafe": 0,
-          "atSource": 62,
+          "atSource": 122,
           "atHousehold": 30,
           "earliest": "2022-12-07",
           "latest": "2026-07-03",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 6
             },
             {
               "year": "2023",
-              "count": 16
+              "count": 30
             },
             {
               "year": "2024",
-              "count": 33
+              "count": 54
             },
             {
               "year": "2025",
-              "count": 17
+              "count": 24
             },
             {
               "year": "2026",
-              "count": 25
+              "count": 38
             }
           ]
         },
@@ -8373,10 +8478,10 @@
           "longitude": 78.4661
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 5,
@@ -8419,7 +8524,7 @@
           "note": "383 of 383 households, across 7 habitations."
         },
         {
-          "value": "13",
+          "value": "26",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -8429,14 +8534,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 123 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 215 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8592,36 +8697,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 13
+            "count": 26
           }
         ],
         "sampling": {
-          "total": 123,
+          "total": 215,
           "unsafe": 0,
-          "atSource": 92,
+          "atSource": 184,
           "atHousehold": 31,
-          "earliest": "2022-12-07",
+          "earliest": "2022-08-18",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 6
             },
             {
               "year": "2023",
-              "count": 13
+              "count": 38
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 18
             },
             {
               "year": "2025",
-              "count": 85
+              "count": 121
             },
             {
               "year": "2026",
-              "count": 21
+              "count": 32
             }
           ]
         },
@@ -8647,7 +8752,7 @@
           "longitude": 78.4414
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -8685,9 +8790,9 @@
           "note": "1,696 of 1,847 households, across 9 habitations."
         },
         {
-          "value": "2",
+          "value": "27",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, River, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -8695,14 +8800,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 56 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 217 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8878,36 +8983,46 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 23
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 3
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 56,
+          "total": 217,
           "unsafe": 0,
-          "atSource": 6,
+          "atSource": 167,
           "atHousehold": 50,
-          "earliest": "2022-12-04",
-          "latest": "2026-07-02",
+          "earliest": "2022-08-18",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
-            },
-            {
-              "year": "2023",
               "count": 23
             },
             {
+              "year": "2023",
+              "count": 59
+            },
+            {
               "year": "2024",
-              "count": 3
+              "count": 44
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 35
             },
             {
               "year": "2026",
-              "count": 13
+              "count": 56
             }
           ]
         },
@@ -8919,7 +9034,7 @@
           "longitude": 78.43965
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6
@@ -8961,9 +9076,9 @@
           "note": "664 of 664 households, across 5 habitations."
         },
         {
-          "value": "4",
+          "value": "22",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Treated Surface Water"
         },
         {
           "value": "114.7%",
@@ -8971,14 +9086,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.5 mm",
+          "value": "63.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 66 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 139 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -9122,20 +9237,25 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 21
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 66,
+          "total": 139,
           "unsafe": 0,
-          "atSource": 27,
+          "atSource": 100,
           "atHousehold": 39,
-          "earliest": "2022-09-07",
-          "latest": "2026-07-02",
+          "earliest": "2022-09-06",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 11
             },
             {
               "year": "2023",
@@ -9143,15 +9263,15 @@
             },
             {
               "year": "2024",
-              "count": 19
+              "count": 46
             },
             {
               "year": "2025",
-              "count": 15
+              "count": 35
             },
             {
               "year": "2026",
-              "count": 12
+              "count": 28
             }
           ]
         },
@@ -9177,10 +9297,10 @@
           "longitude": 78.49645
         },
         "rainfall": {
-          "windowMm": 78.5,
+          "windowMm": 63.2,
           "daysWithRain": 30,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.8
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 7.7
         },
         "waterBodies": {
           "count": 1,
@@ -9215,7 +9335,7 @@
           "note": "1,680 of 1,680 households, across 12 habitations."
         },
         {
-          "value": "12",
+          "value": "34",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -9225,14 +9345,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.1 mm",
+          "value": "85.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 126 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 204 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -9416,43 +9536,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 26
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 8
-          },
-          {
-            "type": "Deep Tubewell",
-            "category": "Ground Water",
-            "count": 4
           }
         ],
         "sampling": {
-          "total": 126,
+          "total": 204,
           "unsafe": 0,
-          "atSource": 76,
+          "atSource": 154,
           "atHousehold": 50,
-          "earliest": "2022-12-07",
+          "earliest": "2022-12-04",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 6
             },
             {
               "year": "2023",
-              "count": 33
+              "count": 54
             },
             {
               "year": "2024",
-              "count": 37
+              "count": 65
             },
             {
               "year": "2025",
-              "count": 28
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 26
+              "count": 39
             }
           ]
         },
@@ -9478,10 +9598,10 @@
           "longitude": 78.45195
         },
         "rainfall": {
-          "windowMm": 103.1,
+          "windowMm": 85.7,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 21.7
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 10.6
         },
         "waterBodies": {
           "count": 1,
@@ -9516,7 +9636,7 @@
           "note": "568 of 1,121 households, across 13 habitations."
         },
         {
-          "value": "5",
+          "value": "26",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -9526,14 +9646,14 @@
           "note": "Peddanayakkanpalayam is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "77 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 60 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 88 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -9725,41 +9845,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 23
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 3
           }
         ],
         "sampling": {
-          "total": 60,
+          "total": 88,
           "unsafe": 0,
-          "atSource": 27,
+          "atSource": 55,
           "atHousehold": 33,
-          "earliest": "2022-12-08",
+          "earliest": "2022-09-03",
           "latest": "2026-07-02",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 7
             },
             {
               "year": "2023",
-              "count": 19
+              "count": 24
             },
             {
               "year": "2024",
-              "count": 15
+              "count": 24
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 18
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 15
             }
           ]
         },
@@ -9785,7 +9905,7 @@
           "longitude": 78.43605
         },
         "rainfall": {
-          "windowMm": 77,
+          "windowMm": 68.6,
           "daysWithRain": 30,
           "wettestDate": "2026-08-06",
           "wettestDayMm": 8.6

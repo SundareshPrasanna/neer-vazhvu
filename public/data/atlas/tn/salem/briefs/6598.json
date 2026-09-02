@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "tngis-generic-viewer-water-bodies",
@@ -83,7 +83,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-01",
+    "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -106,7 +106,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6598",
   "blockName": "KOLATHUR",
-  "assessedAt": "2026-09-01",
+  "assessedAt": "2026-09-02",
   "recordCount": 14,
   "briefs": [
     {
@@ -128,26 +128,27 @@
           "note": "3,382 of 3,382 households, across 28 habitations."
         },
         {
+          "value": "47",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "114.4 mm",
+          "value": "115.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 54 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 172 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -169,10 +170,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -187,10 +184,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -257,7 +250,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -430,30 +423,46 @@
             "connections": 67
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 29
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 17
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 54,
+          "total": 172,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 118,
           "atHousehold": 54,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-06",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 15
+              "count": 55
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 35
             },
             {
               "year": "2025",
-              "count": 19
+              "count": 44
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 38
             }
           ]
         },
@@ -479,7 +488,7 @@
           "longitude": 77.71615
         },
         "rainfall": {
-          "windowMm": 114.4,
+          "windowMm": 115.7,
           "daysWithRain": 29,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 17.7
@@ -525,26 +534,27 @@
           "note": "3,382 of 3,382 households, across 28 habitations."
         },
         {
+          "value": "47",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "114.4 mm",
+          "value": "115.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 54 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 172 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -566,10 +576,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -584,10 +590,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -654,7 +656,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -827,30 +829,46 @@
             "connections": 67
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 29
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 17
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 54,
+          "total": 172,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 118,
           "atHousehold": 54,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-06",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 15
+              "count": 55
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 35
             },
             {
               "year": "2025",
-              "count": 19
+              "count": 44
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 38
             }
           ]
         },
@@ -876,7 +894,7 @@
           "longitude": 77.73125
         },
         "rainfall": {
-          "windowMm": 114.4,
+          "windowMm": 115.7,
           "daysWithRain": 29,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 17.7
@@ -914,26 +932,27 @@
           "note": "2,439 of 2,439 households, across 20 habitations."
         },
         {
+          "value": "38",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.3 mm",
+          "value": "95.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 62 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 210 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -955,10 +974,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -973,10 +988,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1043,7 +1054,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1168,30 +1179,41 @@
             "connections": 149
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 23
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 15
+          }
+        ],
         "sampling": {
-          "total": 62,
+          "total": 210,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 148,
           "atHousehold": 62,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-06",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 24
+              "count": 79
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 39
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 52
             }
           ]
         },
@@ -1217,7 +1239,7 @@
           "longitude": 77.78985
         },
         "rainfall": {
-          "windowMm": 95.3,
+          "windowMm": 95.2,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 13.3
@@ -1255,26 +1277,27 @@
           "note": "1,913 of 1,913 households, across 22 habitations."
         },
         {
+          "value": "41",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "146.1 mm",
+          "value": "145.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 53 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 121 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -1296,10 +1319,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -1314,10 +1333,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1384,7 +1399,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1521,30 +1536,46 @@
             "connections": 29
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 29
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 11
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 53,
+          "total": 121,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 68,
           "atHousehold": 53,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-19",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 29
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 24
             },
             {
               "year": "2025",
-              "count": 21
+              "count": 32
             },
             {
               "year": "2026",
-              "count": 16
+              "count": 36
             }
           ]
         },
@@ -1572,7 +1603,7 @@
           "longitude": 77.71245
         },
         "rainfall": {
-          "windowMm": 146.1,
+          "windowMm": 145.9,
           "daysWithRain": 29,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 21.7
@@ -1618,26 +1649,27 @@
           "note": "6,858 of 6,858 households, across 58 habitations."
         },
         {
+          "value": "82",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.3 mm",
+          "value": "95.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 59 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 318 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -1659,10 +1691,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -1677,10 +1705,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1747,7 +1771,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2100,30 +2124,50 @@
             "connections": 53
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 52
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 28
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          }
+        ],
         "sampling": {
-          "total": 59,
+          "total": 318,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 259,
           "atHousehold": 59,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2022-12-27",
+          "latest": "2026-07-21",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 87
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 69
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 67
             },
             {
               "year": "2026",
-              "count": 20
+              "count": 91
             }
           ]
         },
@@ -2149,7 +2193,7 @@
           "longitude": 77.71675
         },
         "rainfall": {
-          "windowMm": 95.3,
+          "windowMm": 95.2,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 13.3
@@ -2191,26 +2235,27 @@
           "note": "6,858 of 6,858 households, across 58 habitations."
         },
         {
+          "value": "82",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.3 mm",
+          "value": "95.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 59 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 318 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -2232,10 +2277,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -2250,10 +2291,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2320,7 +2357,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2673,30 +2710,50 @@
             "connections": 53
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 52
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 28
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          }
+        ],
         "sampling": {
-          "total": 59,
+          "total": 318,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 259,
           "atHousehold": 59,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2022-12-27",
+          "latest": "2026-07-21",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 87
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 69
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 67
             },
             {
               "year": "2026",
-              "count": 20
+              "count": 91
             }
           ]
         },
@@ -2722,7 +2779,7 @@
           "longitude": 77.7152
         },
         "rainfall": {
-          "windowMm": 95.3,
+          "windowMm": 95.2,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 13.3
@@ -2768,26 +2825,27 @@
           "note": "2,129 of 2,129 households, across 12 habitations."
         },
         {
+          "value": "39",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.7 mm",
+          "value": "104.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "47d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 51 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-17. 191 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -2809,10 +2867,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -2831,10 +2885,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2901,7 +2951,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 11,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2978,30 +3028,41 @@
             "connections": 157
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 32
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 7
+          }
+        ],
         "sampling": {
-          "total": 51,
+          "total": 191,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 140,
           "atHousehold": 51,
-          "earliest": "2023-01-24",
+          "earliest": "2023-01-20",
           "latest": "2026-07-17",
           "byYear": [
             {
               "year": "2023",
-              "count": 13
+              "count": 56
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 46
             },
             {
               "year": "2025",
-              "count": 16
+              "count": 53
             },
             {
               "year": "2026",
-              "count": 16
+              "count": 36
             }
           ]
         },
@@ -3027,7 +3088,7 @@
           "longitude": 77.79115
         },
         "rainfall": {
-          "windowMm": 103.7,
+          "windowMm": 104.4,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 11.3
@@ -3054,26 +3115,27 @@
           "note": "2,209 of 2,209 households, across 18 habitations."
         },
         {
+          "value": "34",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "114.4 mm",
+          "value": "115.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 45 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 151 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3095,10 +3157,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -3113,10 +3171,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3183,7 +3237,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3296,30 +3350,45 @@
             "connections": 48
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 23
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 11
+          }
+        ],
         "sampling": {
-          "total": 45,
+          "total": 151,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 106,
           "atHousehold": 45,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2022-12-28",
+          "latest": "2026-07-21",
           "byYear": [
             {
+              "year": "2022",
+              "count": 1
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 39
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 32
             },
             {
               "year": "2025",
-              "count": 15
+              "count": 34
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 45
             }
           ]
         },
@@ -3345,7 +3414,7 @@
           "longitude": 77.67055
         },
         "rainfall": {
-          "windowMm": 114.4,
+          "windowMm": 115.7,
           "daysWithRain": 29,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 17.7
@@ -3387,26 +3456,27 @@
           "note": "1,330 of 1,330 households, across 7 habitations."
         },
         {
+          "value": "21",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "99.3 mm",
+          "value": "99.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 55 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 81 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3428,10 +3498,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -3446,10 +3512,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3516,7 +3578,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3563,30 +3625,46 @@
             "connections": 221
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 14
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 6
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 55,
+          "total": 81,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 26,
           "atHousehold": 55,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-20",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 23
+              "count": 30
             },
             {
               "year": "2024",
-              "count": 6
-            },
-            {
-              "year": "2025",
               "count": 12
             },
             {
+              "year": "2025",
+              "count": 18
+            },
+            {
               "year": "2026",
-              "count": 14
+              "count": 21
             }
           ]
         },
@@ -3614,7 +3692,7 @@
           "longitude": 77.77865
         },
         "rainfall": {
-          "windowMm": 99.3,
+          "windowMm": 99.9,
           "daysWithRain": 29,
           "wettestDate": "2026-08-24",
           "wettestDayMm": 13.7
@@ -3652,26 +3730,27 @@
           "note": "3,014 of 3,014 households, across 15 habitations."
         },
         {
+          "value": "31",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.7 mm",
+          "value": "104.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 46 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 179 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3693,10 +3772,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -3715,10 +3790,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3785,7 +3856,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 11,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3880,30 +3951,45 @@
             "connections": 369
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 21
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 10
+          }
+        ],
         "sampling": {
-          "total": 46,
+          "total": 179,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 133,
           "atHousehold": 46,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2022-09-28",
+          "latest": "2026-07-21",
           "byYear": [
             {
+              "year": "2022",
+              "count": 15
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 43
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 40
             },
             {
               "year": "2025",
-              "count": 16
+              "count": 49
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 32
             }
           ]
         },
@@ -3929,7 +4015,7 @@
           "longitude": 77.7839
         },
         "rainfall": {
-          "windowMm": 103.7,
+          "windowMm": 104.4,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 11.3
@@ -3956,26 +4042,27 @@
           "note": "1,502 of 1,502 households, across 18 habitations."
         },
         {
+          "value": "22",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Filter Points, Open Well"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.7 mm",
+          "value": "104.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "47d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 42 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-17. 66 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3997,10 +4084,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -4019,10 +4102,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -4089,7 +4168,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 11,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -4202,30 +4281,46 @@
             "connections": 56
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 11
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 10
+          },
+          {
+            "type": "Filter Points",
+            "category": "Others",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 42,
+          "total": 66,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 24,
           "atHousehold": 42,
-          "earliest": "2023-01-24",
+          "earliest": "2023-01-20",
           "latest": "2026-07-17",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 21
             },
             {
               "year": "2024",
-              "count": 4
+              "count": 10
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 17
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 18
             }
           ]
         },
@@ -4251,7 +4346,7 @@
           "longitude": 77.729
         },
         "rainfall": {
-          "windowMm": 103.7,
+          "windowMm": 104.4,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 11.3
@@ -4278,26 +4373,27 @@
           "note": "2,439 of 2,439 households, across 20 habitations."
         },
         {
+          "value": "38",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.3 mm",
+          "value": "95.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 62 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 210 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -4319,10 +4415,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -4341,10 +4433,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -4411,7 +4499,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 11,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -4536,30 +4624,41 @@
             "connections": 149
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 23
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 15
+          }
+        ],
         "sampling": {
-          "total": 62,
+          "total": 210,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 148,
           "atHousehold": 62,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-06",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 24
+              "count": 79
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 39
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 52
             }
           ]
         },
@@ -4585,7 +4684,7 @@
           "longitude": 77.77405
         },
         "rainfall": {
-          "windowMm": 95.3,
+          "windowMm": 95.2,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 13.3
@@ -4612,26 +4711,27 @@
           "note": "801 of 801 households, across 4 habitations."
         },
         {
+          "value": "14",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "99.3 mm",
+          "value": "99.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 53 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 122 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -4653,10 +4753,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -4671,10 +4767,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -4741,7 +4833,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -4770,34 +4862,45 @@
             "connections": 401
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 10
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 4
+          }
+        ],
         "sampling": {
-          "total": 53,
+          "total": 122,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 69,
           "atHousehold": 53,
           "earliest": "2022-10-27",
-          "latest": "2026-07-17",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 9
             },
             {
               "year": "2023",
-              "count": 21
+              "count": 37
             },
             {
               "year": "2024",
-              "count": 4
+              "count": 20
             },
             {
               "year": "2025",
-              "count": 12
+              "count": 24
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 32
             }
           ]
         },
@@ -4823,7 +4926,7 @@
           "longitude": 77.7681
         },
         "rainfall": {
-          "windowMm": 99.3,
+          "windowMm": 99.9,
           "daysWithRain": 29,
           "wettestDate": "2026-08-24",
           "wettestDayMm": 13.7
@@ -4861,26 +4964,27 @@
           "note": "1,538 of 1,538 households, across 10 habitations."
         },
         {
+          "value": "17",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Treated Surface Water"
+        },
+        {
           "value": "119.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "95.3 mm",
+          "value": "95.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "46d ago",
+          "value": "43d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-17. 44 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-21. 96 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -4902,10 +5006,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -4920,10 +5020,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -4990,7 +5086,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -5055,30 +5151,41 @@
             "connections": 35
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 9
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 8
+          }
+        ],
         "sampling": {
-          "total": 44,
+          "total": 96,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 52,
           "atHousehold": 44,
-          "earliest": "2023-01-24",
-          "latest": "2026-07-17",
+          "earliest": "2023-01-20",
+          "latest": "2026-07-21",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 18
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 26
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 29
             }
           ]
         },
@@ -5106,7 +5213,7 @@
           "longitude": 77.7335
         },
         "rainfall": {
-          "windowMm": 95.3,
+          "windowMm": 95.2,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 13.3

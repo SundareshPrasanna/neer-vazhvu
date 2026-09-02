@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "tngis-generic-viewer-water-bodies",
@@ -83,7 +83,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-01",
+    "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -106,7 +106,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6608",
   "blockName": "THALAIVASAL",
-  "assessedAt": "2026-09-01",
+  "assessedAt": "2026-09-02",
   "recordCount": 35,
   "briefs": [
     {
@@ -128,7 +128,7 @@
           "note": "753 of 813 households, across 1 habitations."
         },
         {
-          "value": "3",
+          "value": "9",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -138,14 +138,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 58 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 89 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -265,36 +265,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 9
           }
         ],
         "sampling": {
-          "total": 58,
+          "total": 89,
           "unsafe": 0,
-          "atSource": 22,
+          "atSource": 53,
           "atHousehold": 36,
-          "earliest": "2022-12-31",
+          "earliest": "2022-10-15",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 6
+              "count": 10
             },
             {
               "year": "2023",
-              "count": 8
+              "count": 14
             },
             {
               "year": "2024",
-              "count": 11
+              "count": 17
             },
             {
               "year": "2025",
-              "count": 28
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 5
+              "count": 8
             }
           ]
         },
@@ -320,10 +320,10 @@
           "longitude": 78.78305
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 4,
@@ -366,26 +366,27 @@
           "note": "241 of 438 households, across 1 habitations."
         },
         {
+          "value": "2",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "228.6%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 30 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 40 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -407,10 +408,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -429,10 +426,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -499,7 +492,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 11,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -510,11 +503,17 @@
             "connections": 241
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 2
+          }
+        ],
         "sampling": {
-          "total": 30,
+          "total": 40,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 10,
           "atHousehold": 30,
           "earliest": "2022-12-08",
           "latest": "2026-07-04",
@@ -525,19 +524,19 @@
             },
             {
               "year": "2023",
-              "count": 10
+              "count": 12
             },
             {
               "year": "2024",
-              "count": 3
-            },
-            {
-              "year": "2025",
               "count": 9
             },
             {
+              "year": "2025",
+              "count": 10
+            },
+            {
               "year": "2026",
-              "count": 2
+              "count": 3
             }
           ]
         },
@@ -563,10 +562,10 @@
           "longitude": 78.76065
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": null
       }
@@ -590,7 +589,7 @@
           "note": "1,232 of 1,232 households, across 2 habitations."
         },
         {
-          "value": "2",
+          "value": "14",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -600,14 +599,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 64 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 95 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -741,36 +740,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 14
           }
         ],
         "sampling": {
-          "total": 64,
+          "total": 95,
           "unsafe": 0,
-          "atSource": 11,
+          "atSource": 42,
           "atHousehold": 53,
           "earliest": "2022-12-08",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 10
+              "count": 11
             },
             {
               "year": "2023",
-              "count": 12
+              "count": 21
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 20
             },
             {
               "year": "2025",
-              "count": 29
+              "count": 35
             },
             {
               "year": "2026",
-              "count": 4
+              "count": 8
             }
           ]
         },
@@ -782,10 +781,10 @@
           "longitude": 78.72685
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 1,
@@ -820,7 +819,7 @@
           "note": "449 of 860 households, across 3 habitations."
         },
         {
-          "value": "1",
+          "value": "11",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -830,14 +829,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "73.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 42 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 71 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -969,36 +968,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 11
           }
         ],
         "sampling": {
-          "total": 42,
+          "total": 71,
           "unsafe": 0,
-          "atSource": 5,
+          "atSource": 34,
           "atHousehold": 37,
-          "earliest": "2022-12-31",
+          "earliest": "2022-12-20",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 9
             },
             {
               "year": "2023",
-              "count": 13
+              "count": 19
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 16
             },
             {
               "year": "2025",
-              "count": 14
+              "count": 18
             },
             {
               "year": "2026",
-              "count": 5
+              "count": 9
             }
           ]
         },
@@ -1024,10 +1023,10 @@
           "longitude": 78.8034
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 73.3,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 45.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 8,
@@ -1066,7 +1065,7 @@
           "note": "1,044 of 1,044 households, across 6 habitations."
         },
         {
-          "value": "3",
+          "value": "13",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -1076,14 +1075,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 41 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 63 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1233,32 +1232,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 13
           }
         ],
         "sampling": {
-          "total": 41,
+          "total": 63,
           "unsafe": 0,
-          "atSource": 17,
+          "atSource": 39,
           "atHousehold": 24,
-          "earliest": "2023-01-22",
+          "earliest": "2022-10-17",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 11
+              "count": 14
             },
             {
               "year": "2024",
-              "count": 10
+              "count": 16
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 19
             },
             {
               "year": "2026",
-              "count": 7
+              "count": 10
             }
           ]
         },
@@ -1284,10 +1287,10 @@
           "longitude": 78.82355
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 2,
@@ -1326,7 +1329,7 @@
           "note": "403 of 723 households, across 3 habitations."
         },
         {
-          "value": "2",
+          "value": "9",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -1336,14 +1339,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 39 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 54 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1475,36 +1478,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 9
           }
         ],
         "sampling": {
-          "total": 39,
+          "total": 54,
           "unsafe": 0,
-          "atSource": 10,
+          "atSource": 25,
           "atHousehold": 29,
           "earliest": "2022-11-03",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 7
             },
             {
               "year": "2023",
-              "count": 12
+              "count": 16
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 13
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 11
             },
             {
               "year": "2026",
-              "count": 5
+              "count": 7
             }
           ]
         },
@@ -1533,10 +1536,10 @@
           "longitude": 78.7585
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 3,
@@ -1575,7 +1578,7 @@
           "note": "537 of 811 households, across 7 habitations."
         },
         {
-          "value": "5",
+          "value": "19",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, River"
         },
@@ -1585,14 +1588,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "21d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-11. 68 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 111 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1752,7 +1755,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 18
           },
           {
             "type": "River",
@@ -1761,28 +1764,32 @@
           }
         ],
         "sampling": {
-          "total": 68,
+          "total": 111,
           "unsafe": 0,
-          "atSource": 37,
+          "atSource": 80,
           "atHousehold": 31,
-          "earliest": "2023-01-22",
+          "earliest": "2022-09-20",
           "latest": "2026-08-11",
           "byYear": [
             {
+              "year": "2022",
+              "count": 9
+            },
+            {
               "year": "2023",
-              "count": 12
+              "count": 20
             },
             {
               "year": "2024",
-              "count": 23
+              "count": 37
             },
             {
               "year": "2025",
-              "count": 24
+              "count": 32
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 13
             }
           ]
         },
@@ -1813,10 +1820,10 @@
           "longitude": 78.7498
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": null
       }
@@ -1840,7 +1847,7 @@
           "note": "1,648 of 3,460 households, across 17 habitations."
         },
         {
-          "value": "2",
+          "value": "35",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -1850,14 +1857,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 40 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 153 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2073,36 +2080,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 35
           }
         ],
         "sampling": {
-          "total": 40,
+          "total": 153,
           "unsafe": 0,
-          "atSource": 13,
+          "atSource": 126,
           "atHousehold": 27,
-          "earliest": "2022-12-08",
+          "earliest": "2022-12-07",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 3
+              "count": 7
             },
             {
               "year": "2023",
-              "count": 13
+              "count": 46
             },
             {
               "year": "2024",
-              "count": 10
+              "count": 53
             },
             {
               "year": "2025",
-              "count": 10
+              "count": 25
             },
             {
               "year": "2026",
-              "count": 4
+              "count": 22
             }
           ]
         },
@@ -2128,10 +2135,10 @@
           "longitude": 78.6677
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 4,
@@ -2166,9 +2173,9 @@
           "note": "271 of 506 households, across 2 habitations."
         },
         {
-          "value": "2",
+          "value": "9",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Infiltration well, Open Well"
         },
         {
           "value": "228.6%",
@@ -2176,14 +2183,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "73.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 29 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 49 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2307,34 +2314,48 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 5
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 2
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 29,
+          "total": 49,
           "unsafe": 0,
-          "atSource": 11,
+          "atSource": 31,
           "atHousehold": 18,
-          "earliest": "2023-01-22",
+          "earliest": "2022-12-20",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 17
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 16
             },
             {
               "year": "2025",
-              "count": 7
+              "count": 9
             },
             {
               "year": "2026",
-              "count": 3
+              "count": 5
             }
           ]
         },
@@ -2360,10 +2381,10 @@
           "longitude": 78.79365
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 73.3,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 45.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 1,
@@ -2398,7 +2419,7 @@
           "note": "642 of 862 households, across 7 habitations."
         },
         {
-          "value": "4",
+          "value": "19",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -2408,14 +2429,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "73.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 63 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 112 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2579,7 +2600,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 17
           },
           {
             "type": "Open Well",
@@ -2588,28 +2609,28 @@
           }
         ],
         "sampling": {
-          "total": 63,
+          "total": 112,
           "unsafe": 0,
-          "atSource": 25,
+          "atSource": 74,
           "atHousehold": 38,
           "earliest": "2023-01-02",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 15
+              "count": 33
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 24
             },
             {
               "year": "2025",
-              "count": 26
+              "count": 37
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 18
             }
           ]
         },
@@ -2621,10 +2642,10 @@
           "longitude": 78.76695
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 73.3,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 45.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 4,
@@ -2667,7 +2688,7 @@
           "note": "3,265 of 3,711 households, across 19 habitations."
         },
         {
-          "value": "18",
+          "value": "53",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -2677,14 +2698,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 138 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 211 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2912,7 +2933,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 12
+            "count": 47
           },
           {
             "type": "Open Well",
@@ -2921,28 +2942,28 @@
           }
         ],
         "sampling": {
-          "total": 138,
+          "total": 211,
           "unsafe": 0,
-          "atSource": 112,
+          "atSource": 185,
           "atHousehold": 26,
           "earliest": "2023-01-02",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 21
+              "count": 56
             },
             {
               "year": "2024",
-              "count": 69
+              "count": 87
             },
             {
               "year": "2025",
-              "count": 27
+              "count": 34
             },
             {
               "year": "2026",
-              "count": 21
+              "count": 34
             }
           ]
         },
@@ -2968,10 +2989,10 @@
           "longitude": 78.70015
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 9,
@@ -3014,9 +3035,9 @@
           "note": "1,346 of 1,346 households, across 4 habitations."
         },
         {
-          "value": "2",
+          "value": "16",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "228.6%",
@@ -3024,14 +3045,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 53 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 105 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3177,32 +3198,37 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 15
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 53,
+          "total": 105,
           "unsafe": 0,
-          "atSource": 12,
+          "atSource": 64,
           "atHousehold": 41,
           "earliest": "2023-01-02",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 15
+              "count": 35
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 26
             },
             {
               "year": "2025",
-              "count": 22
+              "count": 30
             },
             {
               "year": "2026",
-              "count": 7
+              "count": 14
             }
           ]
         },
@@ -3214,7 +3240,7 @@
           "longitude": 78.75755
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -3256,9 +3282,9 @@
           "note": "939 of 1,040 households, across 2 habitations."
         },
         {
-          "value": "3",
+          "value": "8",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "228.6%",
@@ -3266,14 +3292,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 45 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 68 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3399,32 +3425,37 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 7
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 45,
+          "total": 68,
           "unsafe": 0,
-          "atSource": 18,
+          "atSource": 41,
           "atHousehold": 27,
-          "earliest": "2023-01-22",
+          "earliest": "2023-01-09",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 11
+              "count": 19
             },
             {
               "year": "2024",
-              "count": 15
+              "count": 24
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 14
             },
             {
               "year": "2026",
-              "count": 8
+              "count": 11
             }
           ]
         },
@@ -3452,10 +3483,10 @@
           "longitude": 78.73645
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 4,
@@ -3498,26 +3529,27 @@
           "note": "301 of 301 households, across 3 habitations."
         },
         {
+          "value": "9",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
           "value": "228.6%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 22 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 49 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3539,10 +3571,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -3557,10 +3585,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3627,7 +3651,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3650,30 +3674,41 @@
             "connections": 121
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 8
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 22,
+          "total": 49,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 27,
           "atHousehold": 22,
-          "earliest": "2023-01-22",
+          "earliest": "2023-01-06",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 20
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 14
             },
             {
               "year": "2025",
-              "count": 4
+              "count": 7
             },
             {
               "year": "2026",
-              "count": 5
+              "count": 8
             }
           ]
         },
@@ -3699,10 +3734,10 @@
           "longitude": 78.78465
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 1,
@@ -3737,7 +3772,7 @@
           "note": "704 of 704 households, across 3 habitations."
         },
         {
-          "value": "1",
+          "value": "11",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -3747,14 +3782,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 29 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 82 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3894,32 +3929,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 11
           }
         ],
         "sampling": {
-          "total": 29,
+          "total": 82,
           "unsafe": 0,
-          "atSource": 5,
+          "atSource": 58,
           "atHousehold": 24,
-          "earliest": "2023-01-22",
+          "earliest": "2023-01-06",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 31
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 24
             },
             {
               "year": "2025",
-              "count": 7
+              "count": 15
             },
             {
               "year": "2026",
-              "count": 6
+              "count": 12
             }
           ]
         },
@@ -3931,10 +3966,10 @@
           "longitude": 78.73785
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 1,
@@ -3969,9 +4004,9 @@
           "note": "1,017 of 1,300 households, across 7 habitations."
         },
         {
-          "value": "1",
+          "value": "15",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "228.6%",
@@ -3979,14 +4014,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 50 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 76 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4140,34 +4175,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 13
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 50,
+          "total": 76,
           "unsafe": 0,
-          "atSource": 6,
+          "atSource": 32,
           "atHousehold": 44,
-          "earliest": "2023-01-02",
+          "earliest": "2022-10-17",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 1
+            },
+            {
               "year": "2023",
-              "count": 16
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 12
             },
             {
               "year": "2025",
-              "count": 22
+              "count": 29
             },
             {
               "year": "2026",
-              "count": 7
+              "count": 11
             }
           ]
         },
@@ -4193,7 +4237,7 @@
           "longitude": 78.8033
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -4229,17 +4273,17 @@
       "statusReason": "Identity, population and drinking-water service are all established.",
       "verdict": {
         "title": "Taps are incomplete and the aquifer is already in deficit",
-        "body": "42.78 percent of households report a tap connection, and Thalaivasal is assessed over exploited at 228.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "body": "47.13 percent of households report a tap connection, and Thalaivasal is assessed over exploited at 228.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
         "tone": "blocked"
       },
       "headlineFacts": [
         {
-          "value": "42.78%",
+          "value": "47.13%",
           "label": "Households with a tap connection",
-          "note": "492 of 1,150 households, across 8 habitations."
+          "note": "542 of 1,150 households, across 8 habitations."
         },
         {
-          "value": "10",
+          "value": "23",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -4249,14 +4293,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 85 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 88 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4399,7 +4443,7 @@
             "name": "Pulaiyankurchi",
             "population": 698,
             "households": 225,
-            "connections": 76
+            "connections": 126
           },
           {
             "name": "Rajiv Gandhi Nagar",
@@ -4418,32 +4462,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 10
+            "count": 23
           }
         ],
         "sampling": {
-          "total": 85,
+          "total": 88,
           "unsafe": 0,
-          "atSource": 57,
+          "atSource": 60,
           "atHousehold": 28,
-          "earliest": "2023-01-02",
+          "earliest": "2022-11-02",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 21
+              "count": 27
             },
             {
               "year": "2024",
-              "count": 33
+              "count": 21
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 14
             },
             {
               "year": "2026",
-              "count": 13
+              "count": 24
             }
           ]
         },
@@ -4469,10 +4517,10 @@
           "longitude": 78.7928
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 6,
@@ -4519,7 +4567,7 @@
           "note": "782 of 1,160 households, across 4 habitations."
         },
         {
-          "value": "2",
+          "value": "9",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -4529,14 +4577,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "81.6 mm",
+          "value": "61.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 44 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 61 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4674,36 +4722,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 9
           }
         ],
         "sampling": {
-          "total": 44,
+          "total": 61,
           "unsafe": 0,
-          "atSource": 14,
+          "atSource": 31,
           "atHousehold": 30,
           "earliest": "2022-11-04",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 2
             },
             {
               "year": "2023",
-              "count": 14
+              "count": 19
             },
             {
               "year": "2024",
-              "count": 11
+              "count": 17
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 10
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 13
             }
           ]
         },
@@ -4729,10 +4777,10 @@
           "longitude": 78.70635
         },
         "rainfall": {
-          "windowMm": 81.6,
+          "windowMm": 61.7,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 20.2
+          "wettestDate": "2026-08-06",
+          "wettestDayMm": 5.1
         },
         "waterBodies": {
           "count": 3,
@@ -4771,7 +4819,7 @@
           "note": "852 of 901 households, across 3 habitations."
         },
         {
-          "value": "8",
+          "value": "16",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -4781,14 +4829,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 86 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 128 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4920,32 +4968,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 8
+            "count": 16
           }
         ],
         "sampling": {
-          "total": 86,
+          "total": 128,
           "unsafe": 0,
-          "atSource": 59,
+          "atSource": 101,
           "atHousehold": 27,
-          "earliest": "2023-01-02",
+          "earliest": "2022-10-15",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 6
+            },
+            {
               "year": "2023",
-              "count": 21
+              "count": 31
             },
             {
               "year": "2024",
-              "count": 28
+              "count": 33
             },
             {
               "year": "2025",
-              "count": 19
+              "count": 25
             },
             {
               "year": "2026",
-              "count": 18
+              "count": 33
             }
           ]
         },
@@ -4971,7 +5023,7 @@
           "longitude": 78.7756
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -5013,7 +5065,7 @@
           "note": "698 of 1,108 households, across 7 habitations."
         },
         {
-          "value": "2",
+          "value": "14",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -5023,14 +5075,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "56d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-07. 37 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-07. 70 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5184,39 +5236,39 @@
         ],
         "sources": [
           {
-            "type": "Open Well",
+            "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 13
           },
           {
-            "type": "Deep Tubewell",
+            "type": "Open Well",
             "category": "Ground Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 37,
+          "total": 70,
           "unsafe": 0,
-          "atSource": 10,
+          "atSource": 43,
           "atHousehold": 27,
           "earliest": "2023-01-02",
           "latest": "2026-07-07",
           "byYear": [
             {
               "year": "2023",
-              "count": 13
+              "count": 25
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 19
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 13
             },
             {
               "year": "2026",
-              "count": 7
+              "count": 13
             }
           ]
         },
@@ -5242,10 +5294,10 @@
           "longitude": 78.67385
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 2,
@@ -5274,17 +5326,17 @@
       "statusReason": "Identity, population and drinking-water service are all established.",
       "verdict": {
         "title": "Taps are incomplete and the aquifer is already in deficit",
-        "body": "68.92 percent of households report a tap connection, and Thalaivasal is assessed over exploited at 228.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "body": "74.61 percent of households report a tap connection, and Thalaivasal is assessed over exploited at 228.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
         "tone": "blocked"
       },
       "headlineFacts": [
         {
-          "value": "68.92%",
+          "value": "74.61%",
           "label": "Households with a tap connection",
-          "note": "1,091 of 1,583 households, across 8 habitations."
+          "note": "1,181 of 1,583 households, across 8 habitations."
         },
         {
-          "value": "3",
+          "value": "24",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -5294,14 +5346,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "91d ago",
+          "value": "74d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-02. 75 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-20. 188 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5444,7 +5496,7 @@
             "name": "Sarvoy Pudur",
             "population": 1960,
             "households": 490,
-            "connections": 136
+            "connections": 226
           },
           {
             "name": "Semberi",
@@ -5463,32 +5515,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 24
           }
         ],
         "sampling": {
-          "total": 75,
+          "total": 188,
           "unsafe": 0,
-          "atSource": 20,
+          "atSource": 133,
           "atHousehold": 55,
           "earliest": "2023-01-02",
-          "latest": "2026-06-02",
+          "latest": "2026-06-20",
           "byYear": [
             {
               "year": "2023",
-              "count": 27
+              "count": 69
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 34
             },
             {
               "year": "2025",
-              "count": 25
+              "count": 53
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 32
             }
           ]
         },
@@ -5514,10 +5566,10 @@
           "longitude": 78.6965
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 3,
@@ -5546,17 +5598,17 @@
       "statusReason": "Identity, population and drinking-water service are all established.",
       "verdict": {
         "title": "Taps are incomplete and the aquifer is already in deficit",
-        "body": "68.92 percent of households report a tap connection, and Thalaivasal is assessed over exploited at 228.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "body": "74.61 percent of households report a tap connection, and Thalaivasal is assessed over exploited at 228.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
         "tone": "blocked"
       },
       "headlineFacts": [
         {
-          "value": "68.92%",
+          "value": "74.61%",
           "label": "Households with a tap connection",
-          "note": "1,091 of 1,583 households, across 8 habitations."
+          "note": "1,181 of 1,583 households, across 8 habitations."
         },
         {
-          "value": "3",
+          "value": "24",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -5566,14 +5618,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "91d ago",
+          "value": "74d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-02. 75 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-20. 188 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5720,7 +5772,7 @@
             "name": "Sarvoy Pudur",
             "population": 1960,
             "households": 490,
-            "connections": 136
+            "connections": 226
           },
           {
             "name": "Semberi",
@@ -5739,32 +5791,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 24
           }
         ],
         "sampling": {
-          "total": 75,
+          "total": 188,
           "unsafe": 0,
-          "atSource": 20,
+          "atSource": 133,
           "atHousehold": 55,
           "earliest": "2023-01-02",
-          "latest": "2026-06-02",
+          "latest": "2026-06-20",
           "byYear": [
             {
               "year": "2023",
-              "count": 27
+              "count": 69
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 34
             },
             {
               "year": "2025",
-              "count": 25
+              "count": 53
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 32
             }
           ]
         },
@@ -5790,10 +5842,10 @@
           "longitude": 78.68515
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": null
       }
@@ -5817,7 +5869,7 @@
           "note": "1,044 of 1,044 households, across 2 habitations."
         },
         {
-          "value": "1",
+          "value": "7",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -5827,14 +5879,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 35 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 70 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5960,32 +6012,32 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 7
           }
         ],
         "sampling": {
-          "total": 35,
+          "total": 70,
           "unsafe": 0,
-          "atSource": 8,
+          "atSource": 43,
           "atHousehold": 27,
           "earliest": "2023-01-02",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 13
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 7
+              "count": 20
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 13
             },
             {
               "year": "2026",
-              "count": 6
+              "count": 14
             }
           ]
         },
@@ -6011,10 +6063,10 @@
           "longitude": 78.68735
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 1,
@@ -6049,7 +6101,7 @@
           "note": "3,165 of 3,165 households, across 19 habitations."
         },
         {
-          "value": "10",
+          "value": "48",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -6059,14 +6111,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 103 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 211 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -6294,32 +6346,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 10
+            "count": 48
           }
         ],
         "sampling": {
-          "total": 103,
+          "total": 211,
           "unsafe": 0,
-          "atSource": 79,
+          "atSource": 187,
           "atHousehold": 24,
-          "earliest": "2023-01-02",
+          "earliest": "2022-08-24",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 15
+            },
+            {
               "year": "2023",
-              "count": 23
+              "count": 52
             },
             {
               "year": "2024",
-              "count": 45
+              "count": 77
             },
             {
               "year": "2025",
-              "count": 20
+              "count": 34
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 33
             }
           ]
         },
@@ -6345,7 +6401,7 @@
           "longitude": 78.73855
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -6387,26 +6443,27 @@
           "note": "910 of 1,096 households, across 5 habitations."
         },
         {
+          "value": "10",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "228.6%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "122d ago",
+          "value": "67d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-05-02. 25 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-27. 67 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -6428,10 +6485,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -6446,10 +6499,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -6516,7 +6565,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -6551,30 +6600,40 @@
             "connections": 53
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 10
+          }
+        ],
         "sampling": {
-          "total": 25,
+          "total": 67,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 42,
           "atHousehold": 25,
-          "earliest": "2023-01-02",
-          "latest": "2026-05-02",
+          "earliest": "2022-10-15",
+          "latest": "2026-06-27",
           "byYear": [
             {
+              "year": "2022",
+              "count": 5
+            },
+            {
               "year": "2023",
-              "count": 13
+              "count": 25
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 13
             },
             {
               "year": "2025",
-              "count": 6
+              "count": 12
             },
             {
               "year": "2026",
-              "count": 3
+              "count": 12
             }
           ]
         },
@@ -6600,10 +6659,10 @@
           "longitude": 78.7986
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 2,
@@ -6642,7 +6701,7 @@
           "note": "1,839 of 2,545 households, across 11 habitations."
         },
         {
-          "value": "14",
+          "value": "35",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -6652,14 +6711,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "61d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-02. 140 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-02. 267 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -6839,37 +6898,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 13
+            "count": 33
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 140,
+          "total": 267,
           "unsafe": 0,
-          "atSource": 114,
+          "atSource": 241,
           "atHousehold": 26,
-          "earliest": "2023-01-24",
+          "earliest": "2022-12-03",
           "latest": "2026-07-02",
           "byYear": [
             {
+              "year": "2022",
+              "count": 9
+            },
+            {
               "year": "2023",
-              "count": 24
+              "count": 70
             },
             {
               "year": "2024",
-              "count": 64
+              "count": 98
             },
             {
               "year": "2025",
-              "count": 24
+              "count": 38
             },
             {
               "year": "2026",
-              "count": 28
+              "count": 52
             }
           ]
         },
@@ -6897,7 +6960,7 @@
           "longitude": 78.76115
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -6943,26 +7006,27 @@
           "note": "498 of 498 households, across 1 habitations."
         },
         {
+          "value": "5",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "228.6%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 27 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 51 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -6984,10 +7048,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -7002,10 +7062,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -7072,7 +7128,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -7083,30 +7139,40 @@
             "connections": 498
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 5
+          }
+        ],
         "sampling": {
-          "total": 27,
+          "total": 51,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 24,
           "atHousehold": 27,
-          "earliest": "2023-01-24",
+          "earliest": "2022-11-04",
           "latest": "2026-07-04",
           "byYear": [
             {
-              "year": "2023",
-              "count": 10
-            },
-            {
-              "year": "2024",
+              "year": "2022",
               "count": 3
             },
             {
+              "year": "2023",
+              "count": 14
+            },
+            {
+              "year": "2024",
+              "count": 9
+            },
+            {
               "year": "2025",
-              "count": 8
+              "count": 14
             },
             {
               "year": "2026",
-              "count": 6
+              "count": 11
             }
           ]
         },
@@ -7132,10 +7198,10 @@
           "longitude": 78.71105
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 2,
@@ -7174,7 +7240,7 @@
           "note": "368 of 446 households, across 4 habitations."
         },
         {
-          "value": "5",
+          "value": "16",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -7184,14 +7250,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "73.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 62 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 92 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -7329,7 +7395,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 14
           },
           {
             "type": "Open Well",
@@ -7338,28 +7404,32 @@
           }
         ],
         "sampling": {
-          "total": 62,
+          "total": 92,
           "unsafe": 0,
-          "atSource": 39,
+          "atSource": 69,
           "atHousehold": 23,
-          "earliest": "2023-01-23",
+          "earliest": "2022-11-25",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 19
             },
             {
               "year": "2024",
-              "count": 21
+              "count": 29
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 17
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 23
             }
           ]
         },
@@ -7385,10 +7455,10 @@
           "longitude": 78.7455
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 73.3,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 45.1
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 1,
@@ -7423,7 +7493,7 @@
           "note": "283 of 692 households, across 4 habitations."
         },
         {
-          "value": "3",
+          "value": "13",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -7433,14 +7503,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 50 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 74 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -7586,32 +7656,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 13
           }
         ],
         "sampling": {
-          "total": 50,
+          "total": 74,
           "unsafe": 0,
-          "atSource": 24,
+          "atSource": 48,
           "atHousehold": 26,
-          "earliest": "2023-01-23",
+          "earliest": "2022-10-14",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 13
+              "count": 17
             },
             {
               "year": "2024",
-              "count": 14
+              "count": 22
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 13
             },
             {
               "year": "2026",
-              "count": 12
+              "count": 20
             }
           ]
         },
@@ -7623,10 +7697,10 @@
           "longitude": 78.7641
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 1,
@@ -7661,26 +7735,27 @@
           "note": "1,351 of 1,723 households, across 5 habitations."
         },
         {
+          "value": "11",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
           "value": "228.6%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 25 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 50 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -7702,10 +7777,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -7720,10 +7791,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -7790,7 +7857,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -7825,30 +7892,45 @@
             "connections": 349
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 10
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 25,
+          "total": 50,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 25,
           "atHousehold": 25,
-          "earliest": "2023-01-23",
+          "earliest": "2022-09-16",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 10
+            },
+            {
               "year": "2023",
-              "count": 7
+              "count": 10
             },
             {
               "year": "2024",
-              "count": 3
-            },
-            {
-              "year": "2025",
               "count": 7
             },
             {
+              "year": "2025",
+              "count": 11
+            },
+            {
               "year": "2026",
-              "count": 8
+              "count": 12
             }
           ]
         },
@@ -7874,7 +7956,7 @@
           "longitude": 78.78605
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -7920,7 +8002,7 @@
           "note": "560 of 633 households, across 3 habitations."
         },
         {
-          "value": "2",
+          "value": "10",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -7930,14 +8012,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "78.6 mm",
+          "value": "68.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "73d ago",
+          "value": "74d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-20. 42 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-20. 74 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8069,32 +8151,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 10
           }
         ],
         "sampling": {
-          "total": 42,
+          "total": 74,
           "unsafe": 0,
-          "atSource": 18,
+          "atSource": 50,
           "atHousehold": 24,
-          "earliest": "2023-01-23",
+          "earliest": "2022-11-26",
           "latest": "2026-06-20",
           "byYear": [
             {
+              "year": "2022",
+              "count": 5
+            },
+            {
               "year": "2023",
-              "count": 12
+              "count": 19
             },
             {
               "year": "2024",
-              "count": 13
+              "count": 21
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 12
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 17
             }
           ]
         },
@@ -8120,10 +8206,10 @@
           "longitude": 78.72075
         },
         "rainfall": {
-          "windowMm": 78.6,
+          "windowMm": 68.6,
           "daysWithRain": 28,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 12.4
+          "wettestDate": "2026-08-11",
+          "wettestDayMm": 7.6
         },
         "waterBodies": {
           "count": 2,
@@ -8162,9 +8248,9 @@
           "note": "815 of 815 households, across 4 habitations."
         },
         {
-          "value": "2",
+          "value": "10",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "228.6%",
@@ -8172,14 +8258,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 43 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 70 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8321,32 +8407,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 9
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 43,
+          "total": 70,
           "unsafe": 0,
-          "atSource": 13,
+          "atSource": 40,
           "atHousehold": 30,
-          "earliest": "2023-01-23",
+          "earliest": "2022-09-17",
           "latest": "2026-07-04",
           "byYear": [
             {
+              "year": "2022",
+              "count": 4
+            },
+            {
               "year": "2023",
-              "count": 14
+              "count": 22
             },
             {
               "year": "2024",
-              "count": 10
+              "count": 18
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 12
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 14
             }
           ]
         },
@@ -8374,7 +8469,7 @@
           "longitude": 78.7726
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1
@@ -8401,26 +8496,27 @@
           "note": "477 of 965 households, across 3 habitations."
         },
         {
+          "value": "10",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "228.6%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "56d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-07. 21 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-07. 34 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -8442,10 +8538,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -8460,10 +8552,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -8530,7 +8618,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -8553,30 +8641,36 @@
             "connections": 328
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 10
+          }
+        ],
         "sampling": {
-          "total": 21,
+          "total": 34,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 13,
           "atHousehold": 21,
           "earliest": "2023-01-23",
           "latest": "2026-07-07",
           "byYear": [
             {
               "year": "2023",
-              "count": 10
+              "count": 14
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 8
             },
             {
               "year": "2025",
-              "count": 5
+              "count": 7
             },
             {
               "year": "2026",
-              "count": 3
+              "count": 5
             }
           ]
         },
@@ -8602,10 +8696,10 @@
           "longitude": 78.76755
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 5,
@@ -8652,9 +8746,9 @@
           "note": "883 of 883 households, across 7 habitations."
         },
         {
-          "value": "1",
+          "value": "20",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "228.6%",
@@ -8662,14 +8756,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.9 mm",
+          "value": "57.8 mm",
           "label": "Rainfall, last 30 days",
-          "note": "27 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "59d ago",
+          "value": "60d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 34 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-04. 77 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8825,32 +8919,37 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
+            "count": 19
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 34,
+          "total": 77,
           "unsafe": 0,
-          "atSource": 11,
+          "atSource": 54,
           "atHousehold": 23,
-          "earliest": "2023-01-23",
+          "earliest": "2023-01-07",
           "latest": "2026-07-04",
           "byYear": [
             {
               "year": "2023",
-              "count": 8
+              "count": 28
             },
             {
               "year": "2024",
-              "count": 7
+              "count": 21
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 13
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 15
             }
           ]
         },
@@ -8879,10 +8978,10 @@
           "longitude": 78.7725
         },
         "rainfall": {
-          "windowMm": 98.9,
+          "windowMm": 57.8,
           "daysWithRain": 27,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 42.7
+          "wettestDate": "2026-08-04",
+          "wettestDayMm": 6.9
         },
         "waterBodies": {
           "count": 2,
@@ -8921,7 +9020,7 @@
           "note": "601 of 646 households, across 5 habitations."
         },
         {
-          "value": "3",
+          "value": "14",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -8931,14 +9030,14 @@
           "note": "Thalaivasal is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "93.9 mm",
+          "value": "100.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "56d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-07. 47 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-07. 69 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -9082,7 +9181,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 13
           },
           {
             "type": "Open Well",
@@ -9091,28 +9190,32 @@
           }
         ],
         "sampling": {
-          "total": 47,
+          "total": 69,
           "unsafe": 0,
-          "atSource": 23,
+          "atSource": 45,
           "atHousehold": 24,
-          "earliest": "2023-01-23",
+          "earliest": "2022-08-27",
           "latest": "2026-07-07",
           "byYear": [
             {
+              "year": "2022",
+              "count": 5
+            },
+            {
               "year": "2023",
-              "count": 9
+              "count": 14
             },
             {
               "year": "2024",
-              "count": 15
+              "count": 21
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 17
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 12
             }
           ]
         },
@@ -9138,7 +9241,7 @@
           "longitude": 78.76535
         },
         "rainfall": {
-          "windowMm": 93.9,
+          "windowMm": 100.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-10",
           "wettestDayMm": 19.1

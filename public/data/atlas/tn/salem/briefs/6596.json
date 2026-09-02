@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "tngis-generic-viewer-water-bodies",
@@ -83,7 +83,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-01",
+    "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -106,7 +106,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6596",
   "blockName": "IDAPPADY",
-  "assessedAt": "2026-09-01",
+  "assessedAt": "2026-09-02",
   "recordCount": 10,
   "briefs": [
     {
@@ -128,9 +128,9 @@
           "note": "1,392 of 1,392 households, across 23 habitations."
         },
         {
-          "value": "2",
+          "value": "48",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -138,14 +138,14 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.7 mm",
+          "value": "104.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "55d ago",
+          "value": "35d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-08. 76 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-29. 338 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -399,38 +399,53 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 38
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 7
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 76,
+          "total": 338,
           "unsafe": 0,
-          "atSource": 7,
+          "atSource": 269,
           "atHousehold": 69,
-          "earliest": "2022-09-05",
-          "latest": "2026-07-08",
+          "earliest": "2022-09-02",
+          "latest": "2026-07-29",
           "byYear": [
             {
               "year": "2022",
-              "count": 38
+              "count": 50
             },
             {
               "year": "2023",
-              "count": 5
+              "count": 79
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 63
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 46
             },
             {
               "year": "2026",
-              "count": 20
+              "count": 100
             }
           ]
         },
@@ -456,7 +471,7 @@
           "longitude": 77.8196
         },
         "rainfall": {
-          "windowMm": 103.7,
+          "windowMm": 104.4,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 11.3
@@ -483,26 +498,27 @@
           "note": "3,309 of 3,309 households, across 18 habitations."
         },
         {
+          "value": "24",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Pond, Rooftop Structure(Community), Treated Surface Water"
+        },
+        {
           "value": "133.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "110.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "55d ago",
+          "value": "35d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-08. 37 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-29. 231 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -524,10 +540,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -542,10 +554,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -612,7 +620,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -725,34 +733,55 @@
             "connections": 193
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 18
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 4
+          },
+          {
+            "type": "Rooftop Structure(Community)",
+            "category": "Rain Water",
+            "count": 1
+          },
+          {
+            "type": "Pond",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 37,
+          "total": 231,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 194,
           "atHousehold": 37,
-          "earliest": "2022-11-18",
-          "latest": "2026-07-08",
+          "earliest": "2022-11-15",
+          "latest": "2026-07-29",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 15
             },
             {
               "year": "2023",
-              "count": 2
+              "count": 76
             },
             {
               "year": "2024",
-              "count": 9
+              "count": 48
             },
             {
               "year": "2025",
-              "count": 6
+              "count": 31
             },
             {
               "year": "2026",
-              "count": 16
+              "count": 61
             }
           ]
         },
@@ -778,10 +807,10 @@
           "longitude": 77.8563
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 110.2,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 16.7
+          "wettestDate": "2026-08-20",
+          "wettestDayMm": 14.1
         },
         "waterBodies": {
           "count": 12,
@@ -824,9 +853,9 @@
           "note": "3,466 of 3,466 households, across 32 habitations."
         },
         {
-          "value": "1",
+          "value": "67",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -834,14 +863,14 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "110.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "55d ago",
+          "value": "35d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-08. 38 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-29. 588 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1145,34 +1174,53 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 52
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 8
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 5
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 38,
+          "total": 588,
           "unsafe": 0,
-          "atSource": 3,
+          "atSource": 553,
           "atHousehold": 35,
-          "earliest": "2023-01-06",
-          "latest": "2026-07-08",
+          "earliest": "2022-10-04",
+          "latest": "2026-07-29",
           "byYear": [
             {
+              "year": "2022",
+              "count": 1
+            },
+            {
               "year": "2023",
-              "count": 5
+              "count": 174
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 117
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 141
             },
             {
               "year": "2026",
-              "count": 17
+              "count": 155
             }
           ]
         },
@@ -1198,10 +1246,10 @@
           "longitude": 77.85345
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 110.2,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 16.7
+          "wettestDate": "2026-08-20",
+          "wettestDayMm": 14.1
         },
         "waterBodies": {
           "count": 3,
@@ -1240,9 +1288,9 @@
           "note": "5,489 of 5,489 households, across 78 habitations."
         },
         {
-          "value": "1",
+          "value": "118",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Lake, Open Well, Pond, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -1250,19 +1298,18 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "103.7 mm",
+          "value": "104.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
-        },
-        {
-          "value": "49d ago",
-          "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-14. 41 samples over 4 years, none of them recorded unsafe."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         }
       ],
       "gaps": [
         {
           "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-quality",
           "reason": "unavailable"
         },
         {
@@ -1370,7 +1417,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 12,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1845,37 +1892,37 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 84
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 11
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 11
+          },
+          {
+            "type": "Pond",
+            "category": "Surface Water",
+            "count": 8
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "Lake",
+            "category": "Surface Water",
             "count": 1
           }
         ],
-        "sampling": {
-          "total": 41,
-          "unsafe": 0,
-          "atSource": 3,
-          "atHousehold": 38,
-          "earliest": "2023-01-06",
-          "latest": "2026-07-14",
-          "byYear": [
-            {
-              "year": "2023",
-              "count": 5
-            },
-            {
-              "year": "2024",
-              "count": 5
-            },
-            {
-              "year": "2025",
-              "count": 13
-            },
-            {
-              "year": "2026",
-              "count": 18
-            }
-          ]
-        },
+        "sampling": null,
         "land": null,
         "seasonal": null,
         "boundary": {
@@ -1884,7 +1931,7 @@
           "longitude": 77.8075
         },
         "rainfall": {
-          "windowMm": 103.7,
+          "windowMm": 104.4,
           "daysWithRain": 30,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 11.3
@@ -1930,26 +1977,27 @@
           "note": "1,621 of 1,621 households, across 21 habitations."
         },
         {
+          "value": "39",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "133.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "115.2 mm",
+          "value": "110.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "49d ago",
+          "value": "16d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-14. 36 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-17. 299 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -1971,10 +2019,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -1989,10 +2033,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2059,7 +2099,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2190,30 +2230,50 @@
             "connections": 55
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 31
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 6
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          }
+        ],
         "sampling": {
-          "total": 36,
+          "total": 299,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 263,
           "atHousehold": 36,
-          "earliest": "2022-12-27",
-          "latest": "2026-07-14",
+          "earliest": "2022-12-24",
+          "latest": "2026-08-17",
           "byYear": [
             {
               "year": "2022",
-              "count": 5
+              "count": 35
+            },
+            {
+              "year": "2023",
+              "count": 65
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 67
             },
             {
               "year": "2025",
-              "count": 10
+              "count": 52
             },
             {
               "year": "2026",
-              "count": 16
+              "count": 80
             }
           ]
         },
@@ -2239,10 +2299,10 @@
           "longitude": 77.877
         },
         "rainfall": {
-          "windowMm": 115.2,
+          "windowMm": 110.2,
           "daysWithRain": 29,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 16.7
+          "wettestDate": "2026-08-20",
+          "wettestDayMm": 14.1
         },
         "waterBodies": {
           "count": 11,
@@ -2285,9 +2345,9 @@
           "note": "4,050 of 4,050 households, across 41 habitations."
         },
         {
-          "value": "1",
+          "value": "62",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, Pond, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -2295,14 +2355,14 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.2 mm",
+          "value": "119.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "42d ago",
+          "value": "35d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-21. 48 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-29. 460 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2660,38 +2720,58 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 48
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 6
+          },
+          {
+            "type": "Pond",
+            "category": "Surface Water",
+            "count": 5
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
+            "count": 2
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 48,
+          "total": 460,
           "unsafe": 0,
-          "atSource": 6,
+          "atSource": 418,
           "atHousehold": 42,
           "earliest": "2022-10-02",
-          "latest": "2026-07-21",
+          "latest": "2026-07-29",
           "byYear": [
             {
               "year": "2022",
-              "count": 10
+              "count": 52
             },
             {
               "year": "2023",
-              "count": 5
+              "count": 115
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 100
             },
             {
               "year": "2025",
-              "count": 10
+              "count": 77
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 116
             }
           ]
         },
@@ -2717,7 +2797,7 @@
           "longitude": 77.8521
         },
         "rainfall": {
-          "windowMm": 125.2,
+          "windowMm": 119.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-03",
           "wettestDayMm": 15.7
@@ -2763,9 +2843,9 @@
           "note": "1,979 of 1,979 households, across 22 habitations."
         },
         {
-          "value": "1",
+          "value": "43",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Filter Points, Open Well, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -2773,14 +2853,14 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79 mm",
+          "value": "77.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "39d ago",
+          "value": "27d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-24. 38 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-06. 376 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3024,34 +3104,58 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 24
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 12
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 5
+          },
+          {
+            "type": "Filter Points",
+            "category": "Others",
+            "count": 1
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 38,
+          "total": 376,
           "unsafe": 0,
-          "atSource": 6,
+          "atSource": 344,
           "atHousehold": 32,
           "earliest": "2022-12-28",
-          "latest": "2026-07-24",
+          "latest": "2026-08-06",
           "byYear": [
             {
               "year": "2022",
-              "count": 5
+              "count": 34
+            },
+            {
+              "year": "2023",
+              "count": 74
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 72
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 77
             },
             {
               "year": "2026",
-              "count": 16
+              "count": 119
             }
           ]
         },
@@ -3080,10 +3184,10 @@
           "longitude": 77.75075
         },
         "rainfall": {
-          "windowMm": 79,
+          "windowMm": 77.6,
           "daysWithRain": 30,
           "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.7
+          "wettestDayMm": 9.7
         },
         "waterBodies": {
           "count": 4,
@@ -3126,9 +3230,9 @@
           "note": "2,879 of 2,879 households, across 36 habitations."
         },
         {
-          "value": "1",
+          "value": "62",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -3136,14 +3240,14 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "99.3 mm",
+          "value": "99.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "39d ago",
+          "value": "19d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-24. 34 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-14. 391 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3475,34 +3579,49 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 48
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 9
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 4
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 34,
+          "total": 391,
           "unsafe": 0,
-          "atSource": 2,
+          "atSource": 359,
           "atHousehold": 32,
           "earliest": "2023-01-06",
-          "latest": "2026-07-24",
+          "latest": "2026-08-14",
           "byYear": [
             {
               "year": "2023",
-              "count": 5
+              "count": 126
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 89
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 65
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 111
             }
           ]
         },
@@ -3528,7 +3647,7 @@
           "longitude": 77.8319
         },
         "rainfall": {
-          "windowMm": 99.3,
+          "windowMm": 99.9,
           "daysWithRain": 29,
           "wettestDate": "2026-08-24",
           "wettestDayMm": 13.7
@@ -3555,9 +3674,9 @@
           "note": "4,200 of 4,200 households, across 44 habitations."
         },
         {
-          "value": "2",
+          "value": "95",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well, River, Treated Surface Water"
         },
         {
           "value": "133.0%",
@@ -3565,14 +3684,14 @@
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "79 mm",
+          "value": "77.6 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "20d ago",
+          "value": "19d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-12. 46 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-14. 525 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3956,34 +4075,49 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 73
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 16
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 4
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 46,
+          "total": 525,
           "unsafe": 0,
-          "atSource": 10,
+          "atSource": 489,
           "atHousehold": 36,
           "earliest": "2023-01-06",
-          "latest": "2026-08-12",
+          "latest": "2026-08-14",
           "byYear": [
             {
               "year": "2023",
-              "count": 5
+              "count": 158
             },
             {
               "year": "2024",
-              "count": 7
+              "count": 107
             },
             {
               "year": "2025",
-              "count": 20
+              "count": 127
             },
             {
               "year": "2026",
-              "count": 14
+              "count": 133
             }
           ]
         },
@@ -3995,10 +4129,10 @@
           "longitude": 77.78965
         },
         "rainfall": {
-          "windowMm": 79,
+          "windowMm": 77.6,
           "daysWithRain": 30,
           "wettestDate": "2026-09-01",
-          "wettestDayMm": 11.7
+          "wettestDayMm": 9.7
         },
         "waterBodies": {
           "count": 5,
@@ -4041,26 +4175,27 @@
           "note": "1,272 of 1,272 households, across 15 habitations."
         },
         {
+          "value": "25",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
           "value": "133.0%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Edappady is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.2 mm",
+          "value": "119.4 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "49d ago",
+          "value": "20d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-14. 29 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-13. 183 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -4082,10 +4217,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -4100,10 +4231,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -4170,7 +4297,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -4265,30 +4392,50 @@
             "connections": 331
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 15
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 6
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 4
+          }
+        ],
         "sampling": {
-          "total": 29,
+          "total": 183,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 154,
           "atHousehold": 29,
-          "earliest": "2023-01-06",
-          "latest": "2026-07-14",
+          "earliest": "2022-11-25",
+          "latest": "2026-08-13",
           "byYear": [
             {
+              "year": "2022",
+              "count": 13
+            },
+            {
               "year": "2023",
-              "count": 5
+              "count": 42
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 41
             },
             {
               "year": "2025",
-              "count": 8
+              "count": 36
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 51
             }
           ]
         },
@@ -4314,7 +4461,7 @@
           "longitude": 77.88015
         },
         "rainfall": {
-          "windowMm": 125.2,
+          "windowMm": 119.4,
           "daysWithRain": 31,
           "wettestDate": "2026-08-03",
           "wettestDayMm": 15.7

@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-09-02"
       },
       {
         "id": "tngis-generic-viewer-water-bodies",
@@ -83,7 +83,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-01",
+    "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -106,7 +106,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6612",
   "blockName": "YERCAUD",
-  "assessedAt": "2026-09-01",
+  "assessedAt": "2026-09-02",
   "recordCount": 9,
   "briefs": [
     {
@@ -128,9 +128,9 @@
           "note": "643 of 643 households, across 7 habitations."
         },
         {
-          "value": "2",
+          "value": "22",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Infiltration well, Open Well"
         },
         {
           "value": "14.2%",
@@ -138,14 +138,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "33d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 49 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-31. 178 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -299,38 +299,48 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 16
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 2
+            "count": 5
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 49,
+          "total": 178,
           "unsafe": 0,
-          "atSource": 15,
+          "atSource": 144,
           "atHousehold": 34,
           "earliest": "2022-09-16",
           "latest": "2026-07-31",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 12
             },
             {
               "year": "2023",
-              "count": 5
+              "count": 38
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 35
             },
             {
               "year": "2025",
-              "count": 21
+              "count": 42
             },
             {
               "year": "2026",
-              "count": 16
+              "count": 51
             }
           ]
         },
@@ -356,10 +366,10 @@
           "longitude": 78.2309
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 4,
@@ -398,26 +408,27 @@
           "note": "1,152 of 1,561 households, across 15 habitations."
         },
         {
+          "value": "34",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
           "value": "14.2%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "122.9 mm",
+          "value": "116.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 26 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 73 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -439,10 +450,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -457,10 +464,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -527,7 +530,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -622,26 +625,45 @@
             "connections": 69
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 26
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 8
+          }
+        ],
         "sampling": {
-          "total": 26,
+          "total": 73,
           "unsafe": 0,
-          "atSource": 0,
-          "atHousehold": 26,
-          "earliest": "2023-01-11",
-          "latest": "2026-07-31",
+          "atSource": 45,
+          "atHousehold": 28,
+          "earliest": "2022-12-07",
+          "latest": "2026-08-30",
           "byYear": [
             {
-              "year": "2023",
+              "year": "2022",
               "count": 6
             },
             {
-              "year": "2025",
+              "year": "2023",
               "count": 11
             },
             {
+              "year": "2024",
+              "count": 15
+            },
+            {
+              "year": "2025",
+              "count": 16
+            },
+            {
               "year": "2026",
-              "count": 9
+              "count": 25
             }
           ]
         },
@@ -667,7 +689,7 @@
           "longitude": 78.3168
         },
         "rainfall": {
-          "windowMm": 122.9,
+          "windowMm": 116.1,
           "daysWithRain": 31,
           "wettestDate": "2026-08-04",
           "wettestDayMm": 16.6
@@ -705,7 +727,7 @@
           "note": "1,026 of 1,090 households, across 17 habitations."
         },
         {
-          "value": "4",
+          "value": "39",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -715,14 +737,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 50 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 158 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -936,39 +958,43 @@
         ],
         "sources": [
           {
-            "type": "Open Well",
-            "category": "Ground Water",
-            "count": 3
-          },
-          {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 23
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 16
           }
         ],
         "sampling": {
-          "total": 50,
+          "total": 158,
           "unsafe": 0,
-          "atSource": 18,
-          "atHousehold": 32,
+          "atSource": 124,
+          "atHousehold": 34,
           "earliest": "2022-10-14",
-          "latest": "2026-07-31",
+          "latest": "2026-08-30",
           "byYear": [
             {
               "year": "2022",
-              "count": 6
+              "count": 21
             },
             {
               "year": "2023",
-              "count": 5
+              "count": 21
+            },
+            {
+              "year": "2024",
+              "count": 31
             },
             {
               "year": "2025",
-              "count": 20
+              "count": 38
             },
             {
               "year": "2026",
-              "count": 19
+              "count": 47
             }
           ]
         },
@@ -994,10 +1020,10 @@
           "longitude": 78.20365
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 2,
@@ -1032,7 +1058,7 @@
           "note": "628 of 803 households, across 12 habitations."
         },
         {
-          "value": "2",
+          "value": "27",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -1042,14 +1068,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 44 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 134 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1235,37 +1261,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 19
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 8
           }
         ],
         "sampling": {
-          "total": 44,
+          "total": 134,
           "unsafe": 0,
-          "atSource": 12,
-          "atHousehold": 32,
-          "earliest": "2023-01-11",
-          "latest": "2026-07-31",
+          "atSource": 100,
+          "atHousehold": 34,
+          "earliest": "2022-12-13",
+          "latest": "2026-08-30",
           "byYear": [
             {
+              "year": "2022",
+              "count": 2
+            },
+            {
               "year": "2023",
-              "count": 9
+              "count": 30
             },
             {
               "year": "2024",
-              "count": 3
+              "count": 31
             },
             {
               "year": "2025",
-              "count": 17
+              "count": 27
             },
             {
               "year": "2026",
-              "count": 15
+              "count": 44
             }
           ]
         },
@@ -1291,10 +1321,10 @@
           "longitude": 78.2301
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 7,
@@ -1333,9 +1363,9 @@
           "note": "822 of 1,008 households, across 10 habitations."
         },
         {
-          "value": "1",
+          "value": "25",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "14.2%",
@@ -1343,14 +1373,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 40 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 80 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1522,34 +1552,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 16
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 9
           }
         ],
         "sampling": {
-          "total": 40,
+          "total": 80,
           "unsafe": 0,
-          "atSource": 6,
-          "atHousehold": 34,
-          "earliest": "2023-01-11",
-          "latest": "2026-07-31",
+          "atSource": 44,
+          "atHousehold": 36,
+          "earliest": "2022-10-23",
+          "latest": "2026-08-30",
           "byYear": [
             {
+              "year": "2022",
+              "count": 6
+            },
+            {
               "year": "2023",
-              "count": 12
+              "count": 16
             },
             {
               "year": "2024",
-              "count": 2
+              "count": 14
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 17
             },
             {
               "year": "2026",
-              "count": 13
+              "count": 27
             }
           ]
         },
@@ -1575,10 +1614,10 @@
           "longitude": 78.2482
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 1,
@@ -1613,7 +1652,7 @@
           "note": "967 of 967 households, across 10 habitations."
         },
         {
-          "value": "10",
+          "value": "37",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -1623,14 +1662,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 85 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 285 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1808,41 +1847,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 5
+            "count": 23
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 5
+            "count": 14
           }
         ],
         "sampling": {
-          "total": 85,
+          "total": 285,
           "unsafe": 0,
-          "atSource": 49,
-          "atHousehold": 36,
-          "earliest": "2022-12-03",
-          "latest": "2026-07-31",
+          "atSource": 247,
+          "atHousehold": 38,
+          "earliest": "2022-11-26",
+          "latest": "2026-08-30",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 28
             },
             {
               "year": "2023",
-              "count": 11
+              "count": 38
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 66
             },
             {
               "year": "2025",
-              "count": 22
+              "count": 51
             },
             {
               "year": "2026",
-              "count": 42
+              "count": 102
             }
           ]
         },
@@ -1868,10 +1907,10 @@
           "longitude": 78.264
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": null
       }
@@ -1895,26 +1934,27 @@
           "note": "1,235 of 1,326 households, across 9 habitations."
         },
         {
+          "value": "24",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
           "value": "14.2%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 31 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 166 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -1936,10 +1976,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -1954,10 +1990,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2024,7 +2056,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2083,26 +2115,45 @@
             "connections": 210
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 19
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 5
+          }
+        ],
         "sampling": {
-          "total": 31,
+          "total": 166,
           "unsafe": 0,
-          "atSource": 0,
-          "atHousehold": 31,
-          "earliest": "2023-01-11",
-          "latest": "2026-07-31",
+          "atSource": 133,
+          "atHousehold": 33,
+          "earliest": "2022-12-24",
+          "latest": "2026-08-30",
           "byYear": [
             {
+              "year": "2022",
+              "count": 8
+            },
+            {
               "year": "2023",
-              "count": 10
+              "count": 35
+            },
+            {
+              "year": "2024",
+              "count": 43
             },
             {
               "year": "2025",
-              "count": 11
+              "count": 37
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 43
             }
           ]
         },
@@ -2130,10 +2181,10 @@
           "longitude": 78.26255
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": {
           "count": 1,
@@ -2168,9 +2219,9 @@
           "note": "429 of 730 households, across 10 habitations."
         },
         {
-          "value": "2",
+          "value": "26",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "14.2%",
@@ -2178,14 +2229,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "135.1 mm",
+          "value": "126.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 38 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 76 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2363,28 +2414,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 19
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 7
           }
         ],
         "sampling": {
-          "total": 38,
+          "total": 76,
           "unsafe": 0,
-          "atSource": 10,
-          "atHousehold": 28,
-          "earliest": "2023-01-11",
-          "latest": "2026-07-31",
+          "atSource": 46,
+          "atHousehold": 30,
+          "earliest": "2022-12-29",
+          "latest": "2026-08-30",
           "byYear": [
             {
+              "year": "2022",
+              "count": 1
+            },
+            {
               "year": "2023",
-              "count": 8
+              "count": 16
+            },
+            {
+              "year": "2024",
+              "count": 11
             },
             {
               "year": "2025",
-              "count": 18
+              "count": 27
             },
             {
               "year": "2026",
-              "count": 12
+              "count": 21
             }
           ]
         },
@@ -2410,10 +2474,10 @@
           "longitude": 78.18055
         },
         "rainfall": {
-          "windowMm": 135.1,
+          "windowMm": 126.1,
           "daysWithRain": 31,
-          "wettestDate": "2026-09-01",
-          "wettestDayMm": 14.4
+          "wettestDate": "2026-08-03",
+          "wettestDayMm": 13.8
         },
         "waterBodies": null
       }
@@ -2437,9 +2501,9 @@
           "note": "1,750 of 1,761 households, across 13 habitations."
         },
         {
-          "value": "9",
+          "value": "49",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell, Open Well"
+          "note": "Deep Tubewell, Filter Points, Open Well"
         },
         {
           "value": "14.2%",
@@ -2447,14 +2511,14 @@
           "note": "Yercaud is assessed safe. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "98.7 mm",
+          "value": "98.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "3d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 77 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-30. 288 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2654,37 +2718,42 @@
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 7
+            "count": 25
           },
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 23
+          },
+          {
+            "type": "Filter Points",
+            "category": "Others",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 77,
+          "total": 288,
           "unsafe": 0,
-          "atSource": 36,
-          "atHousehold": 41,
+          "atSource": 245,
+          "atHousehold": 43,
           "earliest": "2023-01-11",
-          "latest": "2026-07-31",
+          "latest": "2026-08-30",
           "byYear": [
             {
               "year": "2023",
-              "count": 9
+              "count": 66
             },
             {
               "year": "2024",
-              "count": 18
+              "count": 89
             },
             {
               "year": "2025",
-              "count": 31
+              "count": 70
             },
             {
               "year": "2026",
-              "count": 19
+              "count": 63
             }
           ]
         },
@@ -2696,7 +2765,7 @@
           "longitude": 78.20235
         },
         "rainfall": {
-          "windowMm": 98.7,
+          "windowMm": 98.1,
           "daysWithRain": 30,
           "wettestDate": "2026-08-03",
           "wettestDayMm": 12.2
