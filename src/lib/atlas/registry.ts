@@ -138,7 +138,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Ahilyanagar",
     hook: "The tanker district: 97 tankers were running in monsoon August 2026 while the assessment still reads semi-critical - the scarcity register sees what the annual number cannot.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: MH_IRRIGATION_GAP,
   },
   {
@@ -150,7 +150,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Kolhapur",
     hook: "Every taluka is within its groundwater; the water story here is the flood - the Krishna-Panchganga backwater that submerged the district in 2019 and 2021.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: MH_IRRIGATION_GAP,
   },
 ];
