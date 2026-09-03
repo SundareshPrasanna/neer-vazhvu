@@ -481,7 +481,7 @@ def main() -> None:
         reg = d.get("regulator", {})
         mc = monthly_composition(passes, r["spine_id"])
         other = {m: mc["frac_bed"].get(m, 0) + mc["frac_froth"].get(m, 0) for m in mc["frac_bed"]}
-        series = fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, reeds, scum)", C_AQUA, mc["frac_algae"])], W=560, H=150)
+        series = fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, reeds, scum)", C_AQUA, mc["frac_algae"])], W=560, H=125)
         chip = fig_footprint(fps[r["spine_id"]], subzones.get(r["spine_id"], []), W=260)
         cust = sp.get("ktcda_name", r["ktcda_name"])
         # same season, year by year since 2017: the lake's own baseline in the open
@@ -505,8 +505,8 @@ def main() -> None:
                              f'<td class="num">{"" if q is None else algae_word(q)}</td></tr>')
         baseline = (f'<h3>The same season, year by year</h3><table class="kpi"><thead><tr><th class="num">Year</th><th class="num">Clear passes</th><th class="num">Open water</th><th class="num">Vegetation</th><th class="num">Algae</th></tr></thead><tbody>{"".join(base_rows)}</tbody></table>'
                     f'<p class="cap">Medians of the clear passes in the {esc(SEASON_LABEL.get(cur_season, cur_season or ""))} of each year since 2017; a year with fewer than two clear passes shows its passes but its values should be read with care. The shaded row is this edition\'s reading window.</p>') if base_rows else ""
-        return f"""<div class="pb"></div>
-<h2>{r["rank"]}. {esc(r["name"])}</h2>
+        return f"""<div class="lakepage">
+<h2 class="pb">{r["rank"]}. {esc(r["name"])}</h2>
 <p class="sub">Listed as {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; footprint {esc(acres(r["footprint_ha"]))}; reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
 <div class="cols">
 <div>
@@ -534,7 +534,8 @@ def main() -> None:
 {baseline}
 <h3>Surface composition, monthly medians 2019 to date</h3>
 {series}
-<p class="cap">Open water, vegetation cover and the rest, per month; a month with fewer than two clear passes is a gap.</p>"""
+<p class="cap">Open water, vegetation cover and the rest, per month; a month with fewer than two clear passes is a gap.</p>
+</div>"""
 
     lake_pages = "".join(lake_page(r) for r in ranking[:10])
     appendix_rows = "\n".join(f'<tr><td class="num">{r["rank"]}</td><td>{esc(r["name"])}</td><td class="num">{r["condition_band"]}</td><td class="small">{esc(r["condition_inputs"])}</td><td class="small">{esc(r["band_notes"])}</td></tr>' for r in ranking)
@@ -582,7 +583,8 @@ th {{ text-align: left; font-weight: 600; border-bottom: 1px solid {INK}; paddin
 td {{ border-bottom: 1px solid {GRID}; padding: 3px 4px; vertical-align: top; }}
 td.num, th.num {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
 td.cond {{ text-align: right; white-space: normal; max-width: 70px; }}
-table.kpi td.num {{ white-space: normal; }} table.kpi td {{ padding: 2px 4px; }} td.cond .meta {{ font-size: 7.5px; }}
+table.kpi td.num {{ white-space: normal; }} table.kpi td, table.kpi th {{ padding: 1.5px 4px; font-size: 8.5px; }} td.cond .meta {{ font-size: 7.5px; }}
+.lakepage h3 {{ margin: 8px 0 3px; }} .lakepage .cap {{ margin: 2px 0 6px; }} .lakepage p {{ margin: 0 0 4px; }}
 tr.fund td {{ background: #fff7f2; }}
 .pm {{ color: {INK3}; font-size: 8px; margin-left: 2px; }}
 td.band-E, td.band-D {{ font-weight: 700; }}
