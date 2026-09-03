@@ -44,6 +44,15 @@ GRAY, GRID, INK, INK2, INK3, SURFACE = "#c9c8c3", "#e6e5e1", "#0b0b0b", "#52514e
 NEED_COLOUR = {"Fund now": C_ORANGE, "Co-fund": C_BLUE, "Design first": C_AQUA}
 CONF_SHORT = {"high": "H", "medium": "M", "low": "L", "insufficient": "I", "": ""}
 SEASON_ORDER = ["winter", "pre_monsoon", "monsoon", "post_monsoon"]
+SEASONS = {"winter": (1, 2), "pre_monsoon": (3, 5), "monsoon": (6, 9), "post_monsoon": (10, 12)}
+SEASON_LABEL = {"winter": "winter (January to February)", "pre_monsoon": "pre-monsoon (March to May)", "monsoon": "monsoon (June to September)", "post_monsoon": "post-monsoon (October to December)"}
+
+
+def season_of(d: date) -> tuple[str, int]:
+    for s, (a, b) in SEASONS.items():
+        if a <= d.month <= b:
+            return s, d.year
+    raise ValueError(d)
 
 
 def esc(s) -> str:
@@ -475,6 +484,27 @@ def main() -> None:
         series = fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, reeds, scum)", C_AQUA, mc["frac_algae"])], W=560, H=150)
         chip = fig_footprint(fps[r["spine_id"]], subzones.get(r["spine_id"], []), W=260)
         cust = sp.get("ktcda_name", r["ktcda_name"])
+        # same season, year by year since 2017: the lake's own baseline in the open
+        cur_season = (d.get("current_season") or {}).get("season")
+        by_year = defaultdict(list)
+        for pr in passes.get(r["spine_id"], []):
+            if pr["pass_class"] == "clear" and pr.get("comp_ok") == "True":
+                s_name, yr = season_of(date.fromisoformat(pr["date"]))
+                if s_name == cur_season:
+                    by_year[yr].append(pr)
+        def med(rows_, col):
+            vals = [float(x[col]) for x in rows_ if x.get(col) not in ("", None)]
+            return statistics.median(vals) if vals else None
+        base_rows = []
+        for yr in sorted(by_year):
+            rs = by_year[yr]
+            ow, vg, q = med(rs, "frac_open_water"), med(rs, "frac_algae"), med(rs, "ndci_p50")
+            row_cls = ' class="fund"' if yr == (d.get("current_season") or {}).get("year") else ""
+            base_rows.append(f'<tr{row_cls}><td class="num">{yr}</td><td class="num">{len(rs)}</td>'
+                             f'<td class="num">{"" if ow is None else f"{100 * ow:.0f}%"}</td><td class="num">{"" if vg is None else f"{100 * vg:.0f}%"}</td>'
+                             f'<td class="num">{"" if q is None else algae_word(q)}</td></tr>')
+        baseline = (f'<h3>The same season, year by year</h3><table class="kpi"><thead><tr><th class="num">Year</th><th class="num">Clear passes</th><th class="num">Open water</th><th class="num">Vegetation</th><th class="num">Algae</th></tr></thead><tbody>{"".join(base_rows)}</tbody></table>'
+                    f'<p class="cap">Medians of the clear passes in the {esc(SEASON_LABEL.get(cur_season, cur_season or ""))} of each year since 2017; a year with fewer than two clear passes shows its passes but its values should be read with care. The shaded row is this edition\'s reading window.</p>') if base_rows else ""
         return f"""<div class="pb"></div>
 <h2>{r["rank"]}. {esc(r["name"])}</h2>
 <p class="sub">Listed as {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; footprint {esc(acres(r["footprint_ha"]))}; reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
@@ -501,6 +531,7 @@ def main() -> None:
 </div>
 <div>{chip}<p class="cap">Fixed footprint{" with inlets and outflow marked" if subzones.get(r["spine_id"]) else ""}: the mapped boundary united with the observed water extent since 2017. All condition inputs for this lake are in the appendix.</p></div>
 </div>
+{baseline}
 <h3>Surface composition, monthly medians 2019 to date</h3>
 {series}
 <p class="cap">Open water, vegetation cover and the rest, per month; a month with fewer than two clear passes is a gap.</p>"""
@@ -516,7 +547,7 @@ def main() -> None:
         return f'<div class="tile"><div class="label">{esc(label)}</div><div class="value">{esc(value)}</div><div class="sub">{esc(sub)}</div></div>'
 
     top = ranking[:10]
-    top_html = "".join(f'<li><b>{esc(r["name"])}</b> ({esc(r["custodian"])}, {esc(acres(r["footprint_ha"]))}): {esc(r["need_class"])}. {esc(diagnosis(r, lakes.get(r["spine_id"], {}))[0])}</li>' for r in top)
+    top_html = "".join(f'<li><b>{esc(r["name"])}</b> ({esc(r["custodian"])}, {float(r["footprint_ha"]) * 2.471:.0f} acres): {esc(r["need_class"])}; {esc(r["need_reason"].split("; no works")[0].split("; budget")[0].split("; works")[0])}</li>' for r in top)
     never_html = ", ".join(sorted(p["ktcda_name"] for p in never))
 
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(args.title)}</title>
@@ -528,17 +559,18 @@ h1 {{ font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }}
 h2 {{ font-size: 15px; margin: 18px 0 6px; padding-top: 6px; border-top: 2px solid {INK}; }}
 h3 {{ font-size: 11.5px; margin: 12px 0 4px; }}
 p {{ margin: 0 0 6px; }}
-.brand {{ display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; margin: 2px 0 18px; padding-bottom: 12px; border-bottom: 1px solid {GRID}; }}
-.brand svg {{ width: 60px; height: 60px; }}
+.brand {{ display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid {GRID}; }}
+.brand svg {{ width: 54px; height: 54px; }}
 .brand .name {{ font-weight: 800; font-size: 30px; letter-spacing: -0.015em; color: {INK}; }}
 .brand .tag {{ font-size: 13px; font-weight: 600; color: {INK}; letter-spacing: 0.02em; }}
 .brand .contact {{ font-size: 11px; color: {INK2}; }}
-.why {{ border-left: 3px solid {C_BLUE}; padding: 4px 12px; margin: 10px 0 14px; font-size: 11px; }}
-.why p {{ margin: 0 0 5px; }}
+.why {{ margin: 6px 0 4px; font-size: 10.5px; }}
+.why p {{ margin: 0 0 4px; }}
+.why h3 {{ margin: 6px 0 3px; }}
 .sub {{ color: {INK2}; }}
 .meta, .muted {{ color: {INK3}; font-size: 9px; }}
 .small {{ font-size: 9px; }}
-.tiles {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }}
+.tiles {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 6px 0 4px; }}
 .tile {{ border: 1px solid {GRID}; border-radius: 6px; padding: 8px 10px; }}
 .tile .label {{ font-size: 9.5px; color: {INK2}; }}
 .tile .value {{ font-size: 22px; font-weight: 600; line-height: 1.2; margin: 2px 0; }}
@@ -571,7 +603,8 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 as relative, uncalibrated readings, with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(date.fromisoformat(last_scene).strftime("%-d %B %Y"))}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 on the same method.</p>
 
 <div class="why">
-<p><b>What this snapshot is for.</b> Greater Bengaluru lists {n_custody} lakes in the care of four agencies. Each is monitored in its own way, and no single reading covers all of them on the same footing, so a funder, a custodian or a lake group has no common basis on which to decide where the next rupee of restoration money does the most good.</p>
+<h3>What this snapshot is for</h3>
+<p>Greater Bengaluru lists {n_custody} lakes in the care of four agencies. Each is monitored in its own way, and no single reading covers all of them on the same footing, so a funder, a custodian or a lake group has no common basis on which to decide where the next rupee of restoration money does the most good.</p>
 <p>This snapshot reads every listed lake the same way, from free satellite imagery going back to 2017: how much of each lake is open water, vegetation or exposed bed, how green the water is, how much of its usual extent it holds, whether it is built over, and how it compares with its own past. It sets these beside the regulator's June 2026 classification and the works already on record, and orders the lakes by a published rule into classes a funder can act on: Fund now, Co-fund, Design first, and the rest.</p>
 <p>It is a starting point, not a verdict. Every reading carries its uncertainty and a confidence class, nothing is estimated where there is no observation, and the order improves with each edition, with ground sampling, and with surveyed boundaries.</p>
 </div>
@@ -583,25 +616,22 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 {tile("Fundable now", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Fund now {need_counts.get('Fund now', 0)} and Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
 </div>
 
-<div class="pb"></div>
 <div class="cols">
 <div>
 <h3>How to read a number in this report</h3>
 <p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b>. The band is the reading's own uncertainty (sampling and classification for shares, spread across passes for indices). A Health Card band is assigned only where the band is wider than the error; otherwise both candidate bands are listed. Where the evidence is too thin, the value reads "insufficient".</p>
 <p><b>Why nothing reads High.</b> A class is the weakest of six components, and two cannot reach High from a 10 m satellite and a mapped boundary: closeness to shore (only lakes over about 100 ha escape it) and boundary provenance (High needs a surveyed boundary). Medium is the ceiling for now; a surveyed boundary and a field calibration unlock High.</p>
-<p><b>The monsoon window.</b> Storage is read in the wettest months, so the share-of-extent band flatters no lake and the vegetation and chlorophyll readings are at their seasonal high; the November edition reads the same lakes after the rains.</p>
 <h3>What this snapshot cannot say</h3>
 <p>Dissolved oxygen, BOD, COD, nutrients, coliform, metals and toxins have no optical signature; the regulator's Use Based Class (KSPCB, June 2026) is shown beside the satellite reading for {joined_kspcb} lakes and is never recomputed. Chlorophyll and turbidity are relative indices until a field calibration exists; no calibrated concentration appears here. The vegetation share includes floating mats and emergent reeds inside the footprint. Encroachment is read at 10 m from Dynamic World and needs a survey sketch or a sub-metre scene before any claim. Boundaries are OpenStreetMap polygons united with the observed water extent, not survey boundaries.</p>
 </div>
 <div>
 <h3>The first ten in the order</h3>
 <ol class="top">{top_html}</ol>
-<p class="meta">Order: Need class (Fund now, Co-fund, Intervene early, Design first, then the rest), Condition band, the published Need index, confidence, footprint area. Lakes are ordered within the city as the funding unit; custodians are not compared.</p>
+<p class="meta">Lakes are ordered within the city as the funding unit; custodians are not compared.</p>
 </div>
 </div>
 
-<div class="pb"></div>
-<h2>The city in one view</h2>
+<h2 class="pb">The city in one view</h2>
 <div style="width:70%">{f_map}Fixed footprints of the {n_ranked} assessed lakes on the five 2025 corporation outlines, coloured by Need class. Footprint = mapped boundary united with the observed water extent since 2017.</p></div>
 <div class="cols">
 <div>{f_cond}<p class="cap">Condition A (best) to E (worst) is the worse of the median and the worst repeated input over six readings: share of its usual water held, built share, vegetation cover, algae in the water, froth events and the regulator's class.</p></div>
@@ -635,7 +665,8 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <div class="cols">
 <div>{f_scatter}<p class="cap">Assessed lakes with an algae reading: vegetation cover against algae in the water, reading window medians. Two groups: mat-covered lakes and bloom-prone open lakes; both are eutrophication, with different measures.</p></div>
 <div><h3>Confidence</h3><p>Assessed lakes by the weakest of their open-water, vegetation and chlorophyll readings: {", ".join(f"{k} {v}" for k, v in sorted(conf_counts.items()))}.</p>
-<p>A confidence class is the weakest of six components: pixels inside the lake after the shoreline ring, the share of the lake close to shore, clear passes in the window, the length of the lake's own record, validation of the surface classes on the lake's type, and the boundary's provenance. High needs every component High, which a 10 m sensor cannot give a lake under about 20 ha and a mapped boundary cannot give any lake; Medium is the ceiling for the large lakes until a surveyed boundary and field calibration exist. The monsoon window also thins the clear passes; the post-monsoon edition will lift the pass component for most lakes.</p></div>
+<p>A confidence class is the weakest of six components: pixels inside the lake after the shoreline ring, the share of the lake close to shore, clear passes in the window, the length of the lake's own record, validation of the surface classes on the lake's type, and the boundary's provenance. High needs every component High, which a 10 m sensor cannot give a lake under about 20 ha and a mapped boundary cannot give any lake; Medium is the ceiling for the large lakes until a surveyed boundary and field calibration exist. The monsoon window also thins the clear passes; the post-monsoon edition will lift the pass component for most lakes.</p>
+<p><b>The monsoon window.</b> Storage is read in the wettest months, so the share-of-extent band flatters no lake, and the vegetation and algae readings are at their seasonal high; the November edition reads the same lakes after the rains.</p></div>
 </div>
 
 <div class="pb"></div>
