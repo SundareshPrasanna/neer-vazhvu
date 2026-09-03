@@ -521,15 +521,18 @@ def main() -> None:
 
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(args.title)}</title>
 <style>
-@page {{ size: A4; margin: 14mm 14mm 18mm 14mm; @bottom-left {{ content: "Neer Vazhvu - {esc(args.title)}"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} @bottom-right {{ content: "neervazhvu.in"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} }}
+@page {{ size: A4; margin: 14mm 14mm 18mm 14mm; @bottom-left {{ content: "Neer Vazhvu - {esc(args.title)}"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} @bottom-right {{ content: "contact@neervazhvu.org - neervazhvu.org"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} }}
 * {{ box-sizing: border-box; }}
 body {{ font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: {INK}; margin: 0; font-size: 10.5px; line-height: 1.4; background: {SURFACE}; }}
 h1 {{ font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }}
 h2 {{ font-size: 15px; margin: 18px 0 6px; padding-top: 6px; border-top: 2px solid {INK}; }}
 h3 {{ font-size: 11.5px; margin: 12px 0 4px; }}
 p {{ margin: 0 0 6px; }}
-.brand {{ display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; margin-bottom: 14px; }}
-.brand svg {{ width: 22px; height: 22px; }}
+.brand {{ display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; margin: 2px 0 18px; padding-bottom: 12px; border-bottom: 1px solid {GRID}; }}
+.brand svg {{ width: 44px; height: 44px; }}
+.brand .name {{ font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }}
+.brand .tag {{ font-size: 11px; color: {INK2}; }}
+.brand .contact {{ font-size: 10px; color: {INK2}; }}
 .sub {{ color: {INK2}; }}
 .meta, .muted {{ color: {INK3}; font-size: 9px; }}
 .small {{ font-size: 9px; }}
@@ -561,7 +564,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 .mapkey {{ font-size: 9px; color: {INK2}; margin: 4px 0 6px; }} .mapkey span {{ display: inline-block; margin-right: 12px; }} .mapkey i {{ display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }}
 </style></head><body>
 
-<div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">- India's Water Intelligence</span></div>
+<div class="brand">{open(ROOT / "src/app/icon.svg").read()}<div class="name">Neer Vazhvu</div><div class="tag">India's Water Intelligence</div><div class="contact">contact@neervazhvu.org - neervazhvu.org</div></div>
 <h1>{esc(args.title)}</h1>
 <p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 as relative, uncalibrated readings, with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(date.fromisoformat(last_scene).strftime("%-d %B %Y"))}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 on the same method.</p>
 
