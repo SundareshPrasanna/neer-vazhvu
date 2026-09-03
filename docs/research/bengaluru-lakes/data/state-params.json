@@ -1,0 +1,43 @@
+{
+  "version": "lake-state-v2",
+  "computed_at": "2026-09-03T09:13:29.023473+00:00",
+  "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+  "cloud_mask": "GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED cs_cdf >= 0.6",
+  "atmospheric_correction": "Sen2Cor L2A as distributed (Tier 1, relative; no physical units)",
+  "grid": {
+    "crs": "EPSG:32643",
+    "scale_m": 10,
+    "note": "B5 and B11 are 20 m native, resampled; NDCI and MNDWI are 20 m products"
+  },
+  "classifier": {
+    "rule": "B",
+    "precedence": "froth > floating or emergent vegetation > open_water > bed",
+    "froth": "mean(B3,B4,B8) > 0.18 and B11 > 0.1 and NDVI < 0.1 and B8 >= B11",
+    "algae": "NDVI > 0.25 and MNDWI <= 0.0 on non-froth (mats; bloom water stays open water)",
+    "open_water": "MNDWI > 0.0 on the rest",
+    "bed": "remainder inside the footprint",
+    "thresholds_status": "rule B chosen in step 6; evidence in classifier-validation.json"
+  },
+  "indices": {
+    "ndci": "(B5-B4)/(B5+B4), Mishra and Mishra 2012",
+    "ndti": "(B4-B3)/(B4+B3), Lacaux et al. 2007",
+    "gr": "B3/B4, Toming et al. 2016",
+    "hue": "CIE hue angle, van der Woerd and Wernand 2018 MSI 10 m weights and polynomial (edge weights on B2 and B4)",
+    "p1_ndci": "share of core open-water pixels with NDCI > 0.1",
+    "sampled_on": "open-water pixels of the core (footprint inset by ring_m)"
+  },
+  "pass_rule": {
+    "clear": ">= 0.7 of footprint pixels clear",
+    "partial": "0.3 to 0.7: composition only",
+    "discard": "< 0.3"
+  },
+  "floors": {
+    "composition_valid_px": 20,
+    "index_core_open_water_px": 10
+  },
+  "glint_screen": "NIR p50 on the core above the lake's own p95 across clear passes (needs 20 passes); flagged, not removed",
+  "duplicate_dates": "two tiles on one date: the image covering more of the footprint is kept",
+  "imputation": "none; observed passes only",
+  "n_lake_passes": 58291,
+  "n_lakes": 179
+}

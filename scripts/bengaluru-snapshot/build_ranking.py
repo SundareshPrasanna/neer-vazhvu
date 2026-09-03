@@ -45,6 +45,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import statistics
 import sys
 from collections import Counter, defaultdict
@@ -143,20 +144,30 @@ def main() -> None:
                 best = (agree, st)
         return f"; KSPCB station '{best[1]['name']}' at {best[1]['lat']}, {best[1]['lon']} (Class {best[1]['use_based_class']}, June 2026)" if best else ""
 
+    def display_name(r) -> str:
+        n = re.sub(r"^[\s,;:]*(ward\s*no\.?\s*\d+\s*)?", "", r["ktcda_name"], flags=re.I).strip(" ,/")
+        parts = [x.strip() for x in n.split("/") if x.strip()]
+        if len(parts) > 1 and re.search(r"bangalore|bengaluru|taluk", parts[-1], re.I):
+            parts = parts[:-1]
+        n = " / ".join(parts)
+        if not n or not n[0].isalpha():
+            n = r["osm_name"] or r["ktcda_name"]
+        return n
+
     rows, unassessed = [], []
     for r in spine:
         sid = r["spine_id"]
         if r["match_method"] == "duplicate":
             continue
         if sid not in fps:
-            unassessed.append({"spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
+            unassessed.append({"spine_id": sid, "name": display_name(r), "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
                                "need_class": "Unassessed", "queue_reason": "no polygon at open resolution" + ("; LMS point on record" if r["lms_lat"] else "; no location on record") + station_anchor(r["ktcda_name"]),
                                "note": r["note"]})
             continue
         d = json.load(open(LAKES / f"{sid}.json"))
         k = d["kpis"]; fp = fps[sid]
         if not d["current_season"]:
-            unassessed.append({"spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
+            unassessed.append({"spine_id": sid, "name": display_name(r), "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
                                "need_class": "Unassessed", "queue_reason": d["insufficient"].get("all", "no season with enough clear passes"), "note": fp["flags"]})
             continue
         bands, notes, shown = {}, [], {}
@@ -185,7 +196,7 @@ def main() -> None:
         if g2 in BAND_VAL:
             bands["G2"] = g2; shown["G2"] = g2
         if not bands:
-            unassessed.append({"spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
+            unassessed.append({"spine_id": sid, "name": display_name(r), "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
                                "need_class": "Unassessed", "queue_reason": "no computable condition band", "note": "; ".join(f"{a}: {b}" for a, b in d["insufficient"].items())})
             continue
         vals = [BAND_VAL[b] for b in bands.values()]
@@ -255,11 +266,22 @@ def main() -> None:
             need = "Steward"
         else:
             need = "Watch / verify"
+        # register 7.1: one severe signal alone flags the body for a closer read, it
+        # is not a verdict; a dry lake or one never seen holding water is a scoping
+        # question before any maintenance rupee
+        lone_e = [a for a, b in bands.items() if b == "E"]
+        if never:
+            need = "Design first"; notes.append("no open water observed 2017-2026: boundary and hydrology to scope")
+        elif len(lone_e) == 1 and condition in "ABC":
+            if lone_e[0] == "C1":
+                need = "Design first"; notes.append("single severe input C1: little or no water in the reading window; storage and inflow to scope")
+            else:
+                need = "Watch / verify"; notes.append(f"single severe input {lone_e[0]}: flagged for a closer read, not a verdict")
         idx = LENS["condition"] * cond_v + LENS["urgency"] * URGENCY_VAL[urgency] + LENS["stakes"] * CLASS_VAL[stakes]
         confs = [k[x]["confidence"] for x in ("W1", "W2", "Q1") if x in k]
         conf = max(confs, key=lambda c: CONF_ORDER[c]) if confs else "insufficient"
         rows.append({
-            "spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"], "ward": r["ward_name"],
+            "spine_id": sid, "name": display_name(r), "ktcda_name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"], "ward": r["ward_name"],
             "footprint_ha": area, "season": d["current_season"]["label"], "clear_passes": d["current_season"]["clear_passes"],
             "need_class": need, "condition_band": condition, "condition_inputs": " ".join(f"{a}={shown[a]}" for a in bands),
             "stakes": stakes + (" (lifted: cascade)" if lifted else ""), "tractability": tract, "urgency": urgency, "programme": programme,
@@ -289,7 +311,7 @@ def main() -> None:
         "tractability_rule": "High: boundary Medium and built < 10%; Medium: built 10-20% or boundary Low; Low: built >= 20%; Unknown: no water observed or built insufficient",
         "urgency_rule": "Rising: Q1 or W2 at or above own p90 plus rank error, or built share up >= 5 points since 2019; Easing: both at or below p10; Steady otherwise; Unknown without baseline",
         "programme_rule": "budget line = proposed; press-reported works = works underway; both source class Low (press)",
-        "need_class_rule": "register plan section 7.2",
+        "need_class_rule": "register plan section 7.2; Condition C with Urgency Steady, Easing or Unknown and no works on record falls to Watch / verify as the residual class; a lake never seen holding water, or with C1 as its single severe input, reads Design first; any other single severe input with Condition A to C reads Watch / verify (register 7.1: one severe signal alone is a flag, not a verdict)",
         "rank_rule": "Need class order, Condition band (E first), Need index (Condition 0.45 x band A=0..E=4 + Urgency 0.25 x Rising=2/Steady=1/Easing=0 + Stakes 0.30 x High=2/Medium=1/Low=0), confidence, footprint area",
         "funding_unit": "Greater Bengaluru (the city); custodians are never ranked against each other",
         "n_ranked": len(rows), "n_unassessed": len(unassessed),

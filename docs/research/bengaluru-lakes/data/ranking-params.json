@@ -1,0 +1,128 @@
+{
+  "version": "ranking-v1",
+  "computed_at": "2026-09-03T09:15:16.853611+00:00",
+  "lens": {
+    "name": "Restoration need (default register lens; CSR-fundable ordering)",
+    "condition": 0.45,
+    "urgency": 0.25,
+    "stakes": 0.3
+  },
+  "band_edges": {
+    "C1_share_of_full_tank": [
+      [
+        0.85,
+        "A"
+      ],
+      [
+        0.7,
+        "B"
+      ],
+      [
+        0.5,
+        "C"
+      ],
+      [
+        0.3,
+        "D"
+      ]
+    ],
+    "C3_built_share": [
+      [
+        0.01,
+        "A"
+      ],
+      [
+        0.05,
+        "B"
+      ],
+      [
+        0.1,
+        "C"
+      ],
+      [
+        0.2,
+        "D"
+      ]
+    ],
+    "C4_vegetated_share": [
+      [
+        0.1,
+        "A"
+      ],
+      [
+        0.2,
+        "B"
+      ],
+      [
+        0.3,
+        "C"
+      ],
+      [
+        0.4,
+        "D"
+      ]
+    ],
+    "C5_ndci": [
+      [
+        0.0,
+        "A"
+      ],
+      [
+        0.1,
+        "B"
+      ],
+      [
+        0.2,
+        "C"
+      ],
+      [
+        0.4,
+        "D"
+      ]
+    ],
+    "C8_froth_events_per_year": [
+      [
+        0.5,
+        "A"
+      ],
+      [
+        2.5,
+        "B"
+      ],
+      [
+        5.5,
+        "C"
+      ],
+      [
+        9.5,
+        "D"
+      ]
+    ]
+  },
+  "condition_rule": "worse of (median of computable bands; single worst when two or more read E); G2 = KSPCB Use Based Class as printed",
+  "stakes_rule": "area >= 20 ha High, 5-20 Medium, < 5 Low; lifted one class with >= 2 custody lakes downstream or >= 5,000 buildings in the routed catchment",
+  "tractability_rule": "High: boundary Medium and built < 10%; Medium: built 10-20% or boundary Low; Low: built >= 20%; Unknown: no water observed or built insufficient",
+  "urgency_rule": "Rising: Q1 or W2 at or above own p90 plus rank error, or built share up >= 5 points since 2019; Easing: both at or below p10; Steady otherwise; Unknown without baseline",
+  "programme_rule": "budget line = proposed; press-reported works = works underway; both source class Low (press)",
+  "need_class_rule": "register plan section 7.2; Condition C with Urgency Steady, Easing or Unknown and no works on record falls to Watch / verify as the residual class; a lake never seen holding water, or with C1 as its single severe input, reads Design first; any other single severe input with Condition A to C reads Watch / verify (register 7.1: one severe signal alone is a flag, not a verdict)",
+  "rank_rule": "Need class order, Condition band (E first), Need index (Condition 0.45 x band A=0..E=4 + Urgency 0.25 x Rising=2/Steady=1/Easing=0 + Stakes 0.30 x High=2/Medium=1/Low=0), confidence, footprint area",
+  "funding_unit": "Greater Bengaluru (the city); custodians are never ranked against each other",
+  "n_ranked": 179,
+  "n_unassessed": 31,
+  "need_class_counts": {
+    "Fund now": 42,
+    "Co-fund": 6,
+    "Intervene early": 2,
+    "Design first": 53,
+    "Watch / verify": 53,
+    "Maintain": 13,
+    "Steward": 10
+  },
+  "condition_counts": {
+    "E": 73,
+    "D": 13,
+    "C": 56,
+    "B": 28,
+    "A": 9
+  }
+}
