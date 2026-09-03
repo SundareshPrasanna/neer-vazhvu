@@ -152,6 +152,8 @@ def main() -> None:
         n = " / ".join(parts)
         if not n or not n[0].isalpha():
             n = r["osm_name"] or r["ktcda_name"]
+        elif r["osm_name"] and not r["osm_name"].startswith("(") and sim(" ".join(name_aliases(n)[:1]), " ".join(name_aliases(r["osm_name"])[:1])) < 0.5:
+            n = f"{n} ({r['osm_name']})"    # the map name where it differs from the custody name
         return n
 
     rows, unassessed = [], []

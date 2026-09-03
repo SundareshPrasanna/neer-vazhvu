@@ -211,7 +211,7 @@ def fig_line(points, W=560, H=140, colour=C_BLUE, ylabel="open water share of th
     for d, v in points:
         out.append(f'<circle cx="{X(d):.1f}" cy="{Y(v):.1f}" r="3.5" fill="{colour}" stroke="{SURFACE}" stroke-width="2"/>')
     for d, v in (marks or []):
-        out.append(text(min(max(X(d), L + 40), W - R - 40), T + 10, f"{d}: {int(v * 100)}%", 8, INK, "middle"))
+        out.append(text(min(max(X(d), L + 40), W - R - 40), T + 10, f"{date.fromisoformat(d).strftime('%-d %b %Y')}: {int(v * 100)}%", 8, INK, "middle"))
     m = d0.replace(day=1)
     while m <= d1:
         out.append(text(X(m.isoformat()), H - 6, m.strftime("%b %y"), 8, INK2, "middle"))
@@ -221,7 +221,7 @@ def fig_line(points, W=560, H=140, colour=C_BLUE, ylabel="open water share of th
     return "".join(out)
 
 
-def fig_scatter(points, W=320, H=240, xl="vegetated share of the footprint", yl="NDCI on the open-water core") -> str:
+def fig_scatter(points, W=320, H=240, xl="vegetated share of the footprint", yl="chlorophyll proxy on the open-water core") -> str:
     L, R, T, B = 34, 8, 12, 26
     pw, ph = W - L - R, H - T - B
     ys = [y for _, y, _ in points] or [0, 1]
@@ -342,7 +342,7 @@ def main() -> None:
         w1 = k.get("W1", {}); w2 = k.get("W2", {}); q1 = k.get("Q1", {})
         prog = r["programme"] if r["programme"] != "none" else ""
         cls = "fund" if r["need_class"] in ("Fund now", "Co-fund") else ""
-        return (f'<tr class="{cls}"><td class="num">{r["rank"]}</td><td><b>{esc(r["name"])}</b><br><span class="meta">{esc(r["custodian"])} · {esc(r["corporation"]) or "outside the 2025 ward layer"} · {float(r["footprint_ha"]):.1f} ha</span></td>'
+        return (f'<tr class="{cls}"><td class="num">{r["rank"]}</td><td><b>{esc(r["name"])}</b><br><span class="meta">{esc(r["custodian"])} - {esc(r["corporation"]) or "outside the 2025 ward layer"} - {float(r["footprint_ha"]):.1f} ha</span></td>'
                 f'<td>{esc(r["need_class"])}</td><td class="cond band-{r["condition_band"]}">{r["condition_band"]}<br><span class="meta">{esc(r["condition_inputs"])}</span></td>'
                 + band_cell(w1.get("value"), w1.get("band", {}).get("total"), w1.get("n"), w1.get("confidence"))
                 + band_cell(w2.get("value"), w2.get("band", {}).get("total"), w2.get("n"), w2.get("confidence"))
@@ -350,7 +350,7 @@ def main() -> None:
                 + f'<td class="num">{esc(r["kspcb_class"])}</td><td class="small">{esc(prog)}</td><td class="num">{CONF_SHORT.get(r["confidence"], "")}</td></tr>')
 
     rows_html = "\n".join(row_html(r) for r in ranking)
-    unassessed_html = "\n".join(f'<tr><td><b>{esc(u["name"])}</b> <span class="meta">{esc(u["custodian"])} · {esc(u["corporation"])}</span></td><td class="small">{esc(u["queue_reason"])}</td></tr>' for u in unassessed)
+    unassessed_html = "\n".join(f'<tr><td><b>{esc(u["name"])}</b> <span class="meta">{esc(u["custodian"])} - {esc(u["corporation"])}</span></td><td class="small">{esc(u["queue_reason"])}</td></tr>' for u in unassessed)
 
     def tile(label, value, sub=""):
         return f'<div class="tile"><div class="label">{esc(label)}</div><div class="value">{esc(value)}</div><div class="sub">{esc(sub)}</div></div>'
@@ -361,7 +361,7 @@ def main() -> None:
 
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(args.title)}</title>
 <style>
-@page {{ size: A4; margin: 14mm 14mm 18mm 14mm; @bottom-left {{ content: "Neer Vazhvu · {esc(args.title)}"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} @bottom-right {{ content: "neervazhvu.in"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} }}
+@page {{ size: A4; margin: 14mm 14mm 18mm 14mm; @bottom-left {{ content: "Neer Vazhvu - {esc(args.title)}"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} @bottom-right {{ content: "neervazhvu.in"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} }}
 * {{ box-sizing: border-box; }}
 body {{ font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: {INK}; margin: 0; font-size: 10.5px; line-height: 1.4; background: {SURFACE}; }}
 h1 {{ font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }}
@@ -399,15 +399,15 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 .key span {{ display: inline-block; margin-right: 10px; }}
 </style></head><body>
 
-<div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">· India's Water Intelligence</span></div>
+<div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">- India's Water Intelligence</span></div>
 <h1>{esc(args.title)}</h1>
-<p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 at Tier 1 (relative, uncalibrated), with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(last_scene)}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 from the same pipeline.</p>
+<p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 at Tier 1 (relative, uncalibrated), with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(date.fromisoformat(last_scene).strftime("%-d %B %Y"))}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 from the same pipeline.</p>
 
 <div class="tiles">
 {tile("Custody lakes on the KTCDA lists", f"{n_custody}", "BBMP, BDA, Forest Department, BMRCL; one duplicate row removed")}
 {tile("Assessed at open resolution", f"{n_ranked}", f"{n_unassessed} unassessed: no polygon at 10 m, or below the evidence floors")}
 {tile("Condition D or E", f"{cond_counts.get('D', 0) + cond_counts.get('E', 0)}", f"{ha_de:,.0f} of {ha_all:,.0f} ha of assessed footprint")}
-{tile("Fundable now (Fund now + Co-fund)", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Fund now {need_counts.get('Fund now', 0)}; Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
+{tile("Fundable now", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Fund now {need_counts.get('Fund now', 0)} and Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
 </div>
 
 <div class="cols">
@@ -474,12 +474,13 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <h2>Sources</h2>
 <ul>
-<li>KTCDA, List of Lakes in Bengaluru (BBMP, BDA, Forest Department, BMRCL custody lists), obtained 3 September 2026.</li>
+<li>KTCDA, List of Lakes in Bengaluru (BBMP, BDA, Forest Department, BMRCL custody lists), downloaded 3 September 2026.</li>
 <li>BBMP Lake Management System, lake locations (lms.bbmpgov.in), 3 September 2026.</li>
 <li>KSPCB, Water Quality Data of Bengaluru Lakes for the Month of June 2026 (130 stations); Classification of Water Quality under NWMP, April 2025 to February 2026.</li>
 <li>Copernicus Sentinel-2 Level-2A (COPERNICUS/S2_SR_HARMONIZED) and Cloud Score+ on Google Earth Engine; Dynamic World V1.</li>
 <li>OpenStreetMap water polygons (ODbL); Greater Bengaluru 2025 ward and corporation layers; the platform's cascade layer.</li>
-<li>Deccan Herald, 17 July 2025, "BBMP allocates Rs 50 crore to develop 24 lakes"; SANDRP, 10 February 2026, "Bengaluru Lakes 2025".</li>
+<li>KTCDA, List of Lakes in Bengaluru: ktcda.karnataka.gov.in/28/list-of-lakes-in-bengaluru/en.</li>
+<li>Programme rows: Deccan Herald, 17 July 2025, "BBMP allocates Rs 50 crore to develop 24 lakes"; 21 June 2025, "Karnataka Govt approves Rs 80 crore to resume desilting work" (Bellandur); 17 November 2025, "Bellandur Lake rejuvenation pushed to March 2026"; 27 February 2026, "Authority plans revival of drained city lakes"; Citizen Matters, 3 March 2020, "BDA concretises restoration of Bellandur Lake"; Newsfirst, 18 February 2026, "Ulsoor Lake drained for Rs 4-crore mega desilting"; SANDRP, 10 February 2026, "Bengaluru Lakes 2025"; NGT OA 125/2017, orders of 6 December 2018 and 12 March 2021.</li>
 <li>Methodology: Neer Vazhvu, Satellite monitoring of Bengaluru lakes, methodology note v0 (3 September 2026); the national restoration register plan, section 7.</li>
 </ul>
 </body></html>"""
