@@ -250,19 +250,6 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
           <div className="mt-8">
             <AtlasQuickFind rows={rows} basePath={basePath} example={example} />
           </div>
-
-          {verdict.nextSteps.length > 0 ? (
-            <div className="mt-8">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                What would sharpen this reading
-              </h2>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-                {verdict.nextSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
         </AtlasContainer>
       </header>
 
