@@ -14,6 +14,13 @@ verification scripts iterate over. Two shapes are supported:
 Generic zone names are used everywhere so the UI doesn't need to know
 about per-body specifics; the rich-body registry tells the UI which
 zones to surface and how to label them.
+
+Pollution capabilities additionally sample named per-body sub-zones
+(inlet, weir, outflow) via load_named_subzones(). The pollution
+"open-water core" is NOT built here: it is derived GEE-side in the
+state capability as body.buffer(-inset_m) intersected with a per-pass
+MNDWI water class, because ee.Geometry.buffer is geodesic-in-metres and
+the water mask is inherently per-scene.
 """
 from __future__ import annotations
 
@@ -66,3 +73,35 @@ def load_body_zones(
     zones[ZONE_HALO] = buffer.difference(primary)
 
     return zones
+
+
+def load_named_subzones(
+    root: Path, body_id: str
+) -> "OrderedDictType[str, dict]":
+    """Return ordered mapping key -> {label, kind, geom} for a body's named
+    pollution sub-zones, or an empty mapping if it has none.
+
+    Each sub-zone is a separate file at
+    public/geojson/rich-bodies/{body_id}-zone-{key}.geojson, with the key
+    taken from the filename. label and kind are read from the first feature's
+    properties (defaulting to the key and "custom"), so the set is
+    self-describing and needs no coupling to the TS rich-body registry.
+    """
+    from collections import OrderedDict
+
+    base = root / "public/geojson/rich-bodies"
+    prefix = f"{body_id}-zone-"
+    out: "OrderedDictType[str, dict]" = OrderedDict()
+    for path in sorted(base.glob(f"{prefix}*.geojson")):
+        key = path.stem[len(prefix):]
+        with open(path) as f:
+            gj = json.load(f)
+        feats = gj.get("features", [])
+        props = (feats[0].get("properties") or {}) if feats else {}
+        geom = unary_union([shape(ft["geometry"]) for ft in feats])
+        out[key] = {
+            "label": props.get("label", key),
+            "kind": props.get("kind", "custom"),
+            "geom": geom,
+        }
+    return out

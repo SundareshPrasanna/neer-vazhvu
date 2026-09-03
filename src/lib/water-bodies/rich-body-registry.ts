@@ -91,6 +91,57 @@ export interface RichBodyEntry {
     /** Body-specific caveat bullets appended to the generic caveats */
     caveats?: string[];
   };
+  /** Per-body pollution-profile config, read by the pollution capabilities
+   *  (state indices, sources, events). Absent => body not yet onboarded for
+   *  the pollution layer. Onboarding a body is config-only: populate this
+   *  block and drop the sub-zone geojsons - no code change. */
+  pollution?: PollutionConfig;
+}
+
+export interface PollutionConfig {
+  /** Lake-size class. Gates which capabilities auto-enable; derived from
+   *  area but stored explicitly so the gate is auditable. */
+  size_class: "large" | "medium" | "tank";
+  /** Inward inset (m) applied GEE-side to the body polygon before the
+   *  per-pass MNDWI water classification, to drop land-water boundary
+   *  mixed pixels. Default 10 (~one Sentinel-2 pixel). Deliberately small:
+   *  the near-shore drawdown band holds debris that re-enters the water on
+   *  rise, so we don't erode it away - the per-pass classifier does the work. */
+  open_water_inset_m?: number;
+  /** Named point/area sub-zones digitised per body. Geometry lives at
+   *  /geojson/rich-bodies/{id}-zone-{key}.geojson (self-describing via
+   *  feature props); this declares them for the UI. */
+  sub_zones?: Array<{
+    key: string;
+    label: string;
+    kind: "inlet" | "weir" | "outflow" | "custom";
+  }>;
+  /** In-situ reference for Tier-2 calibration. status "acquired" unlocks
+   *  calibrated retrieval; otherwise the layer stays Tier-1 (relative,
+   *  uncalibrated). */
+  insitu_source?: {
+    agency: string;
+    status: "none" | "sought" | "acquired";
+    note?: string;
+  };
+  /** Machine-readable pollution events for froth/bloom validation and
+   *  governance joins. Distinct from timeline_events (display copy): these
+   *  carry real dates so a validation pass can pull the right satellite
+   *  scene window. date is ISO yyyy-mm-dd, or yyyy-mm when only the month
+   *  is known (set approx:true). */
+  known_events?: Array<{
+    date: string;
+    type: "froth" | "fire" | "bloom" | "fishkill";
+    approx?: boolean;
+    source_url?: string;
+  }>;
+  /** Per-signal output JSON paths (mirrors analysis_paths). Populated as
+   *  each capability ships; absent => not yet computed. */
+  signal_paths?: {
+    state?: string;
+    sources?: string;
+    events?: string;
+  };
 }
 
 export interface ModalSourceRow {
@@ -410,6 +461,21 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         },
       ],
     },
+    pollution: {
+      // Open-water drinking reservoir - the contrast case to Bellandur. Same
+      // capability, but open water dominant so turbidity/chl are
+      // lake-representative (not gated).
+      size_class: "large",
+      open_water_inset_m: 10,
+      insitu_source: {
+        agency: "Tamil Nadu Pollution Control Board (TNPCB) / CMWSSB",
+        status: "none",
+        note: "Relative Tier-1 only for now.",
+      },
+      signal_paths: {
+        state: "/data/rich-bodies/chembarambakkam-pollution-state.json",
+      },
+    },
   },
   porur: {
     id: "porur",
@@ -662,6 +728,46 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         "Bellandur's surface water is largely industrial-organic effluent and untreated municipal sewage from the K&C valley; the JRC 'water' classification therefore captures inflow as well as standing water, and the 'water surface' percentage should not be read as a health metric.",
         "The OSM polygon is the lake bed extent. The 'water surface in body' reading can drop below the polygon area when the lake is at low level or post-desilting; this is a measurement artefact, not encroachment.",
       ],
+    },
+    pollution: {
+      size_class: "large",
+      open_water_inset_m: 10,
+      sub_zones: [
+        { key: "inlet-kc", label: "K&C valley inflow (NW)", kind: "inlet" },
+        {
+          key: "weir",
+          label: "Downstream foam weir (SE, toward Sarjapur Rd / Varthur)",
+          kind: "weir",
+        },
+      ],
+      insitu_source: {
+        agency: "Karnataka State Pollution Control Board (KSPCB)",
+        status: "sought",
+        note:
+          "KSPCB monitors Bellandur under the national water-quality " +
+          "programme (BOD/DO/COD/coliform). Acquisition (scrape or RTI) is " +
+          "pending; until status is 'acquired' the layer stays Tier-1 " +
+          "(relative, uncalibrated) and DO/BOD/coliform remain a declared " +
+          "gap - they have no optical signature.",
+      },
+      known_events: [
+        { date: "2015-05-17", type: "froth" },
+        {
+          date: "2017-02-16",
+          type: "fire",
+          source_url:
+            "https://www.thehindu.com/news/national/karnataka/foam-from-bellandur-lake-catches-fire/article17319080.ece",
+        },
+        { date: "2017-02-17", type: "froth" },
+        { date: "2018-01", type: "fire", approx: true },
+        { date: "2021-03-05", type: "froth" },
+        { date: "2024-09", type: "froth", approx: true },
+      ],
+      signal_paths: {
+        state: "/data/rich-bodies/bellandur-pollution-state.json",
+        sources: "/data/rich-bodies/bellandur-pollution-sources.json",
+        events: "/data/rich-bodies/bellandur-pollution-froth.json",
+      },
     },
   },
   varthur: {
