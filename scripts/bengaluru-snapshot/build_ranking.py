@@ -75,6 +75,11 @@ C5_EDGES = [(0.00, "A"), (0.10, "B"), (0.20, "C"), (0.40, "D")]        # NDCI
 C8_EDGES = [(0.5, "A"), (2.5, "B"), (5.5, "C"), (9.5, "D")]            # froth events per year
 
 
+def algae_word(q1: float) -> str:
+    """The chlorophyll proxy in words, on the same edges as the C5 band."""
+    return "clear water" if q1 < 0.0 else "some algae" if q1 < 0.1 else "algae-rich water" if q1 < 0.2 else "heavy algae" if q1 < 0.4 else "algal bloom"
+
+
 def band_up(v: float, edges) -> str:
     for edge, b in edges:
         if v < edge:
@@ -286,32 +291,34 @@ def main() -> None:
         # words with its value; then the programme fact that sets the class
         drivers = []
         if bands.get("C4", "") in ("D", "E") and "W2" in k:
-            drivers.append(f"vegetation {100 * k['W2']['value']:.0f}%")
+            drivers.append(f"{100 * k['W2']['value']:.0f}% covered by vegetation")
         if bands.get("C1", "") in ("D", "E") and "H2" in k:
-            drivers.append(f"holds {100 * k['H2']['value']:.0f}% of its extent")
+            h2 = k["H2"]["value"]
+            drivers.append("almost no water this season" if h2 < 0.05 else f"holds {100 * h2:.0f}% of its usual water")
         if bands.get("C5", "") in ("D", "E") and "Q1" in k:
-            drivers.append(f"chlorophyll proxy {k['Q1']['value']:.2f}")
+            drivers.append(algae_word(k["Q1"]["value"]) + " on the open water")
         if bands.get("C3", "") in ("D", "E") and b1 is not None:
-            drivers.append(f"built {100 * b1:.0f}%")
+            drivers.append("built over" if b1 >= 0.8 else f"{100 * b1:.0f}% built over")
         if bands.get("C8", "") in ("D", "E"):
-            drivers.append(f"froth {per_year:.0f}/yr")
+            drivers.append(f"froth seen about {per_year:.0f} times a year")
         if bands.get("G2", "") in ("D", "E"):
-            drivers.append(f"regulator {g2}")
+            drivers.append(f"KSPCB class {g2}")
         if never:
             drivers = ["no open water seen since 2017"]
-        prog_note = {"works underway": "works on record", "proposed": "budget line on record", "none": "nothing on record"}[programme]
+        prog_note = {"works underway": "works under way", "proposed": "budget line on record", "none": "no works on record"}[programme]
         if need in ("Fund now", "Co-fund", "Design first"):
             reason = ("; ".join(drivers) if drivers else f"condition {condition}") + f"; {prog_note}"
+            reason = reason[0].upper() + reason[1:]
             if need == "Design first" and tract in ("Low", "Unknown") and not never:
                 reason += "; boundary or built-up question"
         elif need == "Intervene early":
-            reason = "condition C, rising against its own history; " + prog_note
+            reason = "getting worse against its own past; " + prog_note
         elif need == "Watch / verify":
-            reason = (prog_note if programme == "works underway" else (drivers[0] + " alone, not a verdict") if len(lone_e) == 1 and drivers else "steady; monitor")
+            reason = (prog_note if programme == "works underway" else (drivers[0] + "; one warning sign, to be checked") if len(lone_e) == 1 and drivers else "steady; keep watching")
         elif need == "Maintain":
-            reason = f"condition {condition}; upkeep and monitoring"
+            reason = "in fair shape; upkeep and monitoring"
         else:
-            reason = f"condition {condition}; protection and monitoring only"
+            reason = "in good shape; protect and monitor"
         idx = LENS["condition"] * cond_v + LENS["urgency"] * URGENCY_VAL[urgency] + LENS["stakes"] * CLASS_VAL[stakes]
         confs = [k[x]["confidence"] for x in ("W1", "W2", "Q1") if x in k]
         conf = max(confs, key=lambda c: CONF_ORDER[c]) if confs else "insufficient"

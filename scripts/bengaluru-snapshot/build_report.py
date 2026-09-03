@@ -216,7 +216,7 @@ def fig_line(points, W=560, H=140, colour=C_BLUE, ylabel="open water share of th
     return "".join(out)
 
 
-def fig_scatter(points, W=320, H=240, xl="vegetated share of the footprint", yl="chlorophyll proxy on the open-water core") -> str:
+def fig_scatter(points, W=320, H=240, xl="vegetated share of the footprint", yl="algae in the water (chlorophyll proxy) on the open-water core") -> str:
     L, R, T, B = 34, 8, 12, 26
     pw, ph = W - L - R, H - T - B
     ys = [y for _, y, _ in points] or [0, 1]
@@ -240,6 +240,10 @@ def fig_scatter(points, W=320, H=240, xl="vegetated share of the footprint", yl=
     return "".join(out)
 
 
+def algae_word(q1: float) -> str:
+    return "clear water" if q1 < 0.0 else "some algae" if q1 < 0.1 else "algae-rich water" if q1 < 0.2 else "heavy algae" if q1 < 0.4 else "algal bloom"
+
+
 def acres(ha) -> str:
     return f"{float(ha):.1f} ha ({float(ha) * 2.471:.0f} acres)" if float(ha) >= 10 else f"{float(ha):.1f} ha ({float(ha) * 2.471:.1f} acres)"
 
@@ -254,27 +258,27 @@ def diagnosis(r, d) -> tuple[str, str]:
     g2 = d.get("regulator", {}).get("kspcb_class")
     what, buys = [], []
     if w2 is not None and w2 >= 0.4:
-        what.append(f"vegetation covers {w2 * 100:.0f}% of the footprint in the reading window, with open water at {(w1 or 0) * 100:.0f}%")
+        what.append(f"vegetation covers {w2 * 100:.0f}% of the lake in the reading window, with open water at {(w1 or 0) * 100:.0f}%")
         buys.append("weed and mat removal with inflow control so it does not regrow")
     elif w1 is not None and w1 >= 0.5:
         what.append(f"open water over {w1 * 100:.0f}% of the footprint")
     if q1 is not None and q1 >= 0.2:
-        what.append(f"a strong chlorophyll signal on the open water (proxy {q1:.2f}, in the bloom range)")
+        what.append(f"{algae_word(q1)} on the open water")
         buys.append("nutrient control at the inlets and in-lake aeration")
     if w5 is not None and w5 >= 0.4:
         what.append(f"exposed bed over {w5 * 100:.0f}% of the footprint")
         buys.append("inflow and storage restoration after a boundary survey")
     elif h2 is not None and h2 < 0.3 and (w2 is None or w2 < 0.4):
-        what.append(f"holding {h2 * 100:.0f}% of its observed extent this season")
+        what.append(f"holding {h2 * 100:.0f}% of its usual water this season")
         buys.append("inflow and storage restoration")
     if b1 is not None and b1 >= 0.1:
-        what.append(f"built structures on {b1 * 100:.0f}% of the footprint")
+        what.append(f"built over on {b1 * 100:.0f}% of the footprint")
         buys.append("a boundary survey before capital works")
     if recent_ev >= 3:
         what.append(f"froth on {recent_ev} clear passes since 2024")
         buys.append("surfactant and sewage control upstream of the weir")
     if g2 in ("D", "E"):
-        what.append(f"the regulator's June 2026 class is {g2}")
+        what.append(f"KSPCB's June 2026 class is {g2}")
     if not buys:
         buys.append("monitoring and renewable upkeep")
     w = "; ".join(what) if what else "readings within the lake's own normal range"
@@ -443,7 +447,7 @@ def main() -> None:
                 f'<td>{esc(r["need_class"])} <span class="meta">{esc(r["need_reason"])}</span></td><td class="cond band-{r["condition_band"]}">{r["condition_band"]}</td>'
                 + band_cell(w1.get("value"), w1.get("band", {}).get("total"), w1.get("n"), w1.get("confidence"))
                 + band_cell(w2.get("value"), w2.get("band", {}).get("total"), w2.get("n"), w2.get("confidence"))
-                + band_cell(q1.get("value"), q1.get("band", {}).get("total"), q1.get("n"), q1.get("confidence"), 2, "idx")
+                + (f'<td class="num">{esc(algae_word(q1["value"]))}<br><span class="meta">{q1["value"]:.2f} ±{q1["band"]["total"]:.2f} n{q1["n"]} {CONF_SHORT.get(q1["confidence"], "")}</span></td>' if q1.get("value") is not None else '<td class="num muted">no open water to read</td>')
                 + f'<td class="num">{esc(r["kspcb_class"])}</td><td class="small">{esc(prog)}</td><td class="num">{CONF_SHORT.get(r["confidence"], "")}</td></tr>')
 
     rows_html = "\n".join(row_html(r) for r in ranking)
@@ -483,10 +487,10 @@ def main() -> None:
 <tr><td>Open water (share of footprint)</td><td class="num">{esc(val("W1"))}</td></tr>
 <tr><td>Vegetation cover (mats, reeds, scum)</td><td class="num">{esc(val("W2"))}</td></tr>
 <tr><td>Exposed bed</td><td class="num">{esc(val("W5"))}</td></tr>
-<tr><td>Chlorophyll proxy on open water</td><td class="num">{esc(val("Q1", unit="idx"))}</td></tr>
-<tr><td>Chlorophyll against its own history</td><td class="num">{esc(p7("Q1"))}</td></tr>
+<tr><td>Algae in the water (chlorophyll proxy)</td><td class="num">{esc((algae_word(k["Q1"]["value"]) + ": " + val("Q1", unit="idx")) if k.get("Q1", {}).get("value") is not None else "no open water to read")}</td></tr>
+<tr><td>Algae against its own history</td><td class="num">{esc(p7("Q1"))}</td></tr>
 <tr><td>Vegetation against its own history</td><td class="num">{esc(p7("W2"))}</td></tr>
-<tr><td>Share of observed extent held</td><td class="num">{esc(val("H2"))}</td></tr>
+<tr><td>Share of its usual water held</td><td class="num">{esc(val("H2"))}</td></tr>
 <tr><td>Built share inside the footprint ({b1.get("year", "")})</td><td class="num">{(f"{100 * b1['built_share']:.0f}%" + (f" ({round(100 * b1['change_since_2019']):+d} points since 2019)" if b1.get("change_since_2019") is not None else "")) if b1 else "insufficient"}</td></tr>
 <tr><td>Froth passes per year (lower bound)</td><td class="num">{esc(", ".join(f"{y}: {n}" for y, n in sorted(ev.items()) if int(y) >= 2022) or "none recorded")}</td></tr>
 <tr><td>KSPCB, June 2026</td><td class="num">{esc(("Class " + reg["kspcb_class"] + f"; DO {reg.get('do_mgl')} mg/l, BOD {reg.get('bod_mgl')} mg/l, turbidity {reg.get('turbidity_ntu')} NTU") if reg.get("kspcb_class") else "no station joined")}</td></tr>
@@ -594,10 +598,10 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The ordered list, fundable now first</h2>
-<p class="meta">Open water and vegetation cover (mats, reeds, scum) are shares of the footprint in the lake's reading window (percent ± points); the chlorophyll proxy is read on the open water (index units ± half the spread across passes; above 0.2 is the bloom range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition A (best) to E (worst) is the worse of the median and the worst repeated input over storage, built share, vegetation, chlorophyll, froth and the regulator's class. The reason under each Need class names the inputs that drive it; every input per lake, with its band, is in the appendix at the end.</p>
+<p class="meta">Open water and vegetation cover (mats, reeds, scum) are shares of the lake's footprint in its reading window (percent ± points). Algae in the water is read from the greenness of the open water on five levels: clear water, some algae, algae-rich water, heavy algae, algal bloom (the satellite index behind it is shown small). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition A (best) to E (worst) is the worse of the median and the worst repeated input over storage, built share, vegetation, chlorophyll, froth and the regulator's class. The reason under each Need class names the inputs that drive it; every input per lake, with its band, is in the appendix at the end.</p>
 <table>
-<colgroup><col style="width:3%"><col style="width:21%"><col style="width:22%"><col style="width:6%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:5%"><col style="width:9%"><col style="width:4%"></colgroup>
-<thead><tr><th class="num">#</th><th>Lake</th><th>Need class and why</th><th class="num">Condition</th><th class="num">Open water</th><th class="num">Vegetation cover</th><th class="num">Chlorophyll proxy</th><th class="num">KSPCB class</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
+<colgroup><col style="width:3%"><col style="width:17%"><col style="width:32%"><col style="width:5%"><col style="width:9%"><col style="width:9%"><col style="width:11%"><col style="width:5%"><col style="width:6%"><col style="width:3%"></colgroup>
+<thead><tr><th class="num">#</th><th>Lake</th><th>Need class and why</th><th class="num">Condition</th><th class="num">Open water</th><th class="num">Vegetation cover</th><th class="num">Algae in the water</th><th class="num">KSPCB class</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
 <tbody>{rows_html}</tbody></table>
 
 {lake_pages}
