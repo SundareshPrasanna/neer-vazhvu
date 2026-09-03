@@ -477,7 +477,7 @@ def main() -> None:
         cust = sp.get("ktcda_name", r["ktcda_name"])
         return f"""<div class="pb"></div>
 <h2>{r["rank"]}. {esc(r["name"])}</h2>
-<p class="sub">Custody list name: {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; footprint {esc(acres(r["footprint_ha"]))}; reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
+<p class="sub">Listed as {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; footprint {esc(acres(r["footprint_ha"]))}; reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
 <div class="cols">
 <div>
 <p><b>{esc(r["need_class"])}.</b> {esc(r["need_reason"])}.</p>
@@ -495,11 +495,11 @@ def main() -> None:
 <tr><td>Froth passes per year (lower bound)</td><td class="num">{esc(", ".join(f"{y}: {n}" for y, n in sorted(ev.items()) if int(y) >= 2022) or "none recorded")}</td></tr>
 <tr><td>KSPCB, June 2026</td><td class="num">{esc(("Class " + reg["kspcb_class"] + f"; DO {reg.get('do_mgl')} mg/l, BOD {reg.get('bod_mgl')} mg/l, turbidity {reg.get('turbidity_ntu')} NTU") if reg.get("kspcb_class") else "no station joined")}</td></tr>
 <tr><td>Programme on record</td><td class="num">{esc(r["programme_detail"] or "none")}</td></tr>
-<tr><td>Cascade</td><td class="num">{esc(("position " + str(r["cascade_position"]) + ", ") if r["cascade_position"] else "")}{r["custody_lakes_downstream"]} custody lakes downstream; {int(r["buildings_in_catchment"] or 0):,} buildings in the catchment</td></tr>
-<tr><td>Boundary</td><td class="num">{esc(fpp[r["spine_id"]]["boundary_provenance"].replace("_", " "))}, confidence {esc(fpp[r["spine_id"]]["boundary_confidence"])}</td></tr>
+<tr><td>Drainage chain</td><td class="num">{esc(("position " + str(r["cascade_position"]) + " in its chain, ") if r["cascade_position"] else "")}{r["custody_lakes_downstream"]} listed lakes downstream; {int(r["buildings_in_catchment"] or 0):,} buildings in the catchment</td></tr>
+<tr><td>Boundary</td><td class="num">{esc({"osm+observed_max": "mapped boundary and observed water", "osm_only": "mapped boundary only", "hand_digitised_from_observed_water": "traced from observed water"}.get(fpp[r["spine_id"]]["boundary_provenance"], fpp[r["spine_id"]]["boundary_provenance"]))}, confidence {esc(fpp[r["spine_id"]]["boundary_confidence"])}</td></tr>
 </tbody></table>
 </div>
-<div>{chip}<p class="cap">Fixed footprint{(" with named sub-zones (" + ", ".join(z["properties"]["key"] for z in subzones.get(r["spine_id"], [])) + ")") if subzones.get(r["spine_id"]) else ""}: the mapped boundary united with the observed water extent since 2017. All condition inputs for this lake are in the appendix.</p></div>
+<div>{chip}<p class="cap">Fixed footprint{" with inlets and outflow marked" if subzones.get(r["spine_id"]) else ""}: the mapped boundary united with the observed water extent since 2017. All condition inputs for this lake are in the appendix.</p></div>
 </div>
 <h3>Surface composition, monthly medians 2019 to date</h3>
 {series}
@@ -507,7 +507,10 @@ def main() -> None:
 
     lake_pages = "".join(lake_page(r) for r in ranking[:10])
     appendix_rows = "\n".join(f'<tr><td class="num">{r["rank"]}</td><td>{esc(r["name"])}</td><td class="num">{r["condition_band"]}</td><td class="small">{esc(r["condition_inputs"])}</td><td class="small">{esc(r["band_notes"])}</td></tr>' for r in ranking)
-    unassessed_html = "\n".join(f'<tr><td><b>{esc(u["name"])}</b> <span class="meta">{esc(u["custodian"])} - {esc(u["corporation"])}</span></td><td class="small">{esc(u["queue_reason"])}</td></tr>' for u in unassessed)
+    def plain_reason(q: str) -> str:
+        return (q.replace("no polygon at open resolution", "no usable boundary at 10 m").replace("LMS point on record", "location known")
+                 .replace("no location on record", "no location known").replace("no season with", "no season with").replace("KSPCB station", "KSPCB samples at its station"))
+    unassessed_html = "\n".join(f'<tr><td><b>{esc(u["name"])}</b> <span class="meta">{esc(u["custodian"])} - {esc(u["corporation"])}</span></td><td class="small">{esc(plain_reason(u["queue_reason"]))}</td></tr>' for u in unassessed)
 
     def tile(label, value, sub=""):
         return f'<div class="tile"><div class="label">{esc(label)}</div><div class="value">{esc(value)}</div><div class="sub">{esc(sub)}</div></div>'
@@ -560,11 +563,11 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">- India's Water Intelligence</span></div>
 <h1>{esc(args.title)}</h1>
-<p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 at Tier 1 (relative, uncalibrated), with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(date.fromisoformat(last_scene).strftime("%-d %B %Y"))}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 from the same pipeline.</p>
+<p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 as relative, uncalibrated readings, with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(date.fromisoformat(last_scene).strftime("%-d %B %Y"))}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 on the same method.</p>
 
 <div class="tiles">
-{tile("Custody lakes on the KTCDA lists", f"{n_custody}", "BBMP, BDA, Forest Department, BMRCL; one duplicate row removed")}
-{tile("Assessed at open resolution", f"{n_ranked}", f"{n_unassessed} unassessed: no polygon at 10 m, or below the evidence floors")}
+{tile("Custody lakes on the KTCDA lists", f"{n_custody}", "BBMP, BDA, Forest Department, BMRCL")}
+{tile("Assessed from satellite", f"{n_ranked}", f"{n_unassessed} unassessed: no usable boundary at 10 m, or too few clear readings")}
 {tile("Condition D or E", f"{cond_counts.get('D', 0) + cond_counts.get('E', 0)}", f"{ha_de:,.0f} of {ha_all:,.0f} ha of assessed footprint")}
 {tile("Fundable now", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Fund now {need_counts.get('Fund now', 0)} and Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
 </div>
@@ -572,7 +575,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <div class="cols">
 <div>
 <h3>How to read a number in this report</h3>
-<p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b>. The band is the reading's own uncertainty (sampling and classification for shares, spread across passes for indices). A Health Card band is assigned only where the band is wider than the error; otherwise both candidate bands are listed. Nothing below an evidence floor is shown as a value.</p>
+<p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b>. The band is the reading's own uncertainty (sampling and classification for shares, spread across passes for indices). A Health Card band is assigned only where the band is wider than the error; otherwise both candidate bands are listed. Where the evidence is too thin, the value reads "insufficient".</p>
 <p><b>Why nothing reads High.</b> A class is the weakest of six components, and two cannot reach High from a 10 m satellite and a mapped boundary: closeness to shore (only lakes over about 100 ha escape it) and boundary provenance (High needs a surveyed boundary). Medium is the ceiling for now; a surveyed boundary and a field calibration unlock High.</p>
 <p><b>The monsoon window.</b> Storage is read in the wettest months, so the share-of-extent band flatters no lake and the vegetation and chlorophyll readings are at their seasonal high; the November edition reads the same lakes after the rains.</p>
 <h3>What this snapshot cannot say</h3>
@@ -589,8 +592,8 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <h2>The city in one view</h2>
 <div style="width:70%">{f_map}Fixed footprints of the {n_ranked} assessed lakes on the five 2025 corporation outlines, coloured by Need class. Footprint = mapped boundary united with the observed water extent since 2017.</p></div>
 <div class="cols">
-<div>{f_cond}<p class="cap">Condition band = the worse of the median and, where two or more inputs read E, the worst input; inputs are the share of the observed maximum held (C1), built share inside the footprint (C3), vegetated share (C4), the chlorophyll proxy (C5), froth events (C8) and the regulator's class (G2).</p></div>
-<div>{f_need}<p class="cap">Need class by the register's rules (plan section 7.2): Condition D or E with a tractable boundary and no works on record reads Fund now (a budget line alone does not change it); with works on record, Co-fund; with a boundary or built-up question, or no water held in the window, Design first; a single severe input against an otherwise sound reading is a flag for a closer read (Watch / verify), not a verdict.</p>
+<div>{f_cond}<p class="cap">Condition A (best) to E (worst) is the worse of the median and the worst repeated input over six readings: share of its usual water held, built share, vegetation cover, algae in the water, froth events and the regulator's class.</p></div>
+<div>{f_need}<p class="cap">Need class by Neer Vazhvu's published rules: Condition D or E with a tractable boundary and no works on record reads Fund now (a budget line alone does not change it); with works on record, Co-fund; with a boundary or built-up question, or no water held in the window, Design first; a single severe input against an otherwise sound reading is a flag for a closer read (Watch / verify), not a verdict.</p>
 <p><b>The regulator's view, June 2026:</b> KSPCB classed {kspcb_counts.get('D', 0)} monitored lakes D (wildlife and fisheries) and {kspcb_counts.get('E', 0)} E (irrigation and industrial cooling), none A to C; {joined_kspcb} of those stations join a custody lake here.</p>
 <p><b>Lakes with no open water observed in nine years:</b> {esc(never_html)}. These read as dry, vegetated or built over at 10 m and are listed with Low boundary confidence.</p>
 </div>
@@ -607,7 +610,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 {lake_pages}
 <div class="pb"></div>
 <h2>What continuous monitoring looks like</h2>
-<p>Three lakes with named sub-zones, monthly medians of the surface composition from 2019 (a month with fewer than two clear passes is a gap, not a value). The monsoon months are thin on every lake, which is what an honest optical record looks like.</p>
+<p>Three lakes, monthly medians of the surface composition from 2019 (a month with fewer than two clear passes is a gap, not a value). The monsoon months are thin on every lake, which is what an honest optical record looks like.</p>
 {"".join(f'<h3>{esc(n)}</h3>{s}' for n, s in series_figs)}
 <p class="cap">Surface classes per pass: open water, vegetation cover (floating mats, reeds along the margins, surface scum; a reed fringe is healthy, a hyacinth mat is not, and the split is a coming refinement), froth, and exposed bed. Sentinel-2, 10 m.</p>
 <h3>Ulsoor, November 2025 to August 2026</h3>
@@ -618,22 +621,22 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <h3>Coverage, 2019 to date</h3>
 {f_cov}<p class="cap">Median clear passes per lake per month. The monsoon gap is reported, never filled; the archive over Bengaluru is dense from 2019.</p>
 <div class="cols">
-<div>{f_scatter}<p class="cap">Assessed lakes with a computable chlorophyll proxy: vegetated share against the chlorophyll proxy on the open-water core, reading window medians. Two groups: mat-covered lakes and bloom-prone open lakes; both are eutrophication, with different measures.</p></div>
+<div>{f_scatter}<p class="cap">Assessed lakes with an algae reading: vegetation cover against algae in the water, reading window medians. Two groups: mat-covered lakes and bloom-prone open lakes; both are eutrophication, with different measures.</p></div>
 <div><h3>Confidence</h3><p>Assessed lakes by the weakest of their open-water, vegetation and chlorophyll readings: {", ".join(f"{k} {v}" for k, v in sorted(conf_counts.items()))}.</p>
 <p>A confidence class is the weakest of six components: pixels inside the lake after the shoreline ring, the share of the lake close to shore, clear passes in the window, the length of the lake's own record, validation of the surface classes on the lake's type, and the boundary's provenance. High needs every component High, which a 10 m sensor cannot give a lake under about 20 ha and a mapped boundary cannot give any lake; Medium is the ceiling for the large lakes until a surveyed boundary and field calibration exist. The monsoon window also thins the clear passes; the post-monsoon edition will lift the pass component for most lakes.</p></div>
 </div>
 
 <div class="pb"></div>
 <h2>Method, in brief</h2>
-<p><b>Universe.</b> The Karnataka Tank Conservation and Development Authority custody lists for Bengaluru (BBMP, BDA, Forest Department, BMRCL): {n_custody} lakes, each joined to a mapped boundary, the BBMP Lake Management System point, the 2025 ward and corporation, the platform's cascade layer, the regulator's June 2026 station, and the programme rows on record.</p>
+<p><b>Universe.</b> The Karnataka Tank Conservation and Development Authority custody lists for Bengaluru (BBMP, BDA, Forest Department, BMRCL): {n_custody} lakes, each joined to a mapped boundary, the BBMP Lake Management System point, the 2025 ward and corporation, Neer Vazhvu's drainage-network layer, the regulator's June 2026 station, and the programme rows on record.</p>
 <p><b>Sensor.</b> Copernicus Sentinel-2 (10 m, a pass every two to three days over Bengaluru), every scene from March 2017 to the reading date, cloud-masked pixel by pixel; observed passes only, nothing interpolated.</p>
-<p><b>Per lake, per pass.</b> A fixed footprint (the mapped boundary united with the observed water extent); the share of the footprint reading as open water, vegetation (mats and emergent growth), froth and exposed bed; and on the open water, relative indices for chlorophyll, turbidity, coloured organic matter and apparent colour. These are Tier 1 (relative) readings: comparable across lakes and years, not concentrations.</p>
+<p><b>Per lake, per pass.</b> A fixed footprint (the mapped boundary united with the observed water extent); the share of the footprint reading as open water, vegetation (mats and emergent growth), froth and exposed bed; and on the open water, relative indices for chlorophyll, turbidity, coloured organic matter and apparent colour. These are relative readings: comparable across lakes and years, not concentrations.</p>
 <p><b>Per lake, per window.</b> Seasonal medians with their spread, percentile against the lake's own same-season history, water area and share of the observed maximum, froth events per year, built share inside the footprint, and the confidence class. Health Card bands are assigned only where the band is wider than the error.</p>
-<p><b>Need class and order.</b> The register's published rules over four axes (Condition, Stakes, Tractability, Urgency) with the programme on record; lakes are ordered within the city as the funding unit. The full method, error model and rule set are in the Neer Vazhvu methodology note, available on request.</p>
+<p><b>Need class and order.</b> Neer Vazhvu's published rules over four axes (Condition, Stakes, Tractability, Urgency) with the programme on record; lakes are ordered within the city as the funding unit. The full method, error model and rule set are in the Neer Vazhvu methodology note, available on request.</p>
 
-<h2>Unassessed at open resolution ({n_unassessed})</h2>
-<p class="meta">Listed after the ordered list with the queue reason, per the register rule. A hand-digitised boundary or a sub-metre scene moves a lake into the assessed set.</p>
-<table><thead><tr><th>Lake</th><th>Queue reason</th></tr></thead><tbody>{unassessed_html}</tbody></table>
+<h2>Unassessed at 10 m ({n_unassessed})</h2>
+<p class="meta">Listed with the reason. A traced boundary or a sub-metre image moves a lake into the assessed set.</p>
+<table><thead><tr><th>Lake</th><th>Reason</th></tr></thead><tbody>{unassessed_html}</tbody></table>
 
 <div class="pb"></div>
 <h2>Appendix: condition inputs per lake</h2>
@@ -642,14 +645,13 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <h2>Sources</h2>
 <ul>
-<li>KTCDA, List of Lakes in Bengaluru (BBMP, BDA, Forest Department, BMRCL custody lists), downloaded 3 September 2026.</li>
+<li>KTCDA, List of Lakes in Bengaluru (BBMP, BDA, Forest Department, BMRCL custody lists), ktcda.karnataka.gov.in/28/list-of-lakes-in-bengaluru/en, downloaded 3 September 2026.</li>
 <li>BBMP Lake Management System, lake locations (lms.bbmpgov.in), 3 September 2026.</li>
 <li>KSPCB, Water Quality Data of Bengaluru Lakes for the Month of June 2026 (130 stations); Classification of Water Quality under NWMP, April 2025 to February 2026.</li>
-<li>Copernicus Sentinel-2 Level-2A (COPERNICUS/S2_SR_HARMONIZED) and Cloud Score+ on Google Earth Engine; Dynamic World V1.</li>
-<li>OpenStreetMap water polygons (ODbL); Greater Bengaluru 2025 ward and corporation layers; the platform's cascade layer.</li>
-<li>KTCDA, List of Lakes in Bengaluru: ktcda.karnataka.gov.in/28/list-of-lakes-in-bengaluru/en.</li>
+<li>Copernicus Sentinel-2 Level-2A imagery, March 2017 to August 2026; Dynamic World land cover (Google and WRI).</li>
+<li>OpenStreetMap water polygons; Greater Bengaluru 2025 ward and corporation layers; Neer Vazhvu's drainage-network layer.</li>
 <li>Programme rows: Deccan Herald, 17 July 2025, "BBMP allocates Rs 50 crore to develop 24 lakes"; 21 June 2025, "Karnataka Govt approves Rs 80 crore to resume desilting work" (Bellandur); 17 November 2025, "Bellandur Lake rejuvenation pushed to March 2026"; 27 February 2026, "Authority plans revival of drained city lakes"; Citizen Matters, 3 March 2020, "BDA concretises restoration of Bellandur Lake"; Newsfirst, 18 February 2026, "Ulsoor Lake drained for Rs 4-crore mega desilting"; SANDRP, 10 February 2026, "Bengaluru Lakes 2025"; NGT OA 125/2017, orders of 6 December 2018 and 12 March 2021.</li>
-<li>Methodology: Neer Vazhvu, Satellite monitoring of Bengaluru lakes, methodology note v0 (3 September 2026); the national restoration register plan, section 7.</li>
+<li>Method: Neer Vazhvu, satellite monitoring of Bengaluru lakes, methodology note (September 2026), available on request.</li>
 </ul>
 </body></html>"""
     OUTDIR.mkdir(exist_ok=True)
