@@ -140,27 +140,31 @@ def main() -> None:
             unassessed.append({"spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
                                "need_class": "Unassessed", "queue_reason": d["insufficient"].get("all", "no season with enough clear passes"), "note": fp["flags"]})
             continue
-        bands, notes = {}, []
+        bands, notes, shown = {}, [], {}
+        # the value's band drives the class; where the error straddles an edge the
+        # candidate bands are shown beside it (note 16.4 rule 3), value first
+        def take(key, value, err, edges, reverse=False):
+            b, amb = banded(value, err, edges, reverse)
+            bands[key] = b
+            shown[key] = f"{b}({amb})" if amb else b
+            if amb:
+                notes.append(f"{key} candidates {amb}")
         if "H2" in k:
-            b, amb = banded(k["H2"]["value"], k["H2"]["band"], C1_EDGES, reverse=True); bands["C1"] = b
-            if amb: notes.append(f"C1 candidates {amb}")
+            take("C1", k["H2"]["value"], k["H2"]["band"], C1_EDGES, reverse=True)
         if "B1" in k:
-            b, amb = banded(k["B1"]["built_share"], 0.02, C3_EDGES); bands["C3"] = b
-            if amb: notes.append(f"C3 candidates {amb}")
+            take("C3", k["B1"]["built_share"], 0.02, C3_EDGES)
         if "W2" in k:
-            b, amb = banded(k["W2"]["value"], k["W2"]["band"]["total"], C4_EDGES); bands["C4"] = b
-            if amb: notes.append(f"C4 candidates {amb}")
+            take("C4", k["W2"]["value"], k["W2"]["band"]["total"], C4_EDGES)
         if "Q1" in k:
-            b, amb = banded(k["Q1"]["value"], k["Q1"]["band"]["total"], C5_EDGES); bands["C5"] = b
-            if amb: notes.append(f"C5 candidates {amb}")
+            take("C5", k["Q1"]["value"], k["Q1"]["band"]["total"], C5_EDGES)
         ev = k.get("W4_events", {}).get("per_year", {})
         yrs = [y for y in ev if int(y) >= 2019]
         if d["coverage"]["passes_clear"] >= 8:
             per_year = statistics.mean([ev.get(str(y), 0) for y in range(2019, 2026)])
-            bands["C8"] = band_up(per_year, C8_EDGES)
+            bands["C8"] = band_up(per_year, C8_EDGES); shown["C8"] = bands["C8"]
         g2 = d["regulator"]["kspcb_class"]
         if g2 in BAND_VAL:
-            bands["G2"] = g2
+            bands["G2"] = g2; shown["G2"] = g2
         if not bands:
             unassessed.append({"spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
                                "need_class": "Unassessed", "queue_reason": "no computable condition band", "note": "; ".join(f"{a}: {b}" for a, b in d["insufficient"].items())})
@@ -238,7 +242,7 @@ def main() -> None:
         rows.append({
             "spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"], "ward": r["ward_name"],
             "footprint_ha": area, "season": d["current_season"]["label"], "clear_passes": d["current_season"]["clear_passes"],
-            "need_class": need, "condition_band": condition, "condition_inputs": " ".join(f"{a}={b}" for a, b in bands.items()),
+            "need_class": need, "condition_band": condition, "condition_inputs": " ".join(f"{a}={shown[a]}" for a in bands),
             "stakes": stakes + (" (lifted: cascade)" if lifted else ""), "tractability": tract, "urgency": urgency, "programme": programme,
             "programme_detail": d["programme"]["state"] or "", "programme_source_class": d["programme"]["source_class"] or "",
             "kspcb_class": g2 or "", "need_index": round(idx, 3), "confidence": conf,

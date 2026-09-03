@@ -425,7 +425,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The ordered list, fundable now first</h2>
-<p class="meta">W1 open water and W2 vegetated share are shares of the footprint in the lake's reading window (percent ± points); Q1 is the NDCI chlorophyll proxy on the open-water core (index units ± half the interquartile range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition inputs: C1 storage, C3 built, C4 vegetated, C5 chlorophyll proxy, C8 froth, G2 regulator.</p>
+<p class="meta">W1 open water and W2 vegetated share are shares of the footprint in the lake's reading window (percent ± points); Q1 is the NDCI chlorophyll proxy on the open-water core (index units ± half the interquartile range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition inputs: C1 storage, C3 built, C4 vegetated, C5 chlorophyll proxy, C8 froth, G2 regulator; a band followed by candidates in brackets, such as D(C/D), means the error band straddles a boundary and the value's band is shown with both candidates.</p>
 <table>
 <thead><tr><th class="num">#</th><th>Lake</th><th>Need class</th><th class="num">Condition (inputs)</th><th class="num">W1 open water</th><th class="num">W2 vegetated</th><th class="num">Q1 NDCI</th><th class="num">KSPCB</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
 <tbody>{rows_html}</tbody></table>
