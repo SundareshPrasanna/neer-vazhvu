@@ -6,7 +6,9 @@ one Sentinel-2 L2A scene at a time, one batched reduceRegions over every zone of
 every lake, instead of per-lake getInfo calls.
 
 Per scene, per pixel (Cloud Score+ cs_cdf >= 0.60 = clear):
-  class   froth  > algae or floating vegetation > open water > bed   (section 7.4)
+  class   froth > floating or emergent vegetation > open water > bed (section 7.4,
+          rule B of classifier-validation.json: mats need MNDWI <= 0, foam needs
+          NIR >= SWIR; green bloom water stays open water)
   indices NDCI (Q1), NDTI (Q3), B3/B4 (Q5), hue angle (Q7), NIR (glint screen)
           on open-water pixels only
 Per zone, per scene:
@@ -73,7 +75,8 @@ START_DEFAULT = "2017-03-28"
 # per-lake-type values from the step 6 validation are recorded next to the data
 T_WATER_MNDWI = 0.00
 T_VEG_NDVI = 0.25
-T_FROTH_BRIGHT, T_FROTH_SWIR, T_FROTH_NDVI = 0.18, 0.10, 0.10
+T_VEG_MNDWI_MAX = 0.00               # rule B: a mat is not SWIR-dark like water
+T_FROTH_BRIGHT, T_FROTH_SWIR, T_FROTH_NDVI = 0.18, 0.10, 0.10   # rule B adds NIR >= SWIR
 NDCI_P1_MARK = 0.10                  # Mishra and Mishra 2012 (about 25 mg per m3)
 # section 7.1 pass classes on the clear share of the footprint
 CLEAR_PASS, PARTIAL_PASS = 0.70, 0.30
@@ -93,7 +96,7 @@ HUE_POLY = (-164.83, 1139.90, -3006.04, 3677.75, -1979.71, 371.38)
 CLASS_LABELS = {0: "not_clear", 1: "open_water", 2: "algae", 3: "froth", 4: "bed"}
 IDX_BANDS = ["ndci", "ndti", "gr", "hue", "nir", "p1"]
 PCTS = [10, 50, 90]
-VERSION = "lake-state-v1"
+VERSION = "lake-state-v2"
 
 TO_UTM = Transformer.from_crs("EPSG:4326", CRS, always_xy=True).transform
 TO_WGS = Transformer.from_crs(CRS, "EPSG:4326", always_xy=True).transform
@@ -188,8 +191,13 @@ def preprocess(img: ee.Image) -> ee.Image:
              .add(a.pow(2).multiply(c2)).add(a.multiply(c1)).add(c0))
     hue = alpha.add(delta).rename("hue")
 
-    is_froth = bright.gt(T_FROTH_BRIGHT).And(swir.gt(T_FROTH_SWIR)).And(ndvi.lt(T_FROTH_NDVI))
-    is_algae = ndvi.gt(T_VEG_NDVI).And(is_froth.Not())
+    # rule B (classifier-validation.json, step 6): foam keeps NIR at or above SWIR
+    # (a bright dry lakebed has SWIR above NIR); a floating or emergent mat is
+    # SWIR-bright (MNDWI <= 0), while green bloom water (NDVI 0.25-0.45 with
+    # MNDWI well above 0) stays open water and carries its bloom in NDCI
+    is_froth = (bright.gt(T_FROTH_BRIGHT).And(swir.gt(T_FROTH_SWIR)).And(ndvi.lt(T_FROTH_NDVI))
+                .And(nir.gte(swir)))
+    is_algae = ndvi.gt(T_VEG_NDVI).And(mndwi.lte(T_VEG_MNDWI_MAX)).And(is_froth.Not())
     is_water = mndwi.gt(T_WATER_MNDWI).And(is_froth.Not()).And(is_algae.Not())
     cls = ee.Image(4).where(is_water, 1).where(is_algae, 2).where(is_froth, 3).where(clear.Not(), 0).rename("cls")
     comp = ee.Image.cat([cls.eq(k).rename(f"c{k}") for k in range(5)]).updateMask(swath)
@@ -427,10 +435,11 @@ def cmd_assemble(args) -> None:
             "dataset": S2_SR, "cloud_mask": f"{CS_PLUS} {CS_BAND} >= {CS_THRESH}",
             "atmospheric_correction": "Sen2Cor L2A as distributed (Tier 1, relative; no physical units)",
             "grid": {"crs": CRS, "scale_m": SCALE, "note": "B5 and B11 are 20 m native, resampled; NDCI and MNDWI are 20 m products"},
-            "classifier": {"precedence": "froth > algae > open_water > bed",
-                            "froth": f"mean(B3,B4,B8) > {T_FROTH_BRIGHT} and B11 > {T_FROTH_SWIR} and NDVI < {T_FROTH_NDVI}",
-                            "algae": f"NDVI > {T_VEG_NDVI} on non-froth", "open_water": f"MNDWI > {T_WATER_MNDWI} on the rest",
-                            "bed": "remainder inside the footprint", "thresholds_status": "initial (Bellandur-tuned); see classifier-validation.json"},
+            "classifier": {"rule": "B", "precedence": "froth > floating or emergent vegetation > open_water > bed",
+                            "froth": f"mean(B3,B4,B8) > {T_FROTH_BRIGHT} and B11 > {T_FROTH_SWIR} and NDVI < {T_FROTH_NDVI} and B8 >= B11",
+                            "algae": f"NDVI > {T_VEG_NDVI} and MNDWI <= {T_VEG_MNDWI_MAX} on non-froth (mats; bloom water stays open water)",
+                            "open_water": f"MNDWI > {T_WATER_MNDWI} on the rest",
+                            "bed": "remainder inside the footprint", "thresholds_status": "rule B chosen in step 6; evidence in classifier-validation.json"},
             "indices": {"ndci": "(B5-B4)/(B5+B4), Mishra and Mishra 2012", "ndti": "(B4-B3)/(B4+B3), Lacaux et al. 2007",
                         "gr": "B3/B4, Toming et al. 2016", "hue": "CIE hue angle, van der Woerd and Wernand 2018 MSI 10 m weights and polynomial (edge weights on B2 and B4)",
                         "p1_ndci": f"share of core open-water pixels with NDCI > {NDCI_P1_MARK}", "sampled_on": "open-water pixels of the core (footprint inset by ring_m)"},

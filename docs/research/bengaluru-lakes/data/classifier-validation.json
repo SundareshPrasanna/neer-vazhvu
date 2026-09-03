@@ -1,0 +1,31 @@
+{
+  "version": "classifier-validation-v1",
+  "date": "2026-09-03",
+  "method": "scripts/bengaluru-snapshot/validate_classifier.py compares class shares per clear pass under rule A (the Bellandur-tuned initial rule of the platform pipeline) and rule B on one lake of each type over a dry-season window, with the median NDVI, MNDWI, NIR and SWIR of the lakebed beside them; run_lake_state.py diagnose gives the per-pass percentiles. No ground photographs were used; Bellandur's known froth dates come from the platform's earlier validate run.",
+  "rules": {
+    "A": "froth = mean(B3,B4,B8) > 0.18 and B11 > 0.10 and NDVI < 0.10; vegetation = NDVI > 0.25 on non-froth; open water = MNDWI > 0 on the rest; bed = remainder",
+    "B": "froth as A and B8 >= B11 (foam absorbs SWIR; a bright dry lakebed has SWIR above NIR); vegetation = NDVI > 0.25 and MNDWI <= 0 on non-froth (a floating or emergent mat is SWIR-bright; green bloom water with NDVI 0.25 to 0.45 and MNDWI well above 0 stays open water and carries its bloom in NDCI); open water = MNDWI > 0 on the rest; bed = remainder"
+  },
+  "chosen": "B",
+  "evidence": [
+    {"lake": "gba-bbmp-155 Jakkur (mixed, bloom-prone)", "window": "2026-02-01 to 2026-03-16", "finding": "Rule A read 0 to 1% open water on eight passes and 81% on 26 Feb, flipping with the orbit: the lakebed had MNDWI 0.28 to 0.48 (water) with NDVI 0.35 to 0.46 (green bloom water), so the NDVI-first precedence classed the whole lake as mats whenever NDVI crossed 0.25. Rule B reads 73 to 83% open water on every pass with 6 to 21% mats, and NDCI on the core of 0.33 to 0.54 carries the bloom. The Feb 2026 flip was an artefact, not a de-weeding event."},
+    {"lake": "gba-bbmp-052 Ulsoor (open)", "window": "2026-02-01 to 2026-03-16", "finding": "Rule B reads 75, 69, 60, 41, 17, 14, 3, 2, 2, 2% open water across the window with MNDWI falling from 0.47 to -0.28 and SWIR rising from 0.06 to 0.22: a drain-down to a bright dry bed (the lake is on the 2025-26 NDMF and BBMP works lists). Rule A misread 6 Feb as 74% mats (bloom water) and 26 Feb as 34% froth (dry bed, SWIR above NIR); rule B gives 21% mats and 8% froth on those dates."},
+    {"lake": "gba-bda-001 Bellandur (choked)", "window": "2026-02-01 to 2026-03-16 and 2025-03-10 to 2025-04-05", "finding": "Lakebed shares agree within 2 points between rules (mats 46 to 64%, MNDWI -0.19 to -0.40, NDVI 0.27 to 0.38): hyacinth mats are SWIR-bright and rule B keeps them. Lakebed froth under A (1 to 5%) falls to 0 to 1% under B; the weir sub-zone clipped to the footprint reads 0% froth on the platform's known froth dates (23 Mar 2025, 16 and 21 Feb 2026), which shows the foam sits at and below the weir outside the lake polygon, so outflow sub-zones are kept as whole circles."},
+    {"lake": "gba-bbmp-059 Ibblur (seasonally dry)", "window": "2026-02-01 to 2026-03-16", "finding": "A dry bright bed with NIR about equal to SWIR: froth under A 9 to 24%, under B 5 to 14%. Some false froth remains on dry beds under B; froth counts stay a lower bound on wet lakes and are not reported for lakes of the dry type."},
+    {"lake": "gba-bbmp-100 Konappana Agrahara (small, 165 pixels)", "window": "2026-02-01 to 2026-03-16", "finding": "Rules agree within 3 points on nine of ten passes; on 10 Mar rule A read 66% vegetation against 50% under B with MNDWI -0.12. Small lakes carry the wide band regardless."}
+  ],
+  "allowance_points": {"high": 2, "medium": 5, "low": 10, "basis": "rule A versus B agreement on Bellandur (2 points); orbit-to-orbit spread of open water on Jakkur under rule B (about 5 points); the note's pre-validation figure (10 points)"},
+  "types": {
+    "open": {"class": "medium", "validated_on": "gba-bbmp-052 Ulsoor"},
+    "choked": {"class": "medium", "validated_on": "gba-bda-001 Bellandur"},
+    "mixed": {"class": "medium", "validated_on": "gba-bbmp-155 Jakkur"},
+    "small": {"class": "medium", "validated_on": "gba-bbmp-100 Konappana Agrahara"},
+    "dry": {"class": "medium", "validated_on": "gba-bbmp-059 Ibblur", "froth_not_reported": true},
+    "no-data": {"class": "low"}
+  },
+  "lakes": {
+    "gba-bda-001": {"class": "high", "basis": "known froth dates from the platform's earlier validate run; rules agree within 2 points"}
+  },
+  "type_rule": "from the median composition over all clear passes: fewer than 100 interior pixels = small; open water >= 50% = open; vegetation >= 50% = choked; bed >= 50% = dry; else mixed",
+  "still_open": ["W3 mat versus scum split (FAI) not built; W2 includes emergent vegetation (typha, reeds) inside the footprint", "no confusion matrix against photographs or a sub-metre scene; the allowance figures stand in for it"]
+}
