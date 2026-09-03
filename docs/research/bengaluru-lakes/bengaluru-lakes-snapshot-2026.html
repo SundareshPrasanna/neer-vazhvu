@@ -8,10 +8,12 @@ h2 { font-size: 15px; margin: 18px 0 6px; padding-top: 6px; border-top: 2px soli
 h3 { font-size: 11.5px; margin: 12px 0 4px; }
 p { margin: 0 0 6px; }
 .brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; margin: 2px 0 18px; padding-bottom: 12px; border-bottom: 1px solid #e6e5e1; }
-.brand svg { width: 44px; height: 44px; }
-.brand .name { font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }
-.brand .tag { font-size: 11px; color: #52514e; }
-.brand .contact { font-size: 10px; color: #52514e; }
+.brand svg { width: 60px; height: 60px; }
+.brand .name { font-weight: 800; font-size: 30px; letter-spacing: -0.015em; color: #0b0b0b; }
+.brand .tag { font-size: 13px; font-weight: 600; color: #0b0b0b; letter-spacing: 0.02em; }
+.brand .contact { font-size: 11px; color: #52514e; }
+.why { border-left: 3px solid #2a78d6; padding: 4px 12px; margin: 10px 0 14px; font-size: 11px; }
+.why p { margin: 0 0 5px; }
 .sub { color: #52514e; }
 .meta, .muted { color: #8a8985; font-size: 9px; }
 .small { font-size: 9px; }
@@ -67,6 +69,12 @@ ul { margin: 2px 0 6px 16px; padding: 0; } li { margin-bottom: 2px; }
 <h1>Bengaluru Lakes Snapshot, monsoon 2026</h1>
 <p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 as relative, uncalibrated readings, with an order of priority for restoration funding. Reading window: <b>monsoon (Jun-Sep) 2026</b> for 173 of 180 assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to 30 August 2026; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 on the same method.</p>
 
+<div class="why">
+<p><b>What this snapshot is for.</b> Greater Bengaluru lists 210 lakes in the care of four agencies. Each is monitored in its own way, and no single reading covers all of them on the same footing, so a funder, a custodian or a lake group has no common basis on which to decide where the next rupee of restoration money does the most good.</p>
+<p>This snapshot reads every listed lake the same way, from free satellite imagery going back to 2017: how much of each lake is open water, vegetation or exposed bed, how green the water is, how much of its usual extent it holds, whether it is built over, and how it compares with its own past. It sets these beside the regulator's June 2026 classification and the works already on record, and orders the lakes by a published rule into classes a funder can act on: Fund now, Co-fund, Design first, and the rest.</p>
+<p>It is a starting point, not a verdict. Every reading carries its uncertainty and a confidence class, nothing is estimated where there is no observation, and the order improves with each edition, with ground sampling, and with surveyed boundaries.</p>
+</div>
+
 <div class="tiles">
 <div class="tile"><div class="label">Custody lakes on the KTCDA lists</div><div class="value">210</div><div class="sub">BBMP, BDA, Forest Department, BMRCL</div></div>
 <div class="tile"><div class="label">Assessed from satellite</div><div class="value">180</div><div class="sub">30 unassessed: no usable boundary at 10 m, or too few clear readings</div></div>
@@ -74,6 +82,7 @@ ul { margin: 2px 0 6px 16px; padding: 0; } li { margin-bottom: 2px; }
 <div class="tile"><div class="label">Fundable now</div><div class="value">46</div><div class="sub">Fund now 28 and Co-fund 18; Design first 53</div></div>
 </div>
 
+<div class="pb"></div>
 <div class="cols">
 <div>
 <h3>How to read a number in this report</h3>

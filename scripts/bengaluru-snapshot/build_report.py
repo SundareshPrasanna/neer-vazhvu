@@ -529,10 +529,12 @@ h2 {{ font-size: 15px; margin: 18px 0 6px; padding-top: 6px; border-top: 2px sol
 h3 {{ font-size: 11.5px; margin: 12px 0 4px; }}
 p {{ margin: 0 0 6px; }}
 .brand {{ display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; margin: 2px 0 18px; padding-bottom: 12px; border-bottom: 1px solid {GRID}; }}
-.brand svg {{ width: 44px; height: 44px; }}
-.brand .name {{ font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }}
-.brand .tag {{ font-size: 11px; color: {INK2}; }}
-.brand .contact {{ font-size: 10px; color: {INK2}; }}
+.brand svg {{ width: 60px; height: 60px; }}
+.brand .name {{ font-weight: 800; font-size: 30px; letter-spacing: -0.015em; color: {INK}; }}
+.brand .tag {{ font-size: 13px; font-weight: 600; color: {INK}; letter-spacing: 0.02em; }}
+.brand .contact {{ font-size: 11px; color: {INK2}; }}
+.why {{ border-left: 3px solid {C_BLUE}; padding: 4px 12px; margin: 10px 0 14px; font-size: 11px; }}
+.why p {{ margin: 0 0 5px; }}
 .sub {{ color: {INK2}; }}
 .meta, .muted {{ color: {INK3}; font-size: 9px; }}
 .small {{ font-size: 9px; }}
@@ -568,6 +570,12 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <h1>{esc(args.title)}</h1>
 <p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 as relative, uncalibrated readings, with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(date.fromisoformat(last_scene).strftime("%-d %B %Y"))}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 on the same method.</p>
 
+<div class="why">
+<p><b>What this snapshot is for.</b> Greater Bengaluru lists {n_custody} lakes in the care of four agencies. Each is monitored in its own way, and no single reading covers all of them on the same footing, so a funder, a custodian or a lake group has no common basis on which to decide where the next rupee of restoration money does the most good.</p>
+<p>This snapshot reads every listed lake the same way, from free satellite imagery going back to 2017: how much of each lake is open water, vegetation or exposed bed, how green the water is, how much of its usual extent it holds, whether it is built over, and how it compares with its own past. It sets these beside the regulator's June 2026 classification and the works already on record, and orders the lakes by a published rule into classes a funder can act on: Fund now, Co-fund, Design first, and the rest.</p>
+<p>It is a starting point, not a verdict. Every reading carries its uncertainty and a confidence class, nothing is estimated where there is no observation, and the order improves with each edition, with ground sampling, and with surveyed boundaries.</p>
+</div>
+
 <div class="tiles">
 {tile("Custody lakes on the KTCDA lists", f"{n_custody}", "BBMP, BDA, Forest Department, BMRCL")}
 {tile("Assessed from satellite", f"{n_ranked}", f"{n_unassessed} unassessed: no usable boundary at 10 m, or too few clear readings")}
@@ -575,6 +583,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 {tile("Fundable now", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Fund now {need_counts.get('Fund now', 0)} and Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
 </div>
 
+<div class="pb"></div>
 <div class="cols">
 <div>
 <h3>How to read a number in this report</h3>
