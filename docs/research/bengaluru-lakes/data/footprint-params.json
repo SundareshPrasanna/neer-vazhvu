@@ -1,0 +1,45 @@
+{
+  "version": "footprints-v1",
+  "computed_at": "2026-09-03T07:56:56.665479+00:00",
+  "date_range": [
+    "2017-03-28",
+    "2026-09-03"
+  ],
+  "dataset": "COPERNICUS/S2_SR_HARMONIZED",
+  "cloud_mask": "GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED cs_cdf >= 0.6",
+  "water_rule": "MNDWI (B3, B11) > 0.0 on clear pixels; no NDVI ceiling (lakebed, mats included)",
+  "occurrence_threshold": 0.05,
+  "occurrence_sensitivity": [
+    0.05,
+    0.1,
+    0.25,
+    0.5
+  ],
+  "min_clear_observations_per_pixel": 20,
+  "grid": {
+    "crs": "EPSG:32643",
+    "scale_m": 10,
+    "note": "B11 is 20 m native, resampled; the observed maximum is a 20 m product"
+  },
+  "halo_rule": {
+    "halos_m": [
+      250,
+      500,
+      1000
+    ],
+    "widen_when": "observed water within 15 m of the halo edge"
+  },
+  "exclusion": {
+    "other_osm_water_buffer_m": 15,
+    "duplicate_overlap_share": 0.1
+  },
+  "component_rule": "4-connected water within 20 m of the OSM polygon",
+  "footprint": "OSM polygon union observed-maximum component(s) after an opening of 10 m; simplified 1 m; slivers under one pixel dropped",
+  "ring_rule": {
+    "ring_m": 10,
+    "ring_m_large": 20,
+    "large_from_ha": 50
+  },
+  "confidence_rule": "medium when the observed maximum corroborates a verified OSM polygon; low when the assignment is unverified, no water was observed, or the observed water outside the polygon exceeds the polygon (raster-only boundary); never high (no survey boundary)",
+  "n_lakes": 176
+}

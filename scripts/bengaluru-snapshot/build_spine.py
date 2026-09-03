@@ -160,11 +160,8 @@ def main() -> None:
     for ri, row in enumerate(ktcda):
         key = f"{row['custodian']}#{row['serial']}"
         variants = aliases(row["name"])
-        if key in overrides:
-            o = overrides[key]
-            if o.get("osm_id", "").strip():
-                proposals.append((ri, osm_index[int(o["osm_id"])], "manual_override", 1.0, 0))
-            continue
+        # LMS lookup runs for every row, override or not: the point is the only
+        # location an unassessed row has, and the override only fixes the polygon
         hit = lms_lookup(variants)
         pt = None
         if hit:
@@ -175,6 +172,11 @@ def main() -> None:
                     lms_hits[ri] = hit
             except Exception:
                 pass
+        if key in overrides:
+            o = overrides[key]
+            if o.get("osm_id", "").strip():
+                proposals.append((ri, osm_index[int(o["osm_id"])], "manual_override", 1.0, 0))
+            continue
         chosen = None
         if pt is not None:
             best = None
