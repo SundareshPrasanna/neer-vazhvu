@@ -17,8 +17,9 @@ Per zone, per scene:
   sub-zones (optional gba-lakes-subzones.geojson, step 8) the same two reductions
 
 Two modes:
-  fetch     pull scene batches from GEE (one calendar month per request, cached
-            under .cache/bengaluru-snapshot/state/, resumable)
+  fetch     pull scene batches from GEE (chunks of about 13 scenes per request,
+            under the 5,000-row reply cap; cached under
+            .cache/bengaluru-snapshot/state/, resumable)
   assemble  turn the cache into one row per lake per pass with the section 7.8
             floors and 7.1 pass classes applied, write
             docs/research/bengaluru-lakes/data/lake-passes.csv.gz and
@@ -206,23 +207,32 @@ def collection(start: str, end: str, aoi) -> ee.ImageCollection:
 
 
 def per_scene(zones: ee.FeatureCollection):
-    comp_red = ee.Reducer.mean().combine(ee.Reducer.count(), sharedInputs=True)
-    idx_red = (ee.Reducer.mean().combine(ee.Reducer.percentile(PCTS), sharedInputs=True)
-               .combine(ee.Reducer.count(), sharedInputs=True))
-
-    def strip(part):
-        def _f(f):
-            return ee.Feature(None, f.toDictionary().set("part", part))
-        return _f
+    """One reduceRegions per scene over every zone: composition bands (unmasked
+    inside the swath) and index bands (masked to open water) together; the
+    reducer runs per band with each band's own mask (verified against separate
+    reductions on Bellandur and Jakkur, identical to 4 decimals)."""
+    red = (ee.Reducer.mean().combine(ee.Reducer.percentile(PCTS), sharedInputs=True)
+           .combine(ee.Reducer.count(), sharedInputs=True))
+    bands = [f"c{k}" for k in range(5)] + IDX_BANDS
 
     def _per(img):
         img = ee.Image(img)
         tag = {"t": img.get("t"), "img": img.get("img")}
-        a = (img.select([f"c{k}" for k in range(5)])
-             .reduceRegions(zones, comp_red, SCALE, CRS).map(strip("comp")))
-        b = (img.select(IDX_BANDS).reduceRegions(zones, idx_red, SCALE, CRS).map(strip("idx")))
-        return a.merge(b).map(lambda f: f.set(tag))
+        return (img.select(bands).reduceRegions(zones, red, SCALE, CRS)
+                .map(lambda f: ee.Feature(None, f.toDictionary().combine(tag))))
     return _per
+
+
+def scene_chunks(start: str, end: str, aoi, per_chunk: int) -> list[tuple[str, list[str]]]:
+    """Scenes over the AOI in date order, grouped so one request stays under
+    GEE's 5,000-element reply cap (rows = scenes x zones)."""
+    base = ee.ImageCollection(S2_SR).filterBounds(aoi).filterDate(start, end).sort("system:time_start")
+    ids = base.aggregate_array("system:index").getInfo()
+    out = []
+    for i in range(0, len(ids), per_chunk):
+        chunk = ids[i:i + per_chunk]
+        out.append((f"{chunk[0][:8]}_{i:05d}", chunk))
+    return out
 
 
 def month_windows(start: str, end: str) -> list[tuple[str, str]]:
@@ -259,29 +269,31 @@ def cmd_fetch(args) -> None:
     (CACHE / tag).mkdir(parents=True, exist_ok=True)
     zpx = zone_pixel_counts(zones, fc, tag)
     print(f"zone pixel counts: {len(zpx)} zones")
-    windows = month_windows(args.start, args.end)
-    print(f"fetch {len(zones)} zones, {len(windows)} month windows, cache {CACHE / tag}")
+    per_chunk = max(1, min(40, 4800 // len(zones)))
+    chunks = scene_chunks(args.start, args.end, aoi, per_chunk)
+    n_scenes = sum(len(c[1]) for c in chunks)
+    print(f"fetch {len(zones)} zones, {n_scenes} scenes in {len(chunks)} chunks of {per_chunk}, cache {CACHE / tag}", flush=True)
 
-    def work(win):
-        a, b = win
-        cp = CACHE / tag / f"{a}.json"
+    def work(chunk):
+        key, ids = chunk
+        cp = CACHE / tag / f"{key}.json"
         if cp.exists() and not args.force:
-            return win, "cached", None
+            return key, "cached", None
         t0 = time.time()
-        coll = collection(a, b, aoi)
+        coll = collection(args.start, args.end, aoi).filter(ee.Filter.inList("system:index", ids))
         feats = with_retry(lambda: ee.FeatureCollection(coll.map(fn)).flatten().getInfo())
         rows = [f["properties"] for f in feats["features"]]
         cp.write_text(json.dumps(rows))
-        return win, f"{len(rows)} rows", time.time() - t0
+        return key, f"{len(ids)} scenes {len(rows)} rows", time.time() - t0
 
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        futs = [ex.submit(work, w) for w in windows]
+        futs = [ex.submit(work, c) for c in chunks]
         for i, fut in enumerate(as_completed(futs), 1):
             try:
-                win, msg, dt = fut.result()
-                print(f"  [{i}/{len(windows)}] {win[0]} {msg}" + (f" {dt:.0f}s" if dt else ""), flush=True)
+                key, msg, dt = fut.result()
+                print(f"  [{i}/{len(chunks)}] {key} {msg}" + (f" {dt:.0f}s" if dt else ""), flush=True)
             except Exception as e:  # noqa: BLE001
-                print(f"  FAILED window: {e}", file=sys.stderr, flush=True)
+                print(f"  FAILED chunk: {e}", file=sys.stderr, flush=True)
 
 
 # ---- assemble --------------------------------------------------------------------
@@ -293,25 +305,35 @@ def cmd_assemble(args) -> None:
     only = set(args.only.split(",")) if args.only else None
     zones, meta = load_zones(only)
     tag = "all" if not only else "only-" + "-".join(sorted(only))[:60]
-    files = sorted(p for p in (CACHE / tag).glob("*.json") if p.name != "zone-pixels.json")
+    # the main cache first, then every supplementary tag (lakes re-fetched after a
+    # spine fix, sub-zones) whose rows override on (lake, scene, zone)
+    tags = [tag] if only else ["all"] + sorted(d.name for d in CACHE.iterdir() if d.is_dir() and d.name != "all")
+    files, zpx = [], {}
+    for t in tags:
+        if not (CACHE / t).exists():
+            continue
+        files += sorted(p for p in (CACHE / t).glob("*.json") if p.name != "zone-pixels.json")
+        zp = CACHE / t / "zone-pixels.json"
+        if zp.exists():
+            zpx.update(json.loads(zp.read_text()))
     if not files:
-        sys.exit(f"no cache under {CACHE / tag}; run fetch first")
-    zpx = json.loads((CACHE / tag / "zone-pixels.json").read_text())
-    # (spine_id, img) -> {zone kind -> {part -> props}}
-    recs: dict[tuple[str, str], dict] = defaultdict(lambda: defaultdict(dict))
+        sys.exit(f"no cache under {CACHE}; run fetch first")
+    # (spine_id, img) -> {zone kind -> props}
+    recs: dict[tuple[str, str], dict] = defaultdict(dict)
     for fp in files:
         for p in json.loads(fp.read_text()):
             zid = p.get("zone_id")
             if not zid:
                 continue
             sid, kind = zid.split("|", 1)
-            recs[(sid, p["img"])][kind][p["part"]] = p
+            recs[(sid, p["img"])][kind] = p
+    print(f"cache tags: {tags}")
     print(f"{len(files)} cache files, {len(recs)} lake-scene records")
 
     rows = []
     for (sid, img), zk in recs.items():
         m = meta.get(sid)
-        lb = zk.get("lakebed", {}).get("comp")
+        lb = zk.get("lakebed")
         if not m or not lb or lb.get("c0_count") in (None, 0):
             continue
         t = lb["t"]
@@ -335,7 +357,7 @@ def cmd_assemble(args) -> None:
         else:
             row["comp_ok"] = False
         # core indices (Q1, Q3, Q5, Q7) on open water
-        core = zk.get("core", {}).get("idx")
+        core = zk.get("core")
         n_ow = int(core.get("ndci_count") or 0) if core else 0
         row["core_ow_px"] = n_ow
         if core and n_ow >= MIN_CORE_OW_PX and pass_class == "clear":
@@ -348,10 +370,10 @@ def cmd_assemble(args) -> None:
         else:
             row["idx_ok"] = False
         # sub-zones: composition + index means, floors applied
-        for kind, parts in zk.items():
+        for kind, zp in zk.items():
             if kind in ("lakebed", "core"):
                 continue
-            c = parts.get("comp"); i = parts.get("idx")
+            c = i = zp
             if c and c.get("c0_count"):
                 sw = int(c["c0_count"]); cc0 = c.get("c0_mean") or 0.0; vp = int(round(sw * (1 - cc0)))
                 row[f"{kind}_valid_px"] = vp
