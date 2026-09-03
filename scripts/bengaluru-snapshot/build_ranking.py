@@ -46,11 +46,15 @@ from __future__ import annotations
 import csv
 import json
 import statistics
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_joins import name_aliases  # noqa: E402
+from build_spine import sim  # noqa: E402
 DATA = ROOT / "docs/research/bengaluru-lakes/data"
 LAKES = DATA / "lakes"
 VERSION = "ranking-v1"
@@ -124,6 +128,21 @@ def main() -> None:
                 break
         return n
 
+    kspcb = list(csv.DictReader(open(DATA / "kspcb-lakes-2026-06.csv")))
+    joined_serials = {j["kspcb_serial"] for j in csv.DictReader(open(DATA / "gba-lakes-joins.csv")) if j["kspcb_serial"]}
+
+    def station_anchor(name: str) -> str:
+        """A KSPCB station not joined to any footprint whose name agrees with a
+        polygon-less row: its coordinates anchor a hand-digitised boundary."""
+        best = None
+        for st in kspcb:
+            if st["serial"] in joined_serials:
+                continue
+            agree = max((sim(a, b) for a in name_aliases(name) for b in name_aliases(st["name"])), default=0)
+            if agree >= 0.85 and (best is None or agree > best[0]):
+                best = (agree, st)
+        return f"; KSPCB station '{best[1]['name']}' at {best[1]['lat']}, {best[1]['lon']} (Class {best[1]['use_based_class']}, June 2026)" if best else ""
+
     rows, unassessed = [], []
     for r in spine:
         sid = r["spine_id"]
@@ -131,7 +150,7 @@ def main() -> None:
             continue
         if sid not in fps:
             unassessed.append({"spine_id": sid, "name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"],
-                               "need_class": "Unassessed", "queue_reason": "no polygon at open resolution" + ("; LMS point on record" if r["lms_lat"] else "; no location on record"),
+                               "need_class": "Unassessed", "queue_reason": "no polygon at open resolution" + ("; LMS point on record" if r["lms_lat"] else "; no location on record") + station_anchor(r["ktcda_name"]),
                                "note": r["note"]})
             continue
         d = json.load(open(LAKES / f"{sid}.json"))
