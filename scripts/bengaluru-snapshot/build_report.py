@@ -72,14 +72,25 @@ def fig_map(fps, ranking, corps) -> str:
     need = {r["spine_id"]: r for r in ranking}
     geoms = {sid: shp_transform(TO_UTM, shape(g)) for sid, g in fps.items()}
     cg = [shp_transform(TO_UTM, shape(f["geometry"])) for f in corps]
+    # frame = the corporation outlines padded 3 km; the SVG takes the frame's own
+    # aspect so the map fills the page width; lakes beyond the frame are named
     xs, ys = [], []
-    for g in list(geoms.values()) + cg:
+    for g in cg:
         b = g.bounds; xs += [b[0], b[2]]; ys += [b[1], b[3]]
-    x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
-    W, H = 700, 430
-    sc = min((W - 20) / (x1 - x0), (H - 20) / (y1 - y0))
+    pad = 2000
+    x0, x1, y0, y1 = min(xs) - pad, max(xs) + pad, min(ys) - pad, max(ys) + pad
+    W = 700
+    H = int(W * (y1 - y0) / (x1 - x0))
+    sc = (W - 20) / (x1 - x0)
     def P(x, y):
         return (10 + (x - x0) * sc, H - 10 - (y - y0) * sc)
+    outside = []
+    for sid, g in list(geoms.items()):
+        c = g.centroid
+        if not (x0 <= c.x <= x1 and y0 <= c.y <= y1):
+            r = need.get(sid)
+            outside.append(f"{r['name']} ({r['need_class']})" if r else sid)
+            del geoms[sid]
     def path(g):
         d = []
         polys = g.geoms if hasattr(g, "geoms") else [g]
@@ -112,11 +123,13 @@ def fig_map(fps, ranking, corps) -> str:
         out.append(f'<rect x="{lx}" y="{ly + i * 14 - 8}" width="10" height="10" rx="2" fill="{col}"/>')
         out.append(text(lx + 14, ly + i * 14, k, 9, INK2))
     out.append(text(lx, ly + 4 * 14 + 2, "Numbers mark the first ten in the ordered list; lakes under 20 ha are drawn as dots", 8, INK3))
+    if outside:
+        out.append(text(lx, H - 6, "Beyond the frame: " + "; ".join(outside), 8, INK3))
     out.append("</svg>")
     return "".join(out)
 
 
-def fig_columns(items, title_y, W=320, H=150, colour=C_BLUE, ylabel="lakes"):
+def fig_columns(items, title_y, W=320, H=150, colour=C_BLUE, ylabel="lakes", labels=True):
     """Single-series columns with values on the caps."""
     n = len(items); mx = max((v for _, v in items), default=1) or 1
     L, R, T, B = 28, 8, 26, 26
@@ -132,19 +145,20 @@ def fig_columns(items, title_y, W=320, H=150, colour=C_BLUE, ylabel="lakes"):
         x = L + band * i + (band - bw) / 2
         h = (H - T - B) * v / mx
         out.append(f'<path d="M{x:.1f},{base} v{-h + 4 if h > 4 else 0:.1f} q0,-4 4,-4 h{bw - 8:.1f} q4,0 4,4 v{h - 4 if h > 4 else 0:.1f} z" fill="{colour}"/>')
-        out.append(text(x + bw / 2, base - h - 3, f"{v:g}", 9, INK, "middle"))
+        if labels:
+            out.append(text(x + bw / 2, base - h - 3, f"{v:g}", 9, INK, "middle"))
         out.append(text(x + bw / 2, base + 11, lab, 8, INK2, "middle"))
     out.append(text(L, 9, title_y, 8, INK3))
     out.append("</svg>")
     return "".join(out)
 
 
-def fig_stacked_area(series, W=560, H=150, title="") -> str:
+def fig_stacked_area(series, W=560, H=170, title="") -> str:
     """series: list of (label, colour, {ym: share}); shares of a common month list."""
     months = sorted({m for _, _, d in series for m in d})
     if not months:
         return ""
-    L, R, T, B = 30, 8, 10, 22
+    L, R, T, B = 30, 8, 30, 22
     pw, ph = W - L - R, H - T - B
     xi = {m: L + pw * i / max(1, len(months) - 1) for i, m in enumerate(months)}
     out = [svg_open(W, H)]
@@ -172,9 +186,9 @@ def fig_stacked_area(series, W=560, H=150, title="") -> str:
         out.append(text(xi[m0], H - 6, y, 8, INK2, "start"))
     lx = L
     for label, col, _ in series:
-        out.append(f'<rect x="{lx}" y="{T - 8}" width="9" height="9" rx="2" fill="{col}"/>')
-        out.append(text(lx + 12, T, label, 8, INK2))
-        lx += 12 + 6 * len(label) + 14
+        out.append(f'<rect x="{lx}" y="6" width="9" height="9" rx="2" fill="{col}"/>')
+        out.append(text(lx + 12, 14, label, 8, INK2))
+        lx += 12 + 5 * len(label) + 16
     out.append("</svg>")
     return "".join(out)
 
@@ -183,7 +197,7 @@ def fig_line(points, W=560, H=140, colour=C_BLUE, ylabel="open water share of th
     """points: list of (date, value 0-1)."""
     if not points:
         return ""
-    L, R, T, B = 30, 8, 12, 22
+    L, R, T, B = 30, 8, 22, 24
     pw, ph = W - L - R, H - T - B
     d0 = date.fromisoformat(points[0][0]); d1 = date.fromisoformat(points[-1][0])
     span = max(1, (d1 - d0).days)
@@ -197,12 +211,12 @@ def fig_line(points, W=560, H=140, colour=C_BLUE, ylabel="open water share of th
     for d, v in points:
         out.append(f'<circle cx="{X(d):.1f}" cy="{Y(v):.1f}" r="3.5" fill="{colour}" stroke="{SURFACE}" stroke-width="2"/>')
     for d, v in (marks or []):
-        out.append(text(X(d), Y(v) - 8, f"{d}: {int(v * 100)}%", 8, INK, "middle"))
+        out.append(text(min(max(X(d), L + 40), W - R - 40), T + 10, f"{d}: {int(v * 100)}%", 8, INK, "middle"))
     m = d0.replace(day=1)
     while m <= d1:
         out.append(text(X(m.isoformat()), H - 6, m.strftime("%b %y"), 8, INK2, "middle"))
         m = date(m.year + (m.month == 12), (m.month % 12) + 1, 1)
-    out.append(text(L, 8, ylabel, 8, INK3))
+    out.append(text(L, 9, ylabel, 8, INK3))
     out.append("</svg>")
     return "".join(out)
 
@@ -308,7 +322,7 @@ def main() -> None:
                 cov[r["date"][:7]][sid] += 1
     months = sorted(m for m in cov if m >= "2019-01")
     cov_items = [(m[2:4] if m.endswith("-01") else "", statistics.median(cov[m].values()) if cov[m] else 0) for m in months]
-    f_cov = fig_columns(cov_items, "median clear passes per lake per month, 2019 to date (year labels at January)", W=560, H=130)
+    f_cov = fig_columns(cov_items, "median clear passes per lake per month (year labels at January)", W=700, H=150, labels=False)
     sc_pts = []
     for r in ranking:
         if r["W2"] and r["Q1"]:
@@ -347,7 +361,7 @@ def main() -> None:
 
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(args.title)}</title>
 <style>
-@page {{ size: A4; margin: 14mm 14mm 16mm 14mm; }}
+@page {{ size: A4; margin: 14mm 14mm 18mm 14mm; @bottom-left {{ content: "Neer Vazhvu · {esc(args.title)}"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} @bottom-right {{ content: "neervazhvu.in"; font-family: Helvetica, Arial, sans-serif; font-size: 8px; color: {INK3}; }} }}
 * {{ box-sizing: border-box; }}
 body {{ font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: {INK}; margin: 0; font-size: 10.5px; line-height: 1.4; background: {SURFACE}; }}
 h1 {{ font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }}
@@ -379,13 +393,11 @@ tr {{ page-break-inside: avoid; }}
 .pb {{ page-break-before: always; }}
 .fig {{ max-width: 100%; height: auto; display: block; }}
 .cap {{ font-size: 9px; color: {INK2}; margin: 2px 0 10px; }}
-.footer {{ position: fixed; bottom: 0; left: 0; right: 0; font-size: 8px; color: {INK3}; display: flex; justify-content: space-between; background: {SURFACE}; border-top: 1px solid {GRID}; padding-top: 2px; }}
-body {{ padding-bottom: 6mm; }}
+p {{ orphans: 2; widows: 2; }}
 ol.top li {{ margin-bottom: 2px; }}
 ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 .key span {{ display: inline-block; margin-right: 10px; }}
 </style></head><body>
-<div class="footer"><span>Neer Vazhvu · {esc(args.title)}</span><span>Sentinel-2 L2A via Google Earth Engine (noncommercial), archive to {esc(last_scene)}; built {esc(as_of)}; {esc(state_params.get("version", ""))}, {esc(fp_params.get("version", ""))}, {esc(rank_params.get("version", ""))}</span></div>
 
 <div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">· India's Water Intelligence</span></div>
 <h1>{esc(args.title)}</h1>
@@ -401,7 +413,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <div class="cols">
 <div>
 <h3>How to read a number in this report</h3>
-<p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b> (methodology note v0, section 16). Shares of the footprint carry a binomial standard error on the effective pixel count plus the classifier allowance ({clf["allowance_points"]["high"]}, {clf["allowance_points"]["medium"]} or {clf["allowance_points"]["low"]} points by validation status); index values carry the interquartile range across the season's passes. A Health Card band is only assigned where the band is wider than the error; otherwise both candidate bands are listed. Nothing below an evidence floor is shown as a value.</p>
+<p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b>. The band is the reading's own uncertainty (sampling and classification for shares, spread across passes for indices). A Health Card band is assigned only where the band is wider than the error; otherwise both candidate bands are listed. Nothing below an evidence floor is shown as a value.</p>
 <h3>What this snapshot cannot say</h3>
 <p>Dissolved oxygen, BOD, COD, nutrients, coliform, metals and toxins have no optical signature; the regulator's Use Based Class (KSPCB, June 2026) is shown beside the satellite reading for {joined_kspcb} lakes and is never recomputed. Chlorophyll and turbidity are relative indices until a field calibration exists; no calibrated concentration appears here. The vegetation share includes floating mats and emergent reeds inside the footprint. Encroachment is read at 10 m from Dynamic World and needs a survey sketch or a sub-metre scene before any claim. Boundaries are OpenStreetMap polygons united with the observed water extent, not survey boundaries.</p>
 </div>
@@ -414,7 +426,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The city in one view</h2>
-{f_map}<p class="cap">Fixed footprints of the {n_ranked} assessed lakes on the five 2025 corporation outlines, coloured by Need class. Footprint = OpenStreetMap polygon united with the Sentinel-2 observed maximum water extent (occurrence at or above 5% of clear observations, 2017 to date).</p>
+<div style="width:78%">{f_map}</div><p class="cap">Fixed footprints of the {n_ranked} assessed lakes on the five 2025 corporation outlines, coloured by Need class. Footprint = mapped boundary united with the observed water extent since 2017.</p>
 <div class="cols">
 <div>{f_cond}<p class="cap">Condition band = the worse of the median and, where two or more inputs read E, the worst input; inputs are the share of the observed maximum held (C1), built share inside the footprint (C3), vegetated share (C4), the chlorophyll proxy (C5), froth events (C8) and the regulator's class (G2).</p></div>
 <div>{f_need}<p class="cap">Need class by the register's rules (plan section 7.2): Condition D or E with a tractable boundary and no works on record reads Fund now (a budget line alone does not change it); with works on record, Co-fund; with a boundary or built-up question, or no water held in the window, Design first; a single severe input against an otherwise sound reading is a flag for a closer read (Watch / verify), not a verdict.</p>
@@ -425,43 +437,36 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The ordered list, fundable now first</h2>
-<p class="meta">W1 open water and W2 vegetated share are shares of the footprint in the lake's reading window (percent ± points); Q1 is the NDCI chlorophyll proxy on the open-water core (index units ± half the interquartile range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition inputs: C1 storage, C3 built, C4 vegetated, C5 chlorophyll proxy, C8 froth, G2 regulator; a band followed by candidates in brackets, such as D(C/D), means the error band straddles a boundary and the value's band is shown with both candidates.</p>
+<p class="meta">W1 open water and W2 vegetated share are shares of the footprint in the lake's reading window (percent ± points); Q1 is the chlorophyll proxy on the open-water core (index units ± half the spread across passes). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition inputs: C1 storage, C3 built, C4 vegetated, C5 chlorophyll proxy, C8 froth, G2 regulator; a band followed by candidates in brackets, such as D(C/D), means the error band straddles a boundary and the value's band is shown with both candidates.</p>
 <table>
-<thead><tr><th class="num">#</th><th>Lake</th><th>Need class</th><th class="num">Condition (inputs)</th><th class="num">W1 open water</th><th class="num">W2 vegetated</th><th class="num">Q1 NDCI</th><th class="num">KSPCB</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
+<thead><tr><th class="num">#</th><th>Lake</th><th>Need class</th><th class="num">Condition (inputs)</th><th class="num">W1 open water</th><th class="num">W2 vegetated</th><th class="num">Q1 chlorophyll proxy</th><th class="num">KSPCB</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
 <tbody>{rows_html}</tbody></table>
 
 <div class="pb"></div>
 <h2>What continuous monitoring looks like</h2>
 <p>Three lakes with named sub-zones, monthly medians of the surface composition from 2019 (a month with fewer than two clear passes is a gap, not a value). The monsoon months are thin on every lake, which is what an honest optical record looks like.</p>
 {"".join(f'<h3>{esc(n)}</h3>{s}' for n, s in series_figs)}
-<p class="cap">Composition classes per pass under the step 6 rule: open water (MNDWI above 0), vegetation (NDVI above 0.25 with MNDWI at or below 0: mats and emergent growth; bloom water stays open water and carries its bloom in NDCI), froth (bright, flat, NIR at or above SWIR), bed (remainder). Sentinel-2 L2A, Cloud Score+ at 0.60, 10 m grid.</p>
+<p class="cap">Surface classes per pass: open water, vegetation (mats and emergent growth; bloom water stays open water and shows in the chlorophyll proxy), froth, and exposed bed. Sentinel-2, 10 m.</p>
 <h3>Ulsoor, November 2025 to August 2026</h3>
 {f_ulsoor}
-<p class="cap">Open-water share of the footprint per clear pass. The lake is on the 2025-26 NDMF and BBMP works lists; the February 2026 drain-down reads as works in progress, and the series will show the refill.</p>
+<p class="cap">Open-water share of the footprint per clear pass. The lake was drained from February 2026 for its NDMF desilting works; the series will show the refill.</p>
 
+<div class="pb"></div>
+<h3>Coverage, 2019 to date</h3>
+{f_cov}<p class="cap">Median clear passes per lake per month. The monsoon gap is reported, never filled; the archive over Bengaluru is dense from 2019.</p>
 <div class="cols">
-<div>{f_scatter}<p class="cap">Assessed lakes with a computable chlorophyll proxy: vegetated share against NDCI on the open-water core, reading window medians. Lakes cluster in two groups, the mat-covered and the bloom-prone open lakes; both are eutrophication, with different measures.</p></div>
-<div>{f_cov}<p class="cap">Coverage: median clear passes per lake per month. The monsoon gap is reported, never filled; two-satellite operation began March 2017 and the L2A archive over Bengaluru is dense only from 2019.</p>
-<p><b>Confidence of the assessed lakes' composition reading:</b> {", ".join(f"{k} {v}" for k, v in sorted(conf_counts.items()))}. Class rules: interior pixels after the shoreline ring, share of the lake within 100 m of shore, clear passes in the window, baseline observations, classifier validation on the lake's type, boundary provenance; the worst applies.</p></div>
+<div>{f_scatter}<p class="cap">Assessed lakes with a computable chlorophyll proxy: vegetated share against the chlorophyll proxy on the open-water core, reading window medians. Two groups: mat-covered lakes and bloom-prone open lakes; both are eutrophication, with different measures.</p></div>
+<div><h3>Confidence</h3><p>Assessed lakes by the weakest of their open-water, vegetation and chlorophyll readings: {", ".join(f"{k} {v}" for k, v in sorted(conf_counts.items()))}.</p>
+<p>A confidence class is the weakest of six components: pixels inside the lake after the shoreline ring, the share of the lake close to shore, clear passes in the window, the length of the lake's own record, validation of the surface classes on the lake's type, and the boundary's provenance. High needs every component High, which a 10 m sensor cannot give a lake under about 20 ha and a mapped boundary cannot give any lake; Medium is the ceiling for the large lakes until a surveyed boundary and field calibration exist. The monsoon window also thins the clear passes; the post-monsoon edition will lift the pass component for most lakes.</p></div>
 </div>
 
 <div class="pb"></div>
 <h2>Method, in brief</h2>
-<div class="cols">
-<div>
-<p><b>Universe.</b> The Karnataka Tank Conservation and Development Authority custody lists for Bengaluru (BBMP, BDA, Forest Department, BMRCL): {n_custody} lakes. Each is joined to an OpenStreetMap water polygon, the BBMP Lake Management System point, the 2025 ward and corporation, and the platform's cascade layer; hand decisions are recorded in an override file.</p>
-<p><b>Footprint.</b> {esc(fp_params["footprint"])}. Water occurrence: {esc(fp_params["water_rule"])}; threshold {fp_params["occurrence_threshold"]}. Shoreline ring {fp_params["ring_rule"]["ring_m"]} m, {fp_params["ring_rule"]["ring_m_large"]} m from {fp_params["ring_rule"]["large_from_ha"]} ha. Boundary confidence: Medium where the observed water corroborates the mapped polygon, Low where the assignment is unverified, no water was observed, or the observed water outside the polygon exceeds it; never High, because no survey boundary is used.</p>
-<p><b>Per pass.</b> {esc(state_params["dataset"])}, cloud mask {esc(state_params["cloud_mask"])}, {esc(state_params["atmospheric_correction"])}. A pass is clear for a lake at {state_params["pass_rule"]["clear"]}; between 30% and 70% it contributes composition only. Floors: {state_params["floors"]["composition_valid_px"]} valid pixels for a composition share, {state_params["floors"]["index_core_open_water_px"]} open-water pixels on the core for an index, four clear passes for a seasonal value, three prior seasons and ten observations for an own-baseline percentile.</p>
-<p><b>Indices.</b> NDCI (B5, B4; Mishra and Mishra 2012), NDTI (B4, B3; Lacaux et al. 2007), B3/B4 (Toming et al. 2016), CIE hue angle (van der Woerd and Wernand 2018), all on open-water pixels of the core, all Tier 1. NDCI and MNDWI are 20 m products.</p>
-</div>
-<div>
-<p><b>Classifier.</b> Rule B, chosen in a validation on one lake of each type (open, vegetated, mixed, small, seasonally dry) against the platform's earlier rule: {esc(clf["evidence"][0]["finding"][:330])}</p>
-<p><b>Bands and errors.</b> Health Card bands (Wetland Health Card convention) for storage, built share, vegetated share and froth events; Mishra's NDCI marks, indicative on Sentinel-2, for the chlorophyll proxy. Error model and confidence rules: methodology note v0, section 16 and Appendix D (eight components; binomial sampling error on an effective pixel count of one quarter of the interior pixels; percentile-rank error from the baseline count).</p>
-<p><b>Need class and order.</b> {esc(rank_params["need_class_rule"])}; Stakes: {esc(rank_params["stakes_rule"])}; Tractability: {esc(rank_params["tractability_rule"])}; Urgency: {esc(rank_params["urgency_rule"])}. Rank: {esc(rank_params["rank_rule"])}. Funding unit: {esc(rank_params["funding_unit"])}.</p>
-<p><b>Programme state</b> is press-reported (Deccan Herald, 17 July 2025, on the BBMP 2025-26 budget; SANDRP, 10 February 2026) and carries the Low documentary class until a tender or order is on record.</p>
-<p><b>Compute and licence.</b> Copernicus Sentinel-2 (free and open) through Google Earth Engine on the noncommercial tier, for this snapshot only; Dynamic World (CC BY 4.0); OpenStreetMap (ODbL); KSPCB and KTCDA publications reproduced with attribution.</p>
-</div>
-</div>
+<p><b>Universe.</b> The Karnataka Tank Conservation and Development Authority custody lists for Bengaluru (BBMP, BDA, Forest Department, BMRCL): {n_custody} lakes, each joined to a mapped boundary, the BBMP Lake Management System point, the 2025 ward and corporation, the platform's cascade layer, the regulator's June 2026 station, and the programme rows on record.</p>
+<p><b>Sensor.</b> Copernicus Sentinel-2 (10 m, a pass every two to three days over Bengaluru), every scene from March 2017 to the reading date, cloud-masked pixel by pixel; observed passes only, nothing interpolated.</p>
+<p><b>Per lake, per pass.</b> A fixed footprint (the mapped boundary united with the observed water extent); the share of the footprint reading as open water, vegetation (mats and emergent growth), froth and exposed bed; and on the open water, relative indices for chlorophyll, turbidity, coloured organic matter and apparent colour. These are Tier 1 (relative) readings: comparable across lakes and years, not concentrations.</p>
+<p><b>Per lake, per window.</b> Seasonal medians with their spread, percentile against the lake's own same-season history, water area and share of the observed maximum, froth events per year, built share inside the footprint, and the confidence class. Health Card bands are assigned only where the band is wider than the error.</p>
+<p><b>Need class and order.</b> The register's published rules over four axes (Condition, Stakes, Tractability, Urgency) with the programme on record; lakes are ordered within the city as the funding unit. The full method, error model and rule set are in the Neer Vazhvu methodology note, available on request.</p>
 
 <h2>Unassessed at open resolution ({n_unassessed})</h2>
 <p class="meta">Listed after the ordered list with the queue reason, per the register rule. A hand-digitised boundary or a sub-metre scene moves a lake into the assessed set.</p>
