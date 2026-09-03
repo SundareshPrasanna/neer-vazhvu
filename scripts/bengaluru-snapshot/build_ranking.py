@@ -282,15 +282,36 @@ def main() -> None:
                 need = "Design first"; notes.append("single severe input C1: little or no water in the reading window; storage and inflow to scope")
             else:
                 need = "Watch / verify"; notes.append(f"single severe input {lone_e[0]}: flagged for a closer read, not a verdict")
-        reason = {
-            "Fund now": f"Condition {condition}, boundary tractable, nothing on record",
-            "Co-fund": f"Condition {condition}; {'works on record' if programme == 'works underway' else 'budget line on record'}",
-            "Intervene early": "Condition C and rising against its own history",
-            "Design first": ("no open water observed since 2017" if never else f"Condition {condition}, built-up or boundary question" if tract in ("Low", "Unknown") else "storage to scope before capital"),
-            "Watch / verify": ("works on record" if programme == "works underway" else "one severe input, not a verdict" if len(lone_e) == 1 else "steady; monitor"),
-            "Maintain": f"Condition {condition}; renewable upkeep and monitoring",
-            "Steward": f"Condition {condition}; protection and monitoring only",
-        }[need]
+        # the reason names what drives the condition: every input at D or E, in
+        # words with its value; then the programme fact that sets the class
+        drivers = []
+        if bands.get("C4", "") in ("D", "E") and "W2" in k:
+            drivers.append(f"vegetation {100 * k['W2']['value']:.0f}%")
+        if bands.get("C1", "") in ("D", "E") and "H2" in k:
+            drivers.append(f"holds {100 * k['H2']['value']:.0f}% of its extent")
+        if bands.get("C5", "") in ("D", "E") and "Q1" in k:
+            drivers.append(f"chlorophyll proxy {k['Q1']['value']:.2f}")
+        if bands.get("C3", "") in ("D", "E") and b1 is not None:
+            drivers.append(f"built {100 * b1:.0f}%")
+        if bands.get("C8", "") in ("D", "E"):
+            drivers.append(f"froth {per_year:.0f}/yr")
+        if bands.get("G2", "") in ("D", "E"):
+            drivers.append(f"regulator {g2}")
+        if never:
+            drivers = ["no open water seen since 2017"]
+        prog_note = {"works underway": "works on record", "proposed": "budget line on record", "none": "nothing on record"}[programme]
+        if need in ("Fund now", "Co-fund", "Design first"):
+            reason = ("; ".join(drivers) if drivers else f"condition {condition}") + f"; {prog_note}"
+            if need == "Design first" and tract in ("Low", "Unknown") and not never:
+                reason += "; boundary or built-up question"
+        elif need == "Intervene early":
+            reason = "condition C, rising against its own history; " + prog_note
+        elif need == "Watch / verify":
+            reason = (prog_note if programme == "works underway" else (drivers[0] + " alone, not a verdict") if len(lone_e) == 1 and drivers else "steady; monitor")
+        elif need == "Maintain":
+            reason = f"condition {condition}; upkeep and monitoring"
+        else:
+            reason = f"condition {condition}; protection and monitoring only"
         idx = LENS["condition"] * cond_v + LENS["urgency"] * URGENCY_VAL[urgency] + LENS["stakes"] * CLASS_VAL[stakes]
         confs = [k[x]["confidence"] for x in ("W1", "W2", "Q1") if x in k]
         conf = max(confs, key=lambda c: CONF_ORDER[c]) if confs else "insufficient"

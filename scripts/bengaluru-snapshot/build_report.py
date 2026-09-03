@@ -388,7 +388,6 @@ def main() -> None:
     if szp.exists():
         for f in json.load(open(szp))["features"]:
             subzones[f["properties"]["spine_id"]].append(f)
-    hotspots = {p.stem: json.load(open(p)) for p in (DATA / "hotspots").glob("*.json")} if (DATA / "hotspots").exists() else {}
 
     n_custody = sum(1 for r in spine if r["match_method"] != "duplicate")
     n_ranked, n_unassessed = len(ranking), len(unassessed)
@@ -475,11 +474,7 @@ def main() -> None:
         mc = monthly_composition(passes, r["spine_id"])
         other = {m: mc["frac_bed"].get(m, 0) + mc["frac_froth"].get(m, 0) for m in mc["frac_bed"]}
         series = fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, reeds, scum)", C_AQUA, mc["frac_algae"])], W=560, H=150)
-        hs = hotspots.get(r["spine_id"])
-        hot = fig_hotspot(hs, fps[r["spine_id"]]) if hs else ""
-        hot_cap = ("Chlorophyll proxy per pixel, median of the last twelve months' clear passes on open water. Dark cells are where a bloom sits most of the year: the placement signal for aerators, wetlands and inlet treatment." if hot
-                   else f"Hotspot map withheld: under 25 open-water passes per pixel in the last twelve months" + (f" (median {hs['median_pass_count']})" if hs else "") + ".")
-        chip = fig_footprint(fps[r["spine_id"]], subzones.get(r["spine_id"], []))
+        chip = fig_footprint(fps[r["spine_id"]], subzones.get(r["spine_id"], []), W=260)
         cust = sp.get("ktcda_name", r["ktcda_name"])
         return f"""<div class="pb"></div>
 <h2>{r["rank"]}. {esc(r["name"])}</h2>
@@ -505,8 +500,7 @@ def main() -> None:
 <tr><td>Boundary</td><td class="num">{esc(fpp[r["spine_id"]]["boundary_provenance"].replace("_", " "))}, confidence {esc(fpp[r["spine_id"]]["boundary_confidence"])}</td></tr>
 </tbody></table>
 </div>
-<div>{chip}<p class="cap">Fixed footprint{(" with named sub-zones (" + ", ".join(z["properties"]["key"] for z in subzones.get(r["spine_id"], [])) + ")") if subzones.get(r["spine_id"]) else ""}.</p>
-{hot}<p class="cap">{hot_cap}</p></div>
+<div>{chip}<p class="cap">Fixed footprint{(" with named sub-zones (" + ", ".join(z["properties"]["key"] for z in subzones.get(r["spine_id"], [])) + ")") if subzones.get(r["spine_id"]) else ""}: the mapped boundary united with the observed water extent since 2017. All condition inputs for this lake are in the appendix.</p></div>
 </div>
 <h3>Surface composition, monthly medians 2019 to date</h3>
 {series}
@@ -604,7 +598,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The ordered list, fundable now first</h2>
-<p class="meta">Open water and vegetation cover (mats, reeds, scum) are shares of the footprint in the lake's reading window (percent ± points); the chlorophyll proxy is read on the open water (index units ± half the spread across passes; above 0.2 is the bloom range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition A (best) to E (worst) is the worse of the median and the worst repeated input over storage, built share, vegetation, chlorophyll, froth and the regulator's class; the inputs per lake are in the appendix.</p>
+<p class="meta">Open water and vegetation cover (mats, reeds, scum) are shares of the footprint in the lake's reading window (percent ± points); the chlorophyll proxy is read on the open water (index units ± half the spread across passes; above 0.2 is the bloom range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition A (best) to E (worst) is the worse of the median and the worst repeated input over storage, built share, vegetation, chlorophyll, froth and the regulator's class. The reason under each Need class names the inputs that drive it; every input per lake, with its band, is in the appendix at the end.</p>
 <table>
 <colgroup><col style="width:3%"><col style="width:21%"><col style="width:22%"><col style="width:6%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:5%"><col style="width:9%"><col style="width:4%"></colgroup>
 <thead><tr><th class="num">#</th><th>Lake</th><th>Need class and why</th><th class="num">Condition</th><th class="num">Open water</th><th class="num">Vegetation cover</th><th class="num">Chlorophyll proxy</th><th class="num">KSPCB class</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
