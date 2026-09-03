@@ -250,7 +250,7 @@ def monthly_composition(passes, sid, start="2019-01"):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-pdf", action="store_true")
-    ap.add_argument("--title", default="Bengaluru Lakes Snapshot, post-monsoon 2026")
+    ap.add_argument("--title", default="Bengaluru Lakes Snapshot, monsoon 2026")
     args = ap.parse_args()
 
     ranking = list(csv.DictReader(open(DATA / "gba-lakes-ranking.csv")))
@@ -389,7 +389,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">· India's Water Intelligence</span></div>
 <h1>{esc(args.title)}</h1>
-<p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 at Tier 1 (relative, uncalibrated), with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(last_scene)}; observed passes only, nothing interpolated.</p>
+<p class="sub">Every lake on the Greater Bengaluru custody lists, read from Sentinel-2 at Tier 1 (relative, uncalibrated), with an order of priority for restoration funding. Reading window: <b>{esc(main_season)}</b> for {seasons.get(main_season, 0)} of {n_ranked} assessed lakes (each lake's own window is named in the list). Archive 28 March 2017 to {esc(last_scene)}; observed passes only, nothing interpolated. A post-monsoon edition follows in November 2026 from the same pipeline.</p>
 
 <div class="tiles">
 {tile("Custody lakes on the KTCDA lists", f"{n_custody}", "BBMP, BDA, Forest Department, BMRCL; one duplicate row removed")}

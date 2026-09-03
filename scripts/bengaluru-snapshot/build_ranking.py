@@ -208,8 +208,8 @@ def main() -> None:
         # stakes
         area = float(fp["footprint_area_ha"])
         stakes = "High" if area >= 20 else "Medium" if area >= 5 else "Low"
-        o = osm_of[sid]; cp = cascade.get(o, {})
-        n_down = custody_downstream(o)
+        o = osm_of.get(sid); cp = cascade.get(o, {}) if o else {}
+        n_down = custody_downstream(o) if o else 0
         bld = cp.get("buildings_in_catchment") or 0
         lifted = False
         if (n_down >= 2 or bld >= 5000) and stakes != "High":

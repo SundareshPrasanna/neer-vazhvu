@@ -295,7 +295,7 @@ def main() -> None:
         shore100 = 1 - fp_u.buffer(-100).area / fp_u.area
         wet_share = p.get("wet_mean")
         clear_med = p.get("clear_median")
-        unverified = "unverified" in (row.get("note") or "").lower()
+        unverified = "unverified" in (row.get("note") or "").lower() or row["match_method"] == "hand_digitised"
         never_water = comp_u is None
         dominates = comp_u is not None and obs_outside_osm_ha > osm_u.area / 1e4
         # Low when the boundary rests on one source alone: an unverified mapping,
@@ -314,15 +314,16 @@ def main() -> None:
             flags.append("assignment_unverified")
         adjacent = []
         fp_wgs_probe = wgs(fp_u.buffer(EXCL_BUFFER_M))
+        own_osm = int(row["osm_id"]) if row["osm_id"] else None
         for j in tree.query(fp_wgs_probe):
             pj = polys[j]["properties"]
-            if pj["osm_id"] == int(row["osm_id"]):
+            if pj["osm_id"] == own_osm:
                 continue
             if poly_geoms[j].intersects(fp_wgs_probe):
                 adjacent.append(f"{pj['osm_id']}:{pj.get('name') or ''}")
         props = {
             "spine_id": sid, "ktcda_key": row["ktcda_key"], "ktcda_name": row["ktcda_name"],
-            "ktcda_custodian": row["ktcda_custodian"], "osm_id": int(row["osm_id"]), "osm_name": row["osm_name"],
+            "ktcda_custodian": row["ktcda_custodian"], "osm_id": int(row["osm_id"]) if row["osm_id"] else None, "osm_name": row["osm_name"],
             "corporation": row["corporation"], "ward_name": row["ward_name"],
             "osm_area_ha": round(osm_u.area / 1e4, 2),
             "observed_max_area_ha": round(comp_u.area / 1e4, 2) if comp_u is not None else 0.0,
@@ -340,7 +341,7 @@ def main() -> None:
             "interior_px_20m": int(interior.area / 400),
             "ring_share": round(1 - interior.area / fp_u.area, 3),
             "shore100_share": round(shore100, 3),
-            "boundary_provenance": "osm+observed_max" if comp_u is not None else "osm_only",
+            "boundary_provenance": ("hand_digitised_from_observed_water" if row["match_method"] == "hand_digitised" else "osm+observed_max" if comp_u is not None else "osm_only"),
             "boundary_confidence": conf,
             "flags": ";".join(flags),
             "adjacent_osm": ";".join(adjacent[:6]),

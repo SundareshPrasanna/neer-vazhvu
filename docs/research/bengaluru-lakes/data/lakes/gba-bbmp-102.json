@@ -17,8 +17,8 @@
   "ring_m": 10,
   "shore100_share": 1.0,
   "provenance": "osm+observed_max",
-  "confidence": "medium",
-  "flags": ""
+  "confidence": "low",
+  "flags": "assignment_unverified"
  },
  "coverage": {
   "passes_total": 313,
@@ -133,7 +133,7 @@
     "baseline_years": "2019-2025"
    },
    "baseline_confidence": "medium",
-   "confidence": "medium",
+   "confidence": "low",
    "resolution_m": 10,
    "season": "monsoon (Jun-Sep) 2026"
   },
@@ -272,11 +272,19 @@
    "rule": "clear passes with froth above 5%",
    "bound": "lower bound at 10 m: patches under about 30 m are missed",
    "confidence": "medium"
+  },
+  "B1": {
+   "year": 2026,
+   "built_share": 0.0,
+   "bare_share": 0.0,
+   "water_share": 1.0,
+   "change_since_2019": -0.252,
+   "source": "Dynamic World V1 annual mode, footprint inset 30 m",
+   "confidence": "low",
+   "note": "a lake under works reads as built or bare during the works"
   }
  },
- "insufficient": {
-  "B1": "no Dynamic World year with enough scenes"
- },
+ "insufficient": {},
  "regulator": {
   "kspcb_class": "D",
   "month": "2026-06",
@@ -305,7 +313,7 @@
   "pixels_10m": "medium",
   "pixels_20m": "low",
   "adjacency": "low",
-  "boundary": "medium",
+  "boundary": "low",
   "classifier": "medium",
   "lake_type": "open"
  },

@@ -5,7 +5,9 @@ Management System point, the 2025 ward and corporation, and the cascade layer.
 Match order per KTCDA row (a polygon is assigned to at most one row; every "/"
 alias of the KTCDA name is tried):
   0. manual override (data/spine-manual-overrides.csv: ktcda_key -> osm_id, or
-     duplicate_of, or no_polygon=1)
+     duplicate_of, or no_polygon=1, or digitised_key = a feature in
+     data/hand-digitised-polygons.geojson traced from the Sentinel-2 observed
+     water where no OSM polygon exists; match_method "hand_digitised")
   1. LMS point (name match KTCDA->LMS) inside an OSM polygon, or nearest within
      400 m. Full priority when the polygon is unnamed or its name agrees with the
      lake name (similarity >= 0.6); otherwise kept as a low-priority candidate
@@ -94,6 +96,10 @@ def main() -> None:
     ward_tree = STRtree(ward_geoms)
     cascade = {f["properties"]["osm_id"]: f["properties"] for f in json.load(open(ROOT / "public/data/cascade/bangalore-cascade-lakes.geojson"))["features"]}
     osm_index = {f["properties"]["osm_id"]: i for i, f in enumerate(polys)}
+    hand = {}
+    hp = DATA / "hand-digitised-polygons.geojson"
+    if hp.exists():
+        hand = {f["properties"]["key"]: f for f in json.load(open(hp))["features"]}
 
     name_index: dict[str, list[int]] = defaultdict(list)
     for i, f in enumerate(polys):
@@ -244,6 +250,14 @@ def main() -> None:
         o = overrides.get(key)
         if o and o.get("duplicate_of", "").strip():
             rec.update(match_method="duplicate", duplicate_of=o["duplicate_of"].strip(), note=o.get("note", ""))
+        elif o and o.get("digitised_key", "").strip() in hand:
+            hf = hand[o["digitised_key"].strip()]
+            hg = shape(hf["geometry"])
+            rec.update(osm_name="(hand-digitised from observed water)", area_ha=hf["properties"].get("area_ha", ""), match_method="hand_digitised", match_score=1.0, note=o.get("note", ""))
+            w = ward_for(hg.representative_point())
+            if w:
+                rec.update(ward_no=w.get("ward_no"), ward_name=w.get("ward_name"), corporation=w.get("corporation"), assembly=w.get("ac_name"))
+            rec["_geometry"] = hf["geometry"]
         elif o and o.get("no_polygon", "").strip() == "1":
             rec.update(match_method="no_polygon", note=o.get("note", ""))
         elif ri in winner:
@@ -279,11 +293,13 @@ def main() -> None:
             queue.append(dict(ktcda_key=key, name=row["name"], ward=row["ward"], constituency=row["constituency_or_taluk"], lms_hit=(hit or {}).get("name", ""), lms_lat=(hit or {}).get("latitude", ""), lms_lon=(hit or {}).get("longitude", ""), why=why, candidates=" | ".join(cands[:8])))
         records.append(rec)
 
+    hand_geoms = {r["spine_id"]: r.pop("_geometry") for r in records if "_geometry" in r}
     with open(DATA / "gba-lakes-spine.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(records[0].keys())); w.writeheader(); w.writerows(records)
     with open(DATA / "spine-manual-queue.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["ktcda_key", "name", "ward", "constituency", "lms_hit", "lms_lat", "lms_lon", "why", "candidates"]); w.writeheader(); w.writerows(queue)
     feats = [{"type": "Feature", "geometry": polys[osm_index[int(r["osm_id"])]]["geometry"], "properties": r} for r in records if r["osm_id"] != ""]
+    feats += [{"type": "Feature", "geometry": hand_geoms[r["spine_id"]], "properties": r} for r in records if r["spine_id"] in hand_geoms]
     json.dump({"type": "FeatureCollection", "features": feats}, open(DATA / "gba-lakes-spine.geojson", "w"))
 
     print("rows:", len(records), dict(Counter(r["match_method"] for r in records)))
