@@ -245,6 +245,102 @@ def fig_scatter(points, W=320, H=240, xl="vegetated share of the footprint", yl=
     return "".join(out)
 
 
+def acres(ha) -> str:
+    return f"{float(ha):.1f} ha ({float(ha) * 2.471:.0f} acres)" if float(ha) >= 10 else f"{float(ha):.1f} ha ({float(ha) * 2.471:.1f} acres)"
+
+
+def diagnosis(r, d) -> tuple[str, str]:
+    """One sentence on what the reading shows, one on what the money buys; from the
+    lake's own values, never from a template alone."""
+    k = d.get("kpis", {})
+    w1 = k.get("W1", {}).get("value"); w2 = k.get("W2", {}).get("value"); w5 = k.get("W5", {}).get("value")
+    q1 = k.get("Q1", {}).get("value"); b1 = k.get("B1", {}).get("built_share"); h2 = k.get("H2", {}).get("value")
+    ev = k.get("W4_events", {}).get("per_year", {}); recent_ev = sum(v for y, v in ev.items() if int(y) >= 2024)
+    g2 = d.get("regulator", {}).get("kspcb_class")
+    what, buys = [], []
+    if w2 is not None and w2 >= 0.4:
+        what.append(f"vegetation covers {w2 * 100:.0f}% of the footprint in the reading window, with open water at {(w1 or 0) * 100:.0f}%")
+        buys.append("weed and mat removal with inflow control so it does not regrow")
+    elif w1 is not None and w1 >= 0.5:
+        what.append(f"open water over {w1 * 100:.0f}% of the footprint")
+    if q1 is not None and q1 >= 0.2:
+        what.append(f"a strong chlorophyll signal on the open water (proxy {q1:.2f}, in the bloom range)")
+        buys.append("nutrient control at the inlets and in-lake aeration")
+    if w5 is not None and w5 >= 0.4:
+        what.append(f"exposed bed over {w5 * 100:.0f}% of the footprint")
+        buys.append("inflow and storage restoration after a boundary survey")
+    elif h2 is not None and h2 < 0.3 and (w2 is None or w2 < 0.4):
+        what.append(f"holding {h2 * 100:.0f}% of its observed extent this season")
+        buys.append("inflow and storage restoration")
+    if b1 is not None and b1 >= 0.1:
+        what.append(f"built structures on {b1 * 100:.0f}% of the footprint")
+        buys.append("a boundary survey before capital works")
+    if recent_ev >= 3:
+        what.append(f"froth on {recent_ev} clear passes since 2024")
+        buys.append("surfactant and sewage control upstream of the weir")
+    if g2 in ("D", "E"):
+        what.append(f"the regulator's June 2026 class is {g2}")
+    if not buys:
+        buys.append("monitoring and renewable upkeep")
+    w = "; ".join(what) if what else "readings within the lake's own normal range"
+    return w[0].upper() + w[1:] + ".", "What the money buys: " + "; ".join(dict.fromkeys(buys)) + "."
+
+
+def fig_footprint(geom_wgs, subzones, W=200) -> str:
+    g = shp_transform(TO_UTM, shape(geom_wgs))
+    b = g.bounds; span = max(b[2] - b[0], b[3] - b[1]) or 1
+    H = int(W * (b[3] - b[1]) / span) + 20 if (b[3] - b[1]) < span else W
+    W2 = int(W * (b[2] - b[0]) / span) + 20 if (b[2] - b[0]) < span else W
+    sc = (W - 20) / span
+    P = lambda x, y: (10 + (x - b[0]) * sc, H - 10 - (y - b[1]) * sc)
+    def path(gg):
+        d = []
+        for pg in (gg.geoms if hasattr(gg, "geoms") else [gg]):
+            for ring in [pg.exterior] + list(pg.interiors):
+                d.append("M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in (P(*c) for c in ring.coords)) + " Z")
+        return " ".join(d)
+    out = [svg_open(W2, H), f'<path d="{path(g)}" fill="{C_BLUE}" fill-opacity="0.15" stroke="{C_BLUE}" stroke-width="1.2"/>']
+    for z in subzones:
+        zg = shp_transform(TO_UTM, shape(z["geometry"]))
+        out.append(f'<path d="{path(zg)}" fill="{C_ORANGE}" fill-opacity="0.35" stroke="{C_ORANGE}" stroke-width="0.8"/>')
+        c = zg.centroid; x, y = P(c.x, c.y)
+        out.append(text(x, y + 3, z["properties"]["key"], 7, INK2, "middle"))
+    out.append(text(10, H - 2, f"{span / 1000:.1f} km across", 7, INK3))
+    out.append("</svg>")
+    return "".join(out)
+
+
+def fig_hotspot(h, geom_wgs, W=300) -> str:
+    """Median chlorophyll proxy per 20 m pixel over the window, blue ramp; blank where
+    never open water."""
+    if not h or h.get("withheld") or not h.get("values"):
+        return ""
+    rows, cols = h["rows"], h["cols"]
+    cell = (W - 20) / max(cols, 1)
+    H = int(rows * cell) + 34
+    ramp = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
+    edges = [-0.1, 0.0, 0.1, 0.2, 0.3, 0.4]
+    def col(v):
+        for i, e in enumerate(edges):
+            if v < e:
+                return ramp[i]
+        return ramp[-1]
+    out = [svg_open(W, H)]
+    for i, row in enumerate(h["values"]):
+        for j, v in enumerate(row):
+            if v is None:
+                continue
+            out.append(f'<rect x="{10 + j * cell:.1f}" y="{10 + i * cell:.1f}" width="{cell + 0.3:.1f}" height="{cell + 0.3:.1f}" fill="{col(v)}"/>')
+    lx = 10
+    for c, lab in zip(ramp, ["< -0.1", "-0.1 to 0", "0 to 0.1", "0.1 to 0.2", "0.2 to 0.3", "0.3 to 0.4", "over 0.4"]):
+        out.append(f'<rect x="{lx}" y="{H - 18}" width="8" height="8" fill="{c}"/>')
+        out.append(text(lx + 10, H - 11, lab, 6.5, INK2))
+        lx += 10 + 4.2 * len(lab) + 8
+    out.append(text(10, H - 1, f"median of the last twelve months' open-water passes per pixel (median {h['median_pass_count']} passes); 20 m", 7, INK3))
+    out.append("</svg>")
+    return "".join(out)
+
+
 # ---- data ------------------------------------------------------------------------------
 def monthly_composition(passes, sid, start="2019-01"):
     by = defaultdict(lambda: defaultdict(list))
@@ -286,6 +382,13 @@ def main() -> None:
         for r in csv.DictReader(f):
             passes[r["spine_id"]].append(r)
     spine = list(csv.DictReader(open(DATA / "gba-lakes-spine.csv")))
+    spine_by_id = {r["spine_id"]: r for r in spine}
+    subzones = defaultdict(list)
+    szp = DATA / "gba-lakes-subzones.geojson"
+    if szp.exists():
+        for f in json.load(open(szp))["features"]:
+            subzones[f["properties"]["spine_id"]].append(f)
+    hotspots = {p.stem: json.load(open(p)) for p in (DATA / "hotspots").glob("*.json")} if (DATA / "hotspots").exists() else {}
 
     n_custody = sum(1 for r in spine if r["match_method"] != "duplicate")
     n_ranked, n_unassessed = len(ranking), len(unassessed)
@@ -311,7 +414,7 @@ def main() -> None:
     for sid, name in (("gba-bda-001", "Bellandur (BDA)"), ("gba-bda-002", "Varthur (BDA)"), ("gba-bbmp-155", "Jakkur (BBMP)")):
         mc = monthly_composition(passes, sid)
         other = {m: mc["frac_bed"].get(m, 0) + mc["frac_froth"].get(m, 0) for m in mc["frac_bed"]}
-        series_figs.append((name, fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, emergent, bloom scum)", C_AQUA, mc["frac_algae"])], title=name)))
+        series_figs.append((name, fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, reeds, scum)", C_AQUA, mc["frac_algae"])], title=name)))
     uls = [(r["date"], float(r["frac_open_water"])) for r in passes.get("gba-bbmp-052", []) if r["pass_class"] == "clear" and r.get("comp_ok") == "True" and "2025-11-01" <= r["date"] <= "2026-08-31"]
     f_ulsoor = fig_line(uls, marks=[uls[0], min(uls, key=lambda t: t[1])] if uls else None) if uls else ""
     # coverage: median across lakes of clear passes per month
@@ -342,21 +445,82 @@ def main() -> None:
         w1 = k.get("W1", {}); w2 = k.get("W2", {}); q1 = k.get("Q1", {})
         prog = r["programme"] if r["programme"] != "none" else ""
         cls = "fund" if r["need_class"] in ("Fund now", "Co-fund") else ""
-        return (f'<tr class="{cls}"><td class="num">{r["rank"]}</td><td><b>{esc(r["name"])}</b><br><span class="meta">{esc(r["custodian"])} - {esc(r["corporation"]) or "outside the 2025 ward layer"} - {float(r["footprint_ha"]):.1f} ha</span></td>'
-                f'<td>{esc(r["need_class"])}</td><td class="cond band-{r["condition_band"]}">{r["condition_band"]}<br><span class="meta">{esc(r["condition_inputs"])}</span></td>'
+        return (f'<tr class="{cls}"><td class="num">{r["rank"]}</td><td><b>{esc(r["name"])}</b><br><span class="meta">{esc(r["custodian"])} - {esc(r["corporation"]) or "outside the 2025 ward layer"} - {esc(acres(r["footprint_ha"]))}</span></td>'
+                f'<td>{esc(r["need_class"])} <span class="meta">{esc(r["need_reason"])}</span></td><td class="cond band-{r["condition_band"]}">{r["condition_band"]}</td>'
                 + band_cell(w1.get("value"), w1.get("band", {}).get("total"), w1.get("n"), w1.get("confidence"))
                 + band_cell(w2.get("value"), w2.get("band", {}).get("total"), w2.get("n"), w2.get("confidence"))
                 + band_cell(q1.get("value"), q1.get("band", {}).get("total"), q1.get("n"), q1.get("confidence"), 2, "idx")
                 + f'<td class="num">{esc(r["kspcb_class"])}</td><td class="small">{esc(prog)}</td><td class="num">{CONF_SHORT.get(r["confidence"], "")}</td></tr>')
 
     rows_html = "\n".join(row_html(r) for r in ranking)
+
+    def lake_page(r):
+        d = lakes.get(r["spine_id"], {}); k = d.get("kpis", {}); sp = spine_by_id.get(r["spine_id"], {})
+        what, buys = diagnosis(r, d)
+        def val(key, digits=0, unit="%"):
+            x = k.get(key)
+            if not x or x.get("value") is None:
+                return "insufficient"
+            band = x["band"]["total"] if isinstance(x["band"], dict) else x["band"]
+            n = x.get("n") or (k.get("W1") or {}).get("n", "")
+            if unit == "%":
+                return f"{100 * x['value']:.{digits}f}% ± {100 * band:.0f} (n {n}, {CONF_SHORT.get(x['confidence'], '')})"
+            return f"{x['value']:.2f} ± {band:.2f} (n {n}, {CONF_SHORT.get(x['confidence'], '')})"
+        def p7(key):
+            ob = (k.get(key) or {}).get("own_baseline")
+            return f"{ob['percentile']:.0f}th percentile of its {ob['baseline_years']} {d['current_season']['season'].replace('_', '-')} record (n {ob['baseline_n']})" if ob else "no baseline yet"
+        b1 = k.get("B1", {})
+        ev = k.get("W4_events", {}).get("per_year", {})
+        reg = d.get("regulator", {})
+        mc = monthly_composition(passes, r["spine_id"])
+        other = {m: mc["frac_bed"].get(m, 0) + mc["frac_froth"].get(m, 0) for m in mc["frac_bed"]}
+        series = fig_stacked_area([("open water", C_BLUE, mc["frac_open_water"]), ("bed, froth and other", C_ORANGE, other), ("vegetation (mats, reeds, scum)", C_AQUA, mc["frac_algae"])], W=560, H=150)
+        hs = hotspots.get(r["spine_id"])
+        hot = fig_hotspot(hs, fps[r["spine_id"]]) if hs else ""
+        hot_cap = ("Chlorophyll proxy per pixel, median of the last twelve months' clear passes on open water. Dark cells are where a bloom sits most of the year: the placement signal for aerators, wetlands and inlet treatment." if hot
+                   else f"Hotspot map withheld: under 25 open-water passes per pixel in the last twelve months" + (f" (median {hs['median_pass_count']})" if hs else "") + ".")
+        chip = fig_footprint(fps[r["spine_id"]], subzones.get(r["spine_id"], []))
+        cust = sp.get("ktcda_name", r["ktcda_name"])
+        return f"""<div class="pb"></div>
+<h2>{r["rank"]}. {esc(r["name"])}</h2>
+<p class="sub">Custody list name: {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; footprint {esc(acres(r["footprint_ha"]))}; reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
+<div class="cols">
+<div>
+<p><b>{esc(r["need_class"])}.</b> {esc(r["need_reason"])}.</p>
+<p><b>What the satellite shows.</b> {esc(what)}</p>
+<p><b>{esc(buys)}</b></p>
+<table class="kpi"><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody>
+<tr><td>Open water (share of footprint)</td><td class="num">{esc(val("W1"))}</td></tr>
+<tr><td>Vegetation cover (mats, reeds, scum)</td><td class="num">{esc(val("W2"))}</td></tr>
+<tr><td>Exposed bed</td><td class="num">{esc(val("W5"))}</td></tr>
+<tr><td>Chlorophyll proxy on open water</td><td class="num">{esc(val("Q1", unit="idx"))}</td></tr>
+<tr><td>Chlorophyll against its own history</td><td class="num">{esc(p7("Q1"))}</td></tr>
+<tr><td>Vegetation against its own history</td><td class="num">{esc(p7("W2"))}</td></tr>
+<tr><td>Share of observed extent held</td><td class="num">{esc(val("H2"))}</td></tr>
+<tr><td>Built share inside the footprint ({b1.get("year", "")})</td><td class="num">{(f"{100 * b1['built_share']:.0f}%" + (f" ({round(100 * b1['change_since_2019']):+d} points since 2019)" if b1.get("change_since_2019") is not None else "")) if b1 else "insufficient"}</td></tr>
+<tr><td>Froth passes per year (lower bound)</td><td class="num">{esc(", ".join(f"{y}: {n}" for y, n in sorted(ev.items()) if int(y) >= 2022) or "none recorded")}</td></tr>
+<tr><td>KSPCB, June 2026</td><td class="num">{esc(("Class " + reg["kspcb_class"] + f"; DO {reg.get('do_mgl')} mg/l, BOD {reg.get('bod_mgl')} mg/l, turbidity {reg.get('turbidity_ntu')} NTU") if reg.get("kspcb_class") else "no station joined")}</td></tr>
+<tr><td>Programme on record</td><td class="num">{esc(r["programme_detail"] or "none")}</td></tr>
+<tr><td>Cascade</td><td class="num">{esc(("position " + str(r["cascade_position"]) + ", ") if r["cascade_position"] else "")}{r["custody_lakes_downstream"]} custody lakes downstream; {int(r["buildings_in_catchment"] or 0):,} buildings in the catchment</td></tr>
+<tr><td>Boundary</td><td class="num">{esc(fpp[r["spine_id"]]["boundary_provenance"].replace("_", " "))}, confidence {esc(fpp[r["spine_id"]]["boundary_confidence"])}</td></tr>
+</tbody></table>
+</div>
+<div>{chip}<p class="cap">Fixed footprint{(" with named sub-zones (" + ", ".join(z["properties"]["key"] for z in subzones.get(r["spine_id"], [])) + ")") if subzones.get(r["spine_id"]) else ""}.</p>
+{hot}<p class="cap">{hot_cap}</p></div>
+</div>
+<h3>Surface composition, monthly medians 2019 to date</h3>
+{series}
+<p class="cap">Open water, vegetation cover and the rest, per month; a month with fewer than two clear passes is a gap.</p>"""
+
+    lake_pages = "".join(lake_page(r) for r in ranking[:10])
+    appendix_rows = "\n".join(f'<tr><td class="num">{r["rank"]}</td><td>{esc(r["name"])}</td><td class="num">{r["condition_band"]}</td><td class="small">{esc(r["condition_inputs"])}</td><td class="small">{esc(r["band_notes"])}</td></tr>' for r in ranking)
     unassessed_html = "\n".join(f'<tr><td><b>{esc(u["name"])}</b> <span class="meta">{esc(u["custodian"])} - {esc(u["corporation"])}</span></td><td class="small">{esc(u["queue_reason"])}</td></tr>' for u in unassessed)
 
     def tile(label, value, sub=""):
         return f'<div class="tile"><div class="label">{esc(label)}</div><div class="value">{esc(value)}</div><div class="sub">{esc(sub)}</div></div>'
 
-    top = fundable[:10]
-    top_html = "".join(f'<li><b>{esc(r["name"])}</b> ({esc(r["custodian"])}, {float(r["footprint_ha"]):.0f} ha): {esc(r["need_class"])}, Condition {r["condition_band"]}' + (f', KSPCB Class {esc(r["kspcb_class"])}' if r["kspcb_class"] else "") + f', confidence {r["confidence"]}</li>' for r in top)
+    top = ranking[:10]
+    top_html = "".join(f'<li><b>{esc(r["name"])}</b> ({esc(r["custodian"])}, {esc(acres(r["footprint_ha"]))}): {esc(r["need_class"])}. {esc(diagnosis(r, lakes.get(r["spine_id"], {}))[0])}</li>' for r in top)
     never_html = ", ".join(sorted(p["ktcda_name"] for p in never))
 
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(args.title)}</title>
@@ -384,7 +548,8 @@ table {{ width: 100%; border-collapse: collapse; font-size: 9px; }}
 th {{ text-align: left; font-weight: 600; border-bottom: 1px solid {INK}; padding: 3px 4px; vertical-align: bottom; }}
 td {{ border-bottom: 1px solid {GRID}; padding: 3px 4px; vertical-align: top; }}
 td.num, th.num {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
-td.cond {{ text-align: right; white-space: normal; max-width: 70px; }} td.cond .meta {{ font-size: 7.5px; }}
+td.cond {{ text-align: right; white-space: normal; max-width: 70px; }}
+table.kpi td.num {{ white-space: normal; }} table.kpi td {{ padding: 2px 4px; }} td.cond .meta {{ font-size: 7.5px; }}
 tr.fund td {{ background: #fff7f2; }}
 .pm {{ color: {INK3}; font-size: 8px; margin-left: 2px; }}
 td.band-E, td.band-D {{ font-weight: 700; }}
@@ -414,6 +579,8 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <div>
 <h3>How to read a number in this report</h3>
 <p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b>. The band is the reading's own uncertainty (sampling and classification for shares, spread across passes for indices). A Health Card band is assigned only where the band is wider than the error; otherwise both candidate bands are listed. Nothing below an evidence floor is shown as a value.</p>
+<p><b>Why nothing reads High.</b> A class is the weakest of six components, and two cannot reach High from a 10 m satellite and a mapped boundary: closeness to shore (only lakes over about 100 ha escape it) and boundary provenance (High needs a surveyed boundary). Medium is the ceiling for now; a surveyed boundary and a field calibration unlock High.</p>
+<p><b>The monsoon window.</b> Storage is read in the wettest months, so the share-of-extent band flatters no lake and the vegetation and chlorophyll readings are at their seasonal high; the November edition reads the same lakes after the rains.</p>
 <h3>What this snapshot cannot say</h3>
 <p>Dissolved oxygen, BOD, COD, nutrients, coliform, metals and toxins have no optical signature; the regulator's Use Based Class (KSPCB, June 2026) is shown beside the satellite reading for {joined_kspcb} lakes and is never recomputed. Chlorophyll and turbidity are relative indices until a field calibration exists; no calibrated concentration appears here. The vegetation share includes floating mats and emergent reeds inside the footprint. Encroachment is read at 10 m from Dynamic World and needs a survey sketch or a sub-metre scene before any claim. Boundaries are OpenStreetMap polygons united with the observed water extent, not survey boundaries.</p>
 </div>
@@ -437,16 +604,18 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The ordered list, fundable now first</h2>
-<p class="meta">W1 open water and W2 vegetated share are shares of the footprint in the lake's reading window (percent ± points); Q1 is the chlorophyll proxy on the open-water core (index units ± half the spread across passes). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition inputs: C1 storage, C3 built, C4 vegetated, C5 chlorophyll proxy, C8 froth, G2 regulator; a band followed by candidates in brackets, such as D(C/D), means the error band straddles a boundary and the value's band is shown with both candidates.</p>
+<p class="meta">Open water and vegetation cover (mats, reeds, scum) are shares of the footprint in the lake's reading window (percent ± points); the chlorophyll proxy is read on the open water (index units ± half the spread across passes; above 0.2 is the bloom range). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition A (best) to E (worst) is the worse of the median and the worst repeated input over storage, built share, vegetation, chlorophyll, froth and the regulator's class; the inputs per lake are in the appendix.</p>
 <table>
-<thead><tr><th class="num">#</th><th>Lake</th><th>Need class</th><th class="num">Condition (inputs)</th><th class="num">W1 open water</th><th class="num">W2 vegetated</th><th class="num">Q1 chlorophyll proxy</th><th class="num">KSPCB</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
+<colgroup><col style="width:3%"><col style="width:21%"><col style="width:22%"><col style="width:6%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:5%"><col style="width:9%"><col style="width:4%"></colgroup>
+<thead><tr><th class="num">#</th><th>Lake</th><th>Need class and why</th><th class="num">Condition</th><th class="num">Open water</th><th class="num">Vegetation cover</th><th class="num">Chlorophyll proxy</th><th class="num">KSPCB class</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
 <tbody>{rows_html}</tbody></table>
 
+{lake_pages}
 <div class="pb"></div>
 <h2>What continuous monitoring looks like</h2>
 <p>Three lakes with named sub-zones, monthly medians of the surface composition from 2019 (a month with fewer than two clear passes is a gap, not a value). The monsoon months are thin on every lake, which is what an honest optical record looks like.</p>
 {"".join(f'<h3>{esc(n)}</h3>{s}' for n, s in series_figs)}
-<p class="cap">Surface classes per pass: open water, vegetation (mats and emergent growth; bloom water stays open water and shows in the chlorophyll proxy), froth, and exposed bed. Sentinel-2, 10 m.</p>
+<p class="cap">Surface classes per pass: open water, vegetation cover (floating mats, reeds along the margins, surface scum; a reed fringe is healthy, a hyacinth mat is not, and the split is a coming refinement), froth, and exposed bed. Sentinel-2, 10 m.</p>
 <h3>Ulsoor, November 2025 to August 2026</h3>
 {f_ulsoor}
 <p class="cap">Open-water share of the footprint per clear pass. The lake was drained from February 2026 for its NDMF desilting works; the series will show the refill.</p>
@@ -471,6 +640,11 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <h2>Unassessed at open resolution ({n_unassessed})</h2>
 <p class="meta">Listed after the ordered list with the queue reason, per the register rule. A hand-digitised boundary or a sub-metre scene moves a lake into the assessed set.</p>
 <table><thead><tr><th>Lake</th><th>Queue reason</th></tr></thead><tbody>{unassessed_html}</tbody></table>
+
+<div class="pb"></div>
+<h2>Appendix: condition inputs per lake</h2>
+<p class="meta">C1 share of observed extent held, C3 built share, C4 vegetation cover, C5 chlorophyll proxy, C8 froth events per year, G2 the regulator's class; a band followed by candidates in brackets, such as D(C/D), means the error band straddles a boundary and the value's band is shown with both candidates.</p>
+<table><thead><tr><th class="num">#</th><th>Lake</th><th class="num">Condition</th><th>Inputs</th><th>Notes</th></tr></thead><tbody>{appendix_rows}</tbody></table>
 
 <h2>Sources</h2>
 <ul>

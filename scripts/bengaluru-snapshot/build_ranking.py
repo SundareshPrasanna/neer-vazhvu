@@ -150,10 +150,15 @@ def main() -> None:
         if len(parts) > 1 and re.search(r"bangalore|bengaluru|taluk", parts[-1], re.I):
             parts = parts[:-1]
         n = " / ".join(parts)
+        osm = r["osm_name"] if r["osm_name"] and not r["osm_name"].startswith("(") else ""
         if not n or not n[0].isalpha():
-            n = r["osm_name"] or r["ktcda_name"]
-        elif r["osm_name"] and not r["osm_name"].startswith("(") and sim(" ".join(name_aliases(n)[:1]), " ".join(name_aliases(r["osm_name"])[:1])) < 0.5:
-            n = f"{n} ({r['osm_name']})"    # the map name where it differs from the custody name
+            n = osm or r["ktcda_name"]
+        elif osm:
+            agree = sim(" ".join(name_aliases(n)[:1]), " ".join(name_aliases(osm)[:1]))
+            if agree < 0.5:
+                n = f"{n} ({osm})"          # a different name on the map: show both
+            elif agree < 0.999:
+                n = osm                       # a spelling variant: the map spelling reads better
         return n
 
     rows, unassessed = [], []
@@ -250,14 +255,12 @@ def main() -> None:
         else:
             programme = "none"
         # need class (register 7.2)
-        if condition in "DE" and programme == "works underway":
+        if condition in "DE" and programme in ("works underway", "proposed") and tract != "Unknown":
             need = "Co-fund"
-        elif condition in "DE" and tract == "High" and programme in ("none", "proposed"):
+        elif condition in "DE" and tract == "High":
             need = "Fund now"
-        elif condition in "DE" and tract in ("Low", "Unknown"):
-            need = "Design first"
         elif condition in "DE":
-            need = "Co-fund" if programme == "proposed" else "Design first"
+            need = "Design first"
         elif condition == "C" and urgency == "Rising":
             need = "Intervene early"
         elif programme == "works underway":
@@ -279,13 +282,22 @@ def main() -> None:
                 need = "Design first"; notes.append("single severe input C1: little or no water in the reading window; storage and inflow to scope")
             else:
                 need = "Watch / verify"; notes.append(f"single severe input {lone_e[0]}: flagged for a closer read, not a verdict")
+        reason = {
+            "Fund now": f"Condition {condition}, boundary tractable, nothing on record",
+            "Co-fund": f"Condition {condition}; {'works on record' if programme == 'works underway' else 'budget line on record'}",
+            "Intervene early": "Condition C and rising against its own history",
+            "Design first": ("no open water observed since 2017" if never else f"Condition {condition}, built-up or boundary question" if tract in ("Low", "Unknown") else "storage to scope before capital"),
+            "Watch / verify": ("works on record" if programme == "works underway" else "one severe input, not a verdict" if len(lone_e) == 1 else "steady; monitor"),
+            "Maintain": f"Condition {condition}; renewable upkeep and monitoring",
+            "Steward": f"Condition {condition}; protection and monitoring only",
+        }[need]
         idx = LENS["condition"] * cond_v + LENS["urgency"] * URGENCY_VAL[urgency] + LENS["stakes"] * CLASS_VAL[stakes]
         confs = [k[x]["confidence"] for x in ("W1", "W2", "Q1") if x in k]
         conf = max(confs, key=lambda c: CONF_ORDER[c]) if confs else "insufficient"
         rows.append({
             "spine_id": sid, "name": display_name(r), "ktcda_name": r["ktcda_name"], "custodian": r["ktcda_custodian"], "corporation": r["corporation"], "ward": r["ward_name"],
             "footprint_ha": area, "season": d["current_season"]["label"], "clear_passes": d["current_season"]["clear_passes"],
-            "need_class": need, "condition_band": condition, "condition_inputs": " ".join(f"{a}={shown[a]}" for a in bands),
+            "need_class": need, "need_reason": reason, "condition_band": condition, "condition_inputs": " ".join(f"{a}={shown[a]}" for a in bands),
             "stakes": stakes + (" (lifted: cascade)" if lifted else ""), "tractability": tract, "urgency": urgency, "programme": programme,
             "programme_detail": d["programme"]["state"] or "", "programme_source_class": d["programme"]["source_class"] or "",
             "kspcb_class": g2 or "", "need_index": round(idx, 3), "confidence": conf,
@@ -312,7 +324,7 @@ def main() -> None:
         "stakes_rule": "area >= 20 ha High, 5-20 Medium, < 5 Low; lifted one class with >= 2 custody lakes downstream or >= 5,000 buildings in the routed catchment",
         "tractability_rule": "High: boundary Medium and built < 10%; Medium: built 10-20% or boundary Low; Low: built >= 20%; Unknown: no water observed or built insufficient",
         "urgency_rule": "Rising: Q1 or W2 at or above own p90 plus rank error, or built share up >= 5 points since 2019; Easing: both at or below p10; Steady otherwise; Unknown without baseline",
-        "programme_rule": "budget line = proposed; press-reported works = works underway; both source class Low (press)",
+        "programme_rule": "budget line = proposed; press-reported works = works underway; both source class Low (press); a budget line on record reads Co-fund (attach to the budgeted work), Fund now needs nothing on record",
         "need_class_rule": "register plan section 7.2; Condition C with Urgency Steady, Easing or Unknown and no works on record falls to Watch / verify as the residual class; a lake never seen holding water, or with C1 as its single severe input, reads Design first; any other single severe input with Condition A to C reads Watch / verify (register 7.1: one severe signal alone is a flag, not a verdict)",
         "rank_rule": "Need class order, Condition band (E first), Need index (Condition 0.45 x band A=0..E=4 + Urgency 0.25 x Rising=2/Steady=1/Easing=0 + Stakes 0.30 x High=2/Medium=1/Low=0), confidence, footprint area",
         "funding_unit": "Greater Bengaluru (the city); custodians are never ranked against each other",
