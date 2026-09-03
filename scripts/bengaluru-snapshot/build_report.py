@@ -117,16 +117,11 @@ def fig_map(fps, ranking, corps) -> str:
         c = g.centroid; x, y = P(c.x, c.y)
         out.append(f'<circle cx="{x:.1f}" cy="{y - 9:.1f}" r="7" fill="{SURFACE}" stroke="{INK}" stroke-width="0.8"/>')
         out.append(text(x, y - 6, r["rank"], 8, INK, "middle", "bold"))
-    # legend
-    lx, ly = 14, 16
-    for i, (k, col) in enumerate(list(NEED_COLOUR.items()) + [("Other classes", GRAY)]):
-        out.append(f'<rect x="{lx}" y="{ly + i * 14 - 8}" width="10" height="10" rx="2" fill="{col}"/>')
-        out.append(text(lx + 14, ly + i * 14, k, 9, INK2))
-    out.append(text(lx, ly + 4 * 14 + 2, "Numbers mark the first ten in the ordered list; lakes under 20 ha are drawn as dots", 8, INK3))
-    if outside:
-        out.append(text(lx, H - 6, "Beyond the frame: " + "; ".join(outside), 8, INK3))
     out.append("</svg>")
-    return "".join(out)
+    key = "".join(f'<span><i style="background:{col}"></i>{esc(k)}</span>' for k, col in list(NEED_COLOUR.items()) + [("Other classes", GRAY)])
+    note = ("Beyond the frame: " + "; ".join(outside) + ". ") if outside else ""
+    return (f'<div class="mapkey">{key}<span class="meta">Numbers mark the first ten in the ordered list; lakes under 20 ha are drawn as dots.</span></div>'
+            + "".join(out) + f'<p class="cap">{note}')
 
 
 def fig_columns(items, title_y, W=320, H=150, colour=C_BLUE, ylabel="lakes", labels=True):
@@ -556,6 +551,7 @@ p {{ orphans: 2; widows: 2; }}
 ol.top li {{ margin-bottom: 2px; }}
 ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 .key span {{ display: inline-block; margin-right: 10px; }}
+.mapkey {{ font-size: 9px; color: {INK2}; margin: 4px 0 6px; }} .mapkey span {{ display: inline-block; margin-right: 12px; }} .mapkey i {{ display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }}
 </style></head><body>
 
 <div class="brand">{open(ROOT / "src/app/icon.svg").read()} Neer Vazhvu <span class="sub" style="font-weight:400">- India's Water Intelligence</span></div>
@@ -587,7 +583,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 
 <div class="pb"></div>
 <h2>The city in one view</h2>
-<div style="width:78%">{f_map}</div><p class="cap">Fixed footprints of the {n_ranked} assessed lakes on the five 2025 corporation outlines, coloured by Need class. Footprint = mapped boundary united with the observed water extent since 2017.</p>
+<div style="width:70%">{f_map}Fixed footprints of the {n_ranked} assessed lakes on the five 2025 corporation outlines, coloured by Need class. Footprint = mapped boundary united with the observed water extent since 2017.</p></div>
 <div class="cols">
 <div>{f_cond}<p class="cap">Condition band = the worse of the median and, where two or more inputs read E, the worst input; inputs are the share of the observed maximum held (C1), built share inside the footprint (C3), vegetated share (C4), the chlorophyll proxy (C5), froth events (C8) and the regulator's class (G2).</p></div>
 <div>{f_need}<p class="cap">Need class by the register's rules (plan section 7.2): Condition D or E with a tractable boundary and no works on record reads Fund now (a budget line alone does not change it); with works on record, Co-fund; with a boundary or built-up question, or no water held in the window, Design first; a single severe input against an otherwise sound reading is a flag for a closer read (Watch / verify), not a verdict.</p>
