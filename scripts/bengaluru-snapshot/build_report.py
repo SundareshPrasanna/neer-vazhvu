@@ -615,7 +615,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 {tile("Custody lakes on the KTCDA lists", f"{n_custody}", "BBMP, BDA, Forest Department, BMRCL")}
 {tile("Assessed from satellite", f"{n_ranked}", f"{n_unassessed} unassessed: no usable boundary at 10 m, or too few clear readings")}
 {tile("Condition D or E", f"{cond_counts.get('D', 0) + cond_counts.get('E', 0)}", f"{ha_de:,.0f} of {ha_all:,.0f} ha of assessed footprint")}
-{tile("Fundable now", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Fund now {need_counts.get('Fund now', 0)} and Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
+{tile("Needs attention or Co-fund", f"{need_counts.get('Fund now', 0) + need_counts.get('Co-fund', 0)}", f"Needs attention {need_counts.get('Fund now', 0)} and Co-fund {need_counts.get('Co-fund', 0)}; Design first {need_counts.get('Design first', 0)}")}
 </div>
 
 <div class="cols">
@@ -699,6 +699,8 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <li>Method: Neer Vazhvu, satellite monitoring of Bengaluru lakes, methodology note (September 2026), available on request.</li>
 </ul>
 </body></html>"""
+    # the public label for the top class (the rules keep the register's internal name)
+    page = page.replace("Fund now", "Needs attention")
     OUTDIR.mkdir(exist_ok=True)
     out_html = OUTDIR / "bengaluru-lakes-snapshot-2026.html"
     out_html.write_text(page)
