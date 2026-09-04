@@ -135,7 +135,9 @@ def main() -> None:
         return n
 
     kspcb = list(csv.DictReader(open(DATA / "kspcb-lakes-2026-06.csv")))
-    joined_serials = {j["kspcb_serial"] for j in csv.DictReader(open(DATA / "gba-lakes-joins.csv")) if j["kspcb_serial"]}
+    joins_rows = list(csv.DictReader(open(DATA / "gba-lakes-joins.csv")))
+    joined_serials = {j["kspcb_serial"] for j in joins_rows if j["kspcb_serial"]}
+    upstream_of = {j["spine_id"]: [u for u in j["upstream_lakes"].split("; ") if u] for j in joins_rows}
 
     def station_anchor(name: str) -> str:
         """A KSPCB station not joined to any footprint whose name agrees with a
@@ -191,8 +193,11 @@ def main() -> None:
             shown[key] = f"{b}({amb})" if amb else b
             if amb:
                 notes.append(f"{key} candidates {amb}")
-        if "H2" in k:
+        w2v = (k.get("W2") or {}).get("value")
+        if "H2" in k and (w2v is None or w2v < 0.4):
             take("C1", k["H2"]["value"], k["H2"]["band"], C1_EDGES, reverse=True)
+        elif "H2" in k:
+            notes.append("C1 not read: water under vegetation cover is not visible to the satellite")
         if "B1" in k:
             take("C3", k["B1"]["built_share"], 0.02, C3_EDGES)
         if "W2" in k:
@@ -284,7 +289,7 @@ def main() -> None:
             need = "Design first"; notes.append("no open water observed 2017-2026: boundary and hydrology to scope")
         elif len(lone_e) == 1 and condition in "ABC":
             if lone_e[0] == "C1":
-                need = "Design first"; notes.append("single severe input C1: little or no water in the reading window; storage and inflow to scope")
+                need = "Design first"; notes.append("single severe input C1: little or no open water in the reading window; storage and inflow to scope")
             else:
                 need = "Watch / verify"; notes.append(f"single severe input {lone_e[0]}: flagged for a closer read, not a verdict")
         # the reason names what drives the condition: every input at D or E, in
@@ -294,7 +299,7 @@ def main() -> None:
             drivers.append(f"{100 * k['W2']['value']:.0f}% covered by vegetation")
         if bands.get("C1", "") in ("D", "E") and "H2" in k:
             h2 = k["H2"]["value"]
-            drivers.append("almost no water this season" if h2 < 0.05 else f"holds {100 * h2:.0f}% of its usual water")
+            drivers.append("almost no open water this season" if h2 < 0.05 else f"holds {100 * h2:.0f}% of its usual open water")
         if bands.get("C5", "") in ("D", "E") and "Q1" in k:
             drivers.append(algae_word(k["Q1"]["value"]) + " on the open water")
         if bands.get("C3", "") in ("D", "E") and b1 is not None:
@@ -337,6 +342,28 @@ def main() -> None:
             "custody_lakes_downstream": n_down, "buildings_in_catchment": bld, "cascade_position": d["cascade"]["position"] or "",
             "boundary_confidence": fp["boundary_confidence"], "flags": fp["flags"], "band_notes": "; ".join(notes),
         })
+    # the lake in its series: upstream custody lakes with their condition this edition,
+    # unlisted upstream water bodies counted, custody lakes downstream
+    cond_by_osm = {osm_of[x["spine_id"]]: (x["name"], x["condition_band"]) for x in rows if x["spine_id"] in osm_of}
+    for x in rows:
+        ups = upstream_of.get(x["spine_id"], [])
+        named, other = [], 0
+        for u in ups:
+            try:
+                oid = int(u.split(":")[0])
+            except ValueError:
+                continue
+            if oid in cond_by_osm:
+                named.append(f"{cond_by_osm[oid][0]} ({cond_by_osm[oid][1]})")
+            else:
+                other += 1
+        parts = []
+        if named:
+            parts.append("upstream on the custody list: " + ", ".join(named))
+        if other:
+            parts.append(f"{other} other water bodies upstream")
+        parts.append(f"{x['custody_lakes_downstream']} custody lakes downstream")
+        x["lake_series"] = "; ".join(parts)
     rows.sort(key=lambda x: (NEED_ORDER.index(x["need_class"]), -BAND_VAL[x["condition_band"]], -x["need_index"], CONF_ORDER[x["confidence"]], -x["footprint_ha"]))
     for i, x in enumerate(rows, 1):
         x["rank"] = i
@@ -348,7 +375,7 @@ def main() -> None:
     params = {
         "version": VERSION, "computed_at": datetime.now(timezone.utc).isoformat(), "lens": LENS,
         "band_edges": {"C1_share_of_full_tank": C1_EDGES, "C3_built_share": C3_EDGES, "C4_vegetated_share": C4_EDGES, "C5_ndci": C5_EDGES, "C8_froth_events_per_year": C8_EDGES},
-        "condition_rule": "worse of (median of computable bands; single worst when two or more read E); G2 = KSPCB Use Based Class as printed",
+        "condition_rule": "worse of (median of computable bands; single worst when two or more read E); G2 = KSPCB Use Based Class as printed; C1 (storage) is not read where vegetation cover is 40% or more, because water under a mat is invisible to the satellite",
         "stakes_rule": "area >= 20 ha High, 5-20 Medium, < 5 Low; lifted one class with >= 2 custody lakes downstream or >= 5,000 buildings in the routed catchment",
         "tractability_rule": "High: boundary Medium and built < 10%; Medium: built 10-20% or boundary Low; Low: built >= 20%; Unknown: no water observed or built insufficient",
         "urgency_rule": "Rising: Q1 or W2 at or above own p90 plus rank error, or built share up >= 5 points since 2019; Easing: both at or below p10; Steady otherwise; Unknown without baseline",

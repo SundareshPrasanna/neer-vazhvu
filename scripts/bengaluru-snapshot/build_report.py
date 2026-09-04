@@ -278,10 +278,10 @@ def diagnosis(r, d) -> tuple[str, str]:
         what.append(f"exposed bed over {w5 * 100:.0f}% of the footprint")
         buys.append("inflow and storage restoration after a boundary survey")
     elif h2 is not None and h2 < 0.3 and (w2 is None or w2 < 0.4):
-        what.append(f"holding {h2 * 100:.0f}% of its usual water this season")
+        what.append(f"holding {h2 * 100:.0f}% of its usual open water this season")
         buys.append("inflow and storage restoration")
     if b1 is not None and b1 >= 0.1:
-        what.append(f"built over on {b1 * 100:.0f}% of the footprint")
+        what.append(f"built structures on {b1 * 100:.0f}% of the satellite footprint")
         buys.append("a boundary survey before capital works")
     if recent_ev >= 3:
         what.append(f"froth on {recent_ev} clear passes since 2024")
@@ -507,10 +507,10 @@ def main() -> None:
                     f'<p class="cap">Medians of the clear passes in the {esc(SEASON_LABEL.get(cur_season, cur_season or ""))} of each year since 2017; a year with fewer than two clear passes shows its passes but its values should be read with care. The shaded row is this edition\'s reading window.</p>') if base_rows else ""
         return f"""<div class="lakepage">
 <h2 class="pb">{r["rank"]}. {esc(r["name"])}</h2>
-<p class="sub">Listed as {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; footprint {esc(acres(r["footprint_ha"]))}; reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
+<p class="sub">Listed as {esc(cust)} ({esc(r["custodian"])}); {esc(r["corporation"]) or "outside the 2025 ward layer"} corporation{(", " + esc(r["ward"]) + " ward") if r["ward"] else ""}; satellite footprint {esc(acres(r["footprint_ha"]))} (the mapped boundary and observed water, not the survey area); reading window {esc(r["season"])}, {r["clear_passes"]} clear passes.</p>
 <div class="cols">
 <div>
-<p><b>{esc(r["need_class"])}.</b> {esc(r["need_reason"])}.</p>
+<p><b>{esc(r["need_class"])}.</b> {esc(r["need_reason"])}. The class rests on the lake's present condition as the satellite reads it and the works on record; it does not say why the lake is in this state, what was done before the record, or that a lake-level work alone is the answer. Read it with the lake series and the catchment.</p>
 <p><b>What the satellite shows.</b> {esc(what)}</p>
 <p><b>{esc(buys)}</b></p>
 <table class="kpi"><colgroup><col style="width:44%"><col style="width:56%"></colgroup><tbody>
@@ -520,12 +520,12 @@ def main() -> None:
 <tr><td>Algae in the water (chlorophyll proxy)</td><td class="num">{esc((algae_word(k["Q1"]["value"]) + ": " + val("Q1", unit="idx")) if k.get("Q1", {}).get("value") is not None else "no open water to read")}</td></tr>
 <tr><td>Algae against its own history</td><td class="num">{esc(p7("Q1"))}</td></tr>
 <tr><td>Vegetation against its own history</td><td class="num">{esc(p7("W2"))}</td></tr>
-<tr><td>Share of its usual water held</td><td class="num">{esc(val("H2"))}</td></tr>
-<tr><td>Built share inside the footprint ({b1.get("year", "")})</td><td class="num">{(f"{100 * b1['built_share']:.0f}%" + (f" ({round(100 * b1['change_since_2019']):+d} points since 2019)" if b1.get("change_since_2019") is not None else "")) if b1 else "insufficient"}</td></tr>
+<tr><td>Share of its usual open water held</td><td class="num">{esc(val("H2"))}{" (water under vegetation cover is not visible to the satellite)" if (k.get("W2") or {}).get("value", 0) >= 0.4 else ""}</td></tr>
+<tr><td>Built share inside the satellite footprint, not against the survey boundary ({b1.get("year", "")})</td><td class="num">{(f"{100 * b1['built_share']:.0f}%" + (f" ({round(100 * b1['change_since_2019']):+d} points since 2019)" if b1.get("change_since_2019") is not None else "")) if b1 else "insufficient"}</td></tr>
 <tr><td>Froth passes per year (lower bound)</td><td class="num">{esc(", ".join(f"{y}: {n}" for y, n in sorted(ev.items()) if int(y) >= 2022) or "none recorded")}</td></tr>
 <tr><td>KSPCB, June 2026</td><td class="num">{esc(("Class " + reg["kspcb_class"] + f"; DO {reg.get('do_mgl')} mg/l, BOD {reg.get('bod_mgl')} mg/l, turbidity {reg.get('turbidity_ntu')} NTU") if reg.get("kspcb_class") else "no station joined")}</td></tr>
 <tr><td>Programme on record</td><td class="num">{esc(r["programme_detail"] or "none")}</td></tr>
-<tr><td>Drainage chain</td><td class="num">{esc(("position " + str(r["cascade_position"]) + " in its chain, ") if r["cascade_position"] else "")}{r["custody_lakes_downstream"]} listed lakes downstream; {int(r["buildings_in_catchment"] or 0):,} buildings in the catchment</td></tr>
+<tr><td>Lake series</td><td class="num">{esc(("position " + str(r["cascade_position"]) + " in its chain; ") if r["cascade_position"] else "")}{esc(r.get("lake_series", ""))}; {int(r["buildings_in_catchment"] or 0):,} buildings in the catchment</td></tr>
 <tr><td>Boundary</td><td class="num">{esc({"osm+observed_max": "mapped boundary and observed water", "osm_only": "mapped boundary only", "hand_digitised_from_observed_water": "traced from observed water"}.get(fpp[r["spine_id"]]["boundary_provenance"], fpp[r["spine_id"]]["boundary_provenance"]))}, confidence {esc(fpp[r["spine_id"]]["boundary_confidence"])}</td></tr>
 </tbody></table>
 </div>
@@ -624,7 +624,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <p>Each value is a seasonal median of clear satellite passes, shown as <b>value ± band</b> with <b>n</b> passes and a confidence class <b>H / M / L</b>. The band is the reading's own uncertainty (sampling and classification for shares, spread across passes for indices). A Health Card band is assigned only where the band is wider than the error; otherwise both candidate bands are listed. Where the evidence is too thin, the value reads "insufficient".</p>
 <p><b>Why nothing reads High.</b> A class is the weakest of six components, and two cannot reach High from a 10 m satellite and a mapped boundary: closeness to shore (only lakes over about 100 ha escape it) and boundary provenance (High needs a surveyed boundary). Medium is the ceiling for now; a surveyed boundary and a field calibration unlock High.</p>
 <h3>What this snapshot cannot say</h3>
-<p>Dissolved oxygen, BOD, COD, nutrients, coliform, metals and toxins have no optical signature; the regulator's Use Based Class (KSPCB, June 2026) is shown beside the satellite reading for {joined_kspcb} lakes and is never recomputed. Chlorophyll and turbidity are relative indices until a field calibration exists; no calibrated concentration appears here. The vegetation share includes floating mats and emergent reeds inside the footprint. Encroachment is read at 10 m from Dynamic World and needs a survey sketch or a sub-metre scene before any claim. Boundaries are OpenStreetMap polygons united with the observed water extent, not survey boundaries.</p>
+<p>Dissolved oxygen, BOD, COD, nutrients, coliform, metals and toxins have no optical signature; the regulator's Use Based Class (KSPCB, June 2026) is shown beside the satellite reading for {joined_kspcb} lakes and is never recomputed. Chlorophyll and turbidity are relative indices until a field calibration exists; no calibrated concentration appears here. The vegetation share includes floating mats and emergent reeds inside the footprint, and water under a mat is invisible: "no open water" on a sewage-fed lake means a covered surface, not a dry bed. Built share is read at 10 m inside the satellite footprint, which is the mapped boundary united with the observed water, not the survey area; encroachment against the cadastral boundary needs that boundary, and the footprint area is not the revenue-record area. A class rests on condition and the works on record, not on why a lake is in its state or what was done before the record.</p>
 </div>
 <div>
 <h3>The first ten in the order</h3>
@@ -648,7 +648,7 @@ ul {{ margin: 2px 0 6px 16px; padding: 0; }} li {{ margin-bottom: 2px; }}
 <p class="meta">Open water and vegetation cover (mats, reeds, scum) are shares of the lake's footprint in its reading window (percent ± points). Algae in the water is read from the greenness of the open water on five levels: clear water, some algae, algae-rich water, heavy algae, algal bloom (the satellite index behind it is shown small). n = clear passes with a value. H / M / L = confidence class. Rows shaded orange are Fund now and Co-fund. Condition A (best) to E (worst) is the worse of the median and the worst repeated input over storage, built share, vegetation, chlorophyll, froth and the regulator's class. The reason under each Need class names the inputs that drive it; every input per lake, with its band, is in the appendix at the end.</p>
 <table>
 <colgroup><col style="width:3%"><col style="width:17%"><col style="width:32%"><col style="width:5%"><col style="width:9%"><col style="width:9%"><col style="width:11%"><col style="width:5%"><col style="width:6%"><col style="width:3%"></colgroup>
-<thead><tr><th class="num">#</th><th>Lake</th><th>Need class and why</th><th class="num">Condition</th><th class="num">Open water</th><th class="num">Vegetation cover</th><th class="num">Algae in the water</th><th class="num">KSPCB class</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
+<thead><tr><th class="num">#</th><th>Lake (satellite footprint)</th><th>Need class and why</th><th class="num">Condition</th><th class="num">Open water</th><th class="num">Vegetation cover</th><th class="num">Algae in the water</th><th class="num">KSPCB class</th><th>Programme on record</th><th class="num">Conf.</th></tr></thead>
 <tbody>{rows_html}</tbody></table>
 
 {lake_pages}
