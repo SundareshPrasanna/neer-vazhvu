@@ -1,0 +1,3299 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-projection",
+  "scope": {
+    "kind": "district",
+    "id": "tn-namakkal"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-project-groundwater.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/namakkal/directory.json",
+      "public/data/atlas/tn/namakkal/groundwater-taluks.json"
+    ],
+    "note": "IN-GRES 2024-2025 taluk assessment projected onto 322 of 322 Gram Panchayats across 8 taluks; 0 deferred with a reason in review[]."
+  },
+  "projection": {
+    "of": {
+      "kind": "district",
+      "id": "tn-namakkal"
+    },
+    "method": "spatial-intersection",
+    "limitations": [
+      "The assessment unit is a revenue taluk, not the Gram Panchayat: each Panchayat inherits its containing taluk's category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.",
+      "Containment is decided by the TNGIS polygon centroid (vertex fallback for concave polygons); a Panchayat that falls in no taluk or in a taluk without an assessment is deferred, never guessed.",
+      "4 TNRD blocks span more than one revenue taluk, so a block-to-taluk name match would have been wrong."
+    ]
+  },
+  "schemaVersion": 1,
+  "planId": "tn-namakkal-v1",
+  "assessmentYear": "2024-2025",
+  "projectedAt": "2026-09-06",
+  "projectionMethod": "spatial-intersection",
+  "source": {
+    "talukLayer": "admin_master:administrative_boundary_taluk",
+    "talukDistrictLgdCode": "580",
+    "groundwaterSourceId": "ingres-gec-dynamic-groundwater",
+    "boundarySourceId": "tngis-tnrd-panchayat-boundary"
+  },
+  "recordsSha256": "902128a4149188f9b9859e7fb5004aa0082645c9423334afdc3c9e8e7a9b18a4",
+  "recordCount": 322,
+  "records": [
+    {
+      "lgdGramPanchayatCode": "225970",
+      "lgdGramPanchayatName": "85 Goundampalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225971",
+      "lgdGramPanchayatName": "87 Goundampalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225972",
+      "lgdGramPanchayatName": "Agaram",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225973",
+      "lgdGramPanchayatName": "Akalampatti",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225974",
+      "lgdGramPanchayatName": "Bommampatti",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225975",
+      "lgdGramPanchayatName": "Chinnamanali",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225976",
+      "lgdGramPanchayatName": "Elanagar",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225977",
+      "lgdGramPanchayatName": "Iluppuli",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225978",
+      "lgdGramPanchayatName": "Kilappalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225979",
+      "lgdGramPanchayatName": "Kokkalai",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225980",
+      "lgdGramPanchayatName": "Konnaiyar",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225981",
+      "lgdGramPanchayatName": "Koothampoondi",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225982",
+      "lgdGramPanchayatName": "Kuppandapalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225983",
+      "lgdGramPanchayatName": "Lathuvadi",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225984",
+      "lgdGramPanchayatName": "Manathi",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225985",
+      "lgdGramPanchayatName": "Mandagapalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225986",
+      "lgdGramPanchayatName": "Marukkalampatti",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225987",
+      "lgdGramPanchayatName": "Mavureddipatti",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225988",
+      "lgdGramPanchayatName": "Molipalli",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225989",
+      "lgdGramPanchayatName": "Musiri",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225990",
+      "lgdGramPanchayatName": "Nallipalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225991",
+      "lgdGramPanchayatName": "Periyamanali",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225992",
+      "lgdGramPanchayatName": "Pokkampalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225993",
+      "lgdGramPanchayatName": "Pullagoundampatti",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225994",
+      "lgdGramPanchayatName": "Punjaipudupalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225995",
+      "lgdGramPanchayatName": "Puthur East",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225996",
+      "lgdGramPanchayatName": "Sakthinaickenpalayam",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225997",
+      "lgdGramPanchayatName": "Thondipatti",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225998",
+      "lgdGramPanchayatName": "Unjanai",
+      "lgdBlockCode": "6544",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "225999",
+      "lgdGramPanchayatName": "ALANGANATHAM",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226000",
+      "lgdGramPanchayatName": "BODINAICKENPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226001",
+      "lgdGramPanchayatName": "BOMMASAMUTHIRAM",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226002",
+      "lgdGramPanchayatName": "DEVARAYAPURAM",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226003",
+      "lgdGramPanchayatName": "KAVAKARANPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226004",
+      "lgdGramPanchayatName": "KODIKKALPUDUR",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226005",
+      "lgdGramPanchayatName": "KONANGIPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226006",
+      "lgdGramPanchayatName": "M. METTUPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226007",
+      "lgdGramPanchayatName": "MUTHUGAPATTTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226008",
+      "lgdGramPanchayatName": "MUTTANCHETTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226009",
+      "lgdGramPanchayatName": "SARKARPALAYAPALAYAM",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226010",
+      "lgdGramPanchayatName": "PAVITHIRAM",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226011",
+      "lgdGramPanchayatName": "PAVITHIRAMPUDUR",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226012",
+      "lgdGramPanchayatName": "PERUMAPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226013",
+      "lgdGramPanchayatName": "POTTIREDDIPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226014",
+      "lgdGramPanchayatName": "PUDUKOTTAI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226015",
+      "lgdGramPanchayatName": "REDDIPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226016",
+      "lgdGramPanchayatName": "SEVINTHIPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226017",
+      "lgdGramPanchayatName": "SIVANAICKENPATTI",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226018",
+      "lgdGramPanchayatName": "THIPRAMADEVI",
+      "lgdBlockCode": "6545",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226019",
+      "lgdGramPanchayatName": "VADAVATHUR",
+      "lgdBlockCode": "6545",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226020",
+      "lgdGramPanchayatName": "AGRAHARA VALAVANTHI",
+      "lgdBlockCode": "6545",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226021",
+      "lgdGramPanchayatName": "VARADHARAJAPURAM",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226022",
+      "lgdGramPanchayatName": "VARAGUR",
+      "lgdBlockCode": "6545",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226023",
+      "lgdGramPanchayatName": "A Kunnathur",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226024",
+      "lgdGramPanchayatName": "Anangur",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226025",
+      "lgdGramPanchayatName": "Irukkur",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226026",
+      "lgdGramPanchayatName": "Kabilakurichi",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226027",
+      "lgdGramPanchayatName": "Kondalam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226028",
+      "lgdGramPanchayatName": "Koppanampalayam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226029",
+      "lgdGramPanchayatName": "Kothamangalam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226030",
+      "lgdGramPanchayatName": "Kupprikkapalayam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226031",
+      "lgdGramPanchayatName": "Kurumbalamahadevi",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226032",
+      "lgdGramPanchayatName": "Periasolipalayam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226033",
+      "lgdGramPanchayatName": "Perunkurichi",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226034",
+      "lgdGramPanchayatName": "Pilikkalpalayam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226035",
+      "lgdGramPanchayatName": "Selur",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226036",
+      "lgdGramPanchayatName": "Sirunallikoil",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226037",
+      "lgdGramPanchayatName": "Solasiramani",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226038",
+      "lgdGramPanchayatName": "Sullipalayam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226039",
+      "lgdGramPanchayatName": "T Goundampalayam",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226040",
+      "lgdGramPanchayatName": "Thidumal",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226041",
+      "lgdGramPanchayatName": "Vadakaraiyattur",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226042",
+      "lgdGramPanchayatName": "Zamin Elampalli",
+      "lgdBlockCode": "6546",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226043",
+      "lgdGramPanchayatName": "Alathur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226044",
+      "lgdGramPanchayatName": "Ariyur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226045",
+      "lgdGramPanchayatName": "Bail Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226046",
+      "lgdGramPanchayatName": "Chittoor Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226047",
+      "lgdGramPanchayatName": "Devannur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226048",
+      "lgdGramPanchayatName": "Edapuli Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226049",
+      "lgdGramPanchayatName": "Gundur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226050",
+      "lgdGramPanchayatName": "Gunduni Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226051",
+      "lgdGramPanchayatName": "Perakkarai Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226052",
+      "lgdGramPanchayatName": "Selur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226053",
+      "lgdGramPanchayatName": "Thinnanur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226054",
+      "lgdGramPanchayatName": "Thirupuli Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226055",
+      "lgdGramPanchayatName": "Valappur Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226056",
+      "lgdGramPanchayatName": "Valavanthi Nadu",
+      "lgdBlockCode": "6547",
+      "talukName": "Kolli Hills",
+      "subDistrictCode": "6625",
+      "containment": "centroid-in-taluk",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453
+    },
+    {
+      "lgdGramPanchayatCode": "226057",
+      "lgdGramPanchayatName": "Avinashipatti",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226058",
+      "lgdGramPanchayatName": "Ballakuli",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226059",
+      "lgdGramPanchayatName": "Ballakuli Agraharam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226060",
+      "lgdGramPanchayatName": "Irukalur Pudupalayam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "vertex-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226061",
+      "lgdGramPanchayatName": "Kallupalayam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226062",
+      "lgdGramPanchayatName": "Karumanur",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226063",
+      "lgdGramPanchayatName": "Karungalpatti Agraharam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226064",
+      "lgdGramPanchayatName": "Kolankondai",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226065",
+      "lgdGramPanchayatName": "Koothanatham",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226066",
+      "lgdGramPanchayatName": "Kottapalayam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226067",
+      "lgdGramPanchayatName": "Kuppichipalayam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226068",
+      "lgdGramPanchayatName": "Mallasamudram Melmugam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226069",
+      "lgdGramPanchayatName": "Mamundi Agraharam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226070",
+      "lgdGramPanchayatName": "Mangalam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226071",
+      "lgdGramPanchayatName": "Maraparai",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226072",
+      "lgdGramPanchayatName": "Minnampalli",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226073",
+      "lgdGramPanchayatName": "Morangam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226074",
+      "lgdGramPanchayatName": "Munjanur",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226075",
+      "lgdGramPanchayatName": "Nagarpalayam",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226076",
+      "lgdGramPanchayatName": "Palamedu",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226077",
+      "lgdGramPanchayatName": "Paruthipalli",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226078",
+      "lgdGramPanchayatName": "Pillanatham",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226079",
+      "lgdGramPanchayatName": "Ramapuram",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226080",
+      "lgdGramPanchayatName": "Sappayapuram",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226081",
+      "lgdGramPanchayatName": "Sarkar Mamundi",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226082",
+      "lgdGramPanchayatName": "Senbagamadevi",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226083",
+      "lgdGramPanchayatName": "Vandinatham",
+      "lgdBlockCode": "6548",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226084",
+      "lgdGramPanchayatName": "ANDAPURAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226085",
+      "lgdGramPanchayatName": "ANIYAPURAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226086",
+      "lgdGramPanchayatName": "ARASANATHAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226087",
+      "lgdGramPanchayatName": "ARIYUR",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226088",
+      "lgdGramPanchayatName": "AROOR",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226089",
+      "lgdGramPanchayatName": "CHINNAPETHAMPATTI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226090",
+      "lgdGramPanchayatName": "K PUDUPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226091",
+      "lgdGramPanchayatName": "KALIPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226092",
+      "lgdGramPanchayatName": "KOMARIPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226093",
+      "lgdGramPanchayatName": "KUMARAPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226094",
+      "lgdGramPanchayatName": "LATHUVADI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226095",
+      "lgdGramPanchayatName": "MADAKASAMPATTI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226096",
+      "lgdGramPanchayatName": "MANAPALLI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226097",
+      "lgdGramPanchayatName": "N PUDUPATTI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226098",
+      "lgdGramPanchayatName": "NANJAI EDAYAR",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226099",
+      "lgdGramPanchayatName": "OLAPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226100",
+      "lgdGramPanchayatName": "ORUVANDUR",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226101",
+      "lgdGramPanchayatName": "PARALI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226102",
+      "lgdGramPanchayatName": "PERAMANDAPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226103",
+      "lgdGramPanchayatName": "PETTAPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226104",
+      "lgdGramPanchayatName": "RASIPALAYAM",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226105",
+      "lgdGramPanchayatName": "S VALAVANTHI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226106",
+      "lgdGramPanchayatName": "SENGAPALLI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226107",
+      "lgdGramPanchayatName": "THOLUR",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226108",
+      "lgdGramPanchayatName": "VALAYAPPATTI",
+      "lgdBlockCode": "6549",
+      "talukName": "Mohanur",
+      "subDistrictCode": "6635",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427
+    },
+    {
+      "lgdGramPanchayatCode": "226109",
+      "lgdGramPanchayatName": "Eswaramurthipalayam",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226110",
+      "lgdGramPanchayatName": "Karkoodalpatti",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226111",
+      "lgdGramPanchayatName": "Mangalapuram",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226112",
+      "lgdGramPanchayatName": "Mathuruttu",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226113",
+      "lgdGramPanchayatName": "Moolakurichi",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226114",
+      "lgdGramPanchayatName": "Moolapallipatti",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226115",
+      "lgdGramPanchayatName": "Mullukurichi",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226116",
+      "lgdGramPanchayatName": "Naraikinaru",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226117",
+      "lgdGramPanchayatName": "Navalpatti",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226118",
+      "lgdGramPanchayatName": "Oyilpatti",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226119",
+      "lgdGramPanchayatName": "Pachudaiyampalayam",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226120",
+      "lgdGramPanchayatName": "Perappansolai",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226121",
+      "lgdGramPanchayatName": "Perumagoundampalayam",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226122",
+      "lgdGramPanchayatName": "T Jederpalayam",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226123",
+      "lgdGramPanchayatName": "Thimmanaickenpatti",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226124",
+      "lgdGramPanchayatName": "Thoppapatti",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226125",
+      "lgdGramPanchayatName": "Unanthangal",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226126",
+      "lgdGramPanchayatName": "Vaduga Muniappampalayam",
+      "lgdBlockCode": "6550",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226127",
+      "lgdGramPanchayatName": "ANIYAR",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226128",
+      "lgdGramPanchayatName": "AVALNAICKENPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226129",
+      "lgdGramPanchayatName": "ERNAPURAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226130",
+      "lgdGramPanchayatName": "KADAPALLI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226131",
+      "lgdGramPanchayatName": "KEELSATHAMPUR",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226132",
+      "lgdGramPanchayatName": "KEERAMBUR",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226133",
+      "lgdGramPanchayatName": "KONUR",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226134",
+      "lgdGramPanchayatName": "MARAPPANAICKENPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226135",
+      "lgdGramPanchayatName": "MARURPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226137",
+      "lgdGramPanchayatName": "NARAVALUR",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226138",
+      "lgdGramPanchayatName": "PERIAGOUNDAMPALAYAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226139",
+      "lgdGramPanchayatName": "RASAMPALAYAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226140",
+      "lgdGramPanchayatName": "RENGAPPANAICKENPALAYAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226141",
+      "lgdGramPanchayatName": "SILUVAMPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226142",
+      "lgdGramPanchayatName": "SINGILIPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226143",
+      "lgdGramPanchayatName": "SIVIYAMPALAYAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226144",
+      "lgdGramPanchayatName": "THALIGAI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226145",
+      "lgdGramPanchayatName": "THINDAMANGALAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226146",
+      "lgdGramPanchayatName": "THOTTIPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226147",
+      "lgdGramPanchayatName": "VAGURAMPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226148",
+      "lgdGramPanchayatName": "VALLIPURAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226149",
+      "lgdGramPanchayatName": "VASANTHAPURAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226150",
+      "lgdGramPanchayatName": "VEESANAM",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226151",
+      "lgdGramPanchayatName": "VETTAMBADI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226152",
+      "lgdGramPanchayatName": "VITTAMANAICKENPATTI",
+      "lgdBlockCode": "6551",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226153",
+      "lgdGramPanchayatName": "Elanthakkuttai",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226154",
+      "lgdGramPanchayatName": "Kadachanallur",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226155",
+      "lgdGramPanchayatName": "Kalianur",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226156",
+      "lgdGramPanchayatName": "Kalianur Agraharam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226157",
+      "lgdGramPanchayatName": "Kokkarayanpettai",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226158",
+      "lgdGramPanchayatName": "Kuppandapalayam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226159",
+      "lgdGramPanchayatName": "Odappalli Agraharam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226160",
+      "lgdGramPanchayatName": "Pallakkapalayam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226161",
+      "lgdGramPanchayatName": "Pallipalayam Agraharam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226162",
+      "lgdGramPanchayatName": "Pappampalayam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226163",
+      "lgdGramPanchayatName": "Patharai",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226164",
+      "lgdGramPanchayatName": "Puduppalayam Agraharam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226165",
+      "lgdGramPanchayatName": "Samayasangili Agraharam",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226166",
+      "lgdGramPanchayatName": "Sowthapuram",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226167",
+      "lgdGramPanchayatName": "Thattankuttai",
+      "lgdBlockCode": "6552",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226168",
+      "lgdGramPanchayatName": "IRUTTANAI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226169",
+      "lgdGramPanchayatName": "KOLARAM",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226170",
+      "lgdGramPanchayatName": "KOODACHERI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226171",
+      "lgdGramPanchayatName": "Kodur",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226172",
+      "lgdGramPanchayatName": "KUNNAMALAI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226173",
+      "lgdGramPanchayatName": "MANIANUR",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226174",
+      "lgdGramPanchayatName": "MANICKANATHAM",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226175",
+      "lgdGramPanchayatName": "MELSATHAMBUR",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226176",
+      "lgdGramPanchayatName": "NADANTHAI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226177",
+      "lgdGramPanchayatName": "NALLUR",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226178",
+      "lgdGramPanchayatName": "PILLAIKALATHUR",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226179",
+      "lgdGramPanchayatName": "PILLUR",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226180",
+      "lgdGramPanchayatName": "PIRANTHAGAM",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226181",
+      "lgdGramPanchayatName": "RAMADEVAM",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226182",
+      "lgdGramPanchayatName": "SEERAPALLI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226183",
+      "lgdGramPanchayatName": "SERUKKALAI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226184",
+      "lgdGramPanchayatName": "SITHAMPOONDI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226185",
+      "lgdGramPanchayatName": "SUNGAKARAMPATTI",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226186",
+      "lgdGramPanchayatName": "VEERANAMPALAYAM",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226187",
+      "lgdGramPanchayatName": "VILLIPALAYAM",
+      "lgdBlockCode": "6553",
+      "talukName": "Paramathi Velur",
+      "subDistrictCode": "5748",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548
+    },
+    {
+      "lgdGramPanchayatCode": "226188",
+      "lgdGramPanchayatName": "A K Samudram",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226189",
+      "lgdGramPanchayatName": "Elur",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226190",
+      "lgdGramPanchayatName": "Kadiranallur",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226191",
+      "lgdGramPanchayatName": "Kalangani",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226192",
+      "lgdGramPanchayatName": "Kalyani",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226193",
+      "lgdGramPanchayatName": "Kannurpatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226194",
+      "lgdGramPanchayatName": "Karadipatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226195",
+      "lgdGramPanchayatName": "Karaikurichi",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226196",
+      "lgdGramPanchayatName": "Karaikurichi Pudur",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226197",
+      "lgdGramPanchayatName": "Lakkapuram",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226198",
+      "lgdGramPanchayatName": "Minnampalli",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226199",
+      "lgdGramPanchayatName": "Navanithottakurpatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226200",
+      "lgdGramPanchayatName": "Pachal",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226201",
+      "lgdGramPanchayatName": "Pappinaickenpatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226202",
+      "lgdGramPanchayatName": "Sarkar Uduppam",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226203",
+      "lgdGramPanchayatName": "Sarkarnattamangalam",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226204",
+      "lgdGramPanchayatName": "Sellappampatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226205",
+      "lgdGramPanchayatName": "Thalambadi",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226206",
+      "lgdGramPanchayatName": "Thathathiripuram",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226207",
+      "lgdGramPanchayatName": "Thathayangarpatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Namakkal",
+      "subDistrictCode": "5747",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593
+    },
+    {
+      "lgdGramPanchayatCode": "226208",
+      "lgdGramPanchayatName": "Thirumalaipatti",
+      "lgdBlockCode": "6554",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226209",
+      "lgdGramPanchayatName": "85 R KOMARAPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226210",
+      "lgdGramPanchayatName": "ANAIPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226211",
+      "lgdGramPanchayatName": "ARASAPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226212",
+      "lgdGramPanchayatName": "BODINAICKENPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226213",
+      "lgdGramPanchayatName": "CHANDRASEKARAPURAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226214",
+      "lgdGramPanchayatName": "GOUNDAMPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226215",
+      "lgdGramPanchayatName": "KAKKAVERI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226216",
+      "lgdGramPanchayatName": "KANAGABOMMAMPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226217",
+      "lgdGramPanchayatName": "KOONAVELAMPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226218",
+      "lgdGramPanchayatName": "KURUKKAPURAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226219",
+      "lgdGramPanchayatName": "M KONERIPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226220",
+      "lgdGramPanchayatName": "MALAIYAMPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226221",
+      "lgdGramPanchayatName": "MOLLAPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226222",
+      "lgdGramPanchayatName": "MURUNGAPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226223",
+      "lgdGramPanchayatName": "MUTHUKALIPATTI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226224",
+      "lgdGramPanchayatName": "P AYEEPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226225",
+      "lgdGramPanchayatName": "P MUNIAPPAMPALAYAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226226",
+      "lgdGramPanchayatName": "PONKURICHI",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226227",
+      "lgdGramPanchayatName": "SINGALANDAPURAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226228",
+      "lgdGramPanchayatName": "VADUGAM",
+      "lgdBlockCode": "6555",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226229",
+      "lgdGramPanchayatName": "Akkiampatti",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226230",
+      "lgdGramPanchayatName": "Belukurichi",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226231",
+      "lgdGramPanchayatName": "Bommasamudram",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226232",
+      "lgdGramPanchayatName": "Kalkurichi",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226233",
+      "lgdGramPanchayatName": "Kondamanaickenpatti",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226234",
+      "lgdGramPanchayatName": "Melapatti",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226235",
+      "lgdGramPanchayatName": "Naducombai",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226236",
+      "lgdGramPanchayatName": "Pachudaiyampatti",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226237",
+      "lgdGramPanchayatName": "Pallipatti",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226238",
+      "lgdGramPanchayatName": "Periakulam",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226239",
+      "lgdGramPanchayatName": "Pottanam",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226240",
+      "lgdGramPanchayatName": "Thuthikulam",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226241",
+      "lgdGramPanchayatName": "Uthirakidikaval",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226242",
+      "lgdGramPanchayatName": "Valavanthicombai",
+      "lgdBlockCode": "6556",
+      "talukName": "Sendamangalam",
+      "subDistrictCode": "6632",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617
+    },
+    {
+      "lgdGramPanchayatCode": "226243",
+      "lgdGramPanchayatName": "A erayamangalam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226244",
+      "lgdGramPanchayatName": "Anangoor",
+      "lgdBlockCode": "6557",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226245",
+      "lgdGramPanchayatName": "Andipalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226246",
+      "lgdGramPanchayatName": "Animoor",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226247",
+      "lgdGramPanchayatName": "Chikkanaickanpalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226248",
+      "lgdGramPanchayatName": "Chitalandur",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226249",
+      "lgdGramPanchayatName": "Devanankurichi",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226250",
+      "lgdGramPanchayatName": "Emapalli",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226251",
+      "lgdGramPanchayatName": "Karumapuram",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226252",
+      "lgdGramPanchayatName": "Karuveppampatti",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226253",
+      "lgdGramPanchayatName": "Modamangalam",
+      "lgdBlockCode": "6557",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226254",
+      "lgdGramPanchayatName": "Molasi",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226255",
+      "lgdGramPanchayatName": "Patlur",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226256",
+      "lgdGramPanchayatName": "Pirithi",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226257",
+      "lgdGramPanchayatName": "Pudupuliampatti",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226258",
+      "lgdGramPanchayatName": "O. rajapalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226259",
+      "lgdGramPanchayatName": "S erayamangalam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226260",
+      "lgdGramPanchayatName": "Sirumolasi",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226261",
+      "lgdGramPanchayatName": "T goundampalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226262",
+      "lgdGramPanchayatName": "T kailasampalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226263",
+      "lgdGramPanchayatName": "T pudupalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226264",
+      "lgdGramPanchayatName": "Thanneerpandalpalayam",
+      "lgdBlockCode": "6557",
+      "talukName": "Kumarapalayam",
+      "subDistrictCode": "6634",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424
+    },
+    {
+      "lgdGramPanchayatCode": "226265",
+      "lgdGramPanchayatName": "Thirumangalam",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226266",
+      "lgdGramPanchayatName": "Thokkavadi",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226267",
+      "lgdGramPanchayatName": "Varagoorampatti",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226268",
+      "lgdGramPanchayatName": "Vattur",
+      "lgdBlockCode": "6557",
+      "talukName": "Tiruchengode",
+      "subDistrictCode": "5745",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668
+    },
+    {
+      "lgdGramPanchayatCode": "226269",
+      "lgdGramPanchayatName": "Ananthagoundampalayam",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226270",
+      "lgdGramPanchayatName": "Akkaraipatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226271",
+      "lgdGramPanchayatName": "Alampatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226272",
+      "lgdGramPanchayatName": "Alavaipatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226273",
+      "lgdGramPanchayatName": "Kallankulam",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226274",
+      "lgdGramPanchayatName": "Kattanachampatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226275",
+      "lgdGramPanchayatName": "Keelur",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226276",
+      "lgdGramPanchayatName": "Kuttaladampatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226277",
+      "lgdGramPanchayatName": "Mathiyampatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226278",
+      "lgdGramPanchayatName": "Mattuvelampatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226279",
+      "lgdGramPanchayatName": "Minnakkal",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226280",
+      "lgdGramPanchayatName": "Moolakadu",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226281",
+      "lgdGramPanchayatName": "Nachipatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226282",
+      "lgdGramPanchayatName": "Nadupatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226283",
+      "lgdGramPanchayatName": "No 3 Komarapalayam",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226284",
+      "lgdGramPanchayatName": "O Sowthapuram",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226285",
+      "lgdGramPanchayatName": "Palanthinnipatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226286",
+      "lgdGramPanchayatName": "Pallavanaickenpatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226287",
+      "lgdGramPanchayatName": "Ponparappipatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226288",
+      "lgdGramPanchayatName": "R Pudupalayam",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226289",
+      "lgdGramPanchayatName": "Semmandapatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226290",
+      "lgdGramPanchayatName": "Thengalpalayam",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226291",
+      "lgdGramPanchayatName": "Thottiyapatti",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    },
+    {
+      "lgdGramPanchayatCode": "226292",
+      "lgdGramPanchayatName": "Thottiyavalasu",
+      "lgdBlockCode": "6558",
+      "talukName": "Rasipuram",
+      "subDistrictCode": "5746",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631
+    }
+  ],
+  "review": [],
+  "summary": {
+    "gramPanchayats": 322,
+    "projected": 322,
+    "deferred": 0,
+    "byCategory": {
+      "critical": 79,
+      "over_exploited": 211,
+      "safe": 14,
+      "semi_critical": 18
+    },
+    "blocksSpanningTaluks": 4,
+    "talukCoverage": 8
+  }
+}

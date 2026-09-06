@@ -1,0 +1,278 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/environment-plan",
+  "scope": {
+    "kind": "district",
+    "id": "tn-namakkal"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ngt-dep-tn-namakkal",
+        "title": "District Environmental Plan, Namakkal District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
+        "publisher": "District Collector, Namakkal, with the Tamil Nadu Pollution Control Board",
+        "license": "Tamil Nadu government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://namakkal.nic.in/document/district-environment-plan-namakkal-district/",
+        "as_of": "2019-11-28",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-environment-plan-district.ts",
+    "internal_inputs": [],
+    "note": "District Environmental Plan, Namakkal District (2019, District Collector, Namakkal, for the District Committee; members include the District Environmental Engineers, Tamilnadu Pollution Control Board, Namakkal and Kumarapalayam), which carries no water-balance table: 13 figures the plan states about water, each transcribed with the sentence it was read from and the PDF page it sits on, and 10 of its water action points. Nothing is computed from the plan; a balance is served only where the plan prints one. Review status proposed (transcribed, awaiting a reviewer's check).",
+    "conventions": {
+      "figures": "value and unit as the plan states them; quote is the sentence verbatim; pdfPage is the viewer's page, printedPage the number printed on it",
+      "waterBalance": "null when the plan carries no NGT-template balance; the page says so rather than estimating one",
+      "review": "proposed until a person reads every figure against the PDF; then verified with the date",
+      "document": "sha256 and byte length of the PDF as retrieved, so a re-posted file is detected; the PDF itself is not mirrored"
+    }
+  },
+  "schemaVersion": 1,
+  "id": "tn-namakkal-environment-plan-2019",
+  "sourceId": "ngt-dep-tn-namakkal",
+  "document": {
+    "title": "District Environmental Plan, Namakkal District",
+    "publisher": "District Collector, Namakkal, for the District Committee; members include the District Environmental Engineers, Tamilnadu Pollution Control Board, Namakkal and Kumarapalayam",
+    "url": "https://cdn.s3waas.gov.in/s3b9228e0962a78b84f3d5d92f4faa000b/uploads/2019/11/2019112865.pdf",
+    "listingUrl": "https://namakkal.nic.in/document/district-environment-plan-namakkal-district/",
+    "editionLabel": "2019",
+    "editionNote": "The cover is undated; the District Collector's signature on the last page is hand-dated 28/11/19, the PDF metadata creation date is 28 November 2019, and the upload path on namakkal.nic.in is 2019/11, so the edition is labelled 2019.",
+    "documentDate": "2019-11-28",
+    "pages": 38,
+    "sha256": "a3c1e4f018ba9c9c2c228b620f16b8bc7d5b5840b354bb7e0ba8fc019aa76821",
+    "bytes": 5931757,
+    "retrievedAt": "2026-09-06",
+    "template": "An Introduction (NGT order, District Committee membership, district profile) followed by twelve subject sections: solid, bio-medical, plastic and C&D waste, non-attainment cities, polluted river stretches, polluted industrial clusters, industrial pollution control, utilisation of treated sewage, conservation of water bodies, e-waste and illegal sand mining, each a short narrative followed by a responsibility / plan of action / stakeholders table or a work-to-be-carried-out / action-by table, with photograph pages between them. It prints no demand, supply or deficit water balance.",
+    "quirks": [
+      "The cover cites Hon'ble NGT Order in O.A.No.710-713/2017 dated 15.07.2019, and the preamble the D.O. letter of 26.07.2019 that followed it, rather than O.A. 360/2018.",
+      "The cover prints the title on two lines, 'District Environmental Plan' over 'Namakkal District'; the comma in the title here is added. The cover carries two emblems and the motto 'Pollution Prevention Pays' but no office name in its text, so the publisher is taken from the District Committee list on page 4 and the 'District Collector Namakkal' signature block on page 38.",
+      "Every page carries a footer number equal to its PDF page number (the cover is page 1), so printedPage equals pdfPage throughout.",
+      "Village panchayats are counted as 322 on page 5 and 633 on page 16.",
+      "The 'status of water bodies' table on page 32 prints owner rows and column headings (available, rejuvenated in the past five years, under rejuvenation at present) but no counts; the work table below it starts at S.No 2.",
+      "The sampling-point table on page 20 is headed 'Ground water Sample Collection points' although the surrounding text describes river (GEMS and MINARS) and sewage-drain samples; Kokkarayanpettai appears twice (rows 5 and 6) with identical coordinates.",
+      "No district-level sewage generation figure is printed; the treated-sewage section gives the Tamil Nadu total and the consented capacities of two municipal STPs.",
+      "The solid-waste authorisation row on page 10 leaves its dates blank ('as on __ date').",
+      "Page 38 is a scanned signature page whose text layer is OCR ('District Cornnrittee', 'Governm.ent', 'A11 Municipal Commissioners'); the signature over 'District Collector Namakkal' is hand-dated 28/11/19.",
+      "The action tables carry no priority column, so every action point's priority is null.",
+      "Section 12 is headed 'Prevention Illegal Sand Mining'; the index lists 13 entries (Introduction plus the 12 subjects) while the conclusion says the plan covers '12 subjects'."
+    ]
+  },
+  "waterBalance": null,
+  "figures": [
+    {
+      "id": "cauvery-priority-i-bod-threshold",
+      "label": "BOD threshold of the priority-I class under which CPCB lists the Cauvery",
+      "value": 30,
+      "unit": "mg/l BOD",
+      "detail": "The Cauvery is one of four Tamil Nadu stretches in priority-I; the same page states the Cauvery stretch in Namakkal district is priority-I.",
+      "quote": "Thirumanimutharu, Cauvery under priority-I (BOD > 30mg/l), River Bhavani under",
+      "section": "6.Rejuvenation of Polluted River Stretches",
+      "pdfPage": 19,
+      "printedPage": 19
+    },
+    {
+      "id": "bathing-fitness-target-bod",
+      "label": "BOD target for restoring polluted stretches to bathing quality",
+      "value": 3,
+      "unit": "mg/l BOD",
+      "detail": "With faecal coliform below 500 MPN/100 ml; the NGT deadline was extended to 31.03.2021 by its order of 08.04.2019.",
+      "quote": "purposes (i.e., BOD < 3mg/l & FC < 500 MPN/100ml) within six months from the date of",
+      "section": "6.Rejuvenation of Polluted River Stretches",
+      "pdfPage": 19,
+      "printedPage": 19
+    },
+    {
+      "id": "dyeing-units-consented-kumarapalayam",
+      "label": "Dyeing and bleaching units with Board consent in Kumarapalayam taluk",
+      "value": 110,
+      "unit": "units",
+      "detail": "All consented units are stated to run individual effluent treatment plants with zero liquid discharge.",
+      "quote": "Taluk - 110 Nos of Dyeing and Bleaching Industries are obtained consent from the Board. All",
+      "section": "Dyeing Industry",
+      "pdfPage": 24,
+      "printedPage": 24
+    },
+    {
+      "id": "dyeing-units-consented-rasipuram",
+      "label": "Dyeing and bleaching units with Board consent in Rasipuram taluk",
+      "value": 12,
+      "unit": "units",
+      "detail": "Paramathi Velur taluk has one more consented unit on the same line.",
+      "quote": "In Rasipuram Taluk - 12 Nos, Paramathi Velur Taluk - 1 No. Kumarapalayam",
+      "section": "Dyeing Industry",
+      "pdfPage": 24,
+      "printedPage": 24
+    },
+    {
+      "id": "unauthorised-dyeing-units",
+      "label": "Unauthorised textile dyeing and bleaching units identified earlier",
+      "value": 236,
+      "unit": "units",
+      "detail": "In Rasipuram, Kumarapalayam and Pallipalayam taluks; the plan says they were issued closure directions, had power disconnected, and are being demolished or evicted through the District Coordination Committee.",
+      "quote": "Earlier there were 236 Nos. of unauthorized Textile Dyeing and Bleaching units",
+      "section": "Dyeing Industry",
+      "pdfPage": 24,
+      "printedPage": 24
+    },
+    {
+      "id": "cetp-green-environmental-association-members",
+      "label": "Member units of the proposed Green Environmental Association CETP",
+      "value": 118,
+      "unit": "member units",
+      "detail": "Proposed cost Rs 157 crore, land bought near Elanthakuttai village, Terms of Reference issued at the SEIAA meeting of 03.08.2018; consent to establish not yet applied for.",
+      "quote": "1. M/s. Green Environmental Association - (118 Members) - Proposed cost - 157 Crores -",
+      "section": "Present/proposed CETP (Common Effluent Treatment Plant) capacity/Member units",
+      "pdfPage": 25,
+      "printedPage": 25
+    },
+    {
+      "id": "cetp-green-cauvery-cluster-members",
+      "label": "Member units of the proposed Kumarapalayam Green Cauvery Dyeing Cluster CETP",
+      "value": 92,
+      "unit": "member units",
+      "detail": "Proposed cost Rs 150 crore; feasibility report submitted to the Government of Tamil Nadu.",
+      "quote": "2. M/s. Kumarapalayam Green Cauvery Dyeing Cluster (92 Members) - Proposed Cost -",
+      "section": "Present/proposed CETP (Common Effluent Treatment Plant) capacity/Member units",
+      "pdfPage": 26,
+      "printedPage": 26
+    },
+    {
+      "id": "cetp-green-cauvery-cluster-land",
+      "label": "Land bought for the Kumarapalayam Green Cauvery Dyeing Cluster CETP",
+      "value": 28,
+      "unit": "acres",
+      "detail": "Near Elanthakutai and Sowthapuram villages, Kumarapalayam taluk; the line breaks after '28.0' and 'acres' follows on the next line.",
+      "quote": "150 Crores. Feasibility report submitted to the Government of Tamil Nadu TWICL- 28.0",
+      "section": "Present/proposed CETP (Common Effluent Treatment Plant) capacity/Member units",
+      "pdfPage": 26,
+      "printedPage": 26
+    },
+    {
+      "id": "tn-sewage-generation",
+      "label": "Sewage generated in Tamil Nadu (state-wide)",
+      "value": 5600,
+      "unit": "MLD",
+      "detail": "A state figure quoted in the section preamble; no district generation figure is printed anywhere in the plan.",
+      "quote": "In Tamilnadu, total sewage generation is around 5600 MLD and there are 54 Sewage",
+      "section": "9. Utilization of treated sewage",
+      "pdfPage": 28,
+      "printedPage": 28
+    },
+    {
+      "id": "tn-stp-capacity",
+      "label": "Sewage treatment capacity in operation in Tamil Nadu (state-wide)",
+      "value": 1400,
+      "unit": "MLD",
+      "detail": "Across 54 sewage treatment plants at corporations and selected municipalities and town panchayats.",
+      "quote": "Treatment Plants at a total capacity of 1400 MLD are in operation at all Corporations and",
+      "section": "9. Utilization of treated sewage",
+      "pdfPage": 28,
+      "printedPage": 28
+    },
+    {
+      "id": "namakkal-municipality-stp-capacity",
+      "label": "Namakkal Municipality sewage treatment plant, consented capacity",
+      "value": 5,
+      "unit": "MLD",
+      "detail": "Consent to operate obtained; the plan records the plant as under operation.",
+      "quote": "carrying out – Treatment of Sewage (STP) – 5 MLD for treatment and disposal of sewage",
+      "section": "9. Utilization of treated sewage",
+      "pdfPage": 28,
+      "printedPage": 28
+    },
+    {
+      "id": "rasipuram-municipality-stp-capacity",
+      "label": "Rasipuram Municipality sewage treatment plant, consented capacity",
+      "value": 6.96,
+      "unit": "MLD",
+      "detail": "Consent to operate obtained; the plan records the plant as ready for commissioning.",
+      "quote": "Treatment of Sewage (STP) – 6.96 MLD for treatment and disposal of sewage generated from",
+      "section": "9. Utilization of treated sewage",
+      "pdfPage": 30,
+      "printedPage": 30
+    },
+    {
+      "id": "water-body-restoration-threshold",
+      "label": "Minimum area of water bodies covered by the state restoration review",
+      "value": 0.5,
+      "unit": "acre",
+      "detail": "Lakes, tanks, ponds and ooranis of 0.5 acre or more as recorded in the revenue record; the district's own water-body counts are left blank in the table on page 32.",
+      "quote": "water bodies (Lakes, Tanks, Ponds, Ooranis) in Tamilnadu having area 0.5 acre or more as",
+      "section": "10. Conservation of Water Bodies",
+      "pdfPage": 31,
+      "printedPage": 31
+    }
+  ],
+  "actionPoints": [
+    {
+      "text": "To carry out Air Quality Monitoring, Water Quality Monitoring (ground water) & Compost quality in and around processing facilities & dump sites as per Schedule I & II of SWM Rules, 2016",
+      "sector": "Solid Waste Management",
+      "priority": null,
+      "pdfPage": 10
+    },
+    {
+      "text": "Special Task Force shall periodically review once in two weeks on the status of creating awareness and also on the prevention of dumping of solid waste and discharge of sewage in water bodies",
+      "sector": "Solid Waste Management",
+      "priority": null,
+      "pdfPage": 11
+    },
+    {
+      "text": "Monitoring of industries by periodical collection of sewage/ Trade effluent Sample for ascertaining Water Quality",
+      "sector": "Industrial Pollution Control",
+      "priority": null,
+      "pdfPage": 27
+    },
+    {
+      "text": "All the municipalities and Town Panchayat shall cover their entire jurisdiction area under UGDS scheme. Sewage received in STP shall be treated to the Discharge standards.",
+      "sector": "Utilization of treated sewage",
+      "priority": null,
+      "pdfPage": 30
+    },
+    {
+      "text": "Periodic monitoring of treated sewage with preferably online monitoring (parameters for analysis pH, BOD, TSS, TDS, COD, Total N, Fecal Coliform)",
+      "sector": "Utilization of treated sewage",
+      "priority": null,
+      "pdfPage": 30
+    },
+    {
+      "text": "Industries located near Common STP shall make MoU with the operator of STP so as to utilize treated sewage to meet their industrial requirement after proper tertiary treatment",
+      "sector": "Utilization of treated sewage",
+      "priority": null,
+      "pdfPage": 31
+    },
+    {
+      "text": "Treated sewage from the Common STPs shall be utilized for industrial use, agriculture, ground water recharge and other non-domestic use",
+      "sector": "Utilization of treated sewage",
+      "priority": null,
+      "pdfPage": 31
+    },
+    {
+      "text": "Collection of data regarding Sewage, Solid Waste disposal in river stretch with quality and prepare Digital Mapping with above details",
+      "sector": "Conservation of Water Bodies",
+      "priority": null,
+      "pdfPage": 32
+    },
+    {
+      "text": "Desilting, removal of enchroachments & flood control measures",
+      "sector": "Conservation of Water Bodies",
+      "priority": null,
+      "pdfPage": 32
+    },
+    {
+      "text": "Identification of river stretches where there are chances for illegal sand mining; frequent surprise checks in those river stretches by the Taluk Level Task Force, reporting fortnightly",
+      "sector": "Prevention of illegal sand mining",
+      "priority": null,
+      "pdfPage": 37
+    }
+  ],
+  "review": {
+    "status": "proposed",
+    "extractedAt": "2026-09-06",
+    "extractedBy": "Claude, transcribed from the PDF text; pending Sundaresh's verify against the PDF",
+    "verifiedAt": null,
+    "verifiedBy": null
+  }
+}
