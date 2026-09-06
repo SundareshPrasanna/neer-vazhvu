@@ -25,6 +25,9 @@ export const MUMBAI_RIVERS: BasinManifest = {
     "Mumbai's water in one map: the four rivers of Salsette island that drain the city (the Mithi, Dahisar, Poisar and Oshiwara) and the seven lakes 30 to 130 km outside it that supply it (Bhatsa, Upper and Middle Vaitarna, Modak Sagar, Tansa, Vihar and Tulsi). CPCB's October 2025 assessment puts the Mithi at Mahim at a maximum BOD of 210 mg/l, the highest of any polluted river stretch in India; the other three city rivers are not monitored as rivers at all. Click a river to open its treatment-and-waste gap view.",
   mapCenter: [19.1, 72.9],
   mapZoom: 11,
+  // Open on the whole system - city boundary plus the river and supply-lake
+  // catchments - not on Greater Mumbai alone: the lakes are the point.
+  defaultFitFamilies: ["boundary", "sub-hydrosheds"],
   // Open the gap view on the Mithi by default - the best-evidenced river - so
   // the right-hand panel is populated, not blank (the Chennai/Cooum pattern).
   defaultGapUnit: "mithi",

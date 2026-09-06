@@ -875,6 +875,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const shedData = data["sub-hydrosheds"];
   const boundaryData = data["boundary"];
   const contextData = data["context-boundary"];
+  // Loaded-state key of the manifest's default-fit families ("" until the
+  // manifest names some and every one has arrived).
+  const fitKey = (manifest.defaultFitFamilies ?? []).every((f) => data[f])
+    ? (manifest.defaultFitFamilies ?? []).map((f) => `${f}:${data[f]?.features.length ?? 0}`).join(",")
+    : "";
   const fitBounds = useMemo(() => {
     let feats: Feature[];
     if (selectedRiverId && shedData) {
@@ -884,6 +889,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       // Nothing selected and a focus view is configured: defer to it (the
       // MapController applies center/zoom) instead of the wide boundary fit.
       return null;
+    } else if (fitKey) {
+      // The manifest names the families that frame the opening view - a city
+      // atlas whose supply lakes sit far outside its boundary opens on the
+      // whole system, the way its PDF export already does.
+      feats = (manifest.defaultFitFamilies ?? []).flatMap((f) => data[f]?.features ?? []);
     } else {
       // A basin whose story crosses its working boundary ships a wider
       // context outline; frame to that, or the reach it exists to show gets
@@ -894,7 +904,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     if (!feats.length) return null;
     const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, shedData, boundaryData, contextData, selectedSheds, manifest.defaultFocus]);
+    // fitKey stands in for the fit families' data so a floor change never refits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fitKey, selectedRiverId, shedData, boundaryData, contextData, selectedSheds, manifest.defaultFocus]);
 
   // Frame the region highlighted from the accountability matrix ("Show X on
   // the map") once its layer data is in. Matching mirrors the highlight style.
