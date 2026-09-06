@@ -31,6 +31,7 @@ import argparse
 import csv
 import json
 import shutil
+import statistics
 import sys
 from pathlib import Path
 
@@ -51,7 +52,6 @@ def width_confidence(rows_all, ok_rows, way_year):
     """Tier the reach's width measurement (canal DECISIONS W7 addendum):
     A = well-covered recent tracing with low transect-to-transect jitter;
     B = measured but sparse or older tracing; C = not channel-measurable."""
-    import statistics
     share = len(ok_rows) / len(rows_all) if rows_all else 0.0
     if len(ok_rows) < 3:
         return {"tier": "C", "share_measured": round(share, 2),
@@ -71,10 +71,18 @@ def width_confidence(rows_all, ok_rows, way_year):
                 diffs.append(abs(ok_rows[j][1] - ok_rows[i][1]) / med * 100)
             break
     jitter = statistics.median(diffs) if diffs else None
-    years = [way_year[w] for _, _, ids in ok_rows
-             for w in ids.split(";") if w in way_year]
+    # way_year maps a polygon id to the tracing years of the geometry the
+    # transects actually cross: one year for a plain way, the OUTER rings'
+    # years for a multipolygon. Report the honest span across every ring
+    # touched, but gate on one representative year per polygon so that a
+    # relation with many rings does not outvote the ways beside it.
+    years = [y for _, _, ids in ok_rows
+             for w in ids.split(";") if w in way_year
+             for y in way_year[w]]
+    reps = [statistics.median(way_year[w]) for _, _, ids in ok_rows
+            for w in ids.split(";") if w in way_year]
     vintage = f"{min(years)}-{max(years)}" if years else None
-    vin_ok = bool(years) and statistics.median(years) >= 2021
+    vin_ok = bool(reps) and statistics.median(reps) >= 2021
     if share >= 0.7 and vin_ok and (jitter or 99) <= 25:
         tier = "A"
     elif share >= 0.4:
@@ -148,10 +156,27 @@ def main(waterway=None):
         (RESEARCH / "figures" / "photos" / "photos.json").read_text())
     osm_meta = json.loads(
         (RESEARCH / "data" / "osm-water-meta.json").read_text())
-    way_year = {}
+    # Tracing vintage per polygon. A relation's own timestamp records when
+    # the RELATION was last touched - a retag, a member swap - not when the
+    # water surface was traced, so it is not evidence about the bank line.
+    # Resolve a multipolygon from its OUTER rings instead: those are the
+    # geometry the transects intersect. Inner rings are islands and say
+    # nothing about width. Meta files fetched before the query carried
+    # member ways have no outer-ring metadata; those fall back to the
+    # relation's own year, which is what the build did throughout.
+    elem_year = {}
     for e in osm_meta.get("elements", []):
         if "timestamp" in e:
-            way_year[f"{e['type']}/{e['id']}"] = int(e["timestamp"][:4])
+            elem_year[f"{e['type']}/{e['id']}"] = int(e["timestamp"][:4])
+    way_year = {k: [v] for k, v in elem_year.items()}
+    for e in osm_meta.get("elements", []):
+        if e["type"] != "relation":
+            continue
+        outer = [elem_year[f"way/{m['ref']}"] for m in e.get("members", [])
+                 if m.get("type") == "way" and m.get("role") == "outer"
+                 and f"way/{m['ref']}" in elem_year]
+        if outer:
+            way_year[f"relation/{e['id']}"] = outer
     veg_ha_by_reach = {int(r["reach_id"]): float(r["veg_ha"]) for r in
                        csv.DictReader(open(RESEARCH / "data" / "current-veg-area.csv"))}
     veg_on_water = {int(r["reach_id"]): {
