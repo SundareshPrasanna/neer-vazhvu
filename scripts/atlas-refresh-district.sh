@@ -45,7 +45,7 @@
 #                alert. Every other step stops on any failure.
 set -uo pipefail
 
-district="${1:?district slug required (thanjavur, tiruchirappalli, salem, tirupathur, satara, ahilyanagar, kolhapur)}"
+district="${1:?district slug required (thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, satara, ahilyanagar, kolhapur)}"
 as_of="${2:-$(date -u +%Y-%m-%d)}"
 cd "$(dirname "$0")/.."
 
@@ -102,7 +102,13 @@ if [ "$identity" = "refreshed" ]; then
     workbook_sha="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sources"]["census"]["artifactSha256s"][0])' ".cache/atlas/$state/$district/source-extract.json")"
     must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --workbook ".cache/atlas/$state/$district/objects/$workbook_sha" --as-of "$as_of"
   else
-    must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --replay
+    if [ -f ".cache/atlas/$state/$district/census-village-attributes.json" ]; then
+      must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --replay
+    else
+      # First run: the attributes cache is cut from the workbook the identity refresh cached.
+      workbook_sha="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sources"]["census"]["artifactSha256s"][0])' ".cache/atlas/$state/$district/source-extract.json")"
+      must npx tsx scripts/atlas-census-tn-district.ts --district "$district" --workbook ".cache/atlas/$state/$district/objects/$workbook_sha" --as-of "$as_of"
+    fi
   fi
 else
   step "3 census: skipped (closed source; identity not refreshed this run)"
@@ -143,7 +149,10 @@ PY
 )
 if [ "$identity" = "refreshed" ] || [ "$gw_changed" = 1 ]; then
   step "5 project-gw: taluk assessment onto Gram Panchayats"
-  must npx tsx scripts/atlas-project-groundwater.ts --district "$district" --as-of "$as_of"
+  # First run: no cached taluk layer yet, so the projection fetches it.
+  taluk_flags=""
+  [ -f ".cache/atlas/$state/$district/tngis-taluk-boundary.json" ] || taluk_flags="--fetch"
+  must npx tsx scripts/atlas-project-groundwater.ts --district "$district" --as-of "$as_of" $taluk_flags
 else
   step "5 project-gw: skipped (identity and taluk assessment unchanged; served projection stands)"
 fi

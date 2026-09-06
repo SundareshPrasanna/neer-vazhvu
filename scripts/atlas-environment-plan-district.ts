@@ -33,6 +33,8 @@ const PRODUCED_BY = "scripts/atlas-environment-plan-district.ts";
 /** The registered upstream each plan source id resolves to. */
 const UPSTREAM_BY_SOURCE: Record<string, UpstreamKey> = {
   "mpcb-district-environment-plans": "mpcbEnvironmentPlans",
+  "ngt-dep-tn-namakkal": "ngtDepTnNamakkal",
+  "ngt-dep-tn-karur": "ngtDepTnKarur",
 };
 
 function main(): void {

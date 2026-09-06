@@ -1,0 +1,4973 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/briefs",
+  "scope": {
+    "kind": "district",
+    "id": "tn-erode"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnrd-lgd-directory-2021",
+        "title": "TNRD village panchayat directory with LGD codes (village_eng.pdf, 2021 edition)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+        "as_of": "2021-03-11",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tnrd-panchayat-master",
+        "title": "TNRD current village panchayat master (vptax public dues enquiry)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "census-2011-village-amenities",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Tamil Nadu village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        "as_of": "2011",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo daily precipitation (forecast past_days and ERA5 archive)",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "input",
+        "url": "https://open-meteo.com/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-generic-viewer-water-bodies",
+        "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-generate-assessments.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/erode/directory.json",
+      "public/data/atlas/tn/erode/jjm-service/6462.json",
+      "public/data/atlas/tn/erode/census-2011/6462.json",
+      "public/data/atlas/tn/erode/groundwater-taluks.json",
+      "public/data/atlas/tn/erode/groundwater-projection.json",
+      "public/data/atlas/tn/erode/rainfall.json",
+      "public/data/atlas/tn/erode/water-bodies/6462.geojson",
+      "public/data/atlas/tn/erode/assessments/6462.json"
+    ],
+    "note": "Place briefs for 15 Gram Panchayats in BHAVANI block: the verdict derived from the tension between tap coverage and the containing taluk's groundwater category, headline facts each carrying their caveat, the named capability gaps, and the detail behind them (habitations, sources, sampling, land, seasonal sources, boundary, rainfall, water bodies). Briefs fail closed: a place must hold identity, population and drinking-water service before it gets a verdict; otherwise it is directory-only and publishes no numbers.",
+    "conventions": {
+      "status": "brief-ready | directory-only; a directory-only brief carries no verdict and no headline facts by rule",
+      "tone": "positive | warning | neutral | blocked, the same vocabulary the district page uses",
+      "groundwater": "every taluk-grain figure says it describes the taluk, not the Panchayat"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-erode-v1",
+  "blockCode": "6462",
+  "blockName": "BHAVANI",
+  "assessedAt": "2026-09-06",
+  "recordCount": 15,
+  "briefs": [
+    {
+      "schemaVersion": 1,
+      "placeId": "223588",
+      "name": "ALATHUR",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 543 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "543 of 543 households, across 5 habitations."
+        },
+        {
+          "value": "20",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River, Treated Surface Water"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "71.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "16d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-21. 168 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Alathur",
+            "population": 393,
+            "households": 118,
+            "connections": 118
+          },
+          {
+            "name": "Appanaickkanur",
+            "population": 596,
+            "households": 149,
+            "connections": 149
+          },
+          {
+            "name": "Dasanaickkanur",
+            "population": 364,
+            "households": 93,
+            "connections": 93
+          },
+          {
+            "name": "Thattarapalayam",
+            "population": 396,
+            "households": 94,
+            "connections": 94
+          },
+          {
+            "name": "V.ramanathapuram",
+            "population": 356,
+            "households": 89,
+            "connections": 89
+          }
+        ],
+        "sources": [
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 8
+          },
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 8
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 4
+          }
+        ],
+        "sampling": {
+          "total": 168,
+          "unsafe": 0,
+          "atSource": 131,
+          "atHousehold": 37,
+          "earliest": "2022-10-25",
+          "latest": "2026-08-21",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 12
+            },
+            {
+              "year": "2023",
+              "count": 28
+            },
+            {
+              "year": "2024",
+              "count": 31
+            },
+            {
+              "year": "2025",
+              "count": 65
+            },
+            {
+              "year": "2026",
+              "count": 32
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 302.83,
+          "netSownHectares": 240.3,
+          "irrigatedHectares": 240.3,
+          "canalHectares": 186.35,
+          "wellHectares": 53.95,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 3.06,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 3,
+          "summerSourceTypes": 3,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 292.9769,
+          "latitude": 11.4329,
+          "longitude": 77.5935
+        },
+        "rainfall": {
+          "windowMm": 71.9,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 7.8
+        },
+        "waterBodies": {
+          "count": 2,
+          "namedCount": 2,
+          "areaHectares": 1.3877,
+          "largestAreaHectares": 0.7756,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223589",
+      "name": "ANDIKULAM",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 600 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "600 of 600 households, across 5 habitations."
+        },
+        {
+          "value": "15",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, River"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "52.5 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "16d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-21. 120 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Andikulam",
+            "population": 390,
+            "households": 118,
+            "connections": 118
+          },
+          {
+            "name": "KADAYAMPATTI AD COLONY",
+            "population": 355,
+            "households": 91,
+            "connections": 91
+          },
+          {
+            "name": "Kulathukkarai",
+            "population": 265,
+            "households": 53,
+            "connections": 53
+          },
+          {
+            "name": "Palaiya Kadayampatti",
+            "population": 632,
+            "households": 206,
+            "connections": 206
+          },
+          {
+            "name": "Senkaadu",
+            "population": 396,
+            "households": 132,
+            "connections": 132
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 13
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 1
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 120,
+          "unsafe": 0,
+          "atSource": 93,
+          "atHousehold": 27,
+          "earliest": "2022-10-22",
+          "latest": "2026-08-21",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 8
+            },
+            {
+              "year": "2023",
+              "count": 22
+            },
+            {
+              "year": "2024",
+              "count": 34
+            },
+            {
+              "year": "2025",
+              "count": 38
+            },
+            {
+              "year": "2026",
+              "count": 18
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 94.47,
+          "netSownHectares": 44.86,
+          "irrigatedHectares": 42.15,
+          "canalHectares": 39.91,
+          "wellHectares": 2.24,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 96.5846,
+          "latitude": 11.46155,
+          "longitude": 77.6789
+        },
+        "rainfall": {
+          "windowMm": 52.5,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 1,
+          "areaHectares": 12.3902,
+          "largestAreaHectares": 12.3902,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223590",
+      "name": "CHINNAPULIYUR",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 1,193 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,193 of 1,193 households, across 9 habitations."
+        },
+        {
+          "value": "14",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "57.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "16d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-21. 111 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "C Mettur",
+            "population": 180,
+            "households": 41,
+            "connections": 41
+          },
+          {
+            "name": "Chinnapuliyur",
+            "population": 886,
+            "households": 196,
+            "connections": 196
+          },
+          {
+            "name": "Chirai Meettaan Palayam",
+            "population": 648,
+            "households": 162,
+            "connections": 162
+          },
+          {
+            "name": "G.d.naidu Colony",
+            "population": 640,
+            "households": 211,
+            "connections": 211
+          },
+          {
+            "name": "Gunduchettipalayam",
+            "population": 632,
+            "households": 199,
+            "connections": 199
+          },
+          {
+            "name": "Kanchi Nagar",
+            "population": 220,
+            "households": 53,
+            "connections": 53
+          },
+          {
+            "name": "Karattupudhur Colony",
+            "population": 404,
+            "households": 95,
+            "connections": 95
+          },
+          {
+            "name": "Periyar Nagar",
+            "population": 352,
+            "households": 87,
+            "connections": 87
+          },
+          {
+            "name": "Ramakoundanvalasu",
+            "population": 612,
+            "households": 149,
+            "connections": 149
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 13
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 111,
+          "unsafe": 0,
+          "atSource": 83,
+          "atHousehold": 28,
+          "earliest": "2022-11-03",
+          "latest": "2026-08-21",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 15
+            },
+            {
+              "year": "2023",
+              "count": 11
+            },
+            {
+              "year": "2024",
+              "count": 25
+            },
+            {
+              "year": "2025",
+              "count": 42
+            },
+            {
+              "year": "2026",
+              "count": 18
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 663.59,
+          "netSownHectares": 452.33,
+          "irrigatedHectares": 452.33,
+          "canalHectares": 452.33,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 1.59,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 5,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 624.5637,
+          "latitude": 11.4498,
+          "longitude": 77.6348
+        },
+        "rainfall": {
+          "windowMm": 57.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 1,
+          "areaHectares": 1.3513,
+          "largestAreaHectares": 1.3513,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223591",
+      "name": "KAVANDAPADI",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 11,575 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "11,575 of 11,575 households, across 37 habitations."
+        },
+        {
+          "value": "107",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Delivery point of MVS (Upto mouth of village), Infiltration well, River, Treated Surface Water"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "71.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "15d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-22. 193 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Avarankattur",
+            "population": 294,
+            "households": 64,
+            "connections": 64
+          },
+          {
+            "name": "Avarankattur Colony",
+            "population": 970,
+            "households": 191,
+            "connections": 191
+          },
+          {
+            "name": "Ayyampalayam",
+            "population": 3848,
+            "households": 1191,
+            "connections": 1191
+          },
+          {
+            "name": "Ayyampalayam Colony",
+            "population": 973,
+            "households": 232,
+            "connections": 232
+          },
+          {
+            "name": "Ayyanvalasu",
+            "population": 81,
+            "households": 27,
+            "connections": 27
+          },
+          {
+            "name": "Ayyanvalasu Colony",
+            "population": 180,
+            "households": 45,
+            "connections": 45
+          },
+          {
+            "name": "Bommanpatty",
+            "population": 942,
+            "households": 314,
+            "connections": 314
+          },
+          {
+            "name": "Chinnagoundanur",
+            "population": 126,
+            "households": 42,
+            "connections": 42
+          },
+          {
+            "name": "Chinniyampalayam",
+            "population": 84,
+            "households": 28,
+            "connections": 28
+          },
+          {
+            "name": "Dharmapuri",
+            "population": 381,
+            "households": 109,
+            "connections": 109
+          },
+          {
+            "name": "Kannadipudur",
+            "population": 391,
+            "households": 116,
+            "connections": 116
+          },
+          {
+            "name": "Kattu Valasu",
+            "population": 224,
+            "households": 65,
+            "connections": 65
+          },
+          {
+            "name": "Kavandapadi",
+            "population": 18820,
+            "households": 5304,
+            "connections": 5304
+          },
+          {
+            "name": "Kavindapadi Pudur",
+            "population": 4320,
+            "households": 1428,
+            "connections": 1428
+          },
+          {
+            "name": "Kavindapadi Pudur Colony",
+            "population": 812,
+            "households": 232,
+            "connections": 232
+          },
+          {
+            "name": "Kullampalayam",
+            "population": 139,
+            "households": 40,
+            "connections": 40
+          },
+          {
+            "name": "Maniyampalayam",
+            "population": 438,
+            "households": 146,
+            "connections": 146
+          },
+          {
+            "name": "Maniyan Kattur Colony",
+            "population": 392,
+            "households": 98,
+            "connections": 98
+          },
+          {
+            "name": "Maniyankattur",
+            "population": 52,
+            "households": 15,
+            "connections": 15
+          },
+          {
+            "name": "Nallagoundanpalayam",
+            "population": 715,
+            "households": 221,
+            "connections": 221
+          },
+          {
+            "name": "Nalligoundanur",
+            "population": 580,
+            "households": 168,
+            "connections": 168
+          },
+          {
+            "name": "Nalligoundanur Colony",
+            "population": 75,
+            "households": 1,
+            "connections": 1
+          },
+          {
+            "name": "Panankattur",
+            "population": 214,
+            "households": 62,
+            "connections": 62
+          },
+          {
+            "name": "Pappankattur",
+            "population": 448,
+            "households": 117,
+            "connections": 117
+          },
+          {
+            "name": "Pavandagoundanur",
+            "population": 162,
+            "households": 44,
+            "connections": 44
+          },
+          {
+            "name": "Perumapalayam",
+            "population": 740,
+            "households": 228,
+            "connections": 228
+          },
+          {
+            "name": "Perumapalayam Colony",
+            "population": 300,
+            "households": 87,
+            "connections": 87
+          },
+          {
+            "name": "Poolavapatty",
+            "population": 214,
+            "households": 62,
+            "connections": 62
+          },
+          {
+            "name": "Sooranaikkannur",
+            "population": 234,
+            "households": 78,
+            "connections": 78
+          },
+          {
+            "name": "Thannasipatty",
+            "population": 896,
+            "households": 231,
+            "connections": 231
+          },
+          {
+            "name": "Thannasipatty Colony",
+            "population": 45,
+            "households": 13,
+            "connections": 13
+          },
+          {
+            "name": "Thenkattu Palayam",
+            "population": 248,
+            "households": 72,
+            "connections": 72
+          },
+          {
+            "name": "Thenkattupalayam Colony",
+            "population": 397,
+            "households": 115,
+            "connections": 115
+          },
+          {
+            "name": "VADAKATTU PALAYAM",
+            "population": 150,
+            "households": 42,
+            "connections": 42
+          },
+          {
+            "name": "Velampalayam",
+            "population": 363,
+            "households": 121,
+            "connections": 121
+          },
+          {
+            "name": "Velampalayam Colony",
+            "population": 513,
+            "households": 171,
+            "connections": 171
+          },
+          {
+            "name": "Velampalayam Mettur",
+            "population": 190,
+            "households": 55,
+            "connections": 55
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 55
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 27
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 16
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 8
+          },
+          {
+            "type": "Delivery point of MVS (Upto mouth of village)",
+            "category": "Bulk water (from MVS)",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 193,
+          "unsafe": 0,
+          "atSource": 167,
+          "atHousehold": 26,
+          "earliest": "2022-09-24",
+          "latest": "2026-08-22",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 11
+            },
+            {
+              "year": "2023",
+              "count": 29
+            },
+            {
+              "year": "2024",
+              "count": 42
+            },
+            {
+              "year": "2025",
+              "count": 80
+            },
+            {
+              "year": "2026",
+              "count": 31
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 2204.76,
+          "netSownHectares": 1379.75,
+          "irrigatedHectares": 1379.75,
+          "canalHectares": 1379.75,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 6.05,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 7,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 2226.9884,
+          "latitude": 11.4172,
+          "longitude": 77.5387
+        },
+        "rainfall": {
+          "windowMm": 71.9,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 7.8
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 0,
+          "areaHectares": 58.4237,
+          "largestAreaHectares": 58.4237,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223593",
+      "name": "MYLAMBADI",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "48.75 percent of 3,309 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "48.75%",
+          "label": "Households with a tap connection",
+          "note": "1,613 of 3,309 households, across 36 habitations."
+        },
+        {
+          "value": "52",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, River, Treated Surface Water"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "57.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "13d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-24. 192 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Alangattu Pudur",
+            "population": 128,
+            "households": 42,
+            "connections": 42
+          },
+          {
+            "name": "Andi Goundanur",
+            "population": 240,
+            "households": 80,
+            "connections": 12
+          },
+          {
+            "name": "Andipalayam Pudur",
+            "population": 279,
+            "households": 91,
+            "connections": 91
+          },
+          {
+            "name": "Athimarathottam",
+            "population": 175,
+            "households": 47,
+            "connections": 47
+          },
+          {
+            "name": "Chickanaicknur",
+            "population": 232,
+            "households": 75,
+            "connections": 1
+          },
+          {
+            "name": "Ellaipudur",
+            "population": 102,
+            "households": 23,
+            "connections": 3
+          },
+          {
+            "name": "Ganthi Nagar",
+            "population": 402,
+            "households": 134,
+            "connections": 134
+          },
+          {
+            "name": "Indiranagar",
+            "population": 205,
+            "households": 67,
+            "connections": 67
+          },
+          {
+            "name": "Irusanur",
+            "population": 426,
+            "households": 142,
+            "connections": 2
+          },
+          {
+            "name": "Kalvanaickanur",
+            "population": 441,
+            "households": 147,
+            "connections": 2
+          },
+          {
+            "name": "Kannadi Palayam Colony",
+            "population": 340,
+            "households": 84,
+            "connections": 78
+          },
+          {
+            "name": "Kannadipalayam",
+            "population": 360,
+            "households": 120,
+            "connections": 2
+          },
+          {
+            "name": "Katham Palayam",
+            "population": 246,
+            "households": 82,
+            "connections": 3
+          },
+          {
+            "name": "Kattur",
+            "population": 304,
+            "households": 93,
+            "connections": 93
+          },
+          {
+            "name": "Kattur Merku Kottai",
+            "population": 81,
+            "households": 27,
+            "connections": 27
+          },
+          {
+            "name": "Kombukadu",
+            "population": 108,
+            "households": 36,
+            "connections": 2
+          },
+          {
+            "name": "Kondu Reddi Palayam",
+            "population": 366,
+            "households": 122,
+            "connections": 3
+          },
+          {
+            "name": "Koonaka Palayam",
+            "population": 336,
+            "households": 112,
+            "connections": 6
+          },
+          {
+            "name": "Krishnapuram",
+            "population": 231,
+            "households": 77,
+            "connections": 3
+          },
+          {
+            "name": "Krishnapuram Colony",
+            "population": 230,
+            "households": 68,
+            "connections": 68
+          },
+          {
+            "name": "Lakshmi Nagar",
+            "population": 195,
+            "households": 65,
+            "connections": 65
+          },
+          {
+            "name": "Mondipalayam",
+            "population": 164,
+            "households": 41,
+            "connections": 41
+          },
+          {
+            "name": "Mylambadi",
+            "population": 1470,
+            "households": 490,
+            "connections": 490
+          },
+          {
+            "name": "Narayanapuram",
+            "population": 390,
+            "households": 130,
+            "connections": 19
+          },
+          {
+            "name": "Pachapali",
+            "population": 315,
+            "households": 105,
+            "connections": 105
+          },
+          {
+            "name": "Ponnayagoundanur",
+            "population": 78,
+            "households": 26,
+            "connections": 26
+          },
+          {
+            "name": "Pothanaickanur",
+            "population": 567,
+            "households": 189,
+            "connections": 4
+          },
+          {
+            "name": "Pudupalayam",
+            "population": 265,
+            "households": 84,
+            "connections": 2
+          },
+          {
+            "name": "Ram Nagar",
+            "population": 230,
+            "households": 66,
+            "connections": 66
+          },
+          {
+            "name": "Rangan Nagar",
+            "population": 275,
+            "households": 63,
+            "connections": 2
+          },
+          {
+            "name": "Sadayagoundanur",
+            "population": 272,
+            "households": 68,
+            "connections": 4
+          },
+          {
+            "name": "Sakthi Nagar",
+            "population": 206,
+            "households": 68,
+            "connections": 2
+          },
+          {
+            "name": "Sanar Palayam Colony",
+            "population": 112,
+            "households": 28,
+            "connections": 26
+          },
+          {
+            "name": "Sanarpalayam",
+            "population": 358,
+            "households": 104,
+            "connections": 2
+          },
+          {
+            "name": "Segandiyur",
+            "population": 130,
+            "households": 34,
+            "connections": 2
+          },
+          {
+            "name": "Solayam Palayam Colony",
+            "population": 340,
+            "households": 79,
+            "connections": 71
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 47
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 2
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 192,
+          "unsafe": 0,
+          "atSource": 170,
+          "atHousehold": 22,
+          "earliest": "2022-09-30",
+          "latest": "2026-08-24",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 11
+            },
+            {
+              "year": "2023",
+              "count": 32
+            },
+            {
+              "year": "2024",
+              "count": 44
+            },
+            {
+              "year": "2025",
+              "count": 79
+            },
+            {
+              "year": "2026",
+              "count": 26
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 2146.57,
+          "netSownHectares": 1607.71,
+          "irrigatedHectares": 919.94,
+          "canalHectares": 70.57,
+          "wellHectares": 849.37,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 17.32,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 6,
+          "lostInSummer": [
+            "riverCanal"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 2162.6819,
+          "latitude": 11.52545,
+          "longitude": 77.66795
+        },
+        "rainfall": {
+          "windowMm": 57.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 10,
+          "namedCount": 10,
+          "areaHectares": 21.1891,
+          "largestAreaHectares": 4.8642,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 6
+            },
+            {
+              "department": "NRSC",
+              "count": 4
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223594",
+      "name": "ODATHURAI",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 2,913 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "2,913 of 2,913 households, across 19 habitations."
+        },
+        {
+          "value": "60",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, Pond, River, Treated Surface Water"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "71.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "12d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-25. 406 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Indiranagar",
+            "population": 184,
+            "households": 46,
+            "connections": 46
+          },
+          {
+            "name": "Konakkadu",
+            "population": 648,
+            "households": 187,
+            "connections": 187
+          },
+          {
+            "name": "Kovilpalayam Colony",
+            "population": 918,
+            "households": 273,
+            "connections": 273
+          },
+          {
+            "name": "Kumarapalayam",
+            "population": 195,
+            "households": 65,
+            "connections": 65
+          },
+          {
+            "name": "L.m.palapalayam",
+            "population": 429,
+            "households": 143,
+            "connections": 143
+          },
+          {
+            "name": "Malaimedu",
+            "population": 96,
+            "households": 32,
+            "connections": 32
+          },
+          {
+            "name": "Marappampalayam",
+            "population": 196,
+            "households": 56,
+            "connections": 56
+          },
+          {
+            "name": "Nanjagoundanpalayam",
+            "population": 924,
+            "households": 291,
+            "connections": 291
+          },
+          {
+            "name": "Nanjappa Nagar",
+            "population": 180,
+            "households": 60,
+            "connections": 60
+          },
+          {
+            "name": "Odathurai",
+            "population": 2028,
+            "households": 504,
+            "connections": 504
+          },
+          {
+            "name": "Palapalayam",
+            "population": 1212,
+            "households": 359,
+            "connections": 359
+          },
+          {
+            "name": "Pananakattur",
+            "population": 579,
+            "households": 193,
+            "connections": 193
+          },
+          {
+            "name": "Pananakattur Colony",
+            "population": 561,
+            "households": 147,
+            "connections": 147
+          },
+          {
+            "name": "Pattaikalaipalayam",
+            "population": 396,
+            "households": 90,
+            "connections": 90
+          },
+          {
+            "name": "Periyarnagar",
+            "population": 105,
+            "households": 35,
+            "connections": 35
+          },
+          {
+            "name": "Poyyari",
+            "population": 138,
+            "households": 46,
+            "connections": 46
+          },
+          {
+            "name": "Rangankattur",
+            "population": 240,
+            "households": 80,
+            "connections": 80
+          },
+          {
+            "name": "Sellakomarapalayam",
+            "population": 303,
+            "households": 101,
+            "connections": 101
+          },
+          {
+            "name": "Sooriampalayam",
+            "population": 756,
+            "households": 205,
+            "connections": 205
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 46
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 7
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 4
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 2
+          },
+          {
+            "type": "Pond",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 406,
+          "unsafe": 0,
+          "atSource": 379,
+          "atHousehold": 27,
+          "earliest": "2022-10-15",
+          "latest": "2026-08-25",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 27
+            },
+            {
+              "year": "2023",
+              "count": 66
+            },
+            {
+              "year": "2024",
+              "count": 103
+            },
+            {
+              "year": "2025",
+              "count": 156
+            },
+            {
+              "year": "2026",
+              "count": 54
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1346.77,
+          "netSownHectares": 861.24,
+          "irrigatedHectares": 861.24,
+          "canalHectares": 474.03,
+          "wellHectares": 387.21,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0.09,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1308.8771,
+          "latitude": 11.44755,
+          "longitude": 77.5268
+        },
+        "rainfall": {
+          "windowMm": 71.9,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 7.8
+        },
+        "waterBodies": {
+          "count": 7,
+          "namedCount": 7,
+          "areaHectares": 9.7857,
+          "largestAreaHectares": 9.0465,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 5
+            },
+            {
+              "department": "DOSS",
+              "count": 1
+            },
+            {
+              "department": "WRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223595",
+      "name": "ORICHERI",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 1,849 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,849 of 1,849 households, across 13 habitations."
+        },
+        {
+          "value": "28",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, River"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "57.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "10d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-27. 213 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Chinna Naickanur",
+            "population": 832,
+            "households": 208,
+            "connections": 208
+          },
+          {
+            "name": "Kattur",
+            "population": 124,
+            "households": 31,
+            "connections": 31
+          },
+          {
+            "name": "Kattur Colony",
+            "population": 148,
+            "households": 37,
+            "connections": 37
+          },
+          {
+            "name": "Kavudanpudur",
+            "population": 156,
+            "households": 39,
+            "connections": 39
+          },
+          {
+            "name": "Malliyur",
+            "population": 224,
+            "households": 56,
+            "connections": 56
+          },
+          {
+            "name": "Oricheri",
+            "population": 1112,
+            "households": 278,
+            "connections": 278
+          },
+          {
+            "name": "Oricheri Agraharam",
+            "population": 296,
+            "households": 66,
+            "connections": 66
+          },
+          {
+            "name": "Oricheri Colony",
+            "population": 594,
+            "households": 180,
+            "connections": 180
+          },
+          {
+            "name": "Oricheri Pudur Colony",
+            "population": 466,
+            "households": 106,
+            "connections": 106
+          },
+          {
+            "name": "Oricherri Pudur",
+            "population": 2319,
+            "households": 702,
+            "connections": 702
+          },
+          {
+            "name": "Papppakkavoor",
+            "population": 252,
+            "households": 63,
+            "connections": 63
+          },
+          {
+            "name": "Paruvachi Naickanur",
+            "population": 104,
+            "households": 26,
+            "connections": 26
+          },
+          {
+            "name": "Sathiya Naickanur",
+            "population": 188,
+            "households": 57,
+            "connections": 57
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 24
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 213,
+          "unsafe": 0,
+          "atSource": 190,
+          "atHousehold": 23,
+          "earliest": "2022-10-20",
+          "latest": "2026-08-27",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 16
+            },
+            {
+              "year": "2023",
+              "count": 28
+            },
+            {
+              "year": "2024",
+              "count": 44
+            },
+            {
+              "year": "2025",
+              "count": 93
+            },
+            {
+              "year": "2026",
+              "count": 32
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 686.33,
+          "netSownHectares": 422.06,
+          "irrigatedHectares": 222.11,
+          "canalHectares": 65.3,
+          "wellHectares": 156.81,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 1.37,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 5,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 703.019,
+          "latitude": 11.4731,
+          "longitude": 77.6069
+        },
+        "rainfall": {
+          "windowMm": 57.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 2,
+          "namedCount": 0,
+          "areaHectares": 1.133,
+          "largestAreaHectares": 0.6059,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223596",
+      "name": "PARUVACHI",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "56.06 percent of 1,864 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "56.06%",
+          "label": "Households with a tap connection",
+          "note": "1,045 of 1,864 households, across 14 habitations."
+        },
+        {
+          "value": "17",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "65.4 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "10d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-27. 85 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Ammanpalayam",
+            "population": 2365,
+            "households": 517,
+            "connections": 132
+          },
+          {
+            "name": "Anna Nagar",
+            "population": 310,
+            "households": 58,
+            "connections": 58
+          },
+          {
+            "name": "Gnadinagar Colony",
+            "population": 321,
+            "households": 107,
+            "connections": 2
+          },
+          {
+            "name": "Muthukoattai",
+            "population": 156,
+            "households": 28,
+            "connections": 28
+          },
+          {
+            "name": "Palampalayam",
+            "population": 290,
+            "households": 51,
+            "connections": 51
+          },
+          {
+            "name": "Paruvachi",
+            "population": 1431,
+            "households": 395,
+            "connections": 395
+          },
+          {
+            "name": "Paruvachi Kattur",
+            "population": 385,
+            "households": 96,
+            "connections": 21
+          },
+          {
+            "name": "Paruvachi North Street",
+            "population": 182,
+            "households": 34,
+            "connections": 34
+          },
+          {
+            "name": "Pichanur",
+            "population": 456,
+            "households": 152,
+            "connections": 36
+          },
+          {
+            "name": "Puduperuma Palayam",
+            "population": 417,
+            "households": 76,
+            "connections": 29
+          },
+          {
+            "name": "Purasai Kattur",
+            "population": 629,
+            "households": 120,
+            "connections": 120
+          },
+          {
+            "name": "Sathya Nagar",
+            "population": 300,
+            "households": 75,
+            "connections": 75
+          },
+          {
+            "name": "Selambur Amman Kovil",
+            "population": 372,
+            "households": 93,
+            "connections": 2
+          },
+          {
+            "name": "Thottiyanur",
+            "population": 248,
+            "households": 62,
+            "connections": 62
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 15
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 2
+          }
+        ],
+        "sampling": {
+          "total": 85,
+          "unsafe": 0,
+          "atSource": 63,
+          "atHousehold": 22,
+          "earliest": "2022-10-13",
+          "latest": "2026-08-27",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 9
+            },
+            {
+              "year": "2023",
+              "count": 11
+            },
+            {
+              "year": "2024",
+              "count": 21
+            },
+            {
+              "year": "2025",
+              "count": 29
+            },
+            {
+              "year": "2026",
+              "count": 15
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1129.06,
+          "netSownHectares": 881.15,
+          "irrigatedHectares": 412.6,
+          "canalHectares": 0,
+          "wellHectares": 412.6,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 22.22,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1153.8177,
+          "latitude": 11.5291,
+          "longitude": 77.62465
+        },
+        "rainfall": {
+          "windowMm": 65.4,
+          "daysWithRain": 30,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.7
+        },
+        "waterBodies": {
+          "count": 5,
+          "namedCount": 5,
+          "areaHectares": 9.4251,
+          "largestAreaHectares": 3.9857,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 3
+            },
+            {
+              "department": "NRSC",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223597",
+      "name": "PERIYAPULIYUR",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "66.9 percent of 3,254 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "66.9%",
+          "label": "Households with a tap connection",
+          "note": "2,177 of 3,254 households, across 21 habitations."
+        },
+        {
+          "value": "52",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, Open Well, River, Treated Surface Water"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "71.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "9d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-28. 257 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Alamarathuvalasu",
+            "population": 105,
+            "households": 35,
+            "connections": 35
+          },
+          {
+            "name": "Anna Nagar",
+            "population": 81,
+            "households": 25,
+            "connections": 25
+          },
+          {
+            "name": "Chellakuttipalayam",
+            "population": 490,
+            "households": 140,
+            "connections": 136
+          },
+          {
+            "name": "Chettipalayam",
+            "population": 630,
+            "households": 175,
+            "connections": 12
+          },
+          {
+            "name": "Ganthi Nagar",
+            "population": 222,
+            "households": 60,
+            "connections": 60
+          },
+          {
+            "name": "J.j.nagar",
+            "population": 278,
+            "households": 75,
+            "connections": 75
+          },
+          {
+            "name": "Kamaraj Colony",
+            "population": 595,
+            "households": 105,
+            "connections": 105
+          },
+          {
+            "name": "KANNIMARMADAI PUDUR",
+            "population": 312,
+            "households": 93,
+            "connections": 93
+          },
+          {
+            "name": "Kasilingapuram",
+            "population": 969,
+            "households": 175,
+            "connections": 175
+          },
+          {
+            "name": "Kottamopalayam",
+            "population": 886,
+            "households": 259,
+            "connections": 9
+          },
+          {
+            "name": "Mandayakattur",
+            "population": 130,
+            "households": 40,
+            "connections": 40
+          },
+          {
+            "name": "Mgr Nagar",
+            "population": 408,
+            "households": 115,
+            "connections": 115
+          },
+          {
+            "name": "Palakattur",
+            "population": 555,
+            "households": 150,
+            "connections": 150
+          },
+          {
+            "name": "Periyapuliyur",
+            "population": 950,
+            "households": 282,
+            "connections": 282
+          },
+          {
+            "name": "Poolapalyam",
+            "population": 812,
+            "households": 270,
+            "connections": 270
+          },
+          {
+            "name": "SELVANAGAR COLONY",
+            "population": 374,
+            "households": 110,
+            "connections": 110
+          },
+          {
+            "name": "Semboothampalayam",
+            "population": 768,
+            "households": 220,
+            "connections": 220
+          },
+          {
+            "name": "Sevakavandanur",
+            "population": 952,
+            "households": 280,
+            "connections": 122
+          },
+          {
+            "name": "Soolaimedu",
+            "population": 272,
+            "households": 80,
+            "connections": 80
+          },
+          {
+            "name": "Thayirpalayam",
+            "population": 828,
+            "households": 245,
+            "connections": 48
+          },
+          {
+            "name": "Valayakaran Palayam",
+            "population": 1063,
+            "households": 320,
+            "connections": 15
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 35
+          },
+          {
+            "type": "Treated Surface Water",
+            "category": "Surface Water",
+            "count": 11
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 257,
+          "unsafe": 0,
+          "atSource": 206,
+          "atHousehold": 51,
+          "earliest": "2022-09-20",
+          "latest": "2026-08-28",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 15
+            },
+            {
+              "year": "2023",
+              "count": 66
+            },
+            {
+              "year": "2024",
+              "count": 53
+            },
+            {
+              "year": "2025",
+              "count": 84
+            },
+            {
+              "year": "2026",
+              "count": 39
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 2178.11,
+          "netSownHectares": 1439.2,
+          "irrigatedHectares": 1376.55,
+          "canalHectares": 822.77,
+          "wellHectares": 553.78,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 10.22,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 5,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 2077.7982,
+          "latitude": 11.4222,
+          "longitude": 77.61705
+        },
+        "rainfall": {
+          "windowMm": 71.9,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 7.8
+        },
+        "waterBodies": {
+          "count": 6,
+          "namedCount": 6,
+          "areaHectares": 4.9387,
+          "largestAreaHectares": 1.6482,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 3
+            },
+            {
+              "department": "NRSC",
+              "count": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223598",
+      "name": "PUNNAM",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Tap coverage is incomplete",
+        "body": "34.18 percent of 1,539 households report a tap connection.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "34.18%",
+          "label": "Households with a tap connection",
+          "note": "526 of 1,539 households, across 14 habitations."
+        },
+        {
+          "value": "23",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "57.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "9d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-28. 39 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Arijana Theru",
+            "population": 560,
+            "households": 108,
+            "connections": 108
+          },
+          {
+            "name": "Chettikuttai",
+            "population": 102,
+            "households": 34,
+            "connections": 33
+          },
+          {
+            "name": "Chinnamettur",
+            "population": 659,
+            "households": 179,
+            "connections": 0
+          },
+          {
+            "name": "Kakkachikaradu",
+            "population": 159,
+            "households": 53,
+            "connections": 0
+          },
+          {
+            "name": "Koothadi Kottai",
+            "population": 461,
+            "households": 77,
+            "connections": 0
+          },
+          {
+            "name": "Nallanayakkanur",
+            "population": 615,
+            "households": 148,
+            "connections": 3
+          },
+          {
+            "name": "Narapalayam",
+            "population": 366,
+            "households": 122,
+            "connections": 122
+          },
+          {
+            "name": "Palam Palayam",
+            "population": 598,
+            "households": 152,
+            "connections": 2
+          },
+          {
+            "name": "Palani Naickanur",
+            "population": 295,
+            "households": 49,
+            "connections": 0
+          },
+          {
+            "name": "Periya Mettur",
+            "population": 173,
+            "households": 41,
+            "connections": 41
+          },
+          {
+            "name": "Punnam",
+            "population": 762,
+            "households": 178,
+            "connections": 6
+          },
+          {
+            "name": "Selliyam Palayam",
+            "population": 275,
+            "households": 60,
+            "connections": 60
+          },
+          {
+            "name": "Sengodampalayam",
+            "population": 962,
+            "households": 200,
+            "connections": 13
+          },
+          {
+            "name": "Velamarathur",
+            "population": 682,
+            "households": 138,
+            "connections": 138
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 17
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 6
+          }
+        ],
+        "sampling": {
+          "total": 39,
+          "unsafe": 0,
+          "atSource": 17,
+          "atHousehold": 22,
+          "earliest": "2022-10-15",
+          "latest": "2026-08-28",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 2
+            },
+            {
+              "year": "2023",
+              "count": 9
+            },
+            {
+              "year": "2024",
+              "count": 9
+            },
+            {
+              "year": "2025",
+              "count": 10
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1126.09,
+          "netSownHectares": 945.84,
+          "irrigatedHectares": 420.03,
+          "canalHectares": 0,
+          "wellHectares": 420.03,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 29.7,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 5,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1111.1213,
+          "latitude": 11.5038,
+          "longitude": 77.61125
+        },
+        "rainfall": {
+          "windowMm": 57.2,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 5,
+          "namedCount": 5,
+          "areaHectares": 7.4937,
+          "largestAreaHectares": 3.9013,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 3
+            },
+            {
+              "department": "DOSS",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223599",
+      "name": "SANNIYASIPATTI",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 466 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "466 of 466 households, across 4 habitations."
+        },
+        {
+          "value": "7",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "52.5 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "8d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-29. 77 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "historical-water-access",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "historical-agricultural-baseline",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 12,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Sanniyasipatti Colony",
+            "population": 141,
+            "households": 41,
+            "connections": 41
+          },
+          {
+            "name": "Sanyasipatti",
+            "population": 804,
+            "households": 268,
+            "connections": 268
+          },
+          {
+            "name": "V.mettupalayam",
+            "population": 322,
+            "households": 87,
+            "connections": 87
+          },
+          {
+            "name": "V.mettupalayam Colony",
+            "population": 210,
+            "households": 70,
+            "connections": 70
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 6
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 77,
+          "unsafe": 0,
+          "atSource": 58,
+          "atHousehold": 19,
+          "earliest": "2022-11-01",
+          "latest": "2026-08-29",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 11
+            },
+            {
+              "year": "2023",
+              "count": 9
+            },
+            {
+              "year": "2024",
+              "count": 18
+            },
+            {
+              "year": "2025",
+              "count": 25
+            },
+            {
+              "year": "2026",
+              "count": 14
+            }
+          ]
+        },
+        "land": null,
+        "seasonal": null,
+        "boundary": {
+          "areaHectares": 246.0157,
+          "latitude": 11.5092,
+          "longitude": 77.721
+        },
+        "rainfall": {
+          "windowMm": 52.5,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223600",
+      "name": "THOTTIPALAYAM",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 3,626 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "3,626 of 3,626 households, across 17 habitations."
+        },
+        {
+          "value": "48",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, River, Spring"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "52.5 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "8d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-29. 257 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Arumaikaran Pudur",
+            "population": 120,
+            "households": 40,
+            "connections": 40
+          },
+          {
+            "name": "Eb Colony Iv Barage",
+            "population": 547,
+            "households": 238,
+            "connections": 238
+          },
+          {
+            "name": "ERAPPANAICKAN PALAYAM",
+            "population": 803,
+            "households": 222,
+            "connections": 222
+          },
+          {
+            "name": "JEEVA NAGAR",
+            "population": 429,
+            "households": 138,
+            "connections": 138
+          },
+          {
+            "name": "Molagoundan Pudur",
+            "population": 520,
+            "households": 163,
+            "connections": 163
+          },
+          {
+            "name": "Panankattu Arijana Colony",
+            "population": 353,
+            "households": 99,
+            "connections": 99
+          },
+          {
+            "name": "PUDUKADAYAM PATTI",
+            "population": 871,
+            "households": 268,
+            "connections": 268
+          },
+          {
+            "name": "Sankaragoundar Palayam",
+            "population": 855,
+            "households": 263,
+            "connections": 263
+          },
+          {
+            "name": "Sankaragoundar Palayam Colony",
+            "population": 224,
+            "households": 95,
+            "connections": 95
+          },
+          {
+            "name": "Selambagoundar Palayam",
+            "population": 592,
+            "households": 182,
+            "connections": 182
+          },
+          {
+            "name": "Seman Kuli",
+            "population": 228,
+            "households": 70,
+            "connections": 70
+          },
+          {
+            "name": "SERVARAYAN PALYAM",
+            "population": 1615,
+            "households": 502,
+            "connections": 502
+          },
+          {
+            "name": "Thalapaiyanur",
+            "population": 423,
+            "households": 130,
+            "connections": 130
+          },
+          {
+            "name": "THIPPICHETTI PALAYAM",
+            "population": 615,
+            "households": 205,
+            "connections": 205
+          },
+          {
+            "name": "Thottipalayam",
+            "population": 1183,
+            "households": 197,
+            "connections": 197
+          },
+          {
+            "name": "Urachikottai",
+            "population": 2010,
+            "households": 661,
+            "connections": 661
+          },
+          {
+            "name": "Vednagiri Puramn",
+            "population": 497,
+            "households": 153,
+            "connections": 153
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 43
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 3
+          },
+          {
+            "type": "Spring",
+            "category": "Rain Water",
+            "count": 1
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 257,
+          "unsafe": 0,
+          "atSource": 235,
+          "atHousehold": 22,
+          "earliest": "2022-09-17",
+          "latest": "2026-08-29",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 15
+            },
+            {
+              "year": "2023",
+              "count": 42
+            },
+            {
+              "year": "2024",
+              "count": 66
+            },
+            {
+              "year": "2025",
+              "count": 97
+            },
+            {
+              "year": "2026",
+              "count": 37
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 2148.09,
+          "netSownHectares": 1158,
+          "irrigatedHectares": 1158,
+          "canalHectares": 992.9,
+          "wellHectares": 165.1,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 82.85,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 7,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 2117.3956,
+          "latitude": 11.47255,
+          "longitude": 77.68185
+        },
+        "rainfall": {
+          "windowMm": 52.5,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 6,
+          "namedCount": 5,
+          "areaHectares": 9.3486,
+          "largestAreaHectares": 3.0718,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 4
+            },
+            {
+              "department": "AED",
+              "count": 1
+            },
+            {
+              "department": "NRSC",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223601",
+      "name": "VAIRAMANGALAM",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 1,034 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,034 of 1,034 households, across 8 habitations."
+        },
+        {
+          "value": "19",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "71.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "6d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-31. 113 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "historical-water-access",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "historical-agricultural-baseline",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 13,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "ANGAPPA GOUNDEN PUDUR",
+            "population": 245,
+            "households": 68,
+            "connections": 68
+          },
+          {
+            "name": "Karattupalayam",
+            "population": 201,
+            "households": 67,
+            "connections": 67
+          },
+          {
+            "name": "Karattupalayam Colony",
+            "population": 314,
+            "households": 104,
+            "connections": 104
+          },
+          {
+            "name": "Kavandan Pudur",
+            "population": 343,
+            "households": 103,
+            "connections": 103
+          },
+          {
+            "name": "Kavundanpudur Colony",
+            "population": 201,
+            "households": 67,
+            "connections": 67
+          },
+          {
+            "name": "Kuttipalayam",
+            "population": 896,
+            "households": 283,
+            "connections": 283
+          },
+          {
+            "name": "Pachakavundanpudur",
+            "population": 162,
+            "households": 45,
+            "connections": 45
+          },
+          {
+            "name": "Vyramangalam",
+            "population": 909,
+            "households": 297,
+            "connections": 297
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 18
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 113,
+          "unsafe": 0,
+          "atSource": 92,
+          "atHousehold": 21,
+          "earliest": "2022-10-11",
+          "latest": "2026-08-31",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 18
+            },
+            {
+              "year": "2023",
+              "count": 12
+            },
+            {
+              "year": "2024",
+              "count": 24
+            },
+            {
+              "year": "2025",
+              "count": 42
+            },
+            {
+              "year": "2026",
+              "count": 17
+            }
+          ]
+        },
+        "land": null,
+        "seasonal": null,
+        "boundary": {
+          "areaHectares": 681.696,
+          "latitude": 11.4509,
+          "longitude": 77.6055
+        },
+        "rainfall": {
+          "windowMm": 71.9,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 7.8
+        },
+        "waterBodies": {
+          "count": 3,
+          "namedCount": 2,
+          "areaHectares": 280.0738,
+          "largestAreaHectares": 274.7175,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 2
+            },
+            {
+              "department": "AED",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223602",
+      "name": "VARADHANALLUR",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 1,389 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,389 of 1,389 households, across 11 habitations."
+        },
+        {
+          "value": "16",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "52.5 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "6d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-31. 123 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Chinna Perichi Palayam Pudur",
+            "population": 420,
+            "households": 152,
+            "connections": 152
+          },
+          {
+            "name": "Chinna Peridhi Palayam",
+            "population": 519,
+            "households": 162,
+            "connections": 162
+          },
+          {
+            "name": "Chinnaperichipalayam Colony",
+            "population": 474,
+            "households": 91,
+            "connections": 91
+          },
+          {
+            "name": "Coolikaran Palayam",
+            "population": 1164,
+            "households": 388,
+            "connections": 388
+          },
+          {
+            "name": "Erikkarai",
+            "population": 168,
+            "households": 43,
+            "connections": 43
+          },
+          {
+            "name": "Karumagoundanur",
+            "population": 369,
+            "households": 109,
+            "connections": 109
+          },
+          {
+            "name": "Mettupalayam",
+            "population": 348,
+            "households": 116,
+            "connections": 116
+          },
+          {
+            "name": "Thalakulam",
+            "population": 234,
+            "households": 78,
+            "connections": 78
+          },
+          {
+            "name": "Thandavapuram Colony",
+            "population": 180,
+            "households": 26,
+            "connections": 26
+          },
+          {
+            "name": "Varadha Nallur",
+            "population": 514,
+            "households": 146,
+            "connections": 146
+          },
+          {
+            "name": "Venga Medu Colony",
+            "population": 258,
+            "households": 78,
+            "connections": 78
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 15
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 123,
+          "unsafe": 0,
+          "atSource": 101,
+          "atHousehold": 22,
+          "earliest": "2022-11-01",
+          "latest": "2026-08-31",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 10
+            },
+            {
+              "year": "2023",
+              "count": 16
+            },
+            {
+              "year": "2024",
+              "count": 31
+            },
+            {
+              "year": "2025",
+              "count": 45
+            },
+            {
+              "year": "2026",
+              "count": 21
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 830.56,
+          "netSownHectares": 616.11,
+          "irrigatedHectares": 616.11,
+          "canalHectares": 446.28,
+          "wellHectares": 29.84,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 4.6,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 7,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 825.1061,
+          "latitude": 11.5037,
+          "longitude": 77.70225
+        },
+        "rainfall": {
+          "windowMm": 52.5,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": {
+          "count": 3,
+          "namedCount": 3,
+          "areaHectares": 14.1275,
+          "largestAreaHectares": 13.1037,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 2
+            },
+            {
+              "department": "DOSS",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "254907",
+      "name": "KURUPPANAICKENPALAYAM",
+      "blockCode": "6462",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Universal taps on a source still within its limit",
+        "body": "All 3,461 households report a tap connection and Bhavani remains assessed safe at 50.0 percent of extraction.",
+        "tone": "positive"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "3,461 of 3,461 households, across 10 habitations."
+        },
+        {
+          "value": "19",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
+          "value": "50.0%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Bhavani is assessed safe. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "52.5 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "31 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "13d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-24. 159 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "historical-water-access",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "historical-agricultural-baseline",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 12,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Jeeva Nagar( Knp Pyt)",
+            "population": 254,
+            "households": 78,
+            "connections": 78
+          },
+          {
+            "name": "Kamaraj Nagar",
+            "population": 520,
+            "households": 86,
+            "connections": 86
+          },
+          {
+            "name": "Kottainagar",
+            "population": 448,
+            "households": 106,
+            "connections": 106
+          },
+          {
+            "name": "Kuruppanaicken Palayam",
+            "population": 4926,
+            "households": 1652,
+            "connections": 1652
+          },
+          {
+            "name": "N.g.g.o Colony",
+            "population": 652,
+            "households": 194,
+            "connections": 194
+          },
+          {
+            "name": "Natrajapuram",
+            "population": 762,
+            "households": 209,
+            "connections": 209
+          },
+          {
+            "name": "Nethaji Nagar",
+            "population": 951,
+            "households": 266,
+            "connections": 266
+          },
+          {
+            "name": "Rana Nagar",
+            "population": 937,
+            "households": 311,
+            "connections": 311
+          },
+          {
+            "name": "Rotary Colony",
+            "population": 581,
+            "households": 163,
+            "connections": 163
+          },
+          {
+            "name": "Urachikottai",
+            "population": 1271,
+            "households": 396,
+            "connections": 396
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 19
+          }
+        ],
+        "sampling": {
+          "total": 159,
+          "unsafe": 0,
+          "atSource": 134,
+          "atHousehold": 25,
+          "earliest": "2022-11-08",
+          "latest": "2026-08-24",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 19
+            },
+            {
+              "year": "2023",
+              "count": 28
+            },
+            {
+              "year": "2024",
+              "count": 35
+            },
+            {
+              "year": "2025",
+              "count": 56
+            },
+            {
+              "year": "2026",
+              "count": 21
+            }
+          ]
+        },
+        "land": null,
+        "seasonal": null,
+        "boundary": {
+          "areaHectares": 259.6936,
+          "latitude": 11.46365,
+          "longitude": 77.68965
+        },
+        "rainfall": {
+          "windowMm": 52.5,
+          "daysWithRain": 31,
+          "wettestDate": "2026-08-25",
+          "wettestDayMm": 9.1
+        },
+        "waterBodies": null
+      }
+    }
+  ]
+}

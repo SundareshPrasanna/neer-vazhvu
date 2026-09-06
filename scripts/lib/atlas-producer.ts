@@ -368,6 +368,9 @@ export const SOURCE_IDS = {
   ingresMh: "ingres-groundwater-maharashtra",
   waterBodiesCensusMh: "water-bodies-census-mh",
   mpcbEnvironmentPlans: "mpcb-district-environment-plans",
+  // Tamil Nadu has no state listing: each collectorate publishes its own plan.
+  ngtDepTnNamakkal: "ngt-dep-tn-namakkal",
+  ngtDepTnKarur: "ngt-dep-tn-karur",
 } as const;
 
 export type UpstreamKey = keyof typeof SOURCE_IDS;
@@ -452,6 +455,16 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     title: "MPCB: State Environment Plan and District Environment Plans (district plans on the CPCB model, NGT O.A. 360 of 2018)",
     publisher: "Maharashtra Pollution Control Board with the Environment Department, Government of Maharashtra",
     url: "https://mpcb.gov.in/en/state-environment-plan-and-district-environment-plan",
+  },
+  ngtDepTnNamakkal: {
+    title: "District Environmental Plan, Namakkal District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
+    publisher: "District Collector, Namakkal, with the Tamil Nadu Pollution Control Board",
+    url: "https://namakkal.nic.in/document/district-environment-plan-namakkal-district/",
+  },
+  ngtDepTnKarur: {
+    title: "District Environmental Plan, Karur District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
+    publisher: "District Collector, Karur, with the Tamil Nadu Pollution Control Board",
+    url: "https://karur.nic.in/departments/the-tamil-nadu-pollution-control-board-karur/",
   },
 };
 

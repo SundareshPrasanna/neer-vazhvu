@@ -1,0 +1,3372 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/assessments",
+  "scope": {
+    "kind": "district",
+    "id": "tn-erode"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnrd-lgd-directory-2021",
+        "title": "TNRD village panchayat directory with LGD codes (village_eng.pdf, 2021 edition)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+        "as_of": "2021-03-11",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tnrd-panchayat-master",
+        "title": "TNRD current village panchayat master (vptax public dues enquiry)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "census-2011-village-amenities",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Tamil Nadu village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        "as_of": "2011",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo daily precipitation (forecast past_days and ERA5 archive)",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "input",
+        "url": "https://open-meteo.com/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-generic-viewer-water-bodies",
+        "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-generate-assessments.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/erode/directory.json",
+      "public/data/atlas/tn/erode/jjm-service/6466.json",
+      "public/data/atlas/tn/erode/census-2011/6466.json",
+      "public/data/atlas/tn/erode/groundwater-taluks.json",
+      "public/data/atlas/tn/erode/groundwater-projection.json",
+      "public/data/atlas/tn/erode/rainfall.json",
+      "public/data/atlas/tn/erode/water-bodies/6466.geojson"
+    ],
+    "note": "village-water-profile-v2: 6 Gram Panchayats in ERODE block assessed against 40 capabilities by the evidence rules in src/lib/atlas/capability-evidence.ts (capability-evidence-v2). Each requirement records its state (adequate, unavailable, not-applicable, not-assessed), the evidence with its locality class and projection method, and limitations. A capability with no rule is reported unavailable rather than guessed; an undetermined applicability is not-assessed rather than a gap.",
+    "conventions": {
+      "locality": "direct-place | within-place | connected-system | containing-area | nearby-observation | derived-place: how close the evidence is to the place; groundwater is always containing-area (revenue taluk)",
+      "projection": "direct-published | identifier-crosswalk | spatial-intersection | administrative-proxy | interpolation | service-relation: the relation between the evidence unit and the Panchayat"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-erode-v1",
+  "blockCode": "6466",
+  "blockName": "ERODE",
+  "profileId": "village-water-profile-v2",
+  "assessedAt": "2026-09-06",
+  "generatorVersion": "capability-evidence-v2",
+  "requirementIds": [
+    "place-identity-and-composition",
+    "place-boundary",
+    "population-and-settlements",
+    "drinking-water-service",
+    "drinking-water-source",
+    "drinking-water-reliability",
+    "drinking-water-quality",
+    "historical-water-access",
+    "current-rainfall",
+    "rainfall-anomaly",
+    "groundwater-resource-status",
+    "groundwater-level-observation",
+    "groundwater-level-trend",
+    "aquifer-context",
+    "catchment-context",
+    "connected-supply-system",
+    "water-body-inventory",
+    "water-body-condition",
+    "surface-water-change",
+    "waterway-network",
+    "river-water-quality",
+    "public-water-works",
+    "flood-hazard",
+    "observed-flood-events",
+    "natural-drainage",
+    "engineered-stormwater-drainage",
+    "wastewater-service",
+    "wastewater-treatment-assets",
+    "pollution-pressure-inventory",
+    "measured-water-pollution",
+    "coastal-and-estuarine",
+    "historical-agricultural-baseline",
+    "current-crop-and-irrigation-state",
+    "soil-water-context",
+    "agricultural-water-system-relation",
+    "crop-water-demand",
+    "agricultural-water-stress-observation",
+    "agricultural-water-pollution-pressure",
+    "responsibility-and-action",
+    "composite-priority-score"
+  ],
+  "recordCount": 6,
+  "assessments": [
+    {
+      "schemaVersion": 1,
+      "profileId": "village-water-profile-v2",
+      "placeId": "223656",
+      "placeKind": "gram-panchayat",
+      "assessedAt": "2026-09-06",
+      "mode": "generated",
+      "generatorVersion": "capability-evidence-v2",
+      "requirements": [
+        {
+          "requirementId": "place-identity-and-composition",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-identity",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis",
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNRD/LGD Gram Panchayat 223656 bound to JJM unit 4412/147585 and Census unit 0123/0001."
+            }
+          ],
+          "limitations": [
+            "The JJM identity binding is proposed by exact and has not been checked by a reviewer."
+          ]
+        },
+        {
+          "requirementId": "place-boundary",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-boundary",
+              "sourceRefs": [
+                "tngis-tnrd-panchayat-boundary"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1079.0536 ha keyed to LGD 223656."
+            }
+          ],
+          "limitations": [
+            "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year."
+          ]
+        },
+        {
+          "requirementId": "population-and-settlements",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 10696 people in 4009 households across 22 habitations."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-service",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 4009 tap connections against 4009 households (100 percent)."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-source",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM lists 49 drinking-water sources of type Deep Tubewell."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-reliability",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "drinking-water-quality",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "445 samples across 5 years (262 at source, 183 at households); latest Safe on 2026-09-01, 5 days ago."
+            }
+          ],
+          "limitations": [
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "All 445 published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination."
+          ]
+        },
+        {
+          "requirementId": "historical-water-access",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-historical-access",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 14 drinking-water source types across 2 constituent village rows, all of them reported available through the summer months."
+            }
+          ],
+          "limitations": [
+            "Census figures describe the 2009 reference year and are a historical baseline, not current service."
+          ]
+        },
+        {
+          "requirementId": "current-rainfall",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-rainfall",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "57.2 mm fell over 2026-08-07 to 2026-09-06 across 31 rain days, wettest 9.1 mm on 2026-08-25."
+            }
+          ],
+          "limitations": [
+            "Modelled reanalysis interpolated to a grid point 6.275 km from the Panchayat centroid, not a rain gauge in the village."
+          ]
+        },
+        {
+          "requirementId": "rainfall-anomaly",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-rainfall-anomaly",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "derived-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "57.2 mm against a 11-year normal of 126.85 mm for the same window, 45.1 percent of normal (below)."
+            }
+          ],
+          "limitations": [
+            "The normal is a 11-year mean of modelled reanalysis for the same calendar window, not a long-period gauge climatology."
+          ]
+        },
+        {
+          "requirementId": "groundwater-resource-status",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-groundwater",
+              "sourceRefs": [
+                "ingres-gec-dynamic-groundwater"
+              ],
+              "localityClass": "containing-area",
+              "projectionMethod": "administrative-proxy",
+              "evidenceDate": "2026-09-06",
+              "notes": "The containing revenue taluk Erode is assessed semi_critical at 71.4 percent stage of extraction."
+            }
+          ],
+          "limitations": [
+            "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-observation",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-trend",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "aquifer-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "catchment-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "connected-supply-system",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM associates 49 sources with 22 habitations in this Panchayat's service records."
+            }
+          ],
+          "limitations": [
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
+          ]
+        },
+        {
+          "requirementId": "water-body-inventory",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-water-bodies",
+              "sourceRefs": [
+                "tngis-all-water-bodies"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "8 water bodies covering 7.6467 ha, largest 1.751 ha. Registered by NRSC 7, AED 1."
+            }
+          ],
+          "limitations": [
+            "The register names 7 of 8; the rest are unnamed polygons.",
+            "Waterspread is the mapped extent, not storage, and says nothing about whether the water body holds water or is encroached.",
+            "Five departments contribute to this layer and it carries no survey date, so the vintage of any one polygon is unstated."
+          ]
+        },
+        {
+          "requirementId": "water-body-condition",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "surface-water-change",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "waterway-network",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "river-water-quality",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "public-water-works",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "49 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
+          "limitations": [
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
+          ]
+        },
+        {
+          "requirementId": "flood-hazard",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "observed-flood-events",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "natural-drainage",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "engineered-stormwater-drainage",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "wastewater-service",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "wastewater-treatment-assets",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "pollution-pressure-inventory",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "measured-water-pollution",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "coastal-and-estuarine",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "historical-agricultural-baseline",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-agricultural-baseline",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 599.74 ha net sown and 599.74 ha irrigated, of which 510.75 ha is canal irrigated."
+            }
+          ],
+          "limitations": [
+            "Census land use describes the 2009 reference year and does not describe current cropping."
+          ]
+        },
+        {
+          "requirementId": "current-crop-and-irrigation-state",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "soil-water-context",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-system-relation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "crop-water-demand",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-stress-observation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-pollution-pressure",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "responsibility-and-action",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223656-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "ELAVAMALAI Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
+          "limitations": [
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
+          ]
+        },
+        {
+          "requirementId": "composite-priority-score",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        }
+      ],
+      "summary": {
+        "adequate": 15,
+        "unavailable": 11,
+        "not-applicable": 0,
+        "not-assessed": 14
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "profileId": "village-water-profile-v2",
+      "placeId": "223657",
+      "placeKind": "gram-panchayat",
+      "assessedAt": "2026-09-06",
+      "mode": "generated",
+      "generatorVersion": "capability-evidence-v2",
+      "requirements": [
+        {
+          "requirementId": "place-identity-and-composition",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-identity",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis",
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNRD/LGD Gram Panchayat 223657 bound to JJM unit 4412/147588 and Census unit 0123/0004."
+            }
+          ],
+          "limitations": [
+            "The JJM identity binding is proposed by exact and has not been checked by a reviewer."
+          ]
+        },
+        {
+          "requirementId": "place-boundary",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-boundary",
+              "sourceRefs": [
+                "tngis-tnrd-panchayat-boundary"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNGIS publishes an exact Gram Panchayat polygon of 707.4709 ha keyed to LGD 223657."
+            }
+          ],
+          "limitations": [
+            "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year."
+          ]
+        },
+        {
+          "requirementId": "population-and-settlements",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 4159 people in 1401 households across 6 habitations."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-service",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 1401 tap connections against 1401 households (100 percent)."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-source",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM lists 17 drinking-water sources of type Deep Tubewell, Treated Surface Water."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-reliability",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "drinking-water-quality",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "94 samples across 5 years (21 at source, 73 at households); latest Safe on 2026-09-02, 4 days ago."
+            }
+          ],
+          "limitations": [
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "All 94 published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination."
+          ]
+        },
+        {
+          "requirementId": "historical-water-access",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-historical-access",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 10 drinking-water source types across 3 constituent village rows, all of them reported available through the summer months."
+            }
+          ],
+          "limitations": [
+            "Census figures describe the 2009 reference year and are a historical baseline, not current service."
+          ]
+        },
+        {
+          "requirementId": "current-rainfall",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-rainfall",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "74.5 mm fell over 2026-08-07 to 2026-09-06 across 31 rain days, wettest 10.5 mm on 2026-08-25."
+            }
+          ],
+          "limitations": [
+            "Modelled reanalysis interpolated to a grid point 3.744 km from the Panchayat centroid, not a rain gauge in the village."
+          ]
+        },
+        {
+          "requirementId": "rainfall-anomaly",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-rainfall-anomaly",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "derived-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "74.5 mm against a 11-year normal of 138.41 mm for the same window, 53.8 percent of normal (below)."
+            }
+          ],
+          "limitations": [
+            "The normal is a 11-year mean of modelled reanalysis for the same calendar window, not a long-period gauge climatology."
+          ]
+        },
+        {
+          "requirementId": "groundwater-resource-status",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-groundwater",
+              "sourceRefs": [
+                "ingres-gec-dynamic-groundwater"
+              ],
+              "localityClass": "containing-area",
+              "projectionMethod": "administrative-proxy",
+              "evidenceDate": "2026-09-06",
+              "notes": "The containing revenue taluk Erode is assessed semi_critical at 71.4 percent stage of extraction."
+            }
+          ],
+          "limitations": [
+            "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-observation",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-trend",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "aquifer-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "catchment-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "connected-supply-system",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM associates 17 sources with 6 habitations in this Panchayat's service records."
+            }
+          ],
+          "limitations": [
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
+          ]
+        },
+        {
+          "requirementId": "water-body-inventory",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-water-bodies",
+              "sourceRefs": [
+                "tngis-all-water-bodies"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "32 water bodies covering 31.8133 ha, largest 2.8673 ha. Registered by DOSS 32."
+            }
+          ],
+          "limitations": [
+            "The register names 32 of 32; the rest are unnamed polygons.",
+            "Waterspread is the mapped extent, not storage, and says nothing about whether the water body holds water or is encroached.",
+            "Five departments contribute to this layer and it carries no survey date, so the vintage of any one polygon is unstated."
+          ]
+        },
+        {
+          "requirementId": "water-body-condition",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "surface-water-change",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "waterway-network",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "river-water-quality",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "public-water-works",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "17 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
+          "limitations": [
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
+          ]
+        },
+        {
+          "requirementId": "flood-hazard",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "observed-flood-events",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "natural-drainage",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "engineered-stormwater-drainage",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "wastewater-service",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "wastewater-treatment-assets",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "pollution-pressure-inventory",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "measured-water-pollution",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "coastal-and-estuarine",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "historical-agricultural-baseline",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-agricultural-baseline",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 273.39 ha net sown and 273.39 ha irrigated, of which 263.39 ha is canal irrigated."
+            }
+          ],
+          "limitations": [
+            "Census land use describes the 2009 reference year and does not describe current cropping."
+          ]
+        },
+        {
+          "requirementId": "current-crop-and-irrigation-state",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "soil-water-context",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-system-relation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "crop-water-demand",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-stress-observation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-pollution-pressure",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "responsibility-and-action",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223657-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "KADHIRAMPATTY Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
+          "limitations": [
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
+          ]
+        },
+        {
+          "requirementId": "composite-priority-score",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        }
+      ],
+      "summary": {
+        "adequate": 15,
+        "unavailable": 11,
+        "not-applicable": 0,
+        "not-assessed": 14
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "profileId": "village-water-profile-v2",
+      "placeId": "223658",
+      "placeKind": "gram-panchayat",
+      "assessedAt": "2026-09-06",
+      "mode": "generated",
+      "generatorVersion": "capability-evidence-v2",
+      "requirements": [
+        {
+          "requirementId": "place-identity-and-composition",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-identity",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis",
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNRD/LGD Gram Panchayat 223658 bound to JJM unit 4412/147589 and Census unit 0123/0005."
+            }
+          ],
+          "limitations": [
+            "The JJM identity binding is proposed by exact and has not been checked by a reviewer."
+          ]
+        },
+        {
+          "requirementId": "place-boundary",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-boundary",
+              "sourceRefs": [
+                "tngis-tnrd-panchayat-boundary"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNGIS publishes an exact Gram Panchayat polygon of 589.9307 ha keyed to LGD 223658."
+            }
+          ],
+          "limitations": [
+            "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year."
+          ]
+        },
+        {
+          "requirementId": "population-and-settlements",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 2898 people in 1138 households across 7 habitations."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-service",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 838 tap connections against 1138 households (73.64 percent)."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-source",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM lists 14 drinking-water sources of type Deep Tubewell, River."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-reliability",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "drinking-water-quality",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "93 samples across 5 years (24 at source, 69 at households); latest Safe on 2026-09-02, 4 days ago."
+            }
+          ],
+          "limitations": [
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "All 93 published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination."
+          ]
+        },
+        {
+          "requirementId": "historical-water-access",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-historical-access",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 10 drinking-water source types across 4 constituent village rows, all of them reported available through the summer months."
+            }
+          ],
+          "limitations": [
+            "Census figures describe the 2009 reference year and are a historical baseline, not current service."
+          ]
+        },
+        {
+          "requirementId": "current-rainfall",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-rainfall",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "74.5 mm fell over 2026-08-07 to 2026-09-06 across 31 rain days, wettest 10.5 mm on 2026-08-25."
+            }
+          ],
+          "limitations": [
+            "Modelled reanalysis interpolated to a grid point 5.05 km from the Panchayat centroid, not a rain gauge in the village."
+          ]
+        },
+        {
+          "requirementId": "rainfall-anomaly",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-rainfall-anomaly",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "derived-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "74.5 mm against a 11-year normal of 138.41 mm for the same window, 53.8 percent of normal (below)."
+            }
+          ],
+          "limitations": [
+            "The normal is a 11-year mean of modelled reanalysis for the same calendar window, not a long-period gauge climatology."
+          ]
+        },
+        {
+          "requirementId": "groundwater-resource-status",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-groundwater",
+              "sourceRefs": [
+                "ingres-gec-dynamic-groundwater"
+              ],
+              "localityClass": "containing-area",
+              "projectionMethod": "administrative-proxy",
+              "evidenceDate": "2026-09-06",
+              "notes": "The containing revenue taluk Erode is assessed semi_critical at 71.4 percent stage of extraction."
+            }
+          ],
+          "limitations": [
+            "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-observation",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-trend",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "aquifer-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "catchment-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "connected-supply-system",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM associates 14 sources with 7 habitations in this Panchayat's service records."
+            }
+          ],
+          "limitations": [
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
+          ]
+        },
+        {
+          "requirementId": "water-body-inventory",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-water-bodies",
+              "sourceRefs": [
+                "tngis-all-water-bodies"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "28 water bodies covering 21.2597 ha, largest 1.6732 ha. Registered by DOSS 25, NRSC 3."
+            }
+          ],
+          "limitations": [
+            "The register names 28 of 28; the rest are unnamed polygons.",
+            "Waterspread is the mapped extent, not storage, and says nothing about whether the water body holds water or is encroached.",
+            "Five departments contribute to this layer and it carries no survey date, so the vintage of any one polygon is unstated."
+          ]
+        },
+        {
+          "requirementId": "water-body-condition",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "surface-water-change",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "waterway-network",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "river-water-quality",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "public-water-works",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "14 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
+          "limitations": [
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
+          ]
+        },
+        {
+          "requirementId": "flood-hazard",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "observed-flood-events",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "natural-drainage",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "engineered-stormwater-drainage",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "wastewater-service",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "wastewater-treatment-assets",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "pollution-pressure-inventory",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "measured-water-pollution",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "coastal-and-estuarine",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "historical-agricultural-baseline",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-agricultural-baseline",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 368.91 ha net sown and 368.91 ha irrigated, of which 368.91 ha is canal irrigated."
+            }
+          ],
+          "limitations": [
+            "Census land use describes the 2009 reference year and does not describe current cropping."
+          ]
+        },
+        {
+          "requirementId": "current-crop-and-irrigation-state",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "soil-water-context",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-system-relation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "crop-water-demand",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-stress-observation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-pollution-pressure",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "responsibility-and-action",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223658-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "KOORAPALAYAM Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
+          "limitations": [
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
+          ]
+        },
+        {
+          "requirementId": "composite-priority-score",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        }
+      ],
+      "summary": {
+        "adequate": 15,
+        "unavailable": 11,
+        "not-applicable": 0,
+        "not-assessed": 14
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "profileId": "village-water-profile-v2",
+      "placeId": "223659",
+      "placeKind": "gram-panchayat",
+      "assessedAt": "2026-09-06",
+      "mode": "generated",
+      "generatorVersion": "capability-evidence-v2",
+      "requirements": [
+        {
+          "requirementId": "place-identity-and-composition",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-identity",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNRD/LGD Gram Panchayat 223659 bound to JJM unit 4412/147595."
+            }
+          ],
+          "limitations": [
+            "No Census Gram Panchayat membership is bound, so the 2011 settlement composition is not established.",
+            "The JJM identity binding is proposed by unique-folded and has not been checked by a reviewer."
+          ]
+        },
+        {
+          "requirementId": "place-boundary",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-boundary",
+              "sourceRefs": [
+                "tngis-tnrd-panchayat-boundary"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNGIS publishes an exact Gram Panchayat polygon of 535.9408 ha keyed to LGD 223659."
+            }
+          ],
+          "limitations": [
+            "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year."
+          ]
+        },
+        {
+          "requirementId": "population-and-settlements",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 18401 people in 5137 households across 20 habitations."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-service",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 5137 tap connections against 5137 households (100 percent)."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-source",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM lists 43 drinking-water sources of type Deep Tubewell, Infiltration well, Open Well, River."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-reliability",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "drinking-water-quality",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "373 samples across 5 years (223 at source, 150 at households); latest Safe on 2026-09-03, 3 days ago."
+            }
+          ],
+          "limitations": [
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "All 373 published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination."
+          ]
+        },
+        {
+          "requirementId": "historical-water-access",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No acquired source carries this capability for this place."
+          ]
+        },
+        {
+          "requirementId": "current-rainfall",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-rainfall",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "69.6 mm fell over 2026-08-07 to 2026-09-06 across 31 rain days, wettest 8.9 mm on 2026-08-24."
+            }
+          ],
+          "limitations": [
+            "Modelled reanalysis interpolated to a grid point 7.316 km from the Panchayat centroid, not a rain gauge in the village."
+          ]
+        },
+        {
+          "requirementId": "rainfall-anomaly",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-rainfall-anomaly",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "derived-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "69.6 mm against a 11-year normal of 157.94 mm for the same window, 44.1 percent of normal (below)."
+            }
+          ],
+          "limitations": [
+            "The normal is a 11-year mean of modelled reanalysis for the same calendar window, not a long-period gauge climatology."
+          ]
+        },
+        {
+          "requirementId": "groundwater-resource-status",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-groundwater",
+              "sourceRefs": [
+                "ingres-gec-dynamic-groundwater"
+              ],
+              "localityClass": "containing-area",
+              "projectionMethod": "administrative-proxy",
+              "evidenceDate": "2026-09-06",
+              "notes": "The containing revenue taluk Erode is assessed semi_critical at 71.4 percent stage of extraction."
+            }
+          ],
+          "limitations": [
+            "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-observation",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-trend",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "aquifer-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "catchment-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "connected-supply-system",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM associates 43 sources with 20 habitations in this Panchayat's service records."
+            }
+          ],
+          "limitations": [
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
+          ]
+        },
+        {
+          "requirementId": "water-body-inventory",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No acquired source carries this capability for this place."
+          ]
+        },
+        {
+          "requirementId": "water-body-condition",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "surface-water-change",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "waterway-network",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "river-water-quality",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "public-water-works",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "43 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
+          "limitations": [
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
+          ]
+        },
+        {
+          "requirementId": "flood-hazard",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "observed-flood-events",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "natural-drainage",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "engineered-stormwater-drainage",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "wastewater-service",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "wastewater-treatment-assets",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "pollution-pressure-inventory",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "measured-water-pollution",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "coastal-and-estuarine",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "historical-agricultural-baseline",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "current-crop-and-irrigation-state",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "soil-water-context",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-system-relation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "crop-water-demand",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-stress-observation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-pollution-pressure",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "responsibility-and-action",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223659-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "METTUNASUVAMPALAYAM Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
+          "limitations": [
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
+          ]
+        },
+        {
+          "requirementId": "composite-priority-score",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        }
+      ],
+      "summary": {
+        "adequate": 12,
+        "unavailable": 13,
+        "not-applicable": 0,
+        "not-assessed": 15
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "profileId": "village-water-profile-v2",
+      "placeId": "223660",
+      "placeKind": "gram-panchayat",
+      "assessedAt": "2026-09-06",
+      "mode": "generated",
+      "generatorVersion": "capability-evidence-v2",
+      "requirements": [
+        {
+          "requirementId": "place-identity-and-composition",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-identity",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis",
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNRD/LGD Gram Panchayat 223660 bound to JJM unit 4412/147591 and Census unit 0123/0008."
+            }
+          ],
+          "limitations": [
+            "The JJM identity binding is proposed by exact and has not been checked by a reviewer."
+          ]
+        },
+        {
+          "requirementId": "place-boundary",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-boundary",
+              "sourceRefs": [
+                "tngis-tnrd-panchayat-boundary"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNGIS publishes an exact Gram Panchayat polygon of 633.8945 ha keyed to LGD 223660."
+            }
+          ],
+          "limitations": [
+            "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year."
+          ]
+        },
+        {
+          "requirementId": "population-and-settlements",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 3936 people in 1219 households across 13 habitations."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-service",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 1219 tap connections against 1219 households (100 percent)."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-source",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM lists 33 drinking-water sources of type Deep Tubewell."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-reliability",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "drinking-water-quality",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "179 samples across 5 years (147 at source, 32 at households); latest Safe on 2026-08-01, 36 days ago."
+            }
+          ],
+          "limitations": [
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "All 179 published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination."
+          ]
+        },
+        {
+          "requirementId": "historical-water-access",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-historical-access",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 12 drinking-water source types across 2 constituent village rows, all of them reported available through the summer months."
+            }
+          ],
+          "limitations": [
+            "Census figures describe the 2009 reference year and are a historical baseline, not current service."
+          ]
+        },
+        {
+          "requirementId": "current-rainfall",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-rainfall",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "71.9 mm fell over 2026-08-07 to 2026-09-06 across 31 rain days, wettest 7.8 mm on 2026-08-25."
+            }
+          ],
+          "limitations": [
+            "Modelled reanalysis interpolated to a grid point 8.793 km from the Panchayat centroid, not a rain gauge in the village."
+          ]
+        },
+        {
+          "requirementId": "rainfall-anomaly",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-rainfall-anomaly",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "derived-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "71.9 mm against a 11-year normal of 123.65 mm for the same window, 58.1 percent of normal (below)."
+            }
+          ],
+          "limitations": [
+            "The normal is a 11-year mean of modelled reanalysis for the same calendar window, not a long-period gauge climatology."
+          ]
+        },
+        {
+          "requirementId": "groundwater-resource-status",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-groundwater",
+              "sourceRefs": [
+                "ingres-gec-dynamic-groundwater"
+              ],
+              "localityClass": "containing-area",
+              "projectionMethod": "administrative-proxy",
+              "evidenceDate": "2026-09-06",
+              "notes": "The containing revenue taluk Erode is assessed semi_critical at 71.4 percent stage of extraction."
+            }
+          ],
+          "limitations": [
+            "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-observation",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-trend",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "aquifer-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "catchment-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "connected-supply-system",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM associates 33 sources with 13 habitations in this Panchayat's service records."
+            }
+          ],
+          "limitations": [
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
+          ]
+        },
+        {
+          "requirementId": "water-body-inventory",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-water-bodies",
+              "sourceRefs": [
+                "tngis-all-water-bodies"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "6 water bodies covering 6.0785 ha, largest 4.0058 ha. Registered by NRSC 5, AED 1."
+            }
+          ],
+          "limitations": [
+            "The register names 5 of 6; the rest are unnamed polygons.",
+            "Waterspread is the mapped extent, not storage, and says nothing about whether the water body holds water or is encroached.",
+            "Five departments contribute to this layer and it carries no survey date, so the vintage of any one polygon is unstated."
+          ]
+        },
+        {
+          "requirementId": "water-body-condition",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "surface-water-change",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "waterway-network",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "river-water-quality",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "public-water-works",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "33 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
+          "limitations": [
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
+          ]
+        },
+        {
+          "requirementId": "flood-hazard",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "observed-flood-events",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "natural-drainage",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "engineered-stormwater-drainage",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "wastewater-service",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "wastewater-treatment-assets",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "pollution-pressure-inventory",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "measured-water-pollution",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "coastal-and-estuarine",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "historical-agricultural-baseline",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-agricultural-baseline",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 298.91 ha net sown and 298.91 ha irrigated, of which 298.91 ha is canal irrigated."
+            }
+          ],
+          "limitations": [
+            "Census land use describes the 2009 reference year and does not describe current cropping."
+          ]
+        },
+        {
+          "requirementId": "current-crop-and-irrigation-state",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "soil-water-context",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-system-relation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "crop-water-demand",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-stress-observation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-pollution-pressure",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "responsibility-and-action",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223660-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "PERODE Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
+          "limitations": [
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
+          ]
+        },
+        {
+          "requirementId": "composite-priority-score",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        }
+      ],
+      "summary": {
+        "adequate": 15,
+        "unavailable": 11,
+        "not-applicable": 0,
+        "not-assessed": 14
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "profileId": "village-water-profile-v2",
+      "placeId": "223661",
+      "placeKind": "gram-panchayat",
+      "assessedAt": "2026-09-06",
+      "mode": "generated",
+      "generatorVersion": "capability-evidence-v2",
+      "requirements": [
+        {
+          "requirementId": "place-identity-and-composition",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-identity",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis",
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNRD/LGD Gram Panchayat 223661 bound to JJM unit 4412/147592 and Census unit 0123/0009."
+            }
+          ],
+          "limitations": [
+            "The JJM identity binding is proposed by block-elimination and has not been checked by a reviewer."
+          ]
+        },
+        {
+          "requirementId": "place-boundary",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-boundary",
+              "sourceRefs": [
+                "tngis-tnrd-panchayat-boundary"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1054.9797 ha keyed to LGD 223661."
+            }
+          ],
+          "limitations": [
+            "TNGIS requires prior approval from TNGIS/TNeGA before public display or redistribution, and publishes no mapping year."
+          ]
+        },
+        {
+          "requirementId": "population-and-settlements",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 5903 people in 2407 households across 10 habitations."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-service",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM reports 2407 tap connections against 2407 households (100 percent)."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-source",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM lists 24 drinking-water sources of type Deep Tubewell, River."
+            }
+          ],
+          "limitations": []
+        },
+        {
+          "requirementId": "drinking-water-reliability",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "drinking-water-quality",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "140 samples across 5 years (108 at source, 32 at households); latest Safe on 2026-08-01, 36 days ago."
+            }
+          ],
+          "limitations": [
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "All 140 published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination."
+          ]
+        },
+        {
+          "requirementId": "historical-water-access",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-historical-access",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 12 drinking-water source types across 2 constituent village rows, all of them reported available through the summer months."
+            }
+          ],
+          "limitations": [
+            "Census figures describe the 2009 reference year and are a historical baseline, not current service."
+          ]
+        },
+        {
+          "requirementId": "current-rainfall",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-rainfall",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "74.5 mm fell over 2026-08-07 to 2026-09-06 across 31 rain days, wettest 10.5 mm on 2026-08-25."
+            }
+          ],
+          "limitations": [
+            "Modelled reanalysis interpolated to a grid point 3.494 km from the Panchayat centroid, not a rain gauge in the village."
+          ]
+        },
+        {
+          "requirementId": "rainfall-anomaly",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-rainfall-anomaly",
+              "sourceRefs": [
+                "open-meteo-grid-rainfall"
+              ],
+              "localityClass": "derived-place",
+              "projectionMethod": "interpolation",
+              "evidenceDate": "2026-09-06",
+              "notes": "74.5 mm against a 11-year normal of 138.41 mm for the same window, 53.8 percent of normal (below)."
+            }
+          ],
+          "limitations": [
+            "The normal is a 11-year mean of modelled reanalysis for the same calendar window, not a long-period gauge climatology."
+          ]
+        },
+        {
+          "requirementId": "groundwater-resource-status",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-groundwater",
+              "sourceRefs": [
+                "ingres-gec-dynamic-groundwater"
+              ],
+              "localityClass": "containing-area",
+              "projectionMethod": "administrative-proxy",
+              "evidenceDate": "2026-09-06",
+              "notes": "The containing revenue taluk Erode is assessed semi_critical at 71.4 percent stage of extraction."
+            }
+          ],
+          "limitations": [
+            "The assessment unit is a revenue taluk, not this Panchayat, so the category is containing-area context rather than a measurement of this place."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-observation",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "groundwater-level-trend",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "aquifer-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "catchment-context",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "connected-supply-system",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-06",
+              "notes": "JJM associates 24 sources with 10 habitations in this Panchayat's service records."
+            }
+          ],
+          "limitations": [
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
+          ]
+        },
+        {
+          "requirementId": "water-body-inventory",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-water-bodies",
+              "sourceRefs": [
+                "tngis-all-water-bodies"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "3 water bodies covering 3.3647 ha, largest 2.4795 ha. Registered by NRSC 2, DOSS 1."
+            }
+          ],
+          "limitations": [
+            "The register names 3 of 3; the rest are unnamed polygons.",
+            "Waterspread is the mapped extent, not storage, and says nothing about whether the water body holds water or is encroached.",
+            "Five departments contribute to this layer and it carries no survey date, so the vintage of any one polygon is unstated."
+          ]
+        },
+        {
+          "requirementId": "water-body-condition",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "surface-water-change",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "waterway-network",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "river-water-quality",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "public-water-works",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-06",
+              "notes": "24 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
+          "limitations": [
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
+          ]
+        },
+        {
+          "requirementId": "flood-hazard",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "observed-flood-events",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "natural-drainage",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "engineered-stormwater-drainage",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "wastewater-service",
+          "applicability": "applicable",
+          "state": "unavailable",
+          "evidence": [],
+          "limitations": [
+            "No evidence rule is defined for this capability yet."
+          ]
+        },
+        {
+          "requirementId": "wastewater-treatment-assets",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "pollution-pressure-inventory",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "measured-water-pollution",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "coastal-and-estuarine",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "historical-agricultural-baseline",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-agricultural-baseline",
+              "sourceRefs": [
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "Census 2011 records 348.2 ha net sown and 348.2 ha irrigated, of which 348.2 ha is canal irrigated."
+            }
+          ],
+          "limitations": [
+            "Census land use describes the 2009 reference year and does not describe current cropping."
+          ]
+        },
+        {
+          "requirementId": "current-crop-and-irrigation-state",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "soil-water-context",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-system-relation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "crop-water-demand",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-stress-observation",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "agricultural-water-pollution-pressure",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        },
+        {
+          "requirementId": "responsibility-and-action",
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "223661-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-06",
+              "notes": "PITCHANDAMPALAYAM Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
+          "limitations": [
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
+          ]
+        },
+        {
+          "requirementId": "composite-priority-score",
+          "applicability": "not-assessed",
+          "state": "not-assessed",
+          "evidence": [],
+          "limitations": [
+            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+          ]
+        }
+      ],
+      "summary": {
+        "adequate": 15,
+        "unavailable": 11,
+        "not-applicable": 0,
+        "not-assessed": 14
+      }
+    }
+  ]
+}

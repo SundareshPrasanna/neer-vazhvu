@@ -1,0 +1,298 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/environment-plan",
+  "scope": {
+    "kind": "district",
+    "id": "tn-karur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ngt-dep-tn-karur",
+        "title": "District Environmental Plan, Karur District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
+        "publisher": "District Collector, Karur, with the Tamil Nadu Pollution Control Board",
+        "license": "Tamil Nadu government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://karur.nic.in/departments/the-tamil-nadu-pollution-control-board-karur/",
+        "as_of": "2019-11-26",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-environment-plan-district.ts",
+    "internal_inputs": [],
+    "note": "District Environmental Plan: Karur District (2019, District Collector, Karur, and District Environmental Engineer, Tamil Nadu Pollution Control Board, Karur (the two signatories on the last page); published on the Karur district website under the Tamil Nadu Pollution Control Board, Karur department listing), which carries no water-balance table: 15 figures the plan states about water, each transcribed with the sentence it was read from and the PDF page it sits on, and 10 of its water action points. Nothing is computed from the plan; a balance is served only where the plan prints one. Review status proposed (transcribed, awaiting a reviewer's check).",
+    "conventions": {
+      "figures": "value and unit as the plan states them; quote is the sentence verbatim; pdfPage is the viewer's page, printedPage the number printed on it",
+      "waterBalance": "null when the plan carries no NGT-template balance; the page says so rather than estimating one",
+      "review": "proposed until a person reads every figure against the PDF; then verified with the date",
+      "document": "sha256 and byte length of the PDF as retrieved, so a re-posted file is detected; the PDF itself is not mirrored"
+    }
+  },
+  "schemaVersion": 1,
+  "id": "tn-karur-environment-plan-2019",
+  "sourceId": "ngt-dep-tn-karur",
+  "document": {
+    "title": "District Environmental Plan: Karur District",
+    "publisher": "District Collector, Karur, and District Environmental Engineer, Tamil Nadu Pollution Control Board, Karur (the two signatories on the last page); published on the Karur district website under the Tamil Nadu Pollution Control Board, Karur department listing",
+    "url": "https://cdn.s3waas.gov.in/s3bbf94b34eb32268ada57a3be5062fe7d/uploads/2019/11/2019112659.pdf",
+    "listingUrl": "https://karur.nic.in/departments/the-tamil-nadu-pollution-control-board-karur/",
+    "editionLabel": "2019",
+    "editionNote": "The plan prints no date of its own; its text runs up to the 8.8.2019 submission of the state water-bodies action plan to CPCB and carries time targets to 31.12.2019, pdfinfo shows no CreationDate and a ModDate of 26 November 2019, and the file sits under a November 2019 upload path (uploads/2019/11/2019112659.pdf) on the listing page, which was confirmed to link it on 2026-09-06.",
+    "documentDate": "2019-11-26",
+    "pages": 33,
+    "sha256": "f9954a9ddd86b575baefccad7a862fb538e25521d88e389a3c4a0282f32edba5",
+    "bytes": 869426,
+    "retrievedAt": "2026-09-06",
+    "template": "CPCB model District Environmental Plan under NGT O.A. No. 710-713/2017 (order dated 15.07.2019): a cover, an index and eleven chapters (solid waste, bio-medical waste, plastic waste, C&D waste, polluted river stretches, industrial pollution control, utilization of treated sewage, conservation of water bodies, e-waste, illegal sand mining), each a short preamble followed by a responsibility / plan-of-action / stakeholders table. It carries no demand, supply or deficit water-balance table.",
+    "quirks": [
+      "The plan cites NGT O.A. No. 710-713/2017 dated 15.07.2019 (the District Committee order), not O.A. 360 of 2018 which the Maharashtra plans cite.",
+      "The cover carries no page number; from the index onward the printed footer number is one less than the PDF page (index = printed page 1), so printedPage = pdfPage - 1 for every figure.",
+      "The plan prints no date of its own; documentDate is the PDF ModDate (pdfinfo shows no CreationDate).",
+      "The plan prints no district sewage-generation figure and no district water-body count; the only sewage total (5600 MLD) and the only water-bodies table (90,048) are statewide.",
+      "The industrial-pollution action table (printed page 22) says 2 STPs are required and 2 provided in the local bodies, while the treated-sewage chapter (printed page 23) says only Karur Municipality of the two municipalities has an STP (15 MLD); both are recorded as printed.",
+      "The treated-sewage chapter's sentence 'The entire municipality is not covered under the UGDS S' breaks off mid-word on printed page 23.",
+      "The polluted-river-stretches action table (printed page 19) is a five-column layout; pdftotext interleaves columns on a line, so the FSTP quote is that column's fragment of its line. The table prints 'Priority - I' against the Cauvery stretch (its CPCB class); the action points from that table carry it as their priority since no separate action priority is printed.",
+      "Bulleted lines carry a private-use bullet glyph in the text extraction; quotes start after it.",
+      "The last page (printed page 32) is scanned: the signature block and parts of the sand-mining table are OCR garble ('mmrng itransporting ldamage')."
+    ]
+  },
+  "waterBalance": null,
+  "figures": [
+    {
+      "id": "cauvery-length-in-district",
+      "label": "Length of the Cauvery in Karur district",
+      "value": 56.16,
+      "unit": "km",
+      "detail": "The river enters at Kombupalayam village and exits at Sirugamani village; the Noyyal and the Amaravathi join it in this stretch, which CPCB lists under priority I.",
+      "quote": "Sirugamani Village, after travelling a distance of 56.16 km. In this stretch, two tributaries",
+      "section": "6. Rejuvenation of Polluted River Stretches",
+      "pdfPage": 17,
+      "printedPage": 16
+    },
+    {
+      "id": "tn-polluted-river-stretches",
+      "label": "Polluted river stretches CPCB identified in Tamil Nadu",
+      "value": 6,
+      "unit": "stretches",
+      "detail": "Statewide, printed in words: Sarabanga, Vasista, Thirumanimutharu and Cauvery under priority I (BOD above 30 mg/l), Bhavani under priority IV, Thamirabarani under priority V.",
+      "quote": "In Tamil Nadu, CPCB has identified six numbers of Polluted River Stretches based on",
+      "section": "6. Rejuvenation of Polluted River Stretches",
+      "pdfPage": 17,
+      "printedPage": 16
+    },
+    {
+      "id": "continuous-monitoring-parameters",
+      "label": "Parameters analysed round the clock at the continuous water quality monitoring station",
+      "value": 14,
+      "unit": "parameters",
+      "detail": "TNPCB's station is at the Tamilnadu Newsprint and Papers Limited pumping station on the Cauvery; GEMS and MINARS samples are also collected monthly at Thirumukkudalur and Kattalai.",
+      "quote": "Print & Papers Limited pumping station, and 14 water quality parameters such as pH,",
+      "section": "6. Rejuvenation of Polluted River Stretches",
+      "pdfPage": 18,
+      "printedPage": 17
+    },
+    {
+      "id": "cauvery-encroachment-places",
+      "label": "Places along the Cauvery where encroachments were identified",
+      "value": 65,
+      "unit": "places",
+      "detail": "Agricultural encroachments in Manmangalam Taluk (Nanjaipugalur village); the plan says notices were issued.",
+      "quote": "Encroachments identified in 65 places in",
+      "section": "ACTION PLAN FOR POLLUTED RIVER STRETCHES",
+      "pdfPage": 20,
+      "printedPage": 19
+    },
+    {
+      "id": "karur-fstp-cost",
+      "label": "Cost of the faecal sludge treatment plant planned by Karur Municipality",
+      "value": 2.85,
+      "unit": "Rs crore",
+      "detail": "Listed under sewage management for the Cauvery stretch with a time target of 31.12.2019; the quote is the Karur Municipality column's fragment of an interleaved table line.",
+      "quote": "1) FSTP – Rs.2.85 Crores –",
+      "section": "ACTION PLAN FOR POLLUTED RIVER STRETCHES",
+      "pdfPage": 20,
+      "printedPage": 19
+    },
+    {
+      "id": "red-category-industries",
+      "label": "Red-category industries with TNPCB consent",
+      "value": 300,
+      "unit": "industries",
+      "detail": "From the consent table; the plan says all units generating wastewater have an ETP.",
+      "quote": "Red               300",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 21,
+      "printedPage": 20
+    },
+    {
+      "id": "orange-category-industries",
+      "label": "Orange-category industries with TNPCB consent",
+      "value": 493,
+      "unit": "industries",
+      "detail": "From the consent table.",
+      "quote": "Orange            493",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 21,
+      "printedPage": 20
+    },
+    {
+      "id": "green-category-industries",
+      "label": "Green-category industries with TNPCB consent",
+      "value": 122,
+      "unit": "industries",
+      "detail": "From the consent table.",
+      "quote": "Green             122",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 21,
+      "printedPage": 20
+    },
+    {
+      "id": "consented-industries-total",
+      "label": "Industries with TNPCB consent, all categories",
+      "value": 915,
+      "unit": "industries",
+      "detail": "Red 300, orange 493, green 122; home textiles, bus-body building, quarries, stone crushers and mosquito-net making are named as the main types.",
+      "quote": "Total             915",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 21,
+      "printedPage": 20
+    },
+    {
+      "id": "textile-dyeing-units",
+      "label": "Textile dyeing and bleaching units functioning in Karur",
+      "value": 68,
+      "unit": "units",
+      "detail": "Printed in words; the plan says these units have zero-liquid-discharge plants and recycle their effluent completely.",
+      "quote": "Sixty Eight numbers of Textile Dyeing and Bleaching units are functioning in Karur.",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 21,
+      "printedPage": 20
+    },
+    {
+      "id": "stps-required",
+      "label": "Sewage treatment plants required for the local bodies",
+      "value": 2,
+      "unit": "STPs",
+      "detail": "Item 2 of the industrial-pollution action table, printed over two lines ('No of STPs required for' / 'the local bodies – 2.').",
+      "quote": "the local bodies – 2.",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 23,
+      "printedPage": 22
+    },
+    {
+      "id": "stps-provided",
+      "label": "Sewage treatment plants provided in the local bodies",
+      "value": 2,
+      "unit": "STPs",
+      "detail": "Item 3 of the same table ('No of STPs provided in' / 'the local bodies - 2.'); the treated-sewage chapter names only Karur Municipality's STP.",
+      "quote": "the local bodies - 2.",
+      "section": "7. Industrial Pollution Control",
+      "pdfPage": 23,
+      "printedPage": 22
+    },
+    {
+      "id": "karur-stp-capacity",
+      "label": "Capacity of Karur Municipality's sewage treatment plant",
+      "value": 15,
+      "unit": "MLD",
+      "detail": "Treated effluent goes to adjacent irrigation canals; the plan says the whole municipality is not yet covered by the underground drainage scheme.",
+      "quote": "the capacity of 15 MLD, and the treated effluent is discharged in to adjacent irrigation canals and",
+      "section": "8. Utilization of treated sewage",
+      "pdfPage": 24,
+      "printedPage": 23
+    },
+    {
+      "id": "tn-sewage-generation",
+      "label": "Sewage generated in Tamil Nadu",
+      "value": 5600,
+      "unit": "MLD",
+      "detail": "Statewide, stated as approximate, against 54 STPs of 1400 MLD; the plan prints no district sewage-generation figure.",
+      "quote": "In Tamilnadu, total sewage generation is around 5600 MLD and there are 54 Sewage",
+      "section": "8. Utilization of treated sewage",
+      "pdfPage": 24,
+      "printedPage": 23
+    },
+    {
+      "id": "tn-water-bodies",
+      "label": "Water bodies available in Tamil Nadu",
+      "value": 90048,
+      "unit": "water bodies",
+      "detail": "Statewide total across six owning departments, with 5607 rejuvenated in the past five years and 1806 under rejuvenation; the plan prints no district count.",
+      "quote": "Total                90,048                 5607                  1806",
+      "section": "9. Conservation of Water Bodies",
+      "pdfPage": 27,
+      "printedPage": 26
+    }
+  ],
+  "actionPoints": [
+    {
+      "text": "Sewage Management: 1) FSTP, Rs.2.85 Crores, Time Target 31.12.2019; 2) SWT, in-situ treatment, Time Target 31.12.2019; 3) LWTF, Rs.13.0 Lakhs, Time Target 31.10.2019.",
+      "sector": "Polluted river stretches (Cauvery): Karur Municipality",
+      "priority": "Priority - I",
+      "pdfPage": 20
+    },
+    {
+      "text": "E-Flow & Irrigation practices: supplying water to the crops by turn system on a rotational basis; awareness to farmers, with Agriculture and Horticulture Departments, on drip and sprinkler irrigation.",
+      "sector": "Polluted river stretches (Cauvery): SGWA, PWD-WRD, Forests Dept",
+      "priority": "Priority - I",
+      "pdfPage": 20
+    },
+    {
+      "text": "Flood Plain Zone: after identification and demarcation of FPZ, action will be taken up to evict encroachments; agricultural encroachments found along the Cauvery in 65 places in Manmangalam Taluk.",
+      "sector": "Polluted river stretches (Cauvery): SGWA, PWD-WRD, Forests Dept",
+      "priority": "Priority - I",
+      "pdfPage": 20
+    },
+    {
+      "text": "To ensure all the TNPCB consented units have provided ETP; functional status of ETPs/STPs; monitoring of treated effluent qualities of ETPs/STPs.",
+      "sector": "Industrial Pollution Control: implementation and monitoring of treatment system for liquid effluent",
+      "priority": null,
+      "pdfPage": 23
+    },
+    {
+      "text": "Karur Municipality shall cover all the entire municipality area under UGDS scheme; sewage received in STP shall be treated to the Discharge standards.",
+      "sector": "Utilization of treated sewage: collection and treatment of sewage",
+      "priority": null,
+      "pdfPage": 24
+    },
+    {
+      "text": "Collection of catchment and lead channel pollution data, sewage disposal contamination data, industrial effluent data and solid, plastic, e-, hazardous and C&D waste data for all water bodies.",
+      "sector": "Conservation of Water Bodies: general action plan",
+      "priority": null,
+      "pdfPage": 28
+    },
+    {
+      "text": "Declaring the Designated Best use of water bodies and ascertain the quality of water as per the standard.",
+      "sector": "Conservation of Water Bodies: general action plan",
+      "priority": null,
+      "pdfPage": 28
+    },
+    {
+      "text": "Deweeding, Desilting, protection of drainage basin, channels, stabilization of earthen bunds and preparing cost estimation.",
+      "sector": "Conservation of Water Bodies: general action plan",
+      "priority": null,
+      "pdfPage": 29
+    },
+    {
+      "text": "Identification of river stretches where there are chances for illegal sand mining; frequent surprise checks there by the Taluk Level Task Force, reporting to the District Level Task Force fortnightly.",
+      "sector": "Prevention of illegal sand mining: preventing illegal river sand mining",
+      "priority": null,
+      "pdfPage": 33
+    },
+    {
+      "text": "To carry out Air Quality Monitoring, Water Quality Monitoring (ground water) & Compost quality in and around processing facilities & dumpsites as per Schedule I & II of SWM Rules, 2016.",
+      "sector": "Solid Waste Management: air and water quality monitoring of dumpsites and compost quality",
+      "priority": null,
+      "pdfPage": 9
+    }
+  ],
+  "review": {
+    "status": "proposed",
+    "extractedAt": "2026-09-06",
+    "extractedBy": "Claude, transcribed from the PDF text; pending Sundaresh's verify against the PDF",
+    "verifiedAt": null,
+    "verifiedBy": null
+  }
+}

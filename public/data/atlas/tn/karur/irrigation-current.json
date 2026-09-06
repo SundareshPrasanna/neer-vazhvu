@@ -1,0 +1,88 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/irrigation-current",
+  "scope": {
+    "kind": "district",
+    "id": "tn-karur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tn-des-season-crop-report",
+        "title": "Season and Crop Report of Tamil Nadu 2024-25, Table III-B: area irrigated by different sources",
+        "publisher": "Department of Economics and Statistics, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://des.tn.gov.in/en/node/18",
+        "as_of": "2024",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-irrigation-tn-district.ts",
+    "internal_inputs": [],
+    "note": "Table III-B, Area irrigated by different sources, pages 125-131 of the DES Season and Crop Report 2024-25 (PDF sha256 49bbd356b1aab315a53e9a62ef0ba9a124a90c5975231146fb1bab0498f7eb75, Google Drive file 1uONHRwuvU9-EhDGD1v0XC0OWqAVOZtV6 from the DES listing): the Karur row (Sl. No. 20), net area irrigated per source with the report's printed net total, gross total, area irrigated more than once and irrigation intensity, read into a reviewed extraction (pipeline-inputs/atlas/tn/karur/irrigation-des.json) and validated here. Supplementary wells water land already counted under another source and are recorded separately, never added to the net total.",
+    "conventions": {
+      "units": "hectares, whole, as the report prints them; shares in percent of the printed net total, one decimal",
+      "edition": "2024-25 is the report's agricultural year, not a publication date",
+      "supplementary_wells": "not a component of the net total; they supplement land under other sources",
+      "rounding": "component sums may miss the printed net total by up to 2 ha of the report's own rounding; the printed total is served"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-karur-v1",
+  "edition": "2024-25",
+  "district": {
+    "name": "Karur",
+    "reportSpelling": "Karur",
+    "rowNumber": 20
+  },
+  "bySource": [
+    {
+      "key": "canals",
+      "label": "Canals",
+      "netHectares": 7479,
+      "percent": 15.8
+    },
+    {
+      "key": "tanks",
+      "label": "Tanks",
+      "netHectares": 0,
+      "percent": 0
+    },
+    {
+      "key": "tube-bore-wells",
+      "label": "Tube and bore wells",
+      "netHectares": 14805,
+      "percent": 31.2
+    },
+    {
+      "key": "open-wells",
+      "label": "Open wells",
+      "netHectares": 25137,
+      "percent": 53
+    },
+    {
+      "key": "other-sources",
+      "label": "Other sources",
+      "netHectares": 0,
+      "percent": 0
+    }
+  ],
+  "netAreaIrrigatedHectares": 47421,
+  "componentSumHectares": 47421,
+  "grossAreaIrrigatedHectares": 52017,
+  "areaIrrigatedMoreThanOnceHectares": 4596,
+  "irrigationIntensity": 1.1,
+  "supplementaryWells": {
+    "netHectares": 0,
+    "note": "The report's supplementary-wells column ('by all other types of wells') records 0 ha net for this district in 2024-25."
+  },
+  "extractedOn": "2026-09-06",
+  "notes": [
+    "The five source components sum exactly to the printed net total of 47421 ha.",
+    "Canals 15.8%, open wells 53.0%, tube and bore wells 31.2% of the net irrigated area.",
+    "The report prints 52017 ha gross and 4596 ha irrigated more than once; gross minus net is 4596 ha, matching."
+  ]
+}

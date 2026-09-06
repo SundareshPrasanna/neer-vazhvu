@@ -1,0 +1,130 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-karur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for KARUR: the district row and its 7 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-karur-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-06",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=KARUR;loctype=DISTRICT;locuuid=04b66e00-51df-4569-8a20-73e5fec18480;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "KARUR",
+    "locationUUID": "04b66e00-51df-4569-8a20-73e5fec18480",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 103.1205
+  },
+  "recordsSha256": "8f8f4d93ba34e652dbdac404724be5c09581d850d4faf0539fd158990d74e7f7",
+  "recordCount": 7,
+  "records": [
+    {
+      "locationName": "ARAVAKURICHI",
+      "locationUUID": "4507f0ba-2f61-4c48-85ae-71902afca71c",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.1709,
+      "annualRechargeHam": 3170.92,
+      "totalAvailabilityHam": 4866.29,
+      "availabilityForFutureUseHam": 828.92,
+      "rainfallMm": 641.9569
+    },
+    {
+      "locationName": "KADAVUR",
+      "locationUUID": "5fa68009-b150-4a13-be73-e5aa58314a9d",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 117.9308,
+      "annualRechargeHam": 2197.55,
+      "totalAvailabilityHam": 3856.82,
+      "availabilityForFutureUseHam": 274.55,
+      "rainfallMm": 703.3446
+    },
+    {
+      "locationName": "KARUR",
+      "locationUUID": "582339b2-6f1a-4f11-86ac-1ddbf09b7ffd",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 115.8924,
+      "annualRechargeHam": 1458.65,
+      "totalAvailabilityHam": 2443.18,
+      "availabilityForFutureUseHam": 397.36,
+      "rainfallMm": 616.7
+    },
+    {
+      "locationName": "KRISHNARAYAPURAM",
+      "locationUUID": "080a6253-ddda-40d1-bbe9-36f27c01ec6f",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.1209,
+      "annualRechargeHam": 1960.7,
+      "totalAvailabilityHam": 4317.12,
+      "availabilityForFutureUseHam": 1012.56,
+      "rainfallMm": 723.9193
+    },
+    {
+      "locationName": "KULITHALAI",
+      "locationUUID": "834a842e-914e-42e4-836c-b67d50a8b96c",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 90.8634,
+      "annualRechargeHam": 1898.99,
+      "totalAvailabilityHam": 6657.38,
+      "availabilityForFutureUseHam": 1581.33,
+      "rainfallMm": 636.4493
+    },
+    {
+      "locationName": "MANMANGALAM",
+      "locationUUID": "ea83434e-4ac7-44b8-9b6d-5254d762cea6",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 109.049,
+      "annualRechargeHam": 961.74,
+      "totalAvailabilityHam": 3036.58,
+      "availabilityForFutureUseHam": 1145.27,
+      "rainfallMm": 627.2548
+    },
+    {
+      "locationName": "PUGALUR",
+      "locationUUID": "d76a3df1-395e-4208-be14-355c753c0cb0",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4644,
+      "annualRechargeHam": 1838.43,
+      "totalAvailabilityHam": 4021.55,
+      "availabilityForFutureUseHam": 835.15,
+      "rainfallMm": 560.2869
+    }
+  ]
+}

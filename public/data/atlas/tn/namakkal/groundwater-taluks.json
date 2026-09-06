@@ -1,0 +1,141 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-namakkal"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for NAMAKKAL: the district row and its 8 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-namakkal-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-06",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=NAMAKKAL;loctype=DISTRICT;locuuid=8c289400-6586-426b-9f03-ab7b15563d24;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "NAMAKKAL",
+    "locationUUID": "8c289400-6586-426b-9f03-ab7b15563d24",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 115.8557
+  },
+  "recordsSha256": "6a2274b98a5b0c7d9652b717b2be52320e8f749e4c493f1ea9de783d68d1cd3c",
+  "recordCount": 8,
+  "records": [
+    {
+      "locationName": "KOLLI HILLS",
+      "locationUUID": "d939d3b8-ac56-4a65-a43e-210118319270",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 0.453,
+      "annualRechargeHam": 1719.1,
+      "totalAvailabilityHam": 2008.9,
+      "availabilityForFutureUseHam": 1942.45,
+      "rainfallMm": 750.4
+    },
+    {
+      "locationName": "KUMARAPALAYAM",
+      "locationUUID": "f805b39b-6441-4927-925d-469c0a2fa74c",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.0424,
+      "annualRechargeHam": 1816.41,
+      "totalAvailabilityHam": 3043.59,
+      "availabilityForFutureUseHam": 716.87,
+      "rainfallMm": 765.7
+    },
+    {
+      "locationName": "MOHANUR",
+      "locationUUID": "bc61dfbb-6b8c-4853-a430-0d8b9052db62",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.4427,
+      "annualRechargeHam": 2229.33,
+      "totalAvailabilityHam": 6872.95,
+      "availabilityForFutureUseHam": 1936.35,
+      "rainfallMm": 669.4
+    },
+    {
+      "locationName": "NAMAKKAL",
+      "locationUUID": "37ca2ac1-73f8-41bd-ba60-2e2e1fef68ed",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 127.593,
+      "annualRechargeHam": 3136.58,
+      "totalAvailabilityHam": 5113.55,
+      "availabilityForFutureUseHam": 95.03,
+      "rainfallMm": 649.9975
+    },
+    {
+      "locationName": "PARAMATHI VELUR",
+      "locationUUID": "7aa04113-56e9-4b25-aff6-20722b7de140",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 108.6548,
+      "annualRechargeHam": 2736.59,
+      "totalAvailabilityHam": 10960.28,
+      "availabilityForFutureUseHam": 2309.29,
+      "rainfallMm": 579.4768
+    },
+    {
+      "locationName": "RASIPURAM",
+      "locationUUID": "7bf1980d-e115-4d37-89f1-74f8dac0785e",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.7631,
+      "annualRechargeHam": 5135.34,
+      "totalAvailabilityHam": 10402.29,
+      "availabilityForFutureUseHam": 703.54,
+      "rainfallMm": 872.1498
+    },
+    {
+      "locationName": "SENDAMANGALAM",
+      "locationUUID": "37387d8c-8b84-48d2-83e9-d9547d7c6f25",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 149.1617,
+      "annualRechargeHam": 2616.34,
+      "totalAvailabilityHam": 5233.42,
+      "availabilityForFutureUseHam": 355.21,
+      "rainfallMm": 606.6219
+    },
+    {
+      "locationName": "TIRUCHENGODE",
+      "locationUUID": "8279bb22-0604-4e63-8c71-3cb427061fd0",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 99.8668,
+      "annualRechargeHam": 6083.08,
+      "totalAvailabilityHam": 8798.68,
+      "availabilityForFutureUseHam": 923.02,
+      "rainfallMm": 743.6
+    }
+  ]
+}
