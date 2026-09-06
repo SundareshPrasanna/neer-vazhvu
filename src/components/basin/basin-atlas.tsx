@@ -875,6 +875,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const shedData = data["sub-hydrosheds"];
   const boundaryData = data["boundary"];
   const contextData = data["context-boundary"];
+  const riversData = data["rivers"];
   // Loaded-state key of the manifest's default-fit families ("" until the
   // manifest names some and every one has arrived).
   const fitKey = (manifest.defaultFitFamilies ?? []).every((f) => data[f])
@@ -882,9 +883,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     : "";
   const fitBounds = useMemo(() => {
     let feats: Feature[];
-    if (selectedRiverId && shedData) {
+    if (selectedRiverId && shedData && selectedSheds.size > 0) {
       // A river is selected: frame its sub-catchments.
       feats = shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)));
+    } else if (selectedRiverId) {
+      // A river with no shed of its own (a canal, a context river outside the
+      // working boundary): frame its course, or the map would stay wherever
+      // it was and the panel would describe a river off the edge of it.
+      feats = (riversData?.features ?? []).filter((f) => {
+        const rp = f.properties as Record<string, unknown>;
+        return String(rp?.riverId ?? rp?.river_id ?? "") === selectedRiverId;
+      });
     } else if (manifest.defaultFocus) {
       // Nothing selected and a focus view is configured: defer to it (the
       // MapController applies center/zoom) instead of the wide boundary fit.
@@ -906,7 +915,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     return b.isValid() ? b : null;
     // fitKey stands in for the fit families' data so a floor change never refits.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fitKey, selectedRiverId, shedData, boundaryData, contextData, selectedSheds, manifest.defaultFocus]);
+  }, [fitKey, selectedRiverId, shedData, boundaryData, contextData, riversData, selectedSheds, manifest.defaultFocus]);
 
   // Frame the region highlighted from the accountability matrix ("Show X on
   // the map") once its layer data is in. Matching mirrors the highlight style.
