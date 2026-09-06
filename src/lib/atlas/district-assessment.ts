@@ -19,6 +19,7 @@ import type {
   WaterBodiesShard,
 } from "./artifacts";
 import { identityFromDirectory } from "./artifacts";
+import type { PollutedStretchesArtifact } from "./polluted-stretches";
 import { villageWaterProfileV2 } from "./capability-assessment";
 import { LGD_PROVENANCE, generateCapabilityAssessment } from "./capability-evidence";
 import type { GeneratedAssessment, PlaceEvidenceInputs } from "./capability-evidence";
@@ -33,6 +34,7 @@ import {
   loadJjmServiceShards,
   loadRainfall,
   loadWaterBodyShards,
+  loadPollutedStretches,
 } from "./data";
 import { buildPlaceBrief, validatePlaceBrief } from "./place-brief";
 import type { PlaceBrief } from "./place-brief";
@@ -55,6 +57,8 @@ export interface DistrictCorpus {
   waterBodies: WaterBodiesShard[];
   assessments: AssessmentsShard[];
   briefs: BriefsShard[];
+  /** Optional: the fixtures predate the family. */
+  pollutedStretches?: PollutedStretchesArtifact | undefined;
 }
 
 /** The served families of one district, as read from disk or from a fixture.
@@ -70,6 +74,8 @@ export interface DistrictArtifacts {
   waterBodies: WaterBodiesShard[];
   assessments: AssessmentsShard[];
   briefs: BriefsShard[];
+  /** Optional: the fixtures predate the family. */
+  pollutedStretches?: PollutedStretchesArtifact | undefined;
 }
 
 /** Check every served input against the directory's identity. Pure: the
@@ -143,6 +149,7 @@ export function assembleDistrictCorpus(artifacts: DistrictArtifacts): {
       waterBodies,
       assessments: artifacts.assessments,
       briefs: artifacts.briefs,
+      pollutedStretches: artifacts.pollutedStretches,
     },
     errors,
   };
@@ -168,6 +175,7 @@ export function loadDistrictCorpus(district: DistrictRef): {
     waterBodies: loadWaterBodyShards(district),
     assessments: loadAssessmentShards(district),
     briefs: loadBriefShards(district),
+    pollutedStretches: loadPollutedStretches(district),
   });
 }
 
@@ -242,6 +250,20 @@ export function assembleEvidenceInputs(corpus: DistrictCorpus): PlaceEvidenceInp
   // are byte-compared, so only an LGD-built directory sets it.
   const provenance =
     identityAdapterOf(corpus.directory) === "lgd-directory" ? LGD_PROVENANCE : undefined;
+  // District-grain: the same CPCB slice for every Panchayat, absent until served.
+  const stretchesEvidence = corpus.pollutedStretches
+    ? {
+        editionLabel: corpus.pollutedStretches.edition.publishedLabel,
+        retrievedAt: corpus.pollutedStretches.edition.retrievedAt,
+        districtName: corpus.pollutedStretches.districtName,
+        entries: corpus.pollutedStretches.entries.map((entry) => ({
+          river: entry.river,
+          priority: entry.priority,
+          kind: entry.district.kind,
+          stations: entry.stations.length,
+        })),
+      }
+    : undefined;
   return corpus.directory.panchayats.map((panchayat) => ({
     lgdGramPanchayatCode: panchayat.lgdCode,
     lgdGramPanchayatName: panchayat.name,
@@ -254,6 +276,7 @@ export function assembleEvidenceInputs(corpus: DistrictCorpus): PlaceEvidenceInp
     rainfall: rainfallByGp.get(panchayat.lgdCode),
     rainfallWindow: corpus.rainfall?.window,
     waterBodies: waterBodiesByGp.get(panchayat.lgdCode),
+    pollutedStretches: stretchesEvidence,
   }));
 }
 

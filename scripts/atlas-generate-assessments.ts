@@ -81,6 +81,10 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
     sources.push(upstreamSource("openMeteo", { role: "input", retrieved: corpus.rainfall.acquiredAt }));
     internalInputs.push(districtArtifactPath(district, "rainfall"));
   }
+  if (corpus.pollutedStretches) {
+    sources.push(upstreamSource("cpcbPrs", { role: "input", retrieved: corpus.pollutedStretches.edition.retrievedAt }));
+    internalInputs.push(districtArtifactPath(district, "polluted-stretches"));
+  }
   const waterShard = corpus.waterBodies.find((shard) => shard.ext.atlas.blockCode === blockCode);
   if (waterShard) {
     sources.push(
