@@ -59,7 +59,7 @@
           "provenance": "City-river catchments delineated on FABDEM 30 m (scripts/derive_mumbai_subbasins_fabdem.py) plus the supply-lake catchments from the regional FABDEM lake-catchment atlas"
         }
       ],
-      "bytes": 69318,
+      "bytes": 69661,
       "sliced": false
     },
     "reservoir-catchments": {
@@ -72,7 +72,7 @@
           "provenance": "Per-lake catchments of the supply lakes from the regional FABDEM lake-catchment atlas (neer-vazhvu-api/app/cascade)"
         }
       ],
-      "bytes": 167128,
+      "bytes": 167432,
       "sliced": false
     },
     "boundary": {
@@ -85,7 +85,7 @@
           "provenance": "OpenStreetMap municipal corporation boundary, via public/geojson/mumbai-corporations-2024.geojson"
         }
       ],
-      "bytes": 74851,
+      "bytes": 75155,
       "sliced": false
     },
     "admin-corporation": {
@@ -98,7 +98,7 @@
           "provenance": "OpenStreetMap boundaries of the nine MMR municipal corporations (2024)"
         }
       ],
-      "bytes": 129200,
+      "bytes": 129504,
       "sliced": false
     },
     "rivers": {
@@ -111,33 +111,33 @@
           "provenance": "OpenStreetMap river courses (Overpass), one MultiLineString per river; river_id joins the city river-quality file"
         }
       ],
-      "bytes": 103071,
+      "bytes": 117310,
       "sliced": false
     },
     "waterbodies-major": {
-      "featureCount": 341,
+      "featureCount": 232,
       "sources": [
         {
           "file": "mumbai-water-bodies-current.geojson",
           "kind": null,
-          "count": 341,
-          "provenance": "OpenStreetMap water polygons across the urbanised MMR, named or at least 5 ha (public/geojson/mumbai-water-bodies-current.geojson)"
+          "count": 232,
+          "provenance": "OpenStreetMap water polygons across the urbanised MMR, named or at least 5 ha, river and drain channels excluded (public/geojson/mumbai-water-bodies-current.geojson)"
         }
       ],
-      "bytes": 1245605,
+      "bytes": 736211,
       "sliced": false
     },
     "waterbodies-minor": {
-      "featureCount": 1122,
+      "featureCount": 961,
       "sources": [
         {
           "file": "mumbai-water-bodies-current.geojson",
           "kind": null,
-          "count": 1122,
+          "count": 961,
           "provenance": "OpenStreetMap water polygons under 5 ha and unnamed; sliced per catchment"
         }
       ],
-      "bytes": 695156,
+      "bytes": 517569,
       "sliced": true,
       "shedKeys": [
         "DAHISAR",
@@ -156,7 +156,7 @@
           "provenance": "Documented island-era tanks filled in after the piped supply arrived, at present-day locality positions (public/data/water-bodies-lost-mumbai.json)"
         }
       ],
-      "bytes": 7654,
+      "bytes": 7959,
       "sliced": false
     },
     "reservoirs": {
@@ -169,7 +169,7 @@
           "provenance": "The seven BMC supply lakes as points (OSM polygon centroids; Middle Vaitarna from the city config), WRD live capacity from the Pravah bulletin, BMC share from BMC's published figures; liveCode joins the daily storage feed"
         }
       ],
-      "bytes": 7131,
+      "bytes": 7538,
       "sliced": false
     },
     "prs-stretches": {
@@ -182,7 +182,7 @@
           "provenance": "CPCB polluted river stretches, October 2025 (updated version), Annexures III A/B, XI and XIV, drawn along OpenStreetMap river courses; Greater Mumbai's Dahisar, Poisar and Oshiwara are not in the national list"
         }
       ],
-      "bytes": 9522,
+      "bytes": 9783,
       "sliced": false
     },
     "monitoring-points": {
@@ -195,12 +195,12 @@
           "provenance": "MPCB / CPCB NWMP water-quality stations on the Mithi and Ulhas and MPCB sampling points on the other city rivers, from public/data/river-quality-mumbai.json; hasReadings marks the four with a published series"
         }
       ],
-      "bytes": 9062,
+      "bytes": 9324,
       "sliced": false
     },
     "readings": {
       "featureCount": 4,
-      "bytes": 12786,
+      "bytes": 13830,
       "sliced": false,
       "sources": [
         {
@@ -221,7 +221,7 @@
           "provenance": "CGWB National Hydrograph Network dug wells across the MMR (Ground Water Year Book of Maharashtra), latest seasonal depth per well"
         }
       ],
-      "bytes": 25770,
+      "bytes": 26075,
       "sliced": false
     },
     "infrastructure": {
@@ -234,7 +234,7 @@
           "provenance": "Sewage treatment plants across the MMR: MPCB per-STP inventory, inlet/outlet BOD from Praja 2024 (RTI), eastern-corridor locations from OSM; MSDP-2 replacement dates from BMC's ESR 2024-25 via the commitments register"
         }
       ],
-      "bytes": 10338,
+      "bytes": 10643,
       "sliced": false
     },
     "flood-hotspots": {
@@ -247,7 +247,7 @@
           "provenance": "BMC Disaster Management flood-spot register, the officially mapped chronic/monitored subset (the full pre-monsoon list is not published with locations)"
         }
       ],
-      "bytes": 45045,
+      "bytes": 45350,
       "sliced": false
     },
     "industries": {
@@ -260,7 +260,7 @@
           "provenance": "OpenStreetMap landuse=industrial parcels of at least 2 ha within Greater Mumbai (Overpass, fetched 2026-09-06)"
         }
       ],
-      "bytes": 218239,
+      "bytes": 218544,
       "sliced": false
     },
     "drainage": {
@@ -273,7 +273,7 @@
           "provenance": "OpenStreetMap drain / ditch / nullah network across the urbanised MMR; sliced per catchment"
         }
       ],
-      "bytes": 338655,
+      "bytes": 338960,
       "sliced": true,
       "shedKeys": [
         "DAHISAR",
@@ -292,11 +292,17 @@
           "provenance": "Treatment-gap units = the four city-river catchments (FABDEM); severity is the reading of gaps.json's evidence: high where a CPCB Priority I station or a failing plant discharges, medium where the river is sewage-fed but unmonitored"
         }
       ],
-      "bytes": 20481,
+      "bytes": 21007,
       "sliced": false
     }
   },
   "skipped": [
+    {
+      "file": "mumbai-water-bodies-current.geojson",
+      "family": "waterbodies-major",
+      "kind": "channel",
+      "reason": "270 river, canal, stream and drain polygons (OSM water=river etc.) and unnamed channel ribbons left out: the rivers and drainage families carry the courses"
+    },
     {
       "file": "cpcb-2025.json",
       "family": "prs-stretches",

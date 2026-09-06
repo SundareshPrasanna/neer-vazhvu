@@ -61,8 +61,9 @@ LAKES = [
     {"name": "Bhatsa", "liveCode": "bhatsa", "osm_id": 7112404, "bmcShareMcft": 25321.9, "fallback": (73.45, 19.55),
      "supplyShare": "About 48% of BMC's supply (BMC Hydraulic Engineer's Department)"},
     {"name": "Upper Vaitarna", "liveCode": "upper_vaitarna", "osm_id": 11799235, "bmcShareMcft": 8018.1, "fallback": (73.47, 19.95)},
-    {"name": "Middle Vaitarna", "liveCode": "middle_vaitarna", "osm_id": None, "bmcShareMcft": 6834.4, "fallback": (73.40, 19.83),
-     "locationNote": "No OSM polygon for this reservoir in the water-bodies layer; point from the city config."},
+    # The reservoir is not mapped as a water polygon on OSM (checked 2026-09-06); the point sits at the dam.
+    {"name": "Middle Vaitarna", "liveCode": "middle_vaitarna", "osm_id": None, "bmcShareMcft": 6834.4, "fallback": (73.433, 19.706),
+     "locationNote": "Point at the Middle Vaitarna dam (OSM way 801753320, Kochale, Mokhada); the reservoir behind it has no water polygon on OSM, so it carries no outline or catchment here."},
     {"name": "Modak Sagar", "liveCode": "modak_sagar", "osm_id": 1609905, "bmcShareMcft": 4552.9, "fallback": (73.18, 19.78)},
     {"name": "Tansa", "liveCode": "tansa", "osm_id": 196507985, "bmcShareMcft": 5123.5, "fallback": (73.30, 19.63)},
     {"name": "Vihar", "liveCode": None, "osm_id": 311633, "bmcShareMcft": 978.2, "fallback": (72.91, 19.14)},
@@ -202,12 +203,38 @@ def build_rivers() -> dict:
     return {f["properties"]["river_id"]: f["geometry"] for f in rivers}
 
 
+CONDUIT_TYPES = {"river", "canal", "stream", "drain"}
+RIBBON_COMPACTNESS_MAX = 0.05  # Polsby-Popper; below this an unnamed small polygon is a channel, not a tank
+RIBBON_EXEMPT_HA = 50.0
+
+
+def is_channel(props: dict, geom) -> bool:
+    """OSM maps wide river reaches as water polygons (water=river, plus unnamed
+    ribbons tagged water=water). Drawn as lakes they sit over the river line
+    and swallow its clicks; the rivers family already carries the course."""
+    if props.get("water_type") in CONDUIT_TYPES:
+        return True
+    if props.get("name") or (props.get("area_ha") or 0) >= RIBBON_EXEMPT_HA:
+        return False
+    lat = geom.centroid.y
+    kx, ky = 111.32 * math.cos(math.radians(lat)) * 1000, 110.57 * 1000
+    xs, ys = geom.exterior.coords.xy if geom.geom_type == "Polygon" else max(geom.geoms, key=lambda g: g.area).exterior.coords.xy
+    from shapely.geometry import Polygon
+
+    m = Polygon([(x * kx, y * ky) for x, y in zip(xs, ys)])
+    return m.length > 0 and 4 * math.pi * m.area / (m.length ** 2) < RIBBON_COMPACTNESS_MAX
+
+
 def build_waterbodies(idx: ShedIndex) -> dict[int, Point]:
     wb = load("public/geojson/mumbai-water-bodies-current.geojson")["features"]
     major, minor, slices, centroids = [], [], {}, {}
+    channels = 0
     for f in wb:
         p, g = f["properties"], shape(f["geometry"])
         centroids[p["osm_id"]] = g.centroid
+        if is_channel(p, g):
+            channels += 1
+            continue
         props = {"name": p.get("name"), "name_mr": p.get("name_mr"), "water_type": p.get("water_type"), "area_ha": p.get("area_ha"),
                  "osm_id": p.get("osm_id"), "supply_reservoir": p.get("supply_reservoir"), "shedId": idx.of(g),
                  "source": "OpenStreetMap", "year": "2026"}
@@ -218,7 +245,9 @@ def build_waterbodies(idx: ShedIndex) -> dict[int, Point]:
             minor.append(ft)
             if props["shedId"]:
                 slices.setdefault(props["shedId"], []).append(ft)
-    emit("waterbodies-major", major, "OpenStreetMap water polygons across the urbanised MMR, named or at least 5 ha (public/geojson/mumbai-water-bodies-current.geojson)", "mumbai-water-bodies-current.geojson")
+    inventory["skipped"].append({"file": "mumbai-water-bodies-current.geojson", "family": "waterbodies-major", "kind": "channel",
+                                 "reason": f"{channels} river, canal, stream and drain polygons (OSM water=river etc.) and unnamed channel ribbons left out: the rivers and drainage families carry the courses"})
+    emit("waterbodies-major", major, "OpenStreetMap water polygons across the urbanised MMR, named or at least 5 ha, river and drain channels excluded (public/geojson/mumbai-water-bodies-current.geojson)", "mumbai-water-bodies-current.geojson")
     emit("waterbodies-minor", minor, "OpenStreetMap water polygons under 5 ha and unnamed; sliced per catchment", "mumbai-water-bodies-current.geojson", shed_slices=slices)
     lost = load("public/data/water-bodies-lost-mumbai.json")
     feats = [feat({"type": "Point", "coordinates": [b["lng"], b["lat"]]}, {

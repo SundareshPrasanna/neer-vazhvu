@@ -47,8 +47,11 @@ def _overpass(query: str):
     raise last
 
 # MMR extent (south, west, north, east): BMC's four small rivers in the SW plus
-# the eastern Ulhas/Waldhuni corridor and the NE/NW source rivers.
-BBOX = (18.85, 72.65, 19.85, 73.55)
+# the eastern Ulhas/Waldhuni corridor and the NE/NW source rivers. The box
+# runs to 20.0 N / 73.8 E so the Kalu reaches its Malshej headwaters and the
+# Vaitarna its Trimbak source - the earlier 19.85 / 73.55 edge cut both
+# mid-course, which read on the basin atlas as a river that ends in a field.
+BBOX = (18.85, 72.65, 20.0, 73.8)
 
 # OSM-name substring (lowercase) -> (river_id, display name, Marathi name).
 RIVER_MATCH = [
