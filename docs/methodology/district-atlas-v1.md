@@ -55,6 +55,7 @@ The same discipline covers reviewed inputs that are extractions rather than join
 | `water-bodies/` | counts per GP (TN); census register rows with points, unassigned rows counted per block (MH) | TNGIS / First Census of Water Bodies |
 | `irrigation-current.json` (TN) | net area irrigated by source, district row | Season and Crop Report 2024-25 |
 | `environment-plan.json` (MH) | reviewed DEP figures with page cites, water balance explicitly null where the plan prints none | MPCB DEP |
+| `polluted-stretches.json` | CPCB polluted river stretches touching the district: priority, max BOD 2022-23, stations with 2024 BOD, change since 2018, and the basis for the district join (named in the report or on the river's course) | CPCB PRS October 2025 (national reviewed input `pipeline-inputs/atlas/prs/`) |
 | `assessments/`, `briefs/`, `curated-briefs.json` | per-place capability assessment and the brief each page renders; curated briefs are hand-written and reviewed | derived |
 
 All artifacts are NVDM-enveloped at L2 and validated by the same gates as city data.

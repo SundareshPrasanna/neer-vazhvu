@@ -64,6 +64,15 @@
         "retrieved": "2026-09-02"
       },
       {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "retrieved": "2026-09-06"
+      },
+      {
         "id": "tngis-generic-viewer-water-bodies",
         "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
         "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
@@ -83,7 +92,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-02",
+    "produced_at": "2026-09-06",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -92,6 +101,7 @@
       "public/data/atlas/tn/salem/groundwater-taluks.json",
       "public/data/atlas/tn/salem/groundwater-projection.json",
       "public/data/atlas/tn/salem/rainfall.json",
+      "public/data/atlas/tn/salem/polluted-stretches.json",
       "public/data/atlas/tn/salem/water-bodies/6595.geojson"
     ],
     "note": "village-water-profile-v2: 14 Gram Panchayats in GANGAVALLI block assessed against 40 capabilities by the evidence rules in src/lib/atlas/capability-evidence.ts (capability-evidence-v2). Each requirement records its state (adequate, unavailable, not-applicable, not-assessed), the evidence with its locality class and projection method, and limitations. A capability with no rule is reported unavailable rather than guessed; an undetermined applicability is not-assessed rather than a gap.",
@@ -105,7 +115,7 @@
   "blockCode": "6595",
   "blockName": "GANGAVALLI",
   "profileId": "village-water-profile-v2",
-  "assessedAt": "2026-09-02",
+  "assessedAt": "2026-09-06",
   "generatorVersion": "capability-evidence-v2",
   "requirementIds": [
     "place-identity-and-composition",
@@ -156,7 +166,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227593",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -174,7 +184,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227593 bound to JJM unit 4542/151426 and Census unit 0096/0177."
             }
           ],
@@ -194,7 +204,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 961.8714 ha keyed to LGD 227593."
             }
           ],
@@ -214,7 +224,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 5997 people in 2004 households across 8 habitations."
             }
           ],
@@ -232,7 +242,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1420 tap connections against 2004 households (70.86 percent)."
             }
           ],
@@ -250,7 +260,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 19 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -277,8 +287,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "148 samples across 4 years (103 at source, 45 at households); latest Safe on 2026-06-11, 83 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "148 samples across 4 years (103 at source, 45 at households); latest Safe on 2026-06-11, 87 days ago."
             }
           ],
           "limitations": [
@@ -298,7 +308,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 14 drinking-water source types across 1 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -318,7 +328,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "61.7 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 5.1 mm on 2026-08-06."
             }
           ],
@@ -338,7 +348,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "61.7 mm against a 11-year normal of 106.99 mm for the same window, 57.7 percent of normal (below)."
             }
           ],
@@ -358,7 +368,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -414,7 +424,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 19 sources with 8 habitations in this Panchayat's service records."
             }
           ],
@@ -434,7 +444,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "2 water bodies covering 47.9516 ha, largest 45.6556 ha. Registered by NRSC 1, WRD 1."
             }
           ],
@@ -473,11 +483,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227593-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -492,7 +513,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "19 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -593,7 +614,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 618 ha net sown and 423 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -668,7 +689,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Anaiyampatty Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -687,10 +708,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -698,7 +719,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227594",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -716,7 +737,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227594 bound to JJM unit 4542/151427 and Census unit 0096/0178."
             }
           ],
@@ -736,7 +757,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 355.7894 ha keyed to LGD 227594."
             }
           ],
@@ -756,7 +777,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 2122 people in 696 households across 6 habitations."
             }
           ],
@@ -774,7 +795,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 696 tap connections against 696 households (100 percent)."
             }
           ],
@@ -792,7 +813,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 16 drinking-water sources of type Deep Tubewell, Open Well."
             }
           ],
@@ -819,8 +840,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "130 samples across 5 years (80 at source, 50 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "130 samples across 5 years (80 at source, 50 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -840,7 +861,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 10 drinking-water source types across 1 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -860,7 +881,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "78.1 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 6.4 mm on 2026-08-06."
             }
           ],
@@ -880,7 +901,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "78.1 mm against a 11-year normal of 110.96 mm for the same window, 70.4 percent of normal (below)."
             }
           ],
@@ -900,7 +921,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -956,7 +977,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 16 sources with 6 habitations in this Panchayat's service records."
             }
           ],
@@ -1002,11 +1023,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227594-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -1021,7 +1053,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "16 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -1122,7 +1154,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 275 ha net sown and 275 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -1197,7 +1229,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "95, Belur Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -1216,10 +1248,10 @@
         }
       ],
       "summary": {
-        "adequate": 14,
+        "adequate": 15,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -1227,7 +1259,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227595",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -1245,7 +1277,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227595 bound to JJM unit 4542/151428 and Census unit 0096/0179."
             }
           ],
@@ -1265,7 +1297,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1653.1024 ha keyed to LGD 227595."
             }
           ],
@@ -1285,7 +1317,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 9012 people in 2253 households across 11 habitations."
             }
           ],
@@ -1303,7 +1335,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1919 tap connections against 2253 households (85.18 percent)."
             }
           ],
@@ -1321,7 +1353,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 26 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -1348,8 +1380,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "150 samples across 4 years (118 at source, 32 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "150 samples across 4 years (118 at source, 32 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -1369,7 +1401,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 12 drinking-water source types across 1 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -1389,7 +1421,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "69.2 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 6.8 mm on 2026-08-06."
             }
           ],
@@ -1409,7 +1441,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "69.2 mm against a 11-year normal of 101.06 mm for the same window, 68.5 percent of normal (below)."
             }
           ],
@@ -1429,7 +1461,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -1485,7 +1517,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 26 sources with 11 habitations in this Panchayat's service records."
             }
           ],
@@ -1505,7 +1537,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "3 water bodies covering 15.8437 ha, largest 13.7958 ha. Registered by NRSC 2, WRD 1."
             }
           ],
@@ -1544,11 +1576,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227595-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -1563,7 +1606,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "26 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -1664,7 +1707,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 1026 ha net sown and 916 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -1739,7 +1782,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Goodamalai Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -1758,10 +1801,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -1769,7 +1812,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227596",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -1787,7 +1830,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227596 bound to JJM unit 4542/151429 and Census unit 0096/0180."
             }
           ],
@@ -1807,7 +1850,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1453.2001 ha keyed to LGD 227596."
             }
           ],
@@ -1827,7 +1870,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 4928 people in 1261 households across 7 habitations."
             }
           ],
@@ -1845,7 +1888,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1261 tap connections against 1261 households (100 percent)."
             }
           ],
@@ -1863,7 +1906,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 24 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -1890,8 +1933,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "120 samples across 4 years (88 at source, 32 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "120 samples across 4 years (88 at source, 32 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -1911,7 +1954,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 10 drinking-water source types across 6 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -1931,7 +1974,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "78.1 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 6.4 mm on 2026-08-06."
             }
           ],
@@ -1951,7 +1994,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "78.1 mm against a 11-year normal of 110.96 mm for the same window, 70.4 percent of normal (below)."
             }
           ],
@@ -1971,7 +2014,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -2027,7 +2070,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 24 sources with 7 habitations in this Panchayat's service records."
             }
           ],
@@ -2047,7 +2090,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "3 water bodies covering 6.3384 ha, largest 3.9204 ha. Registered by TNRD 2, WRD 1."
             }
           ],
@@ -2086,11 +2129,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227596-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -2105,7 +2159,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "24 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -2206,7 +2260,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 814 ha net sown and 813 ha irrigated, of which 10 ha is canal irrigated."
             }
           ],
@@ -2281,7 +2335,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Jangamasamudram Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -2300,10 +2354,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -2311,7 +2365,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227597",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -2329,7 +2383,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227597 bound to JJM unit 4542/151430 and Census unit 0096/0181."
             }
           ],
@@ -2349,7 +2403,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1528.6771 ha keyed to LGD 227597."
             }
           ],
@@ -2369,7 +2423,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 7043 people in 2162 households across 5 habitations."
             }
           ],
@@ -2387,7 +2441,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1376 tap connections against 2162 households (63.64 percent)."
             }
           ],
@@ -2405,7 +2459,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 16 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -2432,8 +2486,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "84 samples across 4 years (45 at source, 39 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "84 samples across 4 years (45 at source, 39 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -2453,7 +2507,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 10 drinking-water source types across 1 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -2473,7 +2527,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "69.2 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 6.8 mm on 2026-08-06."
             }
           ],
@@ -2493,7 +2547,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "69.2 mm against a 11-year normal of 101.06 mm for the same window, 68.5 percent of normal (below)."
             }
           ],
@@ -2513,7 +2567,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -2569,7 +2623,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 16 sources with 5 habitations in this Panchayat's service records."
             }
           ],
@@ -2589,7 +2643,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "4 water bodies covering 2.3141 ha, largest 1.1025 ha. Registered by DOSS 2, NRSC 2."
             }
           ],
@@ -2628,11 +2682,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227597-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -2647,7 +2712,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "16 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -2748,7 +2813,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 824 ha net sown and 672 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -2823,7 +2888,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Kadambur Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -2842,10 +2907,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -2853,7 +2918,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227598",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -2870,7 +2935,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227598 bound to JJM unit 4542/151432."
             }
           ],
@@ -2891,7 +2956,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 633.4591 ha keyed to LGD 227598."
             }
           ],
@@ -2911,7 +2976,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 7791 people in 2242 households across 11 habitations."
             }
           ],
@@ -2929,7 +2994,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1493 tap connections against 2242 households (66.59 percent)."
             }
           ],
@@ -2947,7 +3012,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 23 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -2974,8 +3039,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "101 samples across 5 years (41 at source, 60 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "101 samples across 5 years (41 at source, 60 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -3004,7 +3069,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74.2 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 7.5 mm on 2026-08-06."
             }
           ],
@@ -3024,7 +3089,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74.2 mm against a 11-year normal of 102.01 mm for the same window, 72.7 percent of normal (below)."
             }
           ],
@@ -3044,7 +3109,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -3100,7 +3165,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 23 sources with 11 habitations in this Panchayat's service records."
             }
           ],
@@ -3120,7 +3185,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "1 water bodies covering 26.8288 ha, largest 26.8288 ha. Registered by WRD 1."
             }
           ],
@@ -3159,11 +3224,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227598-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -3178,7 +3254,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "23 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -3343,7 +3419,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Kondaiyampalli Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -3362,10 +3438,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -3373,7 +3449,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227599",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -3391,7 +3467,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227599 bound to JJM unit 4542/151431 and Census unit 0096/0183."
             }
           ],
@@ -3411,7 +3487,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1683.0251 ha keyed to LGD 227599."
             }
           ],
@@ -3431,7 +3507,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 3985 people in 1226 households across 9 habitations."
             }
           ],
@@ -3449,7 +3525,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1101 tap connections against 1226 households (89.8 percent)."
             }
           ],
@@ -3467,7 +3543,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 15 drinking-water sources of type Deep Tubewell, Open Well."
             }
           ],
@@ -3494,8 +3570,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "117 samples across 4 years (75 at source, 42 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "117 samples across 4 years (75 at source, 42 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -3515,7 +3591,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 12 drinking-water source types across 3 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -3535,7 +3611,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "62.1 mm fell over 2026-08-03 to 2026-09-02 across 29 rain days, wettest 5.5 mm on 2026-08-06."
             }
           ],
@@ -3555,7 +3631,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "62.1 mm against a 11-year normal of 110.1 mm for the same window, 56.4 percent of normal (below)."
             }
           ],
@@ -3575,7 +3651,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -3631,7 +3707,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 15 sources with 9 habitations in this Panchayat's service records."
             }
           ],
@@ -3651,7 +3727,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "6 water bodies covering 40.7298 ha, largest 31.5749 ha. Registered by NRSC 4, TNRD 1, WRD 1."
             }
           ],
@@ -3690,11 +3766,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227599-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -3709,7 +3796,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "15 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -3810,7 +3897,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 937 ha net sown and 920 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -3885,7 +3972,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74, Krishnapuram Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -3904,10 +3991,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -3915,7 +4002,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227600",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -3933,7 +4020,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227600 bound to JJM unit 4542/151433 and Census unit 0096/0184."
             }
           ],
@@ -3953,7 +4040,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 2454.5753 ha keyed to LGD 227600."
             }
           ],
@@ -3973,7 +4060,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 3007 people in 987 households across 7 habitations."
             }
           ],
@@ -3991,7 +4078,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 937 tap connections against 987 households (94.93 percent)."
             }
           ],
@@ -4009,7 +4096,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 13 drinking-water sources of type Deep Tubewell, Open Well."
             }
           ],
@@ -4036,8 +4123,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "73 samples across 5 years (46 at source, 27 at households); latest Safe on 2026-06-12, 82 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "73 samples across 5 years (46 at source, 27 at households); latest Safe on 2026-06-12, 86 days ago."
             }
           ],
           "limitations": [
@@ -4057,7 +4144,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 12 drinking-water source types across 2 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -4077,7 +4164,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "78.1 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 6.4 mm on 2026-08-06."
             }
           ],
@@ -4097,7 +4184,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "78.1 mm against a 11-year normal of 110.96 mm for the same window, 70.4 percent of normal (below)."
             }
           ],
@@ -4117,7 +4204,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -4173,7 +4260,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 13 sources with 7 habitations in this Panchayat's service records."
             }
           ],
@@ -4193,7 +4280,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "3 water bodies covering 6.4842 ha, largest 4.4663 ha. Registered by AED 2, TNRD 1."
             }
           ],
@@ -4232,11 +4319,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227600-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -4251,7 +4349,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "13 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -4352,7 +4450,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 1356 ha net sown and 1350 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -4427,7 +4525,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Manmalai Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -4446,10 +4544,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -4457,7 +4555,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227601",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -4475,7 +4573,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227601 bound to JJM unit 4542/151434 and Census unit 0096/0185."
             }
           ],
@@ -4495,7 +4593,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1904.3982 ha keyed to LGD 227601."
             }
           ],
@@ -4515,7 +4613,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 8561 people in 2334 households across 8 habitations."
             }
           ],
@@ -4533,7 +4631,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1524 tap connections against 2334 households (65.3 percent)."
             }
           ],
@@ -4551,7 +4649,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 22 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -4578,8 +4676,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "112 samples across 4 years (89 at source, 23 at households); latest Safe on 2026-06-19, 75 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "112 samples across 4 years (89 at source, 23 at households); latest Safe on 2026-06-19, 79 days ago."
             }
           ],
           "limitations": [
@@ -4599,7 +4697,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 11 drinking-water source types across 1 constituent village rows, of which 1 failed in the summer months: tapUntreated."
             }
           ],
@@ -4620,7 +4718,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "68.6 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 7.6 mm on 2026-08-11."
             }
           ],
@@ -4640,7 +4738,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "68.6 mm against a 11-year normal of 118.61 mm for the same window, 57.8 percent of normal (below)."
             }
           ],
@@ -4660,7 +4758,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -4716,7 +4814,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 22 sources with 8 habitations in this Panchayat's service records."
             }
           ],
@@ -4736,7 +4834,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "6 water bodies covering 93.7156 ha, largest 78.7712 ha. Registered by DOSS 4, TNRD 1, WRD 1."
             }
           ],
@@ -4775,11 +4873,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227601-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -4794,7 +4903,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "22 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -4895,7 +5004,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 1506 ha net sown and 1300 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -4970,7 +5079,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Naduvalur Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -4989,10 +5098,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -5000,7 +5109,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227602",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -5017,7 +5126,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227602 bound to JJM unit 4542/151435."
             }
           ],
@@ -5038,7 +5147,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1610.0377 ha keyed to LGD 227602."
             }
           ],
@@ -5058,7 +5167,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 8084 people in 2304 households across 10 habitations."
             }
           ],
@@ -5076,7 +5185,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1837 tap connections against 2304 households (79.73 percent)."
             }
           ],
@@ -5094,7 +5203,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 23 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -5121,8 +5230,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "114 samples across 4 years (75 at source, 39 at households); latest Safe on 2026-06-13, 81 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "114 samples across 4 years (75 at source, 39 at households); latest Safe on 2026-06-13, 85 days ago."
             }
           ],
           "limitations": [
@@ -5151,7 +5260,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74.2 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 7.5 mm on 2026-08-06."
             }
           ],
@@ -5171,7 +5280,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74.2 mm against a 11-year normal of 102.01 mm for the same window, 72.7 percent of normal (below)."
             }
           ],
@@ -5191,7 +5300,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -5247,7 +5356,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 23 sources with 10 habitations in this Panchayat's service records."
             }
           ],
@@ -5267,7 +5376,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "8 water bodies covering 16.4854 ha, largest 3.4897 ha. Registered by DOSS 6, AED 2."
             }
           ],
@@ -5306,11 +5415,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227602-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -5325,7 +5445,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "23 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -5490,7 +5610,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Nagiyampatti Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -5509,10 +5629,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -5520,7 +5640,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227603",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -5537,7 +5657,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227603 bound to JJM unit 4542/151436."
             }
           ],
@@ -5558,7 +5678,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 1004.3807 ha keyed to LGD 227603."
             }
           ],
@@ -5578,7 +5698,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 3465 people in 920 households across 3 habitations."
             }
           ],
@@ -5596,7 +5716,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 672 tap connections against 920 households (73.04 percent)."
             }
           ],
@@ -5614,7 +5734,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 4 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -5641,8 +5761,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "31 samples across 4 years (8 at source, 23 at households); latest Safe on 2026-06-20, 74 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "31 samples across 4 years (8 at source, 23 at households); latest Safe on 2026-06-20, 78 days ago."
             }
           ],
           "limitations": [
@@ -5671,7 +5791,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "68.6 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 7.6 mm on 2026-08-11."
             }
           ],
@@ -5691,7 +5811,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "68.6 mm against a 11-year normal of 118.61 mm for the same window, 57.8 percent of normal (below)."
             }
           ],
@@ -5711,7 +5831,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -5767,7 +5887,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 4 sources with 3 habitations in this Panchayat's service records."
             }
           ],
@@ -5787,7 +5907,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "2 water bodies covering 48.2369 ha, largest 48.1158 ha. Registered by NRSC 1, WRD 1."
             }
           ],
@@ -5826,11 +5946,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227603-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -5845,7 +5976,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "4 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -6010,7 +6141,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Odhiyathur Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -6029,10 +6160,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -6040,7 +6171,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227604",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -6058,7 +6189,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227604 bound to JJM unit 4542/151437 and Census unit 0096/0188."
             }
           ],
@@ -6078,7 +6209,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 3875.9207 ha keyed to LGD 227604."
             }
           ],
@@ -6098,7 +6229,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 8470 people in 2201 households across 33 habitations."
             }
           ],
@@ -6116,7 +6247,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 2201 tap connections against 2201 households (100 percent)."
             }
           ],
@@ -6134,7 +6265,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 70 drinking-water sources of type Deep Tubewell, Open Well."
             }
           ],
@@ -6161,8 +6292,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "250 samples across 5 years (226 at source, 24 at households); latest Safe on 2026-07-02, 62 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "250 samples across 5 years (226 at source, 24 at households); latest Safe on 2026-07-02, 66 days ago."
             }
           ],
           "limitations": [
@@ -6182,7 +6313,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 10 drinking-water source types across 3 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -6202,7 +6333,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "62.1 mm fell over 2026-08-03 to 2026-09-02 across 29 rain days, wettest 5.5 mm on 2026-08-06."
             }
           ],
@@ -6222,7 +6353,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "62.1 mm against a 11-year normal of 110.1 mm for the same window, 56.4 percent of normal (below)."
             }
           ],
@@ -6242,7 +6373,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -6298,7 +6429,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 70 sources with 33 habitations in this Panchayat's service records."
             }
           ],
@@ -6318,7 +6449,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "4 water bodies covering 2.1882 ha, largest 1.1698 ha. Registered by NRSC 4."
             }
           ],
@@ -6357,11 +6488,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227604-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -6376,7 +6518,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "70 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -6477,7 +6619,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 1165 ha net sown and 344.26 ha irrigated, of which 0 ha is canal irrigated."
             }
           ],
@@ -6552,7 +6694,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Pachamalai Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -6571,10 +6713,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -6582,7 +6724,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227605",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -6600,7 +6742,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227605 bound to JJM unit 4542/151438 and Census unit 0096/0189."
             }
           ],
@@ -6620,7 +6762,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 508.9041 ha keyed to LGD 227605."
             }
           ],
@@ -6640,7 +6782,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 7791 people in 2242 households across 11 habitations."
             }
           ],
@@ -6658,7 +6800,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1493 tap connections against 2242 households (66.59 percent)."
             }
           ],
@@ -6676,7 +6818,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 23 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -6703,8 +6845,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "101 samples across 5 years (41 at source, 60 at households); latest Safe on 2026-07-15, 49 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "101 samples across 5 years (41 at source, 60 at households); latest Safe on 2026-07-15, 53 days ago."
             }
           ],
           "limitations": [
@@ -6724,7 +6866,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 12 drinking-water source types across 1 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -6744,7 +6886,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74.2 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 7.5 mm on 2026-08-06."
             }
           ],
@@ -6764,7 +6906,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "74.2 mm against a 11-year normal of 102.01 mm for the same window, 72.7 percent of normal (below)."
             }
           ],
@@ -6784,7 +6926,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -6840,7 +6982,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 23 sources with 11 habitations in this Panchayat's service records."
             }
           ],
@@ -6886,11 +7028,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227605-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -6905,7 +7058,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "23 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -7006,7 +7159,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 766.12 ha net sown and 766.12 ha irrigated, of which 726.12 ha is canal irrigated."
             }
           ],
@@ -7081,7 +7234,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Thagarapudur Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -7100,10 +7253,10 @@
         }
       ],
       "summary": {
-        "adequate": 14,
+        "adequate": 15,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -7111,7 +7264,7 @@
       "profileId": "village-water-profile-v2",
       "placeId": "227606",
       "placeKind": "gram-panchayat",
-      "assessedAt": "2026-09-02",
+      "assessedAt": "2026-09-06",
       "mode": "generated",
       "generatorVersion": "capability-evidence-v2",
       "requirements": [
@@ -7129,7 +7282,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNRD/LGD Gram Panchayat 227606 bound to JJM unit 4542/151439 and Census unit 0096/0190."
             }
           ],
@@ -7149,7 +7302,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "TNGIS publishes an exact Gram Panchayat polygon of 2071.7637 ha keyed to LGD 227606."
             }
           ],
@@ -7169,7 +7322,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 8129 people in 1967 households across 11 habitations."
             }
           ],
@@ -7187,7 +7340,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM reports 1967 tap connections against 1967 households (100 percent)."
             }
           ],
@@ -7205,7 +7358,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM lists 31 drinking-water sources of type Deep Tubewell."
             }
           ],
@@ -7232,8 +7385,8 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
-              "notes": "154 samples across 5 years (127 at source, 27 at households); latest Safe on 2026-07-16, 48 days ago."
+              "evidenceDate": "2026-09-06",
+              "notes": "154 samples across 5 years (127 at source, 27 at households); latest Safe on 2026-07-16, 52 days ago."
             }
           ],
           "limitations": [
@@ -7253,7 +7406,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 12 drinking-water source types across 1 constituent village rows, all of them reported available through the summer months."
             }
           ],
@@ -7273,7 +7426,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "91.4 mm fell over 2026-08-03 to 2026-09-02 across 28 rain days, wettest 15 mm on 2026-08-06."
             }
           ],
@@ -7293,7 +7446,7 @@
               ],
               "localityClass": "derived-place",
               "projectionMethod": "interpolation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "91.4 mm against a 11-year normal of 111 mm for the same window, 82.3 percent of normal (below)."
             }
           ],
@@ -7313,7 +7466,7 @@
               ],
               "localityClass": "containing-area",
               "projectionMethod": "administrative-proxy",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "The containing revenue taluk Gangavalli is assessed over_exploited at 192.5 percent stage of extraction."
             }
           ],
@@ -7369,7 +7522,7 @@
               ],
               "localityClass": "connected-system",
               "projectionMethod": "service-relation",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "JJM associates 31 sources with 11 habitations in this Panchayat's service records."
             }
           ],
@@ -7389,7 +7542,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "10 water bodies covering 19.9926 ha, largest 5.4707 ha. Registered by DOSS 7, AED 3."
             }
           ],
@@ -7428,11 +7581,22 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "227606-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Sarabanga (Priority I), Thirumanimutharu (Priority I), Vasista (Priority I) touching Salem, from 3 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain."
           ]
         },
         {
@@ -7447,7 +7611,7 @@
               ],
               "localityClass": "within-place",
               "projectionMethod": "direct-published",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "31 publicly recorded drinking-water works serve this Panchayat."
             }
           ],
@@ -7548,7 +7712,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Census 2011 records 778.71 ha net sown and 745 ha irrigated, of which 10 ha is canal irrigated."
             }
           ],
@@ -7623,7 +7787,7 @@
               ],
               "localityClass": "direct-place",
               "projectionMethod": "identifier-crosswalk",
-              "evidenceDate": "2026-09-02",
+              "evidenceDate": "2026-09-06",
               "notes": "Ulipuram Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
             }
           ],
@@ -7642,10 +7806,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     }
   ]

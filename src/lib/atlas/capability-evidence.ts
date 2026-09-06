@@ -75,6 +75,15 @@ export interface PlaceEvidenceInputs {
   rainfall: RainfallRecord | undefined;
   rainfallWindow: { start: string; end: string } | undefined;
   waterBodies: TnWaterBodyRecord | undefined;
+  /** CPCB polluted stretches touching the district, the same for every place in it. */
+  pollutedStretches?: PollutedStretchesEvidence | undefined;
+}
+
+export interface PollutedStretchesEvidence {
+  editionLabel: string;
+  retrievedAt: string;
+  districtName: string;
+  entries: { river: string; priority: string; kind: "named" | "course"; stations: number }[];
 }
 
 export interface GeneratedEvidence {
@@ -468,6 +477,30 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
       },
       [
         `The assessment unit is a revenue ${unit}, not this Panchayat, so the category is containing-area context rather than a measurement of this place.`,
+      ],
+    );
+  },
+
+  "river-water-quality": (inputs) => {
+    const stretches = inputs.pollutedStretches;
+    if (!stretches || stretches.entries.length === 0) return null;
+    const listed = stretches.entries.map((e) => `${e.river} (Priority ${e.priority})`).join(", ");
+    return adequate(
+      {
+        id: `${inputs.lgdGramPanchayatCode}-polluted-stretches`,
+        sourceRefs: ["cpcb-prs-report"],
+        localityClass: "nearby-observation",
+        projectionMethod: "station-assignment",
+        evidenceDate: stretches.retrievedAt,
+        notes:
+          `CPCB's ${stretches.editionLabel} polluted river stretches report lists ${listed} touching ` +
+          `${stretches.districtName}, from ${stretches.entries.reduce((n, e) => n + e.stations, 0)} monitoring stations.`,
+      },
+      [
+        "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+        ...(stretches.entries.some((e) => e.kind === "course")
+          ? ["At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."]
+          : []),
       ],
     );
   },

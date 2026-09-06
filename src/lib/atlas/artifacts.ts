@@ -49,6 +49,7 @@ export const ATLAS_FAMILIES = {
   briefs: "briefs",
   curatedBriefs: "curated-briefs",
   environmentPlan: "environment-plan",
+  pollutedStretches: "polluted-stretches",
 } as const;
 
 export type AtlasFamily = (typeof ATLAS_FAMILIES)[keyof typeof ATLAS_FAMILIES];

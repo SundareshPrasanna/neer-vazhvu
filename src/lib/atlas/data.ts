@@ -37,6 +37,7 @@ import {
   type WaterBodiesShard,
 } from "./artifacts";
 import type { EnvironmentPlanArtifact } from "./environment-plan";
+import type { PollutedStretchesArtifact } from "./polluted-stretches";
 import type { FloodClassificationArtifact, ScarcityTankersArtifact } from "./hazards";
 import type { PlaceBrief } from "./place-brief";
 
@@ -121,6 +122,10 @@ export function loadRainfall(district: DistrictRef): RainfallArtifact | undefine
 /** The district's Environment Plan transcription, where one is served. */
 export function loadEnvironmentPlan(district: DistrictRef): EnvironmentPlanArtifact | undefined {
   return readDistrictArtifact<EnvironmentPlanArtifact>(district, "environment-plan");
+}
+
+export function loadPollutedStretches(district: DistrictRef): PollutedStretchesArtifact | undefined {
+  return readDistrictArtifact<PollutedStretchesArtifact>(district, "polluted-stretches");
 }
 
 export function loadJjmServiceShards(district: DistrictRef): JjmServiceShard[] {

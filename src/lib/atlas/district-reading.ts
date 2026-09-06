@@ -29,9 +29,11 @@ import type {
 import { identityAdapterOf, identityMasterVintage, identityVintage } from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
 import { environmentPlanReading, type EnvironmentPlanArtifact, type EnvironmentPlanReading } from "./environment-plan";
+import { pollutedStretchesReading, type PollutedStretchesArtifact, type PollutedStretchesReading } from "./polluted-stretches";
 import {
   loadBriefShards,
   loadEnvironmentPlan,
+  loadPollutedStretches,
   loadCensusShards,
   loadDirectory,
   loadGroundwaterProjection,
@@ -217,6 +219,8 @@ export interface DistrictReading {
   /** The district's Environment Plan as transcribed, figure by figure with
    *  page citations; null renders the named gap. */
   environmentPlan: EnvironmentPlanReading | null;
+  /** CPCB polluted stretches touching the district; null until served. */
+  pollutedStretches: PollutedStretchesReading | null;
   vintages: VintageRow[];
 }
 
@@ -318,6 +322,8 @@ export interface VerdictSignals {
   /** The District Environment Plan on file, if any, and whether it prints
    *  a water balance; absent or null, the plan itself is the next step. */
   environmentPlan?: { label: string; hasWaterBalance: boolean } | null;
+  /** CPCB stretches served for the district: how many, the worst priority. */
+  pollutedStretches?: { count: number; worstPriority: string | null; editionLabel: string } | null;
 }
 
 export function classifyIrrigation(
@@ -481,6 +487,13 @@ export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
   }
   if (s.tapPercent === 100) {
     nextSteps.push("A habitation-level check of the 100.0% tap figure against a survey, to tell reported complete from measured.");
+  }
+  if (s.pollutedStretches === null || s.pollutedStretches === undefined) {
+    nextSteps.push("CPCB's polluted river stretch list for the district, not yet served.");
+  } else if (s.pollutedStretches.count > 0) {
+    nextSteps.push(
+      `Station readings behind the ${s.pollutedStretches.count === 1 ? "CPCB-listed stretch" : `${s.pollutedStretches.count} CPCB-listed stretches`} (worst Priority ${s.pollutedStretches.worstPriority}), so the ${s.pollutedStretches.editionLabel} classification can be read against a series.`,
+    );
   }
   if (!s.environmentPlan) {
     nextSteps.push("The District Environment Plan water balance (NGT template), not yet on file.");
@@ -811,6 +824,8 @@ export interface DistrictReadingInputs {
   curated: CuratedBriefsArtifact | undefined;
   /** Optional: the Tamil Nadu fixtures predate the family. */
   environmentPlan?: EnvironmentPlanArtifact | undefined;
+  /** Optional for the same reason. */
+  pollutedStretches?: PollutedStretchesArtifact | undefined;
   asOf: string;
 }
 
@@ -868,6 +883,13 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       ? {
           label: `${inputs.environmentPlan.document.publisher.split(" and ")[0]}, ${inputs.environmentPlan.document.editionLabel}`,
           hasWaterBalance: inputs.environmentPlan.waterBalance !== null,
+        }
+      : null,
+    pollutedStretches: inputs.pollutedStretches
+      ? {
+          count: inputs.pollutedStretches.count,
+          worstPriority: inputs.pollutedStretches.entries[0]?.priority ?? null,
+          editionLabel: inputs.pollutedStretches.edition.publishedLabel,
         }
       : null,
   };
@@ -1137,6 +1159,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     blockFindings: blockFindings(aggregate, blocks, categories.unitLabel),
     waterBodies: waterBodiesReading(aggregate, inputs.waterBodies),
     environmentPlan: inputs.environmentPlan ? environmentPlanReading(inputs.environmentPlan) : null,
+    pollutedStretches: inputs.pollutedStretches ? pollutedStretchesReading(inputs.pollutedStretches) : null,
     vintages,
   };
 }
@@ -1185,6 +1208,7 @@ export function getDistrictReading(stateSlug: string, districtSlug: string): Dis
       ? readDistrictArtifact<CuratedBriefsArtifact>(district, "curated-briefs")
       : undefined,
     environmentPlan: loadEnvironmentPlan(district),
+    pollutedStretches: loadPollutedStretches(district),
     asOf,
   });
   cache.set(key, built);

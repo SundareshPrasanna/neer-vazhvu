@@ -371,6 +371,7 @@ export const SOURCE_IDS = {
   // Tamil Nadu has no state listing: each collectorate publishes its own plan.
   ngtDepTnNamakkal: "ngt-dep-tn-namakkal",
   ngtDepTnKarur: "ngt-dep-tn-karur",
+  cpcbPrs: "cpcb-prs-report",
 } as const;
 
 export type UpstreamKey = keyof typeof SOURCE_IDS;
@@ -465,6 +466,11 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     title: "District Environmental Plan, Karur District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
     publisher: "District Collector, Karur, with the Tamil Nadu Pollution Control Board",
     url: "https://karur.nic.in/departments/the-tamil-nadu-pollution-control-board-karur/",
+  },
+  cpcbPrs: {
+    title: "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+    publisher: "Central Pollution Control Board",
+    url: "https://cpcb.gov.in/polluted-river-stretches/",
   },
 };
 

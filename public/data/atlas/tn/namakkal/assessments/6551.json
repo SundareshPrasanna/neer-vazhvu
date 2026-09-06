@@ -64,6 +64,15 @@
         "retrieved": "2026-09-06"
       },
       {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "retrieved": "2026-09-06"
+      },
+      {
         "id": "tngis-generic-viewer-water-bodies",
         "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
         "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
@@ -92,6 +101,7 @@
       "public/data/atlas/tn/namakkal/groundwater-taluks.json",
       "public/data/atlas/tn/namakkal/groundwater-projection.json",
       "public/data/atlas/tn/namakkal/rainfall.json",
+      "public/data/atlas/tn/namakkal/polluted-stretches.json",
       "public/data/atlas/tn/namakkal/water-bodies/6551.geojson"
     ],
     "note": "village-water-profile-v2: 25 Gram Panchayats in NAMAKKAL block assessed against 40 capabilities by the evidence rules in src/lib/atlas/capability-evidence.ts (capability-evidence-v2). Each requirement records its state (adequate, unavailable, not-applicable, not-assessed), the evidence with its locality class and projection method, and limitations. A capability with no rule is reported unavailable rather than guessed; an undetermined applicability is not-assessed rather than a gap.",
@@ -473,11 +483,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226127-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -687,10 +709,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -1015,11 +1037,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226128-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -1229,10 +1263,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -1546,11 +1580,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226129-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -1749,10 +1795,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -2077,11 +2123,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226130-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -2291,10 +2349,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -2608,11 +2666,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226131-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -2811,10 +2881,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -3139,11 +3209,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226132-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -3353,10 +3435,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -3682,11 +3764,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226133-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -3896,10 +3990,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -4213,11 +4307,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226134-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -4416,10 +4522,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -4744,11 +4850,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226135-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -4958,10 +5076,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -5286,11 +5404,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226137-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -5500,10 +5630,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -5816,11 +5946,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226138-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -6019,10 +6161,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -6347,11 +6489,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226139-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -6561,10 +6715,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -6878,11 +7032,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226140-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -7081,10 +7247,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -7398,11 +7564,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226141-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -7601,10 +7779,10 @@
         }
       ],
       "summary": {
-        "adequate": 13,
+        "adequate": 14,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
@@ -7916,11 +8094,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226142-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -8130,10 +8320,10 @@
         }
       ],
       "summary": {
-        "adequate": 14,
+        "adequate": 15,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -8384,11 +8574,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226143-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -8564,10 +8766,10 @@
         }
       ],
       "summary": {
-        "adequate": 5,
+        "adequate": 6,
         "unavailable": 19,
         "not-applicable": 0,
-        "not-assessed": 16
+        "not-assessed": 15
       }
     },
     {
@@ -8879,11 +9081,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226144-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -9093,10 +9307,10 @@
         }
       ],
       "summary": {
-        "adequate": 14,
+        "adequate": 15,
         "unavailable": 12,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -9420,11 +9634,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226145-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -9634,10 +9860,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -9962,11 +10188,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226146-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -10176,10 +10414,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -10504,11 +10742,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226147-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -10718,10 +10968,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -11046,11 +11296,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226148-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -11260,10 +11522,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -11588,11 +11850,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226149-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -11802,10 +12076,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -12130,11 +12404,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226150-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -12344,10 +12630,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -12672,11 +12958,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226151-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -12886,10 +13184,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     },
     {
@@ -13214,11 +13512,23 @@
         },
         {
           "requirementId": "river-water-quality",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "226152-polluted-stretches",
+              "sourceRefs": [
+                "cpcb-prs-report"
+              ],
+              "localityClass": "nearby-observation",
+              "projectionMethod": "station-assignment",
+              "evidenceDate": "2026-09-06",
+              "notes": "CPCB's October 2025 polluted river stretches report lists Cauvery (Priority II) touching Namakkal, from 7 monitoring stations."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The stretch runs through the district, not necessarily this Panchayat: the reading is the nearest CPCB observation, district-grain.",
+            "At least one stretch is joined to the district by the river's course as read by the maintainer, not by a place CPCB prints."
           ]
         },
         {
@@ -13428,10 +13738,10 @@
         }
       ],
       "summary": {
-        "adequate": 15,
+        "adequate": 16,
         "unavailable": 11,
         "not-applicable": 0,
-        "not-assessed": 14
+        "not-assessed": 13
       }
     }
   ]

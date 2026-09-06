@@ -178,6 +178,13 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
       text: `Every district files one on the NGT template, with a water balance in it; the plan for ${reading.districtName} has not been acquired, and this stays a named gap rather than an estimate until it is.`,
     });
   }
+  if (!reading.pollutedStretches) {
+    gaps.push({
+      id: "polluted-stretches",
+      title: "CPCB polluted river stretches",
+      text: "CPCB's polluted river stretch list is served per district from one national reviewed input; this district's slice has not been produced yet.",
+    });
+  }
   const sections: AtlasNavSection[] = [
     { id: "runs-on", label: "What it runs on" },
     { id: "groundwater", label: `Groundwater by ${unit}` },
@@ -185,6 +192,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
     ...(flood || scarcity ? [{ id: "hazards", label: "Floods and scarcity" }] : []),
     ...(reading.waterBodies ? [{ id: "water-bodies", label: "Water bodies" }] : []),
     ...(reading.environmentPlan ? [{ id: "environment-plan", label: "Environment Plan" }] : []),
+    ...(reading.pollutedStretches ? [{ id: "polluted-stretches", label: "Polluted stretches" }] : []),
     ...(gaps.length > 0 ? [{ id: "not-on-file", label: "Not yet on file" }] : []),
     { id: "find", label: "Find a Panchayat" },
     { id: "map", label: "Map" },
@@ -670,6 +678,87 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                   </AtlasNote>
                 </div>
               ) : null}
+            </AtlasSection>
+          ) : null}
+
+          {reading.pollutedStretches ? (
+            <AtlasSection
+              id="polluted-stretches"
+              title="Polluted river stretches"
+              intro={`What CPCB's ${reading.pollutedStretches.editionLabel} report lists for the district. Priority is CPCB's own BOD band on the ${reading.pollutedStretches.bodObservedYears} maximum, I the worst; station BOD for ${reading.pollutedStretches.followUpBodYear} is the report's follow-up annexure. Each row says how it was joined to the district: a place CPCB prints, or the river's course.`}
+            >
+              {reading.pollutedStretches.count === 0 ? (
+                <div className="space-y-3">
+                  <AtlasGap title={`CPCB lists no polluted stretch or location in ${reading.districtName}`}>
+                    The {reading.pollutedStretches.editionLabel} report names no stretch or monitoring location in this district. That is a statement about CPCB&apos;s list, not a measurement of every river here.
+                    {reading.pollutedStretches.notes.map((note) => ` ${note.text}`).join("")}
+                  </AtlasGap>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <AtlasCard>
+                    <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{reading.pollutedStretches.sentence}</div>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                      Source: CPCB, Polluted River Stretches for Restoration of Water Quality, {reading.pollutedStretches.editionLabel} (
+                      <a href={reading.pollutedStretches.url} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline" rel="noopener noreferrer" target="_blank">
+                        cpcb.gov.in
+                      </a>
+                      ). The report is cited by annexure serial and PDF page; it is not mirrored here.
+                    </p>
+                  </AtlasCard>
+                  <AtlasSortableTable label="CPCB-listed stretches and locations touching the district">
+                    <table className={`${TABLE} min-w-[52rem]`}>
+                      <thead className={THEAD}>
+                        <tr>
+                          <th className={TH}>River</th>
+                          <th className={TH}>Stretch or location, as CPCB prints it</th>
+                          <th className={TH}>Priority</th>
+                          <th className={TH}>Max BOD {reading.pollutedStretches.bodObservedYears} (mg/L)</th>
+                          <th className={TH}>Stations, BOD {reading.pollutedStretches.followUpBodYear}</th>
+                          <th className={TH}>Since 2018</th>
+                          <th className={TH}>Joined to this district by</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reading.pollutedStretches.entries.map((entry) => {
+                          const bods = entry.stations.map((s) => s.bod2024).filter((b): b is number => b !== null);
+                          const stationText =
+                            entry.stations.length === 0
+                              ? "none listed"
+                              : `${entry.stations.length}${bods.length ? `, BOD ${Math.min(...bods) === Math.max(...bods) ? Math.min(...bods) : `${Math.min(...bods)} to ${Math.max(...bods)}`}` : ""}`;
+                          const since = entry.since2018
+                            ? entry.since2018.class === "new"
+                              ? "new in 2025"
+                              : entry.since2018.class === "same"
+                                ? `same class as 2018 (Priority ${entry.since2018.priority2018})`
+                                : `${entry.since2018.class} from Priority ${entry.since2018.priority2018} in 2018`
+                            : "not stated";
+                          return (
+                            <tr key={entry.id} className={TR}>
+                              <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>{entry.river}</td>
+                              <td className={`${TD} whitespace-normal text-xs`}>
+                                {entry.text}
+                                <span className="text-slate-500 dark:text-slate-400"> (Annexure {entry.serial.annexure}, no. {entry.serial.sno}, PDF p. {entry.serial.pdfPage})</span>
+                              </td>
+                              <td className={`${TD} whitespace-nowrap`}>{`Priority ${entry.priority}`}</td>
+                              <td className={`${TD} whitespace-nowrap`}>{entry.maxBod2022_23 === null ? "not stated" : entry.maxBod2022_23}</td>
+                              <td className={`${TD} whitespace-nowrap text-xs`}>{stationText}</td>
+                              <td className={`${TD} whitespace-normal text-xs`}>{since}</td>
+                              <td className={`${TD} whitespace-normal text-xs`}>
+                                {entry.district.kind === "named" ? "a place CPCB prints: " : "the river's course, as read by the maintainer: "}
+                                {entry.district.basis}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </AtlasSortableTable>
+                  {reading.pollutedStretches.notes.length > 0 ? (
+                    <AtlasNote>{reading.pollutedStretches.notes.map((note) => note.text).join(" ")}</AtlasNote>
+                  ) : null}
+                </div>
+              )}
             </AtlasSection>
           ) : null}
 

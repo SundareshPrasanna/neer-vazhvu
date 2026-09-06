@@ -1,0 +1,319 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/polluted-stretches",
+  "scope": {
+    "kind": "district",
+    "id": "mh-satara"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "asserts",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "as_of": "2026-09-06",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-polluted-stretches.ts",
+    "internal_inputs": [],
+    "note": "Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version): 5 listed stretches or locations touch Satara. Priority is CPCB's BOD band on the 2022 and 2023 maximum; station BOD for 2024 is the report's follow-up annexure. Each entry names how it was joined to the district: a place CPCB prints, or the river's course as read by the maintainer. The report PDF is not mirrored; annexure serials and PDF pages are the citation.",
+    "conventions": {
+      "priority": "I (BOD above 30 mg/L) to V (3.1 to 6 mg/L), as CPCB assigns it to the stretch or location",
+      "district": "kind 'named' when CPCB prints a place in the district; 'course' when the join is the maintainer's reading of the river's course; basis says which",
+      "since2018": "CPCB's own change class against its 2018 list: improved, same, deteriorated, new, dropped; null when the report tables carry no match",
+      "review": "each entry's district list is proposed until a person confirms it; the page shows the basis, not the review state"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "cpcb-prs-2025",
+  "districtName": "Satara",
+  "edition": {
+    "label": "October 2025 (updated version)",
+    "reportTitle": "Polluted River Stretches for Restoration of Water Quality",
+    "publishedLabel": "October 2025",
+    "bodObservedYears": "2022 and 2023",
+    "followUpBodYear": "2024",
+    "url": "https://cpcb.gov.in/polluted-river-stretches/",
+    "pdfSha256": "dde470643a7e9d820e9eeb52255010c032aefdecdc6275dac1e5cb658019fb8a",
+    "pdfBytes": 4426464,
+    "pdfPages": 170,
+    "retrievedAt": "2026-09-06",
+    "annexures": {
+      "stretches": "Annexure III A, PDF pages 85 to 92",
+      "locations": "Annexure III B, PDF pages 93 to 99",
+      "improved": "Annexure X, PDF pages 117 to 121",
+      "same": "Annexure XI, PDF pages 122 to 127",
+      "deteriorated": "Annexure XII, PDF pages 128 to 130",
+      "new": "Annexure XIII, PDF pages 131 to 135",
+      "dropped": "Annexure IX, PDF pages 112 to 116",
+      "bod2024": "Annexure XIV, PDF pages 136 to 170"
+    },
+    "priorityBands": {
+      "I": "BOD above 30 mg/L",
+      "II": "BOD 20.1 to 30 mg/L",
+      "III": "BOD 10.1 to 20 mg/L",
+      "IV": "BOD 6.1 to 10 mg/L",
+      "V": "BOD 3.1 to 6 mg/L"
+    }
+  },
+  "entries": [
+    {
+      "id": "mh-nira-iiia-86",
+      "state": "MAHARASHTRA",
+      "stateSlug": "mh",
+      "kind": "stretch",
+      "river": "Nira",
+      "text": "RIVER NIRA FROM SAROLA VILLAGE TO SANGAVI VILLAGE, SATARA",
+      "priority": "III",
+      "maxBod2022_23": 15.5,
+      "serial": {
+        "annexure": "III A",
+        "sno": 86,
+        "pdfPage": 89
+      },
+      "stations": [
+        {
+          "code": "1463",
+          "location": "RIVER NIRA AT SAROLA BRIDGE, VILLAGE- SAROLA, TALUKA-BHOR, DISTRICT- PUNE.",
+          "bod2024": 6.2
+        },
+        {
+          "code": "2683",
+          "location": "RIVER NIRA AT SHINDEWADI, VILLAGE- SHIRVAL, TALUKA- KHANDALA, DISTRICT- SATARA.",
+          "bod2024": 7
+        },
+        {
+          "code": "2682",
+          "location": "RIVER NIRA AT U/S OF JUBILANT ORGANOSIS, VILLAGE- NIRA (DATTAGHAT),TALUKA- BARAMATI, DISTRICT- PUNE.",
+          "bod2024": 8.3
+        },
+        {
+          "code": "2195",
+          "location": "RIVER NIRA AT D/S OF JUBILANT ORGANOSIS, VILLAGE- NIMBUT, TALUKA- BARAMATI, DISTRICT- PUNE.",
+          "bod2024": 11.5
+        },
+        {
+          "code": "2681",
+          "location": "RIVER NIRA AT SANGAVI, VILLAGE- SANGAVI, TALUKA- PHALTAN, DISTRICT- SATARA.",
+          "bod2024": 20
+        }
+      ],
+      "since2018": {
+        "class": "improved",
+        "stretch2018": "SANGAVI TO SHINDEWADI",
+        "priority2018": "I",
+        "annexure": "X",
+        "sno": 27,
+        "pdfPage": 118
+      },
+      "review": {
+        "status": "proposed",
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "note": "districts proposed from place names in the CPCB text (kind 'named') or the maintainer's reading of the river's course (kind 'course'); a person confirms before the review flips to verified"
+      },
+      "district": {
+        "name": "Satara",
+        "kind": "named",
+        "basis": "'DISTRICT- SATARA' names the district; 'KHANDALA' matches taluk Khandala; 'PHALTAN' matches taluk Phaltan; 'SATARA' is the district name",
+        "scopeId": "mh-satara"
+      }
+    },
+    {
+      "id": "mh-koyna-iiib-79",
+      "state": "MAHARASHTRA",
+      "stateSlug": "mh",
+      "kind": "location",
+      "river": "Koyna",
+      "text": "RIVER KOYNA AT KARAD, VILLAGE- KARAD,TALUKA- KARAD, DISTRICT- SATARA.",
+      "priority": "IV",
+      "maxBod2022_23": 6.5,
+      "serial": {
+        "annexure": "III B",
+        "sno": 79,
+        "pdfPage": 96
+      },
+      "stations": [
+        {
+          "code": "2189",
+          "location": "RIVER KOYNA AT KARAD, VILLAGE- KARAD,TALUKA- KARAD, DISTRICT- SATARA.",
+          "bod2024": 6.2
+        }
+      ],
+      "since2018": {
+        "class": "same",
+        "stretch2018": "KARAD TO PAPDARDE",
+        "priority2018": "IV",
+        "annexure": "XI",
+        "sno": 44,
+        "pdfPage": 124
+      },
+      "review": {
+        "status": "proposed",
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "note": "districts proposed from place names in the CPCB text (kind 'named') or the maintainer's reading of the river's course (kind 'course'); a person confirms before the review flips to verified"
+      },
+      "district": {
+        "name": "Satara",
+        "kind": "named",
+        "basis": "'DISTRICT- SATARA' names the district; 'KARAD' matches taluk Karad; 'SATARA' is the district name",
+        "scopeId": "mh-satara"
+      }
+    },
+    {
+      "id": "mh-krishna-iiia-81",
+      "state": "MAHARASHTRA",
+      "stateSlug": "mh",
+      "kind": "stretch",
+      "river": "Krishna",
+      "text": "RIVER KRISHNA FROM GANPATI GHAT, SATARA TO KURUNDWAD, KOLHAPUR",
+      "priority": "IV",
+      "maxBod2022_23": 8.4,
+      "serial": {
+        "annexure": "III A",
+        "sno": 81,
+        "pdfPage": 89
+      },
+      "stations": [
+        {
+          "code": "2190",
+          "location": "RIEVR KRISHNA AT GANPATI GHAT, WAI, VILLAGE- WAI,TALUKA- WAI,DISTRICT- SATARA.",
+          "bod2024": 6.1
+        },
+        {
+          "code": "2187",
+          "location": "RIVER KRISHNA AT KSHETRA MAHULI, VILLAGE- KSHETRA-MAHULI,TALUKA- MAHULI, DISTRICT- SATARA.",
+          "bod2024": 5.5
+        },
+        {
+          "code": "2188",
+          "location": "RIVER KRISHNA AT KRISHNA- VENNA SANGAM MAHULI , VILLAGE- MAHULI,TALUKA- MAHULI, DISTRICT- SATARA.",
+          "bod2024": 8
+        }
+      ],
+      "since2018": {
+        "class": "improved",
+        "stretch2018": "SHINDI TO KURUNDWAD",
+        "priority2018": "III",
+        "annexure": "X",
+        "sno": 35,
+        "pdfPage": 119
+      },
+      "review": {
+        "status": "proposed",
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "note": "districts proposed from place names in the CPCB text (kind 'named') or the maintainer's reading of the river's course (kind 'course'); a person confirms before the review flips to verified"
+      },
+      "district": {
+        "name": "Satara",
+        "kind": "named",
+        "basis": "'DISTRICT- SATARA' names the district; 'SATARA' is the district name",
+        "scopeId": "mh-satara"
+      }
+    },
+    {
+      "id": "mh-venna-iiia-95",
+      "state": "MAHARASHTRA",
+      "stateSlug": "mh",
+      "kind": "stretch",
+      "river": "Venna",
+      "text": "RIVER VENNA FROM MAHABALESHWAR VILLAGE, SATARA TO MAHULI VILLAGE, SATARA.",
+      "priority": "IV",
+      "maxBod2022_23": 6.8,
+      "serial": {
+        "annexure": "III A",
+        "sno": 95,
+        "pdfPage": 89
+      },
+      "stations": [
+        {
+          "code": "2716",
+          "location": "RIVER VENNA AT MAHABALESHWAR, VILLAGE. MAHABALESHWAR, TALUKA. MAHABALESHWAR, DISTRICT. SATARA.",
+          "bod2024": 5.9
+        },
+        {
+          "code": "2186",
+          "location": "RIVER VENNA AT VARYE, VILLAGE - VARYE,TALUKA- SATARA, DISTRICT- SATARA.",
+          "bod2024": 5.1
+        },
+        {
+          "code": "2717",
+          "location": "RIVER VENNA AT MAHULI, VILLAGE- MAHULI, TALUKA- MAHULI, DISTRICT- SATARA.",
+          "bod2024": 7.6
+        }
+      ],
+      "since2018": {
+        "class": "improved",
+        "stretch2018": "MAHABALESHWAR TO MAHULI",
+        "priority2018": "III",
+        "annexure": "X",
+        "sno": 42,
+        "pdfPage": 119
+      },
+      "review": {
+        "status": "proposed",
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "note": "districts proposed from place names in the CPCB text (kind 'named') or the maintainer's reading of the river's course (kind 'course'); a person confirms before the review flips to verified"
+      },
+      "district": {
+        "name": "Satara",
+        "kind": "named",
+        "basis": "'DISTRICT- SATARA' names the district; 'DISTRICT. SATARA' names the district; 'MAHABALESHWAR' matches taluk Mahabaleshwar; 'SATARA' is the district name",
+        "scopeId": "mh-satara"
+      }
+    },
+    {
+      "id": "mh-urmodi-iiib-92",
+      "state": "MAHARASHTRA",
+      "stateSlug": "mh",
+      "kind": "location",
+      "river": "Urmodi",
+      "text": "RIVER URMODI AT NAGTHNE KT WARE, VILLAGE- NAGTHANE,TALUKA- SATARA, DISTRICT- SATARA.",
+      "priority": "V",
+      "maxBod2022_23": 6.4,
+      "serial": {
+        "annexure": "III B",
+        "sno": 92,
+        "pdfPage": 97
+      },
+      "stations": [
+        {
+          "code": "2711",
+          "location": "RIVER URMODI AT NAGTHNE KT WARE, VILLAGE- NAGTHANE,TALUKA- SATARA, DISTRICT- SATARA.",
+          "bod2024": 8.4
+        }
+      ],
+      "since2018": {
+        "class": "improved",
+        "stretch2018": "DHANGARWADI TO NAGTHANE",
+        "priority2018": "III",
+        "annexure": "X",
+        "sno": 41,
+        "pdfPage": 119
+      },
+      "review": {
+        "status": "proposed",
+        "reviewedAt": null,
+        "reviewedBy": null,
+        "note": "districts proposed from place names in the CPCB text (kind 'named') or the maintainer's reading of the river's course (kind 'course'); a person confirms before the review flips to verified"
+      },
+      "district": {
+        "name": "Satara",
+        "kind": "named",
+        "basis": "'DISTRICT- SATARA' names the district; 'SATARA' is the district name",
+        "scopeId": "mh-satara"
+      }
+    }
+  ],
+  "notes": [],
+  "count": 5
+}

@@ -64,6 +64,15 @@
         "retrieved": "2026-09-02"
       },
       {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "retrieved": "2026-09-06"
+      },
+      {
         "id": "tngis-generic-viewer-water-bodies",
         "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
         "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
@@ -83,7 +92,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-02",
+    "produced_at": "2026-09-06",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -92,6 +101,7 @@
       "public/data/atlas/tn/salem/groundwater-taluks.json",
       "public/data/atlas/tn/salem/groundwater-projection.json",
       "public/data/atlas/tn/salem/rainfall.json",
+      "public/data/atlas/tn/salem/polluted-stretches.json",
       "public/data/atlas/tn/salem/water-bodies/6606.geojson",
       "public/data/atlas/tn/salem/assessments/6606.json"
     ],
@@ -106,7 +116,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6606",
   "blockName": "SALEM",
-  "assessedAt": "2026-09-02",
+  "assessedAt": "2026-09-06",
   "recordCount": 14,
   "briefs": [
     {
@@ -143,7 +153,7 @@
           "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "3d ago",
+          "value": "7d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-30. 155 samples over 4 years, none of them recorded unsafe."
         }
@@ -184,10 +194,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -254,7 +260,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 14,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -407,7 +413,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "3d ago",
+          "value": "7d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-30. 60 samples over 5 years, none of them recorded unsafe."
         }
@@ -444,10 +450,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -514,7 +516,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 15,
+      "adequateCapabilities": 16,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -694,7 +696,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "3d ago",
+          "value": "7d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-30. 279 samples over 5 years, none of them recorded unsafe."
         }
@@ -731,10 +733,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -801,7 +799,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 15,
+      "adequateCapabilities": 16,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -992,7 +990,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "3d ago",
+          "value": "7d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-30. 252 samples over 4 years, none of them recorded unsafe."
         }
@@ -1033,10 +1031,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1107,7 +1101,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1325,7 +1319,7 @@
           "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "11d ago",
+          "value": "15d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-22. 214 samples over 4 years, none of them recorded unsafe."
         }
@@ -1366,10 +1360,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1440,7 +1430,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1641,7 +1631,7 @@
           "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "9d ago",
+          "value": "13d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-24. 215 samples over 4 years, none of them recorded unsafe."
         }
@@ -1682,10 +1672,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1756,7 +1742,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1948,7 +1934,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "3d ago",
+          "value": "7d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-30. 222 samples over 4 years, none of them recorded unsafe."
         }
@@ -1989,10 +1975,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2063,7 +2045,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2218,7 +2200,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "77d ago",
+          "value": "81d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-06-17. 97 samples over 5 years, none of them recorded unsafe."
         }
@@ -2263,10 +2245,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2337,7 +2315,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2465,7 +2443,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "9d ago",
+          "value": "13d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-24. 288 samples over 5 years, none of them recorded unsafe."
         }
@@ -2506,10 +2484,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2580,7 +2554,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2767,7 +2741,7 @@
           "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "2d ago",
+          "value": "6d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-31. 178 samples over 4 years, none of them recorded unsafe."
         }
@@ -2808,10 +2782,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2882,7 +2852,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3048,7 +3018,7 @@
           "note": "30 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "9d ago",
+          "value": "13d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-24. 110 samples over 5 years, none of them recorded unsafe."
         }
@@ -3085,10 +3055,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3155,7 +3121,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 15,
+      "adequateCapabilities": 16,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3323,7 +3289,7 @@
           "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "9d ago",
+          "value": "13d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-24. 167 samples over 5 years, none of them recorded unsafe."
         }
@@ -3364,10 +3330,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3438,7 +3400,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3602,7 +3564,7 @@
           "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "9d ago",
+          "value": "13d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-24. 165 samples over 4 years, none of them recorded unsafe."
         }
@@ -3639,10 +3601,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3709,7 +3667,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 15,
+      "adequateCapabilities": 16,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3893,7 +3851,7 @@
           "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
         },
         {
-          "value": "8d ago",
+          "value": "12d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-25. 143 samples over 4 years, none of them recorded unsafe."
         }
@@ -3934,10 +3892,6 @@
         {
           "capabilityId": "waterway-network",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "river-water-quality",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "flood-hazard",
@@ -4004,7 +3958,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 14,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [

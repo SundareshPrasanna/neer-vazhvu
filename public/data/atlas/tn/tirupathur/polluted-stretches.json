@@ -1,0 +1,68 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/polluted-stretches",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tirupathur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "asserts",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "as_of": "2026-09-06",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-polluted-stretches.ts",
+    "internal_inputs": [],
+    "note": "Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version): no listed stretch or location touches Tirupathur. Priority is CPCB's BOD band on the 2022 and 2023 maximum; station BOD for 2024 is the report's follow-up annexure. Each entry names how it was joined to the district: a place CPCB prints, or the river's course as read by the maintainer. The report PDF is not mirrored; annexure serials and PDF pages are the citation.",
+    "conventions": {
+      "priority": "I (BOD above 30 mg/L) to V (3.1 to 6 mg/L), as CPCB assigns it to the stretch or location",
+      "district": "kind 'named' when CPCB prints a place in the district; 'course' when the join is the maintainer's reading of the river's course; basis says which",
+      "since2018": "CPCB's own change class against its 2018 list: improved, same, deteriorated, new, dropped; null when the report tables carry no match",
+      "review": "each entry's district list is proposed until a person confirms it; the page shows the basis, not the review state"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "cpcb-prs-2025",
+  "districtName": "Tirupathur",
+  "edition": {
+    "label": "October 2025 (updated version)",
+    "reportTitle": "Polluted River Stretches for Restoration of Water Quality",
+    "publishedLabel": "October 2025",
+    "bodObservedYears": "2022 and 2023",
+    "followUpBodYear": "2024",
+    "url": "https://cpcb.gov.in/polluted-river-stretches/",
+    "pdfSha256": "dde470643a7e9d820e9eeb52255010c032aefdecdc6275dac1e5cb658019fb8a",
+    "pdfBytes": 4426464,
+    "pdfPages": 170,
+    "retrievedAt": "2026-09-06",
+    "annexures": {
+      "stretches": "Annexure III A, PDF pages 85 to 92",
+      "locations": "Annexure III B, PDF pages 93 to 99",
+      "improved": "Annexure X, PDF pages 117 to 121",
+      "same": "Annexure XI, PDF pages 122 to 127",
+      "deteriorated": "Annexure XII, PDF pages 128 to 130",
+      "new": "Annexure XIII, PDF pages 131 to 135",
+      "dropped": "Annexure IX, PDF pages 112 to 116",
+      "bod2024": "Annexure XIV, PDF pages 136 to 170"
+    },
+    "priorityBands": {
+      "I": "BOD above 30 mg/L",
+      "II": "BOD 20.1 to 30 mg/L",
+      "III": "BOD 10.1 to 20 mg/L",
+      "IV": "BOD 6.1 to 10 mg/L",
+      "V": "BOD 3.1 to 6 mg/L"
+    }
+  },
+  "entries": [],
+  "notes": [],
+  "count": 0
+}
