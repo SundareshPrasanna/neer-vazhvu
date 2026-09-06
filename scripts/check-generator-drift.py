@@ -158,6 +158,10 @@ INLINE_LICENCE_ALLOWLIST = {
     # origin is attributed in the source title.
     "partner-supplied compilation, cited with attribution; underlying government layers as attributed per layer",
     "published civil-society report, cited with attribution",
+    # Tribunal proceedings that reach the public only through the press (NGT
+    # OA 150/2025, Powai Lake): the order itself is not published online, so the
+    # press report is the record and has no registry id to read from.
+    "press report of tribunal proceedings, cited with attribution",
     "published report, registration-gated download, cited with attribution",
     # TypeScript one-offs, same rule.
     "GoTN delimitation record, cited with attribution ",

@@ -33,6 +33,7 @@ import type {
   BasinManifest,
 } from "@/lib/basins";
 import { tryGetBasinManifest } from "@/lib/basins";
+import { withLiveStorage, type LiveStorageRow } from "@/lib/basins/live-storage";
 import {
   parseReviewedMprSeries,
   reviewedMprConceptLabel,
@@ -132,7 +133,9 @@ function polygonOuterRings(geom: Feature["geometry"] | null | undefined): [numbe
 // Min bbox area (deg²) for a detached gap part to earn its own badge: includes
 // the ~0.36 km² Harohalli/Kaggalahalli exclave, excludes hair-thin slivers.
 const GAP_BADGE_MIN_AREA = 1.2e-5;
-export interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[] }
+/** panelLabel names what the unit's evidence IS (the DEP-snapshot default is
+ *  the Arkavathi's; a city river's gap view is built from other documents). */
+export interface GapUnit { name: string; level?: string; coverage?: string; conflicts?: string[]; caveats?: string[]; headline: string; streams: GapStream[]; panelLabel?: string }
 
 // ── DEP Snapshot v2 (gaps.json `version: 2`; district-first) ─────────────────
 // One tab per district whose DEP covers part of the basin (Paani review,
@@ -556,6 +559,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // Reveal the 2020 stretch alongside 2025 to show how the polluted reach grew.
   const [showGrowth, setShowGrowth] = useState(false);
   const [data, setData] = useState<Record<string, FC | null>>({});
+  // Live storage for features that join the daily reservoir feed (liveCode),
+  // read at view time through the same route the overview strip uses - a
+  // static "today" figure in the family file would be stale by tomorrow.
+  const [liveStorage, setLiveStorage] = useState<Record<string, LiveStorageRow>>({});
+  const liveCodesRef = useRef<Set<string>>(new Set());
   const [coachDismissed, setCoachDismissed] = useState(true);
   // Either panel can be collapsed to see the map alone. On phones the map is
   // the calm resting state, so the layers panel starts closed (tap "Layers" to
@@ -843,6 +851,22 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, focusedFloor, selectedRiverId, selectedPrs]);
 
+  // Fetch the daily storage row for every liveCode the loaded layers carry.
+  useEffect(() => {
+    const codes = Object.values(data).flatMap((fc) =>
+      (fc?.features ?? []).map((f) => (f.properties as Record<string, unknown>)?.liveCode).filter((c): c is string => typeof c === "string"),
+    ).filter((c) => !liveCodesRef.current.has(c));
+    if (codes.length === 0) return;
+    codes.forEach((c) => liveCodesRef.current.add(c));
+    fetch(`/api/reservoir/basin?codes=${[...new Set(codes)].join(",")}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { reservoirs?: LiveStorageRow[] } | null) => {
+        if (!d?.reservoirs) return;
+        setLiveStorage((prev) => ({ ...prev, ...Object.fromEntries(d.reservoirs!.map((r) => [r.code, r])) }));
+      })
+      .catch(() => undefined);
+  }, [data]);
+
   // What the map frames: the selected river's sub-catchments, or the whole
   // basin boundary when nothing is selected (the default). Depends only on the
   // boundary/shed/context data (stable references once loaded) and the
@@ -851,15 +875,34 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const shedData = data["sub-hydrosheds"];
   const boundaryData = data["boundary"];
   const contextData = data["context-boundary"];
+  const riversData = data["rivers"];
+  // Loaded-state key of the manifest's default-fit families ("" until the
+  // manifest names some and every one has arrived).
+  const fitKey = (manifest.defaultFitFamilies ?? []).every((f) => data[f])
+    ? (manifest.defaultFitFamilies ?? []).map((f) => `${f}:${data[f]?.features.length ?? 0}`).join(",")
+    : "";
   const fitBounds = useMemo(() => {
     let feats: Feature[];
-    if (selectedRiverId && shedData) {
+    if (selectedRiverId && shedData && selectedSheds.size > 0) {
       // A river is selected: frame its sub-catchments.
       feats = shedData.features.filter((f) => selectedSheds.has(String((f.properties as Record<string, unknown>)?.shedId)));
+    } else if (selectedRiverId) {
+      // A river with no shed of its own (a canal, a context river outside the
+      // working boundary): frame its course, or the map would stay wherever
+      // it was and the panel would describe a river off the edge of it.
+      feats = (riversData?.features ?? []).filter((f) => {
+        const rp = f.properties as Record<string, unknown>;
+        return String(rp?.riverId ?? rp?.river_id ?? "") === selectedRiverId;
+      });
     } else if (manifest.defaultFocus) {
       // Nothing selected and a focus view is configured: defer to it (the
       // MapController applies center/zoom) instead of the wide boundary fit.
       return null;
+    } else if (fitKey) {
+      // The manifest names the families that frame the opening view - a city
+      // atlas whose supply lakes sit far outside its boundary opens on the
+      // whole system, the way its PDF export already does.
+      feats = (manifest.defaultFitFamilies ?? []).flatMap((f) => data[f]?.features ?? []);
     } else {
       // A basin whose story crosses its working boundary ships a wider
       // context outline; frame to that, or the reach it exists to show gets
@@ -870,7 +913,9 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     if (!feats.length) return null;
     const b = L.geoJSON({ type: "FeatureCollection", features: feats } as FC).getBounds();
     return b.isValid() ? b : null;
-  }, [selectedRiverId, shedData, boundaryData, contextData, selectedSheds, manifest.defaultFocus]);
+    // fitKey stands in for the fit families' data so a floor change never refits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fitKey, selectedRiverId, shedData, boundaryData, contextData, riversData, selectedSheds, manifest.defaultFocus]);
 
   // Frame the region highlighted from the accountability matrix ("Show X on
   // the map") once its layer data is in. Matching mirrors the highlight style.
@@ -1768,7 +1813,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 onClose: () => setSelectedFeature(null),
               }) ?? (
                 <FeaturePanel
-                  props={selectedFeature.props}
+                  props={withLiveStorage(selectedFeature.props, liveStorage)}
                   label={layerByFamily[selectedFeature.family]?.label ?? selectedFeature.family}
                   onClose={() => setSelectedFeature(null)}
                 />
@@ -2265,6 +2310,13 @@ const PROP_LABELS: Record<string, string> = {
   govCode: "Government code",
   townType: "Town type",
   cetpNote: "CETP coverage",
+  liveStorage: "Storage today",
+  bmcShareMcft: "BMC share of capacity (mcft)",
+  liveCapacityMcum: "Live capacity, state books (Mcum)",
+  catchmentKm2: "Catchment (sq km)",
+  supplyShare: "Share of supply",
+  shareNote: "How to read the share",
+  feed: "Storage feed",
 };
 const LINK_FIELDS = new Set(["dataUrl", "evidenceUrl"]);
 
@@ -2278,7 +2330,7 @@ function humanizeKey(k: string): string {
 function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown>; label: string; onClose: () => void }) {
   const title = String(props.name ?? props.contributor ?? props.kind ?? label);
   const entries = Object.entries(props).filter(
-    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && k !== "hasReadings"
+    ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && k !== "hasReadings" && k !== "liveCode"
       && k !== "readingsPending" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
   );
   return (
@@ -3182,7 +3234,7 @@ function GapPanel({ unit, note, onClose, onBack }: { unit: GapUnit; note?: strin
       )}
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-rose-500">District Environment Plan (DEP) 2022 Snapshot{unit.level ? ` - ${unit.level}` : ""}</div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-500">{unit.panelLabel ?? "District Environment Plan (DEP) 2022 Snapshot"}{unit.level ? ` - ${unit.level}` : ""}</div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-snug">{unit.name}</h2>
           {note && <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{note}</p>}
         </div>

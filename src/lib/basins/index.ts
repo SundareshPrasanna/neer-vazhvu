@@ -4,6 +4,7 @@ import { CHENNAI_RIVERS } from "./chennai-rivers";
 import { CAUVERY_KA } from "./cauvery-ka";
 import { CAUVERY_TN } from "./cauvery-tn";
 import { KABINI } from "./kabini";
+import { MUMBAI_RIVERS } from "./mumbai-rivers";
 
 export * from "./types";
 
@@ -15,6 +16,7 @@ const BASINS: Record<string, BasinManifest> = {
   "cauvery-ka": CAUVERY_KA,
   "cauvery-tn": CAUVERY_TN,
   kabini: KABINI,
+  "mumbai-rivers": MUMBAI_RIVERS,
 };
 
 export function tryGetBasinManifest(basinId: string): BasinManifest | null {

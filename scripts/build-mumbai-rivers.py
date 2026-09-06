@@ -47,8 +47,11 @@ def _overpass(query: str):
     raise last
 
 # MMR extent (south, west, north, east): BMC's four small rivers in the SW plus
-# the eastern Ulhas/Waldhuni corridor and the NE/NW source rivers.
-BBOX = (18.85, 72.65, 19.85, 73.55)
+# the eastern Ulhas/Waldhuni corridor and the NE/NW source rivers. The box
+# runs to 20.0 N / 73.8 E so the Kalu reaches its Malshej headwaters and the
+# Vaitarna its Trimbak source - the earlier 19.85 / 73.55 edge cut both
+# mid-course, which read on the basin atlas as a river that ends in a field.
+BBOX = (18.85, 72.65, 20.0, 73.8)
 
 # OSM-name substring (lowercase) -> (river_id, display name, Marathi name).
 RIVER_MATCH = [
@@ -127,6 +130,75 @@ def main() -> int:
     if not grouped:
         print("ERROR: Overpass returned no matching waterways", file=sys.stderr)
         return 1
+
+    # Bridge the gaps. OSM names a river's ways unevenly - the Kalu carries its
+    # name at Kalyan and again at Malshej with 12 km of unnamed waterway=river
+    # between - and a name match alone leaves the course in pieces. A second
+    # pull brings every UNNAMED river way in the box; a connected run of them
+    # is added to a river only along the path that joins two points on that
+    # river's named ways (shared OSM nodes). Reaches that touch the river once
+    # are tributaries and stay out.
+    unnamed_query = (
+        "[out:json][timeout:90];"
+        f'(way["waterway"="river"][!"name"]({s},{w},{n},{e}););'
+        "out geom;"
+    )
+    print("Querying Overpass for unnamed river reaches…", flush=True)
+    unnamed = {
+        el["id"]: el
+        for el in _overpass(unnamed_query).get("elements", [])
+        if el.get("type") == "way" and el.get("nodes") and "geometry" in el
+    }
+    named_nodes: dict[str, dict[int, int]] = {}  # rid -> node id -> named way id
+    for el in payload.get("elements", []):
+        meta = _match((el.get("tags") or {}).get("name", "")) if el.get("type") == "way" else None
+        if meta and el["id"] in grouped.get(meta[0], {}).get("osm_ids", []):
+            for nd in el.get("nodes", []):
+                named_nodes.setdefault(meta[0], {})[nd] = el["id"]
+    # Node graph over the unnamed ways: an edge per consecutive node pair,
+    # labelled with its way. A bridge is the PATH between two points where
+    # the unnamed network meets a river's named ways; whole connected runs
+    # would drag in every unnamed tributary hanging off the reach (the Kalu
+    # gained 70 km of side streams that way).
+    adj: dict[int, list[tuple[int, int]]] = {}
+    for wid, el in unnamed.items():
+        nds = el["nodes"]
+        for a, b in zip(nds, nds[1:]):
+            adj.setdefault(a, []).append((b, wid))
+            adj.setdefault(b, []).append((a, wid))
+    from collections import deque
+
+    for rid, nodes in named_nodes.items():
+        touch = [nd for nd in nodes if nd in adj]
+        if len(touch) < 2:
+            continue
+        touch_set = set(touch)
+        bridge_ways: set[int] = set()
+        for src in touch:
+            prev: dict[int, tuple[int, int] | None] = {src: None}
+            q = deque([src])
+            while q:
+                cur = q.popleft()
+                for nxt, wid in adj.get(cur, []):
+                    if nxt in prev:
+                        continue
+                    prev[nxt] = (cur, wid)
+                    if nxt in touch_set:
+                        # Walk the path back and keep its ways.
+                        node = nxt
+                        while prev[node] is not None:
+                            node, way = prev[node]
+                            bridge_ways.add(way)
+                        continue  # a touch point ends this branch of the search
+                    q.append(nxt)
+        if not bridge_ways:
+            continue
+        for wid in sorted(bridge_ways):
+            line = [[pt["lon"], pt["lat"]] for pt in unnamed[wid]["geometry"]]
+            if len(line) >= 2:
+                grouped[rid]["lines"].append(line)
+                grouped[rid]["osm_ids"].append(wid)
+        print(f"  {rid}: +{len(bridge_ways)} unnamed reaches bridged", flush=True)
 
     features = []
     # Emit every configured river (RIVER_MATCH order), not just the original

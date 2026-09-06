@@ -1,0 +1,376 @@
+{
+  "nvdm": "1.0",
+  "dataset": "basins/gaps",
+  "scope": {
+    "kind": "basin",
+    "id": "mumbai-rivers"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "as_of": "2025-10"
+      },
+      {
+        "id": "mpcb-water-quality-reports",
+        "title": "MPCB annual Water Quality Status of Maharashtra reports (2018-19 to 2023-24; 2019-20 never published)",
+        "publisher": "Maharashtra Pollution Control Board",
+        "license": "Maharashtra government publication, cited with attribution",
+        "role": "input",
+        "url": "https://mpcb.gov.in/focus-area/reports-documents/water",
+        "as_of": "2024"
+      },
+      {
+        "id": "praja-civic-issues-mumbai",
+        "title": "Praja Foundation, Report on the Status of Civic Issues in Mumbai (May 2025 edition = 2024 data; RTI-sourced tables)",
+        "publisher": "Praja Foundation (via OpenCity mirror)",
+        "license": "report (c) Praja, RTI-sourced tables; OpenCity mirror",
+        "role": "input",
+        "as_of": "2024"
+      },
+      {
+        "id": "mpcb-stp-inventory",
+        "title": "MPCB per-STP inventory (STP information published on the website)",
+        "publisher": "Maharashtra Pollution Control Board",
+        "license": "government publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "bmc-esr-annual",
+        "title": "BMC Environment Status Report 2024-25 (MSDP-2 plant progress and completion dates, Table 11.1; Mithi works status)",
+        "publisher": "Brihanmumbai Municipal Corporation",
+        "license": "government publication, cited with attribution",
+        "role": "asserts",
+        "as_of": "2025"
+      },
+      {
+        "title": "NGT OA 150/2025 (Powai Lake) proceedings, July 2025, as reported by the Free Press Journal (18 MLD inflow; STP not before 11 December 2027)",
+        "publisher": "National Green Tribunal (Western Zone bench), via Free Press Journal",
+        "license": "press report of tribunal proceedings, cited with attribution",
+        "closed": true,
+        "as_of": "2025-07"
+      },
+      {
+        "title": "MPCB Action Plan for Mithi River (2019) - station 2168 series context and the 16-point sampling",
+        "publisher": "Maharashtra Pollution Control Board",
+        "license": "Maharashtra government publication, cited with attribution",
+        "closed": true,
+        "as_of": "2019"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-09-06",
+    "produced_by": "Authored from the documents' own tables, annexure- and table-cited; the river-file and commitments-register artifacts carry the same figures with their per-record citations.",
+    "note": "Mumbai's rivers and lakes basin atlas (scope mumbai-rivers; the city's own scope id 'mumbai' is the MMR region). Catchment joins (shedId) come from sub-hydrosheds.geojson, whose city half is the reviewed pipeline input pipeline-inputs/mumbai-river-catchments-fabdem.geojson (FABDEM + WhiteboxTools); CPCB stretch and station figures are read from the reviewed national table pipeline-inputs/atlas/prs/cpcb-2025.json. FABDEM lineage makes the catchment-joined families CC BY-NC-SA (non-commercial) encumbered."
+  },
+  "units": {
+    "mithi": {
+      "name": "Mithi catchment",
+      "panelLabel": "Treatment & waste gap",
+      "level": "River catchment (FABDEM 30 m, WhiteboxTools D8)",
+      "coverage": "CPCB Polluted River Stretches report, October 2025 (station 2168) + MPCB Water Quality Status reports 2018-19 to 2023-24 + Praja Foundation 2024 (RTI series on BMC's plants) + BMC ESR 2024-25 + NGT OA 150/2025 as reported",
+      "headline": "CPCB's October 2025 assessment puts the Mithi at station 2168 at a maximum BOD of 210 mg/l, the highest of any polluted river stretch in India. At its head about 18 MLD of untreated sewage enters Powai Lake, and the 8 MLD plant meant to stop it is not to be commissioned before December 2027.",
+      "caveats": [
+        "CPCB lists one monitoring location on the Mithi (station 2168, near the road bridge at Mahim); nothing on the river above it is monitored by CPCB or MPCB in the sources compiled here. The 2019 MPCB action plan sampled 16 points once.",
+        "The 2023 faecal-coliform figure (540,000 MPN/100 ml, a 100x jump from 2022) is CPCB's published value; Praja, transcribing the same series, flags it as a likely recording error. Directional only.",
+        "Who holds what: BMC's Hydraulic Engineer's Department for supply and the Mumbai Sewerage Disposal Project for treatment; MPCB for monitoring, consents and the 2019 action plan; the Mithi River Development and Protection Authority (2005) for the widening and wall works, executed by BMC and MMRDA."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river",
+          "summary": "The worst-reading river stretch in the country, with the untreated inflow at Powai Lake fixed on the NGT record until December 2027.",
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "metrics": [
+            {
+              "label": "Worst CPCB reading",
+              "value": "BOD 210 mg/l maximum in 2022-23, 80 mg/l in 2024, at station 2168 (CPCB, October 2025); the bathing criterion is 3 mg/l",
+              "emphasis": "bad"
+            },
+            {
+              "label": "MPCB annual averages, station 2168",
+              "value": "BOD 45.3 mg/l (2018-19) to 53.0 (2023-24), the worst year in the series; dissolved oxygen 2.2 to 4.1 mg/l; Water Quality Index 32 (2023-24)",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Raw sewage into Powai Lake",
+              "value": "About 18 MLD (BMC's affidavit says about 10.9) until the 8 MLD STP is commissioned, not before 11 December 2027 (NGT OA 150/2025)",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Treatment in this catchment",
+              "value": "Powai waste stabilisation pond, 8 MLD (MPCB inventory)"
+            },
+            {
+              "label": "Restoration",
+              "value": "Powai Lake Restoration, about Rs 66 crore (2025): the 8 MLD STP, sewage diversion (8 MLD to Bhandup, about 2 MLD to a Mithi STP) and hyacinth removal",
+              "emphasis": "good"
+            },
+            {
+              "label": "River works",
+              "value": "Mithi widening 93.96% and retaining walls 94.60% complete at 30 April 2025, two decades after the 2005 deluge (BMC ESR 2024-25)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CPCB (October 2025)",
+              "says": "River Mithi near road bridge, Mahim: Priority I, maximum BOD 210 mg/l (2022-23); station 2168 BOD 80 mg/l in 2024. Same class as in 2018 (Powai to Dharavi, Priority I).",
+              "citation": "Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version), Annexure III B no. 81, Annexure XI no. 39, Annexure XIV",
+              "url": "https://cpcb.gov.in/polluted-river-stretches/"
+            },
+            {
+              "source": "MPCB Water Quality Status of Maharashtra (annual)",
+              "says": "Station 2168 (Mithi at Mahim bridge) annual average BOD 45.3 mg/l in 2018-19, 18.3 in 2020-21, 28.2 in 2021-22, 37.3 in 2022-23, 53.0 in 2023-24; DO 2.2 to 4.1 mg/l; WQI 32 in 2023-24. The 2019-20 report was never published.",
+              "citation": "MPCB, Water Quality Status of Maharashtra, reports 2018-19 to 2023-24",
+              "url": "https://mpcb.gov.in/focus-area/reports-documents/water"
+            },
+            {
+              "source": "NGT OA 150/2025 (Powai Lake), as reported",
+              "says": "Powai Lake will continue to receive about 18 MLD of sewage until the STP is commissioned, not before 11 December 2027; BMC's affidavit puts the inflow at about 10.9 MLD. An NGT-appointed committee proposed a Rs 5 lakh per inlet monthly penalty on BMC.",
+              "citation": "Free Press Journal, Mumbai, July 2025, reporting the tribunal's proceedings",
+              "url": "https://www.freepressjournal.in/mumbai/mumbai-ngt-told-powai-lake-will-continue-getting-18-mld-sewage-till-2027-due-to-stp-delay"
+            },
+            {
+              "source": "BMC Environment Status Report 2024-25",
+              "says": "Mithi river widening 93.96% and retaining walls 94.60% complete as of 30 April 2025.",
+              "citation": "BMC ESR 2024-25, Mithi works status",
+              "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf"
+            }
+          ]
+        },
+        {
+          "stream": "Treatment performance, Greater Mumbai",
+          "summary": "Four of BMC's nine plants fail the 10 mg/l discharge standard; the seven-plant replacement programme has slipped past its own 2026 dates.",
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "district",
+          "magnitude": {
+            "perDay": 2735,
+            "unit": "MLD",
+            "estimated": true
+          },
+          "metrics": [
+            {
+              "label": "Plants failing the discharge standard (2024 outlet BOD)",
+              "value": "Malad 99.4 mg/l (140.6 in 2023 against an inlet of 144.2), Versova 58.1, Ghatkopar 24.5, Bhandup 20.7, against the 10 mg/l standard (Praja 2024, Table 13, RTI)",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Plants meeting it",
+              "value": "Worli (Love Grove) 757 MLD, Bandra 797 MLD, Colaba 41 MLD and Charkop 6 MLD, outlet BOD 1.3 to 5.4 mg/l in 2023-24; Worli and Bandra were offline in 2024 for reconstruction",
+              "emphasis": "good"
+            },
+            {
+              "label": "Installed capacity",
+              "value": "About 2,735 MLD across the nine BMC plants in MPCB's inventory (Worli 757, Bandra 797, Ghatkopar 386, Malad 280, Bhandup 280, Versova 180, Colaba 41, Powai 8, Charkop 6)"
+            },
+            {
+              "label": "MSDP-2 replacement programme",
+              "value": "Seven plants, 2,464 MLD treated and 1,233 MLD recycled: Worli 500, Malad 454, Dharavi 418, Bandra 360, Ghatkopar 337, Bhandup 215, Versova 180 MLD. Progress 25-43% per plant at 30 April 2025; completion 2026 (three plants), 2027 (three), 2028 (Malad)"
+            },
+            {
+              "label": "Dates already missed",
+              "value": "Versova and Ghatkopar were due 4 July 2026 and Bhandup 22 August 2026 by BMC's own ESR table; all three stand as slipped in the commitments register",
+              "emphasis": "bad"
+            }
+          ],
+          "sources": [
+            {
+              "source": "Praja Foundation (2024, RTI)",
+              "says": "Per-STP inlet and outlet BOD and TSS for BMC's plants, 2020 to 2024 (Table 13).",
+              "citation": "Report on the Status of Civic Issues in Mumbai, May 2025 edition (2024 data), Table 13",
+              "url": "https://data.opencity.in/api/3/action/package_search?q=%22Status%20of%20Civic%20Issues%20in%20Mumbai%22&rows=1"
+            },
+            {
+              "source": "MPCB per-STP inventory",
+              "says": "Capacities and utilisation of the sewage treatment plants across the MMR.",
+              "citation": "MPCB, STP information published on the website",
+              "url": "https://mpcb.gov.in/focus-area/reports-documents/water"
+            },
+            {
+              "source": "BMC Environment Status Report 2024-25",
+              "says": "Table 11.1: per-plant physical progress and expected completion dates for the MSDP-2 plants (Versova and Ghatkopar 04.07.2026, Bhandup 22.08.2026).",
+              "citation": "BMC ESR 2024-25, Table 11.1",
+              "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf"
+            }
+          ]
+        }
+      ]
+    },
+    "dahisar": {
+      "name": "Dahisar catchment",
+      "panelLabel": "Treatment & waste gap",
+      "level": "River catchment (FABDEM 30 m, WhiteboxTools D8)",
+      "coverage": "CPCB Polluted River Stretches report, October 2025 (absence) + MPCB Water Quality Status reports (absence) + MPCB per-STP inventory",
+      "headline": "Not in CPCB's national list and not monitored as a river: what reaches the Dahisar is undocumented in every source compiled here, and there is no treatment plant in its catchment.",
+      "caveats": [
+        "Absence from CPCB's list is absence from monitoring, not evidence of clean water: the river is a sewage-fed channel through built-up Dahisar (MPCB and CPCB descriptions carried in the city river file).",
+        "BMC's river-rejuvenation programme names the Dahisar (STPs under trial in 2025); no capacity or performance figure for those works is published in the sources compiled here."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river",
+          "summary": "Undocumented: no station, no inlet survey, no plant.",
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "metrics": [
+            {
+              "label": "CPCB status",
+              "value": "Not in the October 2025 list of polluted river stretches (Maharashtra has 54 entries; the Dahisar is not among them)"
+            },
+            {
+              "label": "Monitoring",
+              "value": "No MPCB or CPCB water-quality station on the river",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Treatment in this catchment",
+              "value": "None in MPCB's STP inventory",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Source lake",
+              "value": "Tulsi Lake (BMC's oldest source after Vihar) sits at the head of the catchment; no public storage feed"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CPCB (October 2025)",
+              "says": "Maharashtra's 54 listed stretches and locations include the Mithi and, in the eastern corridor, the Ulhas and Kalu; the Dahisar, Poisar and Oshiwara do not appear.",
+              "citation": "Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version), Annexures III A and III B",
+              "url": "https://cpcb.gov.in/polluted-river-stretches/"
+            },
+            {
+              "source": "MPCB Water Quality Status of Maharashtra (annual)",
+              "says": "The Mumbai regional office tables carry the Mithi at station 2168; no station is reported on the Dahisar, Poisar or Oshiwara.",
+              "citation": "MPCB, Water Quality Status of Maharashtra, reports 2018-19 to 2023-24",
+              "url": "https://mpcb.gov.in/focus-area/reports-documents/water"
+            }
+          ]
+        }
+      ]
+    },
+    "poisar": {
+      "name": "Poisar catchment",
+      "panelLabel": "Treatment & waste gap",
+      "level": "River catchment (FABDEM 30 m, WhiteboxTools D8)",
+      "coverage": "CPCB Polluted River Stretches report, October 2025 (absence) + MPCB Water Quality Status reports (absence) + MPCB per-STP inventory + Praja 2024",
+      "headline": "Not in CPCB's national list and not monitored as a river. The one plant in the catchment, Charkop (6 MLD), meets the discharge standard despite an inlet BOD of 181 to 214 mg/l.",
+      "caveats": [
+        "Absence from CPCB's list is absence from monitoring, not evidence of clean water: the river is a storm-water and sewage channel through built-up Kandivali.",
+        "BMC's river-rejuvenation programme names the Poisar; no capacity or performance figure for those works is published in the sources compiled here."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river",
+          "summary": "Undocumented as a river; one small compliant plant near the creek.",
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "metrics": [
+            {
+              "label": "CPCB status",
+              "value": "Not in the October 2025 list of polluted river stretches"
+            },
+            {
+              "label": "Monitoring",
+              "value": "No MPCB or CPCB water-quality station on the river",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Treatment in this catchment",
+              "value": "Charkop STP, 6 MLD, near Marve Creek: outlet BOD 3.1 mg/l (2023) and 5.4 (2024) against an inlet of 181 to 214 (Praja 2024, RTI)",
+              "emphasis": "good"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CPCB (October 2025)",
+              "says": "The Poisar does not appear among Maharashtra's 54 listed stretches and locations.",
+              "citation": "Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version), Annexures III A and III B",
+              "url": "https://cpcb.gov.in/polluted-river-stretches/"
+            },
+            {
+              "source": "Praja Foundation (2024, RTI)",
+              "says": "Charkop STP inlet and outlet BOD, 2020 to 2024 (Table 13).",
+              "citation": "Report on the Status of Civic Issues in Mumbai, May 2025 edition (2024 data), Table 13",
+              "url": "https://data.opencity.in/api/3/action/package_search?q=%22Status%20of%20Civic%20Issues%20in%20Mumbai%22&rows=1"
+            }
+          ]
+        }
+      ]
+    },
+    "oshiwara": {
+      "name": "Oshiwara catchment",
+      "panelLabel": "Treatment & waste gap",
+      "level": "River catchment (FABDEM 30 m, WhiteboxTools D8)",
+      "coverage": "CPCB Polluted River Stretches report, October 2025 (absence) + MPCB Water Quality Status reports (absence) + MPCB per-STP inventory + Praja 2024 + BMC ESR 2024-25",
+      "headline": "Malad Creek, which the Oshiwara joins, takes the outflow of the Malad (280 MLD) and Versova (180 MLD) plants. Malad's 2023 outlet BOD of 140.6 mg/l against an inlet of 144.2 means the plant barely treats; its 454 MLD replacement is the last of the programme, due 2028.",
+      "caveats": [
+        "Absence from CPCB's list is absence from monitoring, not evidence of clean water: the river is heavily encroached and sewage-fed through Goregaon and Jogeshwari.",
+        "The Malad and Versova plants discharge to the creek system the Oshiwara drains into, not to the river itself; their figures are the creek's load, not a river reading."
+      ],
+      "streams": [
+        {
+          "stream": "Sewage reaching the river and creek",
+          "summary": "Two plants at the creek, one of them effectively not treating.",
+          "medium": "liquid",
+          "sector": "public",
+          "granularity": "taluk",
+          "metrics": [
+            {
+              "label": "CPCB status",
+              "value": "Not in the October 2025 list of polluted river stretches"
+            },
+            {
+              "label": "Monitoring",
+              "value": "No MPCB or CPCB water-quality station on the river",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Malad STP, 280 MLD",
+              "value": "Outlet BOD 140.6 mg/l in 2023 against an inlet of 144.2, and 99.4 in 2024, against the 10 mg/l standard: almost no treatment (Praja 2024, RTI)",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Versova STP, 180 MLD",
+              "value": "Outlet BOD 53.4 mg/l (2023) and 58.1 (2024) against an inlet of about 143 to 146 (Praja 2024, RTI)",
+              "emphasis": "bad"
+            },
+            {
+              "label": "Replacements",
+              "value": "Malad 454 MLD due 2028 and Versova 180 MLD due 4 July 2026, now slipped (BMC ESR 2024-25, Table 11.1)"
+            }
+          ],
+          "sources": [
+            {
+              "source": "CPCB (October 2025)",
+              "says": "The Oshiwara does not appear among Maharashtra's 54 listed stretches and locations.",
+              "citation": "Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version), Annexures III A and III B",
+              "url": "https://cpcb.gov.in/polluted-river-stretches/"
+            },
+            {
+              "source": "Praja Foundation (2024, RTI)",
+              "says": "Malad and Versova STP inlet and outlet BOD, 2020 to 2024 (Table 13).",
+              "citation": "Report on the Status of Civic Issues in Mumbai, May 2025 edition (2024 data), Table 13",
+              "url": "https://data.opencity.in/api/3/action/package_search?q=%22Status%20of%20Civic%20Issues%20in%20Mumbai%22&rows=1"
+            },
+            {
+              "source": "BMC Environment Status Report 2024-25",
+              "says": "Table 11.1: Versova expected completion 04.07.2026; Malad the last of the seven, 2028.",
+              "citation": "BMC ESR 2024-25, Table 11.1",
+              "url": "https://www.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Environment/Docs/Environment%20Status%20Report%20%202024-25%20(English).pdf"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

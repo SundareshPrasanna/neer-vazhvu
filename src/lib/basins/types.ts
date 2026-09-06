@@ -225,6 +225,14 @@ export interface BasinManifest {
    * while the rest stays a pan away. Selecting a river still fits to it.
    */
   defaultFocus?: { center: [number, number]; zoom: number };
+  /**
+   * Families whose features frame the opening view, when the boundary alone
+   * would crop the story: a city atlas whose supply lakes sit 100 km outside
+   * the corporation line opens on boundary + sub-hydrosheds so the whole
+   * system is in frame, the way its PDF export already is. Fits only once
+   * every named family has loaded; selecting a river still fits to it.
+   */
+  defaultFitFamilies?: string[];
   /** Collaboration attribution (e.g. "Developed in collaboration with" +
    *  the partner's logo - the partner's NAME lives inside the logo image;
    *  alt text carries it for screen readers). Rendered on the atlas
