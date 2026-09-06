@@ -121,7 +121,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "Canal country on the Bhavani: 39% of irrigation is canal water and 49% open wells, and Nambiyur taluk pumps 171% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "120", subBasinName: "Lower Bhavani" },
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -134,7 +134,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "Cauvery bank with almost no canal: 72% of irrigation is open wells, and 5 of 8 taluks are over-exploited, Rasipuram at 150% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -147,7 +147,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "Where the Amaravathi meets the Cauvery: 4 of 7 taluks are over-exploited and the other 3 critical, and 84% of irrigation is from wells.",
     basin: { basinId: "cauvery-tn", subBasinKey: "113", subBasinName: "Amaravathi" },
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -160,7 +160,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     hook: "The Noyyal's dyeing belt: 22% of irrigation is canal water and 77% wells, and Palladam taluk pumps 121% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "126", subBasinName: "Noyyal" },
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
