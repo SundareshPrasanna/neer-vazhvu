@@ -157,6 +157,51 @@ export const MUMBAI_RIVERS: BasinManifest = {
         pollutedStretch: "CPCB, October 2025: Priority V from upstream of the Badlapur water works to upstream of the NRC bund, Mohane (Kalyan); maximum BOD 5 mg/l in 2022-23. The Kalu at Atale (Kalyan) is Priority I, maximum BOD 42 mg/l.",
       },
     },
+    {
+      riverId: "kalu",
+      displayName: "Kalu",
+      displayNameLocal: "काळू नदी",
+      subHydroshedIds: [],
+      color: "#0f766e",
+      narrative:
+        "The Kalu comes down from the Malshej ghat through Murbad to join the Ulhas near Kalyan, about 104 km on OSM's mapped course. CPCB's October 2025 list carries it at Priority I at one location, Atale village in Kalyan taluka (station 1092), with a maximum BOD of 42 mg/l in 2022-23 and 30 mg/l in 2024, the same class it held in 2018. Below Atale it meets the Ulhas, whose own stretch is Priority V.",
+      attributes: {
+        origin: "Malshej ghat, Western Ghats (Thane)",
+        length: "104 km (OSM mapped course)",
+        flowsInto: "Ulhas River near Kalyan",
+        pollutedStretch: "CPCB, October 2025: Priority I at one location, Atale village (Kalyan, Thane), station 1092; maximum BOD 42 mg/l in 2022-23, 30 mg/l in 2024. Same class as in 2018 (along Atale village).",
+      },
+    },
+    {
+      riverId: "waldhuni",
+      displayName: "Waldhuni",
+      displayNameLocal: "वालधुनी नदी",
+      subHydroshedIds: [],
+      color: "#0f766e",
+      narrative:
+        "An 8 km tributary of the Ulhas through Ulhasnagar, and the channel that brings the town's industrial effluent into the river above Kalyan. MPCB's Kalyan regional office has treated it as the Ulhas corridor's polluted arm since its 2004-05 environment status report; it does not appear as its own entry in CPCB's October 2025 national list.",
+      attributes: {
+        origin: "Ambernath (Thane)",
+        length: "8 km (OSM mapped course)",
+        flowsInto: "Ulhas River at Ulhasnagar",
+        pollutedStretch: "Not a separate entry in CPCB's October 2025 list; the Ulhas stretch it joins (Badlapur water works to the NRC bund) is Priority V.",
+      },
+    },
+    {
+      riverId: "surya",
+      displayName: "Surya",
+      displayNameLocal: "सूर्या नदी",
+      subHydroshedIds: [],
+      color: "#2563eb",
+      narrative:
+        "The western corridor's source river: the Dhamni dam (276 Mcum live capacity on the state's books) and the Kawdas weir below it supply Vasai-Virar and Mira-Bhayandar, not BMC. CPCB lists the river from the MIDC pumping station at Palghar to the Vasai-Virar intake at Priority IV, a class worse than in 2018.",
+      attributes: {
+        origin: "Western Ghats above Dhamni (Vikramgad, Palghar)",
+        length: "85 km (OSM mapped course)",
+        flowsInto: "Vaitarna estuary (Palghar)",
+        pollutedStretch: "CPCB, October 2025: Priority IV from the MIDC pumping station (Palghar) to the Vasai-Virar water intake; maximum BOD 7 mg/l in 2022-23, 4 to 6 mg/l at the three stations in 2024; deteriorated from Priority V in 2018.",
+      },
+    },
   ],
   layers: [
     // Structural context
