@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-karur-v1",
+  "district": {
+    "displayName": "Karur",
+    "tnrdLgdCode": "530",
+    "tnrdMasterCode": "17",
+    "jjmStateId": "29",
+    "jjmDistrictId": "432",
+    "censusDistrictCode": "613",
+    "lgdDistrictCode": "576",
+    "ingresDistrictName": "KARUR",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 157,
+    "tnrdMasterBlocks": 8,
+    "tnrdMasterGramPanchayats": 157,
+    "jjmVillages": 162,
+    "censusVillages": 170
+  },
+  "targets": [
+    {
+      "id": "ammapatti",
+      "displayName": "Ammapatti",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "224624",
+      "tnrdMasterBlockCode": "3",
+      "tnrdMasterGramPanchayatCode": "2",
+      "jjmBlockId": "4445",
+      "jjmGramPanchayatId": "148515",
+      "censusSubdistrictCode": "05768",
+      "censusGramPanchayatCode": "0034",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "635546",
+            "name": "Ammapatti"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 613; subdistrict 05768; Census GP 0034",
+            "assertion": "The reviewed Census composition contains Ammapatti 635546."
+          }
+        ]
+      }
+    }
+  ]
+}

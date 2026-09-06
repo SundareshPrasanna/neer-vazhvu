@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-erode-v1",
+  "district": {
+    "displayName": "Erode",
+    "tnrdLgdCode": "527",
+    "tnrdMasterCode": "10",
+    "jjmStateId": "29",
+    "jjmDistrictId": "429",
+    "censusDistrictCode": "610",
+    "lgdDistrictCode": "573",
+    "ingresDistrictName": "ERODE",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 225,
+    "tnrdMasterBlocks": 14,
+    "tnrdMasterGramPanchayats": 225,
+    "jjmVillages": 230,
+    "censusVillages": 306
+  },
+  "targets": [
+    {
+      "id": "chennampatti",
+      "displayName": "CHENNAMPATTI",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "223556",
+      "tnrdMasterBlockCode": "12",
+      "tnrdMasterGramPanchayatCode": "3",
+      "jjmBlockId": "4404",
+      "jjmGramPanchayatId": "147418",
+      "censusSubdistrictCode": "05750",
+      "censusGramPanchayatCode": "0098",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "634846",
+            "name": "Chennampatti"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 610; subdistrict 05750; Census GP 0098",
+            "assertion": "The reviewed Census composition contains Chennampatti 634846."
+          }
+        ]
+      }
+    }
+  ]
+}

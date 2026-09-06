@@ -126,6 +126,9 @@ def paired_values(
 ) -> list[dict[str, str]]:
     codes = [value.strip() for value in record[code_key].split(",") if value.strip()]
     names = [value.strip() for value in record[name_key].split(",") if value.strip()]
+    if len(codes) == 1 and len(names) > 1:
+        # One code, a comma inside the name (Namakkal 634428): the whole string is the name.
+        names = [record[name_key].strip()]
     if len(codes) != len(names):
         raise ValueError(
             f"Census row {record.get('villageCode', '?')} has "

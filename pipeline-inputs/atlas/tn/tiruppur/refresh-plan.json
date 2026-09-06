@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-tiruppur-v1",
+  "district": {
+    "displayName": "Tiruppur",
+    "tnrdLgdCode": "578",
+    "tnrdMasterCode": "32",
+    "jjmStateId": "29",
+    "jjmDistrictId": "656",
+    "censusDistrictCode": "633",
+    "lgdDistrictCode": "634",
+    "ingresDistrictName": "TIRUPPUR",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 265,
+    "tnrdMasterBlocks": 13,
+    "tnrdMasterGramPanchayats": 265,
+    "jjmVillages": 267,
+    "censusVillages": 297
+  },
+  "targets": [
+    {
+      "id": "alathur",
+      "displayName": "ALATHUR",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "221977",
+      "tnrdMasterBlockCode": "14",
+      "tnrdMasterGramPanchayatCode": "1",
+      "jjmBlockId": "4338",
+      "jjmGramPanchayatId": "145435",
+      "censusSubdistrictCode": "05903",
+      "censusGramPanchayatCode": "0155",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "644738",
+            "name": "Alathur"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 633; subdistrict 05903; Census GP 0155",
+            "assertion": "The reviewed Census composition contains Alathur 644738."
+          }
+        ]
+      }
+    }
+  ]
+}
