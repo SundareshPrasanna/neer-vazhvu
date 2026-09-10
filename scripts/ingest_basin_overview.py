@@ -26,9 +26,11 @@ never learn source-system ids.
 Usage:
     python3 scripts/ingest_basin_overview.py scripts/basin-sources/cauvery-ka.json
 
-NOTE: re-running REGENERATES wq-stations.geojson and scoreboard.json - any
-readings post-step (scripts/build_basin_wq_readings.py) must be re-run after,
-or its classes/worst-class metrics are lost.
+NOTE: re-running REGENERATES wq-stations.geojson and scoreboard.json - the
+post-steps must be re-run after, or their work is lost:
+  scripts/build_basin_wq_positions.py  (partner-validated positions + the
+                                        river stations KWRIS omits)
+  scripts/build_basin_wq_readings.py   (KSPCB monthly classes, worst class)
 """
 
 from __future__ import annotations

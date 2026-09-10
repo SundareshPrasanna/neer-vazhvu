@@ -155,6 +155,7 @@ export const CAUVERY_KA: BasinManifest = {
   ],
   credits: [
     "Boundaries, sub-basins, tanks, stations, reservoirs, streams: KWRIS / ACIWRM open GeoServer (water.karnataka.gov.in), Karnataka Water Resources Department.",
+    "Water-quality station positions: KWRIS's coordinates put 20 of the 35 stations more than a kilometre from where they are (Sathegala bridge 114 km away), so every station matched by NWMP code sits at Paani Earth Foundation's validated location (September 2026), with the KWRIS offset recorded on the moved ones. Ten river stations the KWRIS layer omits, three of them at Kushalnagar, are added from the same set, location-only.",
     "Sub-basin rainfall deviation and groundwater level: KWRIS geomGIS sub-basin views (KSNDMC/IMD basis; period under verification).",
     "Polluted river stretches: CPCB classification as published on KWRIS (earlier vintage; the Arkavathi is Priority I in CPCB's October 2025 report, mirrored on this site).",
     "Live reservoir storage: KWRIS reservoir_landing daily feed.",
