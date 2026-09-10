@@ -9,7 +9,7 @@
       "fields": {
         "name": "name"
       },
-      "provenance": "Karnataka WRD basin decomposition (KWRIS), sub-basin C2 polygon carried over from the cauvery-ka overview ingest. Every other layer here is clipped to it, so the atlas covers the Karnataka portion of the Kabini only - the Wayanad (Kerala) headwaters are out of scope."
+      "provenance": "Karnataka WRD basin decomposition (KWRIS), sub-basin C2 polygon carried over from the cauvery-ka overview ingest. Every other layer here is clipped to it, so the atlas covers the Karnataka portion of the Kabini only. The Wayanad (Kerala) headwaters appear as labelled context: the full watershed outline, the river above the state line, its major waterbodies and, since September 2026, the four NWMP water-quality stations Kerala's board runs there."
     },
     {
       "file": "kabini-sheds.geojson",
@@ -226,6 +226,23 @@
         "purpose": "Water quality"
       },
       "provenance": "KSPCB water-quality monitoring stations, validated and extended by Paani Earth, via Paani Earth Foundation's review-round delivery (23 August 2026). Wider than the NWMP network alone - it includes the tanks and lakes KSPCB monitors monthly, which the first build's NWMP-only layer left out."
+    },
+    {
+      "file": "kerala-nwmp-sites.geojson",
+      "family": "monitoring-points",
+      "fields": {
+        "stationKey": "stationKey",
+        "name": "name",
+        "waterBody": "waterBody",
+        "frequency": "frequency",
+        "state": "state"
+      },
+      "literal": {
+        "agency": "Kerala SPCB",
+        "purpose": "Water quality",
+        "note": "A Kerala State Pollution Control Board station in the Wayanad headwaters. It sits outside the Karnataka share this atlas clips to and inside the basin the atlas draws; the boundary, the counts and every other layer stay Karnataka-only."
+      },
+      "provenance": "The Kabini's four NWMP water-quality stations in Kerala - Kabini at Muthankara, Karapuzha dam, Maniyankode Puzha and Pookode Lake, all in Wayanad - via Paani Earth Foundation's delivery of 3 September 2026. They lie beyond the C2 clip and are shown as headwaters context, the way the Muthankera CWC gauge is; the CPCB annual river tables carry Muthankara, so it takes a parameter pack, and the other three are location-only."
     },
     {
       "file": "admin-district.geojson",

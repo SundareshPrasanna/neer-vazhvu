@@ -41,6 +41,18 @@ def paani_review(title: str) -> dict:
     }
 
 
+def paani_kerala(title: str) -> dict:
+    """The 3 Sep 2026 delivery: the Kabini's NWMP stations in Kerala, one file."""
+    return {
+        "title": f"{title} - Kabini NWMP stations in Kerala (GeoPackage, 3 Sep 2026 delivery)",
+        "publisher": "Paani Earth Foundation",
+        "closed": True,
+        "as_of": "2026-09",
+        "role": "input",
+        "license": "partner-supplied compilation, cited with attribution; underlying government layers as attributed per layer",
+    }
+
+
 def paani(title: str) -> dict:
     """One layer of the partner GeoPackage delivery - a dated, closed edition."""
     return {
@@ -170,7 +182,7 @@ ARTIFACTS: dict[str, tuple[str, list[dict], str, str, bool]] = {
     "admin-taluk.geojson": ("basins/admin-taluk", [paani("KGIS taluk (subdistrict) boundaries"), KWRIS], "derived", PIPELINE, True),
     "admin-town.geojson": ("basins/admin-town", [paani("KGIS urban local body boundaries"), KWRIS], "derived", PIPELINE, True),
     "flow-stations.geojson": ("basins/flow-stations", [paani_review("CWC hydrological observation sites, locations and site types validated"), WRIS], "mixed", f"{PIPELINE} + {FLOW}", True),
-    "monitoring-points.geojson": ("basins/monitoring-points", [paani_review("KSPCB water-quality monitoring stations, validated and extended")], "derived", PIPELINE, True),
+    "monitoring-points.geojson": ("basins/monitoring-points", [paani_review("KSPCB water-quality monitoring stations, validated and extended"), paani_kerala("Kerala SPCB NWMP water-quality stations in the Wayanad headwaters, beyond the Karnataka clip")], "derived", PIPELINE, True),
     "pressures-industrial.geojson": ("basins/pressures-industrial", [paani("KIADB industrial areas and points (KGIS)"), paani_review("Industrial areas draining toward the stretch, and units outside any estate")], "derived", PIPELINE, True),
     "pressures-quarries.geojson": ("basins/pressures-quarries", [paani("Quarry polygons"), OSM], "derived", PIPELINE, True),
     "forests.geojson": ("basins/forests", [paani("KGIS notified forest boundaries")], "derived", PIPELINE, True),
