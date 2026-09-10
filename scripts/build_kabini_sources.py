@@ -12,7 +12,7 @@ The Kabini atlas (sub-basin C2 of cauvery-ka) is assembled from two places:
 Everything lands as clean 4326 GeoJSON in a staging dir; the committed
 scripts/basin-sources/kabini-ingest.json maps staged files onto the layer
 contract and scripts/ingest_basin.py does the rest. Re-run order:
-    python3 scripts/build_kabini_sources.py [--gpkg-dir ...]
+    python3 scripts/build_kabini_sources.py [--gpkg-dir ...] [--kerala-gpkg ...]
     python3 scripts/ingest_basin.py scripts/basin-sources/kabini-ingest.json
     python3 scripts/build_basin_wq_param_packs.py public/data/basins/kabini \
         scripts/basin-sources/kabini-wq-params.json
@@ -21,13 +21,16 @@ contract and scripts/ingest_basin.py does the rest. Re-run order:
     python3 scripts/validate_basin.py scripts/basin-sources/kabini-ingest.json
 (re-ingest rewrites flow-stations.geojson AND strips hasReadings from
 monitoring-points.geojson, so BOTH pack steps come after it - skipping the
-wq step ships the six KSPCB stations hollow.)
+wq step ships the seven river stations hollow.)
 
 Scope rule: the Kabini rises in Wayanad, Kerala, and the partner's own Kabini
 watershed polygon is 1.45x our C2 - it includes that Kerala reach. Everything
 here is clipped to the KWRIS C2 boundary, so the atlas stays the Karnataka
 portion the rest of the platform is decomposed on. The Kerala reach is a
-future extension, not a silent inclusion.
+future extension, not a silent inclusion. What crosses the line does so as
+labelled context: the full watershed outline, the river above the border, its
+major waterbodies and, since the 3 Sep 2026 delivery, the four NWMP
+water-quality stations Kerala's board runs in Wayanad (section 7b).
 
 Requires shapely (neer-vazhvu-api env) + GDAL (QGIS bundle is auto-found).
 """
@@ -118,8 +121,9 @@ PRS_2025_LAYER = "PRS_2025_Polluted_River_Stretches"
 # 31% of its watershed is in Kerala, which the C2 clip cuts away - so the atlas
 # has been drawing a river that appears to start nowhere. These two layers put
 # the missing third back as CONTEXT: the full watershed outline, and the
-# 84.5 km of centreline above the border. Nothing else is extended across it,
-# and no Kerala-side pressure, station or administrative data is claimed.
+# 84.5 km of centreline above the border. Nothing else is extended across it
+# except the four Kerala NWMP stations (section 7b); no Kerala-side pressure
+# or administrative data is claimed.
 FULL_WATERSHED_LAYER = "Cauvery_Tributary_Kabini — dissolved"
 
 # ── Review round, 23 Aug 2026 ────────────────────────────────────────────────
@@ -141,6 +145,20 @@ CWC_GPKG = "Kabini_CWC_Locations.gpkg"
 CWC_LAYER = "Kabini_CWC_Locations"
 KSPCB_GPKG = "Cauvery_Kabini_Monitoring_Points_KSPCB.gpkg"
 KSPCB_LAYER = "Cauvery_Kabini_Monitoring_Points_KSPCB"
+
+# ── Kerala NWMP stations, 3 Sep 2026 delivery ────────────────────────────────
+# The 23 Aug KSPCB file already carried these four Wayanad stations and the
+# boundary clip dropped them. Paani sent them again as a file of their own,
+# which is the ask: show the headwaters stations. They ship OUTSIDE the clip
+# the way the Muthankera CWC gauge does - tagged with their state and a note -
+# and the boundary, the counts and every other layer stay Karnataka-only.
+KERALA_NWMP_GPKG = "Kabini_Basin_Monitoring_Points_NWMP_Kerala.gpkg"
+KERALA_NWMP_LAYER = "Kabini_Basin_Monitoring_Points_NWMP_Kerala"
+# One delivered row has its columns shifted one to the left (State/UT empty,
+# "KERALA" under Type of Water Body). CPCB's river tables carry 1207 as
+# "River Kabani at Muthankara" in every edition 2020-2024, so the type is a
+# matter of record, not a guess.
+KERALA_ROW_FIXES = {"1207": {"state": "KERALA", "waterBody": "RIVER"}}
 STP_GPKG = "Kabini_Basin_Sewage_treatment_Plants.gpkg"
 STP_LAYER = "Kabini_Basin_Sewage_treatment_Plants"
 DRAIN_INLET_GPKG = "Kabini_PRS_Polluting_drains_inlets.gpkg"
@@ -278,6 +296,8 @@ def main() -> None:
     ap.add_argument("--review-dir",
                     default=str(Path.home() / "Downloads/Cauvery_Kabini_Review_23Aug2026"),
                     help="Paani Earth's 23 Aug 2026 review-round GeoPackages")
+    ap.add_argument("--kerala-gpkg", default=str(Path.home() / "Downloads" / KERALA_NWMP_GPKG),
+                    help="Paani Earth's 3 Sep 2026 Kerala NWMP station file")
     ap.add_argument("--out", default=str(REPO / ".cache/kabini-sources"))
     args = ap.parse_args()
 
@@ -501,15 +521,49 @@ def main() -> None:
 
     # stationKey keeps the CPCB_ prefix the first build established: the
     # water-quality readings packs are filed under it.
+    kspcb_all = _read_vector(rdir / KSPCB_GPKG, KSPCB_LAYER, None)
     kspcb = [_tidy(f, {"Water\nQuality Station Code": "stationKey",
                        "Name or Location of Monitoring Station": "name",
                        "Type of Water Body": "waterBody",
                        "Frequency of Monitoring": "frequency"})
-             for f in _intersecting(_read_vector(rdir / KSPCB_GPKG, KSPCB_LAYER, None), kabini)]
+             for f in _intersecting(kspcb_all, kabini)]
+    beyond_clip = {f"CPCB_{f['properties']['Water\nQuality Station Code']}"
+                   for f in kspcb_all if f not in kspcb}
     for f in kspcb:
         f["properties"]["stationKey"] = f"CPCB_{f['properties']['stationKey']}"
         f["properties"]["name"] = f["properties"]["name"].rstrip(", ")
     _write(out / "kspcb-sites.geojson", _fc(kspcb), "KSPCB monitoring (validated)")
+
+    # ── 7b. Kerala NWMP stations: context beyond the clip ──
+    # Every one must sit outside the C2 clip (else it belongs with the KSPCB
+    # set) and inside the full watershed (else it is not a Kabini station).
+    kerala_path = Path(args.kerala_gpkg)
+    if not kerala_path.exists():
+        sys.exit(f"Kerala NWMP GeoPackage not found: {kerala_path}")
+    kerala = [_tidy(f, {"Water\nQuality Station Code": "stationKey",
+                        "Name or Location of Monitoring Station": "name",
+                        "State/UT": "state",
+                        "Type of Water Body": "waterBody",
+                        "Frequency of Monitoring": "frequency"})
+              for f in _read_vector(kerala_path, KERALA_NWMP_LAYER, None)]
+    for f in kerala:
+        p = f["properties"]
+        p.update(KERALA_ROW_FIXES.get(str(p["stationKey"]), {}))
+        p["stationKey"] = f"CPCB_{p['stationKey']}"
+        p["name"] = p["name"].rstrip(", ")
+        p["state"] = p["state"].title()  # "KERALA" -> "Kerala", as the CWC gauge carries it
+        g = _geom(f)
+        if kabini.intersects(g):
+            sys.exit(f"{p['stationKey']} lies inside the C2 clip - stage it with the KSPCB set")
+        if not full_geom.contains(g):
+            sys.exit(f"{p['stationKey']} lies outside the full Kabini watershed: {p['name']}")
+    kerala_keys = {f["properties"]["stationKey"] for f in kerala}
+    if kerala_keys == beyond_clip:
+        print(f"    Kerala file matches the {len(beyond_clip)} stations the review-round file carried beyond the clip")
+    else:
+        print(f"    ! Kerala file differs from the review-round file beyond the clip: "
+              f"only here {sorted(kerala_keys - beyond_clip)}, only there {sorted(beyond_clip - kerala_keys)}")
+    _write(out / "kerala-nwmp-sites.geojson", _fc(kerala), "Kerala NWMP stations (context)")
 
     stps = [_tidy(f, {"STP_Name": "name",
                       "Implementing Agency": "operator",

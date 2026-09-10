@@ -75,21 +75,18 @@ def parse_pdf(pdf: Path, cache_dir: Path) -> dict[str, dict]:
         toks = line.split()
         if len(toks) < 12 or not toks[0].isdigit():
             continue
-        # find the state: the last non-numeric-tail token run must end with one
-        tail_start = None
+        # The state column ends the name and starts the numeric tail. A name
+        # can carry its own state ("KABINI AT MUTHANKARA, KERALA   KERALA"),
+        # so take the LAST state token whose tail is all numbers, not the first.
         joined = " ".join(toks)
-        state_pos = None
+        tail = None
         for st in STATES:
-            m = re.search(rf"\b{re.escape(st)}\b", joined)
-            if m:
-                state_pos = m
-                break
-        if not state_pos:
-            continue
-        tail = joined[state_pos.end():].split()
-        if len(tail) < 10:
-            continue
-        if any(not (NUM_RE.match(t) or t in NULLISH) for t in tail):
+            for m in re.finditer(rf"\b{re.escape(st)}\b", joined):
+                cand = joined[m.end():].split()
+                if len(cand) >= 10 and all(NUM_RE.match(t) or t in NULLISH for t in cand):
+                    if tail is None or len(cand) < len(tail):
+                        tail = cand
+        if tail is None:
             continue
         vals = [float(t) if NUM_RE.match(t) else None for t in tail]
         if len(vals) % 2 == 1:

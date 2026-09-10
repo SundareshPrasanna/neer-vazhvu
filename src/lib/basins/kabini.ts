@@ -63,7 +63,7 @@ export const KABINI: BasinManifest = {
       subHydroshedIds: ["C05CAM20"],
       color: "#2563eb",
       narrative:
-        "The Kabini's eastern tributary, draining the Gundlupet and Chamarajanagara side of the basin through the Nalluru Amanikere and Kamarahalli tanks before joining the mainstem. Not one of the 13 NWMP stations or 3 flow gauges on this map falls in its catchment, and no public record we hold measures its water quality separately.",
+        "The Kabini's eastern tributary, draining the Gundlupet and Chamarajanagara side of the basin through the Nalluru Amanikere and Kamarahalli tanks before joining the mainstem. None of the water-quality stations or flow gauges on this map falls in its catchment, and no public record we hold measures its water quality separately.",
       attributes: {
         length: "83 km of mapped centreline inside the sub-basin",
         flowsInto: "Kabini",
@@ -129,9 +129,11 @@ export const KABINI: BasinManifest = {
     // cyan-500, not the old cyan-700: the darker dot sank into the dark
     // imagery (Sundaresh, 2 Sep).
     { family: "flow-stations", label: "CWC monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#06b6d4", defaultOn: true, readings: true },
-    // readings: the 5 river-table stations carry CPCB annual BOD/DO/FC trend
-    // packs (build_basin_wq_param_packs.py); lake stations stay location-only.
-    { family: "monitoring-points", label: "KSPCB monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },
+    // readings: the river-table stations (six KSPCB, plus Kerala's Muthankara)
+    // carry CPCB annual BOD/DO/FC trend packs (build_basin_wq_param_packs.py);
+    // lake and tank stations stay location-only. The four Kerala SPCB stations
+    // ride this family beyond the clip, tagged with their state.
+    { family: "monitoring-points", label: "State board monitoring points (tap for readings)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true },
 
     // ── Floor 3: Pressures ──
     { family: "pressures-industrial", label: "KIADB industrial areas", floor: "pressures", geom: "fill", color: "#dc2626", defaultOn: true, hasKinds: true, kindFilter: "industrial-area" },
@@ -171,8 +173,8 @@ export const KABINI: BasinManifest = {
     sub: "Cauvery basin spatial data and review",
   },
   credits: [
-    "Basin boundary: Karnataka WRD basin decomposition (KWRIS), sub-basin C2, carried over from the Cauvery (Karnataka) atlas ingest. Every data layer here is clipped to it, so the atlas is the Karnataka portion of the Kabini; the Wayanad (Kerala) headwaters appear as context only - the full-watershed outline, the river's course above the state line, and the major waterbodies within it.",
-    "Kerala-headwaters context: India-WRIS major waterbodies and the tributary skeleton - every named watercourse drawn whole (the Karaman Todu into Banasurasagar, the Kora Puzha and Oni Puzha at Karapuzha among them), plus unnamed trunk segments of Strahler order 5+ where naming lapses - via Paani Earth's Cauvery hydrology GeoPackage (August 2026), filtered to the Wayanad share. Drawn as context; no Kerala-side pressure, station or administrative data is claimed.",
+    "Basin boundary: Karnataka WRD basin decomposition (KWRIS), sub-basin C2, carried over from the Cauvery (Karnataka) atlas ingest. Every data layer here is clipped to it, so the atlas is the Karnataka portion of the Kabini; the Wayanad (Kerala) headwaters appear as context only - the full-watershed outline, the river's course above the state line, the major waterbodies within it, and the four NWMP water-quality stations Kerala's board runs there.",
+    "Kerala-headwaters context: India-WRIS major waterbodies and the tributary skeleton - every named watercourse drawn whole (the Karaman Todu into Banasurasagar, the Kora Puzha and Oni Puzha at Karapuzha among them), plus unnamed trunk segments of Strahler order 5+ where naming lapses - via Paani Earth's Cauvery hydrology GeoPackage (August 2026), filtered to the Wayanad share. Drawn as context; no Kerala-side pressure or administrative data is claimed.",
     "Sub-catchments, river centrelines, drainage network, major waterbodies, dams and anicuts: India-WRIS, via Paani Earth Foundation's Cauvery hydrology GeoPackage (August 2026). WRIS publishes watersheds with codes and no names, so sub-catchments are labelled by code.",
     "Dams: India-WRIS National Register of Large Dams, extract dated 14 April 2026. It disagrees with the older CWC MLRD list on completion year for four minor tanks (Hebballa, Kamarahalli, Kalikatte, Karimuddenahalli); the newer register's years are the ones shown.",
     "Minor irrigation tanks: Karnataka GIS tank inventory (KGIS TIS), via Paani Earth's Cauvery package.",
@@ -183,6 +185,7 @@ export const KABINI: BasinManifest = {
     "Administrative boundaries (districts, taluks, ULBs): Karnataka GIS (KGIS), via Paani Earth's Admin GeoPackage, clipped to the basin.",
     "CWC flow gauges + readings: India-WRIS Dataset API (CWC hydrological observations). Discharge is published in arrears; the telemetric level feed has been frozen at the source since 04 Jun 2026.",
     "KSPCB water-quality monitoring points: station list validated and extended by Paani Earth (August 2026 review), wider than the NWMP subset alone; parameter trends from CPCB's annual Water Quality of Rivers tables.",
+    "Kerala SPCB water-quality monitoring points: the Kabini's four NWMP stations in Wayanad (Kabini at Muthankara, Karapuzha dam, Maniyankode Puzha, Pookode Lake), delivered by Paani Earth in September 2026. They sit outside the Karnataka clip and are shown as headwaters context; Muthankara carries the CPCB trend pack, the other three are location-only.",
     "Polluted river stretch, both editions: CPCB, Polluted River Stretches for Restoration of Water Quality 2025 (October 2025). The 2018 reach was redrawn by Paani Earth against the monitoring station locations and delivered in the August 2026 review; the mapped course measures 12.2 km against the 'about 9 Kms' KSPCB's action plan states.",
     "Polluting drain outfalls and the drains reaching them: mapped by Paani Earth from the NMCG monthly progress report of October 2020, which itemises the drains without coordinates, onto the India-WRIS drainage network.",
     "Sewage treatment plants: NMCG progress report (January 2025) against the CPCB 2021 STP inventory, compiled by Paani Earth. Coordinates for the Gundlupet plants are flagged by the compiler as needing validation.",
