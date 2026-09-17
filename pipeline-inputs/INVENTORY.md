@@ -23,7 +23,7 @@ Inputs of `scripts/build_erode_rivers_basin.py` (the Erode district map, `public
 | tngis-district-boundary.json | The district frame every spatial test rests on, frozen so the weekly `--live` refresh never depends on TNGIS | `bdd9c986666ffbac` | TNGIS WFS `admin_master:administrative_boundary_district`, LGD 573, raw response, retrieved 2026-09-17 | As `tngis-open-geoserver` in `scripts/source-registry/basins.json` |
 | tngis-sub-basins.json | TN WRD sub-basins over the district extent; clipped to the frame they are the map's catchments | `7476b2cd17d51d39` | TNGIS WFS `generic_viewer:sub_basin`, raw response, retrieved 2026-09-17 | As above |
 | tnpcb-type-sectors.json | Reviewed lookup: TNPCB industry type code to the sector class on the map | `a1b115807a75a2f3` | Authored from the distinct type strings in the Erode slice of the TNGIS industry register; review status inside the file | Own work |
-| cetp-schemes.json | Proposed and operating common effluent treatment plants, joined to register unit ids | `d0776a3d5f1e8581` | Parsed by script from the Tamil Nadu Department of Textiles 'Nadanthai Vaazhi Cauvery' table (retrieved 2026-09-18) and TNPCB's 2020 CETP lists; the name join is the reviewed part | Government publications, cited with attribution |
+| cetp-schemes.json | Proposed and operating common effluent treatment plants, joined to register unit ids | `bb8465bfcaa34925` | Parsed by script from the Tamil Nadu Department of Textiles 'Nadanthai Vaazhi Cauvery' table (retrieved 2026-09-17) and TNPCB's 2020 CETP lists; the name join is the reviewed part | Government publications, cited with attribution |
 
 Consumer: the builder above and `.github/workflows/erode-rivers-refresh.yml` (weekly). Public exposure: downloadable via the public repo.
 
@@ -33,5 +33,5 @@ Log:
   overclaiming "not reachable at a public URL".
 - 2026-09-06: mumbai-river-catchments-fabdem.geojson added with the mumbai-rivers
   basin atlas (FABDEM river catchments for the four Greater Mumbai rivers).
-- 2026-09-18: basins/erode-rivers/ added with the Erode district map: two frozen TNGIS frames and two
+- 2026-09-17: basins/erode-rivers/ added with the Erode district map: two frozen TNGIS frames and two
   reviewed lookups (TNPCB type codes; treatment schemes).

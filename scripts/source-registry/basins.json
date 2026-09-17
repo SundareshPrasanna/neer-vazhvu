@@ -751,7 +751,7 @@
         "public/data/basins/erode-rivers/realtime-stations.geojson"
       ],
       "refreshMethod": "scripts/build_erode_rivers_basin.py (delete .cache/erode-rivers/ to re-fetch), then scripts/nvdm_envelope_erode_rivers.py only if the source list changed",
-      "notes": "Same portal as atlas.json's tngis-generic-viewer-water-bodies, whose note quotes the portal's terms; permission to publish was confirmed by Sundaresh on 2026-09-17 (record the date and form of the permission here). Layers read: admin_master district + taluk boundaries, generic_viewer block_boundary, tnrd panchayat_boundary, sub_basin, microwatersheds, all_water_bodies, reservoir, mines and industry_cad_matched; named tanks arrive through the cauvery-tn ingest. The industry register states no publisher or date: its unit ids follow TNPCB's consent-register format (category letter, registration year 2015 to 2024, office code PND or EDL), and it holds only units matched to a land parcel, so counts are lower bounds. The tngis:, TNGIS_V2: and hilaris: workspaces error (their database does not exist): use generic_viewer:. generic_viewer:raingauge is NOT used - it misplaces stations by tens of km."
+      "notes": "Same portal as atlas.json's tngis-generic-viewer-water-bodies, whose note quotes the portal's terms; publication is with TNGIS's permission (the date and form of the permission are to be recorded here). Layers read: admin_master district + taluk boundaries, generic_viewer block_boundary, tnrd panchayat_boundary, sub_basin, microwatersheds, all_water_bodies, reservoir, mines and industry_cad_matched; named tanks arrive through the cauvery-tn ingest. The industry register states no publisher or date: its unit ids follow TNPCB's consent-register format (category letter, registration year 2015 to 2024, office code PND or EDL), and it holds only units matched to a land parcel, so counts are lower bounds. The tngis:, TNGIS_V2: and hilaris: workspaces error (their database does not exist): use generic_viewer:. generic_viewer:raingauge is NOT used - it misplaces stations by tens of km."
     },
     {
       "id": "sipcot-gis-geoserver",
@@ -851,7 +851,7 @@
         "public/data/basins/erode-rivers/inventory.json"
       ],
       "refreshMethod": "scripts/build_erode_rivers_basin.py --live, weekly by .github/workflows/erode-rivers-refresh.yml (Mondays); a full build re-fetches too when .cache/erode-rivers/ is cleared",
-      "notes": "JSON behind the dashboard: /rtwqmstnpcb/api/readings/graph/?site_id=<n>&mean=MO&start_date=YYYY-MM-DD HH:MM&end_date=... (mean = H, D, MO, Q, Y). Site ids: 3 KGC-ERD-UP-3 and 4 KGC-ERD-DS-4 (Kalingarayan canal above and below Erode), 9 NOY-ORA-DS-6 (Noyyal below Orathupalayam dam); 5-8 and 10 are outside Erode district. Sensor data, not laboratory results; a dead sensor reports dissolved solids of 0.01 (dropped). Included on Sundaresh's decision of 2026-09-18."
+      "notes": "JSON behind the dashboard: /rtwqmstnpcb/api/readings/graph/?site_id=<n>&mean=MO&start_date=YYYY-MM-DD HH:MM&end_date=... (mean = H, D, MO, Q, Y). Site ids: 3 KGC-ERD-UP-3 and 4 KGC-ERD-DS-4 (Kalingarayan canal above and below Erode), 9 NOY-ORA-DS-6 (Noyyal below Orathupalayam dam); 5-8 and 10 are outside Erode district. Sensor data, not laboratory results; a dead sensor reports dissolved solids of 0.01 (dropped). Included deliberately on 2026-09-17, with attribution, the reuse terms being unstated."
     }
   ]
 }
