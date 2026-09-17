@@ -28,6 +28,8 @@ export interface AtlasDistrict {
   /** Basin id + sub-basin key this district sits in, for the basin link
    *  (src/lib/basins). Absent when the district is not inside a mapped basin. */
   basin?: { basinId: string; subBasinKey: string; subBasinName: string };
+  /** A district-scoped basin atlas (src/lib/basins), linked from the page's map section. */
+  deepDive?: { basinId: string; label: string };
   /** Curated (human-reviewed) briefs exist only where a reviewer wrote them. */
   hasCuratedBriefs: boolean;
   /** Preview gate, the Surat/Pune pattern: false hides the routes and the
@@ -120,6 +122,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Erode",
     hook: "Canal country on the Bhavani: 39% of irrigation is canal water and 49% open wells, and Nambiyur taluk pumps 171% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "120", subBasinName: "Lower Bhavani" },
+    deepDive: { basinId: "erode-rivers", label: "Rivers, groundwater and industry on one map" },
     hasCuratedBriefs: false,
     published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,

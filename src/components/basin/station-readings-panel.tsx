@@ -408,8 +408,8 @@ function SeriesBlock({ s, tracks, comparing, isDark }: {
           This chart shows the selected station only.
         </div>
       )}
-      {KIND_EXPLAINER[String(s.kind)] && (
-        <div className="text-[10px] text-slate-400 leading-snug mt-0.5">{KIND_EXPLAINER[String(s.kind)]}</div>
+      {(s.explainer ?? KIND_EXPLAINER[String(s.kind)]) && (
+        <div className="text-[10px] text-slate-400 leading-snug mt-0.5">{s.explainer ?? KIND_EXPLAINER[String(s.kind)]}</div>
       )}
       {s.note && <div className="text-[10px] text-slate-400 leading-snug mt-0.5">{s.note}</div>}
     </div>

@@ -551,6 +551,18 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // PRS entry-point panel: open when the polluted-stretch line is clicked.
   const [selectedPrs, setSelectedPrs] = useState(false);
   const [prsData, setPrsData] = useState<PrsData | null>(null);
+  // Classes switched off per layer (layerKey -> class values), for layers that declare `classes`.
+  const [hiddenClasses, setHiddenClasses] = useState<Record<string, string[]>>(() =>
+    Object.fromEntries(manifest.layers.filter((l) => l.classes).map((l) => [layerKey(l), l.classes!.rows.filter((r) => r.defaultOff).map((r) => r.value)])),
+  );
+  const toggleClass = useCallback((key: string, value: string) => {
+    setHiddenClasses((h) => {
+      const cur = h[key] ?? [];
+      return { ...h, [key]: cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value] };
+    });
+  }, []);
+  // "Show X on the map": the family to fly to once its data is in. `n` makes a repeat click fly again.
+  const [flyFamily, setFlyFamily] = useState<{ family: string; n: number } | null>(null);
   const [accData, setAccData] = useState<AccountabilityData | null>(null);
   const [reviewedMpr, setReviewedMpr] = useState<ReviewedMprSeries | null>(null);
   // True when a gap unit was opened FROM the PRS panel, so the gap panel can
@@ -881,6 +893,12 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const fitKey = (manifest.defaultFitFamilies ?? []).every((f) => data[f])
     ? (manifest.defaultFitFamilies ?? []).map((f) => `${f}:${data[f]?.features.length ?? 0}`).join(",")
     : "";
+  const flyFamilyBounds = useMemo(() => {
+    const feats = flyFamily ? data[flyFamily.family]?.features ?? [] : [];
+    if (!feats.length) return null;
+    const b = L.geoJSON({ type: "FeatureCollection", features: feats } as never).getBounds();
+    return b.isValid() ? b : null;
+  }, [flyFamily, data]);
   const fitBounds = useMemo(() => {
     let feats: Feature[];
     if (selectedRiverId && shedData && selectedSheds.size > 0) {
@@ -980,7 +998,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     [manifest.layers],
   );
 
-  const visibleLayers = orderedLayers.filter(shouldRender);
+  const visibleLayers = orderedLayers.filter(shouldRender).map((l) => {
+    const hidden = l.classes ? hiddenClasses[layerKey(l)] ?? [] : [];
+    return hidden.length ? { ...l, classes: { ...l.classes!, rows: l.classes!.rows.filter((r) => !hidden.includes(r.value)) } } : l;
+  });
 
   // Terrain vs choropleth: hypsometric fills under a gap choropleth muddy its
   // severity reading (the one fill layer that spans whole admin units), so the
@@ -1275,7 +1296,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                     {floorLayers(f.id).map((l) => {
                       const inv = inventory?.families[l.family];
                       return (
-                        <label key={layerKey(l)} className="flex items-start gap-2 text-xs cursor-pointer group">
+                        <div key={layerKey(l)}>
+                        <label className="flex items-start gap-2 text-xs cursor-pointer group">
                           <input
                             type="checkbox"
                             checked={enabled[layerKey(l)] ?? l.defaultOn}
@@ -1291,6 +1313,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                             </span>
                           </span>
                         </label>
+                        {l.classes && (enabled[layerKey(l)] ?? l.defaultOn) && (
+                        <ClassChips layer={l} hidden={hiddenClasses[layerKey(l)] ?? []} counts={inv?.sources} onToggle={(v) => toggleClass(layerKey(l), v)} />
+                      )}
+                        </div>
                       );
                     })}
                   </div>
@@ -1305,7 +1331,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             {manifest.layers.filter((l) => l.floor !== "hydrology").map((l) => {
               const inv = inventory?.families[l.family];
               return (
-                <label key={layerKey(l)} className="flex items-start gap-2 text-xs cursor-pointer group">
+                <div key={layerKey(l)}>
+                <label className="flex items-start gap-2 text-xs cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={enabled[layerKey(l)] ?? l.defaultOn}
@@ -1324,6 +1351,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                     </span>
                   </span>
                 </label>
+                {l.classes && (enabled[layerKey(l)] ?? l.defaultOn) && (
+                <ClassChips layer={l} hidden={hiddenClasses[layerKey(l)] ?? []} counts={inv?.sources} onToggle={(v) => toggleClass(layerKey(l), v)} />
+              )}
+                </div>
               );
             })}
           </div>
@@ -1361,6 +1392,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             let feats = scoped(fc, l);
             if (l.kindFilter) {
               feats = feats.filter((f) => (f.properties as Record<string, unknown>)?.kind === l.kindFilter);
+            }
+            // Classed layers: drop the classes the reader has switched off.
+            const hiddenCls = l.classes ? hiddenClasses[layerKey(l)] ?? [] : [];
+            const clsSig = hiddenCls.join("|");
+            if (l.classes && hiddenCls.length) {
+              const prop = l.classes.prop;
+              feats = feats.filter((f) => !hiddenCls.includes(String((f.properties as Record<string, unknown>)?.[prop] ?? "")));
             }
             // PRS: by default only the latest edition's stretch is shown; the
             // growth toggle reveals the earlier ones too. Sort so EARLIER
@@ -1455,10 +1493,10 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             if (l.geom === "line") {
               return (
                 <GeoJSON
-                  key={`${l.family}-${selectedRiverId}-${tiles.isDark}${l.prs ? `-${showGrowth}` : ""}`}
+                  key={`${l.family}-${selectedRiverId}-${tiles.isDark}${l.prs ? `-${showGrowth}` : ""}-${clsSig}`}
                   data={fcScoped}
                   style={(feat?: Feature) => lineStyle(l, feat, manifest, selectedRiverId, faded, l.prs && showGrowth, prsYearsOnMap)}
-                  interactive={l.family === "rivers" || !!l.prs}
+                  interactive={l.family === "rivers" || !!l.prs || !!l.classes}
                   onEachFeature={(feat: Feature, layer: Layer) => {
                     if (l.prs) {
                       const pp = (feat.properties ?? {}) as Record<string, unknown>;
@@ -1472,6 +1510,11 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                         layer.bindTooltip(r.displayName, { sticky: true });
                         layer.on("click", () => selectRiver(rid));
                       }
+                    } else if (l.classes) {
+                      // Classed lines carry named features (a canal network): name on hover, details on click.
+                      const p = (feat.properties ?? {}) as Record<string, unknown>;
+                      layer.bindTooltip(tipLabel(p, l), { sticky: true });
+                      layer.on("click", () => { setSelectedFeature({ family: l.family, props: p }); setSelectedGapUnit(null); setSelectedPrs(false); });
                     }
                   }}
                 />
@@ -1482,7 +1525,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               const treatment = l.family === "infrastructure" || l.family === "fstp";
               return (
                 <GeoJSON
-                  key={`${layerKey(l)}-${selectedRiverId}`}
+                  key={`${layerKey(l)}-${selectedRiverId}-${clsSig}`}
                   data={fcScoped}
                   pointToLayer={(feat, latlng) =>
                     treatment
@@ -1516,7 +1559,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             const hlSig = mapHighlight?.family === l.family ? JSON.stringify(mapHighlight) : "";
             return (
               <GeoJSON
-                key={`${layerKey(l)}-${selectedRiverId}-${tiles.isDark}-${hlSig}`}
+                key={`${layerKey(l)}-${selectedRiverId}-${tiles.isDark}-${hlSig}-${clsSig}`}
                 data={fcScoped}
                 interactive={!isBase}
                 style={(feat?: Feature) => fillStyle(l, feat, faded, null, mapHighlight)}
@@ -1576,6 +1619,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
           })}
 
           <HighlightFlyer bounds={highlightBounds} />
+          <HighlightFlyer key={flyFamily?.n ?? 0} bounds={flyFamilyBounds} />
 
           {/* Visitor's own location: an accuracy ring + a solid blue dot, drawn
               last so it sits on top of every layer. */}
@@ -1760,6 +1804,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 }}
                 onShowLayer={(family) => {
                   const lyr = layerByFamily[family];
+                  // The layer may already be on, so switching it on shows nothing: go to it.
+                  setFlyFamily({ family, n: Date.now() });
                   // Enable every entry of the family - kind-split families
                   // (e.g. pressures-industrial) key their toggles by
                   // family:kindFilter, so the bare family key would miss them.
@@ -1842,7 +1888,10 @@ export interface LegendItem { sym: LegendSym; color: string; label: string }
 export function buildLegendItems(layers: BasinLayer[], elevation?: { band: string; color: string }[]): LegendItem[] {
   const items: LegendItem[] = [];
   for (const l of layers) {
-    if (l.legendRows) {
+    if (l.classes) {
+      for (const r of l.classes.rows) items.push({ sym: l.geom === "point" ? "dot" : l.geom === "line" ? "line" : "box", color: r.color, label: r.label });
+    }
+    else if (l.legendRows) {
       // The manifest speaks for itself: a layer whose features carry more than
       // one visual role declares its own rows (basin-specific prose stays
       // data, never a hardcoded label here).
@@ -1970,6 +2019,35 @@ function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[];
   );
 }
 
+/** Legend chips for a classed layer: click a class to hide it and focus on the rest. */
+function ClassChips({ layer, hidden, counts, onToggle }: {
+  layer: BasinLayer;
+  hidden: string[];
+  counts?: { kind: string | null; count: number }[];
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <div className="ml-6 mt-1 mb-1 flex flex-col gap-0.5">
+      {layer.classes!.rows.map((r) => {
+        const off = hidden.includes(r.value);
+        const n = counts?.find((c) => c.kind === r.value)?.count;
+        return (
+          <button
+            key={r.value}
+            type="button"
+            aria-pressed={!off}
+            onClick={() => onToggle(r.value)}
+            className={`flex items-center gap-1.5 text-left text-[11px] leading-tight ${off ? "opacity-40 line-through" : ""} text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white`}
+          >
+            <span className="inline-block w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: r.color }} />
+            <span>{r.label}{n != null && <span className="text-slate-400"> ({n})</span>}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function LegendSymbol({ sym, color }: { sym: LegendSym; color: string }) {
   if (sym === "dot") return <span className="inline-block w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />;
   if (sym === "ring") return <span className="inline-block w-3 h-3 rounded-full shrink-0 border-2 bg-transparent" style={{ borderColor: color }} />;
@@ -2075,13 +2153,27 @@ function lineStyle(l: BasinLayer, feat: Feature | undefined, manifest: BasinMani
     const sel = rid === selectedRiverId;
     return { color: r?.color ?? l.color, weight: sel ? 5 : 3, opacity: sel || !selectedRiverId ? 1 : 0.75 };
   }
+  if (l.classes) {
+    // Classed lines (a canal network): colour by class, and the first class listed draws heaviest.
+    const v = String((feat?.properties as Record<string, unknown> | undefined)?.[l.classes.prop] ?? "");
+    const rank = Math.max(l.classes.rows.findIndex((r) => r.value === v), 0);
+    return { color: classColor(l, feat), weight: rank === 0 ? 2.5 : rank === 1 ? 1.6 : 1, opacity: faded ? 0.4 : 0.9, fill: false };
+  }
   // fill: false matters when a polygon family is routed through the line
   // path - Leaflet's default otherwise fills it, tinting the whole shape.
   return { color: l.color, weight: 1, opacity: faded ? 0.4 : 0.85, fill: false };
 }
 
+/** A classed layer's colour for this feature (see BasinLayer.classes), else the layer colour. */
+function classColor(l: BasinLayer, feat: Feature | undefined): string {
+  if (!l.classes) return l.color;
+  const v = String((feat?.properties as Record<string, unknown> | undefined)?.[l.classes.prop] ?? "");
+  return l.classes.rows.find((r) => r.value === v)?.color ?? l.color;
+}
+
 function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L.CircleMarkerOptions {
   const p = (feat?.properties ?? {}) as Record<string, unknown>;
+  const color = classColor(l, feat);
   // Hollow marks a station you cannot read here today, but the cue is keyed
   // per layer type: a readings layer goes hollow when no readings pack is
   // attached (solid promises a chart on tap - see the tap gate on
@@ -2094,9 +2186,9 @@ function pointStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean): L
     : l.family === "monitoring-points" && String(p.publicDomain ?? "").toUpperCase() !== "YES";
   return {
     radius: 5,
-    color: l.color,
+    color,
     weight: 1.5,
-    fillColor: hollow ? "transparent" : l.color,
+    fillColor: hollow ? "transparent" : color,
     fillOpacity: faded ? 0.3 : hollow ? 0 : 0.85,
     opacity: faded ? 0.5 : 1,
   };
@@ -2189,16 +2281,17 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gap
     // never uses, so the basin edge can't be mistaken for a basemap boundary.
     return { color: l.color, weight: 3, fill: false, opacity: 0.95 };
   }
-  if (l.family.startsWith("admin")) {
+  if (l.family.startsWith("admin") || l.outline) {
     // District is always-on context (outline only). The opt-in finer levels get
     // a faint fill so the whole unit is tappable (hierarchy on tap/hover).
     const detail = l.family !== "admin-district";
+    const oc = classColor(l, feat);
     return {
-      color: l.color,
+      color: oc,
       weight: l.family === "admin-district" ? 1.4 : 1.2,
       fill: detail,
-      fillColor: l.color,
-      fillOpacity: detail ? (faded ? 0.03 : 0.07) : 0,
+      fillColor: oc,
+      fillOpacity: detail ? (faded ? 0.03 : l.classes ? 0.18 : 0.07) : 0,
       opacity: faded ? 0.4 : 0.85,
       dashArray: ADMIN_DASH[l.family],
     };
@@ -2234,8 +2327,9 @@ function fillStyle(l: BasinLayer, feat: Feature | undefined, faded: boolean, gap
     const c = PRESSURE_KIND_COLOR[kind] ?? l.color;
     return { color: c, weight: 1, fillColor: c, fillOpacity: faded ? 0.2 : 0.5 };
   }
-  // waterbodies, command-areas
-  return { color: l.color, weight: 0.8, fillColor: l.color, fillOpacity: faded ? 0.3 : 0.6 };
+  // waterbodies, command-areas; classed layers take each feature's class colour
+  const c = classColor(l, feat);
+  return { color: c, weight: 0.8, fillColor: c, fillOpacity: faded ? 0.3 : l.classes ? 0.5 : 0.6 };
 }
 
 // ── panels ───────────────────────────────────────────────────────────────
@@ -2259,7 +2353,13 @@ function RiverPanel({ river, onClear }: { river: BasinManifest["rivers"][number]
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{river.displayName}</h2>
           {river.displayNameLocal && <div className="text-sm text-slate-500 dark:text-slate-400">{river.displayNameLocal}</div>}
         </div>
-        <span className="inline-block w-3 h-3 rounded-full mt-1.5" style={{ backgroundColor: river.color }} />
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: river.color }} />
+          {/* The same close control every other panel has; "Back to whole basin" below stays for readers who scroll. */}
+          <button onClick={onClear} aria-label="Close" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded">
+            <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
       </div>
       {river.attributes && (
         <dl className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
@@ -2319,6 +2419,8 @@ const PROP_LABELS: Record<string, string> = {
   feed: "Storage feed",
 };
 const LINK_FIELDS = new Set(["dataUrl", "evidenceUrl"]);
+// A feature that has its own page on this site (a panchayat, a block) carries pagePath + pageLabel.
+const PAGE_FIELDS = new Set(["pagePath", "pageLabel"]);
 
 /** Fallback label for any property key not in PROP_LABELS: split camelCase and
  *  capitalise, so "evidenceType" -> "Evidence Type", "govCode" -> "Gov Code". */
@@ -2331,7 +2433,7 @@ function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown
   const title = String(props.name ?? props.contributor ?? props.kind ?? label);
   const entries = Object.entries(props).filter(
     ([k, v]) => k !== "name" && k !== "shedId" && k !== "cetp" && k !== "hasReadings" && k !== "liveCode"
-      && k !== "readingsPending" && !LINK_FIELDS.has(k) && v != null && String(v).trim() !== "",
+      && k !== "readingsPending" && !LINK_FIELDS.has(k) && !PAGE_FIELDS.has(k) && v != null && String(v).trim() !== "",
   );
   return (
     <div className="space-y-3">
@@ -2352,6 +2454,11 @@ function FeaturePanel({ props, label, onClose }: { props: Record<string, unknown
           </div>
         ))}
       </dl>
+      {typeof props.pagePath === "string" && props.pagePath.startsWith("/") && (
+        <a href={props.pagePath} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          {String(props.pageLabel ?? "Open its page")} →
+        </a>
+      )}
       {[...LINK_FIELDS].map((k) =>
         props[k] && String(props[k]).startsWith("http") ? (
           <a key={k} href={String(props[k])} target="_blank" rel="noopener noreferrer" className="inline-block text-xs text-blue-600 dark:text-blue-400 hover:underline">

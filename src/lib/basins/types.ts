@@ -82,6 +82,13 @@ export interface BasinLayer {
    *  a river is selected, else the full file). Default off so it only loads
    *  when explicitly checked. */
   heavy?: boolean;
+  /** One toggle, several classes: features are coloured by the value of `prop`,
+   *  and each class is a legend chip the reader can switch off to focus on the
+   *  rest. `value` also keys the inventory's per-kind counts. */
+  classes?: { prop: string; rows: { value: string; label: string; color: string; /** Starts switched off (the reader opts in). */ defaultOff?: boolean }[] };
+  /** Boundary-like polygons (watershed levels): drawn as an outline with a
+   *  faint fill so the unit stays tappable, the way admin levels are. */
+  outline?: boolean;
   /** Part of the persistent base skeleton - rendered (dimmed) even when its
    *  floor isn't focused, so the map keeps its bearings. */
   context?: boolean;
@@ -138,6 +145,9 @@ export interface ReadingsSeriesBase {
   verified: boolean;
   /** Note shown under the chart (e.g. cadence, aggregation basis). */
   note?: string;
+  /** Replaces the kind's stock one-line explainer when the series is not what
+   *  that line describes (a sensor's monthly mean is not an annual CPCB table). */
+  explainer?: string;
 }
 
 /** [isoDateOrMonth, value] - value is a number except wq-class-series ("A".."E"). */

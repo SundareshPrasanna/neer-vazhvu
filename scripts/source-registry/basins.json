@@ -20,7 +20,9 @@
         "public/data/basins/arkavathi/gaps.json",
         "public/data/basins/kabini/accountability.json",
         "public/data/basins/kabini/prs.json",
-        "public/data/basins/kabini/prs-drains.geojson"
+        "public/data/basins/kabini/prs-drains.geojson",
+        "public/data/basins/erode-rivers/prs.json",
+        "public/data/basins/erode-rivers/treatment-plants.geojson"
       ],
       "refreshMethod": "scripts/refresh-arkavathi-mpr.ts (--status / --extract / --diff), driven by the headwaters-refresh skill",
       "playbook": [
@@ -583,7 +585,12 @@
         "linkPattern": "\\.pdf"
       },
       "dependsOn": [
-        "public/data/basins/cauvery-tn/scoreboard.json"
+        "public/data/basins/cauvery-tn/scoreboard.json",
+        "public/data/basins/erode-rivers/monitoring-points.geojson",
+        "public/data/basins/erode-rivers/inventory.json",
+        "public/data/basins/erode-rivers/prs.geojson",
+        "public/data/basins/erode-rivers/prs-drains.geojson",
+        "public/data/basins/erode-rivers/prs.json"
       ],
       "refreshMethod": "manual (scripts/build_cauvery_tn_wq.py if the series resumes)",
       "notes": "Replaces the maxAgeDays-400 edition-watch hack formerly in check-data-freshness EXTRA_FEEDS. Watching for a resumed stretch-WQ series or a new vintage; the next CPCB PRS report (cpcb-nwmp-annual host) is the companion signal. UI states the series stopped Dec 2023 - dated staleness is the citable finding.",
@@ -696,6 +703,155 @@
         "public/data/basins/kabini/context-streams.geojson"
       ],
       "refreshMethod": "scripts/ingest_basin_overview.py for cauvery-ka, then scripts/build_kabini_sources.py -> ingest_basin.py -> build_basin_wq_param_packs.py + build_basin_flow_readings.py for the Kabini carry-over (order matters: re-ingest wipes hasReadings on BOTH station families)"
+    },
+    {
+      "id": "tngis-open-geoserver",
+      "scope": "erode-rivers",
+      "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+      "url": "https://tngis.tn.gov.in/tngismaps/ows",
+      "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/erode-rivers/boundary.geojson",
+        "public/data/basins/erode-rivers/sub-hydrosheds.geojson",
+        "public/data/basins/erode-rivers/rivers.geojson",
+        "public/data/basins/erode-rivers/reservoirs.geojson",
+        "public/data/basins/erode-rivers/tanks.geojson",
+        "public/data/basins/erode-rivers/monitoring-points.geojson",
+        "public/data/basins/erode-rivers/industries.geojson",
+        "public/data/basins/erode-rivers/treatment-plants.geojson",
+        "public/data/basins/erode-rivers/industrial-estates.geojson",
+        "public/data/basins/erode-rivers/quarries.geojson",
+        "public/data/basins/erode-rivers/groundwater-taluks.geojson",
+        "public/data/basins/erode-rivers/admin-taluk.geojson",
+        "public/data/basins/erode-rivers/admin-block.geojson",
+        "public/data/basins/erode-rivers/inventory.json",
+        "public/data/basins/erode-rivers/admin-gp.geojson",
+        "public/data/basins/erode-rivers/admin-gp",
+        "public/data/basins/erode-rivers/waterbodies-major.geojson",
+        "public/data/basins/erode-rivers/waterbodies-minor.geojson",
+        "public/data/basins/erode-rivers/waterbodies-minor",
+        "public/data/basins/erode-rivers/watersheds.geojson",
+        "public/data/basins/erode-rivers/sub-watersheds.geojson",
+        "public/data/basins/erode-rivers/mini-watersheds.geojson",
+        "public/data/basins/erode-rivers/micro-watersheds.geojson",
+        "public/data/basins/erode-rivers/micro-watersheds",
+        "public/data/basins/erode-rivers/prs.geojson",
+        "public/data/basins/erode-rivers/prs-drains.geojson",
+        "public/data/basins/erode-rivers/groundwater-wells.geojson",
+        "public/data/basins/erode-rivers/canals.geojson",
+        "public/data/basins/erode-rivers/command-areas.geojson",
+        "public/data/basins/erode-rivers/cepi-area.geojson",
+        "public/data/basins/erode-rivers/gauging-stations.geojson",
+        "public/data/basins/erode-rivers/realtime-stations.geojson"
+      ],
+      "refreshMethod": "scripts/build_erode_rivers_basin.py (delete .cache/erode-rivers/ to re-fetch), then scripts/nvdm_envelope_erode_rivers.py only if the source list changed",
+      "notes": "Same portal as atlas.json's tngis-generic-viewer-water-bodies, whose note quotes the portal's terms; permission to publish was confirmed by Sundaresh on 2026-09-17 (record the date and form of the permission here). Layers read: admin_master district + taluk boundaries, generic_viewer block_boundary, tnrd panchayat_boundary, sub_basin, microwatersheds, all_water_bodies, reservoir, mines and industry_cad_matched; named tanks arrive through the cauvery-tn ingest. The industry register states no publisher or date: its unit ids follow TNPCB's consent-register format (category letter, registration year 2015 to 2024, office code PND or EDL), and it holds only units matched to a land parcel, so counts are lower bounds. The tngis:, TNGIS_V2: and hilaris: workspaces error (their database does not exist): use generic_viewer:. generic_viewer:raingauge is NOT used - it misplaces stations by tens of km."
+    },
+    {
+      "id": "sipcot-gis-geoserver",
+      "scope": "erode-rivers",
+      "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
+      "url": "https://sipcotgis.tn.gov.in/",
+      "license": "LICENCE UNVERIFIED - see notes. Open SIPCOT GeoServer (WFS, no login); the site footer reads 'All Rights Reserved' and states no data terms; the reuse question sent for the Sriperumbudur corridor has no reply. Estate outlines only, published with attribution.",
+      "type": "api",
+      "cadence": "continuous",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/erode-rivers/industrial-estates.geojson",
+        "public/data/basins/erode-rivers/inventory.json"
+      ],
+      "refreshMethod": "scripts/build_erode_rivers_basin.py (delete .cache/erode-rivers/ to re-fetch)",
+      "notes": "WFS at https://sipcotgis.tn.gov.in:8086/geoserver/cite/wfs. Only industrial_complex_boundary-Perundurai_DTA and -Perundurai_SEZ are read. The plot layers (allottee names, product details) are NOT published. The plain Perundurai park key errors on GeoJSON output."
+    },
+    {
+      "id": "nwic-nwdp-groundwater-level",
+      "scope": "erode-rivers",
+      "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+      "url": "https://nwdp.nwic.gov.in/",
+      "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+      "type": "api",
+      "cadence": "weekly refresh (source moves daily)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/erode-rivers/groundwater-wells.geojson",
+        "public/data/basins/erode-rivers/inventory.json"
+      ],
+      "refreshMethod": "scripts/build_erode_rivers_basin.py --live, weekly by .github/workflows/erode-rivers-refresh.yml (Mondays); a full build re-fetches too when .cache/erode-rivers/ is cleared",
+      "notes": "CKAN site carrying the WIMS station data India-WRIS serves; used because indiawris.gov.in and arc.indiawris.gov.in were both unreachable on 2026-09-17. API needs no key: /api/3/action/datastore_search with filters={\"District\":\"Erode\"}, 5,000 rows a page (datastore_search_sql returns 400). Resources: CGWB telemetry 2026-2030 3bd0c6d5-dd9b-4c07-9c60-6410c1c6bd56, Tamil Nadu SW GW telemetry 2026-2030 6857c02f-c77e-4576-b349-3e45aacc1c21, CGWB manual quarterly 2021-2025 21cfbb8e-ac1b-4837-a463-317c05fb6f1b. Policy text read 2026-09-17 at /footer/copyrightPolicy. Traps: telemetry values are negative below ground and some stations flip sign mid-series; 0.0 and 1.0 are placeholders; the District tag follows older district lines (66 Erode-tagged stations plot outside the district, mostly around Dharapuram and Kangayam); the same portal also holds CGWB groundwater QUALITY datasets for Tamil Nadu, not yet used."
+    },
+    {
+      "id": "nwic-nwdp-cwc-canal-network",
+      "scope": "erode-rivers",
+      "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+      "url": "https://nwdp.nwic.gov.in/dataset/dd11dfc1-6723-4603-9426-a03e4c8cf50c",
+      "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+      "type": "file",
+      "cadence": "static (files dated 2025)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/erode-rivers/canals.geojson",
+        "public/data/basins/erode-rivers/command-areas.geojson",
+        "public/data/basins/erode-rivers/rivers.geojson",
+        "public/data/basins/erode-rivers/inventory.json"
+      ],
+      "refreshMethod": "scripts/build_erode_rivers_basin.py (delete .cache/erode-rivers/cwc-*.geojson to re-fetch; needs ogr2ogr once to reproject the shapefiles)",
+      "notes": "Two national CWC layers on NWDP: 'Canal Network' (dataset dd11dfc1-6723-4603-9426-a03e4c8cf50c, SHP resource 75e4b705-44b3-4b4a-a32f-060eeae7b907, 47 MB) and 'Water Resource Project' command areas (dataset a4fde712-4a1f-461b-897a-411ebb29a622, SHP resource 19966957-ccfc-4341-ab11-ca72da5953f4, 41 MB), Lambert conformal conic. Fields: prj_name, can_name, can_type, length_km; command areas carry cca and pot_crted in thousand ha. Checks that held for Erode: the Kalingarayan Channel (91 km) starts 30 m from the OSM Bhavani and both TNPCB real-time canal stations plot 10 m from it. TRAP: three unnamed 'Main Canal' lines filed under 'Kalingarayan Anicut System' lie 20 km east of the channel; they are left out."
+    },
+    {
+      "id": "nwic-nwdp-cwc-river-data",
+      "scope": "erode-rivers",
+      "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+      "url": "https://nwdp.nwic.gov.in/",
+      "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+      "type": "api",
+      "cadence": "weekly refresh (source moves daily)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/erode-rivers/gauging-stations.geojson",
+        "public/data/basins/erode-rivers/readings",
+        "public/data/basins/erode-rivers/inventory.json",
+        "public/data/basins/erode-rivers/reservoirs.geojson"
+      ],
+      "refreshMethod": "scripts/build_erode_rivers_basin.py --live, weekly by .github/workflows/erode-rivers-refresh.yml (Mondays); a full build re-fetches too when .cache/erode-rivers/ is cleared",
+      "notes": "CKAN datastore, no key. Discharge (manual daily): cba07162-d1da-4987-b52e-0c1e2173e287 (1950-2000), fca9df0b-47b1-4f1a-8e59-1b43a8c0ae73 (2001-2025), 38543447-b022-4061-b246-d9c00d134639 (2026-2030). Water quality, chemical: dcb05b97-1ad1-47db-9555-c39938e31309, 0d2370a6-3915-49f2-aa73-bc8bc3613499; biological (BOD, COD, coliform): 6a1e2838-95f2-4878-a1fd-325c618c5b40, b729f83d-044c-43ab-a593-4d82d98b5365. TRAPS: the River column prints the basin for every station; KODUMUDI is printed in CUSECS for 2019-04, 2019-09, 2019-11, 2019-12 and 2020-01 (about 35 times the gauges upstream) and URACHIKOTTAI has one spike (2022-10-25, 154,335): left out, never converted; the conductivity column is labelled mS/cm but holds uS/cm; trace-metal values are implausible (unused). Daily 08:00 reservoir levels for 'Bhavani Sagar Dam' and 'Mettur Reservoir' (from 2016) sit in 'River Water Level CWC Cauvery, Manual Hourly': 3e9b3cde-9d04-4c58-af03-4d4a43cc661b (1991-2020), 5af1557b-bbd3-4551-990c-6bea414b702e (2021-2025), 37cba82e-f745-4004-80d2-b05cad65b8e4 (2026-2030); the station name carries a trailing space in some files. Cross-check that held on 2026-09-17: TN agriculture department 53.29 ft of 105 ft at Bhavanisagar = 264.65 m against 264.59 m here; Mettur within 0.3 m. Entry errors (0.92, 860, 3,190 m) and the gauge-zero placeholder (204.222 at Mettur) are dropped by a 25 m band around each reservoir's median."
+    },
+    {
+      "id": "tnpcb-realtime-wq-dashboard",
+      "scope": "erode-rivers",
+      "publisher": "Tamil Nadu Pollution Control Board",
+      "url": "https://tnpcb.gov.in/rtwqmstnpcb",
+      "license": "LICENCE UNVERIFIED - see notes. Public Tamil Nadu government dashboard with no reuse terms stated; its own page switches the download buttons off. Monthly means published with attribution.",
+      "type": "api",
+      "cadence": "weekly refresh (source moves daily)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/erode-rivers/realtime-stations.geojson",
+        "public/data/basins/erode-rivers/readings",
+        "public/data/basins/erode-rivers/inventory.json"
+      ],
+      "refreshMethod": "scripts/build_erode_rivers_basin.py --live, weekly by .github/workflows/erode-rivers-refresh.yml (Mondays); a full build re-fetches too when .cache/erode-rivers/ is cleared",
+      "notes": "JSON behind the dashboard: /rtwqmstnpcb/api/readings/graph/?site_id=<n>&mean=MO&start_date=YYYY-MM-DD HH:MM&end_date=... (mean = H, D, MO, Q, Y). Site ids: 3 KGC-ERD-UP-3 and 4 KGC-ERD-DS-4 (Kalingarayan canal above and below Erode), 9 NOY-ORA-DS-6 (Noyyal below Orathupalayam dam); 5-8 and 10 are outside Erode district. Sensor data, not laboratory results; a dead sensor reports dissolved solids of 0.01 (dropped). Included on Sundaresh's decision of 2026-09-18."
     }
   ]
 }

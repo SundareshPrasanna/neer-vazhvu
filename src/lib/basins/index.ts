@@ -3,6 +3,7 @@ import { ARKAVATHI } from "./arkavathi";
 import { CHENNAI_RIVERS } from "./chennai-rivers";
 import { CAUVERY_KA } from "./cauvery-ka";
 import { CAUVERY_TN } from "./cauvery-tn";
+import { ERODE_RIVERS } from "./erode-rivers";
 import { KABINI } from "./kabini";
 import { MUMBAI_RIVERS } from "./mumbai-rivers";
 
@@ -15,6 +16,7 @@ const BASINS: Record<string, BasinManifest> = {
   "chennai-rivers": CHENNAI_RIVERS,
   "cauvery-ka": CAUVERY_KA,
   "cauvery-tn": CAUVERY_TN,
+  "erode-rivers": ERODE_RIVERS,
   kabini: KABINI,
   "mumbai-rivers": MUMBAI_RIVERS,
 };

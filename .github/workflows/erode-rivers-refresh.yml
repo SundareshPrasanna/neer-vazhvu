@@ -1,0 +1,69 @@
+# Weekly refresh of the living feeds on the Erode district map
+# (public/data/basins/erode-rivers): groundwater wells, CWC river flow, water
+# quality and reservoir levels from NWIC's National Water Data Portal, and
+# TNPCB's real-time sensor stations. Those sources move daily to weekly; every
+# other family on the map (boundaries, canals, the industry register, the
+# polluted-stretch panel) changes by edition and is rebuilt by hand.
+#
+# Artifact-commit pattern (like bmc-floodspots-refresh.yml): files committed
+# back to main. `--live` calls only the two portals above, works from the
+# frozen boundary inputs in pipeline-inputs, and puts last week's files back
+# if a feed returns under 80% of last week's features, so a flaky response
+# cannot thin the map; a missed week just keeps the previous files.
+# The deployed site serves the pinned corpus, so a refresh reaches it with the
+# next data release.
+name: Erode Rivers Live-Feed Refresh
+
+on:
+  schedule:
+    - cron: '15 5 * * 1'   # Mondays 05:15 UTC = 10:45 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install shapely
+        run: pip install "shapely>=2,<3"
+
+      - name: Refresh the living feeds
+        run: |
+          for attempt in 1 2 3; do
+            if python scripts/build_erode_rivers_basin.py --live; then
+              exit 0
+            fi
+            echo "attempt $attempt failed; retrying in 120s"
+            sleep 120
+          done
+          echo "NWDP or TNPCB unreachable or partial after 3 attempts; keeping last week's files"
+          exit 0
+
+      - name: Commit refreshed feeds
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          B=public/data/basins/erode-rivers
+          # Refresh gate: files enveloped at HEAD must still certify L2.
+          bash scripts/nvdm-refresh-gate.sh $B/groundwater-wells.geojson $B/gauging-stations.geojson $B/realtime-stations.geojson $B/reservoirs.geojson $B/inventory.json $B/readings/*.json
+          python3 scripts/build_dataset_catalogue.py
+          python3 scripts/validate_nvdm.py
+          python3 scripts/validate_nvdm.py --selftest
+          git add $B/groundwater-wells.geojson $B/gauging-stations.geojson $B/realtime-stations.geojson $B/reservoirs.geojson $B/inventory.json $B/readings docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
+          if git diff --staged --quiet; then
+            echo "No feed change to commit"
+            exit 0
+          fi
+          git commit -m "Erode rivers live-feed refresh ($(date -u +%Y-%m-%d))"
+          git pull --rebase origin main
+          git push
