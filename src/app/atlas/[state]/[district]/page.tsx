@@ -797,7 +797,9 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               {points.length} of {directory.panchayats.length} Panchayats have a mapped boundary.{" "}
               {directory.boundary?.publicGeometry
                 ? `The polygons are ${directory.boundary.description}; each taluka and Panchayat page draws them.`
-                : "The polygons themselves are withheld pending the TNGIS licence reply."}
+                : entry.deepDive && hasBasinData(entry.deepDive.basinId)
+                  ? "The polygons are not drawn on this page; the district map linked above draws the Panchayat boundaries."
+                  : "The polygons are not drawn on this page."}
             </AtlasNote>
           </AtlasSection>
 
