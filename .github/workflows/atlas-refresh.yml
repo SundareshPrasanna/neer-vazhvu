@@ -46,6 +46,11 @@ permissions:
   contents: write
   issues: write
 
+# One refresh run at a time, so a dispatch never overlaps the monthly run.
+concurrency:
+  group: atlas-refresh
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -54,16 +59,16 @@ jobs:
     # on a normal day; Satara's 1,742 villages run two to three hours, so
     # the ceiling leaves room for a slow one.
     timeout-minutes: 300
+    # Serialise the districts: JJM is a public portal read at a paced rate, and
+    # parallel readers would multiply the load and race the commit step.
+    # max-parallel, NOT a job-level concurrency group: a group holds one
+    # pending job and cancels the rest, which dropped three of five districts
+    # on 2026-09-02.
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         district: [thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, satara, ahilyanagar, kolhapur]
-    # Serialise the two districts: JJM is a public portal read at a paced
-    # rate, and two parallel readers would double the load and race the
-    # commit step.
-    concurrency:
-      group: atlas-refresh
-      cancel-in-progress: false
     steps:
       - name: Skip districts not requested
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.district != 'all' && github.event.inputs.district != matrix.district }}
@@ -100,6 +105,7 @@ jobs:
         run: bash scripts/atlas-refresh-district.sh ${{ matrix.district }}
 
       - name: Commit refreshed artifacts
+        id: commit
         if: ${{ steps.refresh.outcome == 'success' }}
         run: |
           git config user.name "github-actions[bot]"
@@ -114,17 +120,33 @@ jobs:
           # producers on other feeds). The gate refuses an empty list, hence
           # the guard above.
           bash scripts/nvdm-refresh-gate.sh "${changed[@]}"
-          python3 scripts/build_dataset_catalogue.py
-          python3 scripts/validate_nvdm.py
           python3 scripts/validate_nvdm.py --selftest
-          git add public/data/atlas docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
+          git add public/data/atlas
           if git diff --staged --quiet; then
             echo "No change to commit for ${{ matrix.district }}"
             exit 0
           fi
           git commit -m "Atlas refresh: ${{ matrix.district }} ($(date -u +%Y-%m-%d))"
-          git pull --rebase origin ${{ github.ref_name }}
-          git push
+          # main moves during a multi-hour read, and the generated docs always
+          # conflict on a rebase. So rebase the data-only commit first, build
+          # the docs on the new tip, fold them in, push. A real conflict in the
+          # district's own files still stops the step.
+          docs=(docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md)
+          for attempt in 1 2 3; do
+            git pull --rebase origin ${{ github.ref_name }}
+            data_commit=$(git rev-parse HEAD)
+            python3 scripts/build_dataset_catalogue.py
+            python3 scripts/validate_nvdm.py
+            git add "${docs[@]}"
+            git diff --staged --quiet || git commit --amend --no-edit
+            if git push origin HEAD:${{ github.ref_name }}; then
+              exit 0
+            fi
+            echo "push refused (attempt ${attempt}): main moved during the docs build, rebuilding on the new tip"
+            git reset --hard "$data_commit"
+          done
+          echo "could not publish ${{ matrix.district }} after 3 attempts"
+          exit 1
 
       - name: File an issue for a stopped refresh
         if: ${{ failure() && steps.refresh.outcome == 'failure' }}
@@ -140,4 +162,22 @@ jobs:
             "Run: ${run_url}" \
             "" \
             "To resolve: read the step log, then either update pipeline-inputs/atlas/<state>/${district}/refresh-plan.json (expected counts, new units) after reviewing the drift, or rerun once the host is reachable. If the host blocks GitHub runners, run scripts/atlas-refresh-district.sh ${district} from the launchd job instead.")
+          gh issue create --title "$title" --body "$body" --label pipeline-alert || echo "issue creation failed; the run log carries the failure"
+
+      # A refresh that read cleanly but never reached the branch was silent on
+      # 2026-09-02 and surfaced six days later as a stale feed.
+      - name: File an issue for an unpublished refresh
+        if: ${{ failure() && steps.commit.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          district="${{ matrix.district }}"
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          title="Atlas refresh not published: ${district} ($(date -u +%Y-%m-%d))"
+          body=$(printf '%s\n' \
+            "The monthly Atlas refresh for **${district}** read its registers but the commit did not reach the branch, so nothing was published for the district. The commit step stops when an NVDM gate refuses a refreshed file, when the rebase finds a real conflict in the district's own files, or when the push is refused three times." \
+            "" \
+            "Run: ${run_url}" \
+            "" \
+            "To resolve: read the commit step log, fix the cause, then dispatch the workflow for ${district} alone.")
           gh issue create --title "$title" --body "$body" --label pipeline-alert || echo "issue creation failed; the run log carries the failure"
