@@ -1,0 +1,46 @@
+{
+  "_doc": [
+    "TNPCB industry_type code -> the sector toggle it joins on the erode-rivers map.",
+    "The register (TNGIS generic_viewer:industry_cad_matched) prints each unit's type as",
+    "'<code>/<description>'. Sector is read from the CODE, never from a text match on the",
+    "name or description: a text match put Britannia among the tanneries.",
+    "Two code generations coexist (1045 and 1080 are both tanneries, 1040 and 1084 both",
+    "textile processing), and 1049 is printed for both mining and slaughter houses, so a",
+    "rule may require a word in the description ('descriptionHas').",
+    "Codes not listed here fall to the category's general toggle; nothing is dropped.",
+    "'treatment' rules leave the industry layer and join the treatment-plants layer."
+  ],
+  "schemaVersion": 1,
+  "id": "erode-rivers-tnpcb-type-sectors",
+  "review": {
+    "status": "proposed",
+    "extractedBy": "read from the distinct type strings in the Erode slice of the register, 2026-09-17",
+    "verifiedBy": null,
+    "verifiedAt": null
+  },
+  "sectors": {
+    "textile": "Textile processing (bleaching, dyeing, printing)",
+    "tannery": "Tanneries",
+    "paper": "Pulp and paper",
+    "chemicals": "Basic chemicals",
+    "quarry-mining": "Quarries and mining",
+    "cetp": "Common effluent treatment plant",
+    "stp": "Sewage treatment plant"
+  },
+  "rules": [
+    { "code": "1040", "sector": "textile" },
+    { "code": "1084", "sector": "textile" },
+    { "code": "1045", "sector": "tannery" },
+    { "code": "1080", "sector": "tannery" },
+    { "code": "1018", "sector": "paper" },
+    { "code": "1054", "sector": "paper" },
+    { "code": "1061", "sector": "paper" },
+    { "code": "1025", "sector": "chemicals" },
+    { "code": "1005", "sector": "chemicals" },
+    { "code": "1085", "sector": "quarry-mining" },
+    { "code": "1035", "sector": "quarry-mining" },
+    { "code": "1049", "descriptionHas": "Mining", "sector": "quarry-mining" },
+    { "code": "1078", "sector": "cetp", "treatment": true },
+    { "code": "1081", "sector": "stp", "treatment": true }
+  ]
+}

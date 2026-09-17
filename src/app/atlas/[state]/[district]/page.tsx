@@ -29,7 +29,7 @@ import {
 import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { FloodStatement, ScarcityDistrictRead } from "@/components/atlas/scarcity-flood";
 import { getCuratedBriefs } from "@/lib/atlas/curated-briefs";
-import { loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
+import { hasBasinData, loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
 import {
   districtFloodReading,
   districtScarcityReading,
@@ -786,6 +786,13 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             intro={`Every Panchayat with a mapped boundary is plotted from the centre of its own ${directory.boundary?.label ?? "boundary"} polygon, not from a hand-entered coordinate. The marker is the Panchayat, not a settlement.`}
           >
             <AtlasDistrictMap points={points} />
+            {entry.deepDive && hasBasinData(entry.deepDive.basinId) ? (
+              <p className="mt-3 text-sm">
+                <Link href={`/embed/basins/${entry.deepDive.basinId}`} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline">
+                  {entry.deepDive.label}
+                </Link>
+              </p>
+            ) : null}
             <AtlasNote>
               {points.length} of {directory.panchayats.length} Panchayats have a mapped boundary.{" "}
               {directory.boundary?.publicGeometry

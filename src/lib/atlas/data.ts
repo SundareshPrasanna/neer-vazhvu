@@ -55,6 +55,15 @@ export function clearAtlasDataCache(): void {
   cache.clear();
 }
 
+// The basin atlases' served tree. A static literal base, for the tracer reason given above.
+const BASINS_DATA_ROOT = join(process.cwd(), "public", "data", "basins");
+
+/** A district's deep-dive link shows only once that basin's data is in the served tree:
+ *  the code can merge before the data release without the page pointing at an empty map. */
+export function hasBasinData(basinId: string): boolean {
+  return existsSync(join(BASINS_DATA_ROOT, basinId, "inventory.json"));
+}
+
 export function hasDistrictData(district: DistrictRef): boolean {
   return existsSync(fileFor(district, "directory"));
 }
