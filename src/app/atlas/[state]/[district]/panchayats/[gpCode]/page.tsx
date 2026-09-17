@@ -360,7 +360,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                       <figcaption className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         {directory.boundary?.publicGeometry
                           ? `Plotted from the centroid of the ${directory.boundary.label} polygon. The marker is the Panchayat, not a settlement; the polygon is indicative (a 2001-era digitisation), not a survey boundary.`
-                          : "Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a settlement; the polygon is withheld pending the licence reply."}
+                          : "Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a settlement; the polygon is not drawn on this page."}
                         {waterBodyMarkers.length > 0
                           ? ` The ${waterBodyMarkers.length} small markers are the water bodies the First Census of Water Bodies recorded in this Panchayat's villages, at the coordinates its enumerators entered.`
                           : ""}
@@ -510,8 +510,8 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                             {detail.waterBodies.count === 1 ? "water body covers" : "water bodies cover"}{" "}
                             {area(detail.waterBodies.areaHectares)} ha here, the largest of them{" "}
                             {area(detail.waterBodies.largestAreaHectares)} ha. The register names{" "}
-                            {detail.waterBodies.namedCount} of them; the names and polygons are withheld
-                            pending the TNGIS licence reply.
+                            {detail.waterBodies.namedCount} of them; the names and polygons are not shown
+                            on this page.
                           </AtlasFinding>
                           <AtlasNote className="mt-0">
                             Waterspread is the mapped extent, not storage. It says nothing about whether these
