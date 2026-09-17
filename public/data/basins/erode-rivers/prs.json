@@ -1,0 +1,357 @@
+{
+  "nvdm": "1.0",
+  "dataset": "basins/prs",
+  "scope": {
+    "kind": "basin",
+    "id": "erode-rivers"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "as_of": "2025-10"
+      },
+      {
+        "id": "tnpcb-prs-cauvery",
+        "title": "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019, with the preamble to the stretch action plans; TNPCB NWMP annual data 2024 (station 1320)",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf",
+        "as_of": "2019"
+      },
+      {
+        "id": "nmcg-ngt-mpr-listing",
+        "title": "Tamil Nadu monthly progress reports to NMCG under NGT O.A. 673/2018 (August 2020 to June 2026 editions)",
+        "publisher": "Government of Tamil Nadu, via the National Mission for Clean Ganga",
+        "license": "GoI publication, cited with attribution",
+        "role": "input",
+        "url": "https://nmcg.nic.in/ngtprogressreport.aspx",
+        "as_of": "2026-06"
+      },
+      {
+        "title": "Municipal Administration and Water Supply Department, policy notes 2020-21, 2024-25 and 2025-26 (Erode Corporation sewerage and solid waste)",
+        "publisher": "Government of Tamil Nadu, Municipal Administration and Water Supply Department",
+        "license": "public policy document, cited with attribution",
+        "closed": true,
+        "as_of": "2025",
+        "role": "input"
+      },
+      {
+        "title": "CPCB task team minutes under NGT O.A. 673/2018, 3rd and 5th meetings (2019)",
+        "publisher": "Central Pollution Control Board",
+        "license": "GoI publication, cited with attribution",
+        "closed": true,
+        "as_of": "2019",
+        "role": "input"
+      },
+      {
+        "title": "Nadanthai Vaazhi Cauvery: proposed common effluent treatment plants and common reject management systems (proposal of 13.03.2023), tntextiles.tn.gov.in",
+        "publisher": "Department of Textiles, Government of Tamil Nadu",
+        "license": "government plan document, cited with attribution",
+        "closed": true,
+        "as_of": "2023-03",
+        "role": "input"
+      },
+      {
+        "title": "Details of Common Effluent Treatment Plants pertaining to the clusters of textile and tannery industries in Tamil Nadu (2020), tnpcb.gov.in/cept.php",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "government register, cited with attribution",
+        "closed": true,
+        "as_of": "2020",
+        "role": "input"
+      },
+      {
+        "title": "CEPI action plan for the Erode industrial cluster (September 2020), Table 1.1 and sections 1.1 and 1.6",
+        "publisher": "Tamil Nadu Pollution Control Board, published by the Central Pollution Control Board",
+        "license": "government plan document, cited with attribution",
+        "closed": true,
+        "as_of": "2020-09",
+        "role": "input"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-09-17",
+    "produced_by": "Authored from the documents' own pages, page-cited; every figure is quoted or transcribed from the cited source.",
+    "note": "Erode district's rivers, groundwater and industry (scope erode-rivers; the district's own scope id is tn-erode). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId). The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/erode-rivers/tnpcb-type-sectors.json."
+  },
+  "river": "Cauvery",
+  "stretchName": "Erode (near Virapalayam) to Pichavaram",
+  "epochs": [
+    {
+      "year": 2018,
+      "length_km": 93.5,
+      "priority": "I",
+      "note": "CPCB's 2018 stretch ran from Mettur to Mayiladuthurai. 93.5 km is the part on Erode's district line, measured on the OpenStreetMap course below the Mettur reservoir; the state's June 2026 progress report gives the whole stretch as 200 km (p.6)."
+    },
+    {
+      "year": 2022,
+      "length_km": 93.5,
+      "priority": "III",
+      "notMapped": true,
+      "note": "CPCB's 2022 list carried the Cauvery as Priority III in segments between Mettur and Pichavaram, and TNPCB's 2023 stretch report is headed Priority III. The segments are not drawn here; the length shown is the 2018 reach."
+    },
+    {
+      "year": 2025,
+      "length_km": 43.4,
+      "priority": "II",
+      "note": "CPCB's October 2025 stretch starts 'at Erode near Virapalayam', which is TNPCB monitoring station 1320, and runs to Pichavaram. 43.4 km is the part on Erode's district line, from that station to where the river leaves the district; the reviewed CPCB table places the rest of it along seven more districts: Namakkal, Karur, Tiruchirappalli, Ariyalur, Thanjavur, Mayiladuthurai and Cuddalore."
+    }
+  ],
+  "statusLine": "CPCB's October 2025 list starts the polluted stretch of the Cauvery at Erode. It moves the stretch from Priority I (Mettur to Mayiladuthurai, 2018) to Priority II and records it among the stretches where improvement was observed.",
+  "statusFacts": [
+    {
+      "label": "Polluted stretch",
+      "value": "River Cauvery at Erode near Virapalayam to Pichavaram (CPCB, October 2025, Annexure III A, serial 122)"
+    },
+    {
+      "label": "On Erode's district line",
+      "value": "43.4 km of the 2025 stretch; 93.5 km of the 2018 stretch (mapped course; the river is the district's eastern line, with Namakkal on the other bank)"
+    },
+    {
+      "label": "Classification",
+      "value": "Priority II on a maximum BOD of 24 mg/l observed during 2022 and 2023. In 2018 it was Priority I; CPCB files the change under 'improved' (Annexure X, serial 58)."
+    },
+    {
+      "label": "At Erode itself",
+      "value": "Station 1320 (Vairapalayam): CPCB gives 3.2 mg/l BOD for 2024. TNPCB's monthly data for 2024 read 2 to 3.2 mg/l, with no flow recorded in March and May."
+    }
+  ],
+  "growthNote": "Between 2018 and 2025 the stretch did not grow on this map, it moved. The 2018 stretch began at Mettur, so it covered the whole river along the district. The 2025 stretch begins at Erode and extends further downstream than before, to Pichavaram. In the growth view the 2018 line covers the 2025 line wherever they overlap, which inside this district is everywhere.",
+  "priorityNote": "Priority is CPCB's BOD-based band, set by the worst monitoring point on the stretch: I is above 30 mg/l, II is 20 to 30, III is 10 to 20, IV is 6 to 10 and V is 3 to 6. The Cauvery's band rests on a maximum of 24 mg/l observed during 2022 and 2023; CPCB does not print which station recorded it. The 2024 readings it prints for the stretch's seven stations run from 2.4 mg/l at Musiri to 9 mg/l downstream of Mayiladuthurai, and Erode's is 3.2. TNPCB's own 2023 monthly reports read from under 2 to 3.1 mg/l at Erode's station. The state's June 2026 progress report still names the stretch 'Mettur to Mayiladuthurai', Priority II (p.6); CPCB's wording is used here.",
+  "bodCaveat": "BOD is measured on grab samples, so a reading reflects dilution as much as load. TNPCB recorded no flow at Vairapalayam in March and May 2024. Priority is set from BOD alone. TNPCB's 2019 action plan sampled the river below each drain confluence and recorded BOD of 2 mg/l or less at every point, and it gives no flow or BOD for any of the drains themselves. TNPCB's stretch-wise monthly reports stop at December 2023.",
+  "mprOverview": "Tracked under NGT O.A. 673/2018 through the monthly progress reports Tamil Nadu files with NMCG. Reports from February 2020 to June 2026 are public. Of the editions read for this panel, those of February, May and August 2020 repeat the plan's action table with an 'Action taken' column; those from September 2020 give tables of treatment plants with capacity and utilisation, plants under construction, and common effluent treatment schemes.",
+  "levelCoverage": "Sewage is reported at local-body level: Erode Corporation and Bhavani Municipality in Erode district, Komarapalayam and Pallipalayam on the Namakkal bank. Industry is reported as counts of units and volumes for the Erode reach as a whole, not per unit. Nothing is reported for the villages along the river.",
+  "reportingCaveat": "Figures here are what the official documents state: CPCB's list, TNPCB's 2019 action plan, the state's monthly progress reports and the Municipal Administration and Water Supply Department's policy notes. Documents give different figures for the same thing, and each is shown with its source and date rather than reconciled. Where something is not shown, it is not recorded in those documents.",
+  "evidence": {
+    "headline": "Five outfalls are named and located in the 2019 action plan. Four enter the river; the fifth enters the Kalingarayan Canal.",
+    "points": [
+      "Into the River Cauvery: Notchipallam Odai, Sunnambu Odai, Pitchaikaranpallam Odai and Perumpallam Odai, each with GPS coordinates (action plan, pp.49-50). The plan puts the untreated sewage reaching the river through them at 'About 21MLD as reported by the Erode Corporation' (p.49).",
+      "Into the Kalingarayan Canal: Kona Vaikkal, given as 'About 5MLD' on p.38 and 'About 2 MLD' on p.50 of the same plan.",
+      "The plan's coordinates plot 0.14 to 0.32 km from the mapped centre line of the river, and Kona Vaikkal plots 30 m from the mapped canal.",
+      "Perumpallam Odai, the last of the four, meets the river about 250 m from station 1320, where CPCB's 2025 stretch begins. The 2024-25 policy note records that the treated water from the Erode plant is let out into Perumpallam Odai (p.142 of the PDF).",
+      "The plan gives no flow and no BOD for any of the five. CPCB's task team asked for 'Flow details of all drains' when it recommended the plan subject to conditions (minutes of the 5th meeting, 24.04.2019, p.3)."
+    ],
+    "layerRef": "prs-drains"
+  },
+  "tabs": [
+    {
+      "key": "sewage",
+      "label": "Sewage",
+      "status": "built",
+      "scope": "stretch",
+      "subtabKind": "categories",
+      "source": "TNPCB Action Plan on Rejuvenation of River Cauvery (2019), pp.38-39, 58, 64-66, 117-119; Tamil Nadu monthly progress reports, September 2020 to June 2026; MAWS policy notes 2020-21, 2024-25, 2025-26",
+      "intro": "The 2019 plan's main commitment for this reach was a 50.55 MLD sewage treatment plant and a sewer network for Erode Corporation. The plant has been reported operational since September 2020.",
+      "summaryBadge": "27 of 50.55 MLD",
+      "summaryLine": "Erode's plant reported operational since September 2020; 27 MLD utilised in June 2026 against 50.55 MLD capacity",
+      "summaryTone": "neutral",
+      "categories": [
+        {
+          "key": "erode-corporation",
+          "label": "Erode Corporation",
+          "level": "ULB",
+          "layerRef": "treatment-plants",
+          "body": "The 2019 plan records a 50.55 MLD plant at Vendipalayam, 'ready for commissioning' (p.39), within an underground sewerage scheme of Rs.209.22 crore that 'will be completed by December 2019' (p.64). At that date 7,274 of 72,500 house connections had been made (p.65).",
+          "points": [
+            "Sewage generated, as the plan states it: '35 MLD - 40MLD' in the narrative (p.38) and 44.59 MLD for a population of 547,933 in the action table (p.64).",
+            "Progress reports: 'Erode 50.55 18.50 Operational' in September 2020 (p.3); 25 MLD in December 2020; 27 MLD in December 2021 and 2022; 25 MLD in December 2023 and 2024; 27 MLD in December 2025 and June 2026 (p.21).",
+            "MAWS policy note 2020-21: the scheme 'has been completed and put into public use' (p.106 of the PDF).",
+            "MAWS policy note 2024-25: 25 million litres a day treated and let out into Perumpallam Odai; 79,398 connections among 1,69,912 households; sewerage available in 53 of 60 wards (p.142 of the PDF).",
+            "MAWS policy note 2025-26: sewer works 'completed in all wards'; 27,152 of 30,000 further connections provided (p.118 of the PDF)."
+          ]
+        },
+        {
+          "key": "other-towns",
+          "label": "Other towns on the reach",
+          "level": "ULB",
+          "body": "The 2019 plan proposed treating sewage from Bhavani and Pallipalayam at the Erode plant and a faecal sludge plant for Komarapalayam. The June 2026 progress report lists a separate plant under construction for each.",
+          "points": [
+            "Bhavani Municipality (Erode district): 3.36 MLD generated; to be treated with Erode's; Rs.37.00 lakh of in-situ works by October 2019 (plan, pp.65-66). June 2026: a 4.01 MLD plant, 49% complete, due July 2026 (p.26).",
+            "Komarapalayam (Namakkal district): 5.60 MLD generated; a 20 KLD faecal sludge plant, Rs.2.50 crore, by December 2019 (plan, pp.117-118). June 2026: a 6.02 MLD plant, 80% complete, due September 2026 (p.26).",
+            "Pallipalayam (Namakkal district): 2.95 MLD generated; to be treated at the Erode plant (plan, p.119). June 2026: a 5 MLD plant, 46% complete, due December 2026 (p.27).",
+            "Gobichettipalayam, on the Bhavani: a 4.1 MLD plant, 96% complete, due August 2026 (June 2026 report, p.26)."
+          ]
+        }
+      ]
+    },
+    {
+      "key": "industrial",
+      "label": "Industrial effluent",
+      "status": "built",
+      "scope": "stretch",
+      "subtabKind": "categories",
+      "source": "TNPCB Action Plan on Rejuvenation of River Cauvery (2019), pp.39, 63; Tamil Nadu monthly progress report, June 2026, pp.3, 58; Tamil Nadu Department of Textiles, Nadanthai Vaazhi Cauvery page (proposal of 13.03.2023); TNPCB lists of common effluent treatment plants (2020)",
+      "intro": "The 2019 plan records the textile and tannery units near this reach as treating their effluent on their own premises and discharging none of it. It also records proposals for common treatment plants, which the progress reports continue to track.",
+      "summaryBadge": "funding awaited",
+      "summaryLine": "505 units recorded on individual zero-discharge plants in 2019; eight common treatment schemes proposed in the district (33 MLD, 377 dyeing units), with funding stated as awaited in June 2026",
+      "summaryTone": "neutral",
+      "categories": [
+        {
+          "key": "units",
+          "label": "The units and the zero-discharge position",
+          "level": "district",
+          "layerRef": "industries",
+          "body": "The plan counts 468 consented textile bleaching and dyeing units (297 bleaching, 171 dyeing) and 37 tanneries 'in the vicinity of the polluted river stretch', each with its own effluent treatment plant 'so as to achieve zero discharge' (pp.39, 63). It puts their water consumption at 43.706 MLD and their trade effluent at 39.73 MLD (p.39).",
+          "points": [
+            "The plan states there are no industries of the 17 highly polluting categories on this reach (p.39).",
+            "It also records that discharge of trade effluent into the Kalingarayan Canal at night had been noticed, and that power disconnection and sealing were being carried out through the District Co-ordination Committee chaired by the District Collector (p.63).",
+            "The industry layer on this map comes from a different source, Tamil Nadu's register of units matched to land parcels. It holds 333 red-category textile processing units and 26 tanneries for the whole district, against the plan's 468 and 37 for this reach in 2019. The two were compiled differently and at different dates, so the comparison is indicative only.",
+            "No public source gives effluent readings for individual units.",
+            "TNPCB's 2020 CEPI action plan for the Erode cluster counts 849 Red and Orange units in the CEPI area and gives CPCB's score for 2017-18 as 60.33, a Severely Polluted Area; TNPCB's post-monsoon 2019 recalculation is 25.02. The plan's core zone is drawn on the map as an outer frame."
+          ]
+        },
+        {
+          "key": "cetps",
+          "label": "Common effluent treatment schemes",
+          "level": "district",
+          "layerRef": "treatment-plants",
+          "body": "The 2019 plan records proposals, submitted on 27.11.2017, for 7 common effluent treatment plants in Erode covering the 468 textile units and 37 tanneries, with no capacity, cost or date (p.63). The Tamil Nadu Department of Textiles tabulates the current proposal: ten zero-liquid-discharge schemes in Erode and Namakkal districts, 41 MLD, at a total of Rs.1885.25 crore, of which 75% (Rs.1413.93 crore) is sought from the Union Government and 25% (Rs.471.32 crore) falls to the State Government or the units' own companies. Eight of the ten are in Erode district: 33 MLD for 377 dyeing units.",
+          "points": [
+            "The eight in Erode district, as printed: Suriyampalayam 4.2 MLD (36 units), Villarasampatti 4.5 (85), Gangapuram 4.5 (38), Erode common reject management system 2.0 (18), Green Kalingarayan 5.8 (82), Kadayampatti (Bhavani) 6.25 (34), Kadayampatti common reject management system 1.75 (11), Sri Bhavani 4.0 (73).",
+            "Each scheme's company is on the industry register, registered with TNPCB in 2019 or 2020; the map shows them as proposed plants at their registered land.",
+            "The proposal for central funding was submitted on 13.03.2023 and a further request made on 09.08.2023 (Department of Textiles). June 2026 progress report: 10 schemes, 41 MLD, Rs.1647.48 crore, and 'The funding for the 10 schemes is awaited.' (pp.3, 58). The two documents give different totals; each is shown as printed.",
+            "Operating today, from TNPCB's 2020 lists: Perundurai CETP for textile units, 4,050 KLD, consent of 02.07.2002, 8 of 14 members participating; Perundurai Leather Industries Eco-Security, 2,000 KLD consented and 1,000 KLD permitted, 7 of 14 member tanneries participating."
+          ]
+        }
+      ]
+    },
+    {
+      "key": "solid",
+      "label": "Solid waste",
+      "status": "built",
+      "scope": "stretch",
+      "subtabKind": "categories",
+      "source": "TNPCB Action Plan on Rejuvenation of River Cauvery (2019), p.68; Tamil Nadu monthly progress report, August 2020, p.24; MAWS policy note 2025-26",
+      "intro": "The plan's solid waste commitment on this reach concerned one site: Erode's dump yard on the bank of the river at Vairapalayam.",
+      "summaryBadge": "completed",
+      "summaryLine": "Bio-mining of the Vairapalayam dump yard on the river bank, recorded as completed in the August 2020 progress report",
+      "summaryTone": "good",
+      "categories": [
+        {
+          "key": "vairapalayam",
+          "label": "Vairapalayam dump yard",
+          "level": "ULB",
+          "body": "The 2019 plan commits to bio-mining of the 'Vairapalayam Dump yard on the banks of River Cauvery', to start in May 2019 and finish in March 2020, funded under Smart City (p.68).",
+          "points": [
+            "August 2020 progress report: the same line carries the entry 'Completed' (p.24).",
+            "MAWS policy note 2025-26: '200 saplings have been planted and maintained at the Vairapalayam dumping yard cleared through bio-mining.' (p.119 of the PDF)."
+          ]
+        }
+      ]
+    }
+  ],
+  "governance": {
+    "rows": [
+      {
+        "label": "Action plan by",
+        "value": "Tamil Nadu Pollution Control Board, 2019, for the Mettur to Mayiladuthurai stretch (Priority I)"
+      },
+      {
+        "label": "Approved by",
+        "value": "Tamil Nadu's River Rejuvenation Committee; submitted to CPCB on 18.04.2019 (TNPCB preamble, p.5)"
+      },
+      {
+        "label": "CPCB task team",
+        "value": "Not recommended at its 3rd meeting; recommended subject to conditions at its 5th meeting on 24.04.2019, one condition being flow details of all drains"
+      },
+      {
+        "label": "Executing agencies named",
+        "value": "Erode City Municipal Corporation (sewerage and the treatment plant), Bhavani Municipality, the Komarapalayam and Pallipalayam local bodies, TNPCB (monitoring and consent)"
+      }
+    ],
+    "actionPlan": {
+      "url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf",
+      "label": "Cauvery Action Plan (TNPCB, 2019)"
+    },
+    "compliance": [
+      {
+        "value": "Monthly progress reports are filed with NMCG under NGT O.A. 673/2018. Tamil Nadu's are public from February 2020 to June 2026.",
+        "link": {
+          "url": "https://nmcg.nic.in/ngtprogressreport.aspx",
+          "label": "NMCG progress reports"
+        }
+      },
+      {
+        "value": "TNPCB published stretch-wise monthly water quality for the Cauvery from 2019 to December 2023. For 2024 the station data are in its annual NWMP file; no 2025 file was found.",
+        "link": {
+          "url": "https://tnpcb.gov.in/pollutedriverstretches.php",
+          "label": "TNPCB polluted river stretches"
+        }
+      }
+    ],
+    "note": "No revised action plan for the 2025 stretch was found on TNPCB's or CPCB's sites."
+  },
+  "grievance": {
+    "label": "Report illegal sewage or effluent discharge",
+    "sub": "NMCG's online grievance module, set up on NGT direction and operational since January 2021.",
+    "url": "https://nmcg.nic.in/ngtgrievance.aspx"
+  },
+  "citeSource": {
+    "url": "https://cpcb.gov.in/polluted-river-stretches/",
+    "label": "Cite this data source"
+  },
+  "keyTerms": [
+    {
+      "term": "PRS",
+      "full": "Polluted River Stretch",
+      "note": "A river stretch where BOD exceeds 3 mg/l, the Primary Water Quality Criteria for Bathing Water. CPCB identifies them nationally and states produce a restoration action plan for each."
+    },
+    {
+      "term": "CPCB",
+      "full": "Central Pollution Control Board",
+      "note": "Sets the classification and publishes the national polluted-stretch list; the October 2025 edition is the current one."
+    },
+    {
+      "term": "TNPCB",
+      "full": "Tamil Nadu Pollution Control Board",
+      "note": "Wrote the state's river action plans, monitors water quality and issues industrial consents."
+    },
+    {
+      "term": "MPR",
+      "full": "Monthly Progress Report",
+      "note": "The monthly report each state files with NMCG under NGT O.A. 673/2018 on restoring its polluted stretches."
+    },
+    {
+      "term": "NGT O.A. 673/2018",
+      "full": "National Green Tribunal, Original Application 673 of 2018",
+      "note": "The order that made polluted-stretch restoration a monitored, monthly-reported obligation."
+    },
+    {
+      "term": "BOD",
+      "full": "Biochemical Oxygen Demand",
+      "note": "Oxygen consumed by organic matter in the water, in mg/l. CPCB's priority bands are set on it."
+    },
+    {
+      "term": "MLD",
+      "full": "Million litres a day"
+    },
+    {
+      "term": "STP / CETP",
+      "full": "Sewage treatment plant / common effluent treatment plant"
+    },
+    {
+      "term": "Odai / Vaikkal",
+      "full": "Tamil for a stream or drain / a channel"
+    },
+    {
+      "term": "MAWS",
+      "full": "Municipal Administration and Water Supply Department, Government of Tamil Nadu",
+      "note": "Its annual policy note reports on each corporation's sewerage scheme."
+    }
+  ],
+  "sources": [
+    "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version), Annexures III A, X and XIV.",
+    "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019, chapter 2 (Erode district) and the Namakkal action table.",
+    "TNPCB, Polluted River Stretches in Tamil Nadu (preamble), 2019; CPCB task team minutes under O.A. 673/2018, 3rd and 5th meetings.",
+    "Government of Tamil Nadu, monthly progress reports to NMCG under NGT O.A. 673/2018: August 2020, September 2020, December 2020 to December 2025, June 2026.",
+    "Government of Tamil Nadu, Municipal Administration and Water Supply Department, policy notes 2020-21, 2024-25 and 2025-26.",
+    "TNPCB, Annual Data for the National Water Monitoring Programme, January to December 2024 (station 1320, a scanned page read twice); TNPCB stretch-wise monthly reports for the Cauvery, 2023.",
+    "Tamil Nadu Department of Textiles, Nadanthai Vaazhi Cauvery: proposed common effluent treatment plants (proposal of 13.03.2023). TNPCB, lists of common effluent treatment plants for textile and tannery clusters (2020). TNPCB, CEPI action plan for the Erode industrial cluster (September 2020)."
+  ]
+}
