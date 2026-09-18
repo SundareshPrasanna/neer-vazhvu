@@ -1,0 +1,119 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-ranipet"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for RANIPET: the district row and its 6 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-ranipet-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-06",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=RANIPET;loctype=DISTRICT;locuuid=fd7a00fc-a284-4478-868e-f942c7aadacd;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "RANIPET",
+    "locationUUID": "fd7a00fc-a284-4478-868e-f942c7aadacd",
+    "category": "semi_critical",
+    "stageOfExtractionPercent": 84.5319
+  },
+  "recordsSha256": "5c912b5ac251a87908a859cc7db96d4d2f2cb4d3c397d37666ba5d919dc66714",
+  "recordCount": 6,
+  "records": [
+    {
+      "locationName": "ARAKKONAM",
+      "locationUUID": "ecf9e6de-34a3-4c8a-88fd-630ab94fbc93",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032,
+      "annualRechargeHam": 3051.42,
+      "totalAvailabilityHam": 6873.19,
+      "availabilityForFutureUseHam": 1374.82,
+      "rainfallMm": 1029.0183
+    },
+    {
+      "locationName": "ARCOT",
+      "locationUUID": "b7f38db7-4dbf-4c71-925a-56a61437f1d2",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269,
+      "annualRechargeHam": 2707.96,
+      "totalAvailabilityHam": 4622.24,
+      "availabilityForFutureUseHam": 72.4,
+      "rainfallMm": 1248.4877
+    },
+    {
+      "locationName": "KALAVAI",
+      "locationUUID": "a353f7f6-b89f-439d-b240-a9e7378e06d3",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048,
+      "annualRechargeHam": 1813.79,
+      "totalAvailabilityHam": 4092.91,
+      "availabilityForFutureUseHam": 801.97,
+      "rainfallMm": 1076.1
+    },
+    {
+      "locationName": "NEMILI",
+      "locationUUID": "41a3a69d-1967-465c-8846-2bffd8e6b2fc",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758,
+      "annualRechargeHam": 2931.74,
+      "totalAvailabilityHam": 6522.07,
+      "availabilityForFutureUseHam": 1564.4,
+      "rainfallMm": 1089.9072
+    },
+    {
+      "locationName": "SHOLINGUR",
+      "locationUUID": "5e4a144a-aa26-4bc2-8628-89b5b7c1e67b",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719,
+      "annualRechargeHam": 1927.12,
+      "totalAvailabilityHam": 3924.65,
+      "availabilityForFutureUseHam": 770.09,
+      "rainfallMm": 880.8955
+    },
+    {
+      "locationName": "WALAJAPET",
+      "locationUUID": "57d388f0-c7aa-4559-b56f-0d3af96793a7",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205,
+      "annualRechargeHam": 2659.61,
+      "totalAvailabilityHam": 4086.74,
+      "availabilityForFutureUseHam": 363.72,
+      "rainfallMm": 945.2787
+    }
+  ]
+}

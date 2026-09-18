@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-dindigul-v1",
+  "district": {
+    "displayName": "Dindigul",
+    "tnrdLgdCode": "526",
+    "tnrdMasterCode": "22",
+    "jjmStateId": "29",
+    "jjmDistrictId": "428",
+    "censusDistrictCode": "612",
+    "lgdDistrictCode": "572",
+    "ingresDistrictName": "DINDIGUL",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 306,
+    "tnrdMasterBlocks": 14,
+    "tnrdMasterGramPanchayats": 306,
+    "jjmVillages": 306,
+    "censusVillages": 362
+  },
+  "targets": [
+    {
+      "id": "appanuthu",
+      "displayName": "Appanuthu",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "223464",
+      "tnrdMasterBlockCode": "10",
+      "tnrdMasterGramPanchayatCode": "2",
+      "jjmBlockId": "4387",
+      "jjmGramPanchayatId": "147093",
+      "censusSubdistrictCode": "05761",
+      "censusGramPanchayatCode": "0221",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "635176",
+            "name": "Appanuthu"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 612; subdistrict 05761; Census GP 0221",
+            "assertion": "The reviewed Census composition contains Appanuthu 635176."
+          }
+        ]
+      },
+      "masterNote": "\u0ba4\u0bca\u0baa\u0bcd\u0baa\u0bae\u0bcd\u0baa\u0b9f\u0bcd\u0b9f\u0bbf / \u0b85\u0baa\u0bcd\u0baa\u0ba9\u0bc2\u0ba4\u0bcd\u0ba4\u0bc1"
+    }
+  ]
+}

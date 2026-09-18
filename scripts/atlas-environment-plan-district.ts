@@ -35,6 +35,9 @@ const UPSTREAM_BY_SOURCE: Record<string, UpstreamKey> = {
   "mpcb-district-environment-plans": "mpcbEnvironmentPlans",
   "ngt-dep-tn-namakkal": "ngtDepTnNamakkal",
   "ngt-dep-tn-karur": "ngtDepTnKarur",
+  "ngt-dep-tn-tiruvallur": "ngtDepTnTiruvallur",
+  "ngt-dep-tn-dindigul": "ngtDepTnDindigul",
+  "ngt-dep-tn-krishnagiri": "ngtDepTnKrishnagiri",
 };
 
 function main(): void {

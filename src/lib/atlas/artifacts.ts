@@ -337,6 +337,16 @@ export interface DistrictDirectoryArtifact extends AtlasEnvelope {
     villageName: string;
     subdistrictCode: string;
   }>;
+  /** TNRD adapter: Census 2011 rows the reviewed plan lists as carrying no
+   *  usable Gram Panchayat (blank columns, or a name without a code). They
+   *  belong to no crosswalk unit; kept so the Census enumeration stays
+   *  complete. */
+  censusVillagesWithoutGramPanchayat?: Array<{
+    villageCode: string;
+    villageName: string;
+    subdistrictCode: string;
+    note: string;
+  }>;
   /** Source units no LGD Gram Panchayat is bound to; kept so the enumeration
    *  stays complete and a later review can bind them. */
   unbound: {
@@ -705,6 +715,9 @@ export function identityFromDirectory(
     if (village.censusRow) censusVillageCodes.add(village.census2011Code);
   }
   for (const village of directory.censusVillagesWithoutLgdRow ?? []) {
+    censusVillageCodes.add(village.villageCode);
+  }
+  for (const village of directory.censusVillagesWithoutGramPanchayat ?? []) {
     censusVillageCodes.add(village.villageCode);
   }
   return {

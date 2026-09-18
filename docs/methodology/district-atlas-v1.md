@@ -29,7 +29,7 @@ Two identity adapters exist. A district's `pipeline-inputs/atlas/<state>/<slug>/
 | Water bodies | TNGIS all-water-bodies layer (counts) | First Census of Water Bodies via data.gov.in (GODL), assigned to GPs by village code |
 | Environment plan | not yet on file | MPCB District Environment Plan, reviewed figure-by-figure with page cites |
 
-Adapter firsts are made byte-neutral for existing districts before they merge: the 2021 TNRD PDF lists 2019-formed districts with six-digit codes (Tirupathur 296958), and `censusSubdistrictCodes` scopes a Census extract to the parent district's taluks (Tirupathur's villages sit under Vellore in Census 2011, and the page's vintage line says so from the rows themselves).
+Adapter firsts are made byte-neutral for existing districts before they merge: the 2021 TNRD PDF lists 2019-formed districts with six-digit codes (Tirupathur 296958), and `censusSubdistrictCodes` scopes a Census extract to the parent district's taluks (Tirupathur's villages sit under Vellore in Census 2011, and the page's vintage line says so from the rows themselves). A Census row that carries no usable Gram Panchayat (both columns blank, or a name printed without a code: Sukapuram in Ranipet, three uninhabited rows in Tiruvallur) is listed in the plan under `censusVillagesWithoutGramPanchayat` with a note; the extract keeps it with an empty Panchayat list, the served directory carries it under the same name so the Census enumeration stays complete, and any unlisted such row still stops the run.
 
 ## 3. Identity resolution, and what a human reviews
 

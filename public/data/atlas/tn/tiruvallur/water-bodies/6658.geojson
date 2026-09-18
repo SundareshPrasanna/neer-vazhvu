@@ -1,0 +1,184 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/water-bodies",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tiruvallur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tngis-generic-viewer-water-bodies",
+        "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "asserts",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-water-bodies-tn-district.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/tiruvallur/directory.json"
+    ],
+    "note": "TNGIS all-water-bodies register for PUZHAL block: 5 Gram Panchayats with 26 water bodies between them, rolled up per Panchayat (count, named count, summed and largest waterspread computed from the geometry, contributing departments, a digest of the sorted names). Geometry is null and names are withheld: TNGIS terms require prior approval for public display or redistribution and the confirmation requested on 2026-07-27 has no reply. A Panchayat absent here has no water body in the register.",
+    "conventions": {
+      "geometry": "null by rule until TNGIS/TNeGA approval is recorded; areas are hectares computed from the withheld polygons",
+      "join": "panchayat_lgdvcode is the LGD Gram Panchayat code; features with code 0 (towns, corporations) are dropped, never pooled",
+      "vintage": "the layer merges five departments' registers and carries no survey date"
+    }
+  },
+  "ext": {
+    "atlas": {
+      "schemaVersion": 1,
+      "planId": "tn-tiruvallur-v1",
+      "blockCode": "6658",
+      "blockName": "PUZHAL",
+      "districtLgdCode": "543",
+      "acquiredAt": "2026-09-06",
+      "layer": "generic_viewer:all_water_bodies",
+      "sourceUrl": "https://tngis.tn.gov.in/tngismaps/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=generic_viewer%3Aall_water_bodies&CQL_FILTER=rd_lgddcod%3D543&outputFormat=application%2Fjson",
+      "rights": {
+        "status": "permission-required",
+        "termsUrl": "https://tngis.tn.gov.in/user.html",
+        "termsQuote": "GIS based data available in TNGIS should be used for informational purpose only and Not for legal use/not to be shared / published in the public media in any form or in the social media without any prior approval / permission from TNGIS/TNeGA.",
+        "approval": null
+      },
+      "contributingDepartments": [
+        "AED",
+        "DOSS",
+        "NRSC",
+        "TNRD",
+        "WRD"
+      ],
+      "snapshotSha256": "f452af0fc0db450120bf8dc5a113b01d0587c24e373e64e205ec9b4e1f959b54",
+      "featureCount": 26,
+      "recordCount": 5,
+      "recordsSha256": "68240e55088485903c44b09f6fbed256a221d12f4d0f132ea36e160215e89957"
+    }
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "229448",
+        "count": 6,
+        "namedCount": 1,
+        "areaHectares": 1866.6088,
+        "largestAreaHectares": 1865.4772,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 5
+          },
+          {
+            "department": "WRD",
+            "count": 1
+          }
+        ],
+        "namesSha256": "d347c1268dd1dfec3fd3f0d9eef05c27279ce9a4a0c960128279c6fb2e4a0e40",
+        "lgdBlockCode": "6658"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "229449",
+        "count": 6,
+        "namedCount": 4,
+        "areaHectares": 2.6424,
+        "largestAreaHectares": 1.2279,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 4
+          },
+          {
+            "department": "AED",
+            "count": 2
+          }
+        ],
+        "namesSha256": "6c71d285b2b53fac08ab8e8e26336ceee269a69b5f10e8bb1ae7becce730fd8e",
+        "lgdBlockCode": "6658"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "229450",
+        "count": 4,
+        "namedCount": 3,
+        "areaHectares": 88.212,
+        "largestAreaHectares": 44.2033,
+        "byDepartment": [
+          {
+            "department": "WRD",
+            "count": 2
+          },
+          {
+            "department": "AED",
+            "count": 1
+          },
+          {
+            "department": "NRSC",
+            "count": 1
+          }
+        ],
+        "namesSha256": "56c4525a75e20b78e291c148bdd9507b7b246526ebe887e5b1c80694dca8bda0",
+        "lgdBlockCode": "6658"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "229451",
+        "count": 1,
+        "namedCount": 0,
+        "areaHectares": 0.6741,
+        "largestAreaHectares": 0.6741,
+        "byDepartment": [
+          {
+            "department": "AED",
+            "count": 1
+          }
+        ],
+        "namesSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lgdBlockCode": "6658"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "lgdGramPanchayatCode": "229453",
+        "count": 9,
+        "namedCount": 7,
+        "areaHectares": 43.0998,
+        "largestAreaHectares": 23.2442,
+        "byDepartment": [
+          {
+            "department": "NRSC",
+            "count": 5
+          },
+          {
+            "department": "AED",
+            "count": 2
+          },
+          {
+            "department": "WRD",
+            "count": 2
+          }
+        ],
+        "namesSha256": "6412e52988641f64b2ff2465b1238c149cead908f3cf4a3d706b4defde3f22ea",
+        "lgdBlockCode": "6658"
+      }
+    }
+  ]
+}

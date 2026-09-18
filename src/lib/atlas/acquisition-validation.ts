@@ -419,6 +419,31 @@ export function validateTnDistrictRefreshPlan(raw: unknown): string[] {
         errors.push("district.censusSubdistrictCodes: duplicate subdistrict code");
       }
     }
+    const withoutGramPanchayat = raw.district.censusVillagesWithoutGramPanchayat;
+    if (withoutGramPanchayat !== undefined) {
+      if (!Array.isArray(withoutGramPanchayat) || withoutGramPanchayat.length === 0) {
+        errors.push("district.censusVillagesWithoutGramPanchayat: must be a non-empty array");
+      } else {
+        const codes = new Set<string>();
+        for (const [index, entry] of withoutGramPanchayat.entries()) {
+          const label = `district.censusVillagesWithoutGramPanchayat[${index}]`;
+          if (!isRecord(entry)) {
+            errors.push(`${label}: must be an object`);
+            continue;
+          }
+          if (typeof entry.villageCode !== "string" || !/^\d{6}$/.test(entry.villageCode)) {
+            errors.push(`${label}.villageCode: must be a six-digit Census village code`);
+          } else if (codes.has(entry.villageCode)) {
+            errors.push(`${label}.villageCode: duplicate ${entry.villageCode}`);
+          } else {
+            codes.add(entry.villageCode);
+          }
+          if (!isNonEmptyString(entry.note)) {
+            errors.push(`${label}.note: must be non-empty`);
+          }
+        }
+      }
+    }
   }
   if (!isRecord(raw.sources)) {
     errors.push("sources: must be an object");
@@ -633,7 +658,9 @@ export function validateCensusRecord(
   );
   for (const field of ["cdBlocks", "gramPanchayats"]) {
     const values = raw[field];
-    if (!Array.isArray(values) || values.length === 0) {
+    // gramPanchayats may be empty: a row the reviewed plan lists under
+    // censusVillagesWithoutGramPanchayat (the extractor refuses any other).
+    if (!Array.isArray(values) || (values.length === 0 && field === "cdBlocks")) {
       errors.push(`${label}.${field}: must be a non-empty array`);
       continue;
     }

@@ -1,0 +1,163 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-dindigul"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for DINDIGUL: the district row and its 10 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-dindigul-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-06",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=DINDIGUL;loctype=DISTRICT;locuuid=bbee7054-c0e2-4cd2-9027-d620b0acca95;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "DINDIGUL",
+    "locationUUID": "bbee7054-c0e2-4cd2-9027-d620b0acca95",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 117.451
+  },
+  "recordsSha256": "ecb6cc028b80d9a6eea46f5e4e87fa2a21c5867cf9f3c9d1721dd64d9ab89f33",
+  "recordCount": 10,
+  "records": [
+    {
+      "locationName": "ATHOOR",
+      "locationUUID": "491063c2-cb09-474b-a94b-4097de7a6096",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 123.3988,
+      "annualRechargeHam": 1623.35,
+      "totalAvailabilityHam": 3899.86,
+      "availabilityForFutureUseHam": 155.46,
+      "rainfallMm": 985.6766
+    },
+    {
+      "locationName": "DINDIGUL EAST",
+      "locationUUID": "8995879f-dfdb-449e-9ce8-c43af2a62929",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 119.175,
+      "annualRechargeHam": 3044.18,
+      "totalAvailabilityHam": 5768.28,
+      "availabilityForFutureUseHam": 703.57,
+      "rainfallMm": 904.4912
+    },
+    {
+      "locationName": "DINDIGUL WEST",
+      "locationUUID": "b467d71b-e51a-4f8e-9d97-f8732d7c31bd",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 125.6543,
+      "annualRechargeHam": 3195.37,
+      "totalAvailabilityHam": 5213.59,
+      "availabilityForFutureUseHam": 197.3,
+      "rainfallMm": 934.9061
+    },
+    {
+      "locationName": "GUJILIAMPARAI",
+      "locationUUID": "a6ac1a6d-5f65-4d43-9003-77b41792de43",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 158.6795,
+      "annualRechargeHam": 1582.78,
+      "totalAvailabilityHam": 3753.54,
+      "availabilityForFutureUseHam": 208.93,
+      "rainfallMm": 689.6665
+    },
+    {
+      "locationName": "KODAIKANAL",
+      "locationUUID": "5efecde0-6714-4052-94a7-667ba6052b60",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 1.6113,
+      "annualRechargeHam": 3012.45,
+      "totalAvailabilityHam": 3124.85,
+      "availabilityForFutureUseHam": 2784.12,
+      "rainfallMm": 1222.7322
+    },
+    {
+      "locationName": "NATHAM",
+      "locationUUID": "e796018f-ef3e-4b22-a849-c55fcdde2de5",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8134,
+      "annualRechargeHam": 2039.92,
+      "totalAvailabilityHam": 3615.49,
+      "availabilityForFutureUseHam": 664.37,
+      "rainfallMm": 982.5048
+    },
+    {
+      "locationName": "NILAKOTTAI",
+      "locationUUID": "be68d6a7-0502-4ad2-8670-03e7ad47603c",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 139.7652,
+      "annualRechargeHam": 2139.97,
+      "totalAvailabilityHam": 6189.46,
+      "availabilityForFutureUseHam": 860.21,
+      "rainfallMm": 825.207
+    },
+    {
+      "locationName": "ODDENCHATRAM",
+      "locationUUID": "eca60e9a-31cb-4c2c-84d4-1337ad55ff1e",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 142.5014,
+      "annualRechargeHam": 3237.19,
+      "totalAvailabilityHam": 7595.97,
+      "availabilityForFutureUseHam": 852.01,
+      "rainfallMm": 711.5018
+    },
+    {
+      "locationName": "PALANI",
+      "locationUUID": "30f7e16e-4175-4f78-a5b5-72b2a315adc4",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 88.531,
+      "annualRechargeHam": 2792.04,
+      "totalAvailabilityHam": 8360.39,
+      "availabilityForFutureUseHam": 1800.06,
+      "rainfallMm": 688.5394
+    },
+    {
+      "locationName": "VEDASANDUR",
+      "locationUUID": "5d2720ad-d059-4f56-9491-4306e9f69cf3",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 147.6159,
+      "annualRechargeHam": 2530.96,
+      "totalAvailabilityHam": 6113.19,
+      "availabilityForFutureUseHam": 887.93,
+      "rainfallMm": 804.0525
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-krishnagiri"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-18"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-18",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for KRISHNAGIRI: the district row and its 8 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-krishnagiri-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-18",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=KRISHNAGIRI;loctype=DISTRICT;locuuid=0a062167-2fdd-45f5-a3f7-de6223e6532b;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "KRISHNAGIRI",
+    "locationUUID": "0a062167-2fdd-45f5-a3f7-de6223e6532b",
+    "category": "critical",
+    "stageOfExtractionPercent": 92.3759
+  },
+  "recordsSha256": "87f5e06ec9351d5ed31fadd92936f12f5e0f5d8a4279f7f59a925f5fc3fe710b",
+  "recordCount": 8,
+  "records": [
+    {
+      "locationName": "ANCHETTY",
+      "locationUUID": "c204708d-39b3-4fa6-8062-4fbc76d7c2b3",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 35.1605,
+      "annualRechargeHam": 532.03,
+      "totalAvailabilityHam": 222967.27,
+      "availabilityForFutureUseHam": 539.43,
+      "rainfallMm": 625.5
+    },
+    {
+      "locationName": "BARGUR",
+      "locationUUID": "67b65b1f-cc2d-4aa7-8625-6992743c7eb3",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 104.8495,
+      "annualRechargeHam": 2447.85,
+      "totalAvailabilityHam": 463514.78,
+      "availabilityForFutureUseHam": 45.57,
+      "rainfallMm": 1084.3
+    },
+    {
+      "locationName": "DENKANIKOTTAI",
+      "locationUUID": "afe73228-46ce-41fd-9cbc-345731fb8fe7",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 66.3446,
+      "annualRechargeHam": 4898.85,
+      "totalAvailabilityHam": 1245710.4,
+      "availabilityForFutureUseHam": 3431.88,
+      "rainfallMm": 783.6334
+    },
+    {
+      "locationName": "HOSUR",
+      "locationUUID": "f40f4308-7f84-4e92-a8da-da19fcba2401",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 90.0052,
+      "annualRechargeHam": 2327.33,
+      "totalAvailabilityHam": 415337.41,
+      "availabilityForFutureUseHam": 487.61,
+      "rainfallMm": 732
+    },
+    {
+      "locationName": "KRISHNAGIRI",
+      "locationUUID": "4728eaf3-b538-412f-9126-01bfa317ee01",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 101.233,
+      "annualRechargeHam": 3831.75,
+      "totalAvailabilityHam": 867324.77,
+      "availabilityForFutureUseHam": 873.91,
+      "rainfallMm": 860.9862
+    },
+    {
+      "locationName": "POCHAMPALLI",
+      "locationUUID": "dc183b2a-2ef7-47f4-890f-47352a479d11",
+      "locationType": "TALUK",
+      "category": "critical",
+      "stageOfExtractionPercent": 94.5283,
+      "annualRechargeHam": 1674.01,
+      "totalAvailabilityHam": 582947.9,
+      "availabilityForFutureUseHam": 410.09,
+      "rainfallMm": 835.0209
+    },
+    {
+      "locationName": "SHOOLAGIRI",
+      "locationUUID": "e8d77828-22ff-4505-afb6-7397bf154d78",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 69.9217,
+      "annualRechargeHam": 2535.9,
+      "totalAvailabilityHam": 364776.19,
+      "availabilityForFutureUseHam": 1614.68,
+      "rainfallMm": 745.267
+    },
+    {
+      "locationName": "UTHANGARAI",
+      "locationUUID": "b74a6541-ab9a-4564-8597-1874e0c80640",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 148.9129,
+      "annualRechargeHam": 2463.15,
+      "totalAvailabilityHam": 697613.28,
+      "availabilityForFutureUseHam": 4.89,
+      "rainfallMm": 653.1595
+    }
+  ]
+}

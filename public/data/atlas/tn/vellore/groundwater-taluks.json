@@ -1,0 +1,119 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-vellore"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for VELLORE: the district row and its 6 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-vellore-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-06",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=VELLORE;loctype=DISTRICT;locuuid=161b1ce6-66a4-46c2-a4f7-e262f5a3b06f;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "VELLORE",
+    "locationUUID": "161b1ce6-66a4-46c2-a4f7-e262f5a3b06f",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 121.7516
+  },
+  "recordsSha256": "0d33493b2ab5a64b61a07ee6ec8d8394fd5d20ac3a82c0a49a089bec336daa9b",
+  "recordCount": 6,
+  "records": [
+    {
+      "locationName": "ANAIKKATTU",
+      "locationUUID": "153621b4-72c2-4c97-9175-d4836a06d23c",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 148.1147,
+      "annualRechargeHam": 1553.71,
+      "totalAvailabilityHam": 4617.28,
+      "availabilityForFutureUseHam": 35.54,
+      "rainfallMm": 945.6699
+    },
+    {
+      "locationName": "GUDIYATTAM",
+      "locationUUID": "3b49f7ed-c721-48c8-980e-772a514fa1fa",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 120.5442,
+      "annualRechargeHam": 1243.15,
+      "totalAvailabilityHam": 3816.21,
+      "availabilityForFutureUseHam": 170.91,
+      "rainfallMm": 940.1497
+    },
+    {
+      "locationName": "K V KUPPAM",
+      "locationUUID": "4920db90-2a25-47d8-acde-9769ac8b3bf1",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 150.7507,
+      "annualRechargeHam": 959.75,
+      "totalAvailabilityHam": 2142.63,
+      "availabilityForFutureUseHam": 1.23,
+      "rainfallMm": 978.2852
+    },
+    {
+      "locationName": "KATPADI",
+      "locationUUID": "91e05d7f-44a4-4418-ab58-6076855ad535",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 83.674,
+      "annualRechargeHam": 2046.77,
+      "totalAvailabilityHam": 3413.38,
+      "availabilityForFutureUseHam": 298.46,
+      "rainfallMm": 987.9819
+    },
+    {
+      "locationName": "PERNAMBUT",
+      "locationUUID": "01fe4d0d-4a9c-4390-8e18-d628dabc2d74",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 106.3292,
+      "annualRechargeHam": 1031.5,
+      "totalAvailabilityHam": 1629.12,
+      "availabilityForFutureUseHam": 106.56,
+      "rainfallMm": 951
+    },
+    {
+      "locationName": "VELLORE",
+      "locationUUID": "b44eca07-23bf-466f-8591-9e15822b7858",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.3004,
+      "annualRechargeHam": 1013.43,
+      "totalAvailabilityHam": 2555.69,
+      "availabilityForFutureUseHam": 52.4,
+      "rainfallMm": 1028.6598
+    }
+  ]
+}

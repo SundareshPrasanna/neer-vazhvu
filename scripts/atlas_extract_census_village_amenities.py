@@ -145,7 +145,13 @@ def extract_records(
     sheet_name: str = DEFAULT_SHEET,
     allow_empty_gram_panchayat: bool = False,
     subdistrict_codes: set[str] | None = None,
+    villages_without_gram_panchayat: set[str] | None = None,
 ) -> list[dict[str, str | list[dict[str, str]]]]:
+    # Reviewed village codes whose row carries no usable Gram Panchayat (blank
+    # columns, or a name printed without a code): kept with an empty list.
+    # Any other such row still stops the extraction.
+    listed_without_gp = set(villages_without_gram_panchayat or ())
+    seen_without_gp: set[str] = set()
     with zipfile.ZipFile(xlsx_path) as archive:
         shared_strings = read_shared_strings(archive)
         sheet_path = worksheet_path(archive, sheet_name)
@@ -185,9 +191,12 @@ def extract_records(
                         not subdistrict_codes
                         or raw_record.get("subdistrictCode") in subdistrict_codes
                     ):
+                        no_gram_panchayat = (
+                            raw_record.get("villageCode") in listed_without_gp
+                        )
                         optional = (
                             {"gramPanchayatCode", "gramPanchayatName"}
-                            if allow_empty_gram_panchayat
+                            if allow_empty_gram_panchayat or no_gram_panchayat
                             else set()
                         )
                         if not all(
@@ -218,11 +227,21 @@ def extract_records(
                             "cdBlockCode",
                             "cdBlockName",
                         )
-                        record["gramPanchayats"] = paired_values(
-                            raw_record,
-                            "gramPanchayatCode",
-                            "gramPanchayatName",
-                        )
+                        if no_gram_panchayat:
+                            if raw_record.get("gramPanchayatCode"):
+                                raise ValueError(
+                                    f"Census row {raw_record['villageCode']} is listed as "
+                                    "having no Gram Panchayat but carries code "
+                                    f"{raw_record['gramPanchayatCode']}"
+                                )
+                            seen_without_gp.add(raw_record["villageCode"])
+                            record["gramPanchayats"] = []
+                        else:
+                            record["gramPanchayats"] = paired_values(
+                                raw_record,
+                                "gramPanchayatCode",
+                                "gramPanchayatName",
+                            )
                         records.append(record)
                 row.clear()
     if not records:
@@ -230,6 +249,12 @@ def extract_records(
         if subdistrict_codes:
             scope += f" subdistricts {', '.join(sorted(subdistrict_codes))}"
         raise ValueError(f"No Census village rows found for {scope}")
+    unseen = sorted(listed_without_gp - seen_without_gp)
+    if unseen:
+        raise ValueError(
+            "Villages listed as having no Gram Panchayat are not among the "
+            f"district's rows: {', '.join(unseen)}"
+        )
     records.sort(key=lambda record: int(str(record["villageCode"])))
     village_codes = [record["villageCode"] for record in records]
     if len(set(village_codes)) != len(village_codes):
@@ -256,7 +281,17 @@ def main() -> int:
         default="",
         help="comma-separated Census subdistrict codes to keep: the taluks of a district formed after 2011, whose rows sit under the parent district's code (Tirupathur under Vellore)",
     )
+    parser.add_argument(
+        "--villages-without-gram-panchayat",
+        default="",
+        help="comma-separated Census village codes the reviewed plan lists as carrying no usable Gram Panchayat (blank columns, or a name without a code); kept with an empty list, every other such row stops the run",
+    )
     args = parser.parse_args()
+    villages_without_gram_panchayat = {
+        code.strip()
+        for code in args.villages_without_gram_panchayat.split(",")
+        if code.strip()
+    }
     subdistrict_codes = {
         code.strip() for code in args.subdistrict_codes.split(",") if code.strip()
     }
@@ -268,6 +303,7 @@ def main() -> int:
                 sheet_name=args.sheet,
                 allow_empty_gram_panchayat=args.allow_empty_gram_panchayat,
                 subdistrict_codes=subdistrict_codes or None,
+                villages_without_gram_panchayat=villages_without_gram_panchayat or None,
             ),
             sys.stdout,
             ensure_ascii=False,

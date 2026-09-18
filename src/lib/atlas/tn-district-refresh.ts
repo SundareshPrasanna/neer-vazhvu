@@ -346,6 +346,23 @@ export function buildDistrictDirectoryPayload(options: {
   const censusVillages = new Map(
     extract.sources.census.records.map((record) => [record.villageCode, record]),
   );
+  // Rows the reviewed plan lists as carrying no usable Gram Panchayat sit in
+  // no crosswalk unit; the directory keeps them so the Census enumeration
+  // stays complete (the extractor refuses any other such row).
+  const notesWithoutGramPanchayat = new Map(
+    (plan.district.censusVillagesWithoutGramPanchayat ?? []).map((entry) => [
+      entry.villageCode,
+      entry.note,
+    ]),
+  );
+  const censusVillagesWithoutGramPanchayat = extract.sources.census.records
+    .filter((record) => record.gramPanchayats.length === 0)
+    .map((record) => ({
+      villageCode: record.villageCode,
+      villageName: record.villageName,
+      subdistrictCode: record.subdistrictCode,
+      note: notesWithoutGramPanchayat.get(record.villageCode) ?? "listed by the reviewed plan",
+    }));
   const boundaryByCode = new Map<string, DirectoryBoundary>();
   for (const record of boundary?.records ?? []) {
     boundaryByCode.set(record.lgdGramPanchayatCode, {
@@ -535,6 +552,7 @@ export function buildDistrictDirectoryPayload(options: {
     },
     blocks,
     panchayats,
+    ...(censusVillagesWithoutGramPanchayat.length > 0 ? { censusVillagesWithoutGramPanchayat } : {}),
     unbound: {
       jjm: [...jjmUnits.values()]
         .filter((unit) => !boundJjmUnits.has(unit.id))

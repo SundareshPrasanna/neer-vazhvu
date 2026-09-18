@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-tiruvallur-v1",
+  "district": {
+    "displayName": "Tiruvallur",
+    "tnrdLgdCode": "543",
+    "tnrdMasterCode": "2",
+    "jjmStateId": "29",
+    "jjmDistrictId": "443",
+    "censusDistrictCode": "602",
+    "censusVillagesWithoutGramPanchayat": [
+      {
+        "villageCode": "628734",
+        "note": "Ennore (Ponneri taluk, Minjur CD block; population 0 in 2011): the row prints a Gram Panchayat name but no code."
+      },
+      {
+        "villageCode": "629135",
+        "note": "Thukkanampattu (Poonamallee taluk and CD block; population 0 in 2011): the row leaves both Gram Panchayat columns blank."
+      },
+      {
+        "villageCode": "629194",
+        "note": "Sengundram (Mathavaram taluk, Puzhal CD block; population 0 in 2011): the row leaves both Gram Panchayat columns blank."
+      }
+    ],
+    "lgdDistrictCode": "589",
+    "ingresDistrictName": "TIRUVALLUR",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 526,
+    "tnrdMasterBlocks": 14,
+    "tnrdMasterGramPanchayats": 526,
+    "jjmVillages": 535,
+    "censusVillages": 617
+  },
+  "targets": [
+    {
+      "id": "allikuzhi",
+      "displayName": "Allikuzhi",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "229398",
+      "tnrdMasterBlockCode": "11",
+      "tnrdMasterGramPanchayatCode": "1",
+      "jjmBlockId": "4581",
+      "jjmGramPanchayatId": "152813",
+      "censusSubdistrictCode": "05698",
+      "censusGramPanchayatCode": "0367",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "628986",
+            "name": "Allikuzhi"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 602; subdistrict 05698; Census GP 0367",
+            "assertion": "The reviewed Census composition contains Allikuzhi 628986."
+          }
+        ]
+      },
+      "masterNote": "\u0baa\u0bc2\u0ba3\u0bcd\u0b9f\u0bbf / \u0b85\u0bb2\u0bcd\u0bb2\u0bbf\u0b95\u0bc1\u0bb4\u0bbf"
+    }
+  ]
+}

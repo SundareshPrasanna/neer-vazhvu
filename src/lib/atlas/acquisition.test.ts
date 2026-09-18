@@ -203,3 +203,33 @@ test("source-extract validation checks aggregate raw-response digests", () => {
     ),
   );
 });
+
+test("plan validation accepts a reviewed list of Census villages without a Gram Panchayat", () => {
+  const changed = structuredClone(plan) as TnDistrictRefreshPlan;
+  changed.district.censusVillagesWithoutGramPanchayat = [
+    { villageCode: "630600", note: "the row leaves both Gram Panchayat columns blank" },
+  ];
+  assert.deepEqual(validateTnDistrictRefreshPlan(changed), []);
+  changed.district.censusVillagesWithoutGramPanchayat = [{ villageCode: "6306", note: "x" }];
+  assert.ok(
+    validateTnDistrictRefreshPlan(changed).some((error) =>
+      error.includes("six-digit Census village code"),
+    ),
+  );
+  changed.district.censusVillagesWithoutGramPanchayat = [];
+  assert.ok(
+    validateTnDistrictRefreshPlan(changed).some((error) =>
+      error.includes("censusVillagesWithoutGramPanchayat: must be a non-empty array"),
+    ),
+  );
+});
+
+test("source-extract validation keeps a Census row whose Gram Panchayat list is empty", () => {
+  const changed = structuredClone(extract) as TnDistrictSourceExtract;
+  changed.sources.census.records[0].gramPanchayats = [];
+  assert.ok(
+    !validateTnDistrictSourceExtract(changed).some((error) =>
+      error.includes("gramPanchayats: must be a non-empty array"),
+    ),
+  );
+});

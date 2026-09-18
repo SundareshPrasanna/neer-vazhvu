@@ -67,6 +67,11 @@ export interface TnDistrictRefreshPlan {
      *  extract keeps only these subdistricts' rows. Absent for a district
      *  the Census already knew. */
     censusSubdistrictCodes?: string[];
+    /** Census 2011 rows a reviewer has checked carry no usable Gram Panchayat
+     *  (both columns blank, or a name printed without a code): the extract
+     *  keeps them with an empty gramPanchayats list instead of stopping. Any
+     *  other such row still stops the acquisition. */
+    censusVillagesWithoutGramPanchayat?: Array<{ villageCode: string; note: string }>;
     /** LGD district code, used by the TNGIS taluk layer. Not the TNRD code. */
     lgdDistrictCode: string;
     ingresDistrictName: string;

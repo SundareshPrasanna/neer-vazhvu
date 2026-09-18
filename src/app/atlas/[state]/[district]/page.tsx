@@ -11,6 +11,7 @@ import {
 import { AtlasSectionNav, type AtlasNavSection } from "@/components/atlas/atlas-section-nav";
 import { AtlasDistrictMap, type AtlasMapPoint } from "@/components/atlas/atlas-map";
 import { AtlasMixBar } from "@/components/atlas/atlas-mix-bar";
+import { DistrictMark, districtAccent } from "@/components/atlas/district-mark";
 import {
   AtlasCard,
   AtlasContainer,
@@ -211,8 +212,22 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
         />
       </AtlasContainer>
 
-      {/* Hero: the verdict, not the directory. */}
+      {/* Hero: the verdict, not the directory. The district's own mark
+          (district-mark.tsx) sits in a banner above it, the same art as its
+          card, so the page and the board read as one place. */}
       <header className="border-b border-slate-200 dark:border-slate-800">
+        <div
+          className={`relative h-20 sm:h-28 overflow-hidden bg-gradient-to-br ${districtAccent(entry.scopeId)}`}
+          aria-hidden="true"
+        >
+          <AtlasContainer className="relative h-full">
+            <DistrictMark
+              scopeId={entry.scopeId}
+              className="absolute inset-y-0 right-0 h-full w-72 max-w-full text-white/85"
+            />
+          </AtlasContainer>
+          <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
+        </div>
         <AtlasContainer className="py-8 sm:py-12">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             District
