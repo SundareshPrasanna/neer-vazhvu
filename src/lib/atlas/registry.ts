@@ -175,7 +175,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Vellore",
     hook: "The Palar's fort town with no canal and no tank irrigation: 5 of 6 taluks are over-exploited, K.V. Kuppam at 151% of its recharge, and every hectare is watered from wells.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -187,7 +187,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Ranipet",
     hook: "The Palar below Vellore with no canal: 96% of irrigation is from wells and 4% from tanks, Arcot taluk is over-exploited at 113% of its recharge and Walajapet is critical.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -199,7 +199,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Dindigul",
     hook: "Under the Palani hills: 7 of 10 taluks are over-exploited, Gujiliamparai at 159% of its recharge, and 73% of irrigation is from open wells.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -211,7 +211,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Tiruvallur",
     hook: "The district north of Chennai has no canal irrigation: 80% of its irrigated land is on tube and bore wells and 11.5% on tanks, 6 of 9 taluks read safe and Avadi is the highest at 83% of its recharge.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -223,7 +223,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Krishnagiri",
     hook: "Hosur's district on the Thenpennai: 3 of 8 taluks are over-exploited, Uthangarai at 149% of its recharge, Hosur taluk is critical at 90%, and 89% of irrigation is from wells.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
