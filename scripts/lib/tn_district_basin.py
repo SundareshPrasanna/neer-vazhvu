@@ -43,6 +43,7 @@ OVERPASS = ("https://overpass.kumi.systems/api/interpreter", "https://overpass-a
 SIPCOT = "https://sipcotgis.tn.gov.in:8086/geoserver/cite/wfs"
 NWDP = "https://nwdp.nwic.gov.in"  # NWIC's National Water Data Portal: the station data India-WRIS serves, and up when WRIS is down
 TNPCB_RT = "https://tnpcb.gov.in/rtwqmstnpcb"
+TNSMART = "https://beta-tnsmart.rimes.int/index.php/Reservoir"  # RIMES relay of the state's daily reservoir storage
 CANAL_CLASS = {"Main Canal": "main", "Branch Canal": "main", "Distributary": "distributary", "Minor": "minor", "Sub Minor": "minor"}
 TNPCB_RT_PARAMS = (  # key in the feed, label, unit, criterion, criterion label
     ("bod", "BOD", "mg/L", 3, "BOD of 3 mg/L or less (outdoor bathing criterion)"),
@@ -96,7 +97,7 @@ WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per ca
 SHED_MIN_KM2 = 5.0  # boundary-mismatch slivers below this are dropped, and listed
 BOUNDARY_RIVER_BUFFER_DEG = 0.015  # ~1.6 km: keeps a river that runs along the district line
 UA = {"User-Agent": "neer-vazhvu/basin-build"}
-LIVE_PREFIXES = ("nwdp-", "tnpcb-rt-")  # caches a --live run always re-fetches
+LIVE_PREFIXES = ("nwdp-", "tnpcb-rt-", "tnsmart-")  # caches a --live run always re-fetches
 LIVE_FILES = ("groundwater-wells.geojson", "gauging-stations.geojson", "realtime-stations.geojson", "reservoirs.geojson", "inventory.json")
 LIVE_MIN_SHARE = 0.8  # a feed returning under this share of last week's features is a partial response, not news
 
@@ -113,7 +114,7 @@ REQUIRED = (
 OPTIONAL = {
     "CANAL_RIVERS": {}, "CANAL_NAMES": {}, "CANAL_DROP": None, "SIPCOT_PARKS": (), "ESTATES_PROVENANCE": "", "ESTATES_SOURCE_FILE": "",
     "TNPCB_RT_SITES": (), "CWC_STATIONS": {}, "CWC_FLOW_EXCLUDED_MONTHS": {}, "CWC_FLOW_EXCLUDED_NOTE": {}, "FLOW_MASS_BALANCE": {},
-    "RESERVOIR_LEVELS": {}, "RESERVOIR_ALIASES": {}, "REPO_FAMILIES": (), "CETP_SCHEMES": None, "WB_NOT_A_NAME": {"", "none", "no"},
+    "RESERVOIR_LEVELS": {}, "RESERVOIR_ALIASES": {}, "REPO_FAMILIES": (), "CETP_SCHEMES": None, "WB_NOT_A_NAME": {"", "none", "no"}, "RESERVOIR_STORAGE": {},
 }
 
 
@@ -189,6 +190,11 @@ def wfs(type_name: str, cql: str | None = None, bbox: tuple | None = None) -> di
     req = urllib.request.Request(f"{TNGIS}?{urllib.parse.urlencode(params)}", headers=UA)
     with urllib.request.urlopen(req, timeout=240, context=CTX) as r:
         return json.load(r)
+
+
+def artifact_text_from(url: str) -> str:
+    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=240, context=CTX) as r:
+        return r.read().decode("utf-8", "replace")
 
 
 def fetch_json(url: str) -> dict:
@@ -484,6 +490,34 @@ class DistrictBasinBuild:
         print(f"    {register_name:10} levels {daily[0][0].date()} to {daily[-1][0].date()} ({len(daily)} days); range {min(v for _, v in daily):.2f} to {max(v for _, v in daily):.2f} m")
         return {"stationKey": f"reservoir-{key}", "hasReadings": True, "latestLevel": f"{daily[-1][1]:.2f} m above sea level ({daily[-1][0].strftime('%Y-%m-%d')}, CWC)"}
 
+    def storage_reading(self, register_name: str) -> dict:
+        """The dashboard's current storage for one reservoir, as it prints it. No series, no conversion."""
+        key = self.cfg.RESERVOIR_STORAGE.get(register_name)
+        if not key:
+            return {}
+        row = self.tnsmart_storage().get(key)
+        if row is None:
+            raise SystemExit(f"reservoirs: the state dashboard no longer lists {key!r} for {register_name}")
+        full = num(row.get("total_water_lvl_ft"))
+        return {
+            "storagePercentOfCapacity": num(row.get("percent_capacity")) and round(num(row["percent_capacity"]), 1),
+            "storageMcft": num(row.get("capacity_mcf")),
+            "storageDepthFt": num(row.get("depth_ft")),
+            "fullCapacityFt": full,
+            "storageReadOn": str(row.get("date") or "").strip() or None,
+            "storageSource": "Tamil Nadu reservoir dashboard (TN-SMART, RIMES), daily",
+        }
+
+    def tnsmart_storage(self) -> dict:
+        """Today's storage for the reservoirs the state dashboard reports, keyed by its own name.
+
+        The page carries one JSON array of every reservoir it relays; the reading is a snapshot,
+        not a series, so it is served as a current fact and never charted.
+        """
+        raw = self.cached("tnsmart-reservoirs.json", lambda: {"html": artifact_text_from(TNSMART)})
+        rows = json.loads(re.search(r"\[\s*\{[^\[\]]*?depth_ft.*?\}\s*\]", raw["html"], re.S).group(0))
+        return {str(r["name"]).strip(): r for r in rows}
+
     def build_reservoirs(self) -> None:
         cfg, district, sheds = self.cfg, self.district, self.sheds
         raw = self.cached("reservoirs.json", lambda: wfs("generic_viewer:reservoir", bbox=district.bounds))
@@ -504,7 +538,8 @@ class DistrictBasinBuild:
             levels = self.reservoir_level_pack(name) or {"hasReadings": False}
             feats.append(feat(mapping(pt), {
                 "name": name, "alsoKnownAs": alias, "kind": "reservoir", "district": p.get("district_name"), **levels,
-                "wrdBasin": p.get("basin_name"), "waterspreadHa": round(area_km2(g) * 100, 1), "shedId": sheds.for_point(pt),
+                **self.storage_reading(name), "wrdBasin": p.get("basin_name"),
+                "waterspreadHa": round(area_km2(g) * 100, 1), "shedId": sheds.for_point(pt),
             }))
         self.emit("reservoirs", feats, f"{TNGIS_LABEL}: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon", "generic_viewer:reservoir")
 

@@ -895,6 +895,25 @@
       ],
       "refreshMethod": "scripts/build_erode_rivers_basin.py --live and scripts/build_krishnagiri_rivers_basin.py --live, weekly by .github/workflows/district-basins-refresh.yml (Mondays); a full build re-fetches too when .cache/<basin>/ is cleared",
       "notes": "JSON behind the dashboard: /rtwqmstnpcb/api/readings/graph/?site_id=<n>&mean=MO&start_date=YYYY-MM-DD HH:MM&end_date=... (mean = H, D, MO, Q, Y). Site ids: 3 KGC-ERD-UP-3 and 4 KGC-ERD-DS-4 (Kalingarayan canal above and below Erode), 9 NOY-ORA-DS-6 (Noyyal below Orathupalayam dam); 5-8 and 10 are outside Erode district. Sensor data, not laboratory results; a dead sensor reports dissolved solids of 0.01 (dropped). Included deliberately on 2026-09-17, with attribution, the reuse terms being unstated."
+    },
+    {
+      "id": "tnsmart-rimes-reservoirs",
+      "scope": "krishnagiri-rivers",
+      "publisher": "Regional Integrated Multi-Hazard Early Warning System for Africa and Asia (RIMES), relaying Tamil Nadu's daily reservoir storage",
+      "url": "https://beta-tnsmart.rimes.int/index.php/Reservoir",
+      "license": "LICENCE UNVERIFIED - see notes. The dashboard states no terms of use, no copyright policy and no licence anywhere on the page; nothing has been established about who may redistribute this material. Storage readings are served as current facts with the dashboard named.",
+      "type": "page",
+      "cadence": "daily (the page's rows carry the day's date)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/krishnagiri-rivers/reservoirs.geojson",
+        "public/data/basins/krishnagiri-rivers/inventory.json"
+      ],
+      "refreshMethod": "scripts/build_krishnagiri_rivers_basin.py --live, weekly by .github/workflows/district-basins-refresh.yml (Mondays); the cache prefix tnsmart- is always re-fetched on a --live run",
+      "notes": "The state's daily reservoir dashboard, relayed by RIMES: one JSON array in the page carries every reservoir it reports with the day's depth in feet, storage in Mcft, percentage of capacity, full capacity and coordinates. It serves Kelavarapalli, Krishnagiri (KRP) and Pambar, three of the four dams inside Krishnagiri district; Shoolagiri Chinnar is not on it. IDENTITY CHECK that these are the same dams: the dashboard's full-capacity figures (KRP 52.0 ft, Pambar 19.6 ft, Kelavarapalli 44.28 ft) agree with the Krishnagiri collectorate's own agriculture page. CAVEATS, both deliberate and recorded on the map: RIMES is a relay, not the issuer, so if the state feed breaks this breaks too; the host is a beta subdomain whose stability is not guaranteed; and the page carries no licence statement of any kind, so the licence determination fails closed as unverified. The endpoint index.php/Reservoir/get_reservoir_data returns 31 storage percentages per reservoir with NO dates attached, so it is not used: a chart would have to infer its own x axis. Only the current reading is served, which is what the page itself states."
     }
   ]
 }
