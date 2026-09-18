@@ -24,6 +24,7 @@ Sources (fetched once, cached under .cache/krishnagiri-rivers/, gitignored):
   NWIC National Water Data Portal (CKAN datastore)      groundwater-wells (CGWB + state telemetry 2026, CGWB manual 2021-2025)
   NWDP, CWC 'Canal Network' + 'Water Resource Project'   canals, command-areas (needs ogr2ogr once)
   TNPCB real-time water quality dashboard (JSON)         realtime-stations + readings/<station>.json (Kelavarapalli dam, site 10)
+  TN-SMART (RIMES) reservoir dashboard                   reservoirs: today's storage for Kelavarapalli, Krishnagiri and Pambar
   NWDP, CWC river discharge + surface water quality      gauging-stations + readings/cwc-<station>.json (Gummanur)
   TNGIS admin_master taluks + generic_viewer:block_boundary  admin-taluk, admin-block, groundwater-taluks
   TNGIS generic_viewer:industry_cad_matched             industries, treatment-plants
@@ -33,9 +34,10 @@ Inputs already in the repo:
   public/data/atlas/tn/krishnagiri/groundwater-taluks.json  groundwater-taluks (IN-GRES stage by taluk)
   pipeline-inputs/basins/krishnagiri-rivers/tnpcb-type-sectors.json  reviewed TNPCB type code -> sector lookup
 
-Not served in this round, and why: CWC reports no reservoir level for the
-district's dams (Kelavarapalli, Krishnagiri, Pambar), which are state dams read
-from the WRD's daily feed; the Thenpennai's NWMP stations are not yet placed.
+Not served in this round, and why: CWC publishes no level series for the
+district's dams, which are state dams, so no reservoir carries a chart; the
+state dashboard's reading is a daily snapshot and is served as a current fact
+only. The Thenpennai's NWMP stations are not yet placed.
 
 Writes public/data/basins/krishnagiri-rivers/<family>.geojson and inventory.json
 through nvdm_write.write_artifact so envelopes survive a re-run. Run
@@ -86,6 +88,10 @@ TNPCB_RT_SITES = (10,)  # Thenpennai at the Kelavarapalli dam
 CWC_STATIONS = {"GUMMANUR": "thenpennai"}
 RESERVOIR_LEVELS = {}  # CWC's level resources carry none of the district's dams (state dams)
 RESERVOIR_ALIASES = {}
+# TN WRD register name -> the name the state's daily reservoir dashboard prints. Its full-capacity
+# figures agree with the district's own agriculture page (KRP 52.0 ft, Pambar 19.6 ft), which is the
+# check that these are the same dams. Shoolagiri Chinnar is not on the dashboard.
+RESERVOIR_STORAGE = {"Kelavarapalli": "Kelavarapalli", "Krishnagiri": "Krishnagiri", "Pambar": "Pambar"}
 SECTOR_LOOKUP = ROOT / "pipeline-inputs/basins/krishnagiri-rivers/tnpcb-type-sectors.json"
 CETP_SCHEMES = None  # no common effluent treatment plant in the register; the one treatment unit is a sewage plant
 REGISTER_YEARS = "2015 to 2024"

@@ -47,6 +47,8 @@ CWC_RIVER = reg("nwic-nwdp-cwc-river-data", "CWC river discharge (manual daily) 
                 url="https://nwdp.nwic.gov.in/")
 TNPCB_RT = reg("tnpcb-realtime-wq-dashboard", "TNPCB real-time water quality monitoring dashboard: monthly means of sensor readings", "Tamil Nadu Pollution Control Board",
                url="https://tnpcb.gov.in/rtwqmstnpcb")
+TNSMART = reg("tnsmart-rimes-reservoirs", "Tamil Nadu reservoir dashboard (TN-SMART): the day's storage, depth and percentage of capacity per reservoir", "RIMES, relaying Tamil Nadu's daily reservoir storage",
+              url="https://beta-tnsmart.rimes.int/index.php/Reservoir")
 SHEDS_IN = "public/data/basins/krishnagiri-rivers/sub-hydrosheds.geojson"  # the shedId join
 # The panchayat outlines carry each panchayat's tap-connection headline and Census 2011 totals from the district Atlas.
 ATLAS_PANCHAYAT_INPUTS = sorted(
@@ -63,7 +65,7 @@ ARTIFACTS: dict[str, tuple[str, list[dict], list[str], bool]] = {
     "rivers.geojson": ("basins/rivers", [OSM, TNGIS], [], True),
     "canals.geojson": ("basins/canals", [CWC_CANALS, TNGIS], [SHEDS_IN], True),
     "command-areas.geojson": ("basins/command-areas", [CWC_CANALS, TNGIS], [SHEDS_IN], True),
-    "reservoirs.geojson": ("basins/reservoirs", [TNGIS], [SHEDS_IN], True),
+    "reservoirs.geojson": ("basins/reservoirs", [TNGIS, TNSMART], [SHEDS_IN], True),
     "tanks.geojson": ("basins/tanks", [TNGIS], [SHEDS_IN], True),
     "industries.geojson": ("basins/industries", [TNGIS], [SHEDS_IN], True),
     "treatment-plants.geojson": ("basins/treatment-plants", [TNGIS], [SHEDS_IN], True),
@@ -82,7 +84,7 @@ ARTIFACTS: dict[str, tuple[str, list[dict], list[str], bool]] = {
     "sub-watersheds.geojson": ("basins/sub-watersheds", [TNGIS], [SHEDS_IN], True),
     "mini-watersheds.geojson": ("basins/mini-watersheds", [TNGIS], [SHEDS_IN], True),
     "micro-watersheds.geojson": ("basins/micro-watersheds", [TNGIS], [SHEDS_IN], True),
-    "inventory.json": ("basins/inventory", [TNGIS, OSM, SIPCOT, INGRES, NWDP, CWC_CANALS, CWC_RIVER, TNPCB_RT], [], False),
+    "inventory.json": ("basins/inventory", [TNGIS, OSM, SIPCOT, INGRES, NWDP, CWC_CANALS, CWC_RIVER, TNPCB_RT, TNSMART], [], False),
 }
 
 ENVELOPE_KEYS = ("nvdm", "dataset", "scope", "projection", "provenance", "ext")
