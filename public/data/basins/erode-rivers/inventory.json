@@ -1,614 +1,614 @@
 {
-  "nvdm": "1.0",
-  "dataset": "basins/inventory",
-  "scope": {
-    "kind": "basin",
-    "id": "erode-rivers"
-  },
-  "provenance": {
-    "sources": [
-      {
-        "id": "tngis-open-geoserver",
-        "title": "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies register, named tanks, mine leases, industry register matched to land parcels",
-        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
-        "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
-        "role": "input",
-        "url": "https://tngis.tn.gov.in/tngismaps/ows"
-      },
-      {
-        "id": "osm-overpass",
-        "title": "OpenStreetMap (Overpass API extract: named river and canal courses)",
-        "publisher": "OpenStreetMap contributors",
-        "license": "ODbL 1.0",
-        "role": "input"
-      },
-      {
-        "id": "sipcot-gis-geoserver",
-        "title": "SIPCOT GIS (WFS): industrial complex outlines, Perundurai DTA and SEZ",
-        "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
-        "license": "LICENCE UNVERIFIED - see notes. Open SIPCOT GeoServer (WFS, no login); the site footer reads 'All Rights Reserved' and states no data terms; the reuse question sent for the Sriperumbudur corridor has no reply. Estate outlines only, published with attribution.",
-        "role": "input",
-        "url": "https://sipcotgis.tn.gov.in/"
-      },
-      {
-        "id": "cpcb-prs-report",
-        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version)",
-        "publisher": "Central Pollution Control Board",
-        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
-        "role": "input",
-        "url": "https://cpcb.gov.in/polluted-river-stretches/",
-        "as_of": "2025-10"
-      },
-      {
-        "id": "tnpcb-prs-cauvery",
-        "title": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)",
-        "publisher": "Tamil Nadu Pollution Control Board",
-        "license": "TN government publication, cited with attribution",
-        "role": "input",
-        "url": "https://tnpcb.gov.in/pollutedriverstretches.php",
-        "as_of": "2023-12"
-      },
-      {
-        "id": "tnpcb-prs-cauvery",
-        "title": "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019, with the preamble to the stretch action plans; TNPCB NWMP annual data 2024 (station 1320)",
-        "publisher": "Tamil Nadu Pollution Control Board",
-        "license": "TN government publication, cited with attribution",
-        "role": "input",
-        "url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf",
-        "as_of": "2019"
-      },
-      {
-        "id": "ingres-gw-assessment-tn",
-        "title": "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk",
-        "publisher": "CGWB with IIT Hyderabad (IN-GRES)",
-        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
-        "role": "input",
-        "url": "https://ingres.iith.ac.in/",
-        "as_of": "2025"
-      },
-      {
-        "id": "nwic-nwdp-groundwater-level",
-        "title": "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
-        "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
-        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
-        "role": "input",
-        "url": "https://nwdp.nwic.gov.in/"
-      },
-      {
-        "id": "nwic-nwdp-cwc-canal-network",
-        "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
-        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
-        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
-        "role": "input",
-        "url": "https://nwdp.nwic.gov.in/",
-        "as_of": "2025"
-      },
-      {
-        "id": "nwic-nwdp-cwc-river-data",
-        "title": "CWC river discharge (manual daily), surface water quality and daily reservoir levels for Tamil Nadu and the Cauvery basin, National Water Data Portal",
-        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
-        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
-        "role": "input",
-        "url": "https://nwdp.nwic.gov.in/"
-      },
-      {
-        "id": "tnpcb-realtime-wq-dashboard",
-        "title": "TNPCB real-time water quality monitoring dashboard: monthly means of sensor readings",
-        "publisher": "Tamil Nadu Pollution Control Board",
-        "license": "LICENCE UNVERIFIED - see notes. Public Tamil Nadu government dashboard with no reuse terms stated; its own page switches the download buttons off. Monthly means published with attribution.",
-        "role": "input",
-        "url": "https://tnpcb.gov.in/rtwqmstnpcb"
-      }
-    ],
-    "method": "derived",
-    "produced_at": "2026-09-17",
-    "produced_by": "scripts/build_erode_rivers_basin.py",
-    "note": "Erode district's rivers, groundwater and industry (scope erode-rivers; the district's own scope id is tn-erode). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId). The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/erode-rivers/tnpcb-type-sectors.json."
-  },
-  "basinId": "erode-rivers",
-  "generatedFrom": "build_erode_rivers_basin.py",
-  "generatedOn": "2026-09-17",
-  "families": {
-    "boundary": {
-      "featureCount": 1,
-      "sources": [
-        {
-          "file": "admin_master:administrative_boundary_district",
-          "kind": null,
-          "count": 1,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 573"
-        }
-      ],
-      "bytes": 21104,
-      "sliced": false
-    },
-    "sub-hydrosheds": {
-      "featureCount": 6,
-      "sources": [
-        {
-          "file": "generic_viewer:sub_basin",
-          "kind": null,
-          "count": 6,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
-        }
-      ],
-      "bytes": 34615,
-      "sliced": false
-    },
-    "rivers": {
-      "featureCount": 6,
-      "sources": [
-        {
-          "file": "osm-waterways.json + cwc-canals-erode.geojson",
-          "kind": null,
-          "count": 6,
-          "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay. The two canals: CWC canal network (National Water Data Portal)"
-        }
-      ],
-      "bytes": 156535,
-      "sliced": false
-    },
-    "reservoirs": {
-      "featureCount": 6,
-      "sources": [
-        {
-          "file": "generic_viewer:reservoir",
-          "kind": null,
-          "count": 6,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon"
-        }
-      ],
-      "bytes": 3519,
-      "sliced": false
-    },
-    "tanks": {
-      "featureCount": 44,
-      "sources": [
-        {
-          "file": "cauvery-tn/tanks.geojson",
-          "kind": null,
-          "count": 44,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: named tanks as centre points (generic_viewer:all_tanks), as ingested for the Cauvery (Tamil Nadu) basin"
-        }
-      ],
-      "bytes": 10063,
-      "sliced": false
-    },
-    "monitoring-points": {
-      "featureCount": 6,
-      "sources": [
-        {
-          "file": "cauvery-tn/wq-stations.geojson",
-          "kind": null,
-          "count": 6,
-          "provenance": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin"
-        }
-      ],
-      "bytes": 3871,
-      "sliced": false
-    },
-    "industries": {
-      "featureCount": 1255,
-      "sources": [
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "green-white",
-          "count": 233,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "orange",
-          "count": 458,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "red-chemicals",
-          "count": 18,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "red-other",
-          "count": 77,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "red-paper",
-          "count": 25,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "red-quarry-mining",
-          "count": 85,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "red-tannery",
-          "count": 26,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "red-textile",
-          "count": 333,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        }
-      ],
-      "bytes": 740251,
-      "sliced": false
-    },
-    "treatment-plants": {
-      "featureCount": 13,
-      "sources": [
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "cetp-operating",
-          "count": 2,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "cetp-proposed",
-          "count": 8,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        },
-        {
-          "file": "generic_viewer:industry_cad_matched",
-          "kind": "stp",
-          "count": 3,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
-        }
-      ],
-      "bytes": 13692,
-      "sliced": false
-    },
-    "industrial-estates": {
-      "featureCount": 2,
-      "sources": [
-        {
-          "file": "cite:industrial_complex_boundary-Perundurai_*",
-          "kind": null,
-          "count": 2,
-          "provenance": "SIPCOT GIS (sipcotgis.tn.gov.in): industrial complex outlines, Perundurai DTA and SEZ; area as SIPCOT states it"
-        }
-      ],
-      "bytes": 5288,
-      "sliced": false
-    },
-    "quarries": {
-      "featureCount": 69,
-      "sources": [
-        {
-          "file": "generic_viewer:mines",
-          "kind": null,
-          "count": 69,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
-        }
-      ],
-      "bytes": 34801,
-      "sliced": false
-    },
-    "admin-taluk": {
-      "featureCount": 10,
-      "sources": [
-        {
-          "file": "admin_master:administrative_boundary_taluk",
-          "kind": null,
-          "count": 10,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 573"
-        }
-      ],
-      "bytes": 45524,
-      "sliced": false
-    },
-    "groundwater-taluks": {
-      "featureCount": 10,
-      "sources": [
-        {
-          "file": "atlas/tn/erode/groundwater-taluks.json",
-          "kind": "critical",
-          "count": 1,
-          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
-        },
-        {
-          "file": "atlas/tn/erode/groundwater-taluks.json",
-          "kind": "over-exploited",
-          "count": 2,
-          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
-        },
-        {
-          "file": "atlas/tn/erode/groundwater-taluks.json",
-          "kind": "safe",
-          "count": 3,
-          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
-        },
-        {
-          "file": "atlas/tn/erode/groundwater-taluks.json",
-          "kind": "semi-critical",
-          "count": 4,
-          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
-        }
-      ],
-      "bytes": 47315,
-      "sliced": false
-    },
-    "admin-block": {
-      "featureCount": 14,
-      "sources": [
-        {
-          "file": "generic_viewer:block_boundary",
-          "kind": null,
-          "count": 14,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
-        }
-      ],
-      "bytes": 60940,
-      "sliced": false
-    },
-    "admin-gp": {
-      "featureCount": 225,
-      "sources": [
-        {
-          "file": "tnrd:panchayat_boundary",
-          "kind": null,
-          "count": 225,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
-        }
-      ],
-      "bytes": 326064,
-      "sliced": true,
-      "shedKeys": [
-        "SB114",
-        "SB120",
-        "SB123",
-        "SB126",
-        "SB127"
-      ]
-    },
-    "waterbodies-major": {
-      "featureCount": 120,
-      "sources": [
-        {
-          "file": "generic_viewer:all_water_bodies",
-          "kind": null,
-          "count": 120,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Erode district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
-        }
-      ],
-      "bytes": 162319,
-      "sliced": false
-    },
-    "waterbodies-minor": {
-      "featureCount": 1563,
-      "sources": [
-        {
-          "file": "generic_viewer:all_water_bodies",
-          "kind": null,
-          "count": 1563,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Erode district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
-        }
-      ],
-      "bytes": 534457,
-      "sliced": true,
-      "shedKeys": [
-        "SB114",
-        "SB120",
-        "SB123",
-        "SB124",
-        "SB126",
-        "SB127"
-      ]
-    },
-    "watersheds": {
-      "featureCount": 13,
-      "sources": [
-        {
-          "file": "generic_viewer:microwatersheds",
-          "kind": null,
-          "count": 13,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
-        }
-      ],
-      "bytes": 65587,
-      "sliced": false
-    },
-    "sub-watersheds": {
-      "featureCount": 28,
-      "sources": [
-        {
-          "file": "generic_viewer:microwatersheds",
-          "kind": null,
-          "count": 28,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
-        }
-      ],
-      "bytes": 95431,
-      "sliced": false
-    },
-    "mini-watersheds": {
-      "featureCount": 77,
-      "sources": [
-        {
-          "file": "generic_viewer:microwatersheds",
-          "kind": null,
-          "count": 77,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
-        }
-      ],
-      "bytes": 159452,
-      "sliced": false
-    },
-    "micro-watersheds": {
-      "featureCount": 713,
-      "sources": [
-        {
-          "file": "generic_viewer:microwatersheds",
-          "kind": null,
-          "count": 713,
-          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
-        }
-      ],
-      "bytes": 505703,
-      "sliced": true,
-      "shedKeys": [
-        "SB114",
-        "SB120",
-        "SB123",
-        "SB124",
-        "SB126",
-        "SB127"
-      ]
-    },
-    "groundwater-wells": {
-      "featureCount": 174,
-      "sources": [
-        {
-          "file": "nwdp.nwic.gov.in datastore",
-          "kind": "cgwb-manual",
-          "count": 117,
-          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Erode-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
-        },
-        {
-          "file": "nwdp.nwic.gov.in datastore",
-          "kind": "cgwb-telemetry",
-          "count": 35,
-          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Erode-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
-        },
-        {
-          "file": "nwdp.nwic.gov.in datastore",
-          "kind": "state-telemetry",
-          "count": 22,
-          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Erode-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
-        }
-      ],
-      "bytes": 67597,
-      "sliced": false
-    },
-    "prs": {
-      "featureCount": 2,
-      "sources": [
-        {
-          "file": "cpcb-2025 + osm-waterways.json",
-          "kind": null,
-          "count": 2,
-          "provenance": "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (Annexures III A and X), drawn on the OpenStreetMap course of the Cauvery inside the district; the 2025 stretch starts at TNPCB station 1320 (Vairapalayam)"
-        }
-      ],
-      "bytes": 15037,
-      "sliced": false
-    },
-    "prs-drains": {
-      "featureCount": 5,
-      "sources": [
-        {
-          "file": "PrsCauvery24919.pdf",
-          "kind": null,
-          "count": 5,
-          "provenance": "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019), pp.49-50: outfall names and GPS coordinates as printed"
-        }
-      ],
-      "bytes": 3992,
-      "sliced": false
-    },
-    "canals": {
-      "featureCount": 213,
-      "sources": [
-        {
-          "file": "canal_network.zip",
-          "kind": "distributary",
-          "count": 52,
-          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; three unnamed lines filed under the Kalingarayan system but lying east of the district are left out"
-        },
-        {
-          "file": "canal_network.zip",
-          "kind": "main",
-          "count": 12,
-          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; three unnamed lines filed under the Kalingarayan system but lying east of the district are left out"
-        },
-        {
-          "file": "canal_network.zip",
-          "kind": "minor",
-          "count": 149,
-          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; three unnamed lines filed under the Kalingarayan system but lying east of the district are left out"
-        }
-      ],
-      "bytes": 472389,
-      "sliced": false
-    },
-    "command-areas": {
-      "featureCount": 4,
-      "sources": [
-        {
-          "file": "command_area.zip",
-          "kind": "kalingarayan-anicut-system",
-          "count": 1,
-          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-        },
-        {
-          "file": "command_area.zip",
-          "kind": "kodivery-anicut-system",
-          "count": 1,
-          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-        },
-        {
-          "file": "command_area.zip",
-          "kind": "lower-bhavani",
-          "count": 1,
-          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-        },
-        {
-          "file": "command_area.zip",
-          "kind": "mettur-canal-system",
-          "count": 1,
-          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-        }
-      ],
-      "bytes": 56949,
-      "sliced": false
-    },
-    "cepi-area": {
-      "featureCount": 1,
-      "sources": [
-        {
-          "file": "CEPI_Action Plan_ERODE.pdf",
-          "kind": null,
-          "count": 1,
-          "provenance": "TNPCB, Comprehensive Environmental Pollution Index (CEPI) action plan for the Erode industrial cluster (September 2020), Table 1.1: the eight reference points of the core zone, joined in order"
-        }
-      ],
-      "bytes": 2591,
-      "sliced": false
-    },
-    "realtime-stations": {
-      "featureCount": 3,
-      "sources": [
-        {
-          "file": "rtwqmstnpcb api/readings/graph",
-          "kind": null,
-          "count": 3,
-          "provenance": "TNPCB real-time water quality monitoring dashboard (tnpcb.gov.in/rtwqmstnpcb): station positions and monthly means of the sensor readings; values a dead sensor reports (dissolved solids below 1 mg/L) are dropped"
-        }
-      ],
-      "bytes": 3734,
-      "sliced": false
-    },
-    "gauging-stations": {
-      "featureCount": 4,
-      "sources": [
-        {
-          "file": "nwdp.nwic.gov.in datastore",
-          "kind": null,
-          "count": 4,
-          "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
-        }
-      ],
-      "bytes": 4169,
-      "sliced": false
+ "nvdm": "1.0",
+ "dataset": "basins/inventory",
+ "scope": {
+  "kind": "basin",
+  "id": "erode-rivers"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "tngis-open-geoserver",
+    "title": "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies register, named tanks, mine leases, industry register matched to land parcels",
+    "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+    "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
+    "role": "input",
+    "url": "https://tngis.tn.gov.in/tngismaps/ows"
+   },
+   {
+    "id": "osm-overpass",
+    "title": "OpenStreetMap (Overpass API extract: named river and canal courses)",
+    "publisher": "OpenStreetMap contributors",
+    "license": "ODbL 1.0",
+    "role": "input"
+   },
+   {
+    "id": "sipcot-gis-geoserver",
+    "title": "SIPCOT GIS (WFS): industrial complex outlines, Perundurai DTA and SEZ",
+    "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
+    "license": "LICENCE UNVERIFIED - see notes. Open SIPCOT GeoServer (WFS, no login); the site footer reads 'All Rights Reserved' and states no data terms; the reuse question sent for the Sriperumbudur corridor has no reply. Estate outlines only, published with attribution.",
+    "role": "input",
+    "url": "https://sipcotgis.tn.gov.in/"
+   },
+   {
+    "id": "cpcb-prs-report",
+    "title": "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version)",
+    "publisher": "Central Pollution Control Board",
+    "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+    "role": "input",
+    "url": "https://cpcb.gov.in/polluted-river-stretches/",
+    "as_of": "2025-10"
+   },
+   {
+    "id": "tnpcb-prs-cauvery",
+    "title": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)",
+    "publisher": "Tamil Nadu Pollution Control Board",
+    "license": "TN government publication, cited with attribution",
+    "role": "input",
+    "url": "https://tnpcb.gov.in/pollutedriverstretches.php",
+    "as_of": "2023-12"
+   },
+   {
+    "id": "tnpcb-prs-cauvery",
+    "title": "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019, with the preamble to the stretch action plans; TNPCB NWMP annual data 2024 (station 1320)",
+    "publisher": "Tamil Nadu Pollution Control Board",
+    "license": "TN government publication, cited with attribution",
+    "role": "input",
+    "url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf",
+    "as_of": "2019"
+   },
+   {
+    "id": "ingres-gw-assessment-tn",
+    "title": "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk",
+    "publisher": "CGWB with IIT Hyderabad (IN-GRES)",
+    "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+    "role": "input",
+    "url": "https://ingres.iith.ac.in/",
+    "as_of": "2025"
+   },
+   {
+    "id": "nwic-nwdp-groundwater-level",
+    "title": "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
+    "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+    "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "role": "input",
+    "url": "https://nwdp.nwic.gov.in/"
+   },
+   {
+    "id": "nwic-nwdp-cwc-canal-network",
+    "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+    "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+    "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "role": "input",
+    "url": "https://nwdp.nwic.gov.in/",
+    "as_of": "2025"
+   },
+   {
+    "id": "nwic-nwdp-cwc-river-data",
+    "title": "CWC river discharge (manual daily), surface water quality and daily reservoir levels for Tamil Nadu and the Cauvery basin, National Water Data Portal",
+    "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+    "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "role": "input",
+    "url": "https://nwdp.nwic.gov.in/"
+   },
+   {
+    "id": "tnpcb-realtime-wq-dashboard",
+    "title": "TNPCB real-time water quality monitoring dashboard: monthly means of sensor readings",
+    "publisher": "Tamil Nadu Pollution Control Board",
+    "license": "LICENCE UNVERIFIED - see notes. Public Tamil Nadu government dashboard with no reuse terms stated; its own page switches the download buttons off. Monthly means published with attribution.",
+    "role": "input",
+    "url": "https://tnpcb.gov.in/rtwqmstnpcb"
+   }
+  ],
+  "method": "derived",
+  "produced_at": "2026-09-18",
+  "produced_by": "scripts/build_erode_rivers_basin.py",
+  "note": "Erode district's rivers, groundwater and industry (scope erode-rivers; the district's own scope id is tn-erode). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId). The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/erode-rivers/tnpcb-type-sectors.json."
+ },
+ "basinId": "erode-rivers",
+ "generatedFrom": "build_erode_rivers_basin.py",
+ "generatedOn": "2026-09-18",
+ "families": {
+  "boundary": {
+   "featureCount": 1,
+   "sources": [
+    {
+     "file": "admin_master:administrative_boundary_district",
+     "kind": null,
+     "count": 1,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 573"
     }
+   ],
+   "bytes": 21104,
+   "sliced": false
+  },
+  "sub-hydrosheds": {
+   "featureCount": 6,
+   "sources": [
+    {
+     "file": "generic_viewer:sub_basin",
+     "kind": null,
+     "count": 6,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
+    }
+   ],
+   "bytes": 34615,
+   "sliced": false
+  },
+  "rivers": {
+   "featureCount": 6,
+   "sources": [
+    {
+     "file": "osm-waterways.json + cwc-canals-erode.geojson",
+     "kind": null,
+     "count": 6,
+     "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay. The two canals: CWC canal network (National Water Data Portal)"
+    }
+   ],
+   "bytes": 156535,
+   "sliced": false
+  },
+  "reservoirs": {
+   "featureCount": 6,
+   "sources": [
+    {
+     "file": "generic_viewer:reservoir",
+     "kind": null,
+     "count": 6,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon"
+    }
+   ],
+   "bytes": 3519,
+   "sliced": false
+  },
+  "tanks": {
+   "featureCount": 44,
+   "sources": [
+    {
+     "file": "cauvery-tn/tanks.geojson",
+     "kind": null,
+     "count": 44,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: named tanks as centre points (generic_viewer:all_tanks), as ingested for the Cauvery (Tamil Nadu) basin"
+    }
+   ],
+   "bytes": 10063,
+   "sliced": false
+  },
+  "monitoring-points": {
+   "featureCount": 6,
+   "sources": [
+    {
+     "file": "cauvery-tn/wq-stations.geojson",
+     "kind": null,
+     "count": 6,
+     "provenance": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin"
+    }
+   ],
+   "bytes": 3871,
+   "sliced": false
+  },
+  "industries": {
+   "featureCount": 1255,
+   "sources": [
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "green-white",
+     "count": 233,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "orange",
+     "count": 458,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-chemicals",
+     "count": 18,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-other",
+     "count": 77,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-paper",
+     "count": 25,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-quarry-mining",
+     "count": 85,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-tannery",
+     "count": 26,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "red-textile",
+     "count": 333,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    }
+   ],
+   "bytes": 740249,
+   "sliced": false
+  },
+  "treatment-plants": {
+   "featureCount": 13,
+   "sources": [
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "cetp-operating",
+     "count": 2,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "cetp-proposed",
+     "count": 8,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    },
+    {
+     "file": "generic_viewer:industry_cad_matched",
+     "kind": "stp",
+     "count": 3,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Erode district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+    }
+   ],
+   "bytes": 13692,
+   "sliced": false
+  },
+  "industrial-estates": {
+   "featureCount": 2,
+   "sources": [
+    {
+     "file": "cite:industrial_complex_boundary-Perundurai_*",
+     "kind": null,
+     "count": 2,
+     "provenance": "SIPCOT GIS (sipcotgis.tn.gov.in): industrial complex outlines, Perundurai DTA and SEZ; area as SIPCOT states it"
+    }
+   ],
+   "bytes": 5288,
+   "sliced": false
+  },
+  "quarries": {
+   "featureCount": 69,
+   "sources": [
+    {
+     "file": "generic_viewer:mines",
+     "kind": null,
+     "count": 69,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
+    }
+   ],
+   "bytes": 34801,
+   "sliced": false
+  },
+  "admin-taluk": {
+   "featureCount": 10,
+   "sources": [
+    {
+     "file": "admin_master:administrative_boundary_taluk",
+     "kind": null,
+     "count": 10,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 573"
+    }
+   ],
+   "bytes": 45524,
+   "sliced": false
+  },
+  "groundwater-taluks": {
+   "featureCount": 10,
+   "sources": [
+    {
+     "file": "atlas/tn/erode/groundwater-taluks.json",
+     "kind": "critical",
+     "count": 1,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
+    },
+    {
+     "file": "atlas/tn/erode/groundwater-taluks.json",
+     "kind": "over-exploited",
+     "count": 2,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
+    },
+    {
+     "file": "atlas/tn/erode/groundwater-taluks.json",
+     "kind": "safe",
+     "count": 3,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
+    },
+    {
+     "file": "atlas/tn/erode/groundwater-taluks.json",
+     "kind": "semi-critical",
+     "count": 4,
+     "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Erode district page; taluk polygons from TNGIS"
+    }
+   ],
+   "bytes": 47315,
+   "sliced": false
+  },
+  "admin-block": {
+   "featureCount": 14,
+   "sources": [
+    {
+     "file": "generic_viewer:block_boundary",
+     "kind": null,
+     "count": 14,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
+    }
+   ],
+   "bytes": 60940,
+   "sliced": false
+  },
+  "admin-gp": {
+   "featureCount": 225,
+   "sources": [
+    {
+     "file": "tnrd:panchayat_boundary",
+     "kind": null,
+     "count": 225,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
+    }
+   ],
+   "bytes": 326064,
+   "sliced": true,
+   "shedKeys": [
+    "SB114",
+    "SB120",
+    "SB123",
+    "SB126",
+    "SB127"
+   ]
+  },
+  "waterbodies-major": {
+   "featureCount": 120,
+   "sources": [
+    {
+     "file": "generic_viewer:all_water_bodies",
+     "kind": null,
+     "count": 120,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Erode district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+    }
+   ],
+   "bytes": 162319,
+   "sliced": false
+  },
+  "waterbodies-minor": {
+   "featureCount": 1563,
+   "sources": [
+    {
+     "file": "generic_viewer:all_water_bodies",
+     "kind": null,
+     "count": 1563,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Erode district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+    }
+   ],
+   "bytes": 534457,
+   "sliced": true,
+   "shedKeys": [
+    "SB114",
+    "SB120",
+    "SB123",
+    "SB124",
+    "SB126",
+    "SB127"
+   ]
+  },
+  "watersheds": {
+   "featureCount": 13,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 13,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
+    }
+   ],
+   "bytes": 65587,
+   "sliced": false
+  },
+  "sub-watersheds": {
+   "featureCount": 28,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 28,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
+    }
+   ],
+   "bytes": 95431,
+   "sliced": false
+  },
+  "mini-watersheds": {
+   "featureCount": 77,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 77,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
+    }
+   ],
+   "bytes": 159452,
+   "sliced": false
+  },
+  "micro-watersheds": {
+   "featureCount": 713,
+   "sources": [
+    {
+     "file": "generic_viewer:microwatersheds",
+     "kind": null,
+     "count": 713,
+     "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
+    }
+   ],
+   "bytes": 505703,
+   "sliced": true,
+   "shedKeys": [
+    "SB114",
+    "SB120",
+    "SB123",
+    "SB124",
+    "SB126",
+    "SB127"
+   ]
+  },
+  "groundwater-wells": {
+   "featureCount": 174,
+   "sources": [
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": "cgwb-manual",
+     "count": 117,
+     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Erode-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+    },
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": "cgwb-telemetry",
+     "count": 35,
+     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Erode-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+    },
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": "state-telemetry",
+     "count": 22,
+     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Erode-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+    }
+   ],
+   "bytes": 67597,
+   "sliced": false
+  },
+  "prs": {
+   "featureCount": 2,
+   "sources": [
+    {
+     "file": "cpcb-2025 + osm-waterways.json",
+     "kind": null,
+     "count": 2,
+     "provenance": "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (Annexures III A and X), drawn on the OpenStreetMap course of the Cauvery inside the district; the 2025 stretch starts at TNPCB station 1320 (Vairapalayam)"
+    }
+   ],
+   "bytes": 15037,
+   "sliced": false
+  },
+  "prs-drains": {
+   "featureCount": 5,
+   "sources": [
+    {
+     "file": "PrsCauvery24919.pdf",
+     "kind": null,
+     "count": 5,
+     "provenance": "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (2019), pp.49-50: outfall names and GPS coordinates as printed"
+    }
+   ],
+   "bytes": 3992,
+   "sliced": false
+  },
+  "canals": {
+   "featureCount": 213,
+   "sources": [
+    {
+     "file": "canal_network.zip",
+     "kind": "distributary",
+     "count": 52,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; three unnamed lines filed under the Kalingarayan system but lying east of the district are left out"
+    },
+    {
+     "file": "canal_network.zip",
+     "kind": "main",
+     "count": 12,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; three unnamed lines filed under the Kalingarayan system but lying east of the district are left out"
+    },
+    {
+     "file": "canal_network.zip",
+     "kind": "minor",
+     "count": 149,
+     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district; three unnamed lines filed under the Kalingarayan system but lying east of the district are left out"
+    }
+   ],
+   "bytes": 472389,
+   "sliced": false
+  },
+  "command-areas": {
+   "featureCount": 4,
+   "sources": [
+    {
+     "file": "command_area.zip",
+     "kind": "kalingarayan-anicut-system",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    },
+    {
+     "file": "command_area.zip",
+     "kind": "kodivery-anicut-system",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    },
+    {
+     "file": "command_area.zip",
+     "kind": "lower-bhavani",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    },
+    {
+     "file": "command_area.zip",
+     "kind": "mettur-canal-system",
+     "count": 1,
+     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+    }
+   ],
+   "bytes": 56949,
+   "sliced": false
+  },
+  "cepi-area": {
+   "featureCount": 1,
+   "sources": [
+    {
+     "file": "CEPI_Action Plan_ERODE.pdf",
+     "kind": null,
+     "count": 1,
+     "provenance": "TNPCB, Comprehensive Environmental Pollution Index (CEPI) action plan for the Erode industrial cluster (September 2020), Table 1.1: the eight reference points of the core zone, joined in order"
+    }
+   ],
+   "bytes": 2591,
+   "sliced": false
+  },
+  "realtime-stations": {
+   "featureCount": 3,
+   "sources": [
+    {
+     "file": "rtwqmstnpcb api/readings/graph",
+     "kind": null,
+     "count": 3,
+     "provenance": "TNPCB real-time water quality monitoring dashboard (tnpcb.gov.in/rtwqmstnpcb): station positions and monthly means of the sensor readings; values a dead sensor reports (dissolved solids below 1 mg/L) are dropped"
+    }
+   ],
+   "bytes": 3734,
+   "sliced": false
+  },
+  "gauging-stations": {
+   "featureCount": 4,
+   "sources": [
+    {
+     "file": "nwdp.nwic.gov.in datastore",
+     "kind": null,
+     "count": 4,
+     "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
+    }
+   ],
+   "bytes": 4169,
+   "sliced": false
   }
+ }
 }

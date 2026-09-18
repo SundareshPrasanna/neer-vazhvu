@@ -25,7 +25,7 @@ Inputs of `scripts/build_erode_rivers_basin.py` (the Erode district map, `public
 | tnpcb-type-sectors.json | Reviewed lookup: TNPCB industry type code to the sector class on the map | `a1b115807a75a2f3` | Authored from the distinct type strings in the Erode slice of the TNGIS industry register; review status inside the file | Own work |
 | cetp-schemes.json | Proposed and operating common effluent treatment plants, joined to register unit ids | `bb8465bfcaa34925` | Parsed by script from the Tamil Nadu Department of Textiles 'Nadanthai Vaazhi Cauvery' table (retrieved 2026-09-17) and TNPCB's 2020 CETP lists; the name join is the reviewed part | Government publications, cited with attribution |
 
-Consumer: the builder above and `.github/workflows/erode-rivers-refresh.yml` (weekly). Public exposure: downloadable via the public repo.
+Consumer: the builder above and `.github/workflows/district-basins-refresh.yml` (weekly, one job per district basin). Public exposure: downloadable via the public repo.
 
 Log:
 - 2026-07-30: directory created (#210); inventory added after governance
@@ -35,3 +35,19 @@ Log:
   basin atlas (FABDEM river catchments for the four Greater Mumbai rivers).
 - 2026-09-17: basins/erode-rivers/ added with the Erode district map: two frozen TNGIS frames and two
   reviewed lookups (TNPCB type codes; treatment schemes).
+
+
+## basins/krishnagiri-rivers/
+
+Inputs of `scripts/build_krishnagiri_rivers_basin.py` (the Krishnagiri district map, `public/data/basins/krishnagiri-rivers/`), Krishnagiri's configuration of the shared engine `scripts/lib/tn_district_basin.py`.
+
+| File | Purpose | SHA-256 (first 16) | Provenance | Licence status |
+|---|---|---|---|---|
+| tngis-district-boundary.json | The district frame every spatial test rests on, frozen so the weekly `--live` refresh never depends on TNGIS | `ac4653c7e7ee53f6` | TNGIS WFS `admin_master:administrative_boundary_district`, LGD 577, raw response, retrieved 2026-09-18 | TNGIS open GeoServer, published with attribution (see basins.json `tngis-open-geoserver`) |
+| tngis-sub-basins.json | TN WRD sub-basins over the district extent (Pennaiyar, Cauvery and Palar basins); clipped to the frame they are the map's catchments | `d59964a27a15c0ed` | TNGIS WFS `generic_viewer:sub_basin`, raw response, retrieved 2026-09-18 | As above |
+| tnpcb-type-sectors.json | Reviewed lookup: TNPCB industry type code to the sector class on the map (stone, engineering and metal treatment added to Erode's national codes) | `a2df7e4db17e8f00` | Authored from the distinct type strings in the Krishnagiri slice of the TNGIS industry register (1,695 units); review status inside the file | Own work |
+
+Consumer: the builder above and `.github/workflows/district-basins-refresh.yml` (weekly). Public exposure: downloadable via the public repo.
+
+Log:
+- 2026-09-18: directory created with the Hosur deep dive (Krishnagiri district map).

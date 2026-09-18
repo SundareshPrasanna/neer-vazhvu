@@ -222,6 +222,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     stateName: "Tamil Nadu",
     name: "Krishnagiri",
     hook: "Hosur's district on the Thenpennai: 3 of 8 taluks are over-exploited, Uthangarai at 149% of its recharge, Hosur taluk is critical at 90%, and 89% of irrigation is from wells.",
+    deepDive: { basinId: "krishnagiri-rivers", label: "Rivers, groundwater and industry on one map" },
     hasCuratedBriefs: false,
     published: true,
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,

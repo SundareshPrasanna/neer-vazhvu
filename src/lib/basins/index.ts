@@ -5,6 +5,7 @@ import { CAUVERY_KA } from "./cauvery-ka";
 import { CAUVERY_TN } from "./cauvery-tn";
 import { ERODE_RIVERS } from "./erode-rivers";
 import { KABINI } from "./kabini";
+import { KRISHNAGIRI_RIVERS } from "./krishnagiri-rivers";
 import { MUMBAI_RIVERS } from "./mumbai-rivers";
 
 export * from "./types";
@@ -18,6 +19,7 @@ const BASINS: Record<string, BasinManifest> = {
   "cauvery-tn": CAUVERY_TN,
   "erode-rivers": ERODE_RIVERS,
   kabini: KABINI,
+  "krishnagiri-rivers": KRISHNAGIRI_RIVERS,
   "mumbai-rivers": MUMBAI_RIVERS,
 };
 

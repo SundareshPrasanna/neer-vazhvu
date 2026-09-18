@@ -1,0 +1,514 @@
+{
+  "nvdm": "1.0",
+  "dataset": "basins/inventory",
+  "scope": {
+    "kind": "basin",
+    "id": "krishnagiri-rivers"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tngis-open-geoserver",
+        "title": "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies and all-tanks registers, mine leases, industry register matched to land parcels",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap (Overpass API extract: named river courses)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "sipcot-gis-geoserver",
+        "title": "SIPCOT GIS (WFS): industrial complex outlines, Hosur phases I to IV, Shoolagiri and Bargur parks",
+        "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
+        "license": "LICENCE UNVERIFIED - see notes. Open SIPCOT GeoServer (WFS, no login); the site footer reads 'All Rights Reserved' and states no data terms; the reuse question sent for the Sriperumbudur corridor has no reply. Estate outlines only, published with attribution.",
+        "role": "input",
+        "url": "https://sipcotgis.tn.gov.in/"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk",
+        "publisher": "CGWB with IIT Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-level",
+        "title": "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
+        "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "nwic-nwdp-cwc-canal-network",
+        "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-cwc-river-data",
+        "title": "CWC river discharge (manual daily) and surface water quality for Tamil Nadu, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "tnpcb-realtime-wq-dashboard",
+        "title": "TNPCB real-time water quality monitoring dashboard: monthly means of sensor readings",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "LICENCE UNVERIFIED - see notes. Public Tamil Nadu government dashboard with no reuse terms stated; its own page switches the download buttons off. Monthly means published with attribution.",
+        "role": "input",
+        "url": "https://tnpcb.gov.in/rtwqmstnpcb"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-18",
+    "produced_by": "scripts/build_krishnagiri_rivers_basin.py",
+    "note": "Krishnagiri district's rivers, groundwater and industry (scope krishnagiri-rivers; the district's own scope id is tn-krishnagiri). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId): the Thenpennai's to the east, the Cauvery's Chinnar and Dodda Halla to the south-west. The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/krishnagiri-rivers/tnpcb-type-sectors.json."
+  },
+  "basinId": "krishnagiri-rivers",
+  "generatedFrom": "build_krishnagiri_rivers_basin.py",
+  "generatedOn": "2026-09-18",
+  "families": {
+    "boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_district",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 577"
+        }
+      ],
+      "bytes": 20810,
+      "sliced": false
+    },
+    "sub-hydrosheds": {
+      "featureCount": 11,
+      "sources": [
+        {
+          "file": "generic_viewer:sub_basin",
+          "kind": null,
+          "count": 11,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
+        }
+      ],
+      "bytes": 40390,
+      "sliced": false
+    },
+    "rivers": {
+      "featureCount": 6,
+      "sources": [
+        {
+          "file": "osm-waterways.json",
+          "kind": null,
+          "count": 6,
+          "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+        }
+      ],
+      "bytes": 51555,
+      "sliced": false
+    },
+    "reservoirs": {
+      "featureCount": 6,
+      "sources": [
+        {
+          "file": "generic_viewer:reservoir",
+          "kind": null,
+          "count": 6,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 2884,
+      "sliced": false
+    },
+    "tanks": {
+      "featureCount": 195,
+      "sources": [
+        {
+          "file": "generic_viewer:all_tanks",
+          "kind": null,
+          "count": 195,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all-tanks register (generic_viewer:all_tanks), Krishnagiri district, the tanks the register names, shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 51511,
+      "sliced": false
+    },
+    "industries": {
+      "featureCount": 1694,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "green-white",
+          "count": 687,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "orange",
+          "count": 653,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-chemicals",
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-metal-treatment",
+          "count": 71,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-other",
+          "count": 74,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-paper",
+          "count": 7,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-quarry-mining",
+          "count": 199,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-textile",
+          "count": 2,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 985874,
+      "sliced": false
+    },
+    "treatment-plants": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "stp",
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Krishnagiri district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 1990,
+      "sliced": false
+    },
+    "industrial-estates": {
+      "featureCount": 8,
+      "sources": [
+        {
+          "file": "cite:industrial_complex_boundary-*",
+          "kind": null,
+          "count": 8,
+          "provenance": "SIPCOT GIS (sipcotgis.tn.gov.in): industrial complex outlines, Hosur phases I and II, Shoolagiri (Future Mobility Park, General Engineering), Bargur (DTA, SEZ) and Kurubarapalli; area as SIPCOT states it. Hosur phase III, Shoolagiri Hosur phase IV and the Bargur complex are listed by the server but it returns a database error for each (2026-09-18), so they are not drawn"
+        }
+      ],
+      "bytes": 14744,
+      "sliced": false
+    },
+    "quarries": {
+      "featureCount": 195,
+      "sources": [
+        {
+          "file": "generic_viewer:mines",
+          "kind": null,
+          "count": 195,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
+        }
+      ],
+      "bytes": 103854,
+      "sliced": false
+    },
+    "admin-taluk": {
+      "featureCount": 8,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_taluk",
+          "kind": null,
+          "count": 8,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 577"
+        }
+      ],
+      "bytes": 35062,
+      "sliced": false
+    },
+    "groundwater-taluks": {
+      "featureCount": 8,
+      "sources": [
+        {
+          "file": "atlas/tn/krishnagiri/groundwater-taluks.json",
+          "kind": "critical",
+          "count": 2,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Krishnagiri district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/krishnagiri/groundwater-taluks.json",
+          "kind": "over-exploited",
+          "count": 3,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Krishnagiri district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/krishnagiri/groundwater-taluks.json",
+          "kind": "safe",
+          "count": 3,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Krishnagiri district page; taluk polygons from TNGIS"
+        }
+      ],
+      "bytes": 36532,
+      "sliced": false
+    },
+    "admin-block": {
+      "featureCount": 10,
+      "sources": [
+        {
+          "file": "generic_viewer:block_boundary",
+          "kind": null,
+          "count": 10,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
+        }
+      ],
+      "bytes": 55479,
+      "sliced": false
+    },
+    "admin-gp": {
+      "featureCount": 333,
+      "sources": [
+        {
+          "file": "tnrd:panchayat_boundary",
+          "kind": null,
+          "count": 333,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
+        }
+      ],
+      "bytes": 495900,
+      "sliced": true,
+      "shedKeys": [
+        "SB115",
+        "SB117",
+        "SBP01",
+        "SBP02",
+        "SBP03",
+        "SBP04",
+        "SBP05",
+        "SBP07",
+        "SBP16",
+        "SBP17",
+        "SBP18"
+      ]
+    },
+    "waterbodies-major": {
+      "featureCount": 2115,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 2115,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Krishnagiri district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 1058845,
+      "sliced": false
+    },
+    "waterbodies-minor": {
+      "featureCount": 1550,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 1550,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Krishnagiri district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 549737,
+      "sliced": true,
+      "shedKeys": [
+        "SB115",
+        "SB117",
+        "SBP01",
+        "SBP02",
+        "SBP03",
+        "SBP05",
+        "SBP07",
+        "SBP16",
+        "SBP17",
+        "SBP18"
+      ]
+    },
+    "watersheds": {
+      "featureCount": 12,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 12,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
+        }
+      ],
+      "bytes": 56821,
+      "sliced": false
+    },
+    "sub-watersheds": {
+      "featureCount": 24,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 24,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
+        }
+      ],
+      "bytes": 72873,
+      "sliced": false
+    },
+    "mini-watersheds": {
+      "featureCount": 76,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 76,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
+        }
+      ],
+      "bytes": 117962,
+      "sliced": false
+    },
+    "micro-watersheds": {
+      "featureCount": 809,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 809,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
+        }
+      ],
+      "bytes": 521513,
+      "sliced": true,
+      "shedKeys": [
+        "SB115",
+        "SB117",
+        "SBP01",
+        "SBP02",
+        "SBP03",
+        "SBP04",
+        "SBP05",
+        "SBP07",
+        "SBP16",
+        "SBP17",
+        "SBP18"
+      ]
+    },
+    "groundwater-wells": {
+      "featureCount": 101,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-manual",
+          "count": 56,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Krishnagiri-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-telemetry",
+          "count": 21,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Krishnagiri-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "state-telemetry",
+          "count": 24,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Krishnagiri-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        }
+      ],
+      "bytes": 41064,
+      "sliced": false
+    },
+    "canals": {
+      "featureCount": 6,
+      "sources": [
+        {
+          "file": "canal_network.zip",
+          "kind": "distributary",
+          "count": 1,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "main",
+          "count": 5,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        }
+      ],
+      "bytes": 36472,
+      "sliced": false
+    },
+    "command-areas": {
+      "featureCount": 2,
+      "sources": [
+        {
+          "file": "command_area.zip",
+          "kind": "barur-tank",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "krishnagiri",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        }
+      ],
+      "bytes": 12401,
+      "sliced": false
+    },
+    "realtime-stations": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "rtwqmstnpcb api/readings/graph",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNPCB real-time water quality monitoring dashboard (tnpcb.gov.in/rtwqmstnpcb): station positions and monthly means of the sensor readings; values a dead sensor reports (dissolved solids below 1 mg/L) are dropped"
+        }
+      ],
+      "bytes": 2544,
+      "sliced": false
+    },
+    "gauging-stations": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": null,
+          "count": 1,
+          "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
+        }
+      ],
+      "bytes": 2712,
+      "sliced": false
+    }
+  }
+}
