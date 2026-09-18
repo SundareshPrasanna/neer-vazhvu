@@ -1,0 +1,6682 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/briefs",
+  "scope": {
+    "kind": "district",
+    "id": "tn-dindigul"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tnrd-lgd-directory-2021",
+        "title": "TNRD village panchayat directory with LGD codes (village_eng.pdf, 2021 edition)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+        "as_of": "2021-03-11",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tnrd-panchayat-master",
+        "title": "TNRD current village panchayat master (vptax public dues enquiry)",
+        "publisher": "Rural Development and Panchayat Raj Department, Government of Tamil Nadu",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "jjm-imis-citizen-corner",
+        "title": "Jal Jeevan Mission IMIS citizen corner: village information (habitations, sources, sample tests)",
+        "publisher": "Department of Drinking Water and Sanitation, Ministry of Jal Shakti (JJM IMIS)",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "census-2011-village-amenities",
+        "title": "Census of India 2011 District Census Handbook: village amenities (Tamil Nadu village release)",
+        "publisher": "Office of the Registrar General and Census Commissioner, India",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input",
+        "url": "https://censusindia.gov.in/nada/index.php/catalog/45377",
+        "as_of": "2011",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "open-meteo-archive",
+        "title": "Open-Meteo daily precipitation (forecast past_days and ERA5 archive)",
+        "publisher": "Open-Meteo",
+        "license": "CC BY 4.0",
+        "role": "input",
+        "url": "https://open-meteo.com/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-generic-viewer-water-bodies",
+        "title": "TNGIS generic viewer: all water bodies (WFS layer generic_viewer:all_water_bodies)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-generate-assessments.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/dindigul/directory.json",
+      "public/data/atlas/tn/dindigul/jjm-service/6451.json",
+      "public/data/atlas/tn/dindigul/census-2011/6451.json",
+      "public/data/atlas/tn/dindigul/groundwater-taluks.json",
+      "public/data/atlas/tn/dindigul/groundwater-projection.json",
+      "public/data/atlas/tn/dindigul/rainfall.json",
+      "public/data/atlas/tn/dindigul/polluted-stretches.json",
+      "public/data/atlas/tn/dindigul/water-bodies/6451.geojson",
+      "public/data/atlas/tn/dindigul/assessments/6451.json"
+    ],
+    "note": "Place briefs for 23 Gram Panchayats in NILAKOTTAI block: the verdict derived from the tension between tap coverage and the containing taluk's groundwater category, headline facts each carrying their caveat, the named capability gaps, and the detail behind them (habitations, sources, sampling, land, seasonal sources, boundary, rainfall, water bodies). Briefs fail closed: a place must hold identity, population and drinking-water service before it gets a verdict; otherwise it is directory-only and publishes no numbers.",
+    "conventions": {
+      "status": "brief-ready | directory-only; a directory-only brief carries no verdict and no headline facts by rule",
+      "tone": "positive | warning | neutral | blocked, the same vocabulary the district page uses",
+      "groundwater": "every taluk-grain figure says it describes the taluk, not the Panchayat"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-dindigul-v1",
+  "blockCode": "6451",
+  "blockName": "NILAKOTTAI",
+  "assessedAt": "2026-09-06",
+  "recordCount": 23,
+  "briefs": [
+    {
+      "schemaVersion": 1,
+      "placeId": "223339",
+      "name": "Ethilodu",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "90.77 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "90.77%",
+          "label": "Households with a tap connection",
+          "note": "2,194 of 2,417 households, across 12 habitations."
+        },
+        {
+          "value": "47",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "29d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-08. 320 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Avarampatti",
+            "population": 1825,
+            "households": 365,
+            "connections": 365
+          },
+          {
+            "name": "E.koilpatti",
+            "population": 1050,
+            "households": 210,
+            "connections": 175
+          },
+          {
+            "name": "Ethilode",
+            "population": 1090,
+            "households": 218,
+            "connections": 218
+          },
+          {
+            "name": "Kamatchipuram",
+            "population": 725,
+            "households": 225,
+            "connections": 225
+          },
+          {
+            "name": "Karauthandipatti",
+            "population": 655,
+            "households": 131,
+            "connections": 131
+          },
+          {
+            "name": "Kavundanpatti Colony",
+            "population": 290,
+            "households": 58,
+            "connections": 4
+          },
+          {
+            "name": "Kongapatti",
+            "population": 1335,
+            "households": 267,
+            "connections": 184
+          },
+          {
+            "name": "Meenakshipuram",
+            "population": 795,
+            "households": 159,
+            "connections": 159
+          },
+          {
+            "name": "Muthalapuram",
+            "population": 2405,
+            "households": 580,
+            "connections": 529
+          },
+          {
+            "name": "Panchalankuruchi",
+            "population": 420,
+            "households": 84,
+            "connections": 84
+          },
+          {
+            "name": "Pullakaadupatti",
+            "population": 440,
+            "households": 88,
+            "connections": 88
+          },
+          {
+            "name": "Thatharayanpatti",
+            "population": 160,
+            "households": 32,
+            "connections": 32
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 41
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 6
+          }
+        ],
+        "sampling": {
+          "total": 320,
+          "unsafe": 0,
+          "atSource": 289,
+          "atHousehold": 31,
+          "earliest": "2022-12-12",
+          "latest": "2026-08-08",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 50
+            },
+            {
+              "year": "2023",
+              "count": 69
+            },
+            {
+              "year": "2024",
+              "count": 79
+            },
+            {
+              "year": "2025",
+              "count": 79
+            },
+            {
+              "year": "2026",
+              "count": 43
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1431.42,
+          "netSownHectares": 465.98,
+          "irrigatedHectares": 417.48,
+          "canalHectares": 273.71,
+          "wellHectares": 143.77,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 2.38
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 6,
+          "lostInSummer": [
+            "tapTreated"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 1369.1735,
+          "latitude": 10.11545,
+          "longitude": 77.8865
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": {
+          "count": 12,
+          "namedCount": 8,
+          "areaHectares": 160.5276,
+          "largestAreaHectares": 99.6656,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 4
+            },
+            {
+              "department": "NRSC",
+              "count": 3
+            },
+            {
+              "department": "WRD",
+              "count": 3
+            },
+            {
+              "department": "DOSS",
+              "count": 1
+            },
+            {
+              "department": "TNRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223340",
+      "name": "Gullalagundu",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "72.63 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "72.63%",
+          "label": "Households with a tap connection",
+          "note": "1,502 of 2,068 households, across 19 habitations."
+        },
+        {
+          "value": "49",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration Gallery"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "25d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-12. 264 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Aranmanai Street",
+            "population": 380,
+            "households": 76,
+            "connections": 76
+          },
+          {
+            "name": "Arumuga Nagar",
+            "population": 225,
+            "households": 45,
+            "connections": 45
+          },
+          {
+            "name": "Gandhi Nagar",
+            "population": 440,
+            "households": 88,
+            "connections": 30
+          },
+          {
+            "name": "Gopalapuram",
+            "population": 185,
+            "households": 37,
+            "connections": 3
+          },
+          {
+            "name": "Gullalagundu",
+            "population": 825,
+            "households": 165,
+            "connections": 81
+          },
+          {
+            "name": "Kalladipatti",
+            "population": 1635,
+            "households": 327,
+            "connections": 327
+          },
+          {
+            "name": "Kallupatti",
+            "population": 380,
+            "households": 76,
+            "connections": 76
+          },
+          {
+            "name": "Kandappakottai",
+            "population": 1160,
+            "households": 232,
+            "connections": 156
+          },
+          {
+            "name": "Kannimanagar",
+            "population": 140,
+            "households": 28,
+            "connections": 28
+          },
+          {
+            "name": "Karisalpatty",
+            "population": 75,
+            "households": 15,
+            "connections": 15
+          },
+          {
+            "name": "Kattakoothanpatti",
+            "population": 520,
+            "households": 104,
+            "connections": 83
+          },
+          {
+            "name": "Pottichettipatti",
+            "population": 1130,
+            "households": 226,
+            "connections": 135
+          },
+          {
+            "name": "Roja Colony",
+            "population": 470,
+            "households": 94,
+            "connections": 94
+          },
+          {
+            "name": "Samiyarpuram",
+            "population": 220,
+            "households": 44,
+            "connections": 2
+          },
+          {
+            "name": "Sandalarpuram",
+            "population": 870,
+            "households": 174,
+            "connections": 81
+          },
+          {
+            "name": "Sandhosapuram",
+            "population": 431,
+            "households": 115,
+            "connections": 96
+          },
+          {
+            "name": "Singampatti",
+            "population": 390,
+            "households": 78,
+            "connections": 78
+          },
+          {
+            "name": "Soundarapuram",
+            "population": 214,
+            "households": 60,
+            "connections": 12
+          },
+          {
+            "name": "Vinayaga Nagar",
+            "population": 420,
+            "households": 84,
+            "connections": 84
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 48
+          },
+          {
+            "type": "Infiltration Gallery",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 264,
+          "unsafe": 0,
+          "atSource": 234,
+          "atHousehold": 30,
+          "earliest": "2022-11-08",
+          "latest": "2026-08-12",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 68
+            },
+            {
+              "year": "2023",
+              "count": 56
+            },
+            {
+              "year": "2024",
+              "count": 67
+            },
+            {
+              "year": "2025",
+              "count": 65
+            },
+            {
+              "year": "2026",
+              "count": 8
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1024.71,
+          "netSownHectares": 545.25,
+          "irrigatedHectares": 256.56,
+          "canalHectares": 0,
+          "wellHectares": 256.56,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 17.68,
+          "culturableWasteHectares": 0.44
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 4,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 1166.1632,
+          "latitude": 10.1302,
+          "longitude": 77.9147
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": {
+          "count": 10,
+          "namedCount": 5,
+          "areaHectares": 67.5498,
+          "largestAreaHectares": 37.5828,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 5
+            },
+            {
+              "department": "NRSC",
+              "count": 3
+            },
+            {
+              "department": "WRD",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223341",
+      "name": "Kullichettipatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Every household has a tap, drawn from an aquifer in deficit",
+        "body": "All 1,016 households report a tap connection, while Nilakottai is assessed over exploited at 139.8 percent of extraction. Service is complete; the source is not secure.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,016 of 1,016 households, across 2 habitations."
+        },
+        {
+          "value": "11",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "60.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "25 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "25d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-12. 85 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Gullichettipatti",
+            "population": 1436,
+            "households": 692,
+            "connections": 692
+          },
+          {
+            "name": "Parayapatti",
+            "population": 706,
+            "households": 324,
+            "connections": 324
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 11
+          }
+        ],
+        "sampling": {
+          "total": 85,
+          "unsafe": 0,
+          "atSource": 54,
+          "atHousehold": 31,
+          "earliest": "2022-11-09",
+          "latest": "2026-08-12",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 11
+            },
+            {
+              "year": "2023",
+              "count": 15
+            },
+            {
+              "year": "2024",
+              "count": 27
+            },
+            {
+              "year": "2025",
+              "count": 24
+            },
+            {
+              "year": "2026",
+              "count": 8
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 196.31,
+          "netSownHectares": 92.77,
+          "irrigatedHectares": 85.46,
+          "canalHectares": 0,
+          "wellHectares": 85.46,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 0.14
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 2,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 214.6654,
+          "latitude": 10.1011,
+          "longitude": 77.82305
+        },
+        "rainfall": {
+          "windowMm": 60.7,
+          "daysWithRain": 25,
+          "wettestDate": "2026-08-09",
+          "wettestDayMm": 8.1
+        },
+        "waterBodies": {
+          "count": 3,
+          "namedCount": 3,
+          "areaHectares": 13.3412,
+          "largestAreaHectares": 10.298,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 2
+            },
+            {
+              "department": "WRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223342",
+      "name": "Jambuthuraikottai",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "94.36 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "94.36%",
+          "label": "Households with a tap connection",
+          "note": "2,209 of 2,341 households, across 10 habitations."
+        },
+        {
+          "value": "69",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Ground Collection(Community), Infiltration well, Open Well, Shallow Tubewell"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "177.6 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "29 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "25d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-12. 257 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "historical-water-access",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "historical-agricultural-baseline",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 13,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Alagampatty",
+            "population": 1520,
+            "households": 304,
+            "connections": 304
+          },
+          {
+            "name": "Boodhipuram",
+            "population": 140,
+            "households": 35,
+            "connections": 35
+          },
+          {
+            "name": "Jallipatty",
+            "population": 577,
+            "households": 227,
+            "connections": 227
+          },
+          {
+            "name": "Kamalapuram",
+            "population": 2720,
+            "households": 544,
+            "connections": 525
+          },
+          {
+            "name": "Kaminaickenpatty",
+            "population": 95,
+            "households": 38,
+            "connections": 38
+          },
+          {
+            "name": "Mettur",
+            "population": 843,
+            "households": 211,
+            "connections": 175
+          },
+          {
+            "name": "Mondampatty",
+            "population": 138,
+            "households": 36,
+            "connections": 2
+          },
+          {
+            "name": "Sakkaiyanaickanoor",
+            "population": 3060,
+            "households": 612,
+            "connections": 612
+          },
+          {
+            "name": "Thoppinaickenpatty",
+            "population": 145,
+            "households": 66,
+            "connections": 66
+          },
+          {
+            "name": "Uthupatty",
+            "population": 1340,
+            "households": 268,
+            "connections": 225
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 50
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 10
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 6
+          },
+          {
+            "type": "Shallow Tubewell",
+            "category": "Ground Water",
+            "count": 2
+          },
+          {
+            "type": "Ground Collection(Community)",
+            "category": "Rain Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 257,
+          "unsafe": 0,
+          "atSource": 226,
+          "atHousehold": 31,
+          "earliest": "2022-11-09",
+          "latest": "2026-08-12",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 33
+            },
+            {
+              "year": "2023",
+              "count": 44
+            },
+            {
+              "year": "2024",
+              "count": 68
+            },
+            {
+              "year": "2025",
+              "count": 104
+            },
+            {
+              "year": "2026",
+              "count": 8
+            }
+          ]
+        },
+        "land": null,
+        "seasonal": null,
+        "boundary": {
+          "areaHectares": 1907.334,
+          "latitude": 10.23065,
+          "longitude": 77.89855
+        },
+        "rainfall": {
+          "windowMm": 177.6,
+          "daysWithRain": 29,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 34.6
+        },
+        "waterBodies": {
+          "count": 10,
+          "namedCount": 6,
+          "areaHectares": 23.7518,
+          "largestAreaHectares": 8.5235,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 4
+            },
+            {
+              "department": "DOSS",
+              "count": 4
+            },
+            {
+              "department": "NRSC",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223343",
+      "name": "Kodanginaickenpatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "98.49 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "98.49%",
+          "label": "Households with a tap connection",
+          "note": "1,106 of 1,123 households, across 7 habitations."
+        },
+        {
+          "value": "35",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, Open Well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "24d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-13. 158 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Appavupillaipatti",
+            "population": 660,
+            "households": 132,
+            "connections": 132
+          },
+          {
+            "name": "Appinaickenpatti",
+            "population": 160,
+            "households": 38,
+            "connections": 38
+          },
+          {
+            "name": "Kodanginaickenpatti",
+            "population": 1125,
+            "households": 225,
+            "connections": 210
+          },
+          {
+            "name": "Kokkupatti",
+            "population": 1880,
+            "households": 376,
+            "connections": 374
+          },
+          {
+            "name": "Thambinaickenpatti",
+            "population": 330,
+            "households": 66,
+            "connections": 66
+          },
+          {
+            "name": "Thoppupatti",
+            "population": 1120,
+            "households": 244,
+            "connections": 244
+          },
+          {
+            "name": "Thottampatti",
+            "population": 210,
+            "households": 42,
+            "connections": 42
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 29
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 5
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 158,
+          "unsafe": 0,
+          "atSource": 131,
+          "atHousehold": 27,
+          "earliest": "2022-11-10",
+          "latest": "2026-08-13",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 18
+            },
+            {
+              "year": "2023",
+              "count": 31
+            },
+            {
+              "year": "2024",
+              "count": 42
+            },
+            {
+              "year": "2025",
+              "count": 42
+            },
+            {
+              "year": "2026",
+              "count": 25
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 550.5,
+          "netSownHectares": 211.49,
+          "irrigatedHectares": 133.6,
+          "canalHectares": 0,
+          "wellHectares": 133.6,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 24.98
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 553.0014,
+          "latitude": 10.19745,
+          "longitude": 77.8437
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 0,
+          "areaHectares": 8.5248,
+          "largestAreaHectares": 8.5248,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223344",
+      "name": "Koovanuthu",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "80.05 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "80.05%",
+          "label": "Households with a tap connection",
+          "note": "622 of 777 households, across 4 habitations."
+        },
+        {
+          "value": "20",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "24d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-13. 121 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Kombukaranpatti",
+            "population": 350,
+            "households": 70,
+            "connections": 60
+          },
+          {
+            "name": "Kurumbapatti",
+            "population": 1475,
+            "households": 512,
+            "connections": 413
+          },
+          {
+            "name": "Thamiyan Nagar",
+            "population": 60,
+            "households": 12,
+            "connections": 12
+          },
+          {
+            "name": "Valankottai",
+            "population": 915,
+            "households": 183,
+            "connections": 137
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 17
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 3
+          }
+        ],
+        "sampling": {
+          "total": 121,
+          "unsafe": 0,
+          "atSource": 93,
+          "atHousehold": 28,
+          "earliest": "2022-11-11",
+          "latest": "2026-08-13",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 13
+            },
+            {
+              "year": "2023",
+              "count": 19
+            },
+            {
+              "year": "2024",
+              "count": 34
+            },
+            {
+              "year": "2025",
+              "count": 36
+            },
+            {
+              "year": "2026",
+              "count": 19
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 790.81,
+          "netSownHectares": 110.49,
+          "irrigatedHectares": 77.1,
+          "canalHectares": 0,
+          "wellHectares": 77.1,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 185.62,
+          "culturableWasteHectares": 3.91
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 7,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 791.972,
+          "latitude": 10.13845,
+          "longitude": 77.8577
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 4,
+          "namedCount": 3,
+          "areaHectares": 35.5451,
+          "largestAreaHectares": 17.0634,
+          "byDepartment": [
+            {
+              "department": "DOSS",
+              "count": 2
+            },
+            {
+              "department": "AED",
+              "count": 1
+            },
+            {
+              "department": "TNRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223345",
+      "name": "Kottur",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Every household has a tap, drawn from an aquifer in deficit",
+        "body": "All 2,314 households report a tap connection, while Nilakottai is assessed over exploited at 139.8 percent of extraction. Service is complete; the source is not secure.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "2,314 of 2,314 households, across 17 habitations."
+        },
+        {
+          "value": "42",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "24d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-13. 225 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Achipuram",
+            "population": 195,
+            "households": 39,
+            "connections": 39
+          },
+          {
+            "name": "Anna Nagar",
+            "population": 155,
+            "households": 42,
+            "connections": 42
+          },
+          {
+            "name": "Avayampatti",
+            "population": 1150,
+            "households": 230,
+            "connections": 230
+          },
+          {
+            "name": "Innasipuram",
+            "population": 200,
+            "households": 40,
+            "connections": 40
+          },
+          {
+            "name": "K.pudur",
+            "population": 1245,
+            "households": 249,
+            "connections": 249
+          },
+          {
+            "name": "Kanniyasaripatti",
+            "population": 90,
+            "households": 18,
+            "connections": 18
+          },
+          {
+            "name": "Kottur",
+            "population": 245,
+            "households": 49,
+            "connections": 49
+          },
+          {
+            "name": "Michelpalayam",
+            "population": 3000,
+            "households": 600,
+            "connections": 600
+          },
+          {
+            "name": "Nagammanayackenpatti",
+            "population": 485,
+            "households": 160,
+            "connections": 160
+          },
+          {
+            "name": "Rayappanpatti",
+            "population": 685,
+            "households": 137,
+            "connections": 137
+          },
+          {
+            "name": "Sandhanamathapuram",
+            "population": 140,
+            "households": 39,
+            "connections": 39
+          },
+          {
+            "name": "Sangalpatti",
+            "population": 1150,
+            "households": 230,
+            "connections": 230
+          },
+          {
+            "name": "Selvanagar",
+            "population": 159,
+            "households": 32,
+            "connections": 32
+          },
+          {
+            "name": "Sengottai",
+            "population": 1095,
+            "households": 219,
+            "connections": 219
+          },
+          {
+            "name": "Somapuram",
+            "population": 140,
+            "households": 28,
+            "connections": 28
+          },
+          {
+            "name": "Suttikaladipatti",
+            "population": 800,
+            "households": 160,
+            "connections": 160
+          },
+          {
+            "name": "Thadagaapatti",
+            "population": 210,
+            "households": 42,
+            "connections": 42
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 37
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 5
+          }
+        ],
+        "sampling": {
+          "total": 225,
+          "unsafe": 0,
+          "atSource": 198,
+          "atHousehold": 27,
+          "earliest": "2022-11-11",
+          "latest": "2026-08-13",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 29
+            },
+            {
+              "year": "2023",
+              "count": 52
+            },
+            {
+              "year": "2024",
+              "count": 54
+            },
+            {
+              "year": "2025",
+              "count": 58
+            },
+            {
+              "year": "2026",
+              "count": 32
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1529.02,
+          "netSownHectares": 511.24,
+          "irrigatedHectares": 306.52,
+          "canalHectares": 0,
+          "wellHectares": 306.52,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 6.21,
+          "culturableWasteHectares": 14.19
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1538.1575,
+          "latitude": 10.20265,
+          "longitude": 77.86255
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 6,
+          "namedCount": 1,
+          "areaHectares": 8.6948,
+          "largestAreaHectares": 2.5617,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 5
+            },
+            {
+              "department": "TNRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223346",
+      "name": "Malayagoundanpatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "93.2 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "93.2%",
+          "label": "Households with a tap connection",
+          "note": "1,521 of 1,632 households, across 10 habitations."
+        },
+        {
+          "value": "43",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Ground Collection(Community), Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "24d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-13. 299 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Chettiapatti",
+            "population": 1050,
+            "households": 210,
+            "connections": 210
+          },
+          {
+            "name": "Chokkanchettipatti",
+            "population": 345,
+            "households": 69,
+            "connections": 69
+          },
+          {
+            "name": "Fathima Nagar",
+            "population": 385,
+            "households": 77,
+            "connections": 77
+          },
+          {
+            "name": "Indranagar",
+            "population": 550,
+            "households": 110,
+            "connections": 110
+          },
+          {
+            "name": "Kannarpatti",
+            "population": 190,
+            "households": 49,
+            "connections": 21
+          },
+          {
+            "name": "Kullanservaikaranpatti",
+            "population": 495,
+            "households": 99,
+            "connections": 99
+          },
+          {
+            "name": "Malayagoudanpatti",
+            "population": 2224,
+            "households": 469,
+            "connections": 386
+          },
+          {
+            "name": "Muragathooranpatti",
+            "population": 2010,
+            "households": 402,
+            "connections": 402
+          },
+          {
+            "name": "Pottikulam",
+            "population": 475,
+            "households": 95,
+            "connections": 95
+          },
+          {
+            "name": "Thomaspuram",
+            "population": 260,
+            "households": 52,
+            "connections": 52
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 41
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 1
+          },
+          {
+            "type": "Ground Collection(Community)",
+            "category": "Rain Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 299,
+          "unsafe": 0,
+          "atSource": 272,
+          "atHousehold": 27,
+          "earliest": "2022-11-11",
+          "latest": "2026-08-13",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 33
+            },
+            {
+              "year": "2023",
+              "count": 61
+            },
+            {
+              "year": "2024",
+              "count": 80
+            },
+            {
+              "year": "2025",
+              "count": 83
+            },
+            {
+              "year": "2026",
+              "count": 42
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1042.12,
+          "netSownHectares": 505.56,
+          "irrigatedHectares": 308.29,
+          "canalHectares": 0,
+          "wellHectares": 308.29,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 11.83,
+          "culturableWasteHectares": 1.55
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1138.3461,
+          "latitude": 10.1589,
+          "longitude": 77.91445
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 4,
+          "namedCount": 2,
+          "areaHectares": 15.4747,
+          "largestAreaHectares": 8.6408,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 2
+            },
+            {
+              "department": "WRD",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223347",
+      "name": "Mattaparai",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "97.05 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "97.05%",
+          "label": "Households with a tap connection",
+          "note": "1,643 of 1,693 households, across 6 habitations."
+        },
+        {
+          "value": "48",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well, River"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "24d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-13. 310 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Karatoor",
+            "population": 504,
+            "households": 123,
+            "connections": 123
+          },
+          {
+            "name": "Krishnapuram",
+            "population": 328,
+            "households": 126,
+            "connections": 76
+          },
+          {
+            "name": "Mattaparai",
+            "population": 2468,
+            "households": 660,
+            "connections": 660
+          },
+          {
+            "name": "Melamattaparai",
+            "population": 440,
+            "households": 125,
+            "connections": 125
+          },
+          {
+            "name": "Sadayanpatti",
+            "population": 907,
+            "households": 396,
+            "connections": 396
+          },
+          {
+            "name": "Thathankulam",
+            "population": 530,
+            "households": 263,
+            "connections": 263
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 43
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 4
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 310,
+          "unsafe": 0,
+          "atSource": 282,
+          "atHousehold": 28,
+          "earliest": "2022-11-14",
+          "latest": "2026-08-13",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 26
+            },
+            {
+              "year": "2023",
+              "count": 46
+            },
+            {
+              "year": "2024",
+              "count": 63
+            },
+            {
+              "year": "2025",
+              "count": 121
+            },
+            {
+              "year": "2026",
+              "count": 54
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 697.85,
+          "netSownHectares": 274.83,
+          "irrigatedHectares": 238.2,
+          "canalHectares": 38.87,
+          "wellHectares": 199.33,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 2.3,
+          "culturableWasteHectares": 1.88
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 3,
+          "lostInSummer": [
+            "tapTreated",
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 771.1292,
+          "latitude": 10.0965,
+          "longitude": 77.9126
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": {
+          "count": 1,
+          "namedCount": 1,
+          "areaHectares": 0.773,
+          "largestAreaHectares": 0.773,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223348",
+      "name": "Musuvanuthu",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "67.4 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "67.4%",
+          "label": "Households with a tap connection",
+          "note": "674 of 1,000 households, across 8 habitations."
+        },
+        {
+          "value": "36",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, River"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "8d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-29. 203 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Kalkottai",
+            "population": 1260,
+            "households": 210,
+            "connections": 114
+          },
+          {
+            "name": "Kundalapatti Pirivu",
+            "population": 160,
+            "households": 32,
+            "connections": 4
+          },
+          {
+            "name": "Milakaipatti",
+            "population": 665,
+            "households": 133,
+            "connections": 36
+          },
+          {
+            "name": "Musuvanoothu",
+            "population": 1200,
+            "households": 240,
+            "connections": 240
+          },
+          {
+            "name": "Musuvanuthu Cololy",
+            "population": 200,
+            "households": 40,
+            "connections": 40
+          },
+          {
+            "name": "Muthkammanpatti",
+            "population": 325,
+            "households": 65,
+            "connections": 65
+          },
+          {
+            "name": "N. Andipatti",
+            "population": 690,
+            "households": 138,
+            "connections": 91
+          },
+          {
+            "name": "Sekkapatti",
+            "population": 710,
+            "households": 142,
+            "connections": 84
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 31
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 4
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 203,
+          "unsafe": 0,
+          "atSource": 175,
+          "atHousehold": 28,
+          "earliest": "2022-11-22",
+          "latest": "2026-08-29",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 26
+            },
+            {
+              "year": "2023",
+              "count": 43
+            },
+            {
+              "year": "2024",
+              "count": 60
+            },
+            {
+              "year": "2025",
+              "count": 64
+            },
+            {
+              "year": "2026",
+              "count": 10
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1137.18,
+          "netSownHectares": 166.17,
+          "irrigatedHectares": 134.87,
+          "canalHectares": 0,
+          "wellHectares": 134.87,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 194.65,
+          "culturableWasteHectares": 34.73
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 4,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 1097.074,
+          "latitude": 10.12715,
+          "longitude": 77.83935
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 5,
+          "namedCount": 4,
+          "areaHectares": 12.5431,
+          "largestAreaHectares": 7.8753,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 2
+            },
+            {
+              "department": "TNRD",
+              "count": 2
+            },
+            {
+              "department": "AED",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223349",
+      "name": "Nakkaluthu",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "88.78 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "88.78%",
+          "label": "Households with a tap connection",
+          "note": "364 of 410 households, across 1 habitations."
+        },
+        {
+          "value": "6",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "23d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-14. 57 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Akragarapatti",
+            "population": 2050,
+            "households": 410,
+            "connections": 364
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 6
+          }
+        ],
+        "sampling": {
+          "total": 57,
+          "unsafe": 0,
+          "atSource": 29,
+          "atHousehold": 28,
+          "earliest": "2022-11-23",
+          "latest": "2026-08-14",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 8
+            },
+            {
+              "year": "2023",
+              "count": 9
+            },
+            {
+              "year": "2024",
+              "count": 16
+            },
+            {
+              "year": "2025",
+              "count": 16
+            },
+            {
+              "year": "2026",
+              "count": 8
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 166.51,
+          "netSownHectares": 75.29,
+          "irrigatedHectares": 57.31,
+          "canalHectares": 57.31,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 23.41,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 4,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 184.3272,
+          "latitude": 10.14975,
+          "longitude": 77.8688
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223350",
+      "name": "Nariyuthu",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "71.65 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "71.65%",
+          "label": "Households with a tap connection",
+          "note": "743 of 1,037 households, across 7 habitations."
+        },
+        {
+          "value": "38",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "22d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-15. 135 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Kalathukottam",
+            "population": 65,
+            "households": 13,
+            "connections": 13
+          },
+          {
+            "name": "Kattunaickenpatti",
+            "population": 860,
+            "households": 172,
+            "connections": 68
+          },
+          {
+            "name": "Mariyayipalayam",
+            "population": 465,
+            "households": 93,
+            "connections": 93
+          },
+          {
+            "name": "Nariyoothu",
+            "population": 1115,
+            "households": 223,
+            "connections": 212
+          },
+          {
+            "name": "Palampatti",
+            "population": 942,
+            "households": 157,
+            "connections": 50
+          },
+          {
+            "name": "Rayappapillaipatti",
+            "population": 75,
+            "households": 15,
+            "connections": 15
+          },
+          {
+            "name": "Uchanampatti",
+            "population": 1820,
+            "households": 364,
+            "connections": 292
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 35
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 3
+          }
+        ],
+        "sampling": {
+          "total": 135,
+          "unsafe": 0,
+          "atSource": 108,
+          "atHousehold": 27,
+          "earliest": "2022-11-24",
+          "latest": "2026-08-15",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 16
+            },
+            {
+              "year": "2023",
+              "count": 25
+            },
+            {
+              "year": "2024",
+              "count": 43
+            },
+            {
+              "year": "2025",
+              "count": 44
+            },
+            {
+              "year": "2026",
+              "count": 7
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 861.42,
+          "netSownHectares": 461.05,
+          "irrigatedHectares": 229.92,
+          "canalHectares": 0,
+          "wellHectares": 229.92,
+          "tankHectares": 0,
+          "forestHectares": 44.55,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 22.15
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 2,
+          "lostInSummer": [
+            "uncoveredWell",
+            "tubeWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 853.1331,
+          "latitude": 10.18965,
+          "longitude": 77.88355
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223351",
+      "name": "Noothalapuram",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "69.19 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "69.19%",
+          "label": "Households with a tap connection",
+          "note": "685 of 990 households, across 11 habitations."
+        },
+        {
+          "value": "49",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Filter Points, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "23d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-14. 192 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "historical-water-access",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "historical-agricultural-baseline",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 13,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Achanampatti",
+            "population": 50,
+            "households": 10,
+            "connections": 0
+          },
+          {
+            "name": "Bangalapatti",
+            "population": 540,
+            "households": 108,
+            "connections": 26
+          },
+          {
+            "name": "Chinammanaickenkottai",
+            "population": 925,
+            "households": 185,
+            "connections": 126
+          },
+          {
+            "name": "Kovilpati",
+            "population": 350,
+            "households": 70,
+            "connections": 42
+          },
+          {
+            "name": "Kulathupatti",
+            "population": 800,
+            "households": 160,
+            "connections": 45
+          },
+          {
+            "name": "N.oothupatti",
+            "population": 315,
+            "households": 63,
+            "connections": 63
+          },
+          {
+            "name": "N.perumalpatti",
+            "population": 110,
+            "households": 22,
+            "connections": 11
+          },
+          {
+            "name": "Noothalapuram",
+            "population": 520,
+            "households": 104,
+            "connections": 104
+          },
+          {
+            "name": "Seethapuram",
+            "population": 360,
+            "households": 72,
+            "connections": 72
+          },
+          {
+            "name": "Thummalapatti",
+            "population": 360,
+            "households": 72,
+            "connections": 72
+          },
+          {
+            "name": "Viralipatti",
+            "population": 620,
+            "households": 124,
+            "connections": 124
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 44
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 4
+          },
+          {
+            "type": "Filter Points",
+            "category": "Others",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 192,
+          "unsafe": 0,
+          "atSource": 163,
+          "atHousehold": 29,
+          "earliest": "2022-11-21",
+          "latest": "2026-08-14",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 29
+            },
+            {
+              "year": "2023",
+              "count": 47
+            },
+            {
+              "year": "2024",
+              "count": 52
+            },
+            {
+              "year": "2025",
+              "count": 55
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": null,
+        "seasonal": null,
+        "boundary": {
+          "areaHectares": 1647.745,
+          "latitude": 10.1892,
+          "longitude": 77.82305
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 6,
+          "namedCount": 5,
+          "areaHectares": 33.5092,
+          "largestAreaHectares": 19.8735,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 2
+            },
+            {
+              "department": "WRD",
+              "count": 2
+            },
+            {
+              "department": "AED",
+              "count": 1
+            },
+            {
+              "department": "DOSS",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223352",
+      "name": "Pachamalayankottai",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "89.47 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "89.47%",
+          "label": "Households with a tap connection",
+          "note": "2,760 of 3,085 households, across 19 habitations."
+        },
+        {
+          "value": "59",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "177.6 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "29 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "18d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-19. 187 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Chellayeepuram",
+            "population": 630,
+            "households": 126,
+            "connections": 95
+          },
+          {
+            "name": "Kammupillaichatram",
+            "population": 515,
+            "households": 103,
+            "connections": 36
+          },
+          {
+            "name": "Kethayagoundanpatti",
+            "population": 660,
+            "households": 132,
+            "connections": 132
+          },
+          {
+            "name": "Koothampatty",
+            "population": 1100,
+            "households": 220,
+            "connections": 220
+          },
+          {
+            "name": "KRISHNAPURAM H",
+            "population": 160,
+            "households": 32,
+            "connections": 4
+          },
+          {
+            "name": "Ottupatty",
+            "population": 785,
+            "households": 157,
+            "connections": 157
+          },
+          {
+            "name": "Pachamalayankottai",
+            "population": 914,
+            "households": 434,
+            "connections": 434
+          },
+          {
+            "name": "Pudhukamanpatti",
+            "population": 980,
+            "households": 196,
+            "connections": 196
+          },
+          {
+            "name": "Puduchatram",
+            "population": 345,
+            "households": 69,
+            "connections": 62
+          },
+          {
+            "name": "Pudukottai",
+            "population": 870,
+            "households": 174,
+            "connections": 80
+          },
+          {
+            "name": "Pudusukkalapuram",
+            "population": 120,
+            "households": 24,
+            "connections": 24
+          },
+          {
+            "name": "Ramasamypuram",
+            "population": 155,
+            "households": 31,
+            "connections": 31
+          },
+          {
+            "name": "Sedapatty",
+            "population": 120,
+            "households": 24,
+            "connections": 24
+          },
+          {
+            "name": "Sempatti",
+            "population": 2398,
+            "households": 915,
+            "connections": 915
+          },
+          {
+            "name": "Sukkilapuram",
+            "population": 135,
+            "households": 27,
+            "connections": 27
+          },
+          {
+            "name": "Thimminaickenpatti",
+            "population": 795,
+            "households": 159,
+            "connections": 124
+          },
+          {
+            "name": "Thirumayangoundanpatti",
+            "population": 390,
+            "households": 78,
+            "connections": 35
+          },
+          {
+            "name": "Uthayagoundanpatti",
+            "population": 425,
+            "households": 85,
+            "connections": 65
+          },
+          {
+            "name": "Vettaypatty",
+            "population": 495,
+            "households": 99,
+            "connections": 99
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 57
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 2
+          }
+        ],
+        "sampling": {
+          "total": 187,
+          "unsafe": 0,
+          "atSource": 164,
+          "atHousehold": 23,
+          "earliest": "2022-11-26",
+          "latest": "2026-08-19",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 22
+            },
+            {
+              "year": "2023",
+              "count": 47
+            },
+            {
+              "year": "2024",
+              "count": 50
+            },
+            {
+              "year": "2025",
+              "count": 59
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1815.36,
+          "netSownHectares": 606.28,
+          "irrigatedHectares": 606.28,
+          "canalHectares": 7.46,
+          "wellHectares": 594.94,
+          "tankHectares": 3.88,
+          "forestHectares": 158.82,
+          "barrenHectares": 20.06,
+          "culturableWasteHectares": 52.1
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1837.6527,
+          "latitude": 10.26135,
+          "longitude": 77.8749
+        },
+        "rainfall": {
+          "windowMm": 177.6,
+          "daysWithRain": 29,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 34.6
+        },
+        "waterBodies": {
+          "count": 7,
+          "namedCount": 1,
+          "areaHectares": 8.7719,
+          "largestAreaHectares": 2.932,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 6
+            },
+            {
+              "department": "NRSC",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223353",
+      "name": "Pallapatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "94.04 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "94.04%",
+          "label": "Households with a tap connection",
+          "note": "2,350 of 2,499 households, across 7 habitations."
+        },
+        {
+          "value": "40",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Filter Points, Open Well, River"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "19d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-18. 184 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Arunachalapuram",
+            "population": 355,
+            "households": 81,
+            "connections": 81
+          },
+          {
+            "name": "Bharathipuram",
+            "population": 916,
+            "households": 254,
+            "connections": 254
+          },
+          {
+            "name": "Goundanpatti",
+            "population": 1325,
+            "households": 481,
+            "connections": 481
+          },
+          {
+            "name": "Pallapatti",
+            "population": 6180,
+            "households": 1236,
+            "connections": 1087
+          },
+          {
+            "name": "Ramanchettipatti",
+            "population": 255,
+            "households": 123,
+            "connections": 123
+          },
+          {
+            "name": "Soundarapuram",
+            "population": 125,
+            "households": 55,
+            "connections": 55
+          },
+          {
+            "name": "Velaithapuram",
+            "population": 802,
+            "households": 269,
+            "connections": 269
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 36
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 2
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          },
+          {
+            "type": "Filter Points",
+            "category": "Others",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 184,
+          "unsafe": 0,
+          "atSource": 156,
+          "atHousehold": 28,
+          "earliest": "2022-11-29",
+          "latest": "2026-08-18",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 19
+            },
+            {
+              "year": "2023",
+              "count": 32
+            },
+            {
+              "year": "2024",
+              "count": 50
+            },
+            {
+              "year": "2025",
+              "count": 73
+            },
+            {
+              "year": "2026",
+              "count": 10
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1613.18,
+          "netSownHectares": 644.46,
+          "irrigatedHectares": 543.47,
+          "canalHectares": 0,
+          "wellHectares": 543.47,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 7,
+          "summerSourceTypes": 7,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 1653.9117,
+          "latitude": 10.13365,
+          "longitude": 77.9317
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": {
+          "count": 4,
+          "namedCount": 3,
+          "areaHectares": 103.6239,
+          "largestAreaHectares": 60.0004,
+          "byDepartment": [
+            {
+              "department": "WRD",
+              "count": 3
+            },
+            {
+              "department": "AED",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223354",
+      "name": "Pillaiyarnatham",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "87.81 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "87.81%",
+          "label": "Households with a tap connection",
+          "note": "1,570 of 1,788 households, across 9 habitations."
+        },
+        {
+          "value": "50",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "58d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-07-10. 240 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "historical-water-access",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "historical-agricultural-baseline",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 13,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Anaipatti",
+            "population": 2480,
+            "households": 496,
+            "connections": 464
+          },
+          {
+            "name": "Chokkupillaipatti",
+            "population": 1100,
+            "households": 220,
+            "connections": 173
+          },
+          {
+            "name": "Goundanpatti",
+            "population": 286,
+            "households": 62,
+            "connections": 62
+          },
+          {
+            "name": "Malapatti",
+            "population": 310,
+            "households": 62,
+            "connections": 58
+          },
+          {
+            "name": "Nattarpatti",
+            "population": 930,
+            "households": 186,
+            "connections": 186
+          },
+          {
+            "name": "Old Perumalkoilpatti",
+            "population": 380,
+            "households": 76,
+            "connections": 14
+          },
+          {
+            "name": "Perumalkoilpatti",
+            "population": 315,
+            "households": 63,
+            "connections": 30
+          },
+          {
+            "name": "Pillayarnatham",
+            "population": 1275,
+            "households": 255,
+            "connections": 255
+          },
+          {
+            "name": "Sirunaickenpatti",
+            "population": 1840,
+            "households": 368,
+            "connections": 328
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 44
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 6
+          }
+        ],
+        "sampling": {
+          "total": 240,
+          "unsafe": 0,
+          "atSource": 214,
+          "atHousehold": 26,
+          "earliest": "2022-11-30",
+          "latest": "2026-07-10",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 31
+            },
+            {
+              "year": "2023",
+              "count": 56
+            },
+            {
+              "year": "2024",
+              "count": 70
+            },
+            {
+              "year": "2025",
+              "count": 74
+            },
+            {
+              "year": "2026",
+              "count": 9
+            }
+          ]
+        },
+        "land": null,
+        "seasonal": null,
+        "boundary": {
+          "areaHectares": 735.8266,
+          "latitude": 10.1047,
+          "longitude": 77.85915
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 7,
+          "namedCount": 6,
+          "areaHectares": 16.8529,
+          "largestAreaHectares": 14.3453,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 5
+            },
+            {
+              "department": "AED",
+              "count": 1
+            },
+            {
+              "department": "WRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223355",
+      "name": "Ramarajapuram",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Every household has a tap, drawn from an aquifer in deficit",
+        "body": "All 1,394 households report a tap connection, while Nilakottai is assessed over exploited at 139.8 percent of extraction. Service is complete; the source is not secure.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,394 of 1,394 households, across 3 habitations."
+        },
+        {
+          "value": "26",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, River"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "18d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-19. 142 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Meenakshipuram",
+            "population": 1164,
+            "households": 278,
+            "connections": 278
+          },
+          {
+            "name": "Ramarajapuram",
+            "population": 4305,
+            "households": 1061,
+            "connections": 1061
+          },
+          {
+            "name": "Thangiapuram",
+            "population": 275,
+            "households": 55,
+            "connections": 55
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 25
+          },
+          {
+            "type": "River",
+            "category": "Surface Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 142,
+          "unsafe": 0,
+          "atSource": 114,
+          "atHousehold": 28,
+          "earliest": "2022-12-01",
+          "latest": "2026-08-19",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 18
+            },
+            {
+              "year": "2023",
+              "count": 29
+            },
+            {
+              "year": "2024",
+              "count": 42
+            },
+            {
+              "year": "2025",
+              "count": 41
+            },
+            {
+              "year": "2026",
+              "count": 12
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 415.19,
+          "netSownHectares": 201.51,
+          "irrigatedHectares": 189.07,
+          "canalHectares": 189.07,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 9.49,
+          "culturableWasteHectares": 1.46
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 6,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 400.3979,
+          "latitude": 10.086,
+          "longitude": 77.9141
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": {
+          "count": 2,
+          "namedCount": 0,
+          "areaHectares": 16.0686,
+          "largestAreaHectares": 14.62,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223356",
+      "name": "S.Mettupatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Every household has a tap, drawn from an aquifer in deficit",
+        "body": "All 1,926 households report a tap connection, while Nilakottai is assessed over exploited at 139.8 percent of extraction. Service is complete; the source is not secure.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,926 of 1,926 households, across 10 habitations."
+        },
+        {
+          "value": "44",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "18d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-19. 311 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-inventory",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 14,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Gundalapatti",
+            "population": 2495,
+            "households": 399,
+            "connections": 399
+          },
+          {
+            "name": "Kuthilnaickenpatti",
+            "population": 532,
+            "households": 111,
+            "connections": 111
+          },
+          {
+            "name": "Malliampatti",
+            "population": 1325,
+            "households": 265,
+            "connections": 265
+          },
+          {
+            "name": "Othapatty",
+            "population": 22,
+            "households": 8,
+            "connections": 8
+          },
+          {
+            "name": "Parayapatti .s",
+            "population": 470,
+            "households": 94,
+            "connections": 94
+          },
+          {
+            "name": "S. Mettupatti",
+            "population": 1992,
+            "households": 533,
+            "connections": 533
+          },
+          {
+            "name": "S. Vadipatti",
+            "population": 385,
+            "households": 77,
+            "connections": 77
+          },
+          {
+            "name": "Sakkliyapatty",
+            "population": 409,
+            "households": 92,
+            "connections": 92
+          },
+          {
+            "name": "Sitharhalnatham",
+            "population": 582,
+            "households": 282,
+            "connections": 282
+          },
+          {
+            "name": "Vinayagapuram Colony",
+            "population": 330,
+            "households": 65,
+            "connections": 65
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 38
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 6
+          }
+        ],
+        "sampling": {
+          "total": 311,
+          "unsafe": 0,
+          "atSource": 272,
+          "atHousehold": 39,
+          "earliest": "2022-12-01",
+          "latest": "2026-08-19",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 40
+            },
+            {
+              "year": "2023",
+              "count": 74
+            },
+            {
+              "year": "2024",
+              "count": 92
+            },
+            {
+              "year": "2025",
+              "count": 95
+            },
+            {
+              "year": "2026",
+              "count": 10
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1539.04,
+          "netSownHectares": 479.93,
+          "irrigatedHectares": 27.99,
+          "canalHectares": 4.2,
+          "wellHectares": 23.79,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 62.22,
+          "culturableWasteHectares": 1.51
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 3,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 593.0302,
+          "latitude": 10.0768,
+          "longitude": 77.8582
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": null
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223357",
+      "name": "Silukkuvarpatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "90.82 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "90.82%",
+          "label": "Households with a tap connection",
+          "note": "3,097 of 3,410 households, across 12 habitations."
+        },
+        {
+          "value": "92",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Infiltration well, Open Well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "18d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-19. 322 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Chennachettipatti",
+            "population": 96,
+            "households": 28,
+            "connections": 21
+          },
+          {
+            "name": "Kariyampatti",
+            "population": 2835,
+            "households": 567,
+            "connections": 512
+          },
+          {
+            "name": "Kavirayapuram",
+            "population": 660,
+            "households": 132,
+            "connections": 132
+          },
+          {
+            "name": "Kuppampalanipatti",
+            "population": 296,
+            "households": 82,
+            "connections": 82
+          },
+          {
+            "name": "Mannavaradhi",
+            "population": 660,
+            "households": 132,
+            "connections": 94
+          },
+          {
+            "name": "Nadupatti",
+            "population": 920,
+            "households": 184,
+            "connections": 168
+          },
+          {
+            "name": "Old Silukkuvarpatti",
+            "population": 1360,
+            "households": 272,
+            "connections": 132
+          },
+          {
+            "name": "Othakaavaveedu",
+            "population": 5,
+            "households": 1,
+            "connections": 1
+          },
+          {
+            "name": "Sankarapuram",
+            "population": 145,
+            "households": 29,
+            "connections": 29
+          },
+          {
+            "name": "Silukkuvarpatti",
+            "population": 6283,
+            "households": 1674,
+            "connections": 1674
+          },
+          {
+            "name": "Srirengampatti",
+            "population": 850,
+            "households": 197,
+            "connections": 141
+          },
+          {
+            "name": "Vellaithathanpatti",
+            "population": 405,
+            "households": 112,
+            "connections": 111
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 67
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 16
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 9
+          }
+        ],
+        "sampling": {
+          "total": 322,
+          "unsafe": 0,
+          "atSource": 295,
+          "atHousehold": 27,
+          "earliest": "2022-12-01",
+          "latest": "2026-08-19",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 36
+            },
+            {
+              "year": "2023",
+              "count": 64
+            },
+            {
+              "year": "2024",
+              "count": 93
+            },
+            {
+              "year": "2025",
+              "count": 113
+            },
+            {
+              "year": "2026",
+              "count": 16
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 941.12,
+          "netSownHectares": 460.74,
+          "irrigatedHectares": 218.22,
+          "canalHectares": 0,
+          "wellHectares": 218.22,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0.03,
+          "culturableWasteHectares": 0.05
+        },
+        "seasonal": {
+          "annualSourceTypes": 6,
+          "summerSourceTypes": 5,
+          "lostInSummer": [
+            "tapTreated"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 957.7314,
+          "latitude": 10.1602,
+          "longitude": 77.8789
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 10,
+          "namedCount": 7,
+          "areaHectares": 84.2441,
+          "largestAreaHectares": 30.3165,
+          "byDepartment": [
+            {
+              "department": "TNRD",
+              "count": 5
+            },
+            {
+              "department": "AED",
+              "count": 3
+            },
+            {
+              "department": "WRD",
+              "count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223358",
+      "name": "Sithargalnatham",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Every household has a tap, drawn from an aquifer in deficit",
+        "body": "All 1,926 households report a tap connection, while Nilakottai is assessed over exploited at 139.8 percent of extraction. Service is complete; the source is not secure.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,926 of 1,926 households, across 10 habitations."
+        },
+        {
+          "value": "44",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "18d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-19. 311 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Gundalapatti",
+            "population": 2495,
+            "households": 399,
+            "connections": 399
+          },
+          {
+            "name": "Kuthilnaickenpatti",
+            "population": 532,
+            "households": 111,
+            "connections": 111
+          },
+          {
+            "name": "Malliampatti",
+            "population": 1325,
+            "households": 265,
+            "connections": 265
+          },
+          {
+            "name": "Othapatty",
+            "population": 22,
+            "households": 8,
+            "connections": 8
+          },
+          {
+            "name": "Parayapatti .s",
+            "population": 470,
+            "households": 94,
+            "connections": 94
+          },
+          {
+            "name": "S. Mettupatti",
+            "population": 1992,
+            "households": 533,
+            "connections": 533
+          },
+          {
+            "name": "S. Vadipatti",
+            "population": 385,
+            "households": 77,
+            "connections": 77
+          },
+          {
+            "name": "Sakkliyapatty",
+            "population": 409,
+            "households": 92,
+            "connections": 92
+          },
+          {
+            "name": "Sitharhalnatham",
+            "population": 582,
+            "households": 282,
+            "connections": 282
+          },
+          {
+            "name": "Vinayagapuram Colony",
+            "population": 330,
+            "households": 65,
+            "connections": 65
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 38
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 6
+          }
+        ],
+        "sampling": {
+          "total": 311,
+          "unsafe": 0,
+          "atSource": 272,
+          "atHousehold": 39,
+          "earliest": "2022-12-01",
+          "latest": "2026-08-19",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 40
+            },
+            {
+              "year": "2023",
+              "count": 74
+            },
+            {
+              "year": "2024",
+              "count": 92
+            },
+            {
+              "year": "2025",
+              "count": 95
+            },
+            {
+              "year": "2026",
+              "count": 10
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 1539.04,
+          "netSownHectares": 479.93,
+          "irrigatedHectares": 27.99,
+          "canalHectares": 4.2,
+          "wellHectares": 23.79,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 62.22,
+          "culturableWasteHectares": 1.51
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 3,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 895.2323,
+          "latitude": 10.0985,
+          "longitude": 77.8376
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 7,
+          "namedCount": 4,
+          "areaHectares": 99.0905,
+          "largestAreaHectares": 41.2557,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 4
+            },
+            {
+              "department": "AED",
+              "count": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223359",
+      "name": "Sivagnanapuram",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "97.94 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "97.94%",
+          "label": "Households with a tap connection",
+          "note": "762 of 778 households, across 4 habitations."
+        },
+        {
+          "value": "20",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "60.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "25 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "17d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-20. 90 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Bodiyagoundanpatti",
+            "population": 845,
+            "households": 169,
+            "connections": 169
+          },
+          {
+            "name": "Kootathuayampalyam",
+            "population": 345,
+            "households": 69,
+            "connections": 53
+          },
+          {
+            "name": "S. Pudur",
+            "population": 825,
+            "households": 165,
+            "connections": 165
+          },
+          {
+            "name": "Sivagnnapuram",
+            "population": 1036,
+            "households": 375,
+            "connections": 375
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 20
+          }
+        ],
+        "sampling": {
+          "total": 90,
+          "unsafe": 0,
+          "atSource": 63,
+          "atHousehold": 27,
+          "earliest": "2022-12-06",
+          "latest": "2026-08-20",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 14
+            },
+            {
+              "year": "2023",
+              "count": 21
+            },
+            {
+              "year": "2024",
+              "count": 24
+            },
+            {
+              "year": "2025",
+              "count": 24
+            },
+            {
+              "year": "2026",
+              "count": 7
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 819.24,
+          "netSownHectares": 368.1,
+          "irrigatedHectares": 337.11,
+          "canalHectares": 0,
+          "wellHectares": 337.11,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 115.11,
+          "culturableWasteHectares": 4.04
+        },
+        "seasonal": {
+          "annualSourceTypes": 4,
+          "summerSourceTypes": 3,
+          "lostInSummer": [
+            "uncoveredWell"
+          ]
+        },
+        "boundary": {
+          "areaHectares": 756.4133,
+          "latitude": 10.11145,
+          "longitude": 77.8031
+        },
+        "rainfall": {
+          "windowMm": 60.7,
+          "daysWithRain": 25,
+          "wettestDate": "2026-08-09",
+          "wettestDayMm": 8.1
+        },
+        "waterBodies": {
+          "count": 6,
+          "namedCount": 6,
+          "areaHectares": 29.1287,
+          "largestAreaHectares": 15.459,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 4
+            },
+            {
+              "department": "AED",
+              "count": 1
+            },
+            {
+              "department": "WRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223360",
+      "name": "Veelinaickenpatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "95.78 percent of households report a tap connection, and Nilakottai is assessed over exploited at 139.8 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
+        {
+          "value": "95.78%",
+          "label": "Households with a tap connection",
+          "note": "704 of 735 households, across 4 habitations."
+        },
+        {
+          "value": "24",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Open Well"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "70.9 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "27 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "17d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-20. 142 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Jayanaichenpatty",
+            "population": 800,
+            "households": 160,
+            "connections": 129
+          },
+          {
+            "name": "Mutharaiyarnagar",
+            "population": 230,
+            "households": 46,
+            "connections": 46
+          },
+          {
+            "name": "Pappinaickenpatty",
+            "population": 1045,
+            "households": 209,
+            "connections": 209
+          },
+          {
+            "name": "Veelinaickenpatti",
+            "population": 1532,
+            "households": 320,
+            "connections": 320
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 23
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
+        "sampling": {
+          "total": 142,
+          "unsafe": 0,
+          "atSource": 115,
+          "atHousehold": 27,
+          "earliest": "2022-12-07",
+          "latest": "2026-08-20",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 18
+            },
+            {
+              "year": "2023",
+              "count": 29
+            },
+            {
+              "year": "2024",
+              "count": 42
+            },
+            {
+              "year": "2025",
+              "count": 46
+            },
+            {
+              "year": "2026",
+              "count": 7
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 525.18,
+          "netSownHectares": 157.39,
+          "irrigatedHectares": 96.01,
+          "canalHectares": 0,
+          "wellHectares": 96.01,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 4.99,
+          "culturableWasteHectares": 14.06
+        },
+        "seasonal": {
+          "annualSourceTypes": 5,
+          "summerSourceTypes": 5,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 557.959,
+          "latitude": 10.1541,
+          "longitude": 77.8262
+        },
+        "rainfall": {
+          "windowMm": 70.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-08-14",
+          "wettestDayMm": 13.9
+        },
+        "waterBodies": {
+          "count": 3,
+          "namedCount": 1,
+          "areaHectares": 3.4686,
+          "largestAreaHectares": 2.3063,
+          "byDepartment": [
+            {
+              "department": "AED",
+              "count": 2
+            },
+            {
+              "department": "TNRD",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "placeId": "223361",
+      "name": "Vilampatti",
+      "blockCode": "6451",
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Every household has a tap, drawn from an aquifer in deficit",
+        "body": "All 1,131 households report a tap connection, while Nilakottai is assessed over exploited at 139.8 percent of extraction. Service is complete; the source is not secure.",
+        "tone": "warning"
+      },
+      "headlineFacts": [
+        {
+          "value": "100%",
+          "label": "Households with a tap connection",
+          "note": "1,131 of 1,131 households, across 2 habitations."
+        },
+        {
+          "value": "13",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
+          "value": "139.8%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Nilakottai is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "62.7 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "30 rain days between 2026-08-07 and 2026-09-06, modelled rather than gauged."
+        },
+        {
+          "value": "17d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-08-20. 97 samples over 5 years, none of them recorded unsafe."
+        }
+      ],
+      "gaps": [
+        {
+          "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-observation",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "groundwater-level-trend",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "aquifer-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "catchment-context",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "water-body-condition",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "surface-water-change",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "waterway-network",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "river-water-quality",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "flood-hazard",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "observed-flood-events",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "natural-drainage",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "engineered-stormwater-drainage",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "wastewater-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "wastewater-treatment-assets",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "pollution-pressure-inventory",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "measured-water-pollution",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "coastal-and-estuarine",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "current-crop-and-irrigation-state",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "soil-water-context",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-system-relation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "crop-water-demand",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-stress-observation",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "agricultural-water-pollution-pressure",
+          "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "composite-priority-score",
+          "reason": "not-assessed"
+        }
+      ],
+      "adequateCapabilities": 15,
+      "assessedCapabilities": 40,
+      "detail": {
+        "habitations": [
+          {
+            "name": "Muthulingapuram",
+            "population": 655,
+            "households": 215,
+            "connections": 215
+          },
+          {
+            "name": "Vilampatti",
+            "population": 2244,
+            "households": 916,
+            "connections": 916
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 13
+          }
+        ],
+        "sampling": {
+          "total": 97,
+          "unsafe": 0,
+          "atSource": 70,
+          "atHousehold": 27,
+          "earliest": "2022-12-07",
+          "latest": "2026-08-20",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 11
+            },
+            {
+              "year": "2023",
+              "count": 15
+            },
+            {
+              "year": "2024",
+              "count": 29
+            },
+            {
+              "year": "2025",
+              "count": 35
+            },
+            {
+              "year": "2026",
+              "count": 7
+            }
+          ]
+        },
+        "land": {
+          "totalAreaHectares": 576,
+          "netSownHectares": 446.24,
+          "irrigatedHectares": 380.65,
+          "canalHectares": 380.65,
+          "wellHectares": 0,
+          "tankHectares": 0,
+          "forestHectares": 0,
+          "barrenHectares": 0.6,
+          "culturableWasteHectares": 0
+        },
+        "seasonal": {
+          "annualSourceTypes": 2,
+          "summerSourceTypes": 2,
+          "lostInSummer": []
+        },
+        "boundary": {
+          "areaHectares": 557.4176,
+          "latitude": 10.0842,
+          "longitude": 77.88385
+        },
+        "rainfall": {
+          "windowMm": 62.7,
+          "daysWithRain": 30,
+          "wettestDate": "2026-09-06",
+          "wettestDayMm": 7.3
+        },
+        "waterBodies": {
+          "count": 9,
+          "namedCount": 9,
+          "areaHectares": 8.7951,
+          "largestAreaHectares": 7.2369,
+          "byDepartment": [
+            {
+              "department": "NRSC",
+              "count": 9
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

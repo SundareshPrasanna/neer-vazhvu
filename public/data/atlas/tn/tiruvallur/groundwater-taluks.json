@@ -1,0 +1,152 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "tn-tiruvallur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for TIRUVALLUR: the district row and its 9 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "tn-tiruvallur-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-06",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=TIRUVALLUR;loctype=DISTRICT;locuuid=2e628024-3969-42fc-bdbc-dc426c63176e;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "TIRUVALLUR",
+    "locationUUID": "2e628024-3969-42fc-bdbc-dc426c63176e",
+    "category": "safe",
+    "stageOfExtractionPercent": 55.3857
+  },
+  "recordsSha256": "91767d0d1b9bc87cf72fe60a3bf321f14fdc3e39f18926c6b630ed20e8159adb",
+  "recordCount": 9,
+  "records": [
+    {
+      "locationName": "AVADI",
+      "locationUUID": "9ed11436-b21e-4a2c-83d8-2ad1ec210b1f",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 83.2462,
+      "annualRechargeHam": 2746.14,
+      "totalAvailabilityHam": 4054.24,
+      "availabilityForFutureUseHam": 828.46,
+      "rainfallMm": 1331.1078
+    },
+    {
+      "locationName": "GUMMUDIPOONDI",
+      "locationUUID": "c0cba031-9efe-473a-ac63-3cb629a3f73f",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 45.5523,
+      "annualRechargeHam": 5130.8,
+      "totalAvailabilityHam": 9340.05,
+      "availabilityForFutureUseHam": 4431.85,
+      "rainfallMm": 1308.5488
+    },
+    {
+      "locationName": "PALLIPATTU",
+      "locationUUID": "141d1a8a-83c1-4558-89ab-9f98021cb389",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 53.8217,
+      "annualRechargeHam": 1044.6,
+      "totalAvailabilityHam": 2510.38,
+      "availabilityForFutureUseHam": 942.24,
+      "rainfallMm": 797.2635
+    },
+    {
+      "locationName": "PONNERI",
+      "locationUUID": "5cf8baf5-8f46-4edf-8b57-11ed93e4104e",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 37.9209,
+      "annualRechargeHam": 13764.51,
+      "totalAvailabilityHam": 18084.5,
+      "availabilityForFutureUseHam": 10183.36,
+      "rainfallMm": 1356.5623
+    },
+    {
+      "locationName": "POONAMALLEE",
+      "locationUUID": "24178fcf-b5cb-457b-b072-3728d645ea59",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 67.8501,
+      "annualRechargeHam": 2722.46,
+      "totalAvailabilityHam": 3642.87,
+      "availabilityForFutureUseHam": 744.73,
+      "rainfallMm": 1519.6406
+    },
+    {
+      "locationName": "RK PETTAI",
+      "locationUUID": "767aaa09-1a93-45ab-90ab-3b6813aedf36",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.7618,
+      "annualRechargeHam": 1404.16,
+      "totalAvailabilityHam": 2810.31,
+      "availabilityForFutureUseHam": 417.54,
+      "rainfallMm": 863.4752
+    },
+    {
+      "locationName": "TIRUTTANI",
+      "locationUUID": "8781b357-9648-4acb-9370-695a9a89a97b",
+      "locationType": "TALUK",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 70.2527,
+      "annualRechargeHam": 6449.98,
+      "totalAvailabilityHam": 9035.05,
+      "availabilityForFutureUseHam": 2371.41,
+      "rainfallMm": 1046.192
+    },
+    {
+      "locationName": "TIRUVALLUR",
+      "locationUUID": "23944745-7fcd-4283-bfe9-32c80400e3e2",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 56.172,
+      "annualRechargeHam": 13113.08,
+      "totalAvailabilityHam": 17472.75,
+      "availabilityForFutureUseHam": 6461.36,
+      "rainfallMm": 1311.3415
+    },
+    {
+      "locationName": "UTHUKKOTTAI",
+      "locationUUID": "770fde53-4289-4b11-b34d-6593fe7547b1",
+      "locationType": "TALUK",
+      "category": "safe",
+      "stageOfExtractionPercent": 57.282,
+      "annualRechargeHam": 6375.44,
+      "totalAvailabilityHam": 9523.6,
+      "availabilityForFutureUseHam": 3289.48,
+      "rainfallMm": 1216.8297
+    }
+  ]
+}

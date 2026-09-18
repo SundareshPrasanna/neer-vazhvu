@@ -1,0 +1,2958 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-projection",
+  "scope": {
+    "kind": "district",
+    "id": "tn-ranipet"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater resource assessment, Tamil Nadu taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-06"
+      },
+      {
+        "id": "tngis-tnrd-panchayat-boundary",
+        "title": "TNGIS TNRD panchayat boundary and revenue taluk boundary (WFS layers tnrd:panchayat_boundary, admin_master:administrative_boundary_taluk)",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "LICENCE UNVERIFIED - see notes. TNGIS/TNeGA terms restrict public display, redistribution and commercial use to prior approval; the reuse confirmation requested 2026-07-27 has no reply. Only derived counts, areas, centroids and digests are published; cited with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-06",
+    "produced_by": "scripts/atlas-project-groundwater.ts",
+    "internal_inputs": [
+      "public/data/atlas/tn/ranipet/directory.json",
+      "public/data/atlas/tn/ranipet/groundwater-taluks.json"
+    ],
+    "note": "IN-GRES 2024-2025 taluk assessment projected onto 288 of 288 Gram Panchayats across 6 taluks; 0 deferred with a reason in review[]."
+  },
+  "projection": {
+    "of": {
+      "kind": "district",
+      "id": "tn-ranipet"
+    },
+    "method": "spatial-intersection",
+    "limitations": [
+      "The assessment unit is a revenue taluk, not the Gram Panchayat: each Panchayat inherits its containing taluk's category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.",
+      "Containment is decided by the TNGIS polygon centroid (vertex fallback for concave polygons); a Panchayat that falls in no taluk or in a taluk without an assessment is deferred, never guessed.",
+      "5 TNRD blocks span more than one revenue taluk, so a block-to-taluk name match would have been wrong."
+    ]
+  },
+  "schemaVersion": 1,
+  "planId": "tn-ranipet-v1",
+  "assessmentYear": "2024-2025",
+  "projectedAt": "2026-09-06",
+  "projectionMethod": "spatial-intersection",
+  "source": {
+    "talukLayer": "admin_master:administrative_boundary_taluk",
+    "talukDistrictLgdCode": "731",
+    "groundwaterSourceId": "ingres-gec-dynamic-groundwater",
+    "boundarySourceId": "tngis-tnrd-panchayat-boundary"
+  },
+  "recordsSha256": "d3905b97eb546d24129072b7245b5349a9069a1d93ca8afd7fb2e24860c6cdb3",
+  "recordCount": 288,
+  "records": [
+    {
+      "lgdGramPanchayatCode": "232240",
+      "lgdGramPanchayatName": "Ambarishipuram",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232241",
+      "lgdGramPanchayatName": "Ammanoor",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232242",
+      "lgdGramPanchayatName": "Anaikataputhur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232243",
+      "lgdGramPanchayatName": "Anaipakkam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232244",
+      "lgdGramPanchayatName": "Ananthapuram",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232245",
+      "lgdGramPanchayatName": "Authur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232246",
+      "lgdGramPanchayatName": "Kavanoor",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232247",
+      "lgdGramPanchayatName": "Kilandur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232248",
+      "lgdGramPanchayatName": "Kilkuppam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232249",
+      "lgdGramPanchayatName": "Kilpakkam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232250",
+      "lgdGramPanchayatName": "Konalam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232251",
+      "lgdGramPanchayatName": "Krishnapuram",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232252",
+      "lgdGramPanchayatName": "Mosur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232253",
+      "lgdGramPanchayatName": "Mudur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232254",
+      "lgdGramPanchayatName": "Mulvoy",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232255",
+      "lgdGramPanchayatName": "Nagarikuppam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232256",
+      "lgdGramPanchayatName": "Perumuchi",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232257",
+      "lgdGramPanchayatName": "Perungalathur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232258",
+      "lgdGramPanchayatName": "Pudukesavaram",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232259",
+      "lgdGramPanchayatName": "Puliyamangalam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232260",
+      "lgdGramPanchayatName": "Seyyur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232261",
+      "lgdGramPanchayatName": "Thanigaipolur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232262",
+      "lgdGramPanchayatName": "Uliyambakkam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232263",
+      "lgdGramPanchayatName": "Uriyur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232264",
+      "lgdGramPanchayatName": "Valarpuram",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232265",
+      "lgdGramPanchayatName": "Velur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232266",
+      "lgdGramPanchayatName": "Anathangal",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232267",
+      "lgdGramPanchayatName": "Arapakkam",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232268",
+      "lgdGramPanchayatName": "Arumbakkam",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232269",
+      "lgdGramPanchayatName": "Arungundram",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232270",
+      "lgdGramPanchayatName": "Athithangal",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232271",
+      "lgdGramPanchayatName": "Ayilam",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232273",
+      "lgdGramPanchayatName": "Esaiyanur",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232274",
+      "lgdGramPanchayatName": "Karikkanthangal",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232275",
+      "lgdGramPanchayatName": "Karivedu",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232276",
+      "lgdGramPanchayatName": "Kathiyavadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232277",
+      "lgdGramPanchayatName": "Kilambadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232278",
+      "lgdGramPanchayatName": "Kilkuppam",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232279",
+      "lgdGramPanchayatName": "Kilminnal",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232280",
+      "lgdGramPanchayatName": "Kirambadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232281",
+      "lgdGramPanchayatName": "Koorambadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232282",
+      "lgdGramPanchayatName": "Kukkundi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232283",
+      "lgdGramPanchayatName": "Ladavaram",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232284",
+      "lgdGramPanchayatName": "Mangadu",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232285",
+      "lgdGramPanchayatName": "Mecheri",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232286",
+      "lgdGramPanchayatName": "Melakuppam",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232287",
+      "lgdGramPanchayatName": "Mulluvadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232288",
+      "lgdGramPanchayatName": "Muppathuvetti",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232289",
+      "lgdGramPanchayatName": "Nandhiyalam",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232290",
+      "lgdGramPanchayatName": "Papperi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232291",
+      "lgdGramPanchayatName": "Puderi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232292",
+      "lgdGramPanchayatName": "Pudupadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232293",
+      "lgdGramPanchayatName": "Punnapadi",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232294",
+      "lgdGramPanchayatName": "Puttuthakku",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232295",
+      "lgdGramPanchayatName": "Sakkaramallur",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232296",
+      "lgdGramPanchayatName": "Sambasivapuram",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232297",
+      "lgdGramPanchayatName": "Sarvanthangal",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232298",
+      "lgdGramPanchayatName": "Sathur",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232299",
+      "lgdGramPanchayatName": "Sembedu",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232300",
+      "lgdGramPanchayatName": "Thazhanur",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232301",
+      "lgdGramPanchayatName": "Uppupettai",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232302",
+      "lgdGramPanchayatName": "Valavanur",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232303",
+      "lgdGramPanchayatName": "K.Velur",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232304",
+      "lgdGramPanchayatName": "Vepoor",
+      "lgdBlockCode": "6741",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232508",
+      "lgdGramPanchayatName": "Akkachikkuppam",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232509",
+      "lgdGramPanchayatName": "Alapakkam",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232510",
+      "lgdGramPanchayatName": "Anwarthikanpettai",
+      "lgdBlockCode": "6740",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232511",
+      "lgdGramPanchayatName": "Asamandur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232512",
+      "lgdGramPanchayatName": "Athippattu",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232513",
+      "lgdGramPanchayatName": "Ayal",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232514",
+      "lgdGramPanchayatName": "Ayarpadi",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232515",
+      "lgdGramPanchayatName": "Ayippedu",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232516",
+      "lgdGramPanchayatName": "Banavaram",
+      "lgdBlockCode": "6748",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232517",
+      "lgdGramPanchayatName": "Cheri",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232518",
+      "lgdGramPanchayatName": "Chithambadi",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232519",
+      "lgdGramPanchayatName": "Dharmaneethi",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232520",
+      "lgdGramPanchayatName": "Eralacheri",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232521",
+      "lgdGramPanchayatName": "Gudalur",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232522",
+      "lgdGramPanchayatName": "Itchiputhur",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232523",
+      "lgdGramPanchayatName": "Kainoor",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232524",
+      "lgdGramPanchayatName": "Karikkal",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232525",
+      "lgdGramPanchayatName": "Karivedu",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232526",
+      "lgdGramPanchayatName": "Karnavour",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232527",
+      "lgdGramPanchayatName": "Kattalai",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232528",
+      "lgdGramPanchayatName": "Kilavanam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232529",
+      "lgdGramPanchayatName": "Kilveeranam",
+      "lgdBlockCode": "6748",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232530",
+      "lgdGramPanchayatName": "Koothampakkam",
+      "lgdBlockCode": "6748",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232531",
+      "lgdGramPanchayatName": "Kunnathur",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232532",
+      "lgdGramPanchayatName": "Maganippattu",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232533",
+      "lgdGramPanchayatName": "Mamandur",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232534",
+      "lgdGramPanchayatName": "Mangalam",
+      "lgdBlockCode": "6748",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232535",
+      "lgdGramPanchayatName": "Minnal",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232536",
+      "lgdGramPanchayatName": "Mittapettai",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232537",
+      "lgdGramPanchayatName": "Nandhimangalam",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232538",
+      "lgdGramPanchayatName": "Nandhiveduthangal",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232539",
+      "lgdGramPanchayatName": "Ocheri",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232540",
+      "lgdGramPanchayatName": "Palayapalayam",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232541",
+      "lgdGramPanchayatName": "Panniyur",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232542",
+      "lgdGramPanchayatName": "Paranchi",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232543",
+      "lgdGramPanchayatName": "Paravathur",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232544",
+      "lgdGramPanchayatName": "Perumalrajapettai",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232545",
+      "lgdGramPanchayatName": "Peruvalayam",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232546",
+      "lgdGramPanchayatName": "Polippakkam",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232547",
+      "lgdGramPanchayatName": "Puduppattu",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232548",
+      "lgdGramPanchayatName": "Pudur",
+      "lgdBlockCode": "6748",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232549",
+      "lgdGramPanchayatName": "Sembedu",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232550",
+      "lgdGramPanchayatName": "Sirukarumbur",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232551",
+      "lgdGramPanchayatName": "Siruvalayam",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232552",
+      "lgdGramPanchayatName": "Soorai",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232553",
+      "lgdGramPanchayatName": "Thalikkal",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232554",
+      "lgdGramPanchayatName": "Thandalam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232555",
+      "lgdGramPanchayatName": "Thappour",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232556",
+      "lgdGramPanchayatName": "Thuraiperumbakkam",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232557",
+      "lgdGramPanchayatName": "Uthirampattu",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232558",
+      "lgdGramPanchayatName": "Vadamambakkam",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232559",
+      "lgdGramPanchayatName": "Vailambadi",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232560",
+      "lgdGramPanchayatName": "Vedal",
+      "lgdBlockCode": "6740",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232561",
+      "lgdGramPanchayatName": "Vegamangalam",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232562",
+      "lgdGramPanchayatName": "Venguppattu",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232625",
+      "lgdGramPanchayatName": "Agavalam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232626",
+      "lgdGramPanchayatName": "Arigilapadi",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232627",
+      "lgdGramPanchayatName": "Arumbakkam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232628",
+      "lgdGramPanchayatName": "Asanallikuppam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232629",
+      "lgdGramPanchayatName": "Attupakkam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232630",
+      "lgdGramPanchayatName": "Avalur",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232631",
+      "lgdGramPanchayatName": "Chitheri",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232632",
+      "lgdGramPanchayatName": "Chittoor",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232633",
+      "lgdGramPanchayatName": "Elathur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232634",
+      "lgdGramPanchayatName": "Ganapathipuram",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232635",
+      "lgdGramPanchayatName": "Illupaithandalam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232636",
+      "lgdGramPanchayatName": "Jagirthandalam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232637",
+      "lgdGramPanchayatName": "Kalathur",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232638",
+      "lgdGramPanchayatName": "Kattupakkam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232639",
+      "lgdGramPanchayatName": "Kilandurai",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232640",
+      "lgdGramPanchayatName": "Kilkalathur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232641",
+      "lgdGramPanchayatName": "Kilveedhi",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232642",
+      "lgdGramPanchayatName": "Kilvenbakkam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232643",
+      "lgdGramPanchayatName": "Kilvenkatapuram",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232644",
+      "lgdGramPanchayatName": "Kodambakkam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232645",
+      "lgdGramPanchayatName": "Mahendiravadi",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232646",
+      "lgdGramPanchayatName": "Mangattucheri",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232647",
+      "lgdGramPanchayatName": "Melandurai",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232648",
+      "lgdGramPanchayatName": "Melapulam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232649",
+      "lgdGramPanchayatName": "Meleri",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232650",
+      "lgdGramPanchayatName": "Melkalathur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232651",
+      "lgdGramPanchayatName": "Melpakkam",
+      "lgdBlockCode": "6740",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232652",
+      "lgdGramPanchayatName": "Murungai",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232653",
+      "lgdGramPanchayatName": "Nagavedu",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232654",
+      "lgdGramPanchayatName": "Nedumpuli",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232655",
+      "lgdGramPanchayatName": "Nelvoy",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232656",
+      "lgdGramPanchayatName": "Ochalam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232657",
+      "lgdGramPanchayatName": "Pallur",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232658",
+      "lgdGramPanchayatName": "Parameswaramangalam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232659",
+      "lgdGramPanchayatName": "Parithiputhur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232660",
+      "lgdGramPanchayatName": "Perapperi",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232661",
+      "lgdGramPanchayatName": "Perumbulipakkam",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232662",
+      "lgdGramPanchayatName": "Pinnavaram",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232663",
+      "lgdGramPanchayatName": "Poigainallur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232664",
+      "lgdGramPanchayatName": "Reddivalam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232665",
+      "lgdGramPanchayatName": "Sankarampadi",
+      "lgdBlockCode": "6748",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232666",
+      "lgdGramPanchayatName": "Sayanapuram",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232667",
+      "lgdGramPanchayatName": "Selvamandhai",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232668",
+      "lgdGramPanchayatName": "Sirunamalli",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232669",
+      "lgdGramPanchayatName": "Thirumathalambakkam",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232670",
+      "lgdGramPanchayatName": "Thirumalpur",
+      "lgdBlockCode": "6751",
+      "talukName": "Arakkonam",
+      "subDistrictCode": "5715",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 75.3032
+    },
+    {
+      "lgdGramPanchayatCode": "232671",
+      "lgdGramPanchayatName": "Thuraiyur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232672",
+      "lgdGramPanchayatName": "Uliyanallur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232673",
+      "lgdGramPanchayatName": "Velithangipuram",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232674",
+      "lgdGramPanchayatName": "Veliyanallur",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232675",
+      "lgdGramPanchayatName": "Vepperi",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232676",
+      "lgdGramPanchayatName": "Vettangulam",
+      "lgdBlockCode": "6751",
+      "talukName": "Nemili",
+      "subDistrictCode": "6664",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 74.758
+    },
+    {
+      "lgdGramPanchayatCode": "232734",
+      "lgdGramPanchayatName": "GOVINDACHERI",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232735",
+      "lgdGramPanchayatName": "GOVINDACHERIKUPPAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232736",
+      "lgdGramPanchayatName": "JAMBUKULAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232737",
+      "lgdGramPanchayatName": "VADA KADAPANTHANGAL",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232738",
+      "lgdGramPanchayatName": "KALLALANKUPPAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232739",
+      "lgdGramPanchayatName": "KARADIKUPPAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232740",
+      "lgdGramPanchayatName": "KATTRAMPAKKAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232742",
+      "lgdGramPanchayatName": "KESAVANANKUPPAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232743",
+      "lgdGramPanchayatName": "KODAIKKAL",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232744",
+      "lgdGramPanchayatName": "KOLATHERI",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232748",
+      "lgdGramPanchayatName": "MARUDHALAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232749",
+      "lgdGramPanchayatName": "MELVEERANAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232752",
+      "lgdGramPanchayatName": "OZHUGHUR",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232753",
+      "lgdGramPanchayatName": "PANDIYANELLORE",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232757",
+      "lgdGramPanchayatName": "PONNAPPANTHANGAL",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232758",
+      "lgdGramPanchayatName": "PULIVALAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232759",
+      "lgdGramPanchayatName": "RENDADI",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232760",
+      "lgdGramPanchayatName": "SEKKADIKUPPAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232761",
+      "lgdGramPanchayatName": "SENGALNATHAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232762",
+      "lgdGramPanchayatName": "SOMASAMUTHIRAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232763",
+      "lgdGramPanchayatName": "THAGARAKUPPAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232764",
+      "lgdGramPanchayatName": "THALANGAI",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232768",
+      "lgdGramPanchayatName": "VANGHUR",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232770",
+      "lgdGramPanchayatName": "VELAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232771",
+      "lgdGramPanchayatName": "MELVENKATAPURAM",
+      "lgdBlockCode": "6753",
+      "talukName": "Sholingur",
+      "subDistrictCode": "7060",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 76.3719
+    },
+    {
+      "lgdGramPanchayatCode": "232773",
+      "lgdGramPanchayatName": "Agaram",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232774",
+      "lgdGramPanchayatName": "Allalacheri",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232775",
+      "lgdGramPanchayatName": "Anaimallur",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232776",
+      "lgdGramPanchayatName": "Aroor",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232777",
+      "lgdGramPanchayatName": "Athiyanam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232778",
+      "lgdGramPanchayatName": "Ayiramangalam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232779",
+      "lgdGramPanchayatName": "Damaraipakkam",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232780",
+      "lgdGramPanchayatName": "Donimedu",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232781",
+      "lgdGramPanchayatName": "Durgam",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232782",
+      "lgdGramPanchayatName": "Gundaleri",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232783",
+      "lgdGramPanchayatName": "Irunghur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232784",
+      "lgdGramPanchayatName": "Kalavaiputhur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232785",
+      "lgdGramPanchayatName": "Kaniyanur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232786",
+      "lgdGramPanchayatName": "Kavanur",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232787",
+      "lgdGramPanchayatName": "Kuppam",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232788",
+      "lgdGramPanchayatName": "Kuppidisatham",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232789",
+      "lgdGramPanchayatName": "Kuthiyam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232790",
+      "lgdGramPanchayatName": "Mambakkam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232791",
+      "lgdGramPanchayatName": "Manthangal",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232792",
+      "lgdGramPanchayatName": "Mazhaiyur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232793",
+      "lgdGramPanchayatName": "Melapalanthai",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232794",
+      "lgdGramPanchayatName": "Melathangal",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232795",
+      "lgdGramPanchayatName": "Melnaickenpalayam",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232796",
+      "lgdGramPanchayatName": "Melnelli",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232797",
+      "lgdGramPanchayatName": "Melnethapakkam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232798",
+      "lgdGramPanchayatName": "Mosur",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232799",
+      "lgdGramPanchayatName": "Nagaleri",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232800",
+      "lgdGramPanchayatName": "Nallur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232801",
+      "lgdGramPanchayatName": "Nambarai",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232802",
+      "lgdGramPanchayatName": "Palayam",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232803",
+      "lgdGramPanchayatName": "Palayanur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232804",
+      "lgdGramPanchayatName": "Pali",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232805",
+      "lgdGramPanchayatName": "Paradarami",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232806",
+      "lgdGramPanchayatName": "Pariamangalam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232807",
+      "lgdGramPanchayatName": "Parikkalpattu",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232808",
+      "lgdGramPanchayatName": "Pattanam",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232809",
+      "lgdGramPanchayatName": "Pennagar",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232810",
+      "lgdGramPanchayatName": "Perumanthangal",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232811",
+      "lgdGramPanchayatName": "Pinnathangal",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232813",
+      "lgdGramPanchayatName": "Pudur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232814",
+      "lgdGramPanchayatName": "Punganur",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232815",
+      "lgdGramPanchayatName": "Senganavaram",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232816",
+      "lgdGramPanchayatName": "Chennasamudram",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232817",
+      "lgdGramPanchayatName": "Cheyyathuvannam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232818",
+      "lgdGramPanchayatName": "Chittanthangal",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232819",
+      "lgdGramPanchayatName": "Soraiyur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232820",
+      "lgdGramPanchayatName": "Valaiyathur",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232821",
+      "lgdGramPanchayatName": "Vazhaipandal",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232822",
+      "lgdGramPanchayatName": "Vanakkambadi",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232823",
+      "lgdGramPanchayatName": "Varaghur",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232824",
+      "lgdGramPanchayatName": "Vellambi",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232825",
+      "lgdGramPanchayatName": "Vembi",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    },
+    {
+      "lgdGramPanchayatCode": "232826",
+      "lgdGramPanchayatName": "Venkatapuram",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232827",
+      "lgdGramPanchayatName": "Vilari",
+      "lgdBlockCode": "6754",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "232880",
+      "lgdGramPanchayatName": "Anandalai",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232881",
+      "lgdGramPanchayatName": "Bagaveli",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232882",
+      "lgdGramPanchayatName": "Chennasamudram",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232883",
+      "lgdGramPanchayatName": "Chettithangal",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232884",
+      "lgdGramPanchayatName": "Ekambaranallore",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232885",
+      "lgdGramPanchayatName": "Gudimallur",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232886",
+      "lgdGramPanchayatName": "Kadapperi",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232887",
+      "lgdGramPanchayatName": "Kalmelkuppam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232888",
+      "lgdGramPanchayatName": "Katharikuppam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232889",
+      "lgdGramPanchayatName": "Kondakuppam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232890",
+      "lgdGramPanchayatName": "Lalapet",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232891",
+      "lgdGramPanchayatName": "Maniyambattu",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232892",
+      "lgdGramPanchayatName": "Manthangal",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232893",
+      "lgdGramPanchayatName": "Marudambakkam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232894",
+      "lgdGramPanchayatName": "Mottur",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232895",
+      "lgdGramPanchayatName": "Mukundarayapuram",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232896",
+      "lgdGramPanchayatName": "Musiri",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232897",
+      "lgdGramPanchayatName": "Narasingapuram",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232898",
+      "lgdGramPanchayatName": "Nowlock",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232899",
+      "lgdGramPanchayatName": "Padiyambakkam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232900",
+      "lgdGramPanchayatName": "Palleri",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232901",
+      "lgdGramPanchayatName": "Poondi",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232902",
+      "lgdGramPanchayatName": "Sathambakkam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232903",
+      "lgdGramPanchayatName": "Seekarajapuram",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232904",
+      "lgdGramPanchayatName": "Sengadu",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232905",
+      "lgdGramPanchayatName": "Sumaithangi",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232906",
+      "lgdGramPanchayatName": "Thagarakuppam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232907",
+      "lgdGramPanchayatName": "Thengal",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232908",
+      "lgdGramPanchayatName": "Thenkadappanthangal",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232909",
+      "lgdGramPanchayatName": "Thirumalaicheri",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232910",
+      "lgdGramPanchayatName": "Thiruparkadal",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232911",
+      "lgdGramPanchayatName": "V.c. mottur",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232912",
+      "lgdGramPanchayatName": "Valluvambakkam",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232913",
+      "lgdGramPanchayatName": "Vanapady",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232914",
+      "lgdGramPanchayatName": "Vannivedu",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "232915",
+      "lgdGramPanchayatName": "Vasur",
+      "lgdBlockCode": "6757",
+      "talukName": "Walajapet",
+      "subDistrictCode": "5714",
+      "containment": "centroid-in-taluk",
+      "category": "critical",
+      "stageOfExtractionPercent": 97.2205
+    },
+    {
+      "lgdGramPanchayatCode": "254903",
+      "lgdGramPanchayatName": "Tajpura",
+      "lgdBlockCode": "6741",
+      "talukName": "Arcot",
+      "subDistrictCode": "5716",
+      "containment": "centroid-in-taluk",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 112.8269
+    },
+    {
+      "lgdGramPanchayatCode": "254904",
+      "lgdGramPanchayatName": "Melpudupakkam",
+      "lgdBlockCode": "6754",
+      "talukName": "Kalavai",
+      "subDistrictCode": "7059",
+      "containment": "centroid-in-taluk",
+      "category": "semi_critical",
+      "stageOfExtractionPercent": 78.8048
+    }
+  ],
+  "review": [],
+  "summary": {
+    "gramPanchayats": 288,
+    "projected": 288,
+    "deferred": 0,
+    "byCategory": {
+      "semi_critical": 196,
+      "over_exploited": 43,
+      "critical": 49
+    },
+    "blocksSpanningTaluks": 5,
+    "talukCoverage": 6
+  }
+}

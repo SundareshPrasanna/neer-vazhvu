@@ -1,0 +1,132 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/environment-plan",
+  "scope": {
+    "kind": "district",
+    "id": "tn-dindigul"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ngt-dep-tn-dindigul",
+        "title": "District Environmental Plan for Dindigul District (four-page action list under the NGT's district environment plan directions, October 2019)",
+        "publisher": "District Collector, Dindigul, with the Project Director, District Rural Development Agency",
+        "license": "Tamil Nadu government publication, cited with attribution",
+        "role": "asserts",
+        "url": "https://dindigul.nic.in/document/district-environmental-plan-for-dindigul-district/",
+        "as_of": "2019-10-24",
+        "retrieved": "2026-09-06"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-09-18",
+    "produced_by": "scripts/atlas-environment-plan-district.ts",
+    "internal_inputs": [],
+    "note": "District Environmental Plan for Dindigul District (2019, District Collector, Dindigul, and PAPD, Dindigul (the two signatories on the last page; the committee-constitution order lists PA, PD as the District Committee's convenor), for the District Committee; published on the Dindigul district website's documents listing), which carries no water-balance table: 2 figures the plan states about water, each transcribed with the sentence it was read from and the PDF page it sits on, and 6 of its water action points. Nothing is computed from the plan; a balance is served only where the plan prints one. Review status verified (checked against the document on 2026-09-18).",
+    "conventions": {
+      "figures": "value and unit as the plan states them; quote is the sentence verbatim; pdfPage is the viewer's page, printedPage the number printed on it",
+      "waterBalance": "null when the plan carries no NGT-template balance; the page says so rather than estimating one",
+      "review": "proposed until a person reads every figure against the PDF; then verified with the date",
+      "document": "sha256 and byte length of the PDF as retrieved, so a re-posted file is detected; the PDF itself is not mirrored"
+    }
+  },
+  "schemaVersion": 1,
+  "id": "tn-dindigul-environment-plan-2019",
+  "sourceId": "ngt-dep-tn-dindigul",
+  "document": {
+    "title": "District Environmental Plan for Dindigul District",
+    "publisher": "District Collector, Dindigul, and PAPD, Dindigul (the two signatories on the last page; the committee-constitution order lists PA, PD as the District Committee's convenor), for the District Committee; published on the Dindigul district website's documents listing",
+    "url": "https://cdn.s3waas.gov.in/s3f74909ace68e51891440e4da0b65a70c/uploads/2019/10/2019102954.pdf",
+    "listingUrl": "https://dindigul.nic.in/document/district-environmental-plan-for-dindigul-district/",
+    "editionLabel": "2019",
+    "editionNote": "The plan prints no date and the PDF carries no metadata dates (pdfinfo shows neither CreationDate nor ModDate). The last page carries hand-dated signatures: PAPD, Dindigul 23.10.19 (a second signature below it is dated 23/10/19) and District Collector, Dindigul 24/10/19. The collectorate documents listing dates the entry 29/10/2019 and the file sits under the 2019/10 upload path (2019102954.pdf). The same site holds the committee-constitution order of 27.08.2019 and minutes of committee meetings on 12.09.2019, 25.09.2019 and 09.10.2019. The edition is labelled 2019 and dated to the Collector's signature.",
+    "documentDate": "2019-10-24",
+    "pages": 4,
+    "sha256": "952f078a6d059a02b9dee3818d61cab73849491ad60c5c2235f410cc168a069e",
+    "bytes": 900206,
+    "retrievedAt": "2026-09-06",
+    "template": "Not the CPCB model narrative. A four-page scanned action list headed A to J (solid waste, bio-medical waste, plastic waste, construction and demolition waste, industrial pollution control, utilization of treated sewage, conservation of water bodies, e-waste, polluted river stretches, illegal sand mining), each heading followed by one to ten one-line items with no responsibility, time-target or cost columns, no district profile, no tables and no photographs. The non-attainment cities and polluted industrial clusters subjects listed in Annexure I of the committee-constitution order do not appear. It prints no demand, supply or deficit water balance.",
+    "quirks": [
+      "The PDF is an image scan with no text layer (four JPEG pages, no CreationDate, ModDate, title or author): pdftotext returns empty pages, so the page text used for the quote check is tesseract OCR of 300 dpi renders, and every quote was also read against the page image.",
+      "No page carries a printed page number, so printedPage is set equal to pdfPage (the cover heading is on page 1).",
+      "The cover prints the title on two lines, 'District Environmental Plan for' over 'Dindigul District', with no office name, emblem or date; the publisher is taken from the signature blocks on page 4.",
+      "The solid-waste list is numbered '1' while every other section is lettered, and its items run f. to j. with no a. to e.; the bio-medical items a. and b. sit on page 1 and c. and d. on page 2, and the OCR layer renders the lower-case item letter c. as 'C.' on page 2 (twice), which collides with the 'C. Plastic Waste Management' heading.",
+      "The polluted-river-stretches heading is printed 'Polluted River Stretches (PWD)/Local Bodies)' with an unmatched closing bracket, and its whole content is one sentence, 'There is no polluted river stretches in Dindigul District', with no reference to the CPCB list it answers.",
+      "The treated-sewage section is one sentence on Dindigul Corporation: treated sewage from the common STP is used for irrigation after mixing with treated effluent from the CETP (TALCO), and the remainder is disposed into Sengulam for groundwater recharge; no STP or CETP capacity, sewage generation or treated volume is printed, and TALCO is not expanded.",
+      "The only numbers the plan prints are '100%' door-to-door collection (a target), G.O.No. 58 of MAWS Dept dated 20.04.2019, '32 Nos' plastic recycling units, and 'Rules 2016'; no water body or tank count, groundwater status, BOD, tannery or industrial effluent figure, Kodaikanal lake or sand-mining figure appears, and Kodaikanal is not mentioned although its Municipality sits on the committee.",
+      "The signature block prints 'PAPD' unexpanded over 'Dindigul'; two signatures sit on that side, hand-dated 23.10.19 and 23/10/19, and the District Collector's signature is hand-dated 24/10/19.",
+      "Spellings are as printed: 'bulps', 'Awarness', 'ascertaing', 'enchroachments', 'rechange', 'manufactures'; page 4 shows faint bleed-through of the same text from the sheet behind.",
+      "The e-waste section's third item (page 4) is lettered 'c.' but the OCR layer renders it as 'es'; no quote is taken from that line."
+    ]
+  },
+  "waterBalance": null,
+  "figures": [
+    {
+      "id": "polluted-river-stretches-in-district",
+      "label": "Polluted river stretches in Dindigul district, as stated by the plan",
+      "value": 0,
+      "unit": "stretches",
+      "detail": "Printed in words as a statement, not a count; it is the entire content of the polluted-river-stretches section and cites no list. Dindigul is not among the six Tamil Nadu stretches named in the neighbouring districts' plans.",
+      "quote": "There is no polluted river stretches in Dindigul District.",
+      "section": "I. Polluted River Stretches (PWD)/Local Bodies)",
+      "pdfPage": 4,
+      "printedPage": 4
+    },
+    {
+      "id": "plastic-recycling-units-identified",
+      "label": "Plastic recycling units identified to obtain registration from TNPCB",
+      "value": 32,
+      "unit": "units",
+      "detail": "Not a water figure; kept because it is the only numeric count the plan prints. Item c. of the plastic-waste section, which the OCR layer letters 'C.'.",
+      "quote": "Recycling units identified to obtain Registration from TNPC Board(32 Nos)",
+      "section": "C. Plastic Waste Management",
+      "pdfPage": 2,
+      "printedPage": 2
+    }
+  ],
+  "actionPoints": [
+    {
+      "text": "Creating awareness to public through special task force constituted as per G.O.No. 58 of MAWS Dept dated: 20.04.2019.",
+      "sector": "Solid Waste Management",
+      "priority": null,
+      "pdfPage": 1
+    },
+    {
+      "text": "Monitoring of Industries by Periodical Collection of Water / Waste Water Samples for ascertaing Water Quality.",
+      "sector": "Industrial Pollution Control",
+      "priority": null,
+      "pdfPage": 3
+    },
+    {
+      "text": "Dindigul Corporation : Treated sewage from common STP is used for irrigation after mixing with treated effluent from CETP (TALCO). Remaining part is disposed into Sengulam for rechange of Ground water.",
+      "sector": "Utilization of Treated Sewage",
+      "priority": null,
+      "pdfPage": 3
+    },
+    {
+      "text": "Collection of data regarding discharge of sewage and disposal of solid waste in river stretch with quantity and prepare Digital Mapping with above details.",
+      "sector": "Conservation of Water Bodies (PWD)",
+      "priority": null,
+      "pdfPage": 3
+    },
+    {
+      "text": "Desilting, Removal of enchroachments & flood control measures",
+      "sector": "Conservation of Water Bodies (PWD)",
+      "priority": null,
+      "pdfPage": 3
+    },
+    {
+      "text": "Taluk level Task force constituted shall conduct surprise check of the illegal mining activities.",
+      "sector": "Illegal sand mining",
+      "priority": null,
+      "pdfPage": 4
+    }
+  ],
+  "review": {
+    "status": "verified",
+    "extractedAt": "2026-09-06",
+    "extractedBy": "Claude, transcribed from page images of the scanned PDF (no text layer); both quotes read back from the page images",
+    "verifiedAt": "2026-09-18",
+    "verifiedBy": "Sundaresh, read against the collectorate PDF"
+  }
+}
