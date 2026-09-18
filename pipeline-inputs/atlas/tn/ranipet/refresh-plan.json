@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-ranipet-v1",
+  "district": {
+    "displayName": "Ranipet",
+    "tnrdLgdCode": "296957",
+    "tnrdMasterCode": "36",
+    "jjmStateId": "29",
+    "jjmDistrictId": "790",
+    "censusDistrictCode": "605",
+    "censusSubdistrictCodes": [
+      "05714",
+      "05715",
+      "05716"
+    ],
+    "censusVillagesWithoutGramPanchayat": [
+      {
+        "villageCode": "630600",
+        "note": "Sukapuram (Arakonam taluk): the Census row leaves both Gram Panchayat columns blank."
+      }
+    ],
+    "lgdDistrictCode": "731",
+    "ingresDistrictName": "RANIPET",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 288,
+    "tnrdMasterBlocks": 7,
+    "tnrdMasterGramPanchayats": 288,
+    "jjmVillages": 291,
+    "censusVillages": 309
+  },
+  "targets": [
+    {
+      "id": "akkachikkuppam",
+      "displayName": "Akkachikkuppam",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "232508",
+      "tnrdMasterBlockCode": "10",
+      "tnrdMasterGramPanchayatCode": "46",
+      "jjmBlockId": "4671",
+      "jjmGramPanchayatId": "155709",
+      "censusSubdistrictCode": "05715",
+      "censusGramPanchayatCode": "0440",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "630553",
+            "name": "Akkachikuppam"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 605 (Vellore as the Census knew it, of which Ranipet was part until 2019); subdistrict 05715; Census GP 0440",
+            "assertion": "The reviewed Census composition contains Akkachikuppam 630553."
+          }
+        ]
+      },
+      "masterNote": "\u0b9a\u0bcb\u0bb3\u0bbf\u0b99\u0bcd\u0b95\u0bb0\u0bcd / \u0b85\u0b95\u0bcd\u0b95\u0b9a\u0bcd\u0b9a\u0bbf\u0b95\u0bcd\u0b95\u0bc1\u0baa\u0bcd\u0baa\u0bae\u0bcd"
+    }
+  ]
+}

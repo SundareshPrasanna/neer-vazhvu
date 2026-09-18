@@ -38,7 +38,7 @@ on:
   workflow_dispatch:
     inputs:
       district:
-        description: "District slug (thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, satara, ahilyanagar, kolhapur) or 'all'"
+        description: "District slug (thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, vellore, ranipet, dindigul, tiruvallur, krishnagiri, satara, ahilyanagar, kolhapur) or 'all'"
         required: false
         default: "all"
 
@@ -68,7 +68,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        district: [thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, satara, ahilyanagar, kolhapur]
+        district: [thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, vellore, ranipet, dindigul, tiruvallur, krishnagiri, satara, ahilyanagar, kolhapur]
     steps:
       - name: Skip districts not requested
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.district != 'all' && github.event.inputs.district != matrix.district }}

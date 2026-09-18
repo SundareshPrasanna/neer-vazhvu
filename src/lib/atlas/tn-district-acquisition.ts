@@ -659,6 +659,8 @@ export interface CensusWorkbookSpec {
   /** Keep only these Census subdistricts of districtCode: the villages of a
    *  district the Census did not yet know (formed after 2011). */
   subdistrictCodes?: string[];
+  /** Village codes the reviewed plan lists as carrying no usable Gram Panchayat. */
+  villagesWithoutGramPanchayat?: string[];
 }
 
 export async function acquireCensusVillages(
@@ -723,6 +725,9 @@ export async function acquireCensusVillages(
       spec.districtCode,
       ...(spec.sheet ? ["--sheet", spec.sheet] : []),
       ...(spec.allowEmptyGramPanchayat ? ["--allow-empty-gram-panchayat"] : []),
+      ...(spec.villagesWithoutGramPanchayat?.length
+        ? ["--villages-without-gram-panchayat", spec.villagesWithoutGramPanchayat.join(",")]
+        : []),
       ...(spec.subdistrictCodes?.length
         ? ["--subdistrict-codes", spec.subdistrictCodes.join(",")]
         : []),
@@ -761,6 +766,9 @@ async function acquireCensus(
       districtCode: plan.district.censusDistrictCode,
       expectedVillages: plan.expectedCounts.censusVillages,
       subdistrictCodes: plan.district.censusSubdistrictCodes,
+      villagesWithoutGramPanchayat: plan.district.censusVillagesWithoutGramPanchayat?.map(
+        (entry) => entry.villageCode,
+      ),
     },
     acquiredAt,
     cache,

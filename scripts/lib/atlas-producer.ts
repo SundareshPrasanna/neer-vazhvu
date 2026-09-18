@@ -371,6 +371,9 @@ export const SOURCE_IDS = {
   // Tamil Nadu has no state listing: each collectorate publishes its own plan.
   ngtDepTnNamakkal: "ngt-dep-tn-namakkal",
   ngtDepTnKarur: "ngt-dep-tn-karur",
+  ngtDepTnTiruvallur: "ngt-dep-tn-tiruvallur",
+  ngtDepTnDindigul: "ngt-dep-tn-dindigul",
+  ngtDepTnKrishnagiri: "ngt-dep-tn-krishnagiri",
   cpcbPrs: "cpcb-prs-report",
 } as const;
 
@@ -466,6 +469,21 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     title: "District Environmental Plan, Karur District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
     publisher: "District Collector, Karur, with the Tamil Nadu Pollution Control Board",
     url: "https://karur.nic.in/departments/the-tamil-nadu-pollution-control-board-karur/",
+  },
+  ngtDepTnTiruvallur: {
+    title: "District Environmental Plan, Tiruvallur District (CPCB model plan under the NGT's district environment plan directions, 2019)",
+    publisher: "District Collector, Tiruvallur, with the Tamil Nadu Pollution Control Board",
+    url: "https://tiruvallur.nic.in/district-environmental-plan/",
+  },
+  ngtDepTnDindigul: {
+    title: "District Environmental Plan for Dindigul District (four-page action list under the NGT's district environment plan directions, October 2019)",
+    publisher: "District Collector, Dindigul, with the Project Director, District Rural Development Agency",
+    url: "https://dindigul.nic.in/document/district-environmental-plan-for-dindigul-district/",
+  },
+  ngtDepTnKrishnagiri: {
+    title: "District Environmental Plan, Krishnagiri District (twelve subject sections under NGT O.A. 710-713/2017, signed 22 November 2019)",
+    publisher: "District Collector, Krishnagiri District, for the District Committee",
+    url: "https://krishnagiri.nic.in/notice/district-environmental-protection-plan/",
   },
   cpcbPrs: {
     title: "CPCB, Polluted River Stretches for Restoration of Water Quality (October 2025, updated version): Annexures III A and III B (stretches and locations), IX to XIII (change since 2018), XIV (station BOD 2024)",

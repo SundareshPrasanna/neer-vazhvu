@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "id": "tn-vellore-v1",
+  "district": {
+    "displayName": "Vellore",
+    "tnrdLgdCode": "549",
+    "tnrdMasterCode": "5",
+    "jjmStateId": "29",
+    "jjmDistrictId": "450",
+    "censusDistrictCode": "605",
+    "censusSubdistrictCodes": [
+      "05712",
+      "05713",
+      "05717"
+    ],
+    "lgdDistrictCode": "595",
+    "ingresDistrictName": "VELLORE",
+    "ingresStateUuid": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b"
+  },
+  "sources": {
+    "tnrdLgdPdf": {
+      "url": "https://www.tnrd.tn.gov.in/pdf/village_eng.pdf",
+      "sourceAsOf": "2021-03-11 (PDF CreationDate)"
+    },
+    "tnrdMaster": {
+      "url": "https://vptax.tnrd.tn.gov.in/project/forms/VillagePanchayatMaster/check_dues_public.php"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    }
+  },
+  "expectedCounts": {
+    "tnrdLgdGramPanchayats": 247,
+    "tnrdMasterBlocks": 7,
+    "tnrdMasterGramPanchayats": 247,
+    "jjmVillages": 248,
+    "censusVillages": 311
+  },
+  "targets": [
+    {
+      "id": "appukkal",
+      "displayName": "Appukkal",
+      "reviewedAt": "2026-09-06",
+      "tnrdLgdGramPanchayatCode": "232203",
+      "tnrdMasterBlockCode": "3",
+      "tnrdMasterGramPanchayatCode": "2",
+      "jjmBlockId": "4680",
+      "jjmGramPanchayatId": "156198",
+      "censusSubdistrictCode": "05717",
+      "censusGramPanchayatCode": "0051",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        },
+        "census": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 1
+        }
+      },
+      "censusComposition": {
+        "status": "complete",
+        "basis": "authoritative-enumeration",
+        "expectedRecordCount": 1,
+        "members": [
+          {
+            "kind": "village",
+            "code": "630835",
+            "name": "Appukal"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "census-village-composition",
+            "sourceId": "census-2011-village-amenities",
+            "sourceUrl": "https://censusindia.gov.in/nada/index.php/catalog/45377/download/49381/DH_2011_DCHB_Village_Release_3300.xlsx",
+            "sourceAsOf": "Census 2011 release; village reference year 2009",
+            "method": "authoritative-crosswalk",
+            "locator": "District 605 (Vellore as the Census knew it, before Tirupathur and Ranipet were carved out in 2019); subdistrict 05717; Census GP 0051",
+            "assertion": "The reviewed Census composition contains Appukal 630835."
+          }
+        ]
+      },
+      "masterNote": "\u0b85\u0ba3\u0bc8\u0b95\u0bcd\u0b95\u0b9f\u0bcd\u0b9f\u0bc1 / \u0b85\u0baa\u0bcd\u0baa\u0bc1\u0b95\u0bcd\u0b95\u0bb2\u0bcd"
+    }
+  ]
+}

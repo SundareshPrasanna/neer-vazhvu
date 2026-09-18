@@ -7,6 +7,7 @@
  */
 import Link from "next/link";
 import { CityBadge, type CityStatus } from "@/components/landing/city-landmark";
+import { DEFAULT_DISTRICT_ACCENT, DistrictMark, districtAccent } from "@/components/atlas/district-mark";
 import {
   districtHref,
   groupAtlasStates,
@@ -45,38 +46,18 @@ export function buildDistrictBoard(): BoardDistrict[] {
     .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
 }
 
-const DISTRICT_ACCENT = "from-teal-500 to-emerald-700";
-
-/** Canals, tanks and a field bund: the rural twin of CityLandmark. */
-function DistrictMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 200 80"
-      preserveAspectRatio="xMidYMax meet"
-      aria-hidden="true"
-      className={className}
-    >
-      <g fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-        <path d="M0 58 C 30 46, 55 70, 85 58 S 135 46, 165 58 S 190 66, 200 60" />
-        <path d="M0 68 C 40 58, 65 78, 105 68 S 165 58, 200 70" strokeOpacity={0.55} />
-        <path d="M22 42 V 24 H 62 V 42" strokeOpacity={0.85} />
-        <path d="M112 38 V 20 H 152 V 38" strokeOpacity={0.85} />
-        <path d="M30 33 h24 M120 29 h24" strokeOpacity={0.35} />
-        <path d="M0 78 H 200" strokeOpacity={0.25} />
-      </g>
-    </svg>
-  );
-}
-
 export function DistrictCard({ district, status }: BoardDistrict) {
   const linkable = status !== "onboarding";
+  // Each district's own mark and accent (district-mark.tsx); an onboarding
+  // card keeps its mark but goes grey until it is linkable.
   const accent = linkable
-    ? DISTRICT_ACCENT
+    ? districtAccent(district.scopeId)
     : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
 
   const banner = (
     <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
       <DistrictMark
+        scopeId={district.scopeId}
         className={`absolute inset-0 h-full w-full ${linkable ? "text-white/85" : "text-white/60"}`}
       />
       <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/15 to-transparent" />
@@ -166,7 +147,7 @@ export function StateCard({ state, board }: BoardState) {
   const preview = board.filter((b) => b.status === "preview").length;
   const linkable = live + preview > 0;
   const accent = linkable
-    ? DISTRICT_ACCENT
+    ? DEFAULT_DISTRICT_ACCENT
     : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
   const counts = [
     live > 0 ? `${live} live` : null,

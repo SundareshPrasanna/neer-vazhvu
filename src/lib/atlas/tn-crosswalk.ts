@@ -890,10 +890,16 @@ export function validateTnDistrictCrosswalkProposal(
       "censusMembership: multi-Panchayat village memberships are not preserved exactly",
     );
   }
-  if (membership.villagesCovered !== membership.villageRows) {
+  // A row the reviewed plan lists as carrying no Gram Panchayat belongs to
+  // no unit; every other row must be represented.
+  const withoutGramPanchayat = extract.sources.census.records.filter(
+    (record) => record.gramPanchayats.length === 0,
+  ).length;
+  if (membership.villagesCovered !== membership.villageRows - withoutGramPanchayat) {
     errors.push(
       `censusMembership: ${membership.villagesCovered} of ${membership.villageRows} ` +
-        "Census village rows are represented in the crosswalk units",
+        "Census village rows are represented in the crosswalk units" +
+        (withoutGramPanchayat > 0 ? ` (${withoutGramPanchayat} carry no Gram Panchayat)` : ""),
     );
   }
   return errors;
