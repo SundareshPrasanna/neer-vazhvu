@@ -1,0 +1,139 @@
+{
+ "_doc": [
+  "TNPCB industry_type code -> the sector toggle it joins on the krishnagiri-rivers map.",
+  "The register (TNGIS generic_viewer:industry_cad_matched) prints each unit's type as",
+  "'<code>/<description>'. Sector is read from the CODE, never from a text match on the",
+  "name or description. Krishnagiri's register is stone and engineering country: granite",
+  "cutting (3068), quarries (1085), stone crushers (2064) and M-sand (2098) are the four",
+  "largest types, and metal surface treatment (1044) is the largest Red process type. The",
+  "national codes Erode's lookup carries (textile, tannery, paper, chemicals, treatment",
+  "plants) are kept so a unit of those types is classed the same way on both maps.",
+  "Codes not listed here fall to the category's general toggle; nothing is dropped.",
+  "'treatment' rules leave the industry layer and join the treatment-plants layer."
+ ],
+ "schemaVersion": 1,
+ "id": "krishnagiri-rivers-tnpcb-type-sectors",
+ "review": {
+  "status": "proposed",
+  "extractedBy": "read from the distinct type strings in the Krishnagiri slice of the register, 2026-09-18 (1,695 units); Erode's national codes carried over",
+  "verifiedBy": null,
+  "verifiedAt": null
+ },
+ "sectors": {
+  "textile": "Textile processing (bleaching, dyeing, printing)",
+  "tannery": "Tanneries",
+  "paper": "Pulp and paper",
+  "chemicals": "Basic chemicals",
+  "quarry-mining": "Quarries and mining",
+  "cetp": "Common effluent treatment plant",
+  "stp": "Sewage treatment plant",
+  "stone": "Stone, granite and M-sand (cutting, polishing, crushing)",
+  "engineering": "Engineering, fabrication and metal (furnaces, forging, casting)",
+  "metal-treatment": "Metal surface treatment (pickling, plating, anodising)"
+ },
+ "rules": [
+  {
+   "code": "1040",
+   "sector": "textile"
+  },
+  {
+   "code": "1084",
+   "sector": "textile"
+  },
+  {
+   "code": "1045",
+   "sector": "tannery"
+  },
+  {
+   "code": "1080",
+   "sector": "tannery"
+  },
+  {
+   "code": "1018",
+   "sector": "paper"
+  },
+  {
+   "code": "1054",
+   "sector": "paper"
+  },
+  {
+   "code": "1061",
+   "sector": "paper"
+  },
+  {
+   "code": "1025",
+   "sector": "chemicals"
+  },
+  {
+   "code": "1005",
+   "sector": "chemicals"
+  },
+  {
+   "code": "1085",
+   "sector": "quarry-mining"
+  },
+  {
+   "code": "1035",
+   "sector": "quarry-mining"
+  },
+  {
+   "code": "1049",
+   "descriptionHas": "Mining",
+   "sector": "quarry-mining"
+  },
+  {
+   "code": "1078",
+   "sector": "cetp",
+   "treatment": true
+  },
+  {
+   "code": "1081",
+   "sector": "stp",
+   "treatment": true
+  },
+  {
+   "code": "3068",
+   "sector": "stone"
+  },
+  {
+   "code": "2064",
+   "sector": "stone"
+  },
+  {
+   "code": "2098",
+   "sector": "stone"
+  },
+  {
+   "code": "3056",
+   "sector": "stone"
+  },
+  {
+   "code": "2015",
+   "sector": "stone"
+  },
+  {
+   "code": "3066",
+   "sector": "engineering"
+  },
+  {
+   "code": "2023",
+   "sector": "engineering"
+  },
+  {
+   "code": "2063",
+   "sector": "engineering"
+  },
+  {
+   "code": "2032",
+   "sector": "engineering"
+  },
+  {
+   "code": "2028",
+   "sector": "engineering"
+  },
+  {
+   "code": "1044",
+   "sector": "metal-treatment"
+  }
+ ]
+}

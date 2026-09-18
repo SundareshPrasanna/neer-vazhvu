@@ -1,5 +1,5 @@
-# Weekly refresh of the living feeds on the Erode district map
-# (public/data/basins/erode-rivers): groundwater wells, CWC river flow, water
+# Weekly refresh of the living feeds on the district maps (Erode and
+# Krishnagiri, public/data/basins/<basin>): groundwater wells, CWC river flow, water
 # quality and reservoir levels from NWIC's National Water Data Portal, and
 # TNPCB's real-time sensor stations. Those sources move daily to weekly; every
 # other family on the map (boundaries, canals, the industry register, the
@@ -12,7 +12,7 @@
 # cannot thin the map; a missed week just keeps the previous files.
 # The deployed site serves the pinned corpus, so a refresh reaches it with the
 # next data release.
-name: Erode Rivers Live-Feed Refresh
+name: District Basins Live-Feed Refresh
 
 on:
   schedule:
@@ -26,6 +26,13 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # One district basin per job, in series: both read the same NWDP and TNPCB
+    # endpoints, and two readers at once would double the load for nothing.
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        basin: [erode-rivers, krishnagiri-rivers]
     steps:
       - uses: actions/checkout@v4
 
@@ -39,8 +46,9 @@ jobs:
 
       - name: Refresh the living feeds
         run: |
+          script="scripts/build_$(tr '-' '_' <<< '${{ matrix.basin }}')_basin.py"
           for attempt in 1 2 3; do
-            if python scripts/build_erode_rivers_basin.py --live; then
+            if python "$script" --live; then
               exit 0
             fi
             echo "attempt $attempt failed; retrying in 120s"
@@ -53,7 +61,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          B=public/data/basins/erode-rivers
+          B=public/data/basins/${{ matrix.basin }}
           # Refresh gate: files enveloped at HEAD must still certify L2.
           bash scripts/nvdm-refresh-gate.sh $B/groundwater-wells.geojson $B/gauging-stations.geojson $B/realtime-stations.geojson $B/reservoirs.geojson $B/inventory.json $B/readings/*.json
           python3 scripts/build_dataset_catalogue.py
@@ -64,6 +72,6 @@ jobs:
             echo "No feed change to commit"
             exit 0
           fi
-          git commit -m "Erode rivers live-feed refresh ($(date -u +%Y-%m-%d))"
+          git commit -m "${{ matrix.basin }} live-feed refresh ($(date -u +%Y-%m-%d))"
           git pull --rebase origin main
           git push

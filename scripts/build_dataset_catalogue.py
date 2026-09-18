@@ -36,7 +36,7 @@ CITY_TOKENS = [
     "pune",
     "surat",
 ]
-BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers", "erode-rivers", "kabini", "mumbai-rivers"}
+BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers", "erode-rivers", "kabini", "krishnagiri-rivers", "mumbai-rivers"}
 
 # Chennai-era unprefixed filenames (see src/lib/cities/data-paths.ts).
 CHENNAI_LEGACY = {
