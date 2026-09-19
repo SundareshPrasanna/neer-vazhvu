@@ -74,7 +74,16 @@ function main(): void {
   const asOf = requireAsOf(argv);
   const input = loadInput();
   const districts = hasFlag(argv, "--all") ? ATLAS_DISTRICTS : [requireDistrict(argv)];
-  for (const district of districts) produce(district, input, asOf);
+  const covered = new Set(input.states.map((state) => state.slug));
+  for (const district of districts) {
+    // A state the input does not read is not assessed, never "none listed":
+    // no artifact is written, and the page names the gap.
+    if (!covered.has(district.stateSlug)) {
+      console.log(`${district.slug}: not assessed; ${input.id} carries no ${district.stateName} rows`);
+      continue;
+    }
+    produce(district, input, asOf);
+  }
 }
 
 main();

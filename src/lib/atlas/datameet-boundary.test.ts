@@ -4,7 +4,9 @@ import test from "node:test";
 import {
   buildDataMeetBoundaryExtract,
   buildPanchayatGeometries,
+  dataMeetFeatureKey,
   parseDataMeetCrosswalk,
+  parseDataMeetVillageCodeMapping,
   sliceDataMeetDistrict,
   validateDataMeetBoundaryExtract,
   type DataMeetVillageFeature,
@@ -103,4 +105,40 @@ test("the boundary extract carries ODbL rights and validates against the identit
   const stray = structuredClone(extract);
   stray.records[0].lgdGramPanchayatCode = "555555";
   assert.ok(validateDataMeetBoundaryExtract(stray, identity).some((error) => error.includes("matches no Gram Panchayat")));
+});
+
+// Karnataka: codes on the feature and a semicolon mapping file (ka.geojson).
+test("the village-code mapping joins on the 2001 district and village code, splits left out", () => {
+  const mapping = [
+    "village_code_2011;village_name_2011;state_code_2011;district_code_2011;sub_district_code_2011;village_code_2001;village_name_2001;state_code_2001;district_code_2001;sub_district_code_2001",
+    "622340;Masthi;29;581;5592;1831400;Masthi;29;19;9",
+    "622345;Appaiana Agrahara;29;581;5592;1831900;Appaiana Agrahara;29;19;9",
+    // one 2001 village that became two 2011 villages: neither is drawn from it
+    "622400;North;29;581;5592;1840000;Split;29;19;9",
+    "622401;South;29;581;5592;1840000;Split;29;19;9",
+    // a Chikkaballapur village under the same 2001 district
+    "623000;Elsewhere;29;582;5595;1900000;Elsewhere;29;19;1",
+    "622999;Town part;29;581;5592;;Town part;29;19;9",
+  ].join("\r\n");
+  const { rows, splitVillages2001 } = parseDataMeetVillageCodeMapping(mapping, "581");
+  assert.equal(splitVillages2001, 1);
+  assert.deepEqual([...rows.keys()].sort(), ["19:1831400", "19:1831900"]);
+  const kaFeatures: DataMeetVillageFeature[] = [
+    { properties: { DISTRICT: "Kolar", DIST_CODE: "19", V_CT_CODE: "01831400" }, geometry: { type: "Polygon", coordinates: square(78, 13) } },
+    { properties: { DISTRICT: "Kolar", DIST_CODE: "19", V_CT_CODE: "" }, geometry: { type: "Polygon", coordinates: square(78.1, 13) } },
+    { properties: { DISTRICT: "Kolar", DIST_CODE: "19", V_CT_CODE: "01900000" }, geometry: { type: "Polygon", coordinates: square(78.2, 13) } },
+  ];
+  assert.equal(dataMeetFeatureKey(kaFeatures[0], "village-code-mapping"), "19:1831400");
+  assert.equal(dataMeetFeatureKey(kaFeatures[1], "village-code-mapping"), "");
+  const { geometries, unmatchedFeatures } = buildPanchayatGeometries({
+    features: kaFeatures,
+    crosswalk: rows,
+    format: "village-code-mapping",
+    panchayats: [
+      { lgdGramPanchayatCode: "218979", name: "Masthi", lgdBlockCode: "5592", memberCensusCodes: ["622340", "622345"] },
+    ],
+  });
+  assert.equal(unmatchedFeatures, 2);
+  assert.deepEqual(geometries.get("218979")?.memberVillagesDrawn, ["622340"]);
+  assert.deepEqual(geometries.get("218979")?.memberVillagesNotDrawn, ["622345"]);
 });

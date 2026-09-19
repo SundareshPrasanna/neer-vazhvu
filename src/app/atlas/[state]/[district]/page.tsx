@@ -37,7 +37,7 @@ import {
   floodVintageRow,
   scarcityVintageRow,
 } from "@/lib/atlas/hazards";
-import { getDistrictDirectory } from "@/lib/atlas/district-directory";
+import { censusSampleNote, getDistrictDirectory } from "@/lib/atlas/district-directory";
 import { displayTalukName, getDistrictReading, type DistrictReading } from "@/lib/atlas/district-reading";
 import {
   blockHref,
@@ -166,10 +166,18 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
     gaps.push({
       id: "water-bodies",
       title: "Water bodies",
-      text:
-        directory.identityAdapter === "lgd-directory"
+      text: entry.waterBodiesGapNote
+        ? entry.waterBodiesGapNote
+        : directory.identityAdapter === "lgd-directory"
           ? `No water-body register is wired for ${directory.districtName} yet (the First Census of Water Bodies state return on data.gov.in is the candidate; MRSAC and Bhuvan the GIS leads), so nothing is counted.`
           : "No TNGIS water-body shard exists for this district yet, so nothing is counted.",
+    });
+  }
+  if (!flood && !scarcity) {
+    gaps.push({
+      id: "hazards",
+      title: "Floods and scarcity",
+      text: `No ${entry.stateName} classification of flood-prone districts and no scarcity (tanker) register is wired yet, so nothing is said here about floods or drought.`,
     });
   }
   if (!reading.environmentPlan) {
@@ -183,7 +191,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
     gaps.push({
       id: "polluted-stretches",
       title: "CPCB polluted river stretches",
-      text: "CPCB's polluted river stretch list is served per district from one national reviewed input; this district's slice has not been produced yet.",
+      text: "CPCB's polluted river stretch list is served per district from one national reviewed input, which does not cover this district yet, so nothing is said here about its rivers.",
     });
   }
   const sections: AtlasNavSection[] = [
@@ -322,7 +330,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                         percent: share.percent,
                         detail: `${num(share.value)} ha`,
                       }))}
-                      caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. Kept beneath the current reading because it is the only served source with a block gradient.`}
+                      caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. Kept beneath the current reading because it is the only served source with a block gradient.${censusSampleNote(directory)}`}
                     />
                   </div>
                 ) : (
@@ -334,7 +342,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                       percent: share.percent,
                       detail: `${num(share.value)} ha`,
                     }))}
-                    caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. A historical baseline, not current cropping.`}
+                    caption={`Census 2011 village tables, covering ${irrigation.places} of ${reading.panchayatCount} Panchayats with a land record. A historical baseline, not current cropping.${censusSampleNote(directory)}`}
                   />
                 )}
               </AtlasCard>
@@ -509,7 +517,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                 Canal, well and tank figures are shares of the irrigated farmland beside them, not of
                 households and not of drinking water. They come from Census 2011 ({irrigation.describes})
                 and cover only the {irrigation.places}{" "}Panchayats with a Census land record, so a block
-                with few such records shows a share of a small area. Tap and testing figures are JJM and
+                with few such records shows a share of a small area.{censusSampleNote(directory)} Tap and testing figures are JJM and
                 current at the read date. The {unit} category is the one most of the block&rsquo;s
                 Panchayats inherit by projection{groundwater.projection?.method === "administrative-membership" ? `, which here is the ${unit} the register places them in` : `, since blocks and revenue ${unit}s do not nest`}.
                 Untested counts Panchayats whose most recent water-quality sample is more than 90 days
@@ -625,7 +633,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                           rel="noopener noreferrer"
                           target="_blank"
                         >
-                          Read the plan at MPCB (PDF)
+                          Read the plan (PDF)
                         </a>
                         . {reading.environmentPlan.document.editionNote}
                       </p>
@@ -809,8 +817,12 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               </p>
             ) : null}
             <AtlasNote>
-              {points.length} of {directory.panchayats.length} Panchayats have a mapped boundary.{" "}
-              {directory.boundary?.publicGeometry
+              {directory.boundary?.withheldNote
+                ? `${points.length} of ${directory.panchayats.length} Panchayats have a marker. ${directory.boundary.withheldNote}`
+                : `${points.length} of ${directory.panchayats.length} Panchayats have a mapped boundary. `}
+              {directory.boundary?.withheldNote
+                ? null
+                : directory.boundary?.publicGeometry
                 ? `The polygons are ${directory.boundary.description}; each taluka and Panchayat page draws them.`
                 : entry.deepDive && hasBasinData(entry.deepDive.basinId)
                   ? "The polygons are not drawn on this page; the district map linked above draws the Panchayat boundaries."

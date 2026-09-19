@@ -368,6 +368,11 @@ export const SOURCE_IDS = {
   ingresMh: "ingres-groundwater-maharashtra",
   waterBodiesCensusMh: "water-bodies-census-mh",
   mpcbEnvironmentPlans: "mpcb-district-environment-plans",
+  // Karnataka, built through the same LGD adapter.
+  censusKa: "census-2011-village-amenities-ka",
+  datameetKa: "datameet-village-boundaries-ka",
+  ingresKa: "ingres-gw-assessment-ka",
+  ngtDepKaKolar: "ngt-dep-ka-kolar",
   // Tamil Nadu has no state listing: each collectorate publishes its own plan.
   ngtDepTnNamakkal: "ngt-dep-tn-namakkal",
   ngtDepTnKarur: "ngt-dep-tn-karur",
@@ -460,6 +465,26 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     publisher: "Maharashtra Pollution Control Board with the Environment Department, Government of Maharashtra",
     url: "https://mpcb.gov.in/en/state-environment-plan-and-district-environment-plan",
   },
+  censusKa: {
+    title: "Census of India 2011 District Census Handbook: village amenities (Karnataka village release)",
+    publisher: "Office of the Registrar General and Census Commissioner, India",
+    url: "https://censusindia.gov.in/nada/index.php/catalog/620",
+  },
+  datameetKa: {
+    title: "DataMeet indian_village_boundaries, Karnataka (ka.geojson with the ka_village_2011_2001_code_mapping crosswalk)",
+    publisher: "DataMeet community",
+    url: "https://github.com/datameet/indian_village_boundaries",
+  },
+  ingresKa: {
+    title: "IN-GRES dynamic groundwater resource assessment, Karnataka taluks",
+    publisher: "CGWB / IIT-Hyderabad (IN-GRES)",
+    url: "https://ingres.iith.ac.in/",
+  },
+  ngtDepKaKolar: {
+    title: "District Environmental Plan for Kolar District, Karnataka State (CPCB model plan under the NGT's district environment plan directions, posted April 2022)",
+    publisher: "Office of the Deputy Commissioner, Kolar District",
+    url: "https://kolar.nic.in/en/about-district/district-environmental-plan/",
+  },
   ngtDepTnNamakkal: {
     title: "District Environmental Plan, Namakkal District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
     publisher: "District Collector, Namakkal, with the Tamil Nadu Pollution Control Board",
@@ -506,6 +531,61 @@ export function planIdentityAdapter(district: AtlasDistrict): PlanIdentityAdapte
   }
   const plan = JSON.parse(readFileSync(path, "utf8")) as { identityAdapter?: string };
   return plan.identityAdapter === "lgd-directory" ? "lgd-directory" : "tnrd";
+}
+
+/** The per-state upstreams an LGD-built district cites: the state's Census
+ *  village release, its DataMeet village file, its IN-GRES assessment and,
+ *  where one is wired, its First Census of Water Bodies return. One entry
+ *  per state; a state with no entry stops the producer rather than citing
+ *  another state's sources. */
+export interface LgdStateUpstreams {
+  census: UpstreamKey;
+  datameet: UpstreamKey;
+  ingres: UpstreamKey;
+  waterBodiesCensus?: UpstreamKey;
+  /** What the state calls its revenue sub-district in prose. */
+  subdistrictUnit: string;
+  /** The directory note's clause on the state's Census release. */
+  censusClause: string;
+  /** The directory note's sentence on what the block layer is. */
+  blockSentence: string;
+  /** Why the register's coverage is partial, in prose; absent = the counts
+   *  are stated from the extract. */
+  coverageClause?: string;
+}
+
+export const LGD_STATE_UPSTREAMS: Record<string, LgdStateUpstreams> = {
+  mh: {
+    census: "censusMh",
+    datameet: "datameetMh",
+    ingres: "ingresMh",
+    waterBodiesCensus: "waterBodiesCensusMh",
+    subdistrictUnit: "taluka",
+    censusClause:
+      "Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code " +
+      "because that release carries no Panchayat column",
+    blockSentence: "Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas.",
+    coverageClause: "the export names one covering village for most Panchayats",
+  },
+  ka: {
+    census: "censusKa",
+    datameet: "datameetKa",
+    ingres: "ingresKa",
+    subdistrictUnit: "taluk",
+    censusClause:
+      "Census 2011 village rows from the Karnataka DCHB release (xlsx extract), joined by village code " +
+      "because that release prints each Panchayat's name without a code",
+    blockSentence:
+      "Blocks are LGD sub-districts (taluks), each aligned to a JJM block by name or by the reviewed block alignment.",
+  },
+};
+
+export function lgdStateUpstreams(district: AtlasDistrict): LgdStateUpstreams {
+  const upstreams = LGD_STATE_UPSTREAMS[district.stateSlug];
+  if (!upstreams) {
+    throw new Error(`no LGD upstreams registered for state ${district.stateSlug}; add them in scripts/lib/atlas-producer.ts`);
+  }
+  return upstreams;
 }
 
 export function upstreamSource(

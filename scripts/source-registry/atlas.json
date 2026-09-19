@@ -204,7 +204,11 @@
         "public/data/atlas/tn/ranipet/briefs",
         "public/data/atlas/tn/dindigul/briefs",
         "public/data/atlas/tn/tiruvallur/briefs",
-        "public/data/atlas/tn/krishnagiri/briefs"
+        "public/data/atlas/tn/krishnagiri/briefs",
+        "public/data/atlas/ka/kolar/directory.json",
+        "public/data/atlas/ka/kolar/jjm-service",
+        "public/data/atlas/ka/kolar/assessments",
+        "public/data/atlas/ka/kolar/briefs"
       ],
       "refreshMethod": "scripts/atlas-refresh-tn-district.ts --fetch (village enumeration via ASP.NET postbacks ddState > ddDistrict) then scripts/atlas-jjm-tn-district.ts --district <slug> --fetch --as-of <date> (JSON page methods BindHabitationInfo, BindSourceInfo, BindSampleTestedInfo per village, serial and paced). Monthly scheduled re-run is the freshness question (follow-up: check-data-freshness.ts is city-keyed).",
       "notes": "Village information page of the JJM citizen corner. The district option set is only rendered after an ASP.NET __doPostBack on ddState, and the checker fetches with GET, so no method here can see the district set directly (tried 2026-08-29: the initial page carries the 36 state options and an empty ddDistrict; ETag is a Cache-Control string, not a validator; the body carries a per-request ViewState so a whole-page hash is never stable). What IS watchable is the state option set (select#ddState): a change there means the form was rebuilt, which is the same event that would move the district set. District and village enumeration drift is caught by the acquisition itself, which fails closed when the count differs from the reviewed plan. The page methods take state, district and village ids only (no session, no ViewState); encodeTxt-style obfuscation, if introduced, breaks the parser loudly rather than publishing noise. Licence: GoI programme portal, cited with attribution; no explicit reuse terms beyond the standard GoI website policy.",
@@ -510,7 +514,10 @@
         "public/data/atlas/mh/ahilyanagar/assessments",
         "public/data/atlas/mh/kolhapur/assessments",
         "public/data/atlas/mh/ahilyanagar/briefs",
-        "public/data/atlas/mh/kolhapur/briefs"
+        "public/data/atlas/mh/kolhapur/briefs",
+        "public/data/atlas/ka/kolar/directory.json",
+        "public/data/atlas/ka/kolar/assessments",
+        "public/data/atlas/ka/kolar/briefs"
       ],
       "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch --as-of <date> (bulk CSV export discovered from the portal's resource metadata; fails closed when the Panchayat or coverage count drifts from pipeline-inputs/atlas/<state>/<district>/refresh-plan.json)",
       "notes": "The identity master for districts outside Tamil Nadu: every rural local body with the village(s) it covers, LGD codes throughout. lgdirectory.gov.in itself is captcha-gated on every view and download, so this republication is what a machine reads. Watched through the portal's own list API (updated_date of the resource), with the repository's public sample key (ten rows a call is enough to read one date). The export lists ONE covering village for most Panchayats rather than every member (Maharashtra: 29,460 coverage rows for 28,045 Panchayats against 43,705 village-to-Panchayat rows in the 2022 captcha download), so it settles the Panchayat list and a Panchayat's taluka, and only partially its settlement composition; the full mapping is the captcha download 'Village To Gram Panchayat Mapping', a reviewed input when a person supplies it. Licence: data.gov.in publishes under the Government Open Data License - India, attribution to the Ministry of Panchayati Raj.",
@@ -548,7 +555,11 @@
         "public/data/atlas/mh/ahilyanagar/assessments",
         "public/data/atlas/mh/kolhapur/assessments",
         "public/data/atlas/mh/ahilyanagar/briefs",
-        "public/data/atlas/mh/kolhapur/briefs"
+        "public/data/atlas/mh/kolhapur/briefs",
+        "public/data/atlas/ka/kolar/directory.json",
+        "public/data/atlas/ka/kolar/census-2011",
+        "public/data/atlas/ka/kolar/assessments",
+        "public/data/atlas/ka/kolar/briefs"
       ],
       "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch --as-of <date> (district filter on the bulk export)",
       "notes": "Every LGD village with its Census 2011 code, sub-district and district: the join between the LGD register, the Census workbook and the DataMeet polygons. The export header labels the local-name column 'VillageCode' a second time, so the parser reads positions and checks the header as published. Satara 2026-09: 1,764 villages, 1,693 with an LGD code equal to the Census 2011 code, the rest newer villages. The sibling 'Villages with PIN Codes' resource (f17a1608) updates daily and agreed on 1,763 of them; it is not registered because it adds nothing the identity needs.",
@@ -583,7 +594,11 @@
         "public/data/atlas/mh/ahilyanagar/assessments",
         "public/data/atlas/mh/kolhapur/assessments",
         "public/data/atlas/mh/ahilyanagar/briefs",
-        "public/data/atlas/mh/kolhapur/briefs"
+        "public/data/atlas/mh/kolhapur/briefs",
+        "public/data/atlas/ka/kolar/directory.json",
+        "public/data/atlas/ka/kolar/groundwater-projection.json",
+        "public/data/atlas/ka/kolar/assessments",
+        "public/data/atlas/ka/kolar/briefs"
       ],
       "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch --as-of <date> (district filter on the bulk export)",
       "notes": "The taluka list. It is the block layer where a state's Panchayat Samitis are coterminous with its talukas (Satara: eleven of each, same names; the refresh plan records blockModel 'sub-district'), and the unit IN-GRES assesses in Maharashtra, so the groundwater projection there is a code join through this list rather than a polygon intersection. The LGD development-block resource is not on data.gov.in.",
@@ -666,6 +681,60 @@
         "etag": "W/\"63644c2a0623ad5549e846bc56c162ca0f791b0701bdf7b8218a1af89306449b\"",
         "edition": "baselined 2026-09-01 for Satara",
         "acceptedOn": "2026-09-01"
+      }
+    },
+    {
+      "id": "census-2011-village-amenities-ka",
+      "scope": "atlas",
+      "publisher": "Office of the Registrar General and Census Commissioner, India",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/620",
+      "license": "Government of India publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed edition (Census 2011; the 2021 census did not take place)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": ".resource-downloads"
+      },
+      "insecureTLS": true,
+      "dependsOn": [
+        "public/data/atlas/ka/kolar/directory.json",
+        "public/data/atlas/ka/kolar/census-2011",
+        "public/data/atlas/ka/kolar/assessments",
+        "public/data/atlas/ka/kolar/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch (downloads DH_2011_DCHB_Village_Release_2900.xlsx, 58 MB, once into the content-addressed cache and reuses it hash-verified) then scripts/atlas-census-tn-district.ts --district <slug> --workbook <cached xlsx> --as-of <date>",
+      "notes": "The Karnataka village release (worksheet Village_Data_2900) of the same DCHB series Tamil Nadu and Maharashtra use, attached to every Karnataka district's Part XII A catalog page; pinned here to Kolar's (catalog 620, download 2130), sha256 ac2ce0cb45f208e3d582e538340f73850e26c0494ef2e66184c8ea936d506671, 58,167,463 bytes, retrieved 2026-09-19. This release prints each village's Gram Panchayat NAME but leaves the code column blank (1,797 of 1,797 Kolar rows), so the adapter reads it with the names-without-codes rule: settlement composition comes from the LGD coverage register and the Census rows join by village code alone. censusindia.gov.in serves an incomplete TLS chain for Node (insecureTLS for the checker; the producer downloads with curl and the system trust store).",
+      "lastSeen": {
+        "pageHash": "0d7f6e33ceb4d985",
+        "edition": "baselined 2026-09-19 for Kolar (catalog 620, Karnataka village release 2900)",
+        "acceptedOn": "2026-09-19"
+      }
+    },
+    {
+      "id": "datameet-village-boundaries-ka",
+      "scope": "atlas",
+      "publisher": "DataMeet community (indian_village_boundaries)",
+      "url": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/ka/ka.geojson",
+      "license": "ODbL 1.0",
+      "type": "file",
+      "cadence": "closed edition in practice (a 2001 Census village map digitised by volunteers)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/atlas/ka/kolar/directory.json",
+        "public/data/atlas/ka/kolar/rainfall.json",
+        "public/data/atlas/ka/kolar/assessments",
+        "public/data/atlas/ka/kolar/briefs"
+      ],
+      "refreshMethod": "scripts/atlas-refresh-lgd-district.ts --district <slug> --fetch-boundary --as-of <date> (ka.geojson 87 MB plus ka/ka_village_2011_2001_code_mapping.txt, content-addressed; the district's features are sliced by DISTRICT and joined to the 2011 codes through the mapping file, crosswalkFormat village-code-mapping in the plan)",
+      "notes": "Karnataka's file is keyed differently from Maharashtra's: each feature carries its 2001 Census district and village codes (DIST_CODE, V_CT_CODE, zero-padded) and DataMeet's semicolon-separated mapping file pairs every 2011 village code with its 2001 district and village code; the join key is the 2001 district and village code with leading zeros dropped, and a 2001 village that became two 2011 villages is left out because its one polygon cannot be split. The DISTRICT property follows the 2001 map, so DISTRICT=Kolar also holds the taluks that became Chikkaballapur in 2007; the mapping file's 2011 district code keeps only today's Kolar. Kolar 2026-09-19: 3,341 features under DISTRICT=Kolar, 1,795 2011 villages drawn, one 2001 village split and not drawn. The LGD export lists only one or two villages per Kolar Panchayat, so the reviewed plan WITHHOLDS the Panchayat polygons (their union is not the Panchayat's extent) and uses the polygons only to place each Panchayat's marker; no boundaries/<block>.geojson is served for Kolar. ODbL: attribution required and share-alike on any derived database. GitHub raw serves an ETag, so http-meta sees a re-cut file.",
+      "lastSeen": {
+        "etag": "W/\"78ce94fcf9fafdd9209adebc7b3145823bc79efbf05e234e7e71fd7d35dd8668\"",
+        "edition": "baselined 2026-09-19 for Kolar",
+        "acceptedOn": "2026-09-19"
       }
     },
     {
@@ -906,6 +975,30 @@
       ],
       "refreshMethod": "read the district's PDF, update pipeline-inputs/atlas/tn/krishnagiri/environment-plan.json (every figure with its sentence and page; review status), then scripts/atlas-environment-plan-district.ts --district krishnagiri --as-of <date>",
       "notes": "Krishnagiri's District Environmental Plan (34 pages, signed by the District Collector on 22 November 2019, listed 29/11/2019), published as a notice on the collectorate site https://krishnagiri.nic.in/notice/district-environmental-protection-plan/. Prepared under NGT O.A. No. 710-713/2017. Mostly guideline tables with little district data: no sewage volume, treatment capacity or water-body count. It states that CPCB has identified no polluted river stretch in the district and that the Cauvery and the Thenpennaiyar enter it carrying sewage from Bangalore city (Supreme Court O.S. No. 2/2015, monthly joint sampling since September 2017). One page (PDF 33) is a scan."
+    },
+    {
+      "id": "ngt-dep-ka-kolar",
+      "scope": "atlas",
+      "publisher": "Office of the Deputy Commissioner, Kolar District",
+      "url": "https://cdn.s3waas.gov.in/s3c0f168ce8900fa56e57789e2a2f2c9d0/uploads/2022/04/2022041612.pdf",
+      "license": "Government of Karnataka publication, cited with attribution",
+      "type": "file",
+      "cadence": "episodic (the plan prepared under the NGT's district environment plan directions; a revised plan would appear as a new upload)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/atlas/ka/kolar/environment-plan.json"
+      ],
+      "refreshMethod": "read the district's PDF, update pipeline-inputs/atlas/ka/kolar/environment-plan.json (every figure with its sentence and page; review status), then scripts/atlas-environment-plan-district.ts --district kolar --as-of <date>",
+      "notes": "Kolar's District Environmental Plan (92 pages, PDF created 16 April 2022, sha256 88380ba6e2d84a1a8609c19a81be9872c89f52451ca1462c11139365a197d731), linked from the collectorate page https://kolar.nic.in/en/about-district/district-environmental-plan/. A CPCB model plan (profile table and gap-and-action tables); it carries no NGT water-balance demand, supply or deficit table. Its water-quality profile row reads 'Polluted river stretches if any Nil'.",
+      "lastSeen": {
+        "etag": "\"6c0b2ae352188d8da108bd4f6b5bede6\"",
+        "lastModified": "Sat, 16 Apr 2022 05:22:42 GMT",
+        "edition": "District Environmental Plan, PDF created 2022-04-16",
+        "acceptedOn": "2026-09-19"
+      }
     }
   ]
 }

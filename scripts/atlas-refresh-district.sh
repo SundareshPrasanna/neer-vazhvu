@@ -45,7 +45,7 @@
 #                alert. Every other step stops on any failure.
 set -uo pipefail
 
-district="${1:?district slug required (thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, vellore, ranipet, dindigul, tiruvallur, krishnagiri, satara, ahilyanagar, kolhapur)}"
+district="${1:?district slug required (thanjavur, tiruchirappalli, salem, tirupathur, erode, namakkal, karur, tiruppur, vellore, ranipet, dindigul, tiruvallur, krishnagiri, satara, ahilyanagar, kolhapur, kolar)}"
 as_of="${2:-$(date -u +%Y-%m-%d)}"
 cd "$(dirname "$0")/.."
 

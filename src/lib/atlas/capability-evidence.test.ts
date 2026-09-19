@@ -6,7 +6,9 @@ import { villageWaterProfileV2 } from "./capability-assessment";
 import {
   CAPABILITY_RULES,
   EVIDENCE_GENERATOR_VERSION,
+  LGD_PROVENANCE,
   generateCapabilityAssessment,
+  lgdProvenanceFor,
 } from "./capability-evidence";
 import type { PlaceEvidenceInputs, RequirementPolicy } from "./capability-evidence";
 import { FIXTURE_DISTRICTS, readFixture } from "./test-support";
@@ -118,3 +120,36 @@ for (const fixture of FIXTURE_DISTRICTS) {
     assert.ok(shard.provenance.internal_inputs?.some((path) => path.endsWith("directory.json")));
   });
 }
+
+test("LGD provenance follows what the district serves; withheld polygons evidence no boundary", () => {
+  // Maharashtra's served ids reproduce the shared default exactly.
+  assert.deepEqual(
+    lgdProvenanceFor({
+      boundarySourceRef: "datameet-village-boundaries-mh",
+      waterBodySourceRef: "water-bodies-census-mh",
+      assessmentUnitType: "TALUKA",
+    }),
+    LGD_PROVENANCE,
+  );
+  const karnataka = lgdProvenanceFor({
+    boundarySourceRef: "datameet-village-boundaries-ka",
+    assessmentUnitType: "TALUK",
+    boundaryWithheld: true,
+  });
+  assert.equal(karnataka.boundarySourceRef, "datameet-village-boundaries-ka");
+  assert.equal(karnataka.assessmentUnitLabel, "taluk");
+  const boundary = {
+    lgdGramPanchayatCode: "218979",
+    lgdBlockCode: "5592",
+    name: "Masthi",
+    type: "Village Panchayat (union of DataMeet village polygons)",
+    geometrySha256: "0".repeat(64),
+    areaHectares: 812.4,
+    bbox: [78.1, 13.0, 78.2, 13.1] as [number, number, number, number],
+    ringCount: 2,
+    vertexCount: 40,
+  };
+  const rule = CAPABILITY_RULES["place-boundary"];
+  assert.equal(rule({ ...emptyInputs, boundary, provenance: karnataka }, "2026-09-19"), null);
+  assert.notEqual(rule({ ...emptyInputs, boundary, provenance: LGD_PROVENANCE }, "2026-09-19"), null);
+});

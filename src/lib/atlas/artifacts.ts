@@ -255,6 +255,10 @@ export interface DirectoryBoundaryVintage {
   /** True when the polygons themselves are served (boundaries/<block>.geojson);
    *  false when only derived centroids, areas and digests are published. */
   publicGeometry?: boolean;
+  /** Set when a reviewer withheld the polygons because they cover only the
+   *  villages the register lists: the centroid places the marker, and
+   *  neither an outline nor an area is shown. The sentence the pages print. */
+  withheldNote?: string;
 }
 
 export interface DistrictDirectoryArtifact extends AtlasEnvelope {
@@ -774,6 +778,8 @@ export interface BoundaryProvenance {
   /** What the polygons are: a survey layer or a community digitisation. */
   description: string;
   publicGeometry: boolean;
+  /** The reviewer's reason the polygons are withheld, when they are. */
+  withheldNote?: string;
 }
 
 /** Who drew the polygons a directory's centroids come from, with the copy
@@ -781,13 +787,15 @@ export interface BoundaryProvenance {
 export function boundaryProvenance(directory: DistrictDirectoryArtifact): BoundaryProvenance | null {
   const boundary = directory.vintages.boundary;
   if (!boundary) return null;
-  if (boundary.sourceId === "datameet-village-boundaries-mh") {
+  // One DataMeet registry id per state: datameet-village-boundaries-<state>.
+  if (boundary.sourceId?.startsWith("datameet-village-boundaries-")) {
     return {
       sourceId: boundary.sourceId,
       label: "DataMeet",
       description:
         "DataMeet's community digitisation of the 2001 Census village map (ODbL), joined to the 2011 codes and dissolved to each Panchayat's member villages",
       publicGeometry: boundary.publicGeometry ?? false,
+      ...(boundary.withheldNote ? { withheldNote: boundary.withheldNote } : {}),
     };
   }
   return {

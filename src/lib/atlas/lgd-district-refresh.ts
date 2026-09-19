@@ -549,7 +549,9 @@ export function buildLgdDistrictDirectoryPayload(options: {
             recordCount: boundary.recordCount,
             sourceId: boundary.source.sourceId,
             license: boundary.source.rights.license,
-            publicGeometry: true,
+            ...(plan.sources.boundary.polygons === "withheld"
+              ? { publicGeometry: false, withheldNote: plan.sources.boundary.polygonsNote }
+              : { publicGeometry: true }),
           }
         : null,
     },

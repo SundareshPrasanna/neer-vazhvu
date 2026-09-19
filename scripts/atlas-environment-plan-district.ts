@@ -38,6 +38,7 @@ const UPSTREAM_BY_SOURCE: Record<string, UpstreamKey> = {
   "ngt-dep-tn-tiruvallur": "ngtDepTnTiruvallur",
   "ngt-dep-tn-dindigul": "ngtDepTnDindigul",
   "ngt-dep-tn-krishnagiri": "ngtDepTnKrishnagiri",
+  "ngt-dep-ka-kolar": "ngtDepKaKolar",
 };
 
 function main(): void {

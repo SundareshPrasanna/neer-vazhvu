@@ -24,6 +24,7 @@ import {
 import { DATAMEET_ATTRIBUTION, DATAMEET_LICENSE } from "../src/lib/atlas/datameet-boundary";
 import {
   atlasEnvelope,
+  lgdStateUpstreams,
   planIdentityAdapter,
   pruneShards,
   readArtifact,
@@ -83,6 +84,14 @@ async function main(): Promise<void> {
   const asOf = requireAsOf(argv);
   const directory = readArtifact<DistrictDirectoryArtifact>(district, "directory");
   const identity = identityFromDirectory(directory);
+  if (directory.vintages.boundary?.withheldNote) {
+    const pruned = pruneShards(district, "boundaries", new Set());
+    console.log(
+      `${district.slug}: Panchayat polygons withheld by the reviewed plan; no boundaries shard served` +
+        (pruned.length ? ` (pruned ${pruned.join(", ")})` : ""),
+    );
+    return;
+  }
   const cache = readCacheJson<GeometryCache>(district, GEOMETRY_CACHE);
   if (!cache) {
     throw new Error(`No cached Panchayat geometry; run atlas-refresh-lgd-district.ts --fetch-boundary first`);
@@ -133,13 +142,13 @@ async function main(): Promise<void> {
     const envelope = atlasEnvelope({
       district,
       family: "boundaries",
-      sources: [upstreamSource("datameetMh", { role: "input", as_of: "2001", retrieved: cache.acquiredAt })],
+      sources: [upstreamSource(lgdStateUpstreams(district).datameet, { role: "input", as_of: "2001", retrieved: cache.acquiredAt })],
       method: "derived",
       producedAt: asOf,
       producedBy: PRODUCED_BY,
       internalInputs: [districtArtifactPath(district, "directory")],
       note:
-        `Gram Panchayat polygons for ${features.length} Panchayats in ${blockName} taluka: each is the ` +
+        `Gram Panchayat polygons for ${features.length} Panchayats in ${blockName} ${lgdStateUpstreams(district).subdistrictUnit}: each is the ` +
         "MultiPolygon of its LGD-listed member villages as DataMeet drew them from the 2001 Census village " +
         "map, joined to the 2011 codes through DataMeet's own crosswalk, simplified to about 20 m " +
         "(source polygons kept where simplification moved the area by more than a percent). Member " +

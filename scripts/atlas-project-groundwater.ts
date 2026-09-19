@@ -17,7 +17,6 @@ import {
   type DistrictDirectoryArtifact,
   type GroundwaterTaluksArtifact,
 } from "../src/lib/atlas/artifacts";
-import { DATAMEET_BOUNDARY_SOURCE_ID } from "../src/lib/atlas/datameet-boundary";
 import { BOUNDARY_SOURCE_ID } from "../src/lib/atlas/tn-boundary";
 import { validateTnDistrictGroundwaterExtract } from "../src/lib/atlas/tn-groundwater";
 import {
@@ -28,9 +27,11 @@ import {
 import type { TalukPolygon } from "../src/lib/atlas/tn-groundwater-projection";
 import { buildMembershipGroundwaterProjection } from "../src/lib/atlas/tn-groundwater-projection";
 import {
+  SOURCE_IDS,
   atlasEnvelope,
   cachePath,
   hasFlag,
+  lgdStateUpstreams,
   readArtifact,
   readCacheText,
   readWfsSnapshot,
@@ -244,7 +245,7 @@ async function projectByMembership(
       subDistrictCode: panchayat.blockCode,
       subDistrictName: blockNames.get(panchayat.blockCode) ?? panchayat.blockName,
     })),
-    boundarySourceId: DATAMEET_BOUNDARY_SOURCE_ID,
+    boundarySourceId: SOURCE_IDS[lgdStateUpstreams(district).datameet],
     groundwater,
   });
   const errors = validateGroundwaterProjection(projection, identity, groundwater);
@@ -255,7 +256,7 @@ async function projectByMembership(
     district,
     family: "groundwater-projection",
     sources: [
-      upstreamSource("ingresMh", { role: "input", retrieved: groundwater.acquiredAt }),
+      upstreamSource(lgdStateUpstreams(district).ingres, { role: "input", retrieved: groundwater.acquiredAt }),
       upstreamSource("lgdSubdistricts", { role: "input", retrieved: directory.acquiredAt }),
     ],
     method: "derived",

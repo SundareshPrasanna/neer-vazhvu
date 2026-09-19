@@ -35,6 +35,7 @@ import {
   buildDataMeetBoundaryExtract,
   buildPanchayatGeometries,
   parseDataMeetCrosswalk,
+  parseDataMeetVillageCodeMapping,
   sliceDataMeetDistrict,
   validateDataMeetBoundaryExtract,
   type DataMeetBoundaryExtract,
@@ -72,10 +73,12 @@ import {
   cacheDir,
   cachePath,
   hasFlag,
+  lgdStateUpstreams,
   readArtifact,
   readCacheJson,
   requireDistrict,
   reviewedInputPath,
+  SOURCE_IDS,
   upstreamSource,
   writeAtlasArtifact,
   writeCache,
@@ -130,18 +133,28 @@ async function readBoundary(
   if (features.length === 0) {
     throw new Error(`DataMeet file has no features for DISTRICT=${plan.sources.boundary.districtName}`);
   }
-  const crosswalk = parseDataMeetCrosswalk(
-    new TextDecoder().decode(crosswalkCsv.artifact.bytes),
-    plan.district.censusDistrictCode,
-  );
+  const format = plan.sources.boundary.crosswalkFormat ?? "cen2001-csv";
+  const crosswalkText = new TextDecoder().decode(crosswalkCsv.artifact.bytes);
+  let crosswalk: ReturnType<typeof parseDataMeetCrosswalk>;
+  if (format === "village-code-mapping") {
+    const parsed = parseDataMeetVillageCodeMapping(crosswalkText, plan.district.censusDistrictCode);
+    crosswalk = parsed.rows;
+    console.error(`  boundary: ${parsed.splitVillages2001} 2001 villages split into two 2011 villages are not drawn`);
+  } else {
+    crosswalk = parseDataMeetCrosswalk(crosswalkText, plan.district.censusDistrictCode);
+  }
   const { geometries, villagePolygons, unmatchedFeatures } = buildPanchayatGeometries({
     features,
     crosswalk,
     panchayats,
+    format,
   });
   const { default: area } = await import("@turf/area");
   const { default: bbox } = await import("@turf/bbox");
+  const layerFile = new URL(plan.sources.boundary.geojsonUrl).pathname.split("/").pop();
   const boundary = buildDataMeetBoundaryExtract({
+    sourceId: SOURCE_IDS[lgdStateUpstreams(district).datameet],
+    layer: `datameet/indian_village_boundaries ${layerFile}`,
     planId: plan.id,
     districtLgdCode: plan.district.lgdDistrictCode,
     acquiredAt: asOf,
@@ -325,6 +338,12 @@ async function main(): Promise<void> {
   const errors = validateDirectoryPayload(payload);
   if (errors.length > 0) throw new Error(`Directory payload is inconsistent:\n- ${errors.join("\n- ")}`);
 
+  const state = lgdStateUpstreams(district);
+  const unit = state.subdistrictUnit;
+  const coverage =
+    state.coverageClause ??
+    `the export lists ${extract.sources.lgdLocalBodies.recordCount} covering villages for ` +
+      `${payload.panchayats.length} Panchayats in a district of ${extract.sources.lgdVillages.recordCount} villages`;
   const envelope = atlasEnvelope({
     district,
     family: "directory",
@@ -333,8 +352,8 @@ async function main(): Promise<void> {
       upstreamSource("lgdVillages", { as_of: extract.sources.lgdVillages.sourceAsOf, retrieved: asOf }),
       upstreamSource("lgdSubdistricts", { as_of: extract.sources.lgdSubdistricts.sourceAsOf, retrieved: asOf }),
       upstreamSource("jjm", { retrieved: asOf }),
-      upstreamSource("censusMh", { as_of: "2011", retrieved: extract.sources.census.retrievedAt }),
-      ...(boundary ? [upstreamSource("datameetMh", { as_of: "2001", retrieved: boundary.source.retrievedAt })] : []),
+      upstreamSource(state.census, { as_of: "2011", retrieved: extract.sources.census.retrievedAt }),
+      ...(boundary ? [upstreamSource(state.datameet, { as_of: "2001", retrieved: boundary.source.retrievedAt })] : []),
     ],
     method: "mixed",
     producedAt: asOf,
@@ -342,19 +361,17 @@ async function main(): Promise<void> {
     internalInputs: [],
     note:
       `Identity directory for ${plan.district.displayName}: ${payload.panchayats.length} LGD-coded Gram ` +
-      `Panchayats in ${payload.blocks.length} talukas. The Panchayat list, each Panchayat's covered ` +
-      "villages and the taluka list come from the Local Government Directory as republished monthly on " +
+      `Panchayats in ${payload.blocks.length} ${unit}s. The Panchayat list, each Panchayat's covered ` +
+      `villages and the ${unit} list come from the Local Government Directory as republished monthly on ` +
       "data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); " +
-      "Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code " +
-      "because that release carries no Panchayat column; centroids and areas from DataMeet's village " +
-      "polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's " +
-      "Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each " +
+      `${state.censusClause}; centroids and areas from DataMeet's village ` +
+      `polygons (ODbL) joined through its 2001-to-2011 crosswalk. ${state.blockSentence} JJM bindings are the name crosswalk's, each ` +
       "labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage " +
-      "(match class lgd-coverage), authoritative but partial because the export names one covering village " +
-      "for most Panchayats. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, " +
+      `(match class lgd-coverage), authoritative but partial because ${coverage}. ` +
+      "Raw responses are content-addressed under .cache/atlas/; the reviewed plan, " +
       "resolution and block alignment live under pipeline-inputs/atlas/.",
     conventions: {
-      key: "lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (taluka) code",
+      key: `lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (${unit}) code`,
       bindings:
         "jjm bindings carry matchClass (how the pairing was made) and status (proposed | verified); a census " +
         "binding with matchClass lgd-coverage is the LGD register's own statement of which villages the " +
@@ -373,7 +390,7 @@ async function main(): Promise<void> {
   console.log(
     [
       `Wrote ${rel}`,
-      `Gram Panchayats: ${payload.panchayats.length} in ${payload.blocks.length} talukas (LGD edition ${extract.sources.lgdLocalBodies.sourceAsOf})`,
+      `Gram Panchayats: ${payload.panchayats.length} in ${payload.blocks.length} ${unit}s (LGD edition ${extract.sources.lgdLocalBodies.sourceAsOf})`,
       `JJM: ${summary.jjmBound} bound of ${extract.sources.jjm.recordCount} villages; LGD coverage with Census rows: ${summary.censusBound} Panchayats; ${summary.unbound} bound to nothing`,
       `Bindings: ${summary.verifiedBindings} verified, ${summary.proposedBindings} proposed`,
       boundary

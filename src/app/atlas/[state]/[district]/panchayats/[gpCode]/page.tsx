@@ -26,7 +26,7 @@ import {
 import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { getCuratedBrief } from "@/lib/atlas/curated-briefs";
 import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks, loadWaterBodyShard } from "@/lib/atlas/data";
-import { getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
+import { censusIsSample, getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
 import { displayTalukName, unitLabelOf } from "@/lib/atlas/district-reading";
 import {
   blockHref,
@@ -323,9 +323,11 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                   id="where"
                   title="Place and boundary"
                   intro={
-                    directory.boundary?.publicGeometry
-                      ? `The mapped extent is ${directory.boundary.description}, so the place on the map is the place the register describes.`
-                      : "The mapped extent comes from the TNGIS Panchayat polygon for this LGD code, so the place on the map is the place the records describe."
+                    directory.boundary?.withheldNote
+                      ? `The marker is the centre of the villages the register lists under this Panchayat, drawn by ${directory.boundary.label}. ${directory.boundary.withheldNote}`
+                      : directory.boundary?.publicGeometry
+                        ? `The mapped extent is ${directory.boundary.description}, so the place on the map is the place the register describes.`
+                        : "The mapped extent comes from the TNGIS Panchayat polygon for this LGD code, so the place on the map is the place the records describe."
                   }
                 >
                   <div className="grid gap-4 md:grid-cols-[1fr_1.4fr]">
@@ -335,7 +337,9 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                           ["LGD Panchayat code", panchayat.lgdCode],
                           ["Block", panchayat.blockName],
                           ["District", directory.districtName],
-                          ["Mapped area", `${detail.boundary.areaHectares.toLocaleString("en-IN")} ha`],
+                          ...(directory.boundary?.withheldNote
+                            ? []
+                            : [["Mapped area", `${detail.boundary.areaHectares.toLocaleString("en-IN")} ha`]]),
                           ["Centroid", `${detail.boundary.latitude.toFixed(4)}, ${detail.boundary.longitude.toFixed(4)}`],
                         ].map(([label, value]) => (
                           <div key={label} className="contents">
@@ -358,9 +362,11 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                         }}
                       />
                       <figcaption className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                        {directory.boundary?.publicGeometry
-                          ? `Plotted from the centroid of the ${directory.boundary.label} polygon. The marker is the Panchayat, not a settlement; the polygon is indicative (a 2001-era digitisation), not a survey boundary.`
-                          : "Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a settlement; the polygon is not drawn on this page."}
+                        {directory.boundary?.withheldNote
+                          ? `Plotted from the centre of the ${directory.boundary.label} polygons of the villages the register lists under this Panchayat. The marker is the Panchayat, not a settlement; no outline is drawn.`
+                          : directory.boundary?.publicGeometry
+                            ? `Plotted from the centroid of the ${directory.boundary.label} polygon. The marker is the Panchayat, not a settlement; the polygon is indicative (a 2001-era digitisation), not a survey boundary.`
+                            : "Plotted from the centroid of the TNGIS polygon. The marker is the Panchayat, not a settlement; the polygon is not drawn on this page."}
                         {waterBodyMarkers.length > 0
                           ? ` The ${waterBodyMarkers.length} small markers are the water bodies the First Census of Water Bodies recorded in this Panchayat's villages, at the coordinates its enumerators entered.`
                           : ""}
@@ -615,7 +621,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                 <Chapter
                   id="land"
                   title="Land and irrigation"
-                  intro="Census 2011, reference year 2009. A historical baseline, not current cropping."
+                  intro={`Census 2011, reference year 2009. A historical baseline, not current cropping.${censusIsSample(directory) ? " Summed over only the villages the register lists under this Panchayat, not all of its villages." : ""}`}
                 >
                   <dl className="grid gap-4 sm:grid-cols-3">
                     <StatTile
@@ -642,7 +648,11 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
               ) : null}
 
               {detail?.seasonal ? (
-                <Chapter id="seasonal" title="Sources through the summer" intro="Census 2011, reference year 2009.">
+                <Chapter
+                  id="seasonal"
+                  title="Sources through the summer"
+                  intro={`Census 2011, reference year 2009.${censusIsSample(directory) ? " Read from only the villages the register lists under this Panchayat." : ""}`}
+                >
                   <AtlasFinding>
                     {detail.seasonal.annualSourceTypes} source types were recorded for the year and{" "}
                     {detail.seasonal.summerSourceTypes} held through the summer months.{" "}

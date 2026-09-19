@@ -32,6 +32,7 @@ export const DISTRICT_ACCENT: Record<string, string> = {
   "mh-satara": "from-violet-500 to-purple-700",
   "mh-ahilyanagar": "from-orange-500 to-red-700",
   "mh-kolhapur": "from-pink-500 to-rose-700",
+  "ka-kolar": "from-amber-400 to-stone-700",
 };
 
 /** The gradient every district shared before the per-district marks. */
@@ -331,6 +332,28 @@ function KolhapurRankala() {
   );
 }
 
+/** Kolar - a Kolar Gold Fields headframe above a chain of tanks, each
+ *  bund spilling into the next. */
+function KolarHeadframeTanks() {
+  return (
+    <g {...strokeProps}>
+      {/* the headframe: legs, braces and the winding sheave */}
+      <path d="M140 66 L152 18 L164 66" />
+      <path d="M152 18 L176 66" opacity={0.7} />
+      <path d="M144 50 H160 M147 38 H157 M149 28 H155" opacity={0.6} />
+      <circle cx="152" cy="14" r="5" />
+      <path d="M152 14 L182 40" opacity={0.5} />
+      {/* the winding house */}
+      <path d="M176 66 V48 H194 V66" opacity={0.8} />
+      {/* the tank chain: three bunds stepping down, water behind each */}
+      <path d="M4 44 q14 -6 28 0 M40 54 q16 -6 32 0 M82 64 q18 -6 36 0" />
+      <path d="M8 48 q10 -3 20 0 M46 58 q10 -3 20 0 M90 68 q10 -3 20 0" opacity={0.6} />
+      <path d="M32 44 L40 54 M72 54 L82 64" opacity={0.5} />
+      <path d="M0 76 H200" opacity={0.3} />
+    </g>
+  );
+}
+
 /** Canals, tanks and a field bund: the mark every district shared before
  *  the per-district art, kept as the fallback for a district not yet drawn. */
 function GenericTankCountry() {
@@ -363,6 +386,7 @@ const DISTRICT_MARKS: Record<string, () => React.JSX.Element> = {
   "mh-satara": SataraFortHill,
   "mh-ahilyanagar": AhilyanagarWatershed,
   "mh-kolhapur": KolhapurRankala,
+  "ka-kolar": KolarHeadframeTanks,
 };
 
 /** True when the district has its own drawn mark (used by tests and the

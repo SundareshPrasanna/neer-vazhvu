@@ -656,6 +656,9 @@ export interface CensusWorkbookSpec {
   expectedVillages: number;
   sheet?: string;
   allowEmptyGramPanchayat?: boolean;
+  /** Rows printing a Gram Panchayat name without a code keep an empty list
+   *  (Karnataka); only meaningful with allowEmptyGramPanchayat. */
+  gramPanchayatNamesWithoutCodes?: boolean;
   /** Keep only these Census subdistricts of districtCode: the villages of a
    *  district the Census did not yet know (formed after 2011). */
   subdistrictCodes?: string[];
@@ -725,6 +728,7 @@ export async function acquireCensusVillages(
       spec.districtCode,
       ...(spec.sheet ? ["--sheet", spec.sheet] : []),
       ...(spec.allowEmptyGramPanchayat ? ["--allow-empty-gram-panchayat"] : []),
+      ...(spec.gramPanchayatNamesWithoutCodes ? ["--gram-panchayat-names-without-codes"] : []),
       ...(spec.villagesWithoutGramPanchayat?.length
         ? ["--villages-without-gram-panchayat", spec.villagesWithoutGramPanchayat.join(",")]
         : []),
