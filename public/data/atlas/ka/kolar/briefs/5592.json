@@ -5167,37 +5167,47 @@
       "placeId": "218978",
       "name": "Chokkandahalli",
       "blockCode": "5592",
-      "status": "directory-only",
-      "statusReason": "Held back because place-identity-and-composition, population-and-settlements, drinking-water-service are not established for this place.",
-      "verdict": null,
-      "headlineFacts": [],
-      "gaps": [
+      "status": "brief-ready",
+      "statusReason": "Identity, population and drinking-water service are all established.",
+      "verdict": {
+        "title": "Taps are incomplete and the aquifer is already in deficit",
+        "body": "82.64 percent of households report a tap connection, and Malur is assessed over exploited at 169.6 percent of extraction. Closing the service gap draws on a source already over-drawn.",
+        "tone": "blocked"
+      },
+      "headlineFacts": [
         {
-          "capabilityId": "place-identity-and-composition",
-          "reason": "unavailable"
+          "value": "82.64%",
+          "label": "Households with a tap connection",
+          "note": "1,557 of 1,884 households, across 11 habitations."
         },
+        {
+          "value": "76",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
+          "value": "169.6%",
+          "label": "Groundwater extraction, containing taluk",
+          "note": "Malur is assessed over exploited. This describes the taluk, not this Panchayat."
+        },
+        {
+          "value": "73.2 mm",
+          "label": "Rainfall, last 30 days",
+          "note": "29 rain days between 2026-08-20 and 2026-09-19, modelled rather than gauged."
+        },
+        {
+          "value": "99d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-06-12. 160 samples over 5 years, 16 recorded unsafe."
+        }
+      ],
+      "gaps": [
         {
           "capabilityId": "place-boundary",
           "reason": "unavailable"
         },
         {
-          "capabilityId": "population-and-settlements",
-          "reason": "unavailable"
-        },
-        {
-          "capabilityId": "drinking-water-service",
-          "reason": "unavailable"
-        },
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
-        {
           "capabilityId": "drinking-water-reliability",
-          "reason": "unavailable"
-        },
-        {
-          "capabilityId": "drinking-water-quality",
           "reason": "unavailable"
         },
         {
@@ -5215,10 +5225,6 @@
         {
           "capabilityId": "catchment-context",
           "reason": "unavailable"
-        },
-        {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
         },
         {
           "capabilityId": "water-body-inventory",
@@ -5239,10 +5245,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -5305,20 +5307,118 @@
           "reason": "not-assessed"
         },
         {
-          "capabilityId": "responsibility-and-action",
-          "reason": "unavailable"
-        },
-        {
           "capabilityId": "composite-priority-score",
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 5,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
-        "habitations": [],
-        "sources": [],
-        "sampling": null,
+        "habitations": [
+          {
+            "name": "Madivala",
+            "population": 1231,
+            "households": 304,
+            "connections": 272
+          },
+          {
+            "name": "CHOKKANDAHALLI",
+            "population": 1482,
+            "households": 349,
+            "connections": 344
+          },
+          {
+            "name": "GANGASANDRA",
+            "population": 673,
+            "households": 163,
+            "connections": 0
+          },
+          {
+            "name": "IRABANAHALLI",
+            "population": 601,
+            "households": 110,
+            "connections": 110
+          },
+          {
+            "name": "LAKKENAHALLI",
+            "population": 349,
+            "households": 62,
+            "connections": 46
+          },
+          {
+            "name": "HANUMANAYAKANAHALLI",
+            "population": 447,
+            "households": 110,
+            "connections": 0
+          },
+          {
+            "name": "CHANNIGARAYAPURA",
+            "population": 197,
+            "households": 43,
+            "connections": 43
+          },
+          {
+            "name": "KADADENAHALLI",
+            "population": 1129,
+            "households": 268,
+            "connections": 268
+          },
+          {
+            "name": "YESHAWANTHAPURA",
+            "population": 2065,
+            "households": 400,
+            "connections": 400
+          },
+          {
+            "name": "NALLAPPANAHALLI",
+            "population": 240,
+            "households": 54,
+            "connections": 54
+          },
+          {
+            "name": "GANGAPURA",
+            "population": 62,
+            "households": 21,
+            "connections": 20
+          }
+        ],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 76
+          }
+        ],
+        "sampling": {
+          "total": 160,
+          "unsafe": 16,
+          "atSource": 95,
+          "atHousehold": 65,
+          "earliest": "2022-11-18",
+          "latest": "2026-06-12",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 4
+            },
+            {
+              "year": "2023",
+              "count": 49
+            },
+            {
+              "year": "2024",
+              "count": 71
+            },
+            {
+              "year": "2025",
+              "count": 23
+            },
+            {
+              "year": "2026",
+              "count": 13
+            }
+          ]
+        },
         "land": {
           "totalAreaHectares": 431.55,
           "netSownHectares": 225.54,

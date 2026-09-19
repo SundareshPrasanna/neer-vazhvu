@@ -5496,47 +5496,37 @@
       "placeId": "218944",
       "name": "Annenahalli",
       "blockCode": "5591",
-      "status": "brief-ready",
-      "statusReason": "Identity, population and drinking-water service are all established.",
-      "verdict": {
-        "title": "Taps are incomplete and the aquifer is already in deficit",
-        "body": "87.17 percent of households report a tap connection, and Kolar is assessed over exploited at 200.2 percent of extraction. Closing the service gap draws on a source already over-drawn.",
-        "tone": "blocked"
-      },
-      "headlineFacts": [
-        {
-          "value": "87.17%",
-          "label": "Households with a tap connection",
-          "note": "1,393 of 1,598 households, across 13 habitations."
-        },
-        {
-          "value": "85",
-          "label": "Drinking-water sources",
-          "note": "Deep Tubewell, Open Well"
-        },
-        {
-          "value": "200.2%",
-          "label": "Groundwater extraction, containing taluk",
-          "note": "Kolar is assessed over exploited. This describes the taluk, not this Panchayat."
-        },
-        {
-          "value": "59.8 mm",
-          "label": "Rainfall, last 30 days",
-          "note": "28 rain days between 2026-08-20 and 2026-09-19, modelled rather than gauged."
-        },
-        {
-          "value": "66d ago",
-          "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-15. 316 samples over 4 years, 19 recorded unsafe."
-        }
-      ],
+      "status": "directory-only",
+      "statusReason": "Held back because place-identity-and-composition, population-and-settlements, drinking-water-service are not established for this place.",
+      "verdict": null,
+      "headlineFacts": [],
       "gaps": [
+        {
+          "capabilityId": "place-identity-and-composition",
+          "reason": "unavailable"
+        },
         {
           "capabilityId": "place-boundary",
           "reason": "unavailable"
         },
         {
+          "capabilityId": "population-and-settlements",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-service",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-source",
+          "reason": "unavailable"
+        },
+        {
           "capabilityId": "drinking-water-reliability",
+          "reason": "unavailable"
+        },
+        {
+          "capabilityId": "drinking-water-quality",
           "reason": "unavailable"
         },
         {
@@ -5554,6 +5544,10 @@
         {
           "capabilityId": "catchment-context",
           "reason": "unavailable"
+        },
+        {
+          "capabilityId": "connected-supply-system",
+          "reason": "not-assessed"
         },
         {
           "capabilityId": "water-body-inventory",
@@ -5574,6 +5568,10 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
+        },
+        {
+          "capabilityId": "public-water-works",
+          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -5636,131 +5634,20 @@
           "reason": "not-assessed"
         },
         {
+          "capabilityId": "responsibility-and-action",
+          "reason": "unavailable"
+        },
+        {
           "capabilityId": "composite-priority-score",
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 5,
       "assessedCapabilities": 40,
       "detail": {
-        "habitations": [
-          {
-            "name": "Manigatta",
-            "population": 981,
-            "households": 253,
-            "connections": 252
-          },
-          {
-            "name": "Annihalli",
-            "population": 714,
-            "households": 136,
-            "connections": 136
-          },
-          {
-            "name": "Kuduvanahalli",
-            "population": 556,
-            "households": 111,
-            "connections": 111
-          },
-          {
-            "name": "Syanabhoganahalli",
-            "population": 1054,
-            "households": 261,
-            "connections": 261
-          },
-          {
-            "name": "Gooliganahalli",
-            "population": 255,
-            "households": 46,
-            "connections": 46
-          },
-          {
-            "name": "Nenumanahalli",
-            "population": 326,
-            "households": 56,
-            "connections": 56
-          },
-          {
-            "name": "Byalahalli",
-            "population": 569,
-            "households": 115,
-            "connections": 22
-          },
-          {
-            "name": "Garudupalya",
-            "population": 450,
-            "households": 92,
-            "connections": 40
-          },
-          {
-            "name": "Mattikunte",
-            "population": 302,
-            "households": 88,
-            "connections": 88
-          },
-          {
-            "name": "Karahalli",
-            "population": 494,
-            "households": 91,
-            "connections": 32
-          },
-          {
-            "name": "Agnihalli",
-            "population": 597,
-            "households": 126,
-            "connections": 126
-          },
-          {
-            "name": "Annihalli",
-            "population": 267,
-            "households": 65,
-            "connections": 65
-          },
-          {
-            "name": "Iragasandra",
-            "population": 759,
-            "households": 158,
-            "connections": 158
-          }
-        ],
-        "sources": [
-          {
-            "type": "Deep Tubewell",
-            "category": "Ground Water",
-            "count": 84
-          },
-          {
-            "type": "Open Well",
-            "category": "Ground Water",
-            "count": 1
-          }
-        ],
-        "sampling": {
-          "total": 316,
-          "unsafe": 19,
-          "atSource": 184,
-          "atHousehold": 132,
-          "earliest": "2023-01-05",
-          "latest": "2026-07-15",
-          "byYear": [
-            {
-              "year": "2023",
-              "count": 84
-            },
-            {
-              "year": "2024",
-              "count": 160
-            },
-            {
-              "year": "2025",
-              "count": 39
-            },
-            {
-              "year": "2026",
-              "count": 33
-            }
-          ]
-        },
+        "habitations": [],
+        "sources": [],
+        "sampling": null,
         "land": {
           "totalAreaHectares": 528.06,
           "netSownHectares": 312.33,

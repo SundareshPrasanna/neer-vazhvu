@@ -9271,10 +9271,24 @@
         {
           "requirementId": "place-identity-and-composition",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-identity",
+              "sourceRefs": [
+                "lgd-local-bodies-datagovin",
+                "lgd-villages-datagovin",
+                "jjm-imis",
+                "census-village-directory"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-19",
+              "notes": "LGD Gram Panchayat 218978 bound to JJM unit 2566/62644 and to Census 2011 rows through the register's coverage (lgd/218978)."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The Census composition is the LGD register's own coverage list, which names one covering village for most Panchayats; member villages the register omits are not shown."
           ]
         },
         {
@@ -9289,29 +9303,56 @@
         {
           "requirementId": "population-and-settlements",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
-          "limitations": [
-            "No acquired source carries this capability for this place."
-          ]
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-population",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-19",
+              "notes": "JJM reports 8476 people in 1884 households across 11 habitations."
+            }
+          ],
+          "limitations": []
         },
         {
           "requirementId": "drinking-water-service",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
-          "limitations": [
-            "No acquired source carries this capability for this place."
-          ]
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-service",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-19",
+              "notes": "JJM reports 1557 tap connections against 1884 households (82.64 percent)."
+            }
+          ],
+          "limitations": []
         },
         {
           "requirementId": "drinking-water-source",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
-          "limitations": [
-            "No acquired source carries this capability for this place."
-          ]
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-source",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-19",
+              "notes": "JJM lists 76 drinking-water sources of type Deep Tubewell."
+            }
+          ],
+          "limitations": []
         },
         {
           "requirementId": "drinking-water-reliability",
@@ -9325,10 +9366,22 @@
         {
           "requirementId": "drinking-water-quality",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-quality",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-19",
+              "notes": "160 samples across 5 years (95 at source, 65 at households); latest Safe on 2026-06-12, 99 days ago. 16 sample(s) recorded not Safe."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+            "The most recent published sample is 99 days old, so this describes a past state rather than current water."
           ]
         },
         {
@@ -9449,11 +9502,22 @@
         },
         {
           "requirementId": "connected-supply-system",
-          "applicability": "not-assessed",
-          "state": "not-assessed",
-          "evidence": [],
+          "applicability": "applicable",
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-supply-system",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "connected-system",
+              "projectionMethod": "service-relation",
+              "evidenceDate": "2026-09-19",
+              "notes": "JJM associates 76 sources with 11 habitations in this Panchayat's service records."
+            }
+          ],
           "limitations": [
-            "Whether this capability applies to this place has not been determined, so its absence is not evidence of a gap."
+            "The source-to-habitation association describes service records, not the physical scheme, headworks or transmission main."
           ]
         },
         {
@@ -9504,10 +9568,21 @@
         {
           "requirementId": "public-water-works",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-public-works",
+              "sourceRefs": [
+                "jjm-imis"
+              ],
+              "localityClass": "within-place",
+              "projectionMethod": "direct-published",
+              "evidenceDate": "2026-09-19",
+              "notes": "76 publicly recorded drinking-water works serve this Panchayat."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "Only drinking-water sources are enumerated; tanks, channels and other public water works are not covered."
           ]
         },
         {
@@ -9668,10 +9743,22 @@
         {
           "requirementId": "responsibility-and-action",
           "applicability": "applicable",
-          "state": "unavailable",
-          "evidence": [],
+          "state": "adequate",
+          "evidence": [
+            {
+              "id": "218978-responsibility",
+              "sourceRefs": [
+                "tnrd-lgd-snapshot",
+                "jjm-imis"
+              ],
+              "localityClass": "direct-place",
+              "projectionMethod": "identifier-crosswalk",
+              "evidenceDate": "2026-09-19",
+              "notes": "Chokkandahalli Gram Panchayat is the recorded service unit for drinking water under TNRD and JJM."
+            }
+          ],
           "limitations": [
-            "No acquired source carries this capability for this place."
+            "The responsible body is identified, but no accountable officer, budget line or grievance route is published here."
           ]
         },
         {
@@ -9685,10 +9772,10 @@
         }
       ],
       "summary": {
-        "adequate": 5,
-        "unavailable": 20,
+        "adequate": 13,
+        "unavailable": 13,
         "not-applicable": 0,
-        "not-assessed": 15
+        "not-assessed": 14
       }
     },
     {
