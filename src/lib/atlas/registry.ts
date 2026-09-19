@@ -291,7 +291,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     name: "Kolar",
     hook: "Tank country east of Bengaluru: all 6 taluks draw more groundwater than recharges, Mulabagilu at 213%, and 79.8% of households are recorded with a tap.",
     hasCuratedBriefs: false,
-    published: false,
+    published: true,
     irrigationCurrentSource: KA_IRRIGATION_GAP,
     waterBodiesGapNote:
       "The First Census of Water Bodies Karnataka return on data.gov.in lists 1,304 rows for Kolar, but each row's id carries a local serial rather than the Census 2011 village code the Panchayat join reads, and Mulbagal taluk has a single row, so nothing is counted here until a reviewed join exists.",
