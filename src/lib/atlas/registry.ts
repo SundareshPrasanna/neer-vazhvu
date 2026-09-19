@@ -40,6 +40,9 @@ export interface AtlasDistrict {
    *  the report that carries it, and the sentence to print when it is not
    *  wired. Copy, not data: the numbers come from irrigation-current.json. */
   irrigationCurrentSource: { label: string; gapNote: string; nextStep: string };
+  /** The sentence the page prints when no water-body register is served,
+   *  where the state's register exists but is not joined (copy, not data). */
+  waterBodiesGapNote?: string;
 }
 
 const TN_IRRIGATION_SOURCE = {
@@ -58,6 +61,16 @@ const MH_IRRIGATION_GAP = {
   nextStep: "the District Socio-Economic Review's irrigation tables are not yet extracted for this district.",
   gapNote:
     "No current reading is wired: the District Socio-Economic Review's irrigation-by-source tables are not yet extracted for this district, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
+};
+
+/** The Karnataka current-irrigation gap: no district irrigation-by-source
+ *  table is extracted for the state yet, so the page names the gap rather
+ *  than a report it has not read. */
+const KA_IRRIGATION_GAP = {
+  label: "district irrigation-by-source table",
+  nextStep: "no current irrigation-by-source table is extracted for Karnataka districts yet.",
+  gapNote:
+    "No current reading is wired: no Karnataka district irrigation-by-source table has been extracted yet, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
 };
 
 
@@ -269,6 +282,20 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     published: true,
     irrigationCurrentSource: MH_IRRIGATION_GAP,
   },
+  {
+    slug: "kolar",
+    scopeId: "ka-kolar",
+    stateSlug: "ka",
+    stateCode: "KA",
+    stateName: "Karnataka",
+    name: "Kolar",
+    hook: "Tank country east of Bengaluru: all 6 taluks draw more groundwater than recharges, Mulabagilu at 213%, and 79.8% of households are recorded with a tap.",
+    hasCuratedBriefs: false,
+    published: false,
+    irrigationCurrentSource: KA_IRRIGATION_GAP,
+    waterBodiesGapNote:
+      "The First Census of Water Bodies Karnataka return on data.gov.in lists 1,304 rows for Kolar, but each row's id carries a local serial rather than the Census 2011 village code the Panchayat join reads, and Mulbagal taluk has a single row, so nothing is counted here until a reviewed join exists.",
+  },
 ];
 
 
@@ -331,6 +358,7 @@ export interface AtlasStateEntry {
 const STATE_HOOKS: Record<string, string> = {
   tn: "Where the Atlas began: the Cauvery delta's canal country and the over-exploited west, read district by district.",
   mh: "The first state beyond Tamil Nadu: Koyna country first, with the drought and tanker belt to come.",
+  ka: "The first district beyond Tamil Nadu and Maharashtra: Kolar, where every taluk draws more groundwater than recharges.",
 };
 
 /** Group districts into state entries, preserving each state's first

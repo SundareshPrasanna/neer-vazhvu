@@ -43,6 +43,77 @@ export interface DataMeetCrosswalkRow {
   subdistrictCode2011: string;
 }
 
+/** How DataMeet keys a state's file (the plan's sources.boundary.crosswalkFormat). */
+export type DataMeetCrosswalkFormat = "cen2001-csv" | "village-code-mapping";
+
+/** The feature property a crosswalk row is keyed on, per format. */
+export function dataMeetFeatureKey(
+  feature: DataMeetVillageFeature,
+  format: DataMeetCrosswalkFormat = "cen2001-csv",
+): string {
+  if (format === "cen2001-csv") return String(feature.properties.CEN_2001 ?? "").trim();
+  // Karnataka: the 2001 Census district and village codes sit on the
+  // feature (DIST_CODE "19", V_CT_CODE "01759700"); a feature with no
+  // village code is a town or an unnumbered part and joins nothing.
+  const district = String(feature.properties.DIST_CODE ?? "").trim().replace(/^0+/, "");
+  const village = String(feature.properties.V_CT_CODE ?? "").trim().replace(/^0+/, "");
+  return district && village ? `${district}:${village}` : "";
+}
+
+/**
+ * The district's rows of Karnataka's ka_village_2011_2001_code_mapping.txt
+ * (semicolon-separated), keyed as dataMeetFeatureKey reads a feature. A
+ * 2001 village that became two 2011 villages is left out and counted: its
+ * one polygon cannot be split between them, so neither is drawn from it.
+ */
+export function parseDataMeetVillageCodeMapping(
+  text: string,
+  districtCode2011: string,
+): { rows: Map<string, DataMeetCrosswalkRow>; splitVillages2001: number } {
+  const lines = text.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  const header = (lines[0] ?? "").split(";").map((cell) => cell.trim());
+  const column = (name: string): number => {
+    const index = header.indexOf(name);
+    if (index < 0) throw new Error(`DataMeet mapping has no ${name} column`);
+    return index;
+  };
+  const code2011 = column("village_code_2011");
+  const name2011 = column("village_name_2011");
+  const district2011 = column("district_code_2011");
+  const subdistrict2011 = column("sub_district_code_2011");
+  const village2001 = column("village_code_2001");
+  const district2001 = column("district_code_2001");
+  const byKey = new Map<string, DataMeetCrosswalkRow[]>();
+  for (const line of lines.slice(1)) {
+    const cells = line.split(";").map((cell) => cell.trim());
+    if (cells.length !== header.length) throw new Error(`DataMeet mapping row has ${cells.length} cells: ${line}`);
+    if (cells[district2011] !== districtCode2011) continue;
+    const district = cells[district2001].replace(/^0+/, "");
+    const village = cells[village2001].replace(/^0+/, "");
+    if (!district || !village) continue;
+    const key = `${district}:${village}`;
+    byKey.set(key, [
+      ...(byKey.get(key) ?? []),
+      {
+        cen2001: key,
+        villageCode2011: cells[code2011],
+        villageName2011: cells[name2011],
+        subdistrictCode2011: cells[subdistrict2011],
+      },
+    ]);
+  }
+  const rows = new Map<string, DataMeetCrosswalkRow>();
+  let splitVillages2001 = 0;
+  for (const [key, matches] of byKey) {
+    if (new Set(matches.map((row) => row.villageCode2011)).size > 1) {
+      splitVillages2001 += 1;
+      continue;
+    }
+    rows.set(key, matches[0]);
+  }
+  return { rows, splitVillages2001 };
+}
+
 /** The district's rows of mh.csv, keyed on CEN_2001. */
 export function parseDataMeetCrosswalk(
   csvText: string,
@@ -119,11 +190,12 @@ export function buildPanchayatGeometries(options: {
   features: DataMeetVillageFeature[];
   crosswalk: Map<string, DataMeetCrosswalkRow>;
   panchayats: PanchayatMembers[];
+  format?: DataMeetCrosswalkFormat;
 }): { geometries: Map<string, PanchayatGeometry>; villagePolygons: number; unmatchedFeatures: number } {
   const byCensusCode = new Map<string, Polygon[]>();
   let unmatched = 0;
   for (const feature of options.features) {
-    const row = options.crosswalk.get(String(feature.properties.CEN_2001 ?? "").trim());
+    const row = options.crosswalk.get(dataMeetFeatureKey(feature, options.format));
     if (!row || !row.villageCode2011) {
       unmatched += 1;
       continue;
@@ -208,6 +280,9 @@ function countRingsAndVertices(coordinates: Polygon[]): { ringCount: number; ver
 }
 
 export function buildDataMeetBoundaryExtract(options: {
+  /** Registry id and layer name of the state's DataMeet file; Maharashtra's when absent. */
+  sourceId?: string;
+  layer?: string;
   planId: string;
   districtLgdCode: string;
   acquiredAt: string;
@@ -260,8 +335,8 @@ export function buildDataMeetBoundaryExtract(options: {
     districtLgdCode: options.districtLgdCode,
     acquiredAt: options.acquiredAt,
     source: {
-      sourceId: DATAMEET_BOUNDARY_SOURCE_ID,
-      layer: "datameet/indian_village_boundaries mh2.geojson",
+      sourceId: options.sourceId ?? DATAMEET_BOUNDARY_SOURCE_ID,
+      layer: options.layer ?? "datameet/indian_village_boundaries mh2.geojson",
       sourceUrl: options.sourceUrl,
       crosswalkUrl: options.crosswalkUrl,
       retrievedAt: options.acquiredAt,

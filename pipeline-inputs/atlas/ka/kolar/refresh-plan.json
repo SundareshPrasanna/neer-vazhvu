@@ -1,0 +1,123 @@
+{
+  "_doc": "Reviewed refresh plan for Kolar (Karnataka), the Atlas's first Karnataka district, on the LGD adapter. Identity as for the Maharashtra districts: data.gov.in LGD resources, composition from the LGD coverage register. Every code here was read from a primary artifact on 2026-09-19, none typed: LGD state 29, district 542 and Census 2011 district 581 from the LGD Sub-Districts export; JJM state 15 and district 200 from the citizen-corner dropdowns; the Karnataka DCHB village release (sheet Village_Data_2900) from Kolar's Census catalog page 620; the IN-GRES district row 'Kolara' from the Karnataka state call. Counts are the adapter's: 6 taluks, 1,825 villages, 154 Village Panchayats, 286 coverage rows, 1,511 JJM villages, 1,797 Census 2011 village rows. Four Karnataka differences are reviewed fields: the DCHB release prints Panchayat names without codes; DataMeet's Karnataka file joins on the 2001 district and village codes; the coverage register lists one or two villages per Panchayat, so the polygons are withheld and only the centroid is used; the First Census of Water Bodies Karnataka return carries no Census 2011 village code, so no water-body source is named. IN-GRES aliases bridge four LGD taluk spellings to the portal's (Kolar Gold Field is 'K.G.F'). The target Masthi (Malur) was staged from the extract for review.",
+  "schemaVersion": 1,
+  "id": "ka-kolar-v1",
+  "identityAdapter": "lgd-directory",
+  "district": {
+    "displayName": "Kolar",
+    "lgdStateCode": "29",
+    "lgdDistrictCode": "542",
+    "jjmStateId": "15",
+    "jjmDistrictId": "200",
+    "censusStateCode": "29",
+    "censusDistrictCode": "581",
+    "censusWorkbookSheet": "Village_Data_2900",
+    "ingresStateName": "KARNATAKA",
+    "ingresStateUuid": "eaec6bbb-a219-415f-bdba-991c42586352",
+    "ingresDistrictName": "Kolara",
+    "ingresAssessmentUnitType": "TALUK",
+    "blockModel": "sub-district",
+    "censusGramPanchayatColumns": "names-without-codes",
+    "ingresTalukaAliases": {
+      "Bangarapet": "Bangarpet",
+      "Mulbagal": "Mulabagilu",
+      "Srinivaspur": "Srinivaspura",
+      "Kolar Gold Field": "K.G.F"
+    }
+  },
+  "sources": {
+    "lgdLocalBodies": {
+      "resourceId": "1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "url": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdVillages": {
+      "resourceId": "c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "url": "https://api.data.gov.in/resource/c967fe8f-69c4-42df-8afc-8a2c98057437",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "lgdSubdistricts": {
+      "resourceId": "6be51a29-876a-403a-a6da-42fde795e751",
+      "url": "https://api.data.gov.in/resource/6be51a29-876a-403a-a6da-42fde795e751",
+      "catalogUrl": "https://data.gov.in/catalog/local-government-directory-lgd"
+    },
+    "jjm": {
+      "url": "https://ejalshakti.gov.in/jjm/citizen_corner/villageinformation.aspx"
+    },
+    "census": {
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/620/download/2130/DH_2011_DCHB_Village_Release_2900.xlsx",
+      "catalogUrl": "https://censusindia.gov.in/nada/index.php/catalog/620",
+      "sourceAsOf": "Census 2011 release; village reference year 2009"
+    },
+    "boundary": {
+      "geojsonUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/ka/ka.geojson",
+      "crosswalkUrl": "https://raw.githubusercontent.com/datameet/indian_village_boundaries/master/ka/ka_village_2011_2001_code_mapping.txt",
+      "districtName": "Kolar",
+      "license": "ODbL 1.0",
+      "crosswalkFormat": "village-code-mapping",
+      "polygons": "withheld",
+      "polygonsNote": "The LGD export lists 286 of the district's 1,825 villages under its 154 Panchayats, one or two each, so the union of a Panchayat's listed villages is not its extent: no outline or area is drawn until the full village-to-Panchayat mapping is on file."
+    }
+  },
+  "expectedCounts": {
+    "lgdSubdistricts": 6,
+    "lgdVillages": 1825,
+    "lgdGramPanchayats": 154,
+    "lgdCoverageRows": 286,
+    "jjmVillages": 1511,
+    "censusVillages": 1797
+  },
+  "targets": [
+    {
+      "id": "masthi",
+      "displayName": "Masthi",
+      "reviewedAt": "2026-09-19",
+      "lgdGramPanchayatCode": "218979",
+      "lgdSubdistrictCode": "5592",
+      "jjmBlockId": "2566",
+      "jjmGramPanchayatId": "62646",
+      "censusSubdistrictCode": "05592",
+      "mappingExpectations": {
+        "jjm": {
+          "status": "complete",
+          "basis": "authoritative-enumeration",
+          "expectedRecordCount": 6
+        },
+        "census": {
+          "status": "partial",
+          "basis": "authoritative-crosswalk",
+          "expectedRecordCount": 6
+        }
+      },
+      "censusComposition": {
+        "status": "partial",
+        "basis": "authoritative-crosswalk",
+        "expectedRecordCount": 6,
+        "members": [
+          {
+            "kind": "village",
+            "code": "622340",
+            "name": "Masthi"
+          },
+          {
+            "kind": "village",
+            "code": "622345",
+            "name": "Appaiana Agrahara"
+          }
+        ],
+        "exclusions": [],
+        "evidence": [
+          {
+            "id": "lgd-coverage",
+            "sourceId": "lgd-local-bodies-datagovin",
+            "sourceUrl": "https://api.data.gov.in/resource/1a6c26ed-d67c-40ea-aa20-d38d35f341a5",
+            "sourceAsOf": "2026-09-17 (monthly LGD republication on data.gov.in)",
+            "method": "authoritative-crosswalk",
+            "locator": "localBodyCode 218979 (Masthi, Village Panchayat) covers entityCode 622340 (Masthi) and 622345 (Appaiana Agrahara), coverageType Full",
+            "assertion": "The Gram Panchayat Masthi covers Masthi (622340) and Appaiana Agrahara (622345) in the register's export. JJM enumerates six villages under its MASTHI unit (block 2566), both of these among them, so the export's two are a partial composition; the expected six is JJM's count, not a Census register's."
+          }
+        ]
+      }
+    }
+  ]
+}

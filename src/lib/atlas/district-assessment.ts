@@ -21,7 +21,7 @@ import type {
 import { identityFromDirectory } from "./artifacts";
 import type { PollutedStretchesArtifact } from "./polluted-stretches";
 import { villageWaterProfileV2 } from "./capability-assessment";
-import { LGD_PROVENANCE, generateCapabilityAssessment } from "./capability-evidence";
+import { generateCapabilityAssessment, lgdProvenanceFor } from "./capability-evidence";
 import type { GeneratedAssessment, PlaceEvidenceInputs } from "./capability-evidence";
 import { identityAdapterOf } from "./artifacts";
 import {
@@ -249,7 +249,14 @@ export function assembleEvidenceInputs(corpus: DistrictCorpus): PlaceEvidenceInp
   // The Tamil Nadu corpus predates the provenance field and its fixtures
   // are byte-compared, so only an LGD-built directory sets it.
   const provenance =
-    identityAdapterOf(corpus.directory) === "lgd-directory" ? LGD_PROVENANCE : undefined;
+    identityAdapterOf(corpus.directory) === "lgd-directory"
+      ? lgdProvenanceFor({
+          boundarySourceRef: corpus.directory.vintages.boundary?.sourceId,
+          waterBodySourceRef: corpus.waterBodies[0]?.provenance.sources[0]?.id,
+          assessmentUnitType: corpus.groundwater?.source.assessmentUnitType,
+          boundaryWithheld: Boolean(corpus.directory.vintages.boundary?.withheldNote),
+        })
+      : undefined;
   // District-grain: the same CPCB slice for every Panchayat, absent until served.
   const stretchesEvidence = corpus.pollutedStretches
     ? {

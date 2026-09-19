@@ -630,8 +630,10 @@ function groundwaterReading(
       `IN-GRES ${year ?? ""} puts total groundwater availability across the ${taluks.length} ${unit}s at ` +
       `${num(availabilityHam)} ham a year, ${num(rechargeHam)} ham of it rainfall recharge, with ${headroom}. ` +
       `Of the ${taluks.length} ${unit}s, ${listNames(counts)}.${districtRow} ` +
-      `Headroom sits mostly in ${displayTalukName(most.name)} (${num(most.availabilityForFutureUseHam)} ham) ` +
-      `and is thinnest in ${displayTalukName(least.name)} (${num(least.availabilityForFutureUseHam)} ham).`;
+      (most.availabilityForFutureUseHam > 0
+        ? `Headroom sits mostly in ${displayTalukName(most.name)} (${num(most.availabilityForFutureUseHam)} ham) ` +
+          `and is thinnest in ${displayTalukName(least.name)} (${num(least.availabilityForFutureUseHam)} ham).`
+        : `No ${unit} has any groundwater left for future use.`);
   }
 
   return {
@@ -1017,7 +1019,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       directory,
       `LGD edition ${identityVintage(directory).sourceAsOf}`,
       identityVintage(directory).retrievedAt,
-      "Local Government Directory (Ministry of Panchayati Raj) as republished on data.gov.in: the Panchayat list, its covered villages and the taluka list, refreshed monthly.",
+      `Local Government Directory (Ministry of Panchayati Raj) as republished on data.gov.in: the Panchayat list, its covered villages and the ${inputs.groundwater ? unitLabelOf(inputs.groundwater) : "taluka"} list, refreshed monthly.`,
     );
   } else {
     push(

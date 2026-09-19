@@ -41,6 +41,7 @@ import {
   requireDistrict,
   reviewedInputPath,
   shardCodes,
+  lgdStateUpstreams,
   upstreamSource,
   writeAtlasArtifact,
 } from "./lib/atlas-producer";
@@ -51,13 +52,14 @@ const PRODUCED_BY = "scripts/atlas-generate-assessments.ts";
 function inputSources(corpus: DistrictCorpus, blockCode: string, district: AtlasDistrict) {
   const directory = corpus.directory;
   const lgd = identityAdapterOf(directory) === "lgd-directory";
-  const sources = lgd
+  const state = lgd ? lgdStateUpstreams(district) : undefined;
+  const sources = state
     ? [
         upstreamSource("lgdLocalBodies", { role: "input", as_of: identityVintage(directory).sourceAsOf, retrieved: directory.acquiredAt }),
         upstreamSource("lgdVillages", { role: "input", retrieved: directory.acquiredAt }),
         upstreamSource("lgdSubdistricts", { role: "input", retrieved: directory.acquiredAt }),
         upstreamSource("jjm", { role: "input", retrieved: directory.acquiredAt }),
-        upstreamSource("censusMh", { role: "input", as_of: "2011", retrieved: directory.vintages.census.retrievedAt }),
+        upstreamSource(state.census, { role: "input", as_of: "2011", retrieved: directory.vintages.census.retrievedAt }),
       ]
     : [
         upstreamSource("tnrdLgd", { role: "input", as_of: "2021-03-11", retrieved: directory.acquiredAt }),
@@ -73,7 +75,7 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
     internalInputs.push(districtArtifactPath(district, "census-2011", blockCode));
   }
   if (corpus.groundwater && corpus.projection) {
-    sources.push(upstreamSource(lgd ? "ingresMh" : "ingres", { role: "input", retrieved: corpus.groundwater.acquiredAt }));
+    sources.push(upstreamSource(state ? state.ingres : "ingres", { role: "input", retrieved: corpus.groundwater.acquiredAt }));
     internalInputs.push(districtArtifactPath(district, "groundwater-taluks"));
     internalInputs.push(districtArtifactPath(district, "groundwater-projection"));
   }
@@ -88,7 +90,7 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
   const waterShard = corpus.waterBodies.find((shard) => shard.ext.atlas.blockCode === blockCode);
   if (waterShard) {
     sources.push(
-      upstreamSource(waterShard.ext.atlas.register === "water-bodies-census" ? "waterBodiesCensusMh" : "tngisWaterBodies", {
+      upstreamSource(waterShard.ext.atlas.register === "water-bodies-census" && state?.waterBodiesCensus ? state.waterBodiesCensus : "tngisWaterBodies", {
         role: "input",
         retrieved: waterShard.ext.atlas.acquiredAt,
       }),
@@ -97,7 +99,7 @@ function inputSources(corpus: DistrictCorpus, blockCode: string, district: Atlas
   }
   if (directory.vintages.boundary) {
     sources.push(
-      upstreamSource(lgd ? "datameetMh" : "tngisBoundary", {
+      upstreamSource(state ? state.datameet : "tngisBoundary", {
         role: "input",
         retrieved: directory.vintages.boundary.retrievedAt,
       }),

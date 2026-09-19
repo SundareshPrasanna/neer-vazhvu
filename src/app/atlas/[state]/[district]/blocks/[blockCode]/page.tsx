@@ -16,7 +16,7 @@ import {
 } from "@/components/atlas/atlas-primitives";
 import { getCuratedBriefs } from "@/lib/atlas/curated-briefs";
 import { loadBoundaryShard } from "@/lib/atlas/data";
-import { getDistrictDirectory } from "@/lib/atlas/district-directory";
+import { censusSampleNote, getDistrictDirectory } from "@/lib/atlas/district-directory";
 import { getDistrictReading } from "@/lib/atlas/district-reading";
 import {
   blockHref,
@@ -148,7 +148,7 @@ export default async function AtlasBlockPage({ params }: RouteParams) {
                 value={pct(figures.canalPercent)}
                 label="of irrigated farmland from canals"
                 asOf="Census 2011"
-                note={`${num(figures.irrigatedHectares)} ha irrigated across ${figures.landPlaces} Panchayats with a land record; wells ${pct(figures.wellPercent)}, tanks ${pct(figures.tankPercent)}.`}
+                note={`${num(figures.irrigatedHectares)} ha irrigated across ${figures.landPlaces} Panchayats with a land record; wells ${pct(figures.wellPercent)}, tanks ${pct(figures.tankPercent)}.${censusSampleNote(directory)}`}
               />
               <StatTile
                 value={figures.dominantCategory ? figures.dominantCategory.replace(/_/g, "-") : "not projected"}
@@ -212,13 +212,16 @@ export default async function AtlasBlockPage({ params }: RouteParams) {
               intro={
                 polygons
                   ? `Each Panchayat's outline is ${directory.boundary?.description ?? "the served boundary"}; the marker is its bounding-box centre. Indicative, not a survey boundary.`
-                  : `Every Panchayat with a mapped boundary is plotted from the centre of its own ${directory.boundary?.label ?? "boundary"} polygon. The marker is the Panchayat, not a settlement.`
+                  : directory.boundary?.withheldNote
+                    ? `Every Panchayat is plotted from the centre of the ${directory.boundary.label} polygons of the villages the register lists under it. The marker is the Panchayat, not a settlement. ${directory.boundary.withheldNote}`
+                    : `Every Panchayat with a mapped boundary is plotted from the centre of its own ${directory.boundary?.label ?? "boundary"} polygon. The marker is the Panchayat, not a settlement.`
               }
             >
               <AtlasDistrictMap points={points} polygons={polygons} />
               <AtlasNote>
-                {points.length} of {block.panchayatCount} Panchayats have a mapped boundary
-                {polygons ? `; ${polygons.features.length} outlines drawn` : ""}.
+                {directory.boundary?.withheldNote
+                  ? `${points.length} of ${block.panchayatCount} Panchayats have a marker; no outlines are drawn.`
+                  : `${points.length} of ${block.panchayatCount} Panchayats have a mapped boundary${polygons ? `; ${polygons.features.length} outlines drawn` : ""}.`}
               </AtlasNote>
             </AtlasSection>
           ) : null}

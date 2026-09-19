@@ -48,6 +48,24 @@ export interface DistrictDirectory {
   waterProfileCount: number;
   /** Who drew the polygons behind the centroids, for the pages' copy. */
   boundary: BoundaryProvenance | null;
+  /** Census 2011 villages joined to a Panchayat, of the district's rows. */
+  censusVillages: { bound: number; total: number };
+}
+
+/** True when an LGD-built district's Panchayat roll-ups cover under half its
+ *  Census villages (the register lists only some of each Panchayat's
+ *  villages), so any Census sum on the pages is a partial sample. */
+export function censusIsSample(directory: Pick<DistrictDirectory, "censusVillages" | "identityAdapter">): boolean {
+  const { bound, total } = directory.censusVillages;
+  return directory.identityAdapter === "lgd-directory" && total > 0 && bound / total < 0.5;
+}
+
+/** The sentence the pages add when the Census roll-ups are a sample. */
+export function censusSampleNote(directory: Pick<DistrictDirectory, "censusVillages" | "identityAdapter">): string {
+  const { bound, total } = directory.censusVillages;
+  return censusIsSample(directory)
+    ? ` Only ${bound.toLocaleString("en-IN")} of the district's ${total.toLocaleString("en-IN")} Census villages are joined to a Panchayat (the register lists only some of each Panchayat's villages), so this is a partial sample, not the district.`
+    : "";
 }
 
 function normalizedName(value: string): string {
@@ -144,6 +162,10 @@ export function buildDistrictDirectory(
     currentMasterAsOf: identityMasterVintage(artifact).sourceAsOf,
     currentMasterCount: identityMasterVintage(artifact).recordCount,
     boundary: boundaryProvenance(artifact),
+    censusVillages: {
+      bound: new Set(artifact.panchayats.flatMap((record) => record.census?.villages.map((village) => village.villageCode) ?? [])).size,
+      total: artifact.vintages.census?.recordCount ?? 0,
+    },
     blocks,
     panchayats,
     waterProfileCount: panchayats.filter(

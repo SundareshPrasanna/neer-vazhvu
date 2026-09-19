@@ -1,0 +1,119 @@
+{
+  "nvdm": "1.0",
+  "dataset": "atlas/groundwater-taluks",
+  "scope": {
+    "kind": "district",
+    "id": "ka-kolar"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ingres-gw-assessment-ka",
+        "title": "IN-GRES dynamic groundwater resource assessment, Karnataka taluks",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "asserts",
+        "url": "https://ingres.iith.ac.in/",
+        "retrieved": "2026-09-19"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-09-19",
+    "produced_by": "scripts/atlas-groundwater-tn-district.ts",
+    "internal_inputs": [],
+    "note": "IN-GRES dynamic groundwater assessment 2024-2025 for Kolara: the district row and its 6 TALUK assessment units (category, stage of extraction, recharge, availability, rainfall), read from the open getBusinessDataForUserOpen endpoint. The portal's synthetic total row is the district figure and is not counted as a unit.",
+    "conventions": {
+      "assessment_year": "2024-2025 is IN-GRES's hydrological-year label, not an edition year",
+      "hierarchy": "assessment units sit on the revenue hierarchy (taluks), not the panchayat hierarchy",
+      "categories": "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
+      "units": "stage of extraction in percent; recharge and availability in ham; rainfall in mm"
+    }
+  },
+  "schemaVersion": 1,
+  "planId": "ka-kolar-v1",
+  "assessmentYear": "2024-2025",
+  "acquiredAt": "2026-09-19",
+  "source": {
+    "sourceId": "ingres-gec-dynamic-groundwater",
+    "sourceUrl": "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen",
+    "portalUrl": "https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=Kolara;loctype=DISTRICT;locuuid=35b9b1af-bd93-4002-8f7f-6a507a7ffe1a;year=2024-2025",
+    "assessmentUnitType": "TALUK",
+    "hierarchy": "revenue"
+  },
+  "district": {
+    "locationName": "Kolara",
+    "locationUUID": "35b9b1af-bd93-4002-8f7f-6a507a7ffe1a",
+    "category": "over_exploited",
+    "stageOfExtractionPercent": 184.4309
+  },
+  "recordsSha256": "9d3b2756c204a30862e53e4b4c64ee4e27deecfe0a33da941e21e4141ba9b037",
+  "recordCount": 6,
+  "records": [
+    {
+      "locationName": "Bangarpet",
+      "locationUUID": "ddf2b941-d18f-44c2-839a-4237564394f1",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 187.5658,
+      "annualRechargeHam": 2870.8,
+      "totalAvailabilityHam": 4030.27,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 764.3
+    },
+    {
+      "locationName": "K.G.F",
+      "locationUUID": "e66fd404-0e84-441e-8b33-e23f54fdd41f",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 190.6223,
+      "annualRechargeHam": 1993.54,
+      "totalAvailabilityHam": 3361.15,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 889.7
+    },
+    {
+      "locationName": "Kolar",
+      "locationUUID": "791bb696-6762-4c8c-b671-a757e72e1e06",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 200.2231,
+      "annualRechargeHam": 4082.27,
+      "totalAvailabilityHam": 7367.7,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 840
+    },
+    {
+      "locationName": "Malur",
+      "locationUUID": "c7ea7a7d-b7d4-433c-9479-bf5926ed85c7",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 169.568,
+      "annualRechargeHam": 3267.4,
+      "totalAvailabilityHam": 4788.11,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 798.4
+    },
+    {
+      "locationName": "Mulabagilu",
+      "locationUUID": "813da01d-1a40-4584-8302-13d900ae0f1a",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 213.2103,
+      "annualRechargeHam": 4984.28,
+      "totalAvailabilityHam": 8493.17,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 895
+    },
+    {
+      "locationName": "Srinivaspura",
+      "locationUUID": "02dff550-435c-4079-a711-119aeabd4aad",
+      "locationType": "TALUK",
+      "category": "over_exploited",
+      "stageOfExtractionPercent": 119.7198,
+      "annualRechargeHam": 4160.48,
+      "totalAvailabilityHam": 4992.35,
+      "availabilityForFutureUseHam": 0,
+      "rainfallMm": 757.5
+    }
+  ]
+}

@@ -40,6 +40,10 @@ export interface PlaceEvidenceProvenance {
   /** Registry id of the water-body register a census record cites; absent
    *  where the register is TNGIS. */
   waterBodySourceRef?: string;
+  /** True when a reviewer withheld the Panchayat polygons (they cover only
+   *  the register-listed villages): the boundary capability is then not
+   *  evidenced, though the centroid still places the marker. */
+  boundaryWithheld?: boolean;
 }
 
 export const TNRD_PROVENANCE: PlaceEvidenceProvenance = {
@@ -62,6 +66,25 @@ export const LGD_PROVENANCE: PlaceEvidenceProvenance = {
   assessmentUnitLabel: "taluka",
   waterBodySourceRef: "water-bodies-census-mh",
 };
+
+/** The LGD provenance for one district, read from its served artifacts: the
+ *  directory's polygon source, the water-body register its shards cite and
+ *  the IN-GRES unit type. What a district does not serve keeps the
+ *  Maharashtra default, which no evidence row then cites. */
+export function lgdProvenanceFor(served: {
+  boundarySourceRef?: string;
+  waterBodySourceRef?: string;
+  assessmentUnitType?: string;
+  boundaryWithheld?: boolean;
+}): PlaceEvidenceProvenance {
+  return {
+    ...LGD_PROVENANCE,
+    ...(served.boundaryWithheld ? { boundaryWithheld: true } : {}),
+    ...(served.boundarySourceRef ? { boundarySourceRef: served.boundarySourceRef } : {}),
+    ...(served.waterBodySourceRef ? { waterBodySourceRef: served.waterBodySourceRef } : {}),
+    ...(served.assessmentUnitType ? { assessmentUnitLabel: served.assessmentUnitType.toLowerCase() } : {}),
+  };
+}
 
 export interface PlaceEvidenceInputs {
   lgdGramPanchayatCode: string;
@@ -194,8 +217,8 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
 
   "place-boundary": (inputs, date) => {
     const boundary = inputs.boundary;
-    if (!boundary) return null;
     const provenance = inputs.provenance ?? TNRD_PROVENANCE;
+    if (!boundary || provenance.boundaryWithheld) return null;
     const lgd = provenance.identityAdapter === "lgd-directory";
     return adequate(
       {

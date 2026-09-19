@@ -1,0 +1,223 @@
+{
+  "_doc": "Reviewed input for Kolar's District Environmental Plan, issued from the Office of the Deputy Commissioner, Kolar District and posted on kolar.nic.in (upload path 2022/04), on the CPCB model plan layout: a district profile, then current-status and gap-and-action tables per theme. Figures are the water statements the plan prints (tanks and water bodies, the K&C Valley transfer, KSPCB lake monitoring, town sewage, industrial waste water, bore wells), each with the text it comes from and its page. The plan carries no demand, supply or deficit water balance, so waterBalance stays null. Where the plan's own totals disagree the disagreement is recorded in document.quirks and the figure's detail, never corrected. Two readings on 2026-09-19: the PDF text layer (every quote a verbatim substring of its page) and the page images (every value re-read, 12 of 12 agree). Producer: scripts/atlas-environment-plan-district.ts --district kolar --as-of <date>.",
+  "schemaVersion": 1,
+  "id": "ka-kolar-environment-plan-2022",
+  "sourceId": "ngt-dep-ka-kolar",
+  "document": {
+    "title": "District Environmental Plan for Kolar District, Karnataka State",
+    "publisher": "Office of the Deputy Commissioner, Kolar District",
+    "url": "https://cdn.s3waas.gov.in/s3c0f168ce8900fa56e57789e2a2f2c9d0/uploads/2022/04/2022041612.pdf",
+    "listingUrl": "https://kolar.nic.in/en/about-district/district-environmental-plan/",
+    "editionLabel": "2022",
+    "editionNote": "The plan prints no date of its own and its closing 'Deputy Commissioner, Kolar District, Kolar.' block is unsigned; the date is the PDF's creation date, 16 April 2022, which matches the 2022/04 upload path. The latest periods the text refers to are 'From the year 2019-20' (K&C Valley) and action-plan timelines of 'Dec-2022'.",
+    "documentDate": "2022-04-16",
+    "pages": 92,
+    "sha256": "88380ba6e2d84a1a8609c19a81be9872c89f52451ca1462c11139365a197d731",
+    "bytes": 1843723,
+    "retrievedAt": "2026-09-19",
+    "template": "A CPCB model District Environment Plan (district profile, then 'Details of Data Requirement / Present Status' and gap-and-action-plan tables for solid, plastic, C&D, biomedical, hazardous and e-waste, air, water quality, domestic sewage, industrial waste water, mining and noise), which does not name the NGT order or the CPCB model in its text and prints no demand, supply or deficit water balance.",
+    "quirks": [
+      "Two counts of water bodies: PDF page 8 says 'There are around 2466 water bodies in Kolar districts' and 'There are 2328 tanks are coming under Zilla Pancyat', while the water-quality table on PDF page 67 prints 'Lakes/Ponds 2568 including ZP and MI tanks'. With the 138 minor-irrigation tanks of PDF page 7, 2328 + 138 = 2466; that arithmetic is ours, not the plan's. Both counts are transcribed.",
+      "Town sewage is printed as 17.5 MLD on PDF page 67 (the Total row of the ULB table too) and on PDF page 78, but the six ULB rows beneath it (6.2, 6, 3, 4.5, 1.8, 2.2) add to 23.7 (our arithmetic), and the same six rows on PDF page 80 print 'Total 23.7'.",
+      "Treatment capacity is printed as 'Total available Treatment Capacity [MLD]: 17.5 MLD' with a column Total of 17.5 on PDF page 79, while the same column (10.16, '06 under construction', 6.3, '--', 04, 3.1) prints 'Total 23.7 29.56 19.2' on PDF page 80, 29.56 being the capacity total. The four operating plants listed add to 23.56 (our arithmetic). Neither 17.5 nor 29.56 is transcribed as a capacity figure.",
+      "PDF page 76 prints 'No of Towns STPs installed [Nos]: 3Nos.' while its table lists an existing capacity for four ULBs (Kolar, Mulbagal, Malur, Srinivasapura) and '06 under construction' for KGF; PDF page 77 prints 'No of Towns needing STPs [Nos]: 6 Nos' while the per-ULB column beneath marks only TMC Bangarpet ('01').",
+      "PDF page 68 says 'untreated sewage is not quantified', while PDF page 79 prints 'Quantity of untreated or partially treated sewage (directly or in directly) [ MLD] : Nil'.",
+      "The water-quality table on PDF page 68 prints 'Polluted river stretches if any Nil' and 'Ground water polluted areas if any' with '---'. Neither is a number, so neither is a figure.",
+      "PDF page 8 says 'So far 83.84 TMC of water has been pumped to 138 tanks and 133 check dams.' At the plan's own lift of 440 MLD that volume would take about 15 years of continuous pumping (1 TMC is about 28,317 ML), for a project the same paragraph dates to 2019-20; that arithmetic is ours, not the plan's. Not transcribed as a figure; left for the second reading.",
+      "The K&C Valley '138 tanks' (PDF page 8) are 'in Kolar & Chantamani taluk of Chickballapur District', so not a Kolar-only count, and are a different set from the 138 minor-irrigation tanks of PDF page 7. PDF page 70 splits them as 45 MI, 88 PRED, 02 KUWS&DB and 02 Municipal Administration, which add to 137 (our arithmetic).",
+      "The domestic-sewage action plan on PDF page 81 names 'upcoming STPs viz., TP Hanur and TP Yelandur'; neither is one of the six Kolar ULBs the plan lists (both are Chamarajanagar district towns)."
+    ]
+  },
+  "waterBalance": null,
+  "figures": [
+    {
+      "id": "minor-irrigation-tanks",
+      "label": "Minor irrigation tanks (ayacut 40 to 2,000 ha)",
+      "value": 138,
+      "unit": "tanks",
+      "detail": "The taluk table on the same page splits them Kolar 44, Malur 11, Bangarpet 7, KGF 6, Mulbagal 35, Srinivaspura 35. Not the same set as the 138 tanks the K&C Valley project fills.",
+      "quote": "Based on Atchkat varying from 40 to 2000 Hecrates 138 tanks are considered as Minor irrigation tanks",
+      "section": "c. Natural Resources: Water bodies",
+      "pdfPage": 7,
+      "printedPage": 7
+    },
+    {
+      "id": "minor-irrigation-ayacut",
+      "label": "Total ayacut of the minor irrigation tanks",
+      "value": 12146.55,
+      "unit": "ha",
+      "detail": "Printed as 'about 12146.55 Hecrates'. The taluk table's Total row prints 138 tanks, 12146.55 ha and a live capacity of 5180.63 Mcft.",
+      "quote": "The total Atchkat of 138 tanks is about 12146.55 Hecrates.",
+      "section": "c. Natural Resources: Water bodies",
+      "pdfPage": 7,
+      "printedPage": 7
+    },
+    {
+      "id": "zilla-panchayat-tanks",
+      "label": "Tanks under the Zilla Panchayat",
+      "value": 2328,
+      "unit": "tanks",
+      "detail": "",
+      "quote": "There are 2328 tanks are coming under Zilla Pancyat.",
+      "section": "c. Natural Resources: Availability of water resources",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "water-bodies-profile",
+      "label": "Water bodies in the district (profile count)",
+      "value": 2466,
+      "unit": "water bodies",
+      "detail": "Printed as 'around 2466'; custodians named as urban local bodies, the Zilla Panchayat and the minor irrigation department. The water-quality table on PDF page 67 counts 2568 lakes and ponds instead (next figure); the contradiction is the plan's.",
+      "quote": "There are around 2466 water bodies in Kolar districts",
+      "section": "c. Natural Resources: Availability of water resources",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "lakes-ponds",
+      "label": "Lakes and ponds, including Zilla Panchayat and minor irrigation tanks",
+      "value": 2568,
+      "unit": "lakes and ponds",
+      "detail": "The same cell prints '56354.28 Hectares' on its next line, with no label of its own. The profile on PDF page 8 counts 2466 water bodies instead.",
+      "quote": "Lakes/Ponds 2568 including ZP and MI tanks",
+      "section": "Water Quality Management: (a) Current status related to Water Quality Management",
+      "pdfPage": 67,
+      "printedPage": 67
+    },
+    {
+      "id": "kc-valley-lift",
+      "label": "Secondary-treated water lifted from the K&C Valley STP, Bengaluru, to fill tanks for groundwater recharge",
+      "value": 440,
+      "unit": "MLD",
+      "detail": "From the year 2019-20, per the plan. A design lift as stated, not a measured flow.",
+      "quote": "Lifting 440 MLD of Secondary treated water from K&C Valley STP to fill 138 tanks in Kolar & Chantamani taluk of Chickballapur District for ground water recharge",
+      "section": "c. Natural Resources: Availability of water resources",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "kc-valley-tanks",
+      "label": "Tanks the K&C Valley project fills in Kolar and Chintamani taluk",
+      "value": 138,
+      "unit": "tanks",
+      "detail": "Includes tanks in Chintamani taluk of Chikkaballapur district, so not a Kolar-only count. PDF page 70 splits the 138 as 45 MI, 88 PRED, 02 KUWS&DB and 02 Municipal Administration, which add to 137; that arithmetic is ours, not the plan's.",
+      "quote": "Lifting 440 MLD of Secondary treated water from K&C Valley STP to fill 138 tanks in Kolar & Chantamani taluk of Chickballapur District for ground water recharge",
+      "section": "c. Natural Resources: Availability of water resources",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "kspcb-lakes-monitored",
+      "label": "Lakes KSPCB monitors in the district",
+      "value": 37,
+      "unit": "lakes",
+      "detail": "The plan says all 37 meet CPCB class D water quality criteria. Also stated on PDF page 70 ('KSPCB is monitoring the 37 lakes in the district').",
+      "quote": "37 lakes monitored by KSPCB are meeting class D of water quality criteria prescribed by CPCB.",
+      "section": "Water Quality Management: Identification of gaps and action plan for water quality monitoring",
+      "pdfPage": 72,
+      "printedPage": 72
+    },
+    {
+      "id": "town-sewage",
+      "label": "Total sewage from towns and cities, as the plan states it",
+      "value": 17.5,
+      "unit": "MLD",
+      "detail": "Six ULBs: CMC Kolar 6.2, CMC KGF 6, CMC Mulbagal 3, Bangarpet 4.5, TMC Malur 1.8, TMC Srinivasapura 2.2. Those rows add to 23.7 (our arithmetic), and the same rows on PDF page 80 print 'Total 23.7'; the plan prints 17.5 here, in the table's Total row and again on PDF page 78.",
+      "quote": "Total Quantity of sewage 17.5 MLD from towns and cities in",
+      "section": "Water Quality Management: (a) Current status related to Water Quality Management",
+      "pdfPage": 67,
+      "printedPage": 67
+    },
+    {
+      "id": "industrial-wastewater",
+      "label": "Industrial waste water generated",
+      "value": 3.32171,
+      "unit": "MLD",
+      "detail": "The plan says it is treated and either recycled or used on land for gardening. The same figure is printed on PDF page 83 ('[MLD]: 3.32171').",
+      "quote": "3.32171MLD of waste water is generated from the operation of 56 industries",
+      "section": "Water Quality Management: (a) Current status related to Water Quality Management",
+      "pdfPage": 68,
+      "printedPage": 68
+    },
+    {
+      "id": "industries-generating-wastewater",
+      "label": "Industries generating waste water",
+      "value": 56,
+      "unit": "industries",
+      "detail": "PDF page 83 prints the same 56 as 'No of Industries discharging waste water' and as industries meeting standards, out of 550 operating industries (77 red, 120 orange, 312 green, 41 white).",
+      "quote": "3.32171MLD of waste water is generated from the operation of 56 industries",
+      "section": "Water Quality Management: (a) Current status related to Water Quality Management",
+      "pdfPage": 68,
+      "printedPage": 68
+    },
+    {
+      "id": "bore-wells",
+      "label": "Bore wells",
+      "value": 29463,
+      "unit": "bore wells",
+      "detail": "The row asks for bore wells and the number of extraction permissions; the plan prints only this bore-well count, with no permission count.",
+      "quote": "Details of bore wells and number Bore wells – 29463 No’s",
+      "section": "Water Quality Management: (a) Current status related to Water Quality Management",
+      "pdfPage": 68,
+      "printedPage": 68
+    }
+  ],
+  "actionPoints": [
+    {
+      "text": "Environmental monitoring cell shall be constituted involving all the stake holders by district administration, to maintain data of all water bodies including their water quality (timeline Dec-2022).",
+      "sector": "Water quality monitoring",
+      "priority": null,
+      "pdfPage": 69
+    },
+    {
+      "text": "KSPCB shall increase the number of lakes for sampling (timeline Dec-2022).",
+      "sector": "Water quality monitoring",
+      "priority": null,
+      "pdfPage": 71
+    },
+    {
+      "text": "Ground water authorities shall fix the frequency of monitoring of bore wells as per the CPCB guidelines and furnish the reports to district administration.",
+      "sector": "Water quality monitoring",
+      "priority": null,
+      "pdfPage": 72
+    },
+    {
+      "text": "Inventory of domestic sewage drains and storm water drains discharging waste water to water bodies shall be carried out by ULBs, Grama Panchayaths and Taluk Panchayaths.",
+      "sector": "Water quality monitoring",
+      "priority": null,
+      "pdfPage": 73
+    },
+    {
+      "text": "Due to incomplete UGD connection, missing links exist; the completion of UGD work and connection shall be made.",
+      "sector": "Domestic sewage",
+      "priority": null,
+      "pdfPage": 81
+    },
+    {
+      "text": "Septage management in the areas where sewerage network does not exist; for TMC Bangarpet, FSMM proposed and under tender.",
+      "sector": "Domestic sewage",
+      "priority": null,
+      "pdfPage": 81
+    },
+    {
+      "text": "Formulation of an action plan for long term use of treated water discharged from STPs.",
+      "sector": "Domestic sewage",
+      "priority": null,
+      "pdfPage": 81
+    },
+    {
+      "text": "Laying of sewerage network and connection of households to the sewer line shall be made.",
+      "sector": "Domestic sewage",
+      "priority": null,
+      "pdfPage": 82
+    }
+  ],
+  "review": {
+    "status": "verified",
+    "extractedAt": "2026-09-19",
+    "extractedBy": "transcribed from the PDF text layer and re-read against the page images by the maintainer's assistant (two readings, 2026-09-19)",
+    "verifiedAt": "2026-09-19",
+    "verifiedBy": "Sundaresh, 2026-09-19, verified the twelve figures against the transcription and its page quotes"
+  }
+}

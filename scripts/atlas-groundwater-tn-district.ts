@@ -32,6 +32,8 @@ import {
   requireDistrict,
   reviewedInputPath,
   upstreamSource,
+  lgdStateUpstreams,
+  type UpstreamKey,
   writeAtlasArtifact,
   writeCache,
 } from "./lib/atlas-producer";
@@ -48,7 +50,7 @@ interface IngresPlan {
   stateUuid: string;
   stateName: string;
   unitType: string;
-  upstream: "ingres" | "ingresMh";
+  upstream: UpstreamKey;
 }
 
 function loadIngresPlan(district: ReturnType<typeof requireDistrict>): IngresPlan {
@@ -64,7 +66,7 @@ function loadIngresPlan(district: ReturnType<typeof requireDistrict>): IngresPla
       stateUuid: plan.district.ingresStateUuid,
       stateName: plan.district.ingresStateName,
       unitType: plan.district.ingresAssessmentUnitType,
-      upstream: "ingresMh",
+      upstream: lgdStateUpstreams(district).ingres,
     };
   }
   const plan = loadTnDistrictRefreshPlan(path);

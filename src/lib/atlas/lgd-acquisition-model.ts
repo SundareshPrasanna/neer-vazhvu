@@ -68,6 +68,10 @@ export interface LgdDistrictRefreshPlan {
    *  names, where the fold cannot (transpositions: Rahta / Rhata). */
   ingresTalukaAliases?: Record<string, string>;
     blockModel: LgdBlockModel;
+    /** How the state's DCHB release fills its Gram Panchayat columns when
+     *  it is not blank: Karnataka prints the name with no code. Absent =
+     *  blank (Maharashtra). Composition comes from the LGD register either way. */
+    censusGramPanchayatColumns?: "names-without-codes";
   };
   sources: {
     lgdLocalBodies: LgdResourceSource;
@@ -81,6 +85,19 @@ export interface LgdDistrictRefreshPlan {
       /** The DISTRICT property value in the DataMeet file. */
       districtName: string;
       license: string;
+      /** How DataMeet keys the state's file: "cen2001-csv" (Maharashtra: a
+       *  CEN_2001 property and mh.csv) or "village-code-mapping" (Karnataka:
+       *  2001 district and village codes on each feature and a semicolon
+       *  2011-to-2001 mapping). Absent = cen2001-csv. */
+      crosswalkFormat?: "cen2001-csv" | "village-code-mapping";
+      /** The reviewer's judgement of the Panchayat polygons, the waterspread
+       *  pattern: "withheld" keeps the centroids (the rainfall grid needs a
+       *  point) and serves no outline or area, because the register lists
+       *  too few of each Panchayat's villages for the union to be its extent.
+       *  Absent = served (Maharashtra, mostly single-village Panchayats). */
+      polygons?: "served" | "withheld";
+      /** Required with polygons "withheld": the sentence the pages print. */
+      polygonsNote?: string;
     };
     /** The First Census of Water Bodies state resource on data.gov.in, when
      *  the district's water-body register is read from it. */
@@ -245,6 +262,10 @@ export function validateLgdDistrictRefreshPlan(raw: unknown): string[] {
     if (!LGD_BLOCK_MODELS.includes(raw.district.blockModel as LgdBlockModel)) {
       errors.push(`district.blockModel: must be one of ${LGD_BLOCK_MODELS.join(", ")}`);
     }
+    const gpColumns = raw.district.censusGramPanchayatColumns;
+    if (gpColumns !== undefined && gpColumns !== "names-without-codes") {
+      errors.push("district.censusGramPanchayatColumns: must be names-without-codes when present");
+    }
   }
   if (!isRecord(raw.sources)) {
     errors.push("sources: must be an object");
@@ -270,6 +291,16 @@ export function validateLgdDistrictRefreshPlan(raw: unknown): string[] {
       validateUrl(boundary.geojsonUrl, "sources.boundary.geojsonUrl", errors);
       validateUrl(boundary.crosswalkUrl, "sources.boundary.crosswalkUrl", errors);
       validateStringFields(boundary, ["districtName", "license"], "sources.boundary", errors);
+      const format = boundary.crosswalkFormat;
+      if (format !== undefined && format !== "cen2001-csv" && format !== "village-code-mapping") {
+        errors.push("sources.boundary.crosswalkFormat: must be cen2001-csv or village-code-mapping");
+      }
+      if (boundary.polygons !== undefined && boundary.polygons !== "served" && boundary.polygons !== "withheld") {
+        errors.push("sources.boundary.polygons: must be served or withheld");
+      }
+      if (boundary.polygons === "withheld" && !isNonEmptyString(boundary.polygonsNote)) {
+        errors.push("sources.boundary.polygonsNote: required when the polygons are withheld");
+      }
     }
     const waterBodies = raw.sources.waterBodiesCensus;
     if (waterBodies !== undefined) {

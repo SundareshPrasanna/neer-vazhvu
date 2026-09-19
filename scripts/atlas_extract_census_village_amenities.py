@@ -144,6 +144,7 @@ def extract_records(
     district_code: str,
     sheet_name: str = DEFAULT_SHEET,
     allow_empty_gram_panchayat: bool = False,
+    gram_panchayat_names_without_codes: bool = False,
     subdistrict_codes: set[str] | None = None,
     villages_without_gram_panchayat: set[str] | None = None,
 ) -> list[dict[str, str | list[dict[str, str]]]]:
@@ -227,7 +228,14 @@ def extract_records(
                             "cdBlockCode",
                             "cdBlockName",
                         )
-                        if no_gram_panchayat:
+                        if gram_panchayat_names_without_codes and not raw_record.get(
+                            "gramPanchayatCode"
+                        ):
+                            # Karnataka prints the Panchayat's name with no code;
+                            # an LGD-built district takes composition from the
+                            # LGD register, so the uncoded name is not read.
+                            record["gramPanchayats"] = []
+                        elif no_gram_panchayat:
                             if raw_record.get("gramPanchayatCode"):
                                 raise ValueError(
                                     f"Census row {raw_record['villageCode']} is listed as "
@@ -277,6 +285,11 @@ def main() -> int:
         help="accept rows with no Gram Panchayat code/name (the Maharashtra release leaves the column blank; composition then comes from the LGD register, not from the Census)",
     )
     parser.add_argument(
+        "--gram-panchayat-names-without-codes",
+        action="store_true",
+        help="with --allow-empty-gram-panchayat: rows that print a Gram Panchayat name but no code (the Karnataka release) keep an empty list; composition comes from the LGD register",
+    )
+    parser.add_argument(
         "--subdistrict-codes",
         default="",
         help="comma-separated Census subdistrict codes to keep: the taluks of a district formed after 2011, whose rows sit under the parent district's code (Tirupathur under Vellore)",
@@ -302,6 +315,7 @@ def main() -> int:
                 args.district_code,
                 sheet_name=args.sheet,
                 allow_empty_gram_panchayat=args.allow_empty_gram_panchayat,
+                gram_panchayat_names_without_codes=args.gram_panchayat_names_without_codes,
                 subdistrict_codes=subdistrict_codes or None,
                 villages_without_gram_panchayat=villages_without_gram_panchayat or None,
             ),

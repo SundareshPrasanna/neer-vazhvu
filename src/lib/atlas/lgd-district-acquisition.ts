@@ -462,6 +462,7 @@ export async function acquireLgdDistrictSourceExtract(
           expectedVillages: plan.expectedCounts.censusVillages,
           sheet: plan.district.censusWorkbookSheet,
           allowEmptyGramPanchayat: true,
+          gramPanchayatNamesWithoutCodes: plan.district.censusGramPanchayatColumns === "names-without-codes",
         },
         acquiredAt,
         cache,

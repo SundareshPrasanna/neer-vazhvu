@@ -45,6 +45,8 @@ import {
   reviewedInputPath,
   upstreamSource,
   writeAtlasArtifact,
+  lgdStateUpstreams,
+  type UpstreamKey,
 } from "./lib/atlas-producer";
 import { readFileSync } from "node:fs";
 
@@ -57,7 +59,7 @@ const CACHE = "census-village-attributes.json";
 interface CensusRelease {
   catalogUrl: string;
   sheet: string | undefined;
-  upstream: "census" | "censusMh";
+  upstream: UpstreamKey;
 }
 
 function censusReleaseOf(district: ReturnType<typeof requireDistrict>): CensusRelease {
@@ -66,7 +68,11 @@ function censusReleaseOf(district: ReturnType<typeof requireDistrict>): CensusRe
       district: { censusWorkbookSheet: string };
       sources: { census: { catalogUrl: string } };
     };
-    return { catalogUrl: plan.sources.census.catalogUrl, sheet: plan.district.censusWorkbookSheet, upstream: "censusMh" };
+    return {
+      catalogUrl: plan.sources.census.catalogUrl,
+      sheet: plan.district.censusWorkbookSheet,
+      upstream: lgdStateUpstreams(district).census,
+    };
   }
   return { catalogUrl: "https://censusindia.gov.in/nada/index.php/catalog/45377", sheet: undefined, upstream: "census" };
 }
