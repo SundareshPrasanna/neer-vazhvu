@@ -124,6 +124,10 @@ For a **metropolitan region** rather than a single corporation, set `placeKind: 
 
 Worked examples: Madurai onboarding (`madurai_onboarding`, PR #97) is the canonical reference for the `allocation` pattern; Bengaluru onboarding (`bangalore_onboarding`) covers the `cauvery-pumping` pattern + Kannada localization + 13-body rich-data deep-zoom batch; Mumbai onboarding (`mumbai_onboarding`, PR #147) is the most recent and covers the region pattern, the days-left-with-caveats hero, the Allocation Ledger + Commitments Register data files, and workflow-based (GitHub Actions artifact-commit) data feeds.
 
+### Adding a new district
+
+The District Atlas is the same config-driven architecture for India's districts: a page per district at `/atlas/[state]/[district]`, a page per block (TN) or taluka (MH), and a page per Gram Panchayat, all turning government registers into place pages without inventing anything between them. **Before starting, read `docs/methodology/add-a-district.md`** - the step-by-step walkthrough with Kolar (the most recent district, and the first beyond TN and MH) as the worked example - and `docs/methodology/district-atlas-v1.md` for the as-built methodology. The walkthrough covers the three hard parts: which adapter builds the district (TNRD for Tamil Nadu, the LGD adapter for other states, a much bigger job for a brand-new state), the four reviewed `pipeline-inputs/atlas/<state>/<slug>/` files every district commits, and the rule that a register that cannot be joined becomes a named gap, never a guess (Kolar's withheld polygons and unnamed water-body serials are the patterns to copy).
+
 ## Earth Engine Phase 1
 
 If you are working on the satellite summary layer, also read [GEE_PHASE2_3_PLAN.md](GEE_PHASE2_3_PLAN.md) and the shipped-method write-ups under [docs/methodology/](docs/methodology/).
@@ -207,6 +211,7 @@ Current workflow note:
 - **Localization (UI)** - ~1,500 i18n keys covering EN + TA + KN; `npm run i18n:check` enforces parity.
 - **Testing** - Unit tests for scrapers, calculator, intelligence modules, and the shared `src/lib/utils/river-classification.ts` (CPCB Best-Use classifier).
 - **Adding a fifth city** - see the "Adding a new city" subsection above.
+- **Adding a district** - see the "Adding a new district" subsection above (and `docs/methodology/add-a-district.md`).
 
 ## Submitting a Pull Request
 
