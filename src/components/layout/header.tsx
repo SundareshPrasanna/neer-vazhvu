@@ -247,7 +247,7 @@ function SiteHeader() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2 shrink-0">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="none">
                   <path
                     d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"
@@ -290,7 +290,7 @@ function SiteHeader() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2 min-w-0">
             <Link href={homeHref} className="flex items-center gap-2 shrink-0">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center">
                 <svg
                   viewBox="0 0 24 24"
                   className="w-5 h-5 text-white"
