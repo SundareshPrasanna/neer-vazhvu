@@ -15,17 +15,17 @@
       }
     ],
     "method": "api",
-    "produced_at": "2026-05-25",
-    "produced_by": "scripts/fetch-wris-groundwater-bangalore.ts",
-    "note": "Block-level dynamic groundwater assessment (GEC classes and stage-of-extraction) for Bangalore Urban's 5 assessment units, acquired via the WRIS NWIC GWR{year}_CGWB ArcGIS services, vintages 2011-2024.",
+    "produced_at": "2026-09-26",
+    "produced_by": "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "note": "Block-level dynamic groundwater assessment (category and stage of extraction) for Bangalore Urban's 6 assessment units. 2011, 2013 and 2017 come from the WRIS NWIC GWR{year}_CGWB ArcGIS services (scripts/fetch-wris-groundwater-bangalore.ts); 2019-20 onward from the IN-GRES API, upserted in place by build_ingres_gwr.py --city bangalore. The WRIS 2020-2024 vintages equal IN-GRES 2019-20 to 2023-24 to the rounding. Some extraction inputs are carried forward between editions (Anekal and Yelahanka irrigation draft is identical in 2024-25 and 2025-26), so edition-to-edition movement is not a measured annual trend.",
     "conventions": {
-      "comparability": "CGWB assessment units can change between GEC editions (WRIS also respells the district 'Bangalore Urban'/'Bengaluru Urban' across vintages); year-on-year comparisons must check assessment-unit continuity before differencing."
+      "comparability": "CGWB assessment units can change between GEC editions (WRIS also respells the district 'Bangalore Urban'/'Bengaluru Urban' across vintages); year-on-year comparisons must check assessment-unit continuity before differencing. Units were redrawn between 2019-20 and 2021-22 (Bangalore-City appears; East, North and Yelahanka shrink; district recharge-worthy area 172,061 -> 213,026 ha) and are unchanged from 2021-22 to 2025-26."
     }
   },
-  "source": "India WRIS / CGWB",
-  "source_url": "https://indiawris.gov.in/wris/",
+  "source": "IN-GRES (CGWB + Karnataka) from 2019-20; India WRIS / CGWB for 2011-2017",
+  "source_url": "https://ingres.iith.ac.in/",
   "place_id": "bangalore",
-  "fetched_at": "2026-05-25T11:34:56.340Z",
+  "fetched_at": "2026-09-26",
   "years": [
     2011,
     2013,
@@ -33,7 +33,9 @@
     2020,
     2022,
     2023,
-    2024
+    2024,
+    2025,
+    2026
   ],
   "blocks": [
     {
@@ -62,13 +64,15 @@
         },
         {
           "year": 2020,
+          "year_label": "2019-20",
           "class": "Over Exploited",
           "development_pct": 161.1,
-          "availability_ham": 2727,
+          "availability_ham": 2727.0,
           "draft_total_ham": 4393.4
         },
         {
           "year": 2022,
+          "year_label": "2021-22",
           "class": "Over Exploited",
           "development_pct": 239.2,
           "availability_ham": 2076.4,
@@ -76,6 +80,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 204.3,
           "availability_ham": 2450.6,
@@ -83,88 +88,34 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 305.8,
           "availability_ham": 1657.4,
           "draft_total_ham": 5067.7
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 378.9,
+          "availability_ham": 1414.8,
+          "draft_total_ham": 5360.1
+        },
+        {
+          "year": 2026,
+          "year_label": "2025-26",
+          "class": "Over Exploited",
+          "development_pct": 395.0,
+          "availability_ham": 1416.3,
+          "draft_total_ham": 5594.3
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 305.8,
-        "availability_ham": 1657.4,
-        "draft_total_ham": 5067.7
-      }
-    },
-    {
-      "name": "Yelahanka",
-      "history": [
-        {
-          "year": 2020,
-          "class": "Over Exploited",
-          "development_pct": 139.5,
-          "availability_ham": 3263.9,
-          "draft_total_ham": 4554.6
-        },
-        {
-          "year": 2022,
-          "class": "Over Exploited",
-          "development_pct": 157.1,
-          "availability_ham": 3444.2,
-          "draft_total_ham": 5410.1
-        },
-        {
-          "year": 2023,
-          "class": "Over Exploited",
-          "development_pct": 225.7,
-          "availability_ham": 2410.3,
-          "draft_total_ham": 5440
-        },
-        {
-          "year": 2024,
-          "class": "Over Exploited",
-          "development_pct": 259.9,
-          "availability_ham": 2337.3,
-          "draft_total_ham": 6075.3
-        }
-      ],
-      "latest": {
-        "class": "Over Exploited",
-        "development_pct": 259.9,
-        "availability_ham": 2337.3,
-        "draft_total_ham": 6075.3
-      }
-    },
-    {
-      "name": "Bangalore-City",
-      "history": [
-        {
-          "year": 2022,
-          "class": "Over Exploited",
-          "development_pct": 192.6,
-          "availability_ham": 2377.9,
-          "draft_total_ham": 4580.3
-        },
-        {
-          "year": 2023,
-          "class": "Over Exploited",
-          "development_pct": 217.4,
-          "availability_ham": 2128.1,
-          "draft_total_ham": 4626.7
-        },
-        {
-          "year": 2024,
-          "class": "Over Exploited",
-          "development_pct": 242.1,
-          "availability_ham": 8270.5,
-          "draft_total_ham": 20021.3
-        }
-      ],
-      "latest": {
-        "class": "Over Exploited",
-        "development_pct": 242.1,
-        "availability_ham": 8270.5,
-        "draft_total_ham": 20021.3
+        "development_pct": 395.0,
+        "availability_ham": 1416.3,
+        "draft_total_ham": 5594.3
       }
     },
     {
@@ -193,13 +144,15 @@
         },
         {
           "year": 2020,
+          "year_label": "2019-20",
           "class": "Over Exploited",
           "development_pct": 144.9,
           "availability_ham": 2023.3,
-          "draft_total_ham": 2932
+          "draft_total_ham": 2932.0
         },
         {
           "year": 2022,
+          "year_label": "2021-22",
           "class": "Over Exploited",
           "development_pct": 170.4,
           "availability_ham": 1928.1,
@@ -207,6 +160,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 209.2,
           "availability_ham": 1600.8,
@@ -214,17 +168,144 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
-          "development_pct": 231,
+          "development_pct": 231.0,
           "availability_ham": 2243.3,
           "draft_total_ham": 5181.1
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 249.7,
+          "availability_ham": 2097.0,
+          "draft_total_ham": 5235.2
+        },
+        {
+          "year": 2026,
+          "year_label": "2025-26",
+          "class": "Over Exploited",
+          "development_pct": 257.9,
+          "availability_ham": 2099.5,
+          "draft_total_ham": 5415.6
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 231,
-        "availability_ham": 2243.3,
-        "draft_total_ham": 5181.1
+        "development_pct": 257.9,
+        "availability_ham": 2099.5,
+        "draft_total_ham": 5415.6
+      }
+    },
+    {
+      "name": "Yelahanka",
+      "history": [
+        {
+          "year": 2020,
+          "year_label": "2019-20",
+          "class": "Over Exploited",
+          "development_pct": 139.5,
+          "availability_ham": 3263.9,
+          "draft_total_ham": 4554.6
+        },
+        {
+          "year": 2022,
+          "year_label": "2021-22",
+          "class": "Over Exploited",
+          "development_pct": 157.1,
+          "availability_ham": 3444.2,
+          "draft_total_ham": 5410.1
+        },
+        {
+          "year": 2023,
+          "year_label": "2022-23",
+          "class": "Over Exploited",
+          "development_pct": 225.7,
+          "availability_ham": 2410.3,
+          "draft_total_ham": 5440.0
+        },
+        {
+          "year": 2024,
+          "year_label": "2023-24",
+          "class": "Over Exploited",
+          "development_pct": 259.9,
+          "availability_ham": 2337.3,
+          "draft_total_ham": 6075.3
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 251.3,
+          "availability_ham": 2444.9,
+          "draft_total_ham": 6144.7
+        },
+        {
+          "year": 2026,
+          "year_label": "2025-26",
+          "class": "Over Exploited",
+          "development_pct": 251.5,
+          "availability_ham": 2449.0,
+          "draft_total_ham": 6158.7
+        }
+      ],
+      "latest": {
+        "class": "Over Exploited",
+        "development_pct": 251.5,
+        "availability_ham": 2449.0,
+        "draft_total_ham": 6158.7
+      }
+    },
+    {
+      "name": "Bangalore-City",
+      "history": [
+        {
+          "year": 2022,
+          "year_label": "2021-22",
+          "class": "Over Exploited",
+          "development_pct": 192.6,
+          "availability_ham": 2377.9,
+          "draft_total_ham": 4580.3
+        },
+        {
+          "year": 2023,
+          "year_label": "2022-23",
+          "class": "Over Exploited",
+          "development_pct": 217.4,
+          "availability_ham": 2128.2,
+          "draft_total_ham": 4626.7
+        },
+        {
+          "year": 2024,
+          "year_label": "2023-24",
+          "class": "Over Exploited",
+          "development_pct": 242.1,
+          "availability_ham": 8270.5,
+          "draft_total_ham": 20021.3
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 217.0,
+          "availability_ham": 9496.8,
+          "draft_total_ham": 20606.6
+        },
+        {
+          "year": 2026,
+          "year_label": "2025-26",
+          "class": "Over Exploited",
+          "development_pct": 223.4,
+          "availability_ham": 9551.0,
+          "draft_total_ham": 21335.2
+        }
+      ],
+      "latest": {
+        "class": "Over Exploited",
+        "development_pct": 223.4,
+        "availability_ham": 9551.0,
+        "draft_total_ham": 21335.2
       }
     },
     {
@@ -253,6 +334,7 @@
         },
         {
           "year": 2020,
+          "year_label": "2019-20",
           "class": "Over Exploited",
           "development_pct": 102.9,
           "availability_ham": 4667.1,
@@ -260,6 +342,7 @@
         },
         {
           "year": 2022,
+          "year_label": "2021-22",
           "class": "Over Exploited",
           "development_pct": 107.8,
           "availability_ham": 4726.4,
@@ -267,6 +350,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 119.2,
           "availability_ham": 4311.5,
@@ -274,17 +358,34 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 126.1,
           "availability_ham": 4909.6,
           "draft_total_ham": 6190.4
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 126.8,
+          "availability_ham": 5070.8,
+          "draft_total_ham": 6431.3
+        },
+        {
+          "year": 2026,
+          "year_label": "2025-26",
+          "class": "Over Exploited",
+          "development_pct": 121.9,
+          "availability_ham": 5449.6,
+          "draft_total_ham": 6641.3
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 126.1,
-        "availability_ham": 4909.6,
-        "draft_total_ham": 6190.4
+        "development_pct": 121.9,
+        "availability_ham": 5449.6,
+        "draft_total_ham": 6641.3
       }
     },
     {
@@ -313,13 +414,15 @@
         },
         {
           "year": 2020,
+          "year_label": "2019-20",
           "class": "Over Exploited",
-          "development_pct": 167,
+          "development_pct": 167.0,
           "availability_ham": 3180.5,
           "draft_total_ham": 5312.9
         },
         {
           "year": 2022,
+          "year_label": "2021-22",
           "class": "Over Exploited",
           "development_pct": 128.7,
           "availability_ham": 6665.4,
@@ -327,6 +430,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 102.3,
           "availability_ham": 8444.7,
@@ -334,17 +438,34 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
-          "development_pct": 118,
+          "development_pct": 118.0,
           "availability_ham": 9147.4,
           "draft_total_ham": 10796.6
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 105.6,
+          "availability_ham": 10314.5,
+          "draft_total_ham": 10892.0
+        },
+        {
+          "year": 2026,
+          "year_label": "2025-26",
+          "class": "Over Exploited",
+          "development_pct": 106.4,
+          "availability_ham": 10314.6,
+          "draft_total_ham": 10971.8
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 118,
-        "availability_ham": 9147.4,
-        "draft_total_ham": 10796.6
+        "development_pct": 106.4,
+        "availability_ham": 10314.6,
+        "draft_total_ham": 10971.8
       }
     }
   ]

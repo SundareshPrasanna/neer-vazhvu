@@ -36,6 +36,8 @@ classifies it on a different axis. The surrounding KMA ring IS assessed
 regional picture is real even where the core district's is categorically absent.
 
 Run:  python3 neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata
+      python3 neer-vazhvu-api/scripts/build_ingres_gwr.py --city bangalore
+        then: npx tsx scripts/compute-bangalore-ward-profiles.ts
 """
 
 import argparse
@@ -84,6 +86,7 @@ STATE_UUIDS = {
     # Gujarat's came from the COUNTRY-level call this file recommends above,
     # not from either bundle table.
     "GUJARAT": "8fd29251-6e20-4f33-9a96-f47cab45eb13",
+    "KARNATAKA": "eaec6bbb-a219-415f-bdba-991c42586352",
 }
 
 # Scope kinds must agree with schemas/nvdm/scopes.json or the artifact fails
@@ -264,6 +267,40 @@ CITIES = {
             "portal upper-cases every unit name before 2023-2024 and title-cases "
             "after, and MAVAL is spelled Mawal in the 2025-2026 edition only.",
         ],
+    },
+    # Bengaluru EXTENDS a series rather than owning it: IN-GRES does not serve
+    # 2011-2017 per unit, WRIS does (scripts/fetch-wris-groundwater-bangalore.ts), so IN-GRES editions
+    # are upserted into the blocks already there. See build_extended().
+    "bangalore": {
+        "state": "KARNATAKA",
+        "state_label": "Karnataka",
+        "source_id": "ingres-gw-assessment-ka",
+        "extend": {
+            "state": "KARNATAKA",
+            "district": "BENGALURU(URBAN)",
+            "district_uuid": "fc194628-dfa2-4026-b410-5535a5ceea8c",
+        },
+        # 2020-2021 is not published. The five editions 2019-20 to 2023-24
+        # equal the WRIS extract they replace, to the rounding.
+        "years": [
+            "2019-2020",
+            "2021-2022",
+            "2022-2023",
+            "2023-2024",
+            "2024-2025",
+            "2025-2026",
+        ],
+        # Substring -> the block name the WRIS series and polygons already use.
+        # IN-GRES spells them BENGALURU EAST / Bangalore City / Bangalore-City
+        # across editions.
+        "unit_names": {
+            "yelahanka": "Yelahanka",
+            "anekal": "Anekal",
+            "north": "Bangalore (North)",
+            "south": "Bangalore-South",
+            "east": "Bangalore-East",
+            "city": "Bangalore-City",
+        },
     },
 }
 
@@ -566,6 +603,100 @@ def build_drilled(city: str, cfg: dict) -> int:
     return 0
 
 
+def build_extended(city: str, cfg: dict) -> int:
+    """Upsert IN-GRES editions into an existing blocks series, keeping older
+    vintages, then move the block polygons' attributes to the latest edition
+    (the ward profiles read them). Any change to an already-published value is
+    printed, never applied silently."""
+    path = DATA_DIR / f"gwr-blocks-{city}.json"
+    geo_path = REPO_ROOT / "public" / "geojson" / f"{city}-gwr-blocks.geojson"
+    doc = json.loads(path.read_text())
+    geo = json.loads(geo_path.read_text())
+    blocks = {b["name"]: b for b in doc["blocks"]}
+    newest: dict[str, tuple[int, dict]] = {}
+
+    for year in cfg["years"]:
+        rows = [
+            r
+            for r in fetch_units(cfg["extend"], year)
+            if isinstance(r, dict) and (r.get("locationName") or "").lower() != "total"
+        ]
+        if not rows:
+            print(f"  {year}: no edition published", file=sys.stderr)
+            continue
+        end = int(year.split("-")[1])
+        for r in rows:
+            raw = r.get("locationName") or ""
+            name = next(
+                (v for k, v in cfg["unit_names"].items() if k in raw.lower()), None
+            )
+            if name not in blocks:
+                print(
+                    f"  ! {year}: unknown unit {raw!r}, no polygon for it",
+                    file=sys.stderr,
+                )
+                return 1
+            cat = (r.get("category") or {}).get("total")
+            stage = total_of(r.get("stageOfExtraction"))
+            if CLASS_LABEL.get(cat) is None or stage is None:
+                print(
+                    f"  ! {raw} {year}: category={cat!r} stage={stage!r}",
+                    file=sys.stderr,
+                )
+                return 1
+            avail = fresh_of(r.get("totalGWAvailability"))
+            draft = fresh_of((r.get("draftData") or {}).get("total"))
+            entry = {
+                "year": end,
+                "year_label": f"{year[:4]}-{year[-2:]}",
+                "class": CLASS_LABEL[cat],
+                "development_pct": round(stage, 1),
+                "availability_ham": _r1(avail),
+                "draft_total_ham": _r1(draft),
+            }
+            hist = blocks[name]["history"]
+            old = next((h for h in hist if h["year"] == end), None)
+            if old and any(old.get(k) != entry[k] for k in entry if k != "year_label"):
+                print(f"  ~ {name} {year}: {old} -> {entry}", file=sys.stderr)
+            hist[:] = sorted(
+                [h for h in hist if h["year"] != end] + [entry], key=lambda h: h["year"]
+            )
+            if end >= newest.get(name, (0, {}))[0]:
+                newest[name] = (
+                    end,
+                    {
+                        "class": entry["class"],
+                        "sgw_dev_pe": stage,
+                        "na_gwa": round(avail, 2),
+                        "agwd_tot": round(draft, 2),
+                    },
+                )
+
+    last = max(e for e, _ in newest.values())
+    for b in doc["blocks"]:
+        h = b["history"][-1]
+        b["latest"] = {
+            k: h[k]
+            for k in ("class", "development_pct", "availability_ham", "draft_total_ham")
+        }
+        if newest.get(b["name"], (0,))[0] != last:
+            print(f"  ! {b['name']} is not in the latest edition", file=sys.stderr)
+    doc["blocks"].sort(key=lambda b: -b["latest"]["development_pct"])
+    doc["years"] = sorted({h["year"] for b in doc["blocks"] for h in b["history"]})
+    doc["fetched_at"] = date.today().isoformat()
+    for f in geo["features"]:
+        f["properties"].update(newest[f["properties"]["block"]][1])
+
+    write_artifact(path, doc)
+    write_artifact(geo_path, geo)
+    for b in doc["blocks"]:
+        print(
+            f"  {b['name']:18} {b['latest']['development_pct']:6.1f}%  {b['latest']['class']}",
+            file=sys.stderr,
+        )
+    return 0
+
+
 def _r1(v):
     return round(v, 1) if isinstance(v, (int, float)) else None
 
@@ -613,6 +744,8 @@ def main() -> int:
 
     if "drill" in cfg:
         return build_drilled(args.city, cfg)
+    if "extend" in cfg:
+        return build_extended(args.city, cfg)
 
     by_district: dict[str, dict] = {}
     years_seen = []

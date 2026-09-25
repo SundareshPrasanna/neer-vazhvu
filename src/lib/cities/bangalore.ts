@@ -50,10 +50,9 @@ export const BANGALORE: CityConfig = {
   hasCommitments: true,
   // Per-ward GW depth interpolation (`depth`) is off because Bengaluru
   // has only 13 CGWB telemetric stations across 369 wards - density too
-  // low to honestly IDW. `exploitation` is ON since round 11 (WRIS
-  // GEC 2024 extract): 6 CGWB blocks, every one Over-Exploited, with
-  // Bangalore-East at 306% draft/recharge and Yelahanka up from 140%
-  // to 260% in four years (2020-2024). `risk` ships the ward-risk
+  // low to honestly IDW. `exploitation` is ON: 6 assessment blocks, every
+  // one Over-Exploited in IN-GRES 2025-26 (Bangalore-East worst at
+  // 395%). `risk` ships the ward-risk
   // composite from ward-risk-bangalore.json (round 5); `cgwbStations`
   // surfaces the 13-station point overlay (round 7).
   groundwaterViews: {

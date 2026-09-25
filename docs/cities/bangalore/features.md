@@ -27,7 +27,7 @@ Bengaluru-only longitudinal panel. The single sharpest metric of system failure 
 Different methodology from Chennai. With only 13 CGWB telemetric stations across 369 GBA wards (or 198 BBMP wards), IDW-interpolating a per-ward depth choropleth would manufacture precision the data doesn't support. So:
 
 - **IISc 80-ward stress overlay (headline)** - 80 critically-over-extracted BBMP wards from the April 2025 IISc Groundwater Outlook; rendered as a percentile choropleth (0-100 composite) directly on `/bangalore` (above the fold) and on `/bangalore/groundwater`.
-- **Block-level CGWB exploitation** - 6 Bangalore Urban blocks (Bangalore N/S/E/City, Yelahanka, Anekal) tile the city; ALL six are Over-Exploited every year on record. Bangalore-East worst at 306% draft-vs-recharge (GEC 2024); Yelahanka 140% → 260% in 4 years (2020-2024).
+- **Block-level CGWB exploitation** - 6 Bangalore Urban blocks (Bangalore N/S/E/City, Yelahanka, Anekal) tile the city; ALL six are Over-Exploited in every edition on record. Bangalore-East worst at 395% stage of extraction (IN-GRES 2025-26); Yelahanka 157% (2021-22) → 251% (2025-26).
 - **CGWB Year Book + WRIS station point overlay** - 13 telemetric stations with daily readings; tagged with block + well type + aquifer.
 
 Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, `risk`, `cgwbStations`.

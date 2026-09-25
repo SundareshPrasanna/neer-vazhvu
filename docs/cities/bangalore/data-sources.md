@@ -61,15 +61,15 @@ Surfaces:
 
 | | |
 |---|---|
-| **Source** | India WRIS GEC 2024 (Dynamic Groundwater Resource Assessment) ArcGIS REST endpoint |
-| **Method** | `scripts/fetch-wris-groundwater-bangalore.ts` extracts 6 canonical blocks across 7 vintages (2011-2024) |
+| **Source** | IN-GRES API (CGWB + Karnataka) for 2019-20 onward; India WRIS GEC ArcGIS REST endpoint for 2011-2017 |
+| **Method** | `scripts/fetch-wris-groundwater-bangalore.ts` (WRIS vintages + block polygons), then `python3 neer-vazhvu-api/scripts/build_ingres_gwr.py --city bangalore` upserts every IN-GRES edition and moves the polygon attributes to the latest; rerun `scripts/compute-bangalore-ward-profiles.ts` after |
 | **Frequency** | Annual (refresh when GEC publishes) |
 | **Coverage** | 6 Bangalore Urban blocks: Bangalore (North), Bangalore-East, Bangalore-South, Bangalore-City, Yelahanka, Anekal |
 | **Output** | `public/data/gwr-blocks-bangalore.json` + `public/geojson/bangalore-gwr-blocks.geojson` |
 
 Surfaces:
 - Block exploitation classification on `/bangalore/groundwater` (Safe / Semi Critical / Critical / Over Exploited).
-- **All 6 blocks have been Over-Exploited every year on record.** Bangalore-East worst at **306% draft-vs-recharge** in GEC 2024; Yelahanka accelerated **140% → 260% in 4 years** (2020-2024).
+- **All 6 blocks are Over-Exploited in every edition on record (2011 to 2025-26).** Bangalore-East worst at **395% stage of extraction** in 2025-26 (306% in 2023-24); Yelahanka **157% (2021-22) → 251% (2025-26)**, having reached 259.9% in 2023-24. District 179.4%. Units were redrawn between 2019-20 and 2021-22 (Bangalore-City appears; East, North and Yelahanka shrink), so compare across that break with care.
 - Used as the systemic-extraction marker in the BangaloreDailyBriefing template variants.
 
 ## CGWB Station-Level Groundwater (Bangalore + Bangalore Rural districts)

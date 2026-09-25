@@ -17,6 +17,8 @@
  *   public/geojson/bangalore-gwr-blocks.geojson
  *
  * Run: npx tsx scripts/fetch-wris-groundwater-bangalore.ts
+ *   then: python3 neer-vazhvu-api/scripts/build_ingres_gwr.py --city bangalore
+ *   (this script stops at 2023-24; that one adds the IN-GRES editions since)
  */
 
 import { resolve } from "path";
