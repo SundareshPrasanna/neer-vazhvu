@@ -14,7 +14,7 @@ interface Props {
 /**
  * Client wrapper for the city dashboard's badge row. Lives as its own
  * component so the "PREVIEW" pill can read the active language from the
- * LanguageContext - the parent page (/[cityId]/page.tsx) is a Server
+ * LanguageContext - the parent page (/[cityId]/(home)/page.tsx) is a Server
  * Component, so it can't call useLanguage() directly.
  */
 export function CityHeaderBadges({ displayName, stateCode, preview }: Props) {

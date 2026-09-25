@@ -1,9 +1,10 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { CityHeaderBadges } from "@/components/dashboard/city-header-badges";
-import { getPlaceConfig } from "@/lib/cities";
+import { tryGetPlaceConfig } from "@/lib/cities";
 import type { PlaceConfig } from "@/lib/cities";
 import { FEATURE_AVAILABILITY } from "@/lib/cities/routing";
 import {
@@ -121,21 +122,24 @@ function waterBodiesBlurb(config: PlaceConfig): string {
 // ---------------------------------------------------------------------------
 
 async function getAiNarrative(): Promise<AiNarrative | null> {
-  const { createServerClient } = await import("@/lib/supabase/server");
+  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
   const supabase = createServerClient();
 
   // Scope to today's briefing (IST) so stale AI narratives trigger template fallback
   const todayIST = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kolkata",
   }).format(new Date());
-  const { data } = await supabase
-    .from("daily_briefing")
-    .select(
-      "briefing_date, ai_headline_en, ai_headline_ta, ai_body_en, ai_body_ta, ai_source_dates, ai_model",
-    )
-    .eq("briefing_date", todayIST)
-    .not("ai_headline_en", "is", null)
-    .limit(1);
+  const { data } = await failOnOutage(
+    supabase
+      .from("daily_briefing")
+      .select(
+        "briefing_date, ai_headline_en, ai_headline_ta, ai_body_en, ai_body_ta, ai_source_dates, ai_model",
+      )
+      .eq("briefing_date", todayIST)
+      .not("ai_headline_en", "is", null)
+      .limit(1),
+    "daily_briefing",
+  );
 
   if (!data?.[0]) return null;
 
@@ -154,28 +158,34 @@ async function getAiNarrative(): Promise<AiNarrative | null> {
 async function getReservoirCatchmentContextRows(): Promise<
   ReservoirCatchmentContextRow[] | null
 > {
-  const { createServerClient } = await import("@/lib/supabase/server");
+  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
   const supabase = createServerClient();
 
-  const latestDateResult = await supabase
-    .from("reservoir_catchment_context")
-    .select("context_date")
-    .eq("window_days", 30)
-    .order("context_date", { ascending: false })
-    .limit(1);
+  const latestDateResult = await failOnOutage(
+    supabase
+      .from("reservoir_catchment_context")
+      .select("context_date")
+      .eq("window_days", 30)
+      .order("context_date", { ascending: false })
+      .limit(1),
+    "reservoir_catchment_context latest date",
+  );
 
   if (latestDateResult.error || !latestDateResult.data?.[0]?.context_date) {
     return null;
   }
 
   const contextDate = latestDateResult.data[0].context_date;
-  const rowsResult = await supabase
-    .from("reservoir_catchment_context")
-    .select(
-      "reservoir, context_date, window_days, rain_total_mm, baseline_mm, anomaly_pct, context_level",
-    )
-    .eq("context_date", contextDate)
-    .eq("window_days", 30);
+  const rowsResult = await failOnOutage(
+    supabase
+      .from("reservoir_catchment_context")
+      .select(
+        "reservoir, context_date, window_days, rain_total_mm, baseline_mm, anomaly_pct, context_level",
+      )
+      .eq("context_date", contextDate)
+      .eq("window_days", 30),
+    "reservoir_catchment_context rows",
+  );
 
   if (rowsResult.error || !rowsResult.data?.length) {
     return null;
@@ -195,7 +205,7 @@ async function getReservoirCatchmentContextRows(): Promise<
 async function getGroundwaterData(
   cityId: string,
 ): Promise<GroundwaterApiResponse | null> {
-  const { createServerClient } = await import("@/lib/supabase/server");
+  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
   const supabase = createServerClient();
 
   // Canonical ward zone names for this city (Chennai: ward-names.json).
@@ -210,29 +220,39 @@ async function getGroundwaterData(
     // No ward-names file for this city; fall back to per-row ward names.
   }
 
-  const { data: latest } = await supabase
-    .from("groundwater_monthly")
-    .select("year, month")
-    .order("year", { ascending: false })
-    .order("month", { ascending: false })
-    .limit(1);
+  const { data: latest } = await failOnOutage(
+    supabase
+      .from("groundwater_monthly")
+      .select("year, month")
+      .order("year", { ascending: false })
+      .order("month", { ascending: false })
+      .limit(1),
+    "groundwater_monthly latest period",
+  );
 
   if (!latest || latest.length === 0) return null;
 
   const { year, month } = latest[0];
 
-  const { data: currentData } = await supabase
-    .from("groundwater_monthly")
-    .select("*")
-    .eq("year", year)
-    .eq("month", month)
-    .order("ward_number", { ascending: true });
-
-  const { data: prevYearData } = await supabase
-    .from("groundwater_monthly")
-    .select("ward_number, depth_to_water_m")
-    .eq("year", year - 1)
-    .eq("month", month);
+  const [{ data: currentData }, { data: prevYearData }] = await Promise.all([
+    failOnOutage(
+      supabase
+        .from("groundwater_monthly")
+        .select("*")
+        .eq("year", year)
+        .eq("month", month)
+        .order("ward_number", { ascending: true }),
+      "groundwater_monthly current",
+    ),
+    failOnOutage(
+      supabase
+        .from("groundwater_monthly")
+        .select("ward_number, depth_to_water_m")
+        .eq("year", year - 1)
+        .eq("month", month),
+      "groundwater_monthly previous year",
+    ),
+  ]);
 
   const prevYearMap = new Map(
     prevYearData?.map(
@@ -329,9 +349,10 @@ async function buildCityStoryNarrative(
 }
 
 export async function CityDashboard({ cityId }: { cityId: string }) {
-  // The layout has already validated cityId and redirected /chennai; we can
-  // safely look up the config here.
-  const config = getPlaceConfig(cityId);
+  // The layout renders concurrently with this page, so its notFound() does not
+  // guard this lookup; a throw here would turn a cached route's 404 into a 500.
+  const config = tryGetPlaceConfig(cityId);
+  if (!config) notFound();
   const isLegacy = config.reservoirDataSource === "legacy-v1";
 
   // Legacy-v1 cities (Chennai) keep the demo-mode fallback: when Supabase is
@@ -341,13 +362,26 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
     return <DemoDashboard />;
   }
 
-  const [snapshot, waterEstimate] = await Promise.all([
-    loadCitySnapshot(config),
-    loadCityWaterEstimate(config),
-  ]);
+  // The optional sections are flag-gated (Chennai today) because their
+  // loaders assume single-tenant tables; other cities never query them. None
+  // depends on the reservoir reads, so everything loads in one batch.
+  const [snapshot, waterEstimate, facts, aiNarrative, groundwaterData, reservoirCatchmentContextRows] =
+    await Promise.all([
+      loadCitySnapshot(config),
+      loadCityWaterEstimate(config),
+      loadFacts(cityId),
+      config.dashboard?.aiBriefing ? getAiNarrative() : Promise.resolve(null),
+      config.dashboard?.groundwaterSnapshot
+        ? getGroundwaterData(cityId)
+        : Promise.resolve(null),
+      config.dashboard?.reservoirCatchmentContext
+        ? getReservoirCatchmentContextRows()
+        : Promise.resolve(null),
+    ]);
 
-  // For legacy-v1 cities, no reservoir reading (e.g. Supabase connection failed)
-  // falls back to demo mode, preserving Chennai's prior behaviour.
+  // Legacy-v1 cities with an empty reading table fall back to demo mode. An
+  // unreachable Supabase throws instead (failOnOutage), so the cached page
+  // stays up rather than being replaced by the demo.
   if (isLegacy && !waterEstimate.lastUpdated) {
     return <DemoDashboard />;
   }
@@ -373,21 +407,6 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // Convert the per-city snapshot into the shared ReservoirSummary[]
   // shape Chennai's ReservoirCards consumes.
   const summaries = snapshotToSummaries(config, snapshot);
-  const facts = await loadFacts(cityId);
-
-  // Optional flag-gated sections (Chennai today). The loaders assume
-  // single-tenant tables; gate strictly on the config flags so other cities
-  // never query tables they don't populate.
-  const [aiNarrative, groundwaterData, reservoirCatchmentContextRows] =
-    await Promise.all([
-      config.dashboard?.aiBriefing ? getAiNarrative() : Promise.resolve(null),
-      config.dashboard?.groundwaterSnapshot
-        ? getGroundwaterData(cityId)
-        : Promise.resolve(null),
-      config.dashboard?.reservoirCatchmentContext
-        ? getReservoirCatchmentContextRows()
-        : Promise.resolve(null),
-    ]);
 
   const cityStoryNarrative = config.dashboard?.aiBriefing
     ? await buildCityStoryNarrative(config, waterEstimate, groundwaterData)
