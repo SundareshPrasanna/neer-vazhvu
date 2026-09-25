@@ -468,8 +468,8 @@ function HoverReadout({ active, payload, label, isDark, unit, labelFormat }: {
   return (
     <div
       style={{
-        backgroundColor: isDark ? "rgba(15,23,42,0.94)" : "rgba(255,255,255,0.96)",
-        border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+        backgroundColor: isDark ? "rgba(21,27,32,0.94)" : "rgba(255,255,255,0.96)",
+        border: `1px solid ${isDark ? "#37424a" : "#e2e8f0"}`,
         borderRadius: 6,
         padding: "4px 6px",
         fontSize: 10,
@@ -527,8 +527,8 @@ function fmtValue(v: number): string {
 }
 
 function SeriesChart({ s, tracks, isDark }: { s: ReadingsSeries; tracks: Track[]; isDark: boolean }) {
-  const grid = isDark ? "#334155" : "#e2e8f0";
-  const axis = isDark ? "#94a3b8" : "#64748b";
+  const grid = isDark ? "#37424a" : "#e2e8f0";
+  const axis = isDark ? "#95a2ab" : "#64748b";
   const tickStyle = { fontSize: 9, fill: axis };
   switch (s.kind) {
     case "discharge-monthly":

@@ -235,8 +235,8 @@ export function RainfallTrends({
                 }}
                 contentStyle={{
                   fontSize: "12px",
-                  backgroundColor: isDark ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
-                  border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+                  backgroundColor: isDark ? "rgba(33,42,48,0.95)" : "rgba(255,255,255,0.95)",
+                  border: `1px solid ${isDark ? "#37424a" : "#e2e8f0"}`,
                   borderRadius: "6px",
                   color: isDark ? "#e2e8f0" : "#1e293b",
                 }}
@@ -304,8 +304,8 @@ export function RainfallTrends({
                 ]}
                 contentStyle={{
                   fontSize: "12px",
-                  backgroundColor: isDark ? "rgba(30,41,59,0.95)" : "rgba(255,255,255,0.95)",
-                  border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+                  backgroundColor: isDark ? "rgba(33,42,48,0.95)" : "rgba(255,255,255,0.95)",
+                  border: `1px solid ${isDark ? "#37424a" : "#e2e8f0"}`,
                   borderRadius: "6px",
                   color: isDark ? "#e2e8f0" : "#1e293b",
                 }}

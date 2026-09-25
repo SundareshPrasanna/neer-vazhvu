@@ -484,8 +484,8 @@ export function MultiSourceHistoryChart({
             contentStyle={{
               fontSize: 12,
               borderRadius: 6,
-              backgroundColor: isDark ? "#0f172a" : "#ffffff",
-              border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+              backgroundColor: isDark ? "#151b20" : "#ffffff",
+              border: `1px solid ${isDark ? "#37424a" : "#e2e8f0"}`,
             }}
             labelStyle={{
               color: isDark ? "#f1f5f9" : "#0f172a",

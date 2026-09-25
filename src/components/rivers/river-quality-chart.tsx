@@ -177,11 +177,11 @@ export function RiverQualityChart({ readings, stationName }: RiverQualityChartPr
       </p>
       <ResponsiveContainer width="100%" height="90%">
         <LineChart data={sorted} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
 
           <XAxis
             dataKey="periodLabel"
-            tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
+            tick={{ fontSize: 9, fill: isDark ? "#95a2ab" : "#64748b" }}
             tickLine={false}
             axisLine={false}
           />

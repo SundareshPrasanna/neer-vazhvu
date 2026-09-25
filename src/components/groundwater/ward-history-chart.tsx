@@ -138,10 +138,10 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
       <div className="h-44">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={history} margin={{ top: 5, right: 5, left: -10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
+              tick={{ fontSize: 9, fill: isDark ? "#95a2ab" : "#64748b" }}
               tickLine={false}
               axisLine={false}
               interval={5}
@@ -156,7 +156,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
             />
             <YAxis
               reversed
-              tick={{ fontSize: 9, fill: isDark ? "#94a3b8" : "#64748b" }}
+              tick={{ fontSize: 9, fill: isDark ? "#95a2ab" : "#64748b" }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(v: number) => `${v}m`}

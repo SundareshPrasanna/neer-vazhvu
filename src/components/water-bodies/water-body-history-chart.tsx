@@ -209,8 +209,8 @@ export function WaterBodyHistoryChart({
     );
   };
 
-  const gridColor = isDark ? "#334155" : "#e2e8f0";
-  const tickColor = isDark ? "#94a3b8" : "#64748b";
+  const gridColor = isDark ? "#37424a" : "#e2e8f0";
+  const tickColor = isDark ? "#95a2ab" : "#64748b";
 
   return (
     <div>
@@ -252,7 +252,7 @@ export function WaterBodyHistoryChart({
             {avgBaseline !== null && (
               <ReferenceLine
                 y={avgBaseline}
-                stroke={isDark ? "#64748b" : "#94a3b8"}
+                stroke={isDark ? "#68757f" : "#94a3b8"}
                 strokeDasharray="4 4"
                 strokeWidth={1}
               />

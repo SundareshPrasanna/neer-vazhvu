@@ -207,7 +207,7 @@ export function ReservoirDetailDialog({
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -255,7 +255,7 @@ export function ReservoirDetailDialog({
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={flowData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -319,7 +319,7 @@ export function ReservoirDetailDialog({
                     <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
                 <XAxis
                   dataKey="label"
                   tick={{ fontSize: 10, fill: "#94a3b8" }}
