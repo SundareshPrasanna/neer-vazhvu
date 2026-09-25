@@ -244,7 +244,7 @@ export default function Page() {
     <div className="bg-slate-50 dark:bg-slate-950">
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
             Open source · Built in the open
           </p>
@@ -254,12 +254,12 @@ export default function Page() {
           <p className="mt-3 text-lg sm:text-xl font-semibold text-cyan-700 dark:text-cyan-400">
             Where India&apos;s water stands, place by place
           </p>
-          <p className="mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+          <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
             An open-source platform that makes India&apos;s water systems
             legible - reservoirs, groundwater, rivers, floods, and water bodies
             - city by city, and district by district.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#cities"
               className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg bg-cyan-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-cyan-800 dark:hover:bg-cyan-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
