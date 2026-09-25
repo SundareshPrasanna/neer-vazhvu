@@ -208,7 +208,7 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
   if (selectedWard == null) {
     return (
       <div className="flex flex-col items-center justify-center py-16 sm:py-24 px-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg mb-6">
+        <div className="w-14 h-14 rounded-2xl bg-sky-500 flex items-center justify-center mb-6">
           <svg viewBox="0 0 24 24" className="w-8 h-8 text-white" fill="none">
             <path
               d="M12 3s-5 6.1-5 9.9A5 5 0 0 0 12 18a5 5 0 0 0 5-5.1C17 9.1 12 3 12 3z"

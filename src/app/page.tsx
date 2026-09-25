@@ -155,16 +155,16 @@ const CAPABILITIES: { label: string; detail: string }[] = [
 
 function CityCard({ city }: { city: BoardCity }) {
   const isLive = city.status === "live";
-  // Live cities get their vibrant accent; cities that are not yet open get a
+  // Live cities get their accent colour; cities that are not yet open get a
   // muted slate banner so colour alone signals live-vs-coming at a glance.
   const accent = isLive
     ? CITY_ACCENT[city.cityId] ?? DEFAULT_ACCENT
-    : "from-slate-400 to-slate-500 dark:from-slate-700 dark:to-slate-800";
+    : "bg-slate-400 dark:bg-slate-700";
 
-  // Landmark banner. A licensed photograph can later replace the gradient +
+  // Landmark banner. A licensed photograph can later replace the colour +
   // CityLandmark here without touching the rest of the card.
   const banner = (
-    <div className={`relative h-24 overflow-hidden bg-gradient-to-br ${accent}`}>
+    <div className={`relative h-24 overflow-hidden ${accent}`}>
       <CityLandmark
         cityId={city.cityId}
         className={`absolute inset-0 h-full w-full ${isLive ? "text-white/85" : "text-white/60"}`}
@@ -213,7 +213,7 @@ function CityCard({ city }: { city: BoardCity }) {
   );
 
   const baseClass =
-    "block overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900";
+    "block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900";
 
   if (city.status === "live") {
     return (
@@ -244,17 +244,14 @@ export default function Page() {
     <div className="bg-slate-50 dark:bg-slate-950">
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900" />
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/80 dark:bg-slate-800/80 px-3 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-300 ring-1 ring-inset ring-cyan-600/20">
-            Open source
-            <span className="mx-1.5 font-normal text-cyan-600/40 dark:text-cyan-400/40">|</span>
-            Built in the open
-          </span>
-          <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
+            Open source · Built in the open
+          </p>
+          <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
             Neer Vazhvu
           </h1>
-          <p className="mt-3 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-lg sm:text-xl font-semibold text-transparent">
+          <p className="mt-3 text-lg sm:text-xl font-semibold text-cyan-700 dark:text-cyan-400">
             Where India&apos;s water stands, place by place
           </p>
           <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
@@ -265,7 +262,7 @@ export default function Page() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="#cities"
-              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg bg-cyan-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-cyan-800 dark:hover:bg-cyan-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
             >
               Explore cities and districts
             </a>
@@ -273,7 +270,7 @@ export default function Page() {
               href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
             >
               <svg
                 className="h-4 w-4"
@@ -488,13 +485,13 @@ export default function Page() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/chennai"
-              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg bg-cyan-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-cyan-800 dark:hover:bg-cyan-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
             >
               Open the Chennai dashboard
             </Link>
             <Link
               href="/chennai/about"
-              className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
             >
               Read the methodology
             </Link>

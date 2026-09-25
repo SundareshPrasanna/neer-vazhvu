@@ -9,19 +9,19 @@
  * so they read as a skyline silhouette along the bottom of the banner.
  */
 
-/** Per-city accent gradient (Tailwind classes) for the card banner. */
+/** Per-city accent colour (Tailwind class) for the card banner. */
 export const CITY_ACCENT: Record<string, string> = {
-  chennai: "from-cyan-500 to-blue-600",
-  madurai: "from-amber-500 to-orange-600",
-  bangalore: "from-emerald-500 to-teal-600",
-  mumbai: "from-indigo-500 to-violet-600",
-  delhi: "from-rose-500 to-red-600",
-  kolkata: "from-fuchsia-500 to-pink-600",
-  gurugram: "from-lime-500 to-emerald-600",
-  pune: "from-sky-500 to-cyan-700",
+  chennai: "bg-cyan-700",
+  madurai: "bg-amber-600",
+  bangalore: "bg-emerald-700",
+  mumbai: "bg-indigo-600",
+  delhi: "bg-rose-600",
+  kolkata: "bg-fuchsia-700",
+  gurugram: "bg-lime-700",
+  pune: "bg-sky-700",
 };
 
-export const DEFAULT_ACCENT = "from-slate-500 to-slate-600";
+export const DEFAULT_ACCENT = "bg-slate-600";
 
 const strokeProps = {
   fill: "none",
