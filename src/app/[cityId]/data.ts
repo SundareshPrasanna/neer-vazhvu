@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient, failOnOutage } from "@/lib/supabase/server";
 import type { PlaceConfig } from "@/lib/cities";
 import { RESERVOIR_DISPLAY_ORDER, RESERVOIR_METADATA } from "@/lib/utils/constants";
 import type { ChennaiReservoirName } from "@/types/reservoir";
@@ -122,11 +122,14 @@ async function loadSeasonalAvgInflowMcftPerDay(
   sourceCodes: string[],
   month: number,
 ): Promise<number> {
-  const { data, error } = await supabase.rpc("avg_monthly_inflow_v2", {
-    target_city_id: config.cityId,
-    target_source_codes: sourceCodes,
-    target_month: month,
-  });
+  const { data, error } = await failOnOutage(
+    supabase.rpc("avg_monthly_inflow_v2", {
+      target_city_id: config.cityId,
+      target_source_codes: sourceCodes,
+      target_month: month,
+    }),
+    "avg_monthly_inflow_v2",
+  );
 
   if (!error) {
     return Number(data?.[0]?.avg_inflow_mcft_per_day ?? 0);
@@ -135,12 +138,15 @@ async function loadSeasonalAvgInflowMcftPerDay(
   // Back-compat for databases that have not run migration 022 yet.
   // This preserves behaviour, but the RPC path above avoids pulling the
   // full inflow archive into the Server Component render.
-  const { data: seasonalRows } = await supabase
-    .from("reservoir_daily_v2")
-    .select("date, inflow_cusecs")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .not("inflow_cusecs", "is", null);
+  const { data: seasonalRows } = await failOnOutage(
+    supabase
+      .from("reservoir_daily_v2")
+      .select("date, inflow_cusecs")
+      .eq("city_id", config.cityId)
+      .in("source_code", sourceCodes)
+      .not("inflow_cusecs", "is", null),
+    "reservoir_daily_v2 seasonal inflow",
+  );
 
   if (!seasonalRows || seasonalRows.length === 0) return 0;
 
@@ -180,24 +186,81 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
   }
 
   // Latest available date for any of the primary sources.
-  const { data: latest } = await supabase
-    .from("reservoir_daily_v2")
-    .select("date")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .order("date", { ascending: false })
-    .limit(1);
+  const { data: latest } = await failOnOutage(
+    supabase
+      .from("reservoir_daily_v2")
+      .select("date")
+      .eq("city_id", config.cityId)
+      .in("source_code", sourceCodes)
+      .order("date", { ascending: false })
+      .limit(1),
+    "reservoir_daily_v2 latest date",
+  );
 
   if (!latest || latest.length === 0) return EMPTY_ESTIMATE;
   const asOf = latest[0].date as string;
 
-  // Snapshot: current storage across primary sources for asOf.
-  const { data: rows } = await supabase
-    .from("reservoir_daily_v2")
-    .select("source_code, storage_tmc, inflow_cusecs")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .eq("date", asOf);
+  const sevenDaysAgo = new Date(asOf);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
+  const month = Number(asOf.slice(5, 7));
+  const comparisonYear = config.heroComparisonYear ?? Number(asOf.slice(0, 4)) - 1;
+  const sameDayRef = `${comparisonYear}-${asOf.slice(5)}`;
+
+  // Everything below keys off asOf alone, so the five reads run together
+  // rather than as five sequential round trips.
+  const [
+    { data: rows },
+    { data: recentRows },
+    seasonalAvgInflowMcftPerDay,
+    { data: trendRows },
+    { data: dataRef },
+  ] = await Promise.all([
+    // Snapshot: current storage across primary sources for asOf.
+    failOnOutage(
+      supabase
+        .from("reservoir_daily_v2")
+        .select("source_code, storage_tmc, inflow_cusecs")
+        .eq("city_id", config.cityId)
+        .in("source_code", sourceCodes)
+        .eq("date", asOf),
+      "reservoir_daily_v2 snapshot",
+    ),
+    failOnOutage(
+      supabase
+        .from("reservoir_daily_v2")
+        .select("date, inflow_cusecs")
+        .eq("city_id", config.cityId)
+        .in("source_code", sourceCodes)
+        .gte("date", sevenDaysAgoStr)
+        .lte("date", asOf)
+        .not("inflow_cusecs", "is", null),
+      "reservoir_daily_v2 7-day inflow",
+    ),
+    // Seasonal (same-month) average inflow over all years of history.
+    // Prefer the database aggregate helper so page render time does not
+    // grow with every year of backfilled rows.
+    loadSeasonalAvgInflowMcftPerDay(supabase, config, sourceCodes, month),
+    failOnOutage(
+      supabase
+        .from("reservoir_daily_v2")
+        .select("date, source_code, storage_tmc")
+        .eq("city_id", config.cityId)
+        .in("source_code", sourceCodes)
+        .gte("date", sevenDaysAgoStr)
+        .lte("date", asOf),
+      "reservoir_daily_v2 7-day storage",
+    ),
+    failOnOutage(
+      supabase
+        .from("reservoir_daily_v2")
+        .select("source_code, storage_tmc")
+        .eq("city_id", config.cityId)
+        .in("source_code", sourceCodes)
+        .eq("date", sameDayRef),
+      "reservoir_daily_v2 reference-year day",
+    ),
+  ]);
 
   const totalStorageMcft = (rows ?? []).reduce(
     (s, r) => s + ((r.storage_tmc as number | null) ?? 0) * TMC_TO_MCFT,
@@ -207,18 +270,6 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
 
   // 7-day inflow average (Mcft/day): sum across primary sources per day,
   // then average across the days observed.
-  const sevenDaysAgo = new Date(asOf);
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
-  const { data: recentRows } = await supabase
-    .from("reservoir_daily_v2")
-    .select("date, inflow_cusecs")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .gte("date", sevenDaysAgoStr)
-    .lte("date", asOf)
-    .not("inflow_cusecs", "is", null);
-
   let recentAvgInflowMcftPerDay = 0;
   if (recentRows && recentRows.length > 0) {
     const byDate = new Map<string, number>();
@@ -235,30 +286,10 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
     }
   }
 
-  // Seasonal (same-month) average inflow over all years of history.
-  // Prefer the database aggregate helper so page render time does not
-  // grow with every year of backfilled rows.
-  const month = Number(asOf.slice(5, 7));
-  const seasonalAvgInflowMcftPerDay = await loadSeasonalAvgInflowMcftPerDay(
-    supabase,
-    config,
-    sourceCodes,
-    month,
-  );
-
   // Observed 7-day storage trend: for storage-only bulletins (Pravah)
   // the daily record itself shows the monsoon working - sum storage by
   // date (only dates where every feed source reported) and take the
   // per-day slope between the earliest and latest complete dates.
-  const eightDaysAgo = new Date(asOf);
-  eightDaysAgo.setDate(eightDaysAgo.getDate() - 7);
-  const { data: trendRows } = await supabase
-    .from("reservoir_daily_v2")
-    .select("date, source_code, storage_tmc")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .gte("date", eightDaysAgo.toISOString().slice(0, 10))
-    .lte("date", asOf);
   let observedTrendMcftPerDay: number | null = null;
   // "Complete" = every source that CAN report did (feedless sources like
   // Vihar/Tulsi never appear in the bulletin and must not gate the trend).
@@ -290,15 +321,6 @@ export async function loadCityWaterEstimate(config: PlaceConfig): Promise<CityWa
   // day covers every source reporting today - Mumbai's 2019 backfill holds
   // 2 of 5 dams, and summing those against a 5-dam today would read
   // "(better today)" off a false base.
-  const comparisonYear = config.heroComparisonYear ?? Number(asOf.slice(0, 4)) - 1;
-  const sameDayRef = `${comparisonYear}-${asOf.slice(5)}`;
-  const { data: dataRef } = await supabase
-    .from("reservoir_daily_v2")
-    .select("source_code, storage_tmc")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .eq("date", sameDayRef);
-
   const todayCodes = new Set((rows ?? []).map((r) => r.source_code as string));
   const refCodes = new Set((dataRef ?? []).map((r) => r.source_code as string));
   const refCoversToday = [...todayCodes].every((c) => refCodes.has(c));
@@ -348,11 +370,10 @@ async function loadLegacyChennaiSnapshot(config: PlaceConfig): Promise<CitySnaps
     return EMPTY_SNAPSHOT;
   }
 
-  const { data: latest } = await supabase
-    .from("reservoir_daily")
-    .select("*")
-    .order("date", { ascending: false })
-    .limit(12);
+  const { data: latest } = await failOnOutage(
+    supabase.from("reservoir_daily").select("*").order("date", { ascending: false }).limit(12),
+    "reservoir_daily latest",
+  );
 
   if (!latest || latest.length === 0) return EMPTY_SNAPSHOT;
 
@@ -407,11 +428,52 @@ async function loadLegacyChennaiWaterEstimate(): Promise<CityWaterEstimate> {
     return EMPTY_ESTIMATE;
   }
 
-  const { data: latest } = await supabase
-    .from("reservoir_daily")
-    .select("*")
-    .order("date", { ascending: false })
-    .limit(12);
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const currentMonth = new Date().getMonth() + 1;
+  // 2019 comparison. The legacy history is weekly today and monthly back
+  // in 2019 (12 dates in the whole year), so an exact same-date match
+  // almost never exists - which is why this line never rendered in
+  // production. Take the nearest 2019 reading within +/-10 days and label
+  // it "around this day" rather than "on this day".
+  const today = new Date();
+  const mmdd = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+    today.getDate(),
+  ).padStart(2, "0")}`;
+  const target2019 = new Date(`2019-${mmdd}T00:00:00Z`).getTime();
+  const lo = new Date(target2019 - 10 * 86_400_000).toISOString().slice(0, 10);
+  const hi = new Date(target2019 + 10 * 86_400_000).toISOString().slice(0, 10);
+
+  // None of these reads depends on another, so they run together.
+  const [{ data: latest }, { data: recentInflow }, { data: seasonalData }, { data: windowRows }] =
+    await Promise.all([
+      failOnOutage(
+        supabase.from("reservoir_daily").select("*").order("date", { ascending: false }).limit(12),
+        "reservoir_daily latest",
+      ),
+      // 7-day avg inflow (Mcft/day).
+      failOnOutage(
+        supabase
+          .from("reservoir_daily")
+          .select("date, inflow_cusecs")
+          .gte("date", sevenDaysAgo.toISOString().split("T")[0])
+          .not("inflow_cusecs", "is", null),
+        "reservoir_daily 7-day inflow",
+      ),
+      // Seasonal avg via the v1 RPC (current month).
+      failOnOutage(
+        supabase.rpc("avg_monthly_inflow", { target_month: currentMonth }),
+        "avg_monthly_inflow",
+      ),
+      failOnOutage(
+        supabase
+          .from("reservoir_daily")
+          .select("date, current_storage_mcft")
+          .gte("date", lo)
+          .lte("date", hi),
+        "reservoir_daily 2019 window",
+      ),
+    ]);
 
   if (!latest || latest.length === 0) return EMPTY_ESTIMATE;
 
@@ -440,15 +502,6 @@ async function loadLegacyChennaiWaterEstimate(): Promise<CityWaterEstimate> {
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
 
-  // 7-day avg inflow (Mcft/day).
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const { data: recentInflow } = await supabase
-    .from("reservoir_daily")
-    .select("date, inflow_cusecs")
-    .gte("date", sevenDaysAgo.toISOString().split("T")[0])
-    .not("inflow_cusecs", "is", null);
-
   let recentAvgInflowMcftPerDay = 0;
   if (recentInflow && recentInflow.length > 0) {
     const byDate = new Map<string, number>();
@@ -463,31 +516,9 @@ async function loadLegacyChennaiWaterEstimate(): Promise<CityWaterEstimate> {
     recentAvgInflowMcftPerDay = avgCusecs * CUSEC_DAY_TO_MCFT;
   }
 
-  // Seasonal avg via the v1 RPC (current month).
-  const currentMonth = new Date().getMonth() + 1;
-  const { data: seasonalData } = await supabase.rpc("avg_monthly_inflow", {
-    target_month: currentMonth,
-  });
   const seasonalAvgInflowMcftPerDay =
     seasonalData?.[0]?.avg_inflow_mcft_per_day || 0;
 
-  // 2019 comparison. The legacy history is weekly today and monthly back
-  // in 2019 (12 dates in the whole year), so an exact same-date match
-  // almost never exists - which is why this line never rendered in
-  // production. Take the nearest 2019 reading within +/-10 days and label
-  // it "around this day" rather than "on this day".
-  const today = new Date();
-  const mmdd = `${String(today.getMonth() + 1).padStart(2, "0")}-${String(
-    today.getDate(),
-  ).padStart(2, "0")}`;
-  const target2019 = new Date(`2019-${mmdd}T00:00:00Z`).getTime();
-  const lo = new Date(target2019 - 10 * 86_400_000).toISOString().slice(0, 10);
-  const hi = new Date(target2019 + 10 * 86_400_000).toISOString().slice(0, 10);
-  const { data: windowRows } = await supabase
-    .from("reservoir_daily")
-    .select("date, current_storage_mcft")
-    .gte("date", lo)
-    .lte("date", hi);
   let data2019: { current_storage_mcft: number }[] | null = null;
   let comparisonIsApprox = false;
   if (windowRows && windowRows.length > 0) {
@@ -540,13 +571,16 @@ export async function loadCitySnapshot(config: PlaceConfig): Promise<CitySnapsho
     return EMPTY_SNAPSHOT;
   }
 
-  const { data: latest, error: latestErr } = await supabase
-    .from("reservoir_daily_v2")
-    .select("date")
-    .eq("city_id", config.cityId)
-    .in("source_code", sourceCodes)
-    .order("date", { ascending: false })
-    .limit(1);
+  const { data: latest, error: latestErr } = await failOnOutage(
+    supabase
+      .from("reservoir_daily_v2")
+      .select("date")
+      .eq("city_id", config.cityId)
+      .in("source_code", sourceCodes)
+      .order("date", { ascending: false })
+      .limit(1),
+    "reservoir_daily_v2 latest date",
+  );
 
   if (latestErr || !latest || latest.length === 0) {
     return EMPTY_SNAPSHOT;
@@ -554,14 +588,17 @@ export async function loadCitySnapshot(config: PlaceConfig): Promise<CitySnapsho
 
   const asOf = latest[0].date as string;
 
-  const { data: rows, error } = await supabase
-    .from("reservoir_daily_v2")
-    .select(
-      "city_id, source_code, date, storage_tmc, storage_pct_frl, level_ft, inflow_cusecs, outflow_cusecs, source",
-    )
-    .eq("city_id", config.cityId)
-    .eq("date", asOf)
-    .in("source_code", sourceCodes);
+  const { data: rows, error } = await failOnOutage(
+    supabase
+      .from("reservoir_daily_v2")
+      .select(
+        "city_id, source_code, date, storage_tmc, storage_pct_frl, level_ft, inflow_cusecs, outflow_cusecs, source",
+      )
+      .eq("city_id", config.cityId)
+      .eq("date", asOf)
+      .in("source_code", sourceCodes),
+    "reservoir_daily_v2 snapshot",
+  );
 
   if (error || !rows) {
     return EMPTY_SNAPSHOT;
