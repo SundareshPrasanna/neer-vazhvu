@@ -1205,11 +1205,10 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
       {
         year: 2020,
         label:
-          "Yelahanka block's CGWB GEC stage-of-development crosses " +
-          "into Over-Exploited territory at 140% draft-vs-recharge; " +
-          "Yelahanka named as its own assessment unit (carved out " +
-          "from Bangalore (North)).",
-        label_short: "Yelahanka block GEC 140%",
+          "Yelahanka is first assessed as its own groundwater unit, " +
+          "at 140% of its annual extractable groundwater " +
+          "(Over-Exploited), in a boundary redrawn from 2021-22.",
+        label_short: "Yelahanka block 140%",
       },
       {
         year: 2022,
@@ -1220,19 +1219,19 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         label_short: "Bird sanctuary docs",
       },
       {
-        year: 2024,
+        year: 2026,
         label:
-          "CGWB GEC 2024 records Yelahanka block at 260% (draft / " +
-          "recharge) - the most over-extracted unit in the Bangalore " +
-          "Urban district. The lake itself is a critical recharge " +
-          "asset for the surrounding aquifer.",
-        label_short: "260% over-extracted block headliner",
+          "IN-GRES 2025-26: the Bangalore-City unit that holds the " +
+          "lake draws 223% of its annual extractable groundwater; " +
+          "Yelahanka block, outside the city unit, 251%. All six " +
+          "Bengaluru Urban units are Over-Exploited.",
+        label_short: "City unit 223%, Yelahanka block 251%",
       },
     ],
     status_badges: [
       { label: "Largest north-Bengaluru kere", tone: "sky" },
       { label: "Bird sanctuary attention", tone: "emerald" },
-      { label: "Over-exploited block (260% in 2024)", tone: "amber" },
+      { label: "Over-exploited unit (223% in 2025-26)", tone: "amber" },
     ],
     buffer_legally_mandated: false,
     data_sources: {
@@ -1252,7 +1251,7 @@ export const RICH_BODIES: Record<string, RichBodyEntry> = {
         },
       ],
       caveats: [
-        "Yelahanka the lake is hydrologically a recharge asset for the over-exploited Yelahanka aquifer block (CGWB GEC 260% in 2024 per the round-11 extract). The lake's surface health is therefore inseparable from the block's groundwater story; the panel surfaces the block context explicitly.",
+        "Yelahanka lake sits inside IN-GRES's Bangalore-City assessment unit (223% in 2025-26), not the Yelahanka block (251%), which lies outside the city unit. Both are Over-Exploited, and the lake's surface health is part of that groundwater story; the panel surfaces the block context explicitly.",
       ],
     },
   },

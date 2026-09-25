@@ -130,7 +130,7 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
                 <Link href={`${cityPrefix}/groundwater`} className="text-blue-600 dark:text-blue-400 hover:underline">
                   /bangalore/groundwater
                 </Link>{" "}
-                (IISc 80-ward stress overlay, CGWB GEC 2024 blocks),{" "}
+                (IISc 80-ward stress overlay, IN-GRES 2025-26 blocks),{" "}
                 <Link href={`${cityPrefix}/water-bodies`} className="text-blue-600 dark:text-blue-400 hover:underline">
                   /bangalore/water-bodies
                 </Link>{" "}

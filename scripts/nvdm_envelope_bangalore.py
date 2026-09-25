@@ -314,7 +314,7 @@ PROVENANCE: dict[str, dict] = {
             "Hand-curated fact register (no derived-facts script for Bangalore yet); every "
             "fact carries its own citation (source_label/source_url/data_date). The "
             "envelope lists the registered upstreams; the remaining anchors named in the "
-            "legacy note (CGWB GWR round-11 extract - travels with gwr-blocks-bangalore's "
+            "legacy note (CGWB / IN-GRES groundwater assessment - travels with gwr-blocks-bangalore's "
             "envelope - WELL Labs Urban Water Balance, NGT Forward Foundation OA 222/2014) "
             "are cited per fact."
         ),
@@ -333,19 +333,28 @@ PROVENANCE: dict[str, dict] = {
     },
     "data-root/gwr-blocks": {
         "method": "api",
-        "produced_by": "scripts/fetch-wris-groundwater-bangalore.ts",
+        "produced_by": "neer-vazhvu-api/scripts/build_ingres_gwr.py",
         "sources": [reg("ingres-gw-assessment-ka")],
         "note": (
-            "Block-level dynamic groundwater assessment (GEC classes and stage-of-"
-            "extraction) for Bangalore Urban's 5 assessment units, acquired via the WRIS "
-            "NWIC GWR{year}_CGWB ArcGIS services, vintages 2011-2024."
+            "Block-level dynamic groundwater assessment (category and stage of extraction) "
+            "for Bangalore Urban's 6 assessment units. 2011, 2013 and 2017 come from the "
+            "WRIS NWIC GWR{year}_CGWB ArcGIS services (scripts/fetch-wris-groundwater-"
+            "bangalore.ts); 2019-20 onward from the IN-GRES API, upserted in place by "
+            "build_ingres_gwr.py --city bangalore. The WRIS 2020-2024 vintages equal "
+            "IN-GRES 2019-20 to 2023-24 to the rounding. Some extraction inputs are "
+            "carried forward between editions (Anekal and Yelahanka irrigation draft is "
+            "identical in 2024-25 and 2025-26), so edition-to-edition movement is not a "
+            "measured annual trend."
         ),
         "conventions": {
             "comparability": (
                 "CGWB assessment units can change between GEC editions (WRIS also respells "
                 "the district 'Bangalore Urban'/'Bengaluru Urban' across vintages); "
                 "year-on-year comparisons must check assessment-unit continuity before "
-                "differencing."
+                "differencing. Units were redrawn between 2019-20 and 2021-22 "
+                "(Bangalore-City appears; East, North and Yelahanka shrink; district "
+                "recharge-worthy area 172,061 -> 213,026 ha) and are unchanged from "
+                "2021-22 to 2025-26."
             ),
         },
     },
@@ -533,6 +542,11 @@ PROVENANCE: dict[str, dict] = {
         "method": "api",
         "produced_by": "scripts/fetch-wris-groundwater-bangalore.ts",
         "sources": [reg("ingres-gw-assessment-ka")],
+        "note": (
+            "Polygons from WRIS GWR2024_CGWB. Block attributes are the latest IN-GRES "
+            "edition, written by neer-vazhvu-api/scripts/build_ingres_gwr.py --city "
+            "bangalore; the ward profiles read them."
+        ),
     },
     "geojson-layers/rivers": {
         "method": "api",
