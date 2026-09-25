@@ -184,7 +184,7 @@ export function CoastalMap({
             key={`zone-${props.zone_id}`}
             positions={positions}
             pathOptions={{
-              color: isSel ? "#0ea5e9" : tiles.isDark ? "#475569" : "#cbd5e1",
+              color: isSel ? "#0ea5e9" : tiles.isDark ? "#4a565f" : "#cbd5e1",
               weight: isSel ? 7 : 3,
               opacity: isSel ? 0.9 : 0.55,
             }}
@@ -224,7 +224,7 @@ export function CoastalMap({
             radius={isSel ? 7 : baseR}
             pathOptions={{
               fillColor: rateColor(props.rate_m_yr),
-              color: tiles.isDark ? "#0f172a" : "#ffffff",
+              color: tiles.isDark ? "#151b20" : "#ffffff",
               weight: isSel ? 2 : 0.8,
               fillOpacity: lowConf ? 0.3 : 0.9,
               opacity: lowConf ? 0.4 : 1,

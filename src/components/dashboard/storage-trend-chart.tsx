@@ -453,7 +453,7 @@ export function StorageTrendChart({
           {selectedYears.length > 0 ? (
             // Multi-line chart when comparing years
             <LineChart data={chartData} margin={{ top: 5, right: showFlowLines ? 50 : 5, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
               <XAxis
                 dataKey="date"
                 tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -544,7 +544,7 @@ export function StorageTrendChart({
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#e2e8f0"} />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#37424a" : "#e2e8f0"} />
               <XAxis
                 dataKey="date"
                 tick={{ fontSize: 10, fill: "#94a3b8" }}

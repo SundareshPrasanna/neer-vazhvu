@@ -471,7 +471,7 @@ export function BasinOverview({
         metric === "watersheds" ? (hueByKey[key] ?? "#cbd5e1")
         // Pollution: a quiet neutral wash - the sub-basins stay tappable
         // frames while the red stretch lines carry the whole signal.
-        : metric === "pollution" ? (tiles.isDark ? "#475569" : "#e2e8f0")
+        : metric === "pollution" ? (tiles.isDark ? "#4a565f" : "#e2e8f0")
         : metricColor(metric, v),
       // Identity shading sits a touch lighter: nine saturated hues would
       // otherwise drown the river network drawn over them.
@@ -512,8 +512,8 @@ export function BasinOverview({
   const cityEdge = tiles.isDark ? "#f8fafc" : "#111827";
   const stateLine = tiles.isDark ? "#cbd5e1" : "#64748b";
   const basinLine = tiles.isDark ? "#f0abfc" : "#d946ef";
-  const beyondEdge = tiles.isDark ? "#94a3b8" : "#475569";
-  const beyondFill = tiles.isDark ? "#94a3b8" : "#64748b";
+  const beyondEdge = tiles.isDark ? "#95a2ab" : "#475569";
+  const beyondFill = tiles.isDark ? "#95a2ab" : "#64748b";
   // Live-storage reservoirs wear this ring: the old near-black ring sank into
   // the dark imagery, so every teal dot read as "has live storage"
   // (Sundaresh, 2 Sep).
