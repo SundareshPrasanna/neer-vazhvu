@@ -64,7 +64,7 @@ time, and each missing join becomes a reviewed gap.
 
 A district is one registry entry plus its artifacts; the route tree, directory
 and brief pages are shared and take the district as configuration. Three
-places name it, and all three must agree:
+places name it, and all four must agree:
 
 1. **`schemas/nvdm/scopes.json`** - add `"<state>-<slug>": "district"` (Kolar:
    `"ka-kolar": "district"`). This is the NVDM scope id the served artifacts
@@ -74,15 +74,22 @@ places name it, and all three must agree:
    `stateName`, `name`, the one-line `hook` the landing card shows, an optional
    `basin` / `deepDive` when the district sits in a mapped basin, and
    `hasCuratedBriefs: false` unless a reviewer wrote briefs. Set
-   `published: false` - a district ships preview-gated first. Pick the
-   `irrigationCurrentSource` constant: `TN_IRRIGATION_SOURCE` for Tamil Nadu,
-   `MH_IRRIGATION_GAP` for Maharashtra, `KA_IRRIGATION_GAP` for Karnataka (the
-   constant is copy, not data - it names the gap when no extraction is
-   served). Add a `waterBodiesGapNote` where the state's register exists but is
-   not joined (see the Kolar entry).
+   `published: false` - a district ships preview-gated first. Note that
+   `buildDistrictBoard()` (`src/components/atlas/district-card.tsx:33`) pulls from
+   `listAtlasDistricts()` and shows an "onboarding" card for unpublished
+   entries regardless. The hook, name, and mark must be reviewed BEFORE the
+   registry entry merges, since `published: false` only gates the district's
+   pages, not its landing card. Pick the `irrigationCurrentSource` constant:
+   `TN_IRRIGATION_SOURCE` for Tamil Nadu, `MH_IRRIGATION_GAP` for Maharashtra,
+   `KA_IRRIGATION_GAP` for Karnataka (the constant is copy, not data - it names
+   the gap when no extraction is served). Add a `waterBodiesGapNote` where the
+   state's register exists but is not joined (see the Kolar entry).
 3. **`.github/workflows/atlas-refresh.yml`** - add the slug to the district
    matrix (two occurrences: the manual-dispatch description and the `matrix`
    array).
+4. **`src/components/atlas/district-mark.tsx`** - needs an entry in both
+   `DISTRICT_MARKS` and `DISTRICT_ACCENT`, keyed by `scopeId`. Each district's
+   mark is chosen for the water that defines it.
 
 This file is client-imported, so it is **metadata only**: no district data may
 be imported here (registry.ts comment, lines 1-15). The 45 MB of Gram
@@ -120,18 +127,29 @@ de-publicization ruling); the producers read it and write `public/data/atlas/`.
    (`censusGramPanchayatColumns: "names-without-codes"`,
    `crosswalkFormat: "village-code-mapping"`,
    `polygons: "withheld"`, `ingresTalukaAliases`, ...).
-2. **`block-alignment.json`** - run `npm run atlas:stage-blocks`; it proposes
+
+Before block and crosswalk staging can run, execute the identity-fetch step:
+
+```bash
+npm run atlas:refresh -- --district <slug> --fetch --as-of <date>       # Tamil Nadu
+npm run atlas:refresh-lgd -- --district <slug> --fetch --as-of <date>   # LGD states
+```
+
+2. **`block-alignment.json`** - run `npm run atlas:stage-blocks -- --district <slug>`; it proposes
    the block alignment across registers (MAC. CHOULTTRY = Macdonalds Choultry;
    Bangarapet = Bangarpet). Every proposal carries
    `review.status: "proposed"`; the script refuses to overwrite a reviewed
    file without `--force`.
-3. **`crosswalk-resolution.json`** - run `npm run atlas:stage-resolution`; it
+3. **`crosswalk-resolution.json`** - run `npm run atlas:stage-resolution -- --district <slug>`; it
    proposes JJM-to-directory pairings that name similarity alone cannot
    settle, and writes the leftovers to a local `review-queue.md` that is
-   deliberately **not committed**. Suggested pairings carry
-   `matchClass: "proposed-pairing"` until a human affirms them
-   (`"human-affirmed"`, with the reviewer and date); weak ones are rejected
-   outright (Kolar's `Annihalli` vs `Annenahalli` at similarity 0.625).
+   deliberately **not committed**. Proposed pairings are already live/binding
+   downstream, so every staged pairing needs human review BEFORE the PR is
+   opened — not after. To confirm a pairing, set `status: "verified"` with a
+   real `verifiedBy` and ISO `verifiedAt`; changing `matchClass` alone fails
+   validation. Weak matches are not rejected outright — Kolar's `Annihalli` vs
+   `Annenahalli` pairing at similarity 0.625 is an example of a
+   manually-rejected (not auto-rejected) low-similarity match.
 4. **`environment-plan.json`** - a reviewed transcription of the District
    Environment Plan's water figures, each with a quote, the PDF page, and the
    `review` block naming who verified it. Where the plan prints no water
@@ -209,7 +227,7 @@ add, note it, then get the numbers from a human who reads the document.
 
 ## 6. Assessments and validation
 
-`npm run atlas:assess` (via `scripts/atlas-generate-assessments.ts`) generates
+`npm run atlas:assess -- --district <slug>` (via `scripts/atlas-generate-assessments.ts`) generates
 the per-place capability assessments and briefs. The chain's final step runs
 the same script with `--validate`, which asserts over the whole served
 corpus. For an LGD-built district, the unit-test fixture under
@@ -227,9 +245,10 @@ corpus. For an LGD-built district, the unit-test fixture under
    Drive the pages in a real browser - the district page, `blocks/`, and
    `panchayats/` for a block whose polygons were withheld - and check console
    errors and rendered feature counts, not status codes.
-3. Flip `published: true` once the pages are reviewed. That is what activates
-   the landing card, the sitemap entries and the freshness checks - usually
-   folded into the corpus pin PR once review is done.
+3. Flip `published: true` once the pages are reviewed. That is what makes the
+   landing card live (it already renders as an onboarding card while
+   unpublished) and activates the district's pages, sitemap entries and
+   freshness checks — usually folded into the corpus pin PR once review is done.
 
 ## 8. Close the loop
 
@@ -237,8 +256,12 @@ corpus. For an LGD-built district, the unit-test fixture under
   talukas, the one-line hook), and update the count in the paragraph above it.
 - Add the district to the "Adding a new district" pointer if the walkthrough
   gains a worked example.
-- The catalogue and conformance docs under `docs/architecture/` regenerate
-  from the corpus on the monthly run - do not hand-edit them.
+- The catalogue and conformance docs under `docs/architecture/` must not wait
+  for the monthly regen — a district PR touching `schemas/nvdm/scopes.json` and
+  `scripts/source-registry/` triggers `.github/workflows/nvdm-conformance.yml`,
+  which fails on any diff. Never hand-edit them. Regenerate and commit them
+  with the district:
+  `python3 scripts/build_dataset_catalogue.py && python3 scripts/validate_nvdm.py`
 - Shipping to production is the corpus release chain, not a merge: data-repo
   PR, immutable `corpus-YYYY-MM-DD-<slug>` tag, then a pin PR moving
   `corpus.lock` (`scripts/release_corpus.py prepare` / `pin`). See
