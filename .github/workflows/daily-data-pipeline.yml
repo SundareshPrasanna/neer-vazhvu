@@ -115,7 +115,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           MADURAI_WRIS_DAYS: '90'
-        run: python scripts/scrape_wris_madurai.py
+        run: python scripts/scrape_wris_groundwater.py --city madurai
 
       # India-WRIS CGWB station readings for Bangalore Urban district
       # (last 90 days). 13-14 active telemetric stations (Cubbon Park,
@@ -141,7 +141,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           BANGALORE_WRIS_DAYS: '90'
-        run: python scripts/scrape_wris_bangalore.py
+        run: python scripts/scrape_wris_groundwater.py --city bangalore
 
       # Mumbai 7-lake daily storage comes from the Pravah workflow
       # (pravah-dam-refresh.yml) - the earlier third-party mirror feed died

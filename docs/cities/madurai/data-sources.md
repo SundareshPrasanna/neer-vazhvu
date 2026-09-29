@@ -69,7 +69,7 @@ Surfaces:
 ## CGWB Station-Level Groundwater (Madurai district)
 
 Same India WRIS Ground Water Level API as Chennai's CGWB station scrape, but scoped to Madurai district. Live scrape via:
-- `neer-vazhvu-api/scripts/scrape_wris_madurai.py` (initial discovery)
+- `neer-vazhvu-api/scripts/scrape_wris_groundwater.py --city madurai` (initial discovery)
 - River-level and rainfall ingest across Madurai + Theni + Dindigul + Virudhunagar (the full Vaigai system) and its historical backfill ran as one-time scripts, since retired; nothing on the site reads those tables.
 
 ## River Quality - CPCB NWMP (Vaigai)
