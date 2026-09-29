@@ -30,13 +30,12 @@ import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { computeRiverStatus } from "@/lib/utils/river-classification";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
-import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { loadProfiles, type WardProfile } from "@/lib/hooks/use-ward-profile";
 import {
   riverQualityUrl,
   industrialSourcesUrl,
   sewageInletsUrl,
   riversUrl,
-  wardProfilesUrl,
 } from "@/lib/cities/data-paths";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
@@ -144,9 +143,8 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
 
   // Fetch ward profiles for search fly-to
   useEffect(() => {
-    fetch(wardProfilesUrl(cityId))
-      .then((r) => r.json())
-      .then((profiles: WardProfile[]) => setWardProfiles(profiles))
+    loadProfiles(cityId)
+      .then(setWardProfiles)
       .catch(() => {});
   }, [cityId]);
 

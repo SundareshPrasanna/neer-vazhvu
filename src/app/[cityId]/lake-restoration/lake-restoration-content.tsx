@@ -1,5 +1,6 @@
 "use client";
 
+import type { PriorityLevel, RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -82,22 +83,6 @@ export interface ProjectsFile {
   court_orders: CourtOrder[];
 }
 
-type PriorityLevel = "critical" | "high" | "moderate" | "low";
-
-export interface ScoredBody {
-  name: string;
-  priority_score: number;
-  priority_level: PriorityLevel;
-  rationale: string;
-}
-
-export interface RestorationPriorityFile {
-  generated_at: string;
-  algorithm_version: string;
-  total_scored: number;
-  bodies: ScoredBody[];
-}
-
 const STATUS_TONE: Record<LostBody["status"], string> = {
   "Fully lost":           "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300",
   "Severely reduced":     "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300",
@@ -126,7 +111,7 @@ interface Props {
   lostFile: LostFile | null;
   flagshipFile: FlagshipFile;
   projectsFile: ProjectsFile;
-  priorityFile: RestorationPriorityFile | null;
+  priorityFile: RestorationPriorityData | null;
 }
 
 export function LakeRestorationContent({
@@ -139,8 +124,8 @@ export function LakeRestorationContent({
 }: Props) {
   const { t } = useLanguage();
 
-  const priorityByName = new Map<string, ScoredBody>();
-  for (const b of priorityFile?.bodies ?? []) priorityByName.set(b.name, b);
+  const priorityByName = new Map<string, ScoredWaterBody>();
+  for (const b of priorityFile?.water_bodies ?? []) priorityByName.set(b.name, b);
 
   const lost = lostFile?.lost_bodies ?? [];
   const fullyLost = lost.filter((b) => b.status === "Fully lost");

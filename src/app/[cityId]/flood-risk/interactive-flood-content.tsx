@@ -10,13 +10,12 @@ import { elevationLegendEntries, useElevationBands } from "@/components/map/elev
 import { HAZARD_COLORS } from "@/types/flood-risk";
 import type { FloodViewMode, HazardCategory, SelectedFloodFeature } from "@/types/flood-risk";
 import { useLanguage } from "@/lib/i18n/context";
-import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { loadProfiles, type WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
 import { tryGetPlaceConfig } from "@/lib/cities";
-import { wardProfilesUrl } from "@/lib/cities/data-paths";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -69,9 +68,8 @@ function InteractiveFloodContentInner({ cityId }: { cityId: string }) {
 
   // Load ward profiles for centroid lookups
   useEffect(() => {
-    fetch(wardProfilesUrl(cityId))
-      .then((r) => r.json())
-      .then((profiles: WardProfile[]) => {
+    loadProfiles(cityId)
+      .then((profiles) => {
         setWardProfiles(profiles);
         // Deep link: fly to ward centroid from ?ward= param
         const wardParam = searchParams.get("ward");

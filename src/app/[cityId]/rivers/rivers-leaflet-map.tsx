@@ -97,19 +97,8 @@ const INDUSTRIAL_TYPE_FILL: Record<string, string> = {
   port:              "#1d4ed8",   // blue
 };
 
-// Simple river-color palette. Color comes from riverInfo.color (Tailwind
-// stroke palette) but Leaflet expects hex; map common Tailwind classes.
-const TAILWIND_HEX: Record<string, string> = {
-  "stroke-blue-600":   "#2563eb",
-  "stroke-cyan-600":   "#0891b2",
-  "stroke-amber-600":  "#d97706",
-  "stroke-emerald-600":"#059669",
-  "stroke-violet-600": "#7c3aed",
-};
-
 function colorFor(info: RiverInfo | undefined): string {
-  if (!info) return "#0ea5e9";
-  return TAILWIND_HEX[info.color] ?? "#0ea5e9";
+  return info?.color ?? "#0ea5e9";
 }
 
 function lineStringsFromGeometry(g: GeoJSON.LineString | GeoJSON.MultiLineString): number[][][] {

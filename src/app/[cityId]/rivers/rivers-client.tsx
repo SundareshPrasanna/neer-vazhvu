@@ -113,7 +113,7 @@ export interface RiverInfo {
   feeds: string;
   status: string;
   cpcb_nwmp_stations: string[];
-  /** Tailwind color class for the polyline. */
+  /** Polyline colour as a hex string (Leaflet takes CSS colours, not classes). */
   color: string;
   // Optional Tamil overrides. When the user has language=ta and the
   // override is present, the *_ta version replaces its English sibling

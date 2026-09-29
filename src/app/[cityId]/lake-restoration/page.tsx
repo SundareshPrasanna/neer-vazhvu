@@ -9,8 +9,9 @@ import {
   type LostFile,
   type FlagshipFile,
   type ProjectsFile,
-  type RestorationPriorityFile,
 } from "./lake-restoration-content";
+import type { RestorationPriorityData } from "@/types/restoration";
+import { restorationPriorityFile } from "@/lib/cities/data-paths";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -45,7 +46,7 @@ export default async function CityLakeRestorationPage({ params }: PageProps) {
     loadJson<LostFile>(`water-bodies-lost-${cityId}.json`),
     loadJson<FlagshipFile>(`water-bodies-flagship-${cityId}.json`),
     loadJson<ProjectsFile>(`restoration-projects-${cityId}.json`),
-    loadJson<RestorationPriorityFile>(`restoration-priority-${cityId}.json`),
+    loadJson<RestorationPriorityData>(restorationPriorityFile(cityId)),
   ]);
 
   // Gate on what the page NEEDS to say something: a flagship register and the
