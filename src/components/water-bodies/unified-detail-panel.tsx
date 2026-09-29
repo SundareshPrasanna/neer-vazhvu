@@ -1,7 +1,9 @@
 "use client";
 
 import { type ReactNode, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ConnectedInsight } from "@/components/insights/connected-insight";
 import { WardContext } from "@/components/insights/ward-context";
 import { WardNarrative } from "@/components/insights/ward-narrative";
@@ -22,7 +24,6 @@ import {
   shouldShowWaterBodySatelliteSummary,
   type WaterBodySatelliteSummary,
 } from "@/lib/gee/water-body-satellite";
-import { WaterBodyHistoryChart } from "@/components/water-bodies/water-body-history-chart";
 import {
   RIVER_POLLUTION_COMPONENT_THRESHOLD,
   RIVER_POLLUTION_COMPONENT_MAX,
@@ -30,6 +31,12 @@ import {
   INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD,
 } from "@/lib/insights/constants";
 import { assessCensusCapacity } from "@/lib/water-bodies/census-capacity";
+
+// recharts loads with the chart when a panel shows it, not with the page.
+const WaterBodyHistoryChart = dynamic(
+  () => import("@/components/water-bodies/water-body-history-chart").then((m) => m.WaterBodyHistoryChart),
+  { ssr: false, loading: () => <Skeleton className="h-[184px] w-full rounded-lg" /> },
+);
 
 interface LostNarrativeEntry {
   name: string;
@@ -115,7 +122,7 @@ function componentLabel(key: string, t: (k: string) => string): string {
   return meta.tKey;
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -564,7 +571,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
         <div className="px-4">
           <ConnectedInsight
             messageKey="connected.wb_lost_proximity"
-            linkHref="/water-bodies?mode=existing"
+            linkHref="/water-bodies"
             linkKey="connected.flood_drainage_wb_link"
           />
         </div>

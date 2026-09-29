@@ -19,7 +19,7 @@ only the topology it built survives, as the catchment stage's input.
    ```bash
    python scripts/run_cascade.py --district <id> run-all
    ```
-4. Set `hasCascadeOverlay: true` on the city config to show the view.
+4. Set `hasCatchments: true` on the city config to show the view.
 
 ## Stages
 

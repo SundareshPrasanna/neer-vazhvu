@@ -44,6 +44,8 @@ interface UnifiedMapProps {
   censusData: CensusWaterBodyProperties[];
   onSelectCurrent: (body: SelectedWaterBody) => void;
   onSelectLost: (body: SelectedWaterBody) => void;
+  /** Receives the lost-bodies layer once fetched (null where the city has none). */
+  onLostLayer?: (layer: GeoJSON.FeatureCollection | null) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
   // City-aware, and REQUIRED - see the note above the props.
@@ -52,18 +54,9 @@ interface UnifiedMapProps {
   riversGeoJsonUrl: string;
   mapCenter: [number, number];
   mapZoom?: number;
-  /** Optional extra Leaflet layers rendered as children of the
-   *  MapContainer. Used to plug in opt-in overlays (e.g. cascade
-   *  reconstruction) without coupling them into UnifiedMap itself. */
+  /** Extra Leaflet layers (elevation bands, corporation boundaries) drawn
+   *  inside the map. */
   children?: ReactNode;
-  /**
-   * When true, suppress hover tooltips on the current/lost/census/
-   * orphan-scored layers. The cascade overlay surfaces its own
-   * hover tooltip; having both fire at once produces a confusing
-   * dual-tooltip stack. Toggling this puts the map into
-   * "cascade mode" cleanly.
-   */
-  suppressLayerTooltips?: boolean;
 }
 
 /** Flies the map to a given center when it changes */
@@ -74,6 +67,13 @@ function FlyToCenter({ center }: { center: [number, number] }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center[0], center[1]]);
   return null;
+}
+
+/** Legend category of a census record in the water-bodies view. */
+function censusCategory(wb: CensusWaterBodyProperties): string {
+  if (wb.encroachment_status === "yes") return "census_encroached";
+  if (wb.storage_loss_pct != null && wb.storage_loss_pct > 50) return "census_degraded";
+  return "census_healthy";
 }
 
 function getCensusColor(wb: CensusWaterBodyProperties): string {
@@ -112,6 +112,7 @@ export function UnifiedMap({
   censusData,
   onSelectCurrent,
   onSelectLost,
+  onLostLayer,
   focusCenter,
   hiddenCategories,
   currentGeoJsonUrl,
@@ -120,7 +121,6 @@ export function UnifiedMap({
   mapCenter,
   mapZoom = 11,
   children,
-  suppressLayerTooltips = false,
 }: UnifiedMapProps) {
   const { t, language } = useLanguage();
   const tiles = useMapTiles();
@@ -257,9 +257,12 @@ export function UnifiedMap({
     // shapes; Bangalore's lost-kere data is tabular only (no polygons),
     // so this fetch will 404 there and that's fine.
     fetchJsonOrNull<GeoJSON.FeatureCollection>(lostGeoJsonUrl)
-      .then(setLostGeoJSON)
+      .then((fc) => {
+        setLostGeoJSON(fc);
+        onLostLayer?.(fc);
+      })
       .catch(console.error);
-  }, [currentGeoJsonUrl, lostGeoJsonUrl]);
+  }, [currentGeoJsonUrl, lostGeoJsonUrl, onLostLayer]);
 
   // Fetch THIS city's rich-body polygons from the registry, merge into
   // one FeatureCollection. Each feature stamps body_id so the click
@@ -394,12 +397,7 @@ export function UnifiedMap({
     const censusMatch = osmId ? censusMatchByOsmId.get(osmId) : undefined;
     if (censusMatch) {
       const color = getCensusColor(censusMatch);
-      // Determine census category for filtering
-      let category: string;
-      if (censusMatch.encroachment_status === "yes") category = "census_encroached";
-      else if (censusMatch.storage_loss_pct != null && censusMatch.storage_loss_pct > 50) category = "census_degraded";
-      else category = "census_healthy";
-      const isHidden = hiddenCategories?.has(category) ?? false;
+      const isHidden = hiddenCategories?.has(censusCategory(censusMatch)) ?? false;
       return { fillColor: color, color, weight: 2, fillOpacity: isHidden ? 0.05 : 0.5, opacity: isHidden ? 0.1 : 0.85 };
     }
     const isHidden = hiddenCategories?.has("existing") ?? false;
@@ -502,11 +500,7 @@ export function UnifiedMap({
       return props.name || riverInfo?.name || t("wb_panel.unnamed");
     })();
 
-    if (suppressLayerTooltips) {
-      // Skip tooltip binding entirely; the cascade overlay's hover tooltip
-      // owns the hover surface in this mode. Click-to-select still works
-      // because we still install the click handler below.
-    } else if (viewMode === "restoration") {
+    if (viewMode === "restoration") {
       const scored = scoreLookupByOsmId.get(props.osm_id);
       if (scored) {
         const levelLabel = t(`lr.${scored.priority_level}`);
@@ -591,12 +585,10 @@ export function UnifiedMap({
         ? t("wb_panel.severely_reduced")
         : t("wb_panel.partially_encroached");
 
-    if (!suppressLayerTooltips) {
-      layer.bindTooltip(
-        `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} - ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
-        { sticky: true }
-      );
-    }
+    layer.bindTooltip(
+      `<strong>${name}</strong><br/><span style="font-size:11px;color:#64748b">${statusLabel} - ${t("wb_map.was_area")} ${props.historical_area_ha} ha</span>`,
+      { sticky: true }
+    );
 
     layer.on({
       click: (e) => {
@@ -643,7 +635,7 @@ export function UnifiedMap({
     const osm_id = typeof props.osm_id === "number" ? props.osm_id : 0;
     const name_ta = typeof props.name_ta === "string" ? props.name_ta : "";
 
-    if (!suppressLayerTooltips && body_id) {
+    if (body_id) {
       const labelName = language === "ta" && name_ta ? name_ta : name;
       layer.bindTooltip(
         `<strong>${labelName}</strong><br/><span style="font-size:11px;color:#10b981">Click to explore boundary, encroachment, timeline →</span>`,
@@ -735,7 +727,7 @@ export function UnifiedMap({
       {currentGeoJSON && (
         <GeoJSON
           ref={(layer) => { currentLayerRef.current = layer; }}
-          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}-${suppressLayerTooltips}`}
+          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
           data={currentGeoJSON}
           style={currentStyle}
           onEachFeature={onEachCurrent}
@@ -751,7 +743,7 @@ export function UnifiedMap({
         <Pane name="lost-bodies-pane" style={{ zIndex: 540, pointerEvents: "auto" }}>
           <GeoJSON
             ref={(layer) => { lostLayerRef.current = layer; }}
-            key={`lost-${language}-${tiles.url}-${suppressLayerTooltips}`}
+            key={`lost-${language}-${tiles.url}`}
             data={lostGeoJSON}
             pointToLayer={pointToLayer}
             style={lostStyle}
@@ -772,102 +764,50 @@ export function UnifiedMap({
           />
         </Pane>
       )}
-      {unmatchedCensus.length > 0 && viewMode === "water-bodies" && (
-        <LayerGroup>
-              {unmatchedCensus.filter((wb) => {
-                let cat: string;
-                if (wb.encroachment_status === "yes") cat = "census_encroached";
-                else if (wb.storage_loss_pct != null && wb.storage_loss_pct > 50) cat = "census_degraded";
-                else cat = "census_healthy";
-                return !(hiddenCategories?.has(cat));
-              }).map((wb) => {
-                const color = getCensusColor(wb);
-                const name = wb.name || t("wb_panel.unnamed");
-                const type = wb.water_body_type || t("wb_panel.water_body");
-                return (
-                  <Circle
-                    key={wb.id}
-                    center={[wb.latitude, wb.longitude]}
-                    radius={CENSUS_RADIUS_M}
-                    pathOptions={{
-                      fillColor: color,
-                      color,
-                      weight: 1.5,
-                      fillOpacity: 0.7,
-                      opacity: 0.9,
-                    }}
-                    eventHandlers={{
-                      click: () => {
-                        onSelectCurrent({
-                          kind: "census",
-                          props: wb,
-                          latlng: [wb.latitude, wb.longitude],
-                        });
-                      },
-                    }}
-                  >
-                    {!suppressLayerTooltips && (
-                      <Tooltip sticky>
-                        <strong>{name}</strong>
-                        <br />
-                        <span style={{ fontSize: "11px", color: "#64748b" }}>
-                          {type}
-                          {wb.ownership ? ` - ${wb.ownership}` : ""}
-                        </span>
-                      </Tooltip>
-                    )}
-                  </Circle>
-                );
-              })}
-        </LayerGroup>
-      )}
-      {unmatchedCensus.length > 0 && viewMode === "restoration" && (
-        <LayerGroup>
-              {unmatchedCensus.filter((wb) => {
-                const scored = scoreLookupById.get(`census:${wb.id}`);
-                return !(scored && hiddenCategories?.has(scored.priority_level));
-              }).map((wb) => {
-                const scored = scoreLookupById.get(`census:${wb.id}`);
-                const color = scored ? getPriorityColor(scored.priority_level) : "#94a3b8";
-                const name = wb.name || t("wb_panel.unnamed");
-                return (
-                  <Circle
-                    key={wb.id}
-                    center={[wb.latitude, wb.longitude]}
-                    radius={CENSUS_RADIUS_M}
-                    pathOptions={{
-                      fillColor: color,
-                      color,
-                      weight: 1.5,
-                      fillOpacity: 0.7,
-                      opacity: 0.9,
-                    }}
-                    eventHandlers={{
-                      click: () => {
-                        onSelectCurrent({
-                          kind: "census",
-                          props: wb,
-                          latlng: [wb.latitude, wb.longitude],
-                        });
-                      },
-                    }}
-                  >
-                    {!suppressLayerTooltips && (
-                      <Tooltip sticky>
-                        <strong>{name}</strong>
-                        {scored && (
-                          <>
-                            <br />
-                            <span style={{ fontSize: "11px", color: "#64748b" }}>
-                              {t("lr.priority_score")}: {scored.priority_score} - {t(`lr.${scored.priority_level}`)}
-                            </span>
-                          </>
-                        )}
-                      </Tooltip>
-                    )}
-                  </Circle>
-                );
-              })}
+      {/* Census records with no polygon: status colours in the water-bodies
+          view, priority colours in the restoration view. */}
+      {unmatchedCensus.length > 0 && viewMode !== "catchments" && (
+        <LayerGroup key={viewMode}>
+          {unmatchedCensus.map((wb) => {
+            const scored = viewMode === "restoration" ? scoreLookupById.get(`census:${wb.id}`) : undefined;
+            const category = viewMode === "restoration" ? scored?.priority_level : censusCategory(wb);
+            if (category && hiddenCategories?.has(category)) return null;
+            const color =
+              viewMode === "restoration"
+                ? scored ? getPriorityColor(scored.priority_level) : "#94a3b8"
+                : getCensusColor(wb);
+            return (
+              <Circle
+                key={wb.id}
+                center={[wb.latitude, wb.longitude]}
+                radius={CENSUS_RADIUS_M}
+                pathOptions={{ fillColor: color, color, weight: 1.5, fillOpacity: 0.7, opacity: 0.9 }}
+                eventHandlers={{
+                  click: () => onSelectCurrent({ kind: "census", props: wb, latlng: [wb.latitude, wb.longitude] }),
+                }}
+              >
+                <Tooltip sticky>
+                  <strong>{wb.name || t("wb_panel.unnamed")}</strong>
+                  {viewMode === "water-bodies" ? (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "11px", color: "#64748b" }}>
+                        {wb.water_body_type || t("wb_panel.water_body")}
+                        {wb.ownership ? ` - ${wb.ownership}` : ""}
+                      </span>
+                    </>
+                  ) : scored && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "11px", color: "#64748b" }}>
+                        {t("lr.priority_score")}: {scored.priority_score} - {t(`lr.${scored.priority_level}`)}
+                      </span>
+                    </>
+                  )}
+                </Tooltip>
+              </Circle>
+            );
+          })}
         </LayerGroup>
       )}
       {/* Orphan scored bodies: flagship-curated entries that have no
@@ -911,15 +851,13 @@ export function UnifiedMap({
                     },
                   }}
                 >
-                  {!suppressLayerTooltips && (
-                    <Tooltip sticky>
-                      <strong>{name}</strong>
-                      <br />
-                      <span style={{ fontSize: "11px", color: "#64748b" }}>
-                        {t("lr.priority_score")}: {wb.priority_score} - {t(`lr.${wb.priority_level}`)}
-                      </span>
-                    </Tooltip>
-                  )}
+                  <Tooltip sticky>
+                    <strong>{name}</strong>
+                    <br />
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                      {t("lr.priority_score")}: {wb.priority_score} - {t(`lr.${wb.priority_level}`)}
+                    </span>
+                  </Tooltip>
                 </Circle>
               );
             })}

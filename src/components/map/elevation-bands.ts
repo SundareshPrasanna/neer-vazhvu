@@ -27,13 +27,15 @@ export interface ElevationBands {
   toggle: () => void;
 }
 
-/** Bands for a city, off until the user shows them; pair with ElevationBandsControl. */
-export function useElevationBands(cityId: string): ElevationBands {
+/** Bands for a city, off until the user shows them; pair with ElevationBandsControl.
+ *  A null city never probes and stays unavailable. */
+export function useElevationBands(cityId: string | null): ElevationBands {
   const [enabled, setEnabled] = useState(false);
   const [data, setData] = useState<FeatureCollection | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
+    if (!cityId) return;
     let cancelled = false;
     // A cheap existence probe on mount (so the toggle can hide itself),
     // full parse only once the user first enables the layer.

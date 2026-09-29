@@ -60,7 +60,7 @@ export const CHENNAI: PlaceConfig = {
   defaultDesalinationMld: 190,
   availableLanguages: ['en', 'ta'],
   // Lake catchment atlas (the "Catchments" view on water-bodies).
-  hasCascadeOverlay: true,
+  hasCatchments: true,
   waterSources: [
     {
       sourceCode: 'chembarambakkam',
@@ -163,6 +163,10 @@ export const CHENNAI: PlaceConfig = {
     rankingTab: true,
     wardSearch: true,
     lostBodies: true,
+    // Chembarambakkam Lake, so the page opens with a panel.
+    openOnLoad: 25453624,
+    // The bands file exists; this page has never shown them. Drop the line to add them.
+    elevationBands: false,
   },
   // Chennai's reservoir history lives in the original v1 tables
   // (reservoir_daily / reservoir_forecast), stored in Mcft, not the

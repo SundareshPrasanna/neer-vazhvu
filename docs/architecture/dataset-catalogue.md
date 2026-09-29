@@ -76,12 +76,12 @@ Machine-readable detail: `dataset-catalogue.json` (per-file schema fingerprints,
 | 11.8 | `public/data/cascade/madurai-catchment-downstream.json` | 1 |
 | 11.7 | `public/data/cascade/bangalore-catchment-basin.json` | 1 |
 | 9.9 | `public/data/cascade/hyderabad-catchment-streams.json` | 1 |
-| 9.8 | `public/geojson/kolkata-water-bodies-current.geojson` | 3 |
+| 9.8 | `public/geojson/kolkata-water-bodies-current.geojson` | 2 |
 | 8.8 | `public/data/cascade/bangalore-cascade-catchments.geojson` | 1 |
 | 8.8 | `public/data/cascade/madurai-catchment-streams.json` | 1 |
 | 7.4 | `public/data/cascade/chennai-catchment-streams.json` | 1 |
 | 7.3 | `public/geojson/delhi-wards-2022.geojson` | 0 |
 | 7.3 | `public/data/cascade/hyderabad-catchment-downstream.json` | 1 |
-| 6.5 | `public/geojson/bangalore-water-bodies-current.geojson` | 3 |
+| 6.5 | `public/geojson/bangalore-water-bodies-current.geojson` | 2 |
 | 5.9 | `public/data/elevation-bands-mumbai.geojson` | 1 |
 | 5.9 | `public/data/cascade/chennai-cascade-catchments.geojson` | 1 |

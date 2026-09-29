@@ -8,7 +8,7 @@ import { getRichBody } from "@/lib/water-bodies/rich-body-registry";
 import { RichBodyTimelineSlider } from "./rich-body-timeline-slider";
 import { RichBodyStatsStrip } from "./rich-body-stats-strip";
 import { RichBodySourcesModal } from "./rich-body-sources-modal";
-import { WaterBodyHistoryChart } from "./water-body-history-chart";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChipManifestShape {
   chip_bbox_wsen: [number, number, number, number];
@@ -20,6 +20,12 @@ interface ChipManifestShape {
     url?: string;
   }>;
 }
+
+// recharts loads with the chart, not with the page.
+const WaterBodyHistoryChart = dynamic(
+  () => import("./water-body-history-chart").then((m) => m.WaterBodyHistoryChart),
+  { ssr: false, loading: () => <Skeleton className="h-[184px] w-full rounded-lg" /> },
+);
 
 const RichBodyMap = dynamic(
   () => import("./rich-body-map").then((m) => m.RichBodyMap),

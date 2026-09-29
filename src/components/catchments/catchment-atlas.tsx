@@ -206,10 +206,8 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     setResetKey((k) => k + 1);
   }
 
-  // Deep link to the catchment methodology on the city's about page (Chennai
-  // uses flat routing). The about page renders it under id="catchment-methodology".
-  const methodologyHref =
-    (cityId === "chennai" ? "/about" : `/${cityId}/about`) + "#catchment-methodology";
+  // The about page renders the methodology under id="catchment-methodology".
+  const methodologyHref = `/${cityId}/about#catchment-methodology`;
 
   function lakeStyle(osmId: number): PathOptions {
     const color =
