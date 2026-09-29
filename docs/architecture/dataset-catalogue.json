@@ -60581,6 +60581,1837 @@
    "flags": []
   },
   {
+   "path": "public/data/basins/palakkad-rivers/admin-block.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "admin-block",
+   "bytes": 108221,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 13,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/admin-gp.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "admin-gp",
+   "bytes": 328910,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 88,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "block",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/admin-ulb.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "admin-ulb",
+   "bytes": 21796,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 7,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/boundary.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "boundary",
+   "bytes": 21273,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaKm2",
+     "name"
+    ]
+   },
+   "consumers": [
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/atlas/lgd-acquisition-model.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_elevation_bands.py",
+    "scripts/atlas-refresh-lgd-district.ts",
+    "scripts/build_basin_wq_positions.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/canals.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "canals",
+   "bytes": 532767,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 188,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "canalType",
+     "kind",
+     "lengthInDistrictKm",
+     "name",
+     "project",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver",
+    "nwic-nwdp-cwc-canal-network"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/command-areas.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "command-areas",
+   "bytes": 81536,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 7,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "culturableCommandAreaThousandHa",
+     "districtsBenefited",
+     "kind",
+     "mappedAreaHa",
+     "mappedAreaInDistrictHa",
+     "name",
+     "potentialCreatedThousandHa",
+     "project",
+     "projectType",
+     "river",
+     "shedId",
+     "status",
+     "yearApproved"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver",
+    "nwic-nwdp-cwc-canal-network"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/flood-zones/RB16.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "flood-zones",
+   "bytes": 115116,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 376,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "localBody",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/flood-zones/RB19.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "flood-zones",
+   "bytes": 27728,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 84,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "localBody",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/flood-zones/RB20.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "flood-zones",
+   "bytes": 1690292,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5722,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "localBody",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/flood-zones/RB22.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "flood-zones",
+   "bytes": 153408,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 537,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "localBody",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/flood-zones/RB23.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "flood-zones",
+   "bytes": 23547,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 81,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "localBody",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/flood-zones.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "flood-zones",
+   "bytes": 2005171,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 6800,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "localBody",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/gauging-stations.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "gauging-stations",
+   "bytes": 3781,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 4,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "agency",
+     "dataUrl",
+     "flowRecord",
+     "hasReadings",
+     "kind",
+     "latestFlow",
+     "name",
+     "positionNote",
+     "river",
+     "shedId",
+     "stationKey"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver",
+    "nwic-nwdp-cwc-river-data",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/groundwater-wells.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "groundwater-wells",
+   "bytes": 58769,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 142,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "agency",
+     "deepestMbgl",
+     "firstReading",
+     "kind",
+     "latestDepthMbgl",
+     "latestReading",
+     "name",
+     "network",
+     "readingsCount",
+     "shallowestMbgl",
+     "shedId",
+     "tehsil"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver",
+    "nwic-nwdp-groundwater-level"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/inventory.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "inventory",
+   "bytes": 19276,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "basinId",
+     "dataset",
+     "families",
+     "generatedFrom",
+     "generatedOn",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/page.tsx",
+    "src/app/embed/basins/[basinId]/page.tsx",
+    "src/components/basin/basin-atlas-client.tsx",
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/atlas/data.ts",
+    "src/lib/basins/types.ts"
+   ],
+   "producer_refs": [
+    "scripts/build_arkavathi_taluks_full.py",
+    "scripts/build_basin_flow_readings.py",
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_basin_prs_points.py",
+    "scripts/build_basin_wq_positions.py",
+    "scripts/build_cauvery_tn_wq.py",
+    "scripts/build_erode_rivers_basin.py",
+    "scripts/build_krishnagiri_rivers_basin.py",
+    "scripts/build_mumbai_rivers_basin.py",
+    "scripts/check-basin-pdf-render.tsx",
+    "scripts/ingest_basin.py",
+    "scripts/ingest_basin_overview.py",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py",
+    "scripts/validate_basin.py"
+   ],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "ksrec-open-geoserver",
+    "nwic-nwdp-cwc-canal-network",
+    "nwic-nwdp-cwc-river-data",
+    "nwic-nwdp-groundwater-level",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution.",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/paddy/RB16.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "paddy",
+   "bytes": 1474,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/paddy/RB19.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "paddy",
+   "bytes": 77978,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 64,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/paddy/RB20.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "paddy",
+   "bytes": 2988856,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5149,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/paddy/RB22.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "paddy",
+   "bytes": 56992,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 161,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/paddy/RB23.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "paddy",
+   "bytes": 14280,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 42,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/paddy.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "paddy",
+   "bytes": 3134684,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5417,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/quarries.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "quarries",
+   "bytes": 66870,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 154,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/build_kabini_sources.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/cwc-kumbidi.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 13420,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/cwc-mankara.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 11993,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/cwc-pudur.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 11665,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/cwc-pulamanthole.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 12016,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-chulliyar.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4852,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-kanjirappuzha.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4742,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-malampuzha.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4828,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-mangalam.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4780,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-meenkara.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4865,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-pothundy.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4782,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-siruvani.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4823,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/reservoir-walayar.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 4824,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/reservoirs.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "reservoirs",
+   "bytes": 5815,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 11,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "frlM",
+     "grossStorageMcm",
+     "hasReadings",
+     "kind",
+     "latestLevelM",
+     "latestReading",
+     "liveStoragePct",
+     "name",
+     "positionSource",
+     "shedId",
+     "stationKey",
+     "storageMcm"
+    ]
+   },
+   "consumers": [
+    "src/app/api/reservoir/basin/route.ts",
+    "src/components/basin/basin-overview.tsx"
+   ],
+   "producer_refs": [
+    "scripts/ingest_basin_overview.py",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "ksrec-open-geoserver",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution.",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/rivers.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "rivers",
+   "bytes": 71934,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 6,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "lengthInDistrictKm",
+     "name",
+     "osmWays",
+     "river_id",
+     "source",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_chennai.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/sub-hydrosheds.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "sub-hydrosheds",
+   "bytes": 29173,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 5,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaKm2",
+     "basinCode",
+     "name",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/build_mumbai_rivers_basin.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py",
+    "scripts/validate_basin.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/watersheds/RB16.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "watersheds",
+   "bytes": 51658,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 64,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "basin",
+     "code",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/watersheds/RB19.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "watersheds",
+   "bytes": 12858,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 18,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "basin",
+     "code",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/watersheds/RB20.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "watersheds",
+   "bytes": 244752,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 281,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "basin",
+     "code",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/watersheds/RB22.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "watersheds",
+   "bytes": 70239,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 97,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "basin",
+     "code",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/watersheds/RB23.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "watersheds",
+   "bytes": 16881,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 19,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "basin",
+     "code",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/watersheds.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "watersheds",
+   "bytes": 391472,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 479,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "basin",
+     "code",
+     "shedId"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_krishnagiri_rivers.py"
+   ],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/wetlands/RB16.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "wetlands",
+   "bytes": 83001,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 35,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "name",
+     "origin",
+     "shedId",
+     "system"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/wetlands/RB19.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "wetlands",
+   "bytes": 53670,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 33,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "origin",
+     "shedId",
+     "system"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/wetlands/RB20.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "wetlands",
+   "bytes": 1550397,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3049,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "name",
+     "origin",
+     "shedId",
+     "system"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/wetlands/RB22.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "wetlands",
+   "bytes": 53407,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 23,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "origin",
+     "shedId",
+     "system"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/wetlands/RB23.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "wetlands",
+   "bytes": 31252,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 30,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "name",
+     "origin",
+     "shedId",
+     "system"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/wetlands.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "wetlands",
+   "bytes": 1766819,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3170,
+    "geometries": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "property_keys": [
+     "areaHa",
+     "kind",
+     "name",
+     "origin",
+     "shedId",
+     "system"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/bbmb-dam-storage.json",
    "family": "data-root",
    "scope": "delhi",
@@ -88985,13 +90816,14 @@
   {
    "family": "basins",
    "dataset": "admin-block",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "erode-rivers",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 116419,
-   "schema_variants": 1,
+   "bytes": 224640,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -89024,14 +90856,15 @@
   {
    "family": "basins",
    "dataset": "admin-gp",
-   "files": 27,
+   "files": 28,
    "scopes": [
     "arkavathi",
     "erode-rivers",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 5328403,
-   "schema_variants": 4,
+   "bytes": 5657313,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
@@ -89065,8 +90898,20 @@
   },
   {
    "family": "basins",
+   "dataset": "admin-ulb",
+   "files": 1,
+   "scopes": [
+    "palakkad-rivers"
+   ],
+   "bytes": 21796,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "boundary",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "arkavathi",
     "cauvery-ka",
@@ -89074,9 +90919,10 @@
     "erode-rivers",
     "kabini",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 716133,
+   "bytes": 737406,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -89084,12 +90930,13 @@
   {
    "family": "basins",
    "dataset": "canals",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "erode-rivers",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 508861,
+   "bytes": 1041628,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -89121,14 +90968,15 @@
   {
    "family": "basins",
    "dataset": "command-areas",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "arkavathi",
     "erode-rivers",
     "kabini",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 386539,
+   "bytes": 468075,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -89238,6 +91086,18 @@
   },
   {
    "family": "basins",
+   "dataset": "flood-zones",
+   "files": 6,
+   "scopes": [
+    "palakkad-rivers"
+   ],
+   "bytes": 4015262,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
    "dataset": "flow-stations",
    "files": 1,
    "scopes": [
@@ -89290,13 +91150,14 @@
   {
    "family": "basins",
    "dataset": "gauging-stations",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "erode-rivers",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 6881,
-   "schema_variants": 1,
+   "bytes": 10662,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -89328,13 +91189,14 @@
   {
    "family": "basins",
    "dataset": "groundwater-wells",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "erode-rivers",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 134736,
+   "bytes": 193505,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -89385,7 +91247,7 @@
   {
    "family": "basins",
    "dataset": "inventory",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "arkavathi",
     "cauvery-ka",
@@ -89393,9 +91255,10 @@
     "erode-rivers",
     "kabini",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 102254,
+   "bytes": 121530,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -89439,6 +91302,18 @@
    ],
    "bytes": 71973,
    "schema_variants": 5,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "paddy",
+   "files": 6,
+   "scopes": [
+    "palakkad-rivers"
+   ],
+   "bytes": 6274264,
+   "schema_variants": 1,
    "registered": true,
    "has_consumer": true
   },
@@ -89537,12 +91412,13 @@
   {
    "family": "basins",
    "dataset": "quarries",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "erode-rivers",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 138655,
+   "bytes": 205525,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -89550,15 +91426,16 @@
   {
    "family": "basins",
    "dataset": "readings",
-   "files": 30,
+   "files": 42,
    "scopes": [
     "arkavathi",
     "erode-rivers",
     "kabini",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 209252,
+   "bytes": 296842,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -89592,23 +91469,24 @@
   {
    "family": "basins",
    "dataset": "reservoirs",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "cauvery-ka",
     "cauvery-tn",
     "erode-rivers",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 29018,
-   "schema_variants": 4,
+   "bytes": 34833,
+   "schema_variants": 5,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "basins",
    "dataset": "rivers",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "arkavathi",
     "cauvery-ka",
@@ -89616,9 +91494,10 @@
     "erode-rivers",
     "kabini",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 801545,
+   "bytes": 873479,
    "schema_variants": 6,
    "registered": true,
    "has_consumer": true
@@ -89677,17 +91556,18 @@
   {
    "family": "basins",
    "dataset": "sub-hydrosheds",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "arkavathi",
     "chennai-rivers",
     "erode-rivers",
     "kabini",
     "krishnagiri-rivers",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 685073,
-   "schema_variants": 5,
+   "bytes": 714246,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
@@ -89806,13 +91686,26 @@
   {
    "family": "basins",
    "dataset": "watersheds",
-   "files": 2,
+   "files": 8,
    "scopes": [
     "erode-rivers",
-    "krishnagiri-rivers"
+    "krishnagiri-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 122408,
-   "schema_variants": 1,
+   "bytes": 910268,
+   "schema_variants": 2,
+   "registered": true,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "wetlands",
+   "files": 6,
+   "scopes": [
+    "palakkad-rivers"
+   ],
+   "bytes": 3538546,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
