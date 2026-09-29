@@ -8,6 +8,7 @@ and applies rule-based logic to produce a structured briefing.
 from datetime import timedelta
 
 from app.db import get_supabase
+from app.etl.constants import CITY_ID
 from app.utils.timezone import ist_today
 
 
@@ -200,6 +201,7 @@ async def generate_briefing() -> dict:
     est_result = (
         supabase.table("water_estimate_daily")
         .select("*")
+        .eq("city_id", CITY_ID)
         .order("date", desc=True)
         .limit(1)
         .execute()
@@ -216,7 +218,7 @@ async def generate_briefing() -> dict:
             "recommendations": ["Run the daily pipeline to generate data."],
         }
         supabase.table("daily_briefing").upsert(
-            briefing, on_conflict="briefing_date"
+            {**briefing, "city_id": CITY_ID}, on_conflict="briefing_date"
         ).execute()
         return briefing
 
@@ -234,6 +236,7 @@ async def generate_briefing() -> dict:
     prev_result = (
         supabase.table("water_estimate_daily")
         .select("storage_pct, avg_inflow_mcft_day")
+        .eq("city_id", CITY_ID)
         .lte("date", week_ago.isoformat())
         .order("date", desc=True)
         .limit(1)
@@ -258,6 +261,7 @@ async def generate_briefing() -> dict:
     risk_result = (
         supabase.table("ward_risk_score")
         .select("risk_level")
+        .eq("city_id", CITY_ID)
         .order("computed_date", desc=True)
         .limit(200)
         .execute()
@@ -295,7 +299,7 @@ async def generate_briefing() -> dict:
     }
 
     supabase.table("daily_briefing").upsert(
-        briefing, on_conflict="briefing_date"
+        {**briefing, "city_id": CITY_ID}, on_conflict="briefing_date"
     ).execute()
 
     return briefing

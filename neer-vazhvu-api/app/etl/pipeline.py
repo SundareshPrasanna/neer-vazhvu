@@ -13,6 +13,7 @@ from typing import Any
 
 from app.db import get_supabase
 from app.etl.constants import (
+    CITY_ID,
     CUSEC_DAY_TO_MCFT,
     DEFAULT_CONSUMPTION_MLD,
     DEFAULT_DESALINATION_MLD,
@@ -158,6 +159,7 @@ async def _step_fetch_weather() -> dict:
     rows = []
     for d in days:
         row = {
+            "city_id": CITY_ID,
             "date": d.date,
             "precipitation_mm": d.precipitation_mm,
             "temp_max_c": d.temp_max_c,
@@ -190,6 +192,7 @@ async def _step_fetch_opencity() -> dict:
 
     rows = [
         {
+            "city_id": CITY_ID,
             "ward_number": r.ward_number,
             "ward_name": r.ward_name,
             "zone_name": r.zone_name,
@@ -242,6 +245,7 @@ async def _step_fetch_wris() -> dict:
             "well_depth_m": r.well_depth_m,
             "well_aquifer_type": r.well_aquifer_type,
             "source": "cgwb",
+            "city_id": CITY_ID,
         }
         for r in records
     ]
@@ -295,6 +299,7 @@ async def _step_fetch_wris_river_level() -> dict:
             "level_m": r.level_m,
             "reading_count": r.reading_count,
             "source": "wris",
+            "city_id": CITY_ID,
         }
         for r in records
     ]
@@ -344,6 +349,7 @@ async def _step_fetch_wris_rainfall() -> dict:
             "rainfall_mm": r.rainfall_mm,
             "reading_count": r.reading_count,
             "source": "wris",
+            "city_id": CITY_ID,
         }
         for r in records
     ]
@@ -456,6 +462,7 @@ async def _step_compute_estimate() -> dict:
     net_demand_mcft = (DEFAULT_CONSUMPTION_MLD - DEFAULT_DESALINATION_MLD) * MLD_TO_MCFT
     supabase.table("water_estimate_daily").upsert(
         {
+            "city_id": CITY_ID,
             "date": today,
             "total_storage_mcft": total_storage,
             "total_capacity_mcft": total_capacity,
@@ -671,6 +678,7 @@ async def _step_fetch_census() -> dict:
                     else None
                 ),
                 "source": "data_gov_in",
+                "city_id": CITY_ID,
             }
         )
 

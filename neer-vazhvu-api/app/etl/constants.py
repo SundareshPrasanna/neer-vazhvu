@@ -10,6 +10,11 @@ CUSEC_DAY_TO_MCFT = 0.0864
 """1 cusec flowing for 24 hours = 0.0864 mcft."""
 
 # --- Chennai defaults ---
+CITY_ID = "chennai"
+"""The only city this service writes. Its tables still carry a DEFAULT
+'chennai' city_id from migration 035; rows name the city explicitly so that
+default can go. Other cities write the v2 tables from scripts/."""
+
 DEFAULT_CONSUMPTION_MLD = 830
 DEFAULT_DESALINATION_MLD = 190  # Minjur 100 + Nemmeli 100
 

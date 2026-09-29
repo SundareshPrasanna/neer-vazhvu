@@ -15,7 +15,7 @@ from statsforecast import StatsForecast
 from statsforecast.models import AutoARIMA
 
 from app.db import get_supabase
-from app.etl.constants import RESERVOIR_CAPACITY
+from app.etl.constants import CITY_ID, RESERVOIR_CAPACITY
 from app.utils.timezone import ist_today
 
 CONFIDENCE_LEVEL = 80  # percent
@@ -38,6 +38,7 @@ def _fetch_weather_history() -> pd.DataFrame:
     result = (
         supabase.table("weather_daily")
         .select("date, precipitation_mm, et0_mm")
+        .eq("city_id", CITY_ID)
         .order("date")
         .execute()
     )
