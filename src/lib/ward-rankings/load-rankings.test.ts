@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { CITIES_WITH_WARD_RANKINGS } from "./cities";
 import { loadWardRankings } from "./load-rankings";
+import { PREBAKED_RANKING_SPECS } from "./specs";
 
 // Smoke tests against the real on-disk data files. They guard against:
 //   - schema drift (a column rename in ward-risk-madurai.json breaks
@@ -100,4 +102,15 @@ test("delhi returns the risk_v2_dl bundle", () => {
   const gw = bundle.rows[0].metricColumns.find((c) => c.key === "gw_depth_m");
   assert.ok(gw, "expected a groundwater-depth column");
   if (gw.numeric === null) assert.equal(gw.display, "-");
+});
+
+test("every city with rankings loads a bundle with its declared columns", () => {
+  for (const cityId of CITIES_WITH_WARD_RANKINGS) {
+    const bundle = loadWardRankings(cityId);
+    assert.ok(bundle && bundle.rows.length > 0, `${cityId}: no ranking rows`);
+    const spec = PREBAKED_RANKING_SPECS[cityId];
+    if (spec) {
+      assert.deepEqual(bundle.rows[0].metricColumns.map((c) => c.key), spec.columns.map((c) => c.key));
+    }
+  }
 });

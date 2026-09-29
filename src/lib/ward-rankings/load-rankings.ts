@@ -7,7 +7,7 @@ import {
   type WardRankings,
 } from "@/lib/utils/ward-rankings";
 import { loadProfilesServer } from "@/lib/utils/load-profiles-server";
-import { hasWardRankings } from "./cities";
+import { PREBAKED_RANKING_SPECS, type PrebakedRankingSpec } from "./specs";
 
 /**
  * Normalised "one row per ward" shape that powers the rankings table.
@@ -75,16 +75,9 @@ export interface WardRankingsBundle {
 /** Public entry point: returns the ranking bundle for a city, or null
  *  if no ranking data is available for that city. */
 export function loadWardRankings(cityId: string): WardRankingsBundle | null {
-  // The membership test lives in ./cities so a client component can ask the
-  // same question without importing this fs-backed module. Keep the branches
-  // below in step with that set - ward-rankings-cities.test.ts asserts it.
-  if (!hasWardRankings(cityId)) return null;
-  if (cityId === "madurai") return loadMaduraiRankings();
   if (cityId === "chennai") return loadChennaiRankings();
-  if (cityId === "bangalore") return loadBangaloreRankings();
-  if (cityId === "mumbai") return loadMumbaiRankings();
-  if (cityId === "delhi") return loadDelhiRankings();
-  return null;
+  const spec = PREBAKED_RANKING_SPECS[cityId];
+  return spec ? loadPrebakedRankings(cityId, spec) : null;
 }
 
 // ── Locality lookup: ward_number -> representative locality names ─────
@@ -237,49 +230,40 @@ function formatMetricValue(v: number, unit: string): string {
   return `${Math.round(v).toLocaleString()} ${unit}`;
 }
 
-// ── Madurai: read pre-baked ward-risk-madurai.json ────────────────────
+// ── Pre-baked cities: ward-risk-<city>.json + a declared spec ─────────
 
-interface MaduraiWardRisk {
+interface PrebakedWardRisk {
   ward_number: number;
   ward_name: string;
   zone: string;
-  composite_score: number; // higher = worse risk in Madurai's model
+  composite_score: number; // risk: higher = worse
   grade: Grade;
-  gw_depth_m: number | null;
-  wb_density_per_sqkm: number | null;
-  wb_health_score: number | null;
+  [metric: string]: unknown;
 }
 
-interface MaduraiWardRiskFile {
+interface PrebakedWardRiskFile {
   algorithm_version: string;
   weights: Record<string, number>;
-  wards: MaduraiWardRisk[];
+  wards: PrebakedWardRisk[];
 }
 
-let maduraiCache: MaduraiWardRiskFile | null = null;
+const prebakedCache = new Map<string, PrebakedWardRiskFile>();
 
-function loadMaduraiRankings(): WardRankingsBundle {
-  if (!maduraiCache) {
-    const path = resolve(
-      process.cwd(),
-      "public/data/ward-risk-madurai.json",
-    );
-    maduraiCache = JSON.parse(
-      readFileSync(path, "utf-8"),
-    ) as MaduraiWardRiskFile;
+function loadPrebakedRankings(cityId: string, spec: PrebakedRankingSpec): WardRankingsBundle {
+  let file = prebakedCache.get(cityId);
+  if (!file) {
+    const path = resolve(process.cwd(), `public/data/ward-risk-${cityId}.json`);
+    file = JSON.parse(readFileSync(path, "utf-8")) as PrebakedWardRiskFile;
+    prebakedCache.set(cityId, file);
   }
-  const localities = loadLocalitiesByWard("madurai");
+  const localities = loadLocalitiesByWard(cityId);
 
-  // Madurai composite_score is risk: higher = worse. Sort ascending so
-  // best (lowest-risk) wards land at the top.
-  const sorted = [...maduraiCache.wards].sort(
-    (a, b) => a.composite_score - b.composite_score,
-  );
+  // Sort ascending on risk so the lowest-risk wards land at the top.
+  const sorted = [...file.wards].sort((a, b) => a.composite_score - b.composite_score);
   const total = sorted.length;
 
   const rows: WardRankingRow[] = sorted.map((w, idx) => {
     const rank = idx + 1;
-    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
     return {
       wardNumber: w.ward_number,
       wardName: w.ward_name || `Ward ${w.ward_number}`,
@@ -289,345 +273,20 @@ function loadMaduraiRankings(): WardRankingsBundle {
       compositeScore: w.composite_score,
       rank,
       totalWards: total,
-      percentile,
-      metricColumns: [
-        {
-          key: "gw_depth_m",
-          label: "Groundwater depth",
-          display:
-            w.gw_depth_m === null ? "-" : `${w.gw_depth_m.toFixed(1)} m`,
-          numeric: w.gw_depth_m,
-        },
-        {
-          key: "wb_density_per_sqkm",
-          label: "Water-body density",
-          display:
-            w.wb_density_per_sqkm === null
-              ? "-"
-              : `${w.wb_density_per_sqkm.toFixed(2)} /km²`,
-          numeric: w.wb_density_per_sqkm,
-        },
-        {
-          key: "wb_health_score",
-          label: "Water-body health",
-          display:
-            w.wb_health_score === null
-              ? "-"
-              : w.wb_health_score.toFixed(0),
-          numeric: w.wb_health_score,
-        },
-      ],
+      percentile: total > 1 ? ((total - rank) / (total - 1)) * 100 : 50,
+      metricColumns: spec.columns.map(({ key, label, format }) => {
+        const numeric = (w[key] as number | null | undefined) ?? null;
+        return { key, label, display: numeric === null ? "-" : format(numeric), numeric };
+      }),
     };
   });
 
   return {
-    cityId: "madurai",
+    cityId,
     rows,
     gradeCounts: countsByGrade(rows),
     zones: distinctZones(rows),
-    sourceLabel: `Pre-baked ${maduraiCache.algorithm_version} composite from public/data/ward-risk-madurai.json (groundwater depth, water-body density, water-body health)`,
-    // Madurai stores risk where lower = better; the table sorts the
-    // composite column ascending by default which matches "best first".
-    compositeScoreLowerIsBetter: true,
-  };
-}
-
-// ── Mumbai: read pre-baked ward-risk-mumbai.json (risk_v2_mum) ────────
-//
-// Equity-first model (scripts/compute-mumbai-ward-risk.py). Mumbai is
-// excluded from the CGWB groundwater assessment, so the groundwater-led
-// composite is replaced by:
-//   - supply_deficit (0.50): real per-ward average daily water-supply
-//     HOURS (Praja 2024 Table 4; fewer hours = worse). Replaces the
-//     earlier slum-area-share proxy.
-//   - flood_hotspot_count (0.30): chronic monsoon flooding spots in ward
-//   - river_vertex_count (0.20): Priority-I river polyline length in ward
-//   - slum_area_share: retained as context (unweighted)
-//   - composite_score: 0-100 city percentile (higher = worse), grade by quintile
-
-interface MumbaiWardRisk {
-  ward_number: number;
-  ward_name: string;
-  zone: string;
-  composite_score: number; // higher = worse risk
-  grade: Grade;
-  supply_hours: number;
-  slum_area_share: number;
-  flood_hotspot_count: number;
-  river_vertex_count: number;
-}
-
-interface MumbaiWardRiskFile {
-  algorithm_version: string;
-  weights: Record<string, number>;
-  wards: MumbaiWardRisk[];
-}
-
-let mumbaiCache: MumbaiWardRiskFile | null = null;
-
-function loadMumbaiRankings(): WardRankingsBundle {
-  if (!mumbaiCache) {
-    const path = resolve(process.cwd(), "public/data/ward-risk-mumbai.json");
-    mumbaiCache = JSON.parse(readFileSync(path, "utf-8")) as MumbaiWardRiskFile;
-  }
-  const localities = loadLocalitiesByWard("mumbai");
-
-  // composite_score is risk (higher = worse); sort ascending so the
-  // lowest-risk wards land at the top.
-  const sorted = [...mumbaiCache.wards].sort(
-    (a, b) => a.composite_score - b.composite_score,
-  );
-  const total = sorted.length;
-
-  const rows: WardRankingRow[] = sorted.map((w, idx) => {
-    const rank = idx + 1;
-    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
-    return {
-      wardNumber: w.ward_number,
-      wardName: w.ward_name || `Ward ${w.ward_number}`,
-      localities: localities.get(w.ward_number) ?? [],
-      zone: w.zone,
-      grade: w.grade,
-      compositeScore: w.composite_score,
-      rank,
-      totalWards: total,
-      percentile,
-      metricColumns: [
-        {
-          key: "supply_hours",
-          label: "Water supply (hrs/day)",
-          display: `${w.supply_hours.toFixed(1)} h`,
-          numeric: w.supply_hours,
-        },
-        {
-          key: "flood_hotspot_count",
-          label: "Chronic flood spots",
-          display: String(w.flood_hotspot_count),
-          numeric: w.flood_hotspot_count,
-        },
-        {
-          key: "slum_area_share",
-          label: "Slum-area share",
-          display: `${Math.round(w.slum_area_share * 100)}%`,
-          numeric: w.slum_area_share,
-        },
-      ],
-    };
-  });
-
-  return {
-    cityId: "mumbai",
-    rows,
-    gradeCounts: countsByGrade(rows),
-    zones: distinctZones(rows),
-    sourceLabel: `Pre-baked ${mumbaiCache.algorithm_version} equity composite from public/data/ward-risk-mumbai.json (per-ward water-supply hours from Praja 2024, chronic flood spots, Priority-I river burden)`,
-    compositeScoreLowerIsBetter: true,
-  };
-}
-
-// ── Delhi: read pre-baked ward-risk-delhi.json (risk_v2_dl) ───────────
-//
-// Groundwater + equity model (scripts/compute-delhi-ward-risk.py). Delhi is
-// the first city here where BOTH halves are measured rather than proxied:
-//   - gw_depth (0.35): mean depth-to-water of CGWB observation wells within
-//     4 km of the ward centroid. Bengaluru's equivalent is null (13 stations,
-//     no interpolation); Delhi has 237 wells via India-WRIS.
-//   - gw_stage (0.20): district groundwater extraction stage % (CGWB 2025)
-//   - jj_share (0.25): DUSIB JJ-basti households per 1,000 ward population,
-//     from the Board's own geocoded 675-cluster list
-//   - flood_exposure (0.10) chronic waterlogging spots; wb_density (0.10,
-//     inverted)
-// Wards with no well within range keep gw_depth_m = null and are scored on
-// the remaining factors renormalised, never on an imputed depth.
-
-interface DelhiWardRisk {
-  ward_number: number;
-  ward_name: string;
-  zone: string;
-  composite_score: number; // higher = worse risk
-  grade: Grade;
-  gw_depth_m: number | null;
-  gw_stage_pct: number | null;
-  gw_class: string | null;
-  jj_households: number;
-  jj_households_per_1000: number;
-  flood_hotspots: number;
-  wb_density_per_sqkm: number | null;
-}
-
-interface DelhiWardRiskFile {
-  algorithm_version: string;
-  weights: Record<string, number>;
-  wards: DelhiWardRisk[];
-}
-
-let delhiCache: DelhiWardRiskFile | null = null;
-
-function loadDelhiRankings(): WardRankingsBundle {
-  if (!delhiCache) {
-    const path = resolve(process.cwd(), "public/data/ward-risk-delhi.json");
-    delhiCache = JSON.parse(readFileSync(path, "utf-8")) as DelhiWardRiskFile;
-  }
-  const localities = loadLocalitiesByWard("delhi");
-
-  // composite_score is risk (higher = worse); sort ascending so the
-  // lowest-risk wards land at the top.
-  const sorted = [...delhiCache.wards].sort(
-    (a, b) => a.composite_score - b.composite_score,
-  );
-  const total = sorted.length;
-
-  const rows: WardRankingRow[] = sorted.map((w, idx) => {
-    const rank = idx + 1;
-    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
-    return {
-      wardNumber: w.ward_number,
-      wardName: w.ward_name || `Ward ${w.ward_number}`,
-      localities: localities.get(w.ward_number) ?? [],
-      zone: w.zone,
-      grade: w.grade,
-      compositeScore: w.composite_score,
-      rank,
-      totalWards: total,
-      percentile,
-      metricColumns: [
-        {
-          key: "gw_depth_m",
-          label: "Groundwater depth",
-          // null is rendered as "-" rather than 0: no well in range is not
-          // the same as water at the surface.
-          display:
-            w.gw_depth_m === null ? "-" : `${w.gw_depth_m.toFixed(1)} m`,
-          numeric: w.gw_depth_m,
-        },
-        {
-          key: "jj_households_per_1000",
-          label: "JJ households / 1,000",
-          display: w.jj_households_per_1000.toFixed(0),
-          numeric: w.jj_households_per_1000,
-        },
-        {
-          key: "flood_hotspots",
-          label: "Chronic flood spots",
-          display: String(w.flood_hotspots),
-          numeric: w.flood_hotspots,
-        },
-      ],
-    };
-  });
-
-  return {
-    cityId: "delhi",
-    rows,
-    gradeCounts: countsByGrade(rows),
-    zones: distinctZones(rows),
-    sourceLabel: `Pre-baked ${delhiCache.algorithm_version} composite from public/data/ward-risk-delhi.json (measured CGWB well depth, district extraction stage, DUSIB JJ-basti household share, chronic flood spots, water-body density)`,
-    compositeScoreLowerIsBetter: true,
-  };
-}
-
-// ── Bangalore: read pre-baked ward-risk-bangalore.json ────────────────
-//
-// V0 methodology (will refine as IISc 65 stress wards + per-ward
-// groundwater interpolation land):
-//   - wb_density_per_sqkm: count of OSM water-body centroids inside
-//     each ward polygon / ward area (computed offline by
-//     scripts/compute-bangalore-ward-risk.py)
-//   - wb_health_score: 100 if ward contains a named flagship kere
-//     (Bellandur, Halsoor, Hesaraghatta, Sankey, etc.); else 50
-//   - gw_depth_m: NULL (no per-ward groundwater yet for Bengaluru)
-//   - composite_score weighted: pop_density (+0.5) - wb_density (-0.3)
-//     - wb_health (-0.2); higher composite = worse stress
-//   - grade by quintile of composite_score
-
-interface BangaloreWardRisk {
-  ward_number: number;
-  ward_name: string;
-  zone: string;
-  composite_score: number;
-  grade: Grade;
-  gw_depth_m: number | null;
-  wb_density_per_sqkm: number | null;
-  wb_health_score: number | null;
-}
-
-interface BangaloreWardRiskFile {
-  algorithm_version: string;
-  weights: Record<string, number>;
-  wards: BangaloreWardRisk[];
-}
-
-let bangaloreCache: BangaloreWardRiskFile | null = null;
-
-function loadBangaloreRankings(): WardRankingsBundle {
-  if (!bangaloreCache) {
-    const path = resolve(
-      process.cwd(),
-      "public/data/ward-risk-bangalore.json",
-    );
-    bangaloreCache = JSON.parse(
-      readFileSync(path, "utf-8"),
-    ) as BangaloreWardRiskFile;
-  }
-  const localities = loadLocalitiesByWard("bangalore");
-
-  // composite_score: higher = worse stress (same convention as Madurai)
-  // Sort ascending so best-ranked wards land at the top of the table.
-  const sorted = [...bangaloreCache.wards].sort(
-    (a, b) => a.composite_score - b.composite_score,
-  );
-  const total = sorted.length;
-
-  const rows: WardRankingRow[] = sorted.map((w, idx) => {
-    const rank = idx + 1;
-    const percentile = total > 1 ? ((total - rank) / (total - 1)) * 100 : 50;
-    return {
-      wardNumber: w.ward_number,
-      wardName: w.ward_name || `Ward ${w.ward_number}`,
-      localities: localities.get(w.ward_number) ?? [],
-      zone: w.zone,
-      grade: w.grade,
-      compositeScore: w.composite_score,
-      rank,
-      totalWards: total,
-      percentile,
-      metricColumns: [
-        {
-          key: "wb_density_per_sqkm",
-          label: "Water-body density",
-          display:
-            w.wb_density_per_sqkm === null
-              ? "-"
-              : `${w.wb_density_per_sqkm.toFixed(2)} /km²`,
-          numeric: w.wb_density_per_sqkm,
-        },
-        {
-          key: "wb_health_score",
-          label: "Flagship-kere flag",
-          display:
-            w.wb_health_score === null
-              ? "-"
-              : w.wb_health_score >= 100
-                ? "Flagship"
-                : "—",
-          numeric: w.wb_health_score,
-        },
-        {
-          key: "gw_depth_m",
-          label: "Groundwater depth",
-          display: w.gw_depth_m === null ? "-" : `${w.gw_depth_m.toFixed(1)} m`,
-          numeric: w.gw_depth_m,
-        },
-      ],
-    };
-  });
-
-  return {
-    cityId: "bangalore",
-    rows,
-    gradeCounts: countsByGrade(rows),
-    zones: distinctZones(rows),
-    sourceLabel: `Pre-baked ${bangaloreCache.algorithm_version} composite from public/data/ward-risk-bangalore.json (population density, OSM water-body density per ward, flagship-kere flag). Per-ward groundwater depth + IISc 65 stress-ward overlay are roadmap follow-ups.`,
+    sourceLabel: spec.sourceLabel(file.algorithm_version),
     compositeScoreLowerIsBetter: true,
   };
 }

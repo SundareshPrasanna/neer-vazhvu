@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useCityId } from "@/lib/hooks/use-city-id";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
+import { wardNumberOf } from "@/lib/utils/ward-number";
 
 // Module-level cache for turf imports (shared across all hook instances)
 let cachedPip: typeof import("@turf/boolean-point-in-polygon").default | null = null;
@@ -58,8 +59,7 @@ export function useWardLookup() {
     const pt = cachedHelpers.point([lng, lat]);
     for (const feature of wardGeoRef.current.features) {
       if (cachedPip(pt, feature as GeoJSON.Feature<GeoJSON.Polygon>)) {
-        const props = feature.properties as Record<string, unknown>;
-        return (props.ward_number as number) ?? (props.Ward_No as number) ?? null;
+        return wardNumberOf(feature.properties);
       }
     }
     return null;

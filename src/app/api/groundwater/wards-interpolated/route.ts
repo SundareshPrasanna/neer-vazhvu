@@ -6,6 +6,7 @@ import { idwInterpolate, polygonCentroid, haversineKm, type IdwStation } from "@
 import { getGroundwaterStatus } from "@/types/groundwater";
 import { requireCity } from "@/lib/require-city";
 import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
+import { wardNumberOf } from "@/lib/utils/ward-number";
 
 /**
  * Ward groundwater depth via IDW from CGWB / WRIS stations.
@@ -167,7 +168,7 @@ export async function GET(request: NextRequest) {
   // 3. Interpolate per ward.
   const wards = geojson.features.map((feat) => {
     const props = feat.properties;
-    const wardNumber = Number(props.ward_no ?? props.ward_number ?? 0);
+    const wardNumber = wardNumberOf(props) ?? 0;
     const wardName = String(props.ward_name ?? `Ward ${wardNumber}`);
     const zone = String(props.zone ?? props.zone_name ?? "");
 

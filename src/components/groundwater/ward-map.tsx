@@ -18,6 +18,7 @@ import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight"
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 import { fetchJsonOrNull } from "@/lib/data/fetch-json";
+import { wardNumberOf } from "@/lib/utils/ward-number";
 
 /** Flies the map to a given center when it changes */
 function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string | null }) {
@@ -27,7 +28,7 @@ function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeo
   useEffect(() => {
     if (!geo) return;
     const feature = geo.features.find((f) => {
-      const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
+      const num = wardNumberOf(f.properties);
       return num === wardNumber;
     });
     if (feature) {
@@ -149,16 +150,16 @@ export function WardMap({
   // Ward styles
   const wardStyle = useCallback((feature: Feature | undefined) => {
     if (!feature) return {};
-    const wardNum = Number(feature.properties?.ward_number ?? feature.properties?.Ward_No ?? feature.properties?.ward_no);
+    const wardNum = wardNumberOf(feature.properties);
     let fillColor: string;
     let category: string;
     if (viewMode === "risk") {
-      const risk = riskData.get(wardNum);
+      const risk = wardNum === null ? undefined : riskData.get(wardNum);
       const level = risk?.riskLevel ?? "noData";
       fillColor = getRiskColor(level);
       category = level;
     } else {
-      const ward = groundwaterData.get(wardNum);
+      const ward = wardNum === null ? undefined : groundwaterData.get(wardNum);
       fillColor = getGroundwaterColor(ward?.depthM ?? null);
       category = getGroundwaterStatus(ward?.depthM ?? null);
     }
@@ -192,7 +193,8 @@ export function WardMap({
   }, [blockLookup, hiddenCategories, tiles.strokeLight]);
 
   const onEachWard = (feature: Feature, layer: Layer) => {
-    const wardNum = Number(feature.properties?.ward_number ?? feature.properties?.Ward_No ?? feature.properties?.ward_no);
+    const wardNum = wardNumberOf(feature.properties);
+    if (wardNum === null) return;
     const ward = groundwaterData.get(wardNum);
     const risk = riskData.get(wardNum);
 
