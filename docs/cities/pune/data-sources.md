@@ -498,7 +498,7 @@ as a false zero. The single populated row attaches Old Naidu's 1988 commissionin
 | | |
 |---|---|
 | **Bodies** | Temghar, Panshet, Warasgaon, Khadakwasla (the Mutha chain) + Pawana (PCMC) |
-| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 
 **Temghar's impoundment is visible in the satellite record, and it settles something the registers disagree about.** Water inside the boundary holds a steady 14-15% from 1990 to 2000 with full Landsat coverage - a river channel in a valley - then jumps to 98.8% in 2005 and stays there. Construction ran 1997-2010. CWC's NRLD-2019 and NRLD-2023 disagree on Temghar's commissioning year, so the Origins chapter declines to assert one; the deep-zoom panel does not assert one either, but it can say the water arrived between 2000 and 2005 because that is measured rather than cited.
 

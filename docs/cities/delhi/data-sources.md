@@ -153,7 +153,7 @@ Still with OpenCity (restore ask trimmed accordingly): the MCD **zones** KML (11
 | | |
 |---|---|
 | **Bodies** | Najafgarh Jheel, Bhalswa Lake, Sanjay Lake |
-| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 | **Outputs** | Per body: imagery manifest, JRC water trend, DW water extension, DW built trend, Open Buildings and Overture counts, polygon and 1 km buffer; chips and tints in Supabase `satellite-evidence` |
 
 **Najafgarh is not a lake in the ordinary sense, and the data says so.** Across the whole JRC record the share of its boundary classified as *permanent* water never exceeds 0.05%. Everything there is seasonal, and the water line swings between roughly 15% (2005) and 98% (2021) on rainfall. That is the remnant behaving as the pre-drainage jheel did, not evidence of recovery or loss, and the registry caveat says so. The 1990 reading rests on about half the boundary and the series is only trustworthy from 1992.

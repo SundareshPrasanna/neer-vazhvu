@@ -270,7 +270,7 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
 | | |
 |---|---|
 | **Bodies** | Hussain Sagar, Osman Sagar, Himayat Sagar, Durgam Cheruvu, Ameenpur |
-| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 | **Boundaries** | OpenStreetMap relation/way extracts via `scripts/fetch-rich-body-polygon.ts` |
 | **Outputs** | `public/data/rich-bodies/{body}-imagery-manifest.json`, `{body}-jrc-water-trend.json`, `{body}-dw-water-trend.json`, `{body}-dynamic-world-built-trend.json`, `{body}-open-buildings-verification.json`, `{body}-overture-buildings.json`; chips and tints in Supabase Storage (`satellite-evidence`) |
 

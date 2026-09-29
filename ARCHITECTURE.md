@@ -521,7 +521,7 @@ Pre-computed (build-time) scoring of all 1,787 water bodies for restoration prio
 
 21 flagship bodies have a dedicated full-screen panel layered on top of the standard `/water-bodies` map. Onboarded today: **8 in Chennai** (Pallikaranai Marsh, Sholavaram Lake, Red Hills/Puzhal, Chembarambakkam, Porur, Velachery, Perumbakkam, Chitlapakkam) + **13 in Bengaluru** (Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka). The pattern is registry-driven so a new body needs no UI code, just a registry entry plus pipeline outputs.
 
-**Registry:** [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts) maps a `richBodyId` to the polygon path, buffer path, imagery manifest, analysis-JSON paths, timeline events, status badges, boundary source, and a `data_sources` block driving the in-panel sources & methodology modal.
+**Registry:** per-body data lives in [src/lib/water-bodies/rich-bodies.json](src/lib/water-bodies/rich-bodies.json); the loader [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts) derives the polygon, buffer, imagery-manifest and analysis-JSON paths from the id and maps a `richBodyId` to them plus timeline events, status badges, boundary source, and a `data_sources` block driving the in-panel sources & methodology modal.
 
 **Build-time pipeline (all output to `public/`, no Supabase tables):**
 

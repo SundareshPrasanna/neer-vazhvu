@@ -124,18 +124,9 @@ def load_coverage_allowlist() -> dict[str, str]:
 
 
 def load_rich_body_cities() -> dict[str, str]:
-    """slug -> city_id from rich-body-registry.ts (best-effort regex parse)."""
-    ts = (ROOT / "src/lib/water-bodies/rich-body-registry.ts").read_text()
-    pairs: dict[str, str] = {}
-    current_id = None
-    for m in re.finditer(r'(?<![a-zA-Z_])(id|city_id):\s*"([^"]+)"', ts):
-        key, val = m.group(1), m.group(2)
-        if key == "id":
-            current_id = val
-        elif key == "city_id" and current_id:
-            pairs[current_id] = val
-            current_id = None
-    return pairs
+    """slug -> city_id from the rich-body registry data."""
+    registry = json.loads((ROOT / "src/lib/water-bodies/rich-bodies.json").read_text())
+    return {slug: b["city_id"] for slug, b in registry["bodies"].items()}
 
 
 def detect_scope_and_stem(rel: Path, rich_slugs: dict[str, str]) -> tuple[str, str]:
@@ -233,7 +224,24 @@ def fingerprint(path: Path) -> dict:
 CODE_EXTS = {".ts", ".tsx", ".js", ".mjs", ".py", ".sql", ".sh", ".yml", ".yaml"}
 
 
-def scan_references(files: list[Path]) -> dict[str, set[str]]:
+def name_variants(name: str, rich_slugs: dict[str, str]) -> set[str]:
+    """Basename plus templated forms: city tokens, and a rich-body slug as `${id}`."""
+    keys = {name}
+    for city in CITY_TOKENS:
+        if city in name:
+            keys.add(name.replace(city, "", 1).replace("--", "-").lstrip("-"))
+            for tok in TEMPLATE_TOKENS:
+                keys.add(name.replace(city, tok, 1))
+    for slug in sorted(rich_slugs, key=len, reverse=True):
+        if name.startswith((slug + "-", slug + ".")):
+            keys.add("${id}" + name[len(slug) :])
+            break
+    return keys
+
+
+def scan_references(
+    files: list[Path], rich_slugs: dict[str, str]
+) -> dict[str, set[str]]:
     """One pass over the code tree: pattern -> set of repo-relative files containing it.
 
     Patterns are basenames plus city-stripped variants, so templated paths
@@ -241,15 +249,9 @@ def scan_references(files: list[Path]) -> dict[str, set[str]]:
     fixed substring `ward-profiles.json`. Pure Python (no rg dependency):
     a single compiled alternation regex, applied per code file.
     """
-    patterns: set[str] = set()
-    for f in files:
-        patterns.add(f.name)
-        for city in CITY_TOKENS:
-            if city in f.name:
-                patterns.add(f.name.replace(city, "", 1).replace("--", "-").lstrip("-"))
-                for tok in TEMPLATE_TOKENS:
-                    patterns.add(f.name.replace(city, tok, 1))
-    patterns = {p for p in patterns if len(p) > 6}
+    patterns = {
+        p for f in files for p in name_variants(f.name, rich_slugs) if len(p) > 6
+    }
     rx = re.compile("|".join(re.escape(p) for p in sorted(patterns, key=len, reverse=True)))
 
     hits: dict[str, set[str]] = defaultdict(set)
@@ -282,16 +284,12 @@ def scan_references(files: list[Path]) -> dict[str, set[str]]:
     return hits
 
 
-def refs_for(name: str, hits: dict[str, set[str]]) -> tuple[list[str], list[str]]:
+def refs_for(
+    name: str, hits: dict[str, set[str]], rich_slugs: dict[str, str]
+) -> tuple[list[str], list[str]]:
     """(consumers in src/, producer/refs in scripts+api+supabase) for a basename."""
-    keys = {name}
-    for city in CITY_TOKENS:
-        if city in name:
-            keys.add(name.replace(city, "", 1).replace("--", "-").lstrip("-"))
-            for tok in TEMPLATE_TOKENS:
-                keys.add(name.replace(city, tok, 1))
     found: set[str] = set()
-    for k in keys:
+    for k in name_variants(name, rich_slugs):
         found |= hits.get(k, set())
     consumers = sorted(f for f in found if f.startswith("src/"))
     producers = sorted(f for f in found if not f.startswith("src/"))
@@ -334,13 +332,13 @@ def main() -> None:
         for p in (ROOT / d).rglob("*")
         if p.suffix in (".json", ".geojson") and p.is_file()
     )
-    hits = scan_references(files)
+    hits = scan_references(files, rich_slugs)
 
     records = []
     for path in files:
         rel = path.relative_to(ROOT)
         scope, stem = detect_scope_and_stem(rel, rich_slugs)
-        consumers, producers = refs_for(path.name, hits)
+        consumers, producers = refs_for(path.name, hits, rich_slugs)
         if not consumers and family_of(rel) in ("basins", "corridors") and f'"{scope}"' in conv_blob:
             consumers = [f"(convention: registry-driven loader for '{scope}')"]
         rel_str = str(rel)

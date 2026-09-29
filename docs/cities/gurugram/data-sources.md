@@ -236,7 +236,7 @@ them is ours.
 | | |
 |---|---|
 | **Body** | Sultanpur Lake |
-| **Pipeline** | Body-agnostic scripts under `scripts/`; entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; entry in [rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 
 **Gurugram has exactly one body at deep-zoom scale, and it is not in Gurugram's own register.** The GMDA water-body layer this platform carries runs to 824 features whose largest entry is 350 ha of Budhera agricultural tank and whose typical entry is a village pond under an acre. Sultanpur Lake - ~60 ha, and Haryana's Ramsar site - appears in *Delhi's* OpenStreetMap extract because that extract's bounding box reaches into Haryana. It sits in Farrukhnagar, Gurugram district, and is filed here on that basis.
 

@@ -368,7 +368,7 @@ satellite water-body pipeline as the corroborating layer.
 | | |
 |---|---|
 | **Bodies** | Rabindra Sarobar, Subhash Sarobar, Santragachi Jheel |
-| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 
 **The East Kolkata Wetlands are deliberately absent, and that is the most important thing on this page.** EKW treats 910 MLD, 65% of the city's sewage, and is the Ramsar site that makes Kolkata's water system work. It is not in OpenStreetMap under that name, so a deep-zoom body would need the gazetted Ramsar boundary - and the usual sources for that carry redistribution terms this repo's licence discipline will not wave through. Until that boundary is obtained on terms we can publish, Kolkata's deep zoom covers three park lakes and not the wetland that matters most. Do not read the cohort as a ranking of importance.
 

@@ -17,10 +17,13 @@ canonical path - so a CI workflow can fail loudly and require human
 review before publication.
 
 Usage:
-  python scripts/verify_pallikaranai_overture_buildings.py
-    --body-id pallikaranai
+  python scripts/verify_rich_body_overture_buildings.py
+    (--body-id pallikaranai | --all)
     [--release 2026-04-15.0]
     [--anomaly-pct 20]
+
+--all refreshes every body in src/lib/water-bodies/rich-bodies.json and exits 2
+if any body hit the anomaly threshold.
 """
 from __future__ import annotations
 
@@ -69,13 +72,26 @@ def latest_overture_release() -> str:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--body-id", default="pallikaranai")
+    ap.add_argument("--all", action="store_true", help="every rich-body registry body")
     ap.add_argument("--release", default=None,
                     help="Overture release id; default = newest in the bucket")
     ap.add_argument("--anomaly-pct", type=float, default=DEFAULT_ANOMALY_PCT,
                     help="Flag any zone whose count changes by more than this percent vs the previous JSON.")
     args = ap.parse_args()
-    body_id = args.body_id
     release = args.release or latest_overture_release()
+    ids = [args.body_id]
+    if args.all:
+        registry = ROOT / "src/lib/water-bodies/rich-bodies.json"
+        ids = list(json.loads(registry.read_text())["bodies"])
+    anomaly = False
+    for body_id in ids:
+        print(f"=== refreshing {body_id} ===")
+        anomaly |= refresh(body_id, release, args.anomaly_pct)
+    sys.exit(2 if anomaly else 0)
+
+
+def refresh(body_id: str, release: str, anomaly_pct: float) -> bool:
+    """Refresh one body's counts; True when an anomaly held the canonical file back."""
     overture_url = (
         f"s3://overturemaps-us-west-2/release/{release}/"
         f"theme=buildings/type=building/*"
@@ -94,7 +110,7 @@ def main():
     print(f"Body: {body_id}")
     print(f"Query bbox: lon {qminx:.4f}..{qmaxx:.4f}, lat {qminy:.4f}..{qmaxy:.4f}")
     print(f"Overture release: {release}")
-    print(f"Anomaly threshold: ±{args.anomaly_pct}%")
+    print(f"Anomaly threshold: ±{anomaly_pct}%")
     print(f"This will fetch ~tens of MB of parquet over the network; please wait.\n")
 
     con = duckdb.connect(":memory:")
@@ -222,21 +238,21 @@ def main():
     candidate_path = candidate_dir / f"{body_id}-overture-buildings.candidate.json"
 
     # Anomaly detection: compare against the previously published JSON
-    anomalies = _detect_anomalies(out_path, payload, args.anomaly_pct)
+    anomalies = _detect_anomalies(out_path, payload, anomaly_pct)
     if anomalies:
         write_artifact(candidate_path, payload, envelope_from=out_path)
         print(f"\n!! ANOMALY DETECTED in {len(anomalies)} zone(s):")
         for a in anomalies:
             print(
                 f"   {a['region']}: {a['old']} → {a['new']}  "
-                f"({a['delta_pct']:+.1f}% vs threshold ±{args.anomaly_pct}%)"
+                f"({a['delta_pct']:+.1f}% vs threshold ±{anomaly_pct}%)"
             )
         print(f"\nWrote candidate to {candidate_path}")
         print(f"Canonical {out_path.name} NOT overwritten - human review required.")
         rel_cand = candidate_path.relative_to(ROOT)
         rel_out = out_path.relative_to(ROOT)
         print(f"To accept: mv {rel_cand} {rel_out} && git add -A")
-        sys.exit(2)
+        return True
 
     write_artifact(out_path, payload)
     # Clean up any stale candidate file from a previous failed run
@@ -246,6 +262,7 @@ def main():
     print("\n=== Headline ===")
     for line in payload["headline_for_v0"]:
         print(f"  {line}")
+    return False
 
 
 def _detect_anomalies(out_path: Path, new_payload: dict, threshold_pct: float) -> list[dict]:
