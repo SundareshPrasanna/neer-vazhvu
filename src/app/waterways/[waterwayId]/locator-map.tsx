@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useState } from "react";
 import type { WaterwayLocatorAnchor } from "@/lib/waterways/types";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * The "you are here" inset: the waterway's true shape drawn from its
@@ -18,19 +19,18 @@ type Line = { pts: Pt[]; lengthKm: number };
 const cache: Record<string, Promise<Line>> = {};
 
 function loadLine(waterwayId: string): Promise<Line> {
-  cache[waterwayId] ??= fetch(
+  cache[waterwayId] ??= fetchJson<GeoJSON.FeatureCollection<GeoJSON.LineString, { length_km: number }>>(
     `/data/waterways/${waterwayId}/centerline.geojson`
   )
-    .then((r) => r.json())
     .then((d) => {
       const f = d.features[0];
-      const raw: Pt[] = f.geometry.coordinates;
+      const raw = f.geometry.coordinates as Pt[];
       const step = Math.max(1, Math.floor(raw.length / 150));
       return {
         pts: raw.filter(
           (_: Pt, i: number) => i % step === 0 || i === raw.length - 1
         ),
-        lengthKm: f.properties.length_km as number,
+        lengthKm: f.properties.length_km,
       };
     });
   return cache[waterwayId];

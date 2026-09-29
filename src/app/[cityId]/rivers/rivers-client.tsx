@@ -42,6 +42,7 @@ import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { RiverPanel } from "@/components/rivers/river-panel";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 /** public/data/<city>-drain-quality.json. Delhi-only today; see
  *  neer-vazhvu-api/scripts/extract_delhi_drain_quality.py. */
 interface DrainQualityFile {
@@ -238,9 +239,8 @@ export default function RiversClient({
   const [drainFile, setDrainFile] = useState<DrainQualityFile | null>(null);
 
   useEffect(() => {
-    fetch(`/geojson/${cityId}-rivers.geojson`)
-      .then((r) => r.json())
-      .then((data: RiverGeoFile) => {
+    fetchJson<RiverGeoFile>(`/geojson/${cityId}-rivers.geojson`)
+      .then((data) => {
         const out: RiverGeoFeature[] = [];
         for (const feat of data.features) {
           const p = feat.properties ?? {};
@@ -272,16 +272,14 @@ export default function RiversClient({
 
   // Optional CPCB NWMP overlay - 404 (no file) is expected and silent.
   useEffect(() => {
-    fetch(`/data/river-quality-${cityId}.json`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data: CpcbFile | null) => setCpcb(data))
+    fetchJsonOrNull<CpcbFile>(`/data/river-quality-${cityId}.json`)
+      .then((data) => setCpcb(data))
       .catch(() => setCpcb(null));
   }, [cityId]);
 
   // Optional court orders + news events overlay.
   useEffect(() => {
-    fetch(`/data/river-events-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<RiverEventsFile>) : null))
+    fetchJsonOrNull<RiverEventsFile>(`/data/river-events-${cityId}.json`)
       .then((data) => setEvents(data?.events ?? []))
       .catch(() => setEvents([]));
   }, [cityId]);
@@ -290,9 +288,8 @@ export default function RiversClient({
   // and the panel simply does not render where it is missing.
   useEffect(() => {
     let live = true;
-    fetch(`/data/cetp-compliance-${cityId}.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: { cetps?: CetpCompliance[] }) => {
+    fetchJson<{ cetps?: CetpCompliance[] }>(`/data/cetp-compliance-${cityId}.json`)
+      .then((d) => {
         if (!live) return;
         const byId: Record<string, CetpCompliance> = {};
         for (const c of d.cetps ?? []) byId[c.id] = c;
@@ -306,8 +303,7 @@ export default function RiversClient({
 
   // Optional industrial pollution sources overlay.
   useEffect(() => {
-    fetch(`/data/industrial-sources-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<IndustrialSourcesFile>) : null))
+    fetchJsonOrNull<IndustrialSourcesFile>(`/data/industrial-sources-${cityId}.json`)
       .then((data) => setIndustrial(data?.sources ?? []))
       .catch(() => setIndustrial([]));
   }, [cityId]);
@@ -316,8 +312,7 @@ export default function RiversClient({
   // this granularity today; the fetch simply 404s elsewhere and the layer
   // stays empty, so no city gate is needed.
   useEffect(() => {
-    fetch(`/data/${cityId}-drain-quality.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<DrainQualityFile>) : null))
+    fetchJsonOrNull<DrainQualityFile>(`/data/${cityId}-drain-quality.json`)
       .then((data) => setDrainFile(data))
       .catch(() => setDrainFile(null));
   }, [cityId]);
@@ -326,8 +321,7 @@ export default function RiversClient({
   // file; use it to draw the basin's rivers on this page too.
   useEffect(() => {
     if (!basin) return;
-    fetch(`/data/basins/${basin.manifest.basinId}/rivers.geojson`)
-      .then((r) => (r.ok ? (r.json() as Promise<{ features: Feature[] }>) : null))
+    fetchJsonOrNull<{ features: Feature[] }>(`/data/basins/${basin.manifest.basinId}/rivers.geojson`)
       .then((fc) => {
         if (!fc) return;
         const byPageId: Record<string, Geometry[]> = {};

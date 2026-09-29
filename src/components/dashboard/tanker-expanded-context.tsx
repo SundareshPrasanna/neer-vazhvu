@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 function tFmt(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
@@ -163,8 +164,7 @@ export function TankerExpandedContext() {
   };
 
   useEffect(() => {
-    fetch("/data/bangalore-tanker-context.json")
-      .then((r) => (r.ok ? (r.json() as Promise<TankerContext>) : Promise.reject()))
+    fetchJson<TankerContext>("/data/bangalore-tanker-context.json")
       .then(setCtx)
       .catch(() => setError(true));
   }, []);
@@ -431,8 +431,7 @@ export function TankerDataGaps() {
     return typeof en === "string" ? en : "";
   };
   useEffect(() => {
-    fetch("/data/bangalore-tanker-context.json")
-      .then((r) => (r.ok ? (r.json() as Promise<TankerContext>) : Promise.reject()))
+    fetchJson<TankerContext>("/data/bangalore-tanker-context.json")
       .then(setCtx)
       .catch(() => setCtx(null));
   }, []);

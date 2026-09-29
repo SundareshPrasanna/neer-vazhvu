@@ -21,6 +21,7 @@ import type {
   WrisDataQualityFlag,
 } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface WrisStationPanelProps {
   station: WrisStation;
@@ -57,15 +58,11 @@ export function WrisStationPanel({ station, onClose }: WrisStationPanelProps) {
     setLoading(true);
     setError(false);
 
-    fetch(
+    fetchJson<WrisStationHistoryResponse>(
       `/api/groundwater/stations?station=${encodeURIComponent(station.stationCode)}&days=730`,
       { signal: controller.signal }
     )
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed");
-        return r.json();
-      })
-      .then((d: WrisStationHistoryResponse) => {
+      .then((d) => {
         setReadings(d.readings || []);
         setServerMeta(d.station ?? null);
         setLoading(false);

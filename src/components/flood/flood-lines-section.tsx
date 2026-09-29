@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /* ── Official flood lines (red & blue) ──────────────────────────────────
    Shared surface: city = flood-lines-{cityId}.json; the component self-
@@ -86,8 +87,7 @@ export function FloodLinesSection({ cityId }: { cityId: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/data/flood-lines-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<FloodLinesFile>) : null))
+    fetchJsonOrNull<FloodLinesFile>(`/data/flood-lines-${cityId}.json`)
       .then((d) => {
         if (!cancelled && d) setData(d);
       })

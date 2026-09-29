@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { isDirect, forAuthority } from "@/lib/utils/allocations-grouping";
 import Link from "next/link";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /* ── The Allocation Ledger (docs/specs/allocation-ledger.md) ────────────
    Shared surface: every city = one allocations-{cityId}.json. The unit of
@@ -314,8 +315,7 @@ export default function AllocationsClient({ cityId }: { cityId: string }) {
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    fetch(`/data/allocations-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<AllocationsFile>) : null))
+    fetchJsonOrNull<AllocationsFile>(`/data/allocations-${cityId}.json`)
       .then((d) => (d ? setData(d) : setFailed(true)))
       .catch(() => setFailed(true));
   }, [cityId]);

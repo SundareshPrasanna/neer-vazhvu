@@ -23,6 +23,7 @@ import {
   getRichBodiesForCity,
 } from "@/lib/water-bodies/rich-body-registry";
 import "leaflet/dist/leaflet.css";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // NO CHENNAI DEFAULTS. These were previously defaulted "for backward compat",
 // which meant any city that mounted this map without passing its own URLs
@@ -246,8 +247,7 @@ export function UnifiedMap({
     // Current OSM water-bodies geojson. Cities without one (no Bangalore
     // for now) get a graceful null instead of letting the 404 HTML body
     // explode JSON.parse.
-    fetch(currentGeoJsonUrl)
-      .then((r) => (r.ok ? r.json() : null))
+    fetchJsonOrNull<GeoJSON.FeatureCollection>(currentGeoJsonUrl)
       .then(setCurrentGeoJSON)
       .catch(console.error);
 
@@ -255,8 +255,7 @@ export function UnifiedMap({
     // version (water-bodies-lost-{city}.geojson) with historical tank
     // shapes; Bangalore's lost-kere data is tabular only (no polygons),
     // so this fetch will 404 there and that's fine.
-    fetch(lostGeoJsonUrl)
-      .then((r) => (r.ok ? r.json() : null))
+    fetchJsonOrNull<GeoJSON.FeatureCollection>(lostGeoJsonUrl)
       .then(setLostGeoJSON)
       .catch(console.error);
   }, [currentGeoJsonUrl, lostGeoJsonUrl]);
@@ -270,9 +269,8 @@ export function UnifiedMap({
     let cancelled = false;
     Promise.all(
       getRichBodiesForCity(cityId).map((b) =>
-        fetch(b.polygon_path)
-          .then((r) => r.json())
-          .then((gj: GeoJSON.FeatureCollection) => ({ body: b, gj }))
+        fetchJson<GeoJSON.FeatureCollection>(b.polygon_path)
+          .then((gj) => ({ body: b, gj }))
           .catch(() => null),
       ),
     ).then((results) => {
@@ -307,9 +305,8 @@ export function UnifiedMap({
   // Match unnamed water body polygons to rivers by centroid proximity
   useEffect(() => {
     if (!currentGeoJSON) return;
-    fetch(riversGeoJsonUrl)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((riversGeo: GeoJSON.FeatureCollection | null) => {
+    fetchJsonOrNull<GeoJSON.FeatureCollection>(riversGeoJsonUrl)
+      .then((riversGeo) => {
         if (!riversGeo) return;
         // Extract river line sample points with names
         const riverPoints: { lat: number; lng: number; name: string; name_ta: string }[] = [];

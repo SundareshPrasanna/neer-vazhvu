@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { RichBodyEntry } from "@/lib/water-bodies/rich-body-registry";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface ZoneYear {
   year: number;
@@ -74,14 +75,14 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
 
   useEffect(() => {
     Promise.all([
-      fetch(body.analysis_paths.water_trend).then((r) => r.json()).catch(() => null),
-      fetch(body.analysis_paths.built_trend).then((r) => r.json()).catch(() => null),
-      fetch(body.analysis_paths.open_buildings).then((r) => r.json()).catch(() => null),
+      fetchJson<JrcTrend>(body.analysis_paths.water_trend).catch(() => null),
+      fetchJson<DwTrend>(body.analysis_paths.built_trend).catch(() => null),
+      fetchJson<OpenBuildings>(body.analysis_paths.open_buildings).catch(() => null),
       body.analysis_paths.overture_buildings
-        ? fetch(body.analysis_paths.overture_buildings).then((r) => r.json()).catch(() => null)
+        ? fetchJson<OvertureBuildings>(body.analysis_paths.overture_buildings).catch(() => null)
         : Promise.resolve(null),
       body.analysis_paths.dw_water_trend
-        ? fetch(body.analysis_paths.dw_water_trend).then((r) => r.json()).catch(() => null)
+        ? fetchJson<DwWaterTrend>(body.analysis_paths.dw_water_trend).catch(() => null)
         : Promise.resolve(null),
     ]).then(([j, d, o, ovr, dww]) => {
       setJrc(j);

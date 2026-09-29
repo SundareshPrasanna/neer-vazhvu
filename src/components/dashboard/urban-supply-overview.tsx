@@ -6,6 +6,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/utils/format";
 import { SUPPLY_TILE_COPY } from "@/content/hero/supply-tile";
 import type { CityId } from "@/lib/cities/ids";
+import { fetchJsonShared } from "@/lib/data/fetch-json";
 
 /**
  * Structural "city water supply at a glance" tile.
@@ -161,8 +162,8 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
   const [data, setData] = useState<SupplyOverviewData | null>(null);
 
   useEffect(() => {
-    fetch(`/data/${cityId}-supply-overview.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<SupplyOverviewData>) : null))
+    // Shared with the other supply surface on the dashboard: one request.
+    fetchJsonShared<SupplyOverviewData>(`/data/${cityId}-supply-overview.json`)
       .then((d) => setData(d))
       .catch(() => setData(null));
   }, [cityId]);

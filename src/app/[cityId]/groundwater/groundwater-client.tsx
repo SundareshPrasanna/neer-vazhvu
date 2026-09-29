@@ -28,6 +28,7 @@ import {
   districtsAsBlocks,
   type DistrictEntry,
 } from "@/lib/groundwater/districts-as-blocks";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /** Resolve which GW view layers a city has enabled, falling back to legacy
  *  "all views" behaviour when groundwaterViews is undefined on the place
@@ -175,41 +176,32 @@ export default function CityGroundwaterClient({
       // an empty-blocks fallback instead of letting the .json() parse on
       // the 404 HTML body reject the whole Promise.all and leave the map
       // stuck in a loading state.
-      fetch(assets.blocksJsonUrl)
-        .then((r) =>
-          r.ok
-            ? (r.json() as Promise<{ blocks?: GWBlock[]; districts?: DistrictEntry[] }>)
-            : { blocks: [] },
-        )
+      fetchJsonOrNull<{ blocks?: GWBlock[]; districts?: DistrictEntry[] }>(assets.blocksJsonUrl)
+        .then((d) => d ?? { blocks: [] })
         .catch(() => ({ blocks: [] })),
-      fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
-        .then((r) => r.json() as Promise<WrisStationsResponse>)
+      fetchJson<WrisStationsResponse>(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .catch(() => ({ stations: [], totalStations: 0 } as WrisStationsResponse)),
       // Pull the block geojson too so we can scope auto-selection to
       // blocks that actually have a polygon on the map. Madurai's data
       // file lists 66 CGWB blocks across the whole district while only
       // 11 are inside MMC and rendered - without this filter the page
       // would auto-select an off-map block on first load.
-      fetch(assets.blockGeoJsonUrl)
-        .then((r) => (r.ok ? (r.json() as Promise<GeoJSON.FeatureCollection>) : null))
+      fetchJsonOrNull<GeoJSON.FeatureCollection>(assets.blockGeoJsonUrl)
         .catch(() => null),
       // Skip data fetches for views the city has turned off in its
       // PlaceConfig.groundwaterViews. Saves one network round-trip per
       // disabled layer and keeps the page from briefly flashing data
       // we'd then suppress at render time.
       gwViews.depth
-        ? fetch(`/api/groundwater/wards-interpolated?city=${encodeURIComponent(cityId)}`)
-            .then((r) => (r.ok ? (r.json() as Promise<InterpolatedWardsResponse>) : null))
+        ? fetchJsonOrNull<InterpolatedWardsResponse>(`/api/groundwater/wards-interpolated?city=${encodeURIComponent(cityId)}`)
             .catch(() => null)
         : Promise.resolve(null),
       gwViews.risk
-        ? fetch(`/data/ward-risk-${cityId}.json`)
-            .then((r) => (r.ok ? (r.json() as Promise<WardRiskFile>) : null))
+        ? fetchJsonOrNull<WardRiskFile>(`/data/ward-risk-${cityId}.json`)
             .catch(() => null)
         : Promise.resolve(null),
       gwViews.cgwbStations
-        ? fetch(`/data/${cityId}-cgwb-stations.json`)
-            .then((r) => (r.ok ? (r.json() as Promise<CgwbStationsFile>) : null))
+        ? fetchJsonOrNull<CgwbStationsFile>(`/data/${cityId}-cgwb-stations.json`)
             .catch(() => null)
         : Promise.resolve(null),
     ])

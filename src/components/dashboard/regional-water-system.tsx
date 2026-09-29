@@ -17,6 +17,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 interface SourceDoc {
   title: string;
@@ -97,9 +98,9 @@ export function RegionalWaterSystem({ cityId }: { cityId: string }) {
     let cancelled = false;
     if (!files) return;
     Promise.all([
-      fetch(files.corporations).then((r) => (r.ok ? r.json() : null)),
+      fetchJsonOrNull(files.corporations),
       files.damStorage
-        ? fetch(files.damStorage).then((r) => (r.ok ? r.json() : null))
+        ? fetchJsonOrNull(files.damStorage)
         : Promise.resolve(null),
     ])
       .then(([d, s]) => {

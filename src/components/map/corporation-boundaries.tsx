@@ -21,6 +21,7 @@ import { GeoJSON, Pane, useMap } from "react-leaflet";
 import type { FeatureCollection } from "geojson";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { corporationsGeoJsonPathFor } from "@/lib/cities/data-paths";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 const LABEL_MIN_ZOOM = 11;
 
@@ -34,8 +35,7 @@ export function CorporationBoundaries({ cityId }: { cityId: string }) {
   useEffect(() => {
     if (!url) return;
     let cancelled = false;
-    fetch(url)
-      .then((r) => (r.ok ? (r.json() as Promise<FeatureCollection>) : null))
+    fetchJsonOrNull<FeatureCollection>(url)
       .then((d) => {
         if (!cancelled) setGeo(d);
       })

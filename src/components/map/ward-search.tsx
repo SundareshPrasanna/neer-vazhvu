@@ -6,13 +6,12 @@ import { useCityId } from "@/lib/hooks/use-city-id";
 import type { Language } from "@/lib/i18n/translations";
 import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
-  type WardEntry,
-  type LocalityEntry,
   type ZoneEntry,
   type SearchResult,
   deriveZones,
   searchAll,
 } from "@/lib/utils/ward-filter";
+import { useLocalities, useWardList } from "@/lib/hooks/use-ward-list";
 
 export interface WardSearchProps {
   /**
@@ -28,8 +27,8 @@ export interface WardSearchProps {
 export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   const { language, t } = useLanguage();
   const cityId = useCityId();
-  const [wards, setWards] = useState<WardEntry[]>([]);
-  const [localities, setLocalities] = useState<LocalityEntry[]>([]);
+  const wards = useWardList(cityId);
+  const localities = useLocalities(cityId);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -44,19 +43,6 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
     }),
     [t],
   );
-
-  useEffect(() => {
-    if (!cityId) return;
-    const city = encodeURIComponent(cityId);
-    fetch(`/api/wards?city=${city}`)
-      .then((r) => r.json())
-      .then((d) => setWards(d.wards || []))
-      .catch(console.error);
-    fetch(`/api/localities?city=${city}`)
-      .then((r) => r.json())
-      .then((d) => setLocalities(d.localities || []))
-      .catch(console.error);
-  }, [cityId]);
 
   const zones = useMemo<ZoneEntry[]>(() => deriveZones(wards), [wards]);
 

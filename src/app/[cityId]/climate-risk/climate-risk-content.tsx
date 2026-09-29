@@ -12,6 +12,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -55,8 +56,7 @@ function ClimateRiskContentInner({ cityId }: { cityId: string }) {
 
   // Content owns the fetch so the side-panel list and the map share one dataset.
   useEffect(() => {
-    fetch(`/geojson/${cityId}-sub-basins-risk.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-sub-basins-risk.geojson`)
       .then(setData)
       .catch(() => {});
   }, [cityId]);

@@ -6,6 +6,7 @@ import { formatNumber } from "@/lib/utils/format";
 import { useLanguage } from "@/lib/i18n/context";
 import { PUMPING_HERO_COPY, type PumpingHeroCopy } from "@/content/hero/pumping";
 import type { CityId } from "@/lib/cities/ids";
+import { fetchJsonShared } from "@/lib/data/fetch-json";
 
 function format(template: string, params: Record<string, string | number | undefined>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
@@ -87,8 +88,8 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
   const [data, setData] = useState<SupplyOverviewMin | null>(null);
 
   useEffect(() => {
-    fetch(`/data/${cityId}-supply-overview.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<SupplyOverviewMin>) : null))
+    // Shared with the other supply surface on the dashboard: one request.
+    fetchJsonShared<SupplyOverviewMin>(`/data/${cityId}-supply-overview.json`)
       .then(setData)
       .catch(() => setData(null));
   }, [cityId]);

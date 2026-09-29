@@ -42,6 +42,7 @@ import {
   type ReviewedMprSeries,
 } from "@/lib/basins/reviewed-mpr";
 import "leaflet/dist/leaflet.css";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // Station-readings panel (contract v1): loaded on demand so recharts only
 // ships when a readings-enabled station is actually clicked.
@@ -870,9 +871,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
     ).filter((c) => !liveCodesRef.current.has(c));
     if (codes.length === 0) return;
     codes.forEach((c) => liveCodesRef.current.add(c));
-    fetch(`/api/reservoir/basin?codes=${[...new Set(codes)].join(",")}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d: { reservoirs?: LiveStorageRow[] } | null) => {
+    fetchJsonOrNull<{ reservoirs?: LiveStorageRow[] }>(`/api/reservoir/basin?codes=${[...new Set(codes)].join(",")}`)
+      .then((d) => {
         if (!d?.reservoirs) return;
         setLiveStorage((prev) => ({ ...prev, ...Object.fromEntries(d.reservoirs!.map((r) => [r.code, r])) }));
       })

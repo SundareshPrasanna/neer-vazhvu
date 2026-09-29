@@ -7,6 +7,7 @@ import type { Feature, FeatureCollection } from "geojson";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { FitToBounds, pointsBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface HotspotProps {
   name?: string;
@@ -79,8 +80,7 @@ export function FloodLeafletMap({ center, zoom, layerState , elevationData}: Map
     ) {
       return;
     }
-    fetch("/data/bangalore-flood-hotspots.geojson")
-      .then((r) => r.json() as Promise<FeatureCollection>)
+    fetchJson<FeatureCollection>("/data/bangalore-flood-hotspots.geojson")
       .then((fc) => {
         const out: HotspotMarker[] = [];
         for (let i = 0; i < (fc.features ?? []).length; i++) {
@@ -121,8 +121,7 @@ export function FloodLeafletMap({ center, zoom, layerState , elevationData}: Map
   useEffect(() => {
     if (swdPrimary !== null) return;
     if (!layerState.showPrimary) return;
-    fetch("/geojson/bangalore-swd-primary.geojson")
-      .then((r) => r.json())
+    fetchJson<FeatureCollection>("/geojson/bangalore-swd-primary.geojson")
       .then(setSwdPrimary)
       .catch(() => setSwdPrimary({ type: "FeatureCollection", features: [] }));
   }, [swdPrimary, layerState.showPrimary]);
@@ -130,8 +129,7 @@ export function FloodLeafletMap({ center, zoom, layerState , elevationData}: Map
   useEffect(() => {
     if (swdSecondary !== null) return;
     if (!layerState.showSecondary) return;
-    fetch("/geojson/bangalore-swd-secondary.geojson")
-      .then((r) => r.json())
+    fetchJson<FeatureCollection>("/geojson/bangalore-swd-secondary.geojson")
       .then(setSwdSecondary)
       .catch(() => setSwdSecondary({ type: "FeatureCollection", features: [] }));
   }, [swdSecondary, layerState.showSecondary]);

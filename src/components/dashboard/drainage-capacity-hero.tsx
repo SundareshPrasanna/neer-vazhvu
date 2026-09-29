@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/lib/i18n/context";
 import type { DrainageCapacityConfig } from "@/lib/cities/types";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * "Drainage-capacity" hero for the city dashboard.
@@ -92,9 +93,8 @@ export function DrainageCapacityHero({
 
   useEffect(() => {
     let live = true;
-    fetch(`/data/rainfall-intensity-${cityId}.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: IntensityData) => {
+    fetchJson<IntensityData>(`/data/rainfall-intensity-${cityId}.json`)
+      .then((d) => {
         if (!live) return;
         setData(d);
         const complete = d.coverage?.complete_years ?? [];

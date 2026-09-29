@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * The long profile: measured water-surface width over all 74.5 km.
@@ -39,10 +40,9 @@ export const WidthProfileChart = memo(function WidthProfileChart({
 
   useEffect(() => {
     let alive = true;
-    fetch(`/data/waterways/${waterwayId}/width-profile.json`)
-      .then((r) => r.json())
+    fetchJson<{ profile: ProfilePoint[] }>(`/data/waterways/${waterwayId}/width-profile.json`)
       .then((j) => {
-        if (alive) setPoints(j.profile as ProfilePoint[]);
+        if (alive) setPoints(j.profile);
       })
       .catch(() => alive && setFailed(true));
     return () => {

@@ -20,6 +20,7 @@ import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { AccountabilityMatrix, type AccountabilityData } from "@/components/basin/basin-atlas";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 interface MetricValue {
   value: number | string;
@@ -89,7 +90,7 @@ function metricColor(metric: MetricKey, v: number | null): string {
 }
 
 function fetchJson(url: string): Promise<unknown | null> {
-  return fetch(url).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  return fetchJsonOrNull(url).catch(() => null);
 }
 
 // Use-based class chip colours (A best .. E worst - KSPCB/NWMP verdicts).

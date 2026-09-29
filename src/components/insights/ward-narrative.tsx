@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { useCityId } from "@/lib/hooks/use-city-id";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface WardNarrativeData {
   date: string;
@@ -38,8 +39,7 @@ export function WardNarrative({ wardNumber }: WardNarrativeProps) {
       setLoading(false);
       return;
     }
-    fetch(`/api/narratives/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
-      .then((r) => r.json())
+    fetchJson<{ narrative?: WardNarrativeData | null }>(`/api/narratives/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
       .then((json) => {
         if (!cancelled) {
           setData(json.narrative ?? null);

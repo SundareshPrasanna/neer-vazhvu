@@ -28,6 +28,7 @@ import {
 } from "recharts";
 import { useTheme } from "@/components/theme-provider";
 import type { ReadingsSeries, StationReadingsPack } from "@/lib/basins";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 const MONTH_ABBR = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const CLASS_COLORS: Record<string, string> = {
@@ -91,8 +92,7 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
 
   useEffect(() => {
     let live = true;
-    fetch(`/data/basins/${basinId}/readings/${encodeURIComponent(stationKey)}.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+    fetchJson<StationReadingsPack>(`/data/basins/${basinId}/readings/${encodeURIComponent(stationKey)}.json`)
       .then((d) => { if (live) setLoaded({ key: stationKey, pack: d }); })
       .catch(() => { if (live) setLoaded({ key: stationKey, pack: null }); });
     return () => { live = false; };
@@ -110,8 +110,7 @@ export function StationReadingsPanel({ basinId, stationKey, name, family, peers,
     const missing = compareKeys.filter((k) => !(k in peerPacks));
     if (!missing.length) return;
     Promise.all(missing.map((k) =>
-      fetch(`/data/basins/${basinId}/readings/${encodeURIComponent(k)}.json`)
-        .then((r) => (r.ok ? r.json() : null))
+      fetchJsonOrNull<StationReadingsPack>(`/data/basins/${basinId}/readings/${encodeURIComponent(k)}.json`)
         .catch(() => null)
         .then((pack) => [k, pack] as const),
     )).then((entries) => {

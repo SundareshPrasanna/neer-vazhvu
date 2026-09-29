@@ -28,6 +28,7 @@ import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
 import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 function MapLoading() {
   const { t } = useLanguage();
@@ -116,9 +117,8 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   useEffect(() => {
     const wardParam = searchParams.get("ward");
 
-    fetch(restorationPriorityUrl(cityId))
-      .then((r) => r.json())
-      .then(async (d: RestorationPriorityData) => {
+    fetchJson<RestorationPriorityData>(restorationPriorityUrl(cityId))
+      .then(async (d) => {
         setRestorationData(d);
 
         // Ward deep link: find the ward's nearest/top water body
@@ -214,9 +214,8 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   // Fetch census data
   useEffect(() => {
     if (!hasCensus) return;
-    fetch("/api/water-bodies-census")
-      .then((r) => r.json())
-      .then((d: { data: CensusWaterBodyProperties[]; summary: { total: number; encroached: number; avgStorageLossPct: number | null } }) => {
+    fetchJson<{ data: CensusWaterBodyProperties[]; summary: { total: number; encroached: number; avgStorageLossPct: number | null } }>("/api/water-bodies-census")
+      .then((d) => {
         setCensusData(d.data ?? []);
         setCensusSummary(d.summary ?? null);
       })
@@ -226,8 +225,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
 
   // Count the existing water bodies for THIS city.
   useEffect(() => {
-    fetch(waterBodiesCurrentUrl(cityId))
-      .then((r) => (r.ok ? (r.json() as Promise<{ features?: unknown[] }>) : null))
+    fetchJsonOrNull<{ features?: unknown[] }>(waterBodiesCurrentUrl(cityId))
       .then((d) => setExistingCount(d?.features?.length ?? null))
       .catch(console.error);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -236,9 +234,8 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   // Fetch lost stats
   useEffect(() => {
     if (!hasLostBodies) return;
-    fetch(waterBodiesLostUrl(cityId))
-      .then((r) => r.json())
-      .then((data: LostGeoJSON) => {
+    fetchJson<LostGeoJSON>(waterBodiesLostUrl(cityId))
+      .then((data) => {
         const lostCount = data.features.length;
         const totalHaLost = data.features.reduce((sum, f) => {
           const p = f.properties;

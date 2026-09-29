@@ -22,6 +22,7 @@ import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import type { SelectedWaterBody } from "@/types/water-bodies";
 import type { RestorationPriorityData } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /** Shape of the entries inside water-bodies-lost-{cityId}.json that the
  *  detail panel uses to enrich a clicked OSM body with historical
@@ -138,8 +139,7 @@ export default function WaterBodiesMapClient({
   // page does the same; the JSON conforms to the shared
   // RestorationPriorityData shape across cities.
   useEffect(() => {
-    fetch(`/data/restoration-priority-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<RestorationPriorityData>) : null))
+    fetchJsonOrNull<RestorationPriorityData>(`/data/restoration-priority-${cityId}.json`)
       .then((data) => {
         setRestorationData(data);
         // On restoration view first load, surface the highest-priority
@@ -182,8 +182,7 @@ export default function WaterBodiesMapClient({
   // Fetch lost-bodies tabular file for narrative augmentation. Optional;
   // 404 is fine (Chennai/Madurai use the geojson layer for this).
   useEffect(() => {
-    fetch(`/data/water-bodies-lost-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<LostBodiesFile>) : null))
+    fetchJsonOrNull<LostBodiesFile>(`/data/water-bodies-lost-${cityId}.json`)
       .then((data) => setLostBodies(data?.lost_bodies ?? null))
       .catch(() => setLostBodies(null));
   }, [cityId]);

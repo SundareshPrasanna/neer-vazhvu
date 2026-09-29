@@ -15,6 +15,7 @@ import type { FeatureCollection } from "geojson";
 import { Maximize2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import type { RichBodyEntry } from "@/lib/water-bodies/rich-body-registry";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface ChipManifest {
   chip_bbox_wsen: [number, number, number, number];
@@ -78,10 +79,10 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      fetch(body.imagery_manifest_path).then((r) => r.json()),
-      fetch(body.polygon_path).then((r) => r.json()),
+      fetchJson<ChipManifest>(body.imagery_manifest_path),
+      fetchJson<GeoJSON.FeatureCollection>(body.polygon_path),
       body.buffer_path
-        ? fetch(body.buffer_path).then((r) => r.json())
+        ? fetchJson<GeoJSON.FeatureCollection>(body.buffer_path)
         : Promise.resolve(null),
     ]).then(([m, p, b]) => {
       if (cancelled) return;

@@ -8,6 +8,7 @@ import type { Layer, PathOptions } from "leaflet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // Mumbai flood-hotspot categories (public/data/mumbai-flood-hotspots.geojson -
 // BMC's official Disaster Management flood-spot register).
@@ -115,8 +116,7 @@ export function FloodMumbaiLeafletMap({ center, zoom, layerState , elevationData
 
   useEffect(() => {
     if (hotspots !== null) return;
-    fetch("/data/mumbai-flood-hotspots.geojson")
-      .then((r) => r.json() as Promise<FeatureCollection>)
+    fetchJson<FeatureCollection>("/data/mumbai-flood-hotspots.geojson")
       .then((fc) =>
         setHotspots(
           flattenPoints(fc, (p, lat, lng, i) => {
@@ -146,8 +146,7 @@ export function FloodMumbaiLeafletMap({ center, zoom, layerState , elevationData
 
   useEffect(() => {
     if (!layerState.show2005 || deluge !== null) return;
-    fetch("/geojson/mumbai-flood-2005-hotspots.geojson")
-      .then((r) => (r.ok ? (r.json() as Promise<FeatureCollection>) : null))
+    fetchJsonOrNull<FeatureCollection>("/geojson/mumbai-flood-2005-hotspots.geojson")
       .then((fc) =>
         setDeluge(
           fc
@@ -171,8 +170,7 @@ export function FloodMumbaiLeafletMap({ center, zoom, layerState , elevationData
   // The drainage layer is ~380 KB, so load it only when first toggled on.
   useEffect(() => {
     if (!layerState.showDrainage || drainage !== null) return;
-    fetch("/geojson/mumbai-drainage.geojson")
-      .then((r) => (r.ok ? (r.json() as Promise<FeatureCollection>) : null))
+    fetchJsonOrNull<FeatureCollection>("/geojson/mumbai-drainage.geojson")
       .then((fc) => setDrainage(fc ?? { type: "FeatureCollection", features: [] }))
       .catch(() => setDrainage({ type: "FeatureCollection", features: [] }));
   }, [layerState.showDrainage, drainage]);

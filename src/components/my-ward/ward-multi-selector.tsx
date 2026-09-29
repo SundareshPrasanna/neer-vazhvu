@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { getZoneLabel } from "@/lib/utils/zone-label";
-import { filterWards, type WardEntry } from "@/lib/utils/ward-filter";
+import { filterWards } from "@/lib/utils/ward-filter";
+import { useWardList } from "@/lib/hooks/use-ward-list";
 
 const MAX_WARDS = 3;
 
@@ -38,19 +39,11 @@ export function WardMultiSelector({
   cityId,
 }: WardMultiSelectorProps) {
   const { t, language } = useLanguage();
-  const [wards, setWards] = useState<WardEntry[]>([]);
+  const wards = useWardList(cityId);
   const [openSlot, setOpenSlot] = useState<number | null>(null);
   const [query, setQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const url = `/api/wards?city=${encodeURIComponent(cityId)}`;
-    fetch(url)
-      .then((r) => r.json())
-      .then((d) => setWards(d.wards || []))
-      .catch(console.error);
-  }, [cityId]);
 
   // Close dropdown on outside click
   useEffect(() => {

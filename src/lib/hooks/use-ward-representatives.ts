@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -85,8 +86,7 @@ function loadReps(cityId: string): Promise<RepsFile | null> {
     // Treat a missing file as a soft "no representatives data yet for
     // this city" rather than throwing. The card will render an honest
     // empty state.
-    p = fetch(repsUrl(cityId))
-      .then((r) => (r.ok ? (r.json() as Promise<RepsFile>) : null))
+    p = fetchJsonOrNull<RepsFile>(repsUrl(cityId))
       .catch(() => null);
     repsPromiseByCity.set(cityId, p);
   }

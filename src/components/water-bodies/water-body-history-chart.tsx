@@ -15,6 +15,7 @@ import { useTheme } from "@/components/theme-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/utils/format";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface HistoryPoint {
   summaryDate: string;
@@ -73,13 +74,9 @@ export function WaterBodyHistoryChart({
     setLoading(true);
     setError(false);
 
-    fetch(`/api/water-bodies/gee/history?osm_id=${osmId}`, {
+    fetchJson<{ data?: Record<string, unknown>[] }>(`/api/water-bodies/gee/history?osm_id=${osmId}`, {
       signal: controller.signal,
     })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed");
-        return r.json();
-      })
       .then((payload) => {
         const points: HistoryPoint[] = (payload.data ?? []).map(
           (row: Record<string, unknown>) => ({

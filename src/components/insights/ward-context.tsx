@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useWardProfile } from "@/lib/hooks/use-ward-profile";
 import { useCityId } from "@/lib/hooks/use-city-id";
 import { useLanguage } from "@/lib/i18n/context";
+import { fetchJsonShared } from "@/lib/data/fetch-json";
+import type { GroundwaterData } from "@/lib/hooks/use-my-ward-data";
 
 interface WardContextProps {
   wardNumber: number;
@@ -37,8 +39,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
   useEffect(() => {
     if (groundwater || hideGroundwater || !cityId) return;
     let cancelled = false;
-    fetch(`/api/groundwater/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
-      .then((r) => r.json())
+    fetchJsonShared<GroundwaterData>(`/api/groundwater/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
       .then((d) => {
         if (!cancelled) setGW({ depthM: d.depthM, trend: d.trend, riskLevel: d.riskLevel });
       })

@@ -13,7 +13,9 @@ import {
 import { useTheme } from "@/components/theme-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { WardHistoryPoint, WardHistoryResponse } from "@/types/groundwater";
+import { fetchJson } from "@/lib/data/fetch-json";
 import { useLanguage } from "@/lib/i18n/context";
+import { useCityId } from "@/lib/hooks/use-city-id";
 
 interface WardHistoryChartProps {
   wardNumber: number;
@@ -22,6 +24,7 @@ interface WardHistoryChartProps {
 export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
+  const cityId = useCityId();
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
@@ -67,17 +70,17 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
   };
 
   useEffect(() => {
+    if (!cityId) return;
     const controller = new AbortController();
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(false);
 
-    fetch(`/api/groundwater/history?ward=${wardNumber}`, { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed");
-        return r.json();
-      })
-      .then((d: WardHistoryResponse) => {
+    fetchJson<WardHistoryResponse>(
+      `/api/groundwater/history?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`,
+      { signal: controller.signal },
+    )
+      .then((d) => {
         setHistory(d.history);
         setLoading(false);
       })
@@ -89,7 +92,7 @@ export function WardHistoryChart({ wardNumber }: WardHistoryChartProps) {
       });
 
     return () => controller.abort();
-  }, [wardNumber]);
+  }, [cityId, wardNumber]);
 
   if (loading) {
     return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * A city's live operational flood register: the weekly record of where the
@@ -62,9 +63,8 @@ export function LiveRegisterCard({
 
   useEffect(() => {
     let live = true;
-    fetch(src)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: RegisterDoc) => live && setDoc(d))
+    fetchJson<RegisterDoc>(src)
+      .then((d) => live && setDoc(d))
       .catch(() => live && setFailed(true));
     return () => {
       live = false;

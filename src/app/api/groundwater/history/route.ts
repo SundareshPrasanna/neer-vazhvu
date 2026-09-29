@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFileSync } from "fs";
-import { resolve } from "path";
+import { requireCity } from "@/lib/require-city";
 import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from "@/lib/api-error";
 import { generateMockWardHistory } from "@/lib/mock-data";
-
-const wardNamesPath = resolve(process.cwd(), "public/data/ward-names.json");
-const canonicalNames = new Map<number, string>(
-  (JSON.parse(readFileSync(wardNamesPath, "utf-8")) as {
-    wards: { ward_number: number; zone_name: string }[];
-  }).wards.map((w) => [w.ward_number, `Ward ${w.ward_number}`])
-);
 
 function isSupabaseConfigured(): boolean {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -17,6 +9,8 @@ function isSupabaseConfigured(): boolean {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
   const wardParam = searchParams.get("ward");
 
   if (!wardParam) {
@@ -24,8 +18,8 @@ export async function GET(request: NextRequest) {
   }
 
   const wardNumber = parseInt(wardParam, 10);
-  if (isNaN(wardNumber) || wardNumber < 1 || wardNumber > 200) {
-    return NextResponse.json({ error: "ward must be between 1 and 200" }, { status: 400 });
+  if (isNaN(wardNumber) || wardNumber < 1) {
+    return NextResponse.json({ error: "ward must be a positive integer" }, { status: 400 });
   }
 
   if (!isSupabaseConfigured()) {
@@ -38,7 +32,8 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await supabase
     .from("groundwater_monthly")
-    .select("ward_number, ward_name, year, month, depth_to_water_m")
+    .select("ward_number, year, month, depth_to_water_m")
+    .eq("city_id", city.cityId)
     .eq("ward_number", wardNumber)
     .order("year", { ascending: true })
     .order("month", { ascending: true })
@@ -58,7 +53,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     wardNumber,
-    wardName: canonicalNames.get(wardNumber) || (data?.[0]?.ward_name as string) || `Ward ${wardNumber}`,
+    wardName: `Ward ${wardNumber}`,
     history,
   });
 }
