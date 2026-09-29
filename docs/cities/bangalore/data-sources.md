@@ -75,7 +75,7 @@ Surfaces:
 ## CGWB Station-Level Groundwater (Bangalore + Bangalore Rural districts)
 
 Same India WRIS Ground Water Level API as Chennai's and Madurai's scrape, scoped to Bangalore Urban + Bangalore Rural districts (and parts of Tumakuru / Kolar / Ramanagaram where the periphery falls).
-- `neer-vazhvu-api/scripts/scrape_wris_bangalore.py` (initial discovery)
+- `neer-vazhvu-api/scripts/scrape_wris_groundwater.py --city bangalore` (initial discovery)
 - Daily ingest fans across the 5-district set to capture peri-urban wells used by the corridor (Sarjapur, Whitefield, Devanahalli, etc.)
 - 13 CGWB telemetric stations across Bangalore Urban (sparse - the reason no IDW interpolation is shown)
 
