@@ -170,6 +170,8 @@ export interface ReadingsSeries extends ReadingsSeriesBase {
   param?: string;
   criterion?: number;
   criterionLabel?: string;
+  /** wq-param-series: months whose sample was below the detection limit, plotted at the limit. */
+  belowDetection?: string[];
 }
 
 export interface StationReadingsPack {

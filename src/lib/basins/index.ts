@@ -7,6 +7,7 @@ import { ERODE_RIVERS } from "./erode-rivers";
 import { KABINI } from "./kabini";
 import { KRISHNAGIRI_RIVERS } from "./krishnagiri-rivers";
 import { MUMBAI_RIVERS } from "./mumbai-rivers";
+import { PALAKKAD_RIVERS } from "./palakkad-rivers";
 
 export * from "./types";
 
@@ -21,6 +22,7 @@ const BASINS: Record<string, BasinManifest> = {
   kabini: KABINI,
   "krishnagiri-rivers": KRISHNAGIRI_RIVERS,
   "mumbai-rivers": MUMBAI_RIVERS,
+  "palakkad-rivers": PALAKKAD_RIVERS,
 };
 
 export function tryGetBasinManifest(basinId: string): BasinManifest | null {
