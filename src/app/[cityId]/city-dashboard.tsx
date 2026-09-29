@@ -114,9 +114,22 @@ function waterBodiesBlurb(config: PlaceConfig): string {
 // pending follow-up tracked in docs/specs/multi-city-component-discipline.md.
 // ---------------------------------------------------------------------------
 
-async function getAiNarrative(): Promise<AiNarrative | null> {
+/** The Supabase client, or null when it is not configured (CI builds, local
+ *  dev without keys); the section then renders empty. An outage still throws
+ *  via failOnOutage so a cached page is not replaced. */
+async function serverClientOrNull() {
   const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+  try {
+    return { supabase: createServerClient(), failOnOutage };
+  } catch {
+    return null;
+  }
+}
+
+async function getAiNarrative(): Promise<AiNarrative | null> {
+  const client = await serverClientOrNull();
+  if (!client) return null;
+  const { supabase, failOnOutage } = client;
 
   // Scope to today's briefing (IST) so stale AI narratives trigger template fallback
   const todayIST = new Intl.DateTimeFormat("en-CA", {
@@ -151,8 +164,9 @@ async function getAiNarrative(): Promise<AiNarrative | null> {
 async function getReservoirCatchmentContextRows(): Promise<
   ReservoirCatchmentContextRow[] | null
 > {
-  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+  const client = await serverClientOrNull();
+  if (!client) return null;
+  const { supabase, failOnOutage } = client;
 
   const latestDateResult = await failOnOutage(
     supabase
@@ -198,8 +212,9 @@ async function getReservoirCatchmentContextRows(): Promise<
 async function getGroundwaterData(
   cityId: string,
 ): Promise<GroundwaterApiResponse | null> {
-  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+  const client = await serverClientOrNull();
+  if (!client) return null;
+  const { supabase, failOnOutage } = client;
 
   // Canonical ward zone names for this city (Chennai: ward-names.json).
   let canonicalNames = new Map<number, string>();
