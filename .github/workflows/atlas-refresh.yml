@@ -15,7 +15,7 @@
 # never holds the other's refresh.
 #
 # Artifact-commit pattern (pravah-dam-refresh.yml, bmc-floodspots-refresh.yml):
-# the served artifacts are committed back to the branch after the NVDM gates.
+# the served artifacts are committed back to the branch after the NVDM gate.
 # Production serves the corpus at corpus.lock, so a refreshed tree reaches the
 # site only through the data-repo release (scripts/release-corpus.sh).
 #
@@ -110,16 +110,16 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          mapfile -t changed < <(git diff --name-only -- public/data/atlas)
-          if [ "${#changed[@]}" -eq 0 ]; then
+          if [ -z "$(git status --porcelain -- public/data/atlas)" ]; then
             echo "No artifact changed for ${{ matrix.district }}; nothing to gate or commit"
             exit 0
           fi
-          # Every enveloped file at HEAD must still certify L2 after the
-          # producers rewrote it (the gate that caught envelope-stripping
-          # producers on other feeds). The gate refuses an empty list, hence
-          # the guard above.
-          bash scripts/nvdm-refresh-gate.sh "${changed[@]}"
+          docs=(docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md)
+          # The NVDM gate covers new (untracked) shards too, so catalogue them first; this
+          # copy of the docs is discarded because they are rebuilt on the rebased tip below.
+          python3 scripts/build_dataset_catalogue.py
+          bash scripts/nvdm-gate.sh HEAD public/data/atlas
+          git checkout -- "${docs[@]}"
           python3 scripts/validate_nvdm.py --selftest
           git add public/data/atlas
           if git diff --staged --quiet; then
@@ -131,7 +131,6 @@ jobs:
           # conflict on a rebase. So rebase the data-only commit first, build
           # the docs on the new tip, fold them in, push. A real conflict in the
           # district's own files still stops the step.
-          docs=(docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md)
           for attempt in 1 2 3; do
             git pull --rebase origin ${{ github.ref_name }}
             data_commit=$(git rev-parse HEAD)

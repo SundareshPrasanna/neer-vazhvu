@@ -69,9 +69,9 @@ jobs:
           GEE_CLOUD_PROJECT: ${{ secrets.GEE_CLOUD_PROJECT }}
         run: python scripts/run_gee_coastline.py build-geojson --write --city ${{ matrix.city }}
 
-      - name: NVDM refresh gate (envelope must survive the rewrite)
+      - name: NVDM gate (the transects must keep their level through the rewrite)
         working-directory: .
-        run: bash scripts/nvdm-refresh-gate.sh public/geojson/${{ matrix.city }}-coastal-transects.geojson
+        run: bash scripts/nvdm-gate.sh HEAD public/geojson/${{ matrix.city }}-coastal-transects.geojson
 
       - name: Open PR with the refreshed transects
         uses: peter-evans/create-pull-request@v6

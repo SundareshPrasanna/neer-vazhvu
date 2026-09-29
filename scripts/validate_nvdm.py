@@ -11,23 +11,29 @@ Assesses every catalogued artifact against the four conformance levels:
 Usage:
   python3 scripts/validate_nvdm.py                 # full report -> docs/architecture/nvdm-conformance.md
   python3 scripts/validate_nvdm.py --check FILE... # gate mode: exit 1 unless every FILE reaches L2
+  python3 scripts/validate_nvdm.py --check --base REV FILE...  # ratchet against REV (scripts/nvdm-gate.sh)
   python3 scripts/validate_nvdm.py --selftest      # validate schemas/nvdm/examples/* (CI sanity)
 
-Stdlib only. Implements the subset of JSON Schema the NVDM schemas restrict
-themselves to: type (incl. unions), properties, required, items, enum, pattern,
-minItems, minLength, uniqueItems, additionalProperties:false, allOf, and $ref
-within schemas/nvdm/ files. Run the catalogue builder first; this tool
-deliberately reuses its output instead of re-walking the tree.
+Stdlib only. Implements the JSON Schema subset in SCHEMA_KEYWORDS (the selftest
+fails on any other keyword), with $ref within schemas/nvdm/ files. Run the
+catalogue builder first; this tool deliberately reuses its output instead of
+re-walking the tree.
 """
 
 from __future__ import annotations
 
+import contextlib
+import functools
+import io
 import json
 import math
+import os
 import re
+import subprocess
 import sys
+import tempfile
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,12 +47,40 @@ TYPE_MAP = {
 }
 
 
-class SchemaError(Exception):
-    pass
+# Keywords validate() implements plus pure annotations; any other keyword would be silently ignored.
+SCHEMA_KEYWORDS = {
+    "$ref", "allOf", "enum", "type", "required", "properties", "additionalProperties",
+    "unevaluatedProperties", "pattern", "minLength", "minItems", "uniqueItems", "items",
+    "$schema", "$id", "$defs", "$comment", "title", "description", "examples", "default",
+}
 
 
 def load_schemas() -> dict[str, dict]:
-    return {f.name: json.loads(f.read_text()) for f in SCHEMA_DIR.glob("*.schema.json")}
+    schemas = {f.name: json.loads(f.read_text()) for f in SCHEMA_DIR.glob("*.schema.json")}
+    missing = sorted(set(CONTRACTS.values()) - set(schemas))
+    if missing:
+        raise SystemExit(f"CONTRACTS names schema file(s) missing from {SCHEMA_DIR.relative_to(ROOT)}: {missing}")
+    return schemas
+
+
+def unsupported_keywords(node) -> list[str]:
+    """Keywords, or schema-valued closures, anywhere in a schema that validate() would not enforce."""
+    if isinstance(node, list):
+        return [k for n in node for k in unsupported_keywords(n)]
+    if not isinstance(node, dict):
+        return []
+    subs = [*node.get("properties", {}).values(), *node.get("$defs", {}).values(), node.get("items"), node.get("allOf")]
+    closures = ("additionalProperties", "unevaluatedProperties")
+    return [k for k, v in node.items() if k not in SCHEMA_KEYWORDS or k in closures and not isinstance(v, bool)
+            ] + unsupported_keywords(subs)
+
+
+def declared(schema: dict, schemas: dict[str, dict], owner: str) -> set[str]:
+    """Property names a schema evaluates at one instance location, through allOf and $ref."""
+    if "$ref" in schema:
+        sub, sub_owner = resolve_ref(schema["$ref"], owner, schemas)
+        return declared(sub, schemas, sub_owner)
+    return set(schema.get("properties", {})).union(*(declared(s, schemas, owner) for s in schema.get("allOf", [])))
 
 
 def resolve_ref(ref: str, current: str, schemas: dict[str, dict]) -> tuple[dict, str]:
@@ -86,14 +120,11 @@ def validate(doc, schema: dict, schemas: dict[str, dict], owner: str, path: str 
         for key, sub in schema.get("properties", {}).items():
             if key in doc:
                 errs += validate(doc[key], sub, schemas, owner, f"{path}.{key}")
-        # additionalProperties:false - an undeclared key inside a closed object
-        # is a typo or a smuggled field, and both should fail here rather than
-        # be ignored (PR #227 review: rights_determination is a closed object,
-        # so `approved_by_vibes: true` must not sail past the gate).
-        if schema.get("additionalProperties") is False:
-            for key in doc:
-                if key not in schema.get("properties", {}):
-                    errs.append(f"{path}: undeclared key '{key}'")
+        # An undeclared key in a closed object is a typo or a smuggled field (PR #227:
+        # `approved_by_vibes: true`); unevaluatedProperties also admits keys declared via allOf/$ref.
+        if schema.get("additionalProperties") is False or schema.get("unevaluatedProperties") is False:
+            known = declared(schema, schemas, owner) if "unevaluatedProperties" in schema else schema.get("properties", {})
+            errs += [f"{path}: undeclared key '{key}'" for key in doc if key not in known]
     if isinstance(doc, str) and "pattern" in schema:
         if not re.search(schema["pattern"], doc):
             errs.append(f"{path}: '{doc[:40]}' fails pattern {schema['pattern']}")
@@ -293,34 +324,44 @@ def source_accountability_errors(
     return errs
 
 
-def calendar_date_errors(doc: dict) -> list[str]:
-    """Bounded patterns admit 2026-02-30; real calendars do not. Checks every
-    envelope date and claim-record data_date/as_of."""
-    def bad(v) -> bool:
-        if not isinstance(v, str) or len(v) != 10:
-            return False  # year / year-month forms carry no day to mis-state
-        try:
-            date.fromisoformat(v)
-            return False
-        except ValueError:
-            return True
+def iso_date(v) -> bool:
+    """An ISO year, year-month or real calendar date."""
+    try:
+        return isinstance(v, str) and (
+            (len(v) == 4 and 1 <= int(v) <= 9999)
+            or (len(v) == 7 and v[4] == "-" and 1 <= int(v[:4]) <= 9999 and 1 <= int(v[5:]) <= 12)
+            or (len(v) == 10 and date.fromisoformat(v).isoformat() == v))
+    except ValueError:
+        return False
 
-    errs = []
+
+def calendar_date_errors(doc: dict) -> list[str]:
+    """Bounded patterns admit 2026-02-30 and a fallback can stamp 1970-01-01. Every
+    envelope date and claim-record data_date/as_of must be a real date, none in the
+    future; produced_at and retrieved must also fall on or after 2000."""
+    ceiling = (date.today() + timedelta(days=1)).isoformat()  # a day of slack: IST stamps, UTC runners
+
+    def problem(v, floor: bool) -> str | None:
+        if not isinstance(v, str):
+            return None
+        if len(v) == 10 and not iso_date(v):
+            return "is not a real calendar date"
+        if not re.fullmatch(r"\d{4}(-\d\d){0,2}", v):
+            return None  # prose and era forms carry no comparable date
+        if floor and v < "2000":
+            return "predates 2000 (a fallback stamp, not a production date)"
+        return "is in the future" if v > ceiling[: len(v)] else None
+
     prov = doc.get("provenance", {})
-    if bad(prov.get("produced_at")):
-        errs.append(f"produced_at '{prov.get('produced_at')}' is not a real calendar date")
+    fields = [("produced_at", prov.get("produced_at"), True)]
     for i, s in enumerate(prov.get("sources", [])):
         if isinstance(s, dict):
-            for k in ("as_of", "retrieved"):
-                if bad(s.get(k)):
-                    errs.append(f"provenance.sources[{i}].{k} '{s.get(k)}' is not a real calendar date")
+            fields += [(f"provenance.sources[{i}].{k}", s.get(k), k == "retrieved") for k in ("as_of", "retrieved")]
     for coll in ("facts", "commitments", "arrangements"):
         for i, r in enumerate(doc.get(coll, []) if isinstance(doc.get(coll), list) else []):
             if isinstance(r, dict):
-                for k in ("as_of", "data_date"):
-                    if bad(r.get(k)):
-                        errs.append(f"$.{coll}[{i}].{k} '{r.get(k)}' is not a real calendar date")
-    return errs
+                fields += [(f"$.{coll}[{i}].{k}", r.get(k), False) for k in ("as_of", "data_date")]
+    return [f"{name} '{v}' {p}" for name, v, floor in fields if (p := problem(v, floor))]
 
 
 SEMANTIC_CLAIM_COLLECTIONS = (
@@ -382,22 +423,8 @@ def semantic_value_errors(value, path: str) -> list[str]:
             return [f"{path}.unit: range unit must be a non-empty string"]
     if kind in ("text", "date") and (not isinstance(raw, str) or not raw.strip()):
         return [f"{path}.value: {kind} value must be a non-empty string"]
-    if kind == "date" and isinstance(raw, str):
-        try:
-            valid = (
-                (len(raw) == 4 and 1 <= int(raw) <= 9999)
-                or (
-                    len(raw) == 7
-                    and 1 <= int(raw[:4]) <= 9999
-                    and raw[4] == "-"
-                    and 1 <= int(raw[5:]) <= 12
-                )
-                or (len(raw) == 10 and date.fromisoformat(raw).isoformat() == raw)
-            )
-        except (TypeError, ValueError):
-            valid = False
-        if not valid:
-            return [f"{path}.value: date must be an ISO year, year-month or date"]
+    if kind == "date" and isinstance(raw, str) and not iso_date(raw):
+        return [f"{path}.value: date must be an ISO year, year-month or date"]
     if kind == "terms":
         terms = value.get("values")
         if (
@@ -612,25 +639,12 @@ def semantic_graph_errors(doc: dict) -> list[str]:
             errs.append(f"{path}: unknown subject set {rid!r}")
 
     def interval(value, path: str) -> None:
-        def valid(part) -> bool:
-            if not isinstance(part, str):
-                return False
-            try:
-                if len(part) == 4:
-                    return 1 <= int(part) <= 9999
-                if len(part) == 7:
-                    year, month = map(int, part.split("-"))
-                    return 1 <= year <= 9999 and 1 <= month <= 12
-                return len(part) == 10 and date.fromisoformat(part).isoformat() == part
-            except (TypeError, ValueError):
-                return False
-
         if not isinstance(value, dict):
             return
         closed_keys(value, interval_keys, path)
         start, end = value.get("start"), value.get("end")
         if isinstance(start, str) and isinstance(end, str):
-            if not valid(start) or not valid(end):
+            if not iso_date(start) or not iso_date(end):
                 errs.append(f"{path}: interval contains an invalid calendar date")
             elif len(start) != len(end):
                 errs.append(f"{path}: interval endpoints must use the same precision")
@@ -774,11 +788,6 @@ def unknown_key_errors(doc: dict, contract: dict) -> list[str]:
     ]
 
 
-def contract_schema_for(rec: dict, schemas: dict[str, dict]) -> str | None:
-    name = CONTRACTS.get(f"{rec['family']}/{rec['dataset']}")
-    return name if name and name in schemas else None
-
-
 def apply_internal_input_floor(results: list[dict]) -> None:
     """An L3 claim cannot rest on ungoverned inputs (review 2026-07-30: Chennai
     ward-profiles reached L3 over an L0 boundary geometry). Any artifact
@@ -838,7 +847,7 @@ CLAIM_DATASETS = {
     "data-root/allocations": ("arrangements", ("source_ids", "sources", "source")),
     "data-root/water-bodies-lost": ("lost_bodies", ("source_ids", "sources", "source")),
     "data-root/water-bodies-flagship": ("bodies", ("source_ids", "sources", "source")),
-    "data-root/restoration-projects": ("projects", ("source_ids", "sources", "source")),
+    "data-root/restoration-projects": ("projects", ("source_ids", "sources", "source", "source_url")),
     "data-root/river-events": ("events", ("source_ids", "sources", "source", "url")),
 }
 
@@ -886,8 +895,11 @@ def claim_provenance_errors(doc: dict, dataset: str) -> list[str]:
     return errs
 
 
-def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids: set[str]) -> dict:
-    path = ROOT / rec["path"]
+def disk(rel: str) -> str:
+    return (ROOT / rel).read_text()
+
+
+def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids: set[str], read=disk) -> dict:
     level = 0  # L0: it's in the catalogue by construction
     notes: list[str] = []
     # L1 = accounted for: registry lineage (watched) OR an explicit coverage-
@@ -896,7 +908,7 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
     if rec["headwaters_sources"] or allowlisted:
         level = 1
     try:
-        doc = json.loads(path.read_text())
+        doc = json.loads(read(rec["path"]))
     except Exception as e:  # noqa: BLE001
         return {"path": rec["path"], "level": level, "notes": [f"unparseable: {e}"][:1]}
     env_errs = envelope_check(doc, rec, schemas)
@@ -910,6 +922,8 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
         )
         env_errs += provenance_rule_errors(doc)
         env_errs += calendar_date_errors(doc)
+        # Claim datasets owe per-record citations, contract or not: the empty-sources exemption rests on them.
+        env_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
     if not env_errs:
         if level < 1:
             # The ladder is cumulative for real: a valid envelope on an
@@ -918,10 +932,9 @@ def assess(rec: dict, schemas: dict[str, dict], scopes: dict[str, str], reg_ids:
             notes.append("envelope valid but artifact is unaccounted (no registry lineage, no allowlist reason) - L2 blocked")
             return {"path": rec["path"], "level": level, "notes": notes}
         level = 2
-        contract = contract_schema_for(rec, schemas)
+        contract = CONTRACTS.get(f"{rec['family']}/{rec['dataset']}")
         if contract:
             c_errs = validate(doc, schemas[contract], schemas, contract)
-            c_errs += claim_provenance_errors(doc, f"{rec['family']}/{rec['dataset']}")
             c_errs += unknown_key_errors(doc, schemas[contract])
             c_errs += license_errors(doc)
             # Fail-closed internal lineage (rounds 2-3: omission kept L3, and
@@ -1045,6 +1058,20 @@ def selftest(schemas: dict[str, dict]) -> int:
           bool(source_accountability_errors(d, set(), set(), "data-root/facts")))
     d = dup(facts); d["provenance"]["produced_at"] = "2026-02-30"
     check("calendar-invalid date rejected", bool(calendar_date_errors(d)))
+    d = dup(facts); d["provenance"]["produced_at"] = "1970-01-01"
+    check("epoch produced_at rejected", bool(calendar_date_errors(d)))
+    d = dup(facts); d["provenance"]["sources"][0]["as_of"] = str(date.today().year + 1)
+    check("future source as_of rejected", bool(calendar_date_errors(d)))
+    d = dup(facts); d["provenance"]["sources"][0].update({"as_of": "1872", "retrieved": "2026-07"})
+    d["facts"][0]["data_date"] = "c. 750-1100 CE"
+    check("old as_of and prose data_date accepted", not calendar_date_errors(d))
+    bad_kw = [f"{n}: {k}" for n, s in sorted(schemas.items()) for k in unsupported_keywords(s)]
+    check("every schema keyword is one validate() enforces" + (f" {bad_kw}" if bad_kw else ""), not bad_kw)
+    check("unsupported schema keyword detected",
+          bool(unsupported_keywords({"properties": {"x": {"anyOf": []}}, "additionalProperties": {}})))
+    lost = {"provenance": {"sources": []}, "lost_bodies": [{"name": "x", "status": "lost"}]}
+    check("uncontracted claim record w/o source rejected",
+          bool(claim_provenance_errors(lost, "data-root/water-bodies-lost")))
     d = dup(facts); d["provenance"]["sources"][0].pop("license")
     check("missing licence terms rejected at L3", bool(license_errors(d)))
     d = dup(facts); d["_hyderabad_special"] = {"leak": True}
@@ -1158,7 +1185,8 @@ def selftest(schemas: dict[str, dict]) -> int:
     d = dup(semantic); d["evidence"][0]["source_id"] = "missing-source"
     check("semantic evidence source custody rejected", bool(semantic_graph_errors(d)))
     d = dup(semantic); d["standing_facts"][0]["undocumented_shortcut"] = True
-    check("semantic nested claim keys are closed", bool(semantic_graph_errors(d)))
+    check("semantic nested claim keys are closed", bool(semantic_graph_errors(d)) and bool(
+        validate(d, schemas["semantic-records.schema.json"], schemas, "semantic-records.schema.json")))
     d = dup(semantic); d["observations"][0]["comparison_claim_ids"] = [
         d["observations"][1]["id"]
     ]
@@ -1186,47 +1214,59 @@ def selftest(schemas: dict[str, dict]) -> int:
         d[collection] = []
     check("semantic empty claim bundle rejected", bool(semantic_graph_errors(d)))
 
-    # ---- L2 gate selector regression (2026-07-30 review: --diff-filter=A
-    # missed renames into serving; unprefixed pathspecs missed path shapes).
-    # Selector cases run against a scratch git repo with a stub checker; the
-    # accept/reject semantics run the real --check against this repo.
-    import subprocess as sp
-    import tempfile
-
+    # ---- Gate selector (scripts/nvdm-gate.sh) in a scratch repo with a stub checker: added, renamed-in,
+    # modified and untracked served files are selected; deletions and non-served paths are not.
     with tempfile.TemporaryDirectory() as td:
-        def g(*args):
-            sp.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", *args],
-                   cwd=td, check=True, capture_output=True)
-        g("init", "-q")
-        (Path(td) / "pipeline-inputs").mkdir()
-        (Path(td) / "pipeline-inputs/moved.geojson").write_text("{}")
-        (Path(td) / "unrelated.txt").write_text("x")
-        g("add", "-A"); g("commit", "-qm", "base")
-        base = sp.run(["git", "rev-parse", "HEAD"], cwd=td, check=True,
-                      capture_output=True, text=True).stdout.strip()
-        (Path(td) / "public/data/nested/deep").mkdir(parents=True)
-        (Path(td) / "public/data/direct.json").write_text("{}")
-        (Path(td) / "public/data/nested/deep/naked.geojson").write_text("{}")
-        (Path(td) / "public/geojson").mkdir()
-        (Path(td) / "docs").mkdir()
-        (Path(td) / "docs/not-served.json").write_text("{}")
-        g("mv", "pipeline-inputs/moved.geojson", "public/geojson/moved.geojson")
-        g("add", "-A"); g("commit", "-qm", "pr")
-        out = sp.run(["bash", str(ROOT / "scripts/nvdm-l2-gate.sh"), base],
-                     cwd=td, capture_output=True, text=True,
-                     env={**__import__("os").environ, "NVDM_CHECK_CMD": "echo SELECTED"})
-        sel = out.stdout
-        check("gate selects direct naked artifact", "public/data/direct.json" in sel)
-        check("gate selects nested naked artifact", "public/data/nested/deep/naked.geojson" in sel)
-        check("gate selects artifact renamed into serving", "public/geojson/moved.geojson" in sel)
-        check("gate ignores non-served paths", "docs/not-served.json" not in sel and "unrelated" not in sel)
+        def sh(*cmd: str) -> str:
+            return subprocess.run(cmd, cwd=td, capture_output=True, text=True,
+                                  env={**os.environ, "NVDM_CHECK_CMD": "echo SELECTED"}).stdout
+        git, gate_sh = ("git", "-c", "user.email=t@t", "-c", "user.name=t"), ("bash", str(ROOT / "scripts/nvdm-gate.sh"))
+        for f in ("pipeline-inputs/moved.geojson", "public/data/tracked.json", "public/data/gone.json",
+                  "public/data/nested/deep/naked.geojson", "public/data/direct.json", "docs/not-served.json",
+                  "public/data/untracked.json"):
+            (Path(td) / f).parent.mkdir(parents=True, exist_ok=True)
+            (Path(td) / f).write_text("{}")
+        for cmd in (("init", "-q"), ("add", "pipeline-inputs", "public/data/tracked.json", "public/data/gone.json"),
+                    ("commit", "-qm", "base")):
+            sh(*git, *cmd)
+        base = sh("git", "rev-parse", "HEAD").strip()
+        (Path(td) / "public/data/tracked.json").write_text('{"x": 1}')
+        for cmd in (("mv", "pipeline-inputs/moved.geojson", "public/data/moved.geojson"), ("rm", "-q", "public/data/gone.json"),
+                    ("add", "public/data/nested", "public/data/direct.json", "docs", "public/data/tracked.json"),
+                    ("commit", "-qm", "pr")):
+            sh(*git, *cmd)
+        sel = sh(*gate_sh, base).partition("SELECTED")[2]
+        check("gate selects added, nested, renamed-in, modified and untracked artifacts",
+              all(f in sel for f in ("direct.json", "nested/deep/naked.geojson", "public/data/moved.geojson",
+                                     "tracked.json", "untracked.json")) and f"--base {base}" in sel)
+        check("gate skips deletions and non-served paths", "gone.json" not in sel and "docs/" not in sel)
+        sel = sh(*gate_sh, "HEAD", "public/data").partition("SELECTED")[2]
+        check("refresh gate selects untracked new files, not committed ones",
+              "untracked.json" in sel and "direct.json" not in sel)
 
-    r_ok = sp.run([sys.executable, str(ROOT / "scripts/validate_nvdm.py"),
-                   "--check", "public/data/facts-madurai.json"], capture_output=True)
-    check("gate accepts a valid L2 artifact", r_ok.returncode == 0)
-    r_bad = sp.run([sys.executable, str(ROOT / "scripts/validate_nvdm.py"),
-                    "--check", "public/data/hypothetical-naked-artifact.json"], capture_output=True)
-    check("gate rejects an uncatalogued naked artifact", r_bad.returncode != 0)
+    # Ratchet, in-process on a synthetic record around example-facts so corpus edits cannot move it.
+    rec = {"path": "public/data/facts-x.json", "family": "data-root", "dataset": "facts",
+           "scope": facts["scope"]["id"], "headwaters_sources": ["hmwssb-reservoir-levels"]}
+    l3 = json.dumps(facts)
+    l2 = dup(facts); l2["facts"][0].pop("tier"); l2 = json.dumps(l2)
+    bare = json.dumps({"facts": facts["facts"]})
+
+    def ratchet(now, was) -> int:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return gate([rec["path"]], {rec["path"]: rec}, (schemas, scopes, set(rec["headwaters_sources"])),
+                        lambda _: now, lambda _: was)
+    check("ratchet: new artifact at L3 accepted", ratchet(l3, None) == 0)
+    check("ratchet: new bare artifact rejected", ratchet(bare, None) == 1)
+    check("ratchet: L3 at base dropping to L2 rejected", ratchet(l2, l3) == 1)
+    check("ratchet: L2 at base staying L2 accepted", ratchet(l2, l2) == 0)
+    check("ratchet: envelope stripped from an L2 artifact rejected", ratchet(bare, l2) == 1)
+    check("ratchet: bare at base skipped", ratchet(bare, bare) == 0)
+    for args, want in ((["public/data/facts-madurai.json"], 0),
+                       (["--base", "HEAD", "public/data/facts-madurai.json"], 0),
+                       (["public/data/hypothetical-naked-artifact.json"], 1)):
+        r = subprocess.run([sys.executable, str(ROOT / "scripts/validate_nvdm.py"), "--check", *args],
+                           capture_output=True)
+        check(f"--check {' '.join(args)} exits {want}", r.returncode == want)
 
     # Internal-dependency floor (review 2026-07-30): an L3 artifact declaring
     # an internal input below L2 - or missing from the catalogue - caps at L2.
@@ -1288,39 +1328,42 @@ def selftest(schemas: dict[str, dict]) -> int:
     apply_internal_input_floor(chain5)
     check("undeclared asserted-method node does not taint by omission", chain5[0]["level"] == 3)
 
-    # Refresh gate (round-2 review: report mode cannot fail, so workflows now
-    # call scripts/nvdm-refresh-gate.sh): a file enveloped at HEAD is enforced;
-    # an unenveloped file is skipped, not silently passed through the checker.
-    with tempfile.TemporaryDirectory() as td:
-        def g2(*args):
-            sp.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", *args],
-                   cwd=td, check=True, capture_output=True)
-        g2("init", "-q")
-        (Path(td) / "public/data").mkdir(parents=True)
-        (Path(td) / "public/data/enveloped.json").write_text('{"nvdm": "1.0", "x": 1}')
-        (Path(td) / "public/data/bare.json").write_text('{"x": 1}')
-        # Large one-line enveloped artifact (> pipe buffer): under pipefail,
-        # `git show | head -c 400` SIGPIPEs git show and the old gate silently
-        # SKIPPED big enveloped files (found on the 331 KB coastal transects,
-        # 2026-07-31) - pin the fix.
-        (Path(td) / "public/data/big-enveloped.geojson").write_text(
-            '{"nvdm": "1.0", "features": [' + ", ".join(["0"] * 1_000_000) + "]}"
-        )
-        g2("add", "-A"); g2("commit", "-qm", "base")
-        out = sp.run(["bash", str(ROOT / "scripts/nvdm-refresh-gate.sh"),
-                      "public/data/enveloped.json", "public/data/bare.json",
-                      "public/data/big-enveloped.geojson"],
-                     cwd=td, capture_output=True, text=True,
-                     env={**__import__("os").environ, "NVDM_CHECK_CMD": "echo ENFORCED"})
-        check("refresh gate enforces files enveloped at HEAD",
-              "public/data/enveloped.json" in out.stdout.split("ENFORCED")[-1])
-        check("refresh gate skips unenveloped files without passing them",
-              "bare.json not enveloped at HEAD - skipped" in out.stdout
-              and "bare.json" not in out.stdout.split("ENFORCED")[-1])
-        check("refresh gate enforces LARGE enveloped files (no SIGPIPE skip)",
-              "big-enveloped.geojson" in out.stdout.split("ENFORCED")[-1])
-
     return 1 if fails else 0
+
+
+def assess_closure(targets: list[str], recs: dict[str, dict], ctx: tuple, read=disk) -> dict[str, dict]:
+    """Assess targets plus their transitive internal_inputs (all the dependency floor reads)."""
+    out: dict[str, dict] = {}
+    todo = list(targets)
+    while todo:
+        p = todo.pop()
+        if p not in out and p in recs:
+            out[p] = assess(recs[p], *ctx, read)
+            todo += out[p].get("internal_inputs", [])
+    apply_internal_input_floor([out[p] for p in recs if p in out])  # catalogue order, as the full report runs it
+    return out
+
+
+def gate(targets: list[str], recs: dict[str, dict], ctx: tuple, read=disk, base=None) -> int:
+    """Every target must reach L2; with base (a reader of the base revision, None where absent),
+    one at L2+ there must keep that level and one below L2 there is skipped. Both sides use today's rules."""
+    rels = [str(Path(t).resolve().relative_to(ROOT)) if Path(t).is_absolute() else t for t in targets]
+    now = assess_closure(rels, recs, ctx, read)
+    was = assess_closure([p for p in rels if base(p) is not None], recs, ctx, base) if base else {}
+    failed = 0
+    for t, p in zip(targets, rels):
+        res, old = now.get(p), was.get(p) if base and base(p) is not None else None
+        need = old["level"] if old else 2
+        if res and (need < 2 or res["level"] >= need):
+            print(f"{t}: L{res['level']} OK" if need >= 2 else f"{t}: L{need} at base, below L2 there - skipped")
+            continue
+        failed = 1
+        if res is None:
+            print(f"{t}: not in catalogue (run scripts/build_dataset_catalogue.py)")
+        else:
+            print(f"{t}: L{res['level']} - below L{need}" + (" (its level at base)" if old else ""),
+                  *res["notes"], sep="\n  ")
+    return failed
 
 
 def main(argv: list[str]) -> int:
@@ -1328,31 +1371,21 @@ def main(argv: list[str]) -> int:
     if "--selftest" in argv:
         return selftest(schemas)
 
-    cat = json.loads(CATALOGUE.read_text())
-    records = cat["files"]
-    scopes = load_scopes()
-    reg_ids = registry_source_ids()
-    results = [assess(r, schemas, scopes, reg_ids) for r in records]
-    apply_internal_input_floor(results)
-    by_path = {r["path"]: r for r in results}
-
+    records = json.loads(CATALOGUE.read_text())["files"]
+    ctx = (schemas, load_scopes(), registry_source_ids())
     if "--check" in argv:
-        targets = argv[argv.index("--check") + 1 :]
-        failed = False
-        for t in targets:
-            rel = str(Path(t).resolve().relative_to(ROOT)) if Path(t).is_absolute() else t
-            res = by_path.get(rel)
-            if res is None:
-                print(f"{t}: not in catalogue (run scripts/build_dataset_catalogue.py)")
-                failed = True
-            elif res["level"] < 2:
-                print(f"{t}: L{res['level']} - below L2")
-                for n in res["notes"]:
-                    print(f"  {n}")
-                failed = True
-            else:
-                print(f"{t}: L{res['level']} OK")
-        return 1 if failed else 0
+        args = argv[argv.index("--check") + 1 :]
+        rev = args[1] if args[:1] == ["--base"] else None
+
+        @functools.cache
+        def at_base(rel: str) -> str | None:
+            r = subprocess.run(["git", "show", f"{rev}:{rel}"], cwd=ROOT, capture_output=True, text=True)
+            return r.stdout if r.returncode == 0 else None
+
+        return gate(args[2:] if rev else args, {r["path"]: r for r in records}, ctx, base=at_base if rev else None)
+
+    results = [assess(r, *ctx) for r in records]
+    apply_internal_input_floor(results)
 
     # ---- report ----
     counts = defaultdict(int)
@@ -1392,8 +1425,9 @@ def main(argv: list[str]) -> int:
         f"- L2/L3 progress is the migration meter: the Madurai pilot moved first; each city's",
         f"  migration lifts its artifacts (spec Part 9 order).",
         "- CI (`.github/workflows/nvdm-conformance.yml`): selftest, catalogue/report freshness,",
-        "  and the `--check` L2 gate on newly added data artifacts are all BLOCKING (NVDM v1",
-        "  accepted 2026-07-30). Legacy files stay report-only until migrated (spec 9.4).",
+        "  and `scripts/nvdm-gate.sh` on every changed artifact are all BLOCKING (NVDM v1",
+        "  accepted 2026-07-30): new files reach L2, files at L2 or L3 keep their level, and every",
+        "  direct-push refresh runs the same gate. Files below L2 stay report-only until migrated (spec 9.4).",
         "",
     ]
     OUT_MD.write_text("\n".join(lines))
