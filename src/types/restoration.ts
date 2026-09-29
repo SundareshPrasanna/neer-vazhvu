@@ -50,6 +50,7 @@ export interface RiverSection {
 
 export interface RestorationPriorityData {
   computed_at: string;
+  algorithm_version?: string;
   total_scored: number;
   weights: Record<string, number>;
   water_bodies: ScoredWaterBody[];

@@ -12,7 +12,6 @@ import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-clien
 import { getPlaceConfig } from "@/lib/cities";
 import {
   restorationPriorityUrl,
-  wardProfilesUrl,
   waterBodiesCurrentUrl,
   waterBodiesLostUrl,
   riversUrl,
@@ -23,7 +22,7 @@ import type { SelectedWaterBody, LostWaterBodyProperties, CensusWaterBodyPropert
 import type { RestorationPriorityData, ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import { useLanguage } from "@/lib/i18n/context";
-import type { WardProfile } from "@/lib/hooks/use-ward-profile";
+import { loadProfiles, type WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
@@ -126,7 +125,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
         if (hasWardSearch && wardParam) {
           const wardNum = parseInt(wardParam, 10);
           try {
-            const profiles: WardProfile[] = await fetch(wardProfilesUrl(cityId)).then((r) => r.json());
+            const profiles = await loadProfiles(cityId);
             setWardProfiles(profiles);
             const profile = profiles.find((p) => p.ward_number === wardNum);
             if (profile?.water_bodies.top_bodies?.length) {
@@ -206,9 +205,8 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   useEffect(() => {
     if (!hasWardSearch) return;
     if (wardProfiles.length > 0) return;
-    fetch(wardProfilesUrl(cityId))
-      .then((r) => r.json())
-      .then((profiles: WardProfile[]) => setWardProfiles(profiles))
+    loadProfiles(cityId)
+      .then(setWardProfiles)
       .catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

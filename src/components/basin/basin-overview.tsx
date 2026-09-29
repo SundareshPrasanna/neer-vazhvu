@@ -163,7 +163,7 @@ function FitToSelection({ geoms }: { geoms: GeoJSON.Geometry[] | null }) {
 
 function DepthPips({ level }: { level: number }) {
   return (
-    <span className="inline-flex items-center gap-0.5" title={`Data depth ${level} of 4 - how much of this sub-basin is mapped on this atlas (the Arkavathi has the fullest picture)`}>
+    <span className="inline-flex items-center gap-0.5" title={`Data depth ${level} of 4 - how much of this sub-basin is mapped on this atlas`}>
       {[0, 1, 2, 3, 4].map((i) => (
         <span
           key={i}

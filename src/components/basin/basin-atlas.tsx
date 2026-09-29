@@ -1823,6 +1823,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
               />
             ) : selectedGapUnit && depData ? (
               <DepPanel
+                basinName={manifest.displayName}
                 data={depData}
                 focusTaluk={selectedGapUnit}
                 onSelectTaluk={setSelectedGapUnit}
@@ -3513,7 +3514,8 @@ function DepShowOnMap({ name, match, onShowMatch }: { name: string; match?: MapM
   );
 }
 
-function DepPanel({ data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, onClose, onBack }: {
+function DepPanel({ basinName, data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, onClose, onBack }: {
+  basinName: string;
   data: DepData;
   focusTaluk: string | null;
   onSelectTaluk: (key: string) => void;
@@ -3636,7 +3638,7 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, o
           {/* Basin-share stat + admin composition of the district. */}
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-2.5 space-y-1.5">
             <div className="flex items-baseline justify-between gap-3">
-              <span className="text-[13px] text-slate-500 dark:text-slate-400">Share of the district inside the Arkavathi basin</span>
+              <span className="text-[13px] text-slate-500 dark:text-slate-400">Share of the district inside the {basinName}</span>
               <span className="text-[15px] font-bold tabular-nums text-slate-900 dark:text-slate-100">{district.pctInBasin}%</span>
             </div>
             <div className="h-1.5 rounded bg-slate-100 dark:bg-slate-800 overflow-hidden">
@@ -3732,7 +3734,7 @@ function DepPanel({ data, focusTaluk, onSelectTaluk, onHighlight, onShowMatch, o
           {district.industrialAreas && district.industrialAreas.length > 0 && (
             <div className="space-y-1.5">
               <div className="flex flex-wrap gap-1.5 items-center">
-                <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas in the district (falling within Arkavathi Basin)</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-400">Industrial areas in the district (falling within the {basinName})</span>
                 {district.industrialAreas.map((ia, i) =>
                   ia.mapMatch ? (
                     <button key={i} onClick={() => onShowMatch(ia.mapMatch!)} className={chip(false)}>{ia.name} ↗</button>

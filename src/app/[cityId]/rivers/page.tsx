@@ -62,7 +62,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
   surat: {
     tapi: {
       display_name: "Tapi",
-      color: "stroke-blue-600",
+      color: "#2563eb",
       length_km_geom: 724,
       description:
         "Surat's only raw-water source and its principal flood risk, in the same channel. The city abstracts from a weir-cum-causeway pond at Singanpor; the water that fills it is released from Ukai dam about 100 km upstream, which the Gujarat Water Resources Department operates rather than the corporation. The Tapi is one of only three major peninsular rivers to flow west, and it reaches the Arabian Sea about 20 km past the city.",
@@ -83,7 +83,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
     },
     mindhola: {
       display_name: "Mindhola",
-      color: "stroke-orange-700",
+      color: "#c2410c",
       length_km_geom: 130,
       description:
         "The textile belt's river. It runs south of the city past the Sachin and Pandesara industrial estates, where several hundred dyeing and printing houses sit, and it carries what the common effluent treatment plants there discharge. Monitored by CPCB at the state highway bridge at Sachin.",
@@ -110,7 +110,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Palta (Indira Gandhi WTP), Garden Reach, Jorabagan, Watgunge; bulk sales to Bidhannagar and Budge Budge",
       status: "Comparatively healthy at the city's intakes - DO 5.6-6.3 mg/l, BOD ~2.1-2.2, faecal coliform 46,000-48,000 MPN/100ml (WBPCB, Jul 2026). The pollution story is not the mainstem, it is the Adi Ganga.",
       cpcb_nwmp_stations: ["Ganga at Palta (intake)", "Ganga at Dakshineswar", "Ganga at Garden Reach"],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
     "adi-ganga": {
       display_name: "Adi Ganga",
@@ -131,7 +131,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "Kudghat (high + low tide)",
         "Sahid Kshudiram (high + low tide)",
       ],
-      color: "stroke-red-600",
+      color: "#dc2626",
     },
     bidyadhari: {
       display_name: "Bidyadhari",
@@ -144,7 +144,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Wetland fisheries; no drinking-water abstraction",
       status: "No public WBPCB series at the city end; monitored upstream at Haroa Bridge in North 24 Parganas.",
       cpcb_nwmp_stations: ["U/S of Bidyadhari river at Haroa Bridge"],
-      color: "stroke-amber-600",
+      color: "#d97706",
     },
     saraswati: {
       display_name: "Saraswati",
@@ -157,7 +157,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "No Kolkata abstraction",
       status: "No dedicated WBPCB station on this reach; shown for basin context. The line renders in two pieces with a 10.6 km break: through that stretch OpenStreetMap maps the channel not as the Saraswati but as the 'Kana' (Bengali for blind or dead) and as unnamed 'khal' ditches. We do not join them, because that would assert an identity the map itself does not make - the break is where the river stopped being called a river.",
       cpcb_nwmp_stations: [],
-      color: "stroke-slate-500",
+      color: "#64748b",
     },
   },
   madurai: {
@@ -193,7 +193,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "மானாமதுரை (சிவகங்கை)",
         "ராமநாதபுரம் (கழிமுகம்)",
       ],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
     periyar: {
       display_name: "Periyar (Kerala feeder)",
@@ -212,7 +212,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status: "Politically charged - Kerala-TN dispute since 1979; SC 2014 caps storage at 142 ft",
       status_ta: "அரசியல் ரீதியாக சச்சரவு - 1979 முதல் கேரளா-தமிழ்நாடு தகராறு; உச்சநீதிமன்றம் 2014 சேமிப்பை 142 அடியாக கட்டுப்படுத்தியது",
       cpcb_nwmp_stations: [],
-      color: "stroke-violet-600",
+      color: "#7c3aed",
     },
     suruliyaru: {
       display_name: "Suruliyaru",
@@ -231,7 +231,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status: "Less monitored; key SW-monsoon contributor",
       status_ta: "குறைவாகக் கண்காணிக்கப்படுகிறது; தென்மேற்கு பருவமழையில் முக்கிய பங்களிப்பாளர்",
       cpcb_nwmp_stations: [],
-      color: "stroke-cyan-600",
+      color: "#0891b2",
     },
     manjalar: {
       display_name: "Manjalar",
@@ -250,7 +250,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status: "Operational reservoir; minor monitoring",
       status_ta: "செயல்பாட்டில் உள்ள நீர்த்தேக்கம்; சிறிய கண்காணிப்பு",
       cpcb_nwmp_stations: [],
-      color: "stroke-emerald-600",
+      color: "#059669",
     },
     varaha: {
       display_name: "Varaha (Varaha Nadhi)",
@@ -269,7 +269,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status: "Operational; data gap on daily storage",
       status_ta: "செயல்பாட்டில்; தினசரி சேமிப்பில் தரவு இடைவெளி",
       cpcb_nwmp_stations: [],
-      color: "stroke-amber-600",
+      color: "#d97706",
     },
   },
   // Bengaluru is a ridge city across three drainage divides; its
@@ -297,7 +297,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "Vrishabhavathi downstream of K&C Valley STP discharge",
       ],
       cpcb_nwmp_stations_ta: [],
-      color: "stroke-amber-600",
+      color: "#d97706",
     },
     arkavati: {
       display_name: "Arkavathi",
@@ -316,7 +316,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status_ta: "",
       cpcb_nwmp_stations: [],
       cpcb_nwmp_stations_ta: [],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
     "dakshina-pinakini": {
       display_name: "Dakshina Pinakini",
@@ -335,7 +335,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status_ta: "",
       cpcb_nwmp_stations: [],
       cpcb_nwmp_stations_ta: [],
-      color: "stroke-violet-600",
+      color: "#7c3aed",
     },
   },
   mumbai: {
@@ -353,7 +353,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "Mithi at Kurla (CST Road bridge)",
         "Mithi at Mahim Creek (mouth)",
       ],
-      color: "stroke-red-600",
+      color: "#dc2626",
     },
     dahisar: {
       display_name: "Dahisar River",
@@ -365,7 +365,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Manori Creek",
       status: "CPCB Priority-I polluted stretch; BMC rejuvenation STPs under trial (2025)",
       cpcb_nwmp_stations: [],
-      color: "stroke-amber-600",
+      color: "#d97706",
     },
     poisar: {
       display_name: "Poisar River",
@@ -377,7 +377,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Marve Creek",
       status: "CPCB Priority-I polluted stretch; BMC rejuvenation programme",
       cpcb_nwmp_stations: [],
-      color: "stroke-violet-600",
+      color: "#7c3aed",
     },
     oshiwara: {
       display_name: "Oshiwara River",
@@ -389,7 +389,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Malad Creek",
       status: "CPCB Priority-I polluted stretch; BMC rejuvenation programme",
       cpcb_nwmp_stations: [],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
   },
   // Delhi: Yamuna-basin scope. river_ids match delhi-rivers.geojson. The
@@ -428,7 +428,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "D/s of Musi at Pratapasingaram (1173)",
         "River Musi at Kasaniguda (3082)",
       ],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
     esi: {
       display_name: "Esi",
@@ -442,7 +442,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status:
         "Catchment protected by GO 111 (1996), repealed 2022; the twins have been drawn on every day since 2020",
       cpcb_nwmp_stations: [],
-      color: "stroke-cyan-600",
+      color: "#0891b2",
     },
     haldi: {
       display_name: "Haldi",
@@ -454,7 +454,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "No HMWSSB source draws from it",
       status: "No monitoring data located; OSM geometry only",
       cpcb_nwmp_stations: [],
-      color: "stroke-slate-400",
+      color: "#94a3b8",
     },
     manjira: {
       display_name: "Manjira",
@@ -471,7 +471,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "U/s Manjeera at Gowdicharla, before Nakkavagu confluence (2374)",
         "D/s Manjeera at Gowdicherla, after Nakkavagu confluence (2375)",
       ],
-      color: "stroke-emerald-600",
+      color: "#059669",
     },
   },
   delhi: {
@@ -495,7 +495,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "Okhla Barrage",
         "Asgarpur (exit)",
       ],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
     wyc_munak: {
       display_name: "Western Yamuna Canal / Munak carrier",
@@ -508,7 +508,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "5 of Delhi's 9 WTPs (~70% of raw water)",
       status: "No public flow data - the biggest measurement gap in Delhi's supply (see Allocation Ledger)",
       cpcb_nwmp_stations: [],
-      color: "stroke-cyan-600",
+      color: "#0891b2",
     },
     najafgarh: {
       display_name: "Najafgarh drain",
@@ -527,7 +527,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "Mungeshpur drain",
         "Bupania drain",
       ],
-      color: "stroke-red-600",
+      color: "#dc2626",
     },
     sahibi: {
       display_name: "Sahibi (the buried river)",
@@ -540,7 +540,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Najafgarh Jheel wetland (remnant)",
       status: "Functionally extinguished as a river in Delhi; survives as the drain's alignment and the jheel",
       cpcb_nwmp_stations: [],
-      color: "stroke-amber-600",
+      color: "#d97706",
     },
     hindon: {
       display_name: "Hindon (UP tributary)",
@@ -553,7 +553,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       feeds: "Hindon Cut interlink; UP canal system",
       status: "Severely polluted through Ghaziabad/Noida; UP outfall drains into Delhi's Shahdara system run BOD 95-110 (DPCC May 2026)",
       cpcb_nwmp_stations: ["Hindon Cut (DPCC river station)", "Sahibabad drain", "Banthala drain", "Indrapuri drain"],
-      color: "stroke-violet-600",
+      color: "#7c3aed",
     },
   },
   // Pune. Every BOD figure below is CPCB's own, from the October 2025
@@ -586,7 +586,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "2191 Sangam Bridge, Shivajinagar (35.0)",
         "2678 Veer Savarkar Bhavan (50.2)",
       ],
-      color: "stroke-blue-600",
+      color: "#2563eb",
     },
     mula: {
       display_name: "Mula",
@@ -603,7 +603,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "2194 Harrison Bridge, Mula-Pawana Sangam, Bopodi (102.5 mg/L, 2024)",
         "2193 Aundh Bridge (25.6)",
       ],
-      color: "stroke-red-600",
+      color: "#dc2626",
     },
     "mula-mutha": {
       display_name: "Mula-Mutha",
@@ -620,7 +620,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "2192 Mundhawa Bridge (22.0 mg/L, 2024)",
         "2677 Downstream of Theur (18.4)",
       ],
-      color: "stroke-orange-600",
+      color: "#ea580c",
     },
     pavana: {
       display_name: "Pavana",
@@ -641,7 +641,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "2691 Dapodi Bridge (33.0)",
         "2690 Kasarwadi (36.0)",
       ],
-      color: "stroke-amber-600",
+      color: "#d97706",
     },
     indrayani: {
       display_name: "Indrayani",
@@ -659,7 +659,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "2668 Downstream Moshi (13.2)",
         "2197 Alandigaon (16.1)",
       ],
-      color: "stroke-emerald-600",
+      color: "#059669",
     },
     bhima: {
       display_name: "Bhima",
@@ -676,7 +676,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
         "1189 Upstream Vithalwadi, Shankar Mandir (32.0 mg/L, 2024)",
         "1190 Downstream Bundgarden, Yerwada (34.0)",
       ],
-      color: "stroke-slate-600",
+      color: "#475569",
     },
     ramnadi: {
       display_name: "Ramnadi",
@@ -690,7 +690,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status:
         "No CPCB NWMP station and no published water-quality series. Carried here because it is mapped: WRD publishes a sanctioned flood-line sheet for it (Haveli, chainage 0 to 13,600 m).",
       cpcb_nwmp_stations: [],
-      color: "stroke-teal-600",
+      color: "#0d9488",
     },
     "mutha-canal": {
       display_name: "Mutha Right Bank Canal",
@@ -704,7 +704,7 @@ const RIVER_INFO_BY_CITY: Record<string, Record<string, RiverInfo>> = {
       status:
         "Infrastructure, not a monitored water body. No CPCB station applies.",
       cpcb_nwmp_stations: [],
-      color: "stroke-yellow-700",
+      color: "#a16207",
     },
   },
 };
