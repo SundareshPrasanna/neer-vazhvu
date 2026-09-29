@@ -174,7 +174,9 @@ async def _step_fetch_weather() -> dict:
         rows.append(row)
 
     if rows:
-        supabase.table("weather_daily").upsert(rows, on_conflict="city_id,date").execute()
+        supabase.table("weather_daily").upsert(
+            rows, on_conflict="city_id,date"
+        ).execute()
 
     return {"rows_affected": len(rows)}
 
