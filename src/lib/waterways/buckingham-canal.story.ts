@@ -35,12 +35,11 @@ export const BUCKINGHAM_CANAL_STORY: WaterwayStory = {
         kind: "width-profile",
         xLabel: "km from Ennore",
         band: { from: 20.5, to: 32, label: "MRTS reach" },
-        // "\\u2013" renders literally on the live page; kept as shipped.
         caption:
           "Water-surface width every 200 m, measured from OpenStreetMap water " +
           "polygons (contributor-traced; the polygons carry edits from 2018 to " +
           "March 2026, most since 2022; snapshot Jul 2026). Shaded band: the " +
-          "MRTS city reach (km 20.5\\u201332).",
+          "MRTS city reach (km 20.5–32).",
       },
     },
     okkiyam: {
