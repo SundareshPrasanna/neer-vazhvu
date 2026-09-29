@@ -49948,6 +49948,7 @@
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
     "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_erode_rivers.py",
     "scripts/nvdm_envelope_kabini.py",
@@ -52204,6 +52205,7 @@
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
     "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_erode_rivers.py",
     "scripts/nvdm_envelope_kabini.py",
@@ -53620,6 +53622,7 @@
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
     "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_erode_rivers.py",
     "scripts/nvdm_envelope_kabini.py",
@@ -55826,6 +55829,7 @@
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
     "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_erode_rivers.py",
     "scripts/nvdm_envelope_kabini.py",
@@ -59883,6 +59887,7 @@
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
     "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
     "scripts/nvdm_envelope_cauvery_snapshot.py",
     "scripts/nvdm_envelope_erode_rivers.py",
     "scripts/nvdm_envelope_kabini.py",
@@ -61120,7 +61125,7 @@
    "family": "basins",
    "scope": "palakkad-rivers",
    "dataset": "inventory",
-   "bytes": 19276,
+   "bytes": 22070,
    "schema": {
     "kind": "object",
     "keys": [
@@ -61164,6 +61169,7 @@
    ],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "ksrec-open-geoserver",
     "nwic-nwdp-cwc-canal-network",
     "nwic-nwdp-cwc-river-data",
@@ -61172,9 +61178,65 @@
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution.",
     "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/monitoring-points.geojson",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "monitoring-points",
+   "bytes": 8009,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 9,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "agency",
+     "dataUrl",
+     "hasReadings",
+     "kind",
+     "latestBod",
+     "latestDissolvedOxygen",
+     "latestFecalColiform",
+     "monthsWithReadings",
+     "name",
+     "positionNote",
+     "purpose",
+     "river",
+     "shedId",
+     "stationCode",
+     "stationKey",
+     "useClass"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_wq_param_packs.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_erode_rivers.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py"
+   ],
+   "headwaters_sources": [
+    "kspcb-nwmp-monthly",
+    "ksrec-open-geoserver"
+   ],
+   "licenses": [
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0."
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -61441,10 +61503,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61477,10 +61541,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61513,10 +61579,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61549,10 +61617,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61585,10 +61655,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61621,10 +61693,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61657,10 +61731,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61693,10 +61769,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61729,10 +61807,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61765,10 +61845,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61801,10 +61883,12 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -61837,10 +61921,354 @@
    "producer_refs": [],
    "headwaters_sources": [
     "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
     "nwic-nwdp-cwc-river-data"
    ],
    "licenses": [
     "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-1208.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3896,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-2326.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3877,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-2328.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3897,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-2332.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3695,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-3460.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3883,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-5215.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3864,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-5216.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3721,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-5217.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3902,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+    "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/palakkad-rivers/readings/wq-5218.json",
+   "family": "basins",
+   "scope": "palakkad-rivers",
+   "dataset": "readings",
+   "bytes": 3898,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'palakkad-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "ksdma-dam-bulletins",
+    "kspcb-nwmp-monthly",
+    "nwic-nwdp-cwc-river-data"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
     "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution."
    ],
    "accountability": "watched",
@@ -91258,7 +91686,7 @@
     "mumbai-rivers",
     "palakkad-rivers"
    ],
-   "bytes": 121530,
+   "bytes": 124324,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -91292,16 +91720,17 @@
   {
    "family": "basins",
    "dataset": "monitoring-points",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "arkavathi",
     "chennai-rivers",
     "erode-rivers",
     "kabini",
-    "mumbai-rivers"
+    "mumbai-rivers",
+    "palakkad-rivers"
    ],
-   "bytes": 71973,
-   "schema_variants": 5,
+   "bytes": 79982,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
@@ -91426,7 +91855,7 @@
   {
    "family": "basins",
    "dataset": "readings",
-   "files": 42,
+   "files": 51,
    "scopes": [
     "arkavathi",
     "erode-rivers",
@@ -91435,7 +91864,7 @@
     "mumbai-rivers",
     "palakkad-rivers"
    ],
-   "bytes": 296842,
+   "bytes": 331475,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
