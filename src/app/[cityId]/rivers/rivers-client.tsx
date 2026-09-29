@@ -42,6 +42,7 @@ import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
 import { RiverPanel } from "@/components/rivers/river-panel";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
+import { basinDataUrl } from "@/lib/basins/paths";
 import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 /** public/data/<city>-drain-quality.json. Delhi-only today; see
  *  neer-vazhvu-api/scripts/extract_delhi_drain_quality.py. */
@@ -312,7 +313,7 @@ export default function RiversClient({
   // file; use it to draw the basin's rivers on this page too.
   useEffect(() => {
     if (!basin) return;
-    fetchJsonOrNull<{ features: Feature[] }>(`/data/basins/${basin.manifest.basinId}/rivers.geojson`)
+    fetchJsonOrNull<{ features: Feature[] }>(basinDataUrl(basin.manifest.basinId, "rivers.geojson"))
       .then((fc) => {
         if (!fc) return;
         const byPageId: Record<string, Geometry[]> = {};

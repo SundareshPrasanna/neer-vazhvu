@@ -53,6 +53,7 @@ import {
 import { getDistrictBriefs } from "./district-directory";
 import type { BriefTone, PlaceBrief } from "./pipeline/core/place-brief";
 import { findAtlasDistrict, type AtlasDistrict } from "./registry";
+import { tryGetBasinManifest, type CanalHead } from "../basins";
 
 /* ── shapes ────────────────────────────────────────────────────────────── */
 
@@ -81,7 +82,9 @@ export interface HeadlineFact {
   note: string;
 }
 
-export interface MetturReading {
+export interface CanalHeadReading {
+  /** The basin's canal head, e.g. Mettur (see BasinManifest.canalHead). */
+  name: string;
   canalPercent: number;
   sentence: string;
   /** The live storage feed is not wired; this names the gap instead of a number. */
@@ -210,7 +213,7 @@ export interface DistrictReading {
     supplementaryWellsNote: string | null;
   } | null;
   drinking: { shares: MixShare[]; topTypes: MixShare[]; total: number; sentence: string; describes: string };
-  mettur: MetturReading | null;
+  canalHead: CanalHeadReading | null;
   groundwater: GroundwaterReading;
   blocks: BlockReading[];
   blockFindings: BlockFindings;
@@ -325,8 +328,8 @@ export interface VerdictSignals {
   tapPercent: number | null;
   households: number;
   gapBlocks: Array<{ name: string; tapPercent: number; canalPercent: number | null; inDeficitTaluk: boolean }>;
-  /** True when the district sits in the Cauvery (TN) basin, where the canal head is Mettur. */
-  metturBasin: boolean;
+  /** The canal head of the district's basin, when the basin declares one (Mettur for the Cauvery in Tamil Nadu). */
+  canalHead: CanalHead | null;
   /** The assessment unit's name in this state; "taluk" when unstated. */
   unitLabel?: string;
   /** The state's own sentence on the missing current irrigation reading. */
@@ -394,7 +397,7 @@ export function deriveDistrictTone(s: VerdictSignals): BriefTone {
 // this clause is kept for the "what the district runs on" section, where
 // the vintage is stated beside it.
 export function sourceClause(s: VerdictSignals): string {
-  const head = s.metturBasin ? "canal water released at Mettur" : "canal water released upstream";
+  const head = releasedAt(s.canalHead);
   switch (s.source) {
     case "canal":
       return `${whole(s.canalPercent)} of the irrigated farmland ran on ${head} at the 2011 Census`;
@@ -447,6 +450,10 @@ function serviceClause(s: VerdictSignals): string {
   return `${pct(s.tapPercent)} of households are recorded with a tap, with the gap ${where}`;
 }
 
+function releasedAt(head: CanalHead | null): string {
+  return head ? `canal water released at ${head.name}` : "canal water released upstream";
+}
+
 function capitalise(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
@@ -456,7 +463,7 @@ function capitalise(text: string): string {
  *  the number. */
 function currentMixClause(s: VerdictSignals): string {
   const label = s.currentMixLabel ?? "";
-  const head = s.metturBasin ? "canal water released at Mettur" : "canal water released upstream";
+  const head = releasedAt(s.canalHead);
   switch (s.source) {
     case "canal":
       return `${whole(s.canalPercent)} of the irrigated farmland runs on ${head} (${label})`;
@@ -489,8 +496,8 @@ export function composeDistrictVerdict(s: VerdictSignals): DistrictVerdict {
         (s.irrigationNextStep ?? "the Season and Crop Report 2024-25 is published and not yet wired."),
     );
   }
-  if (s.metturBasin && (s.canalPercent ?? 0) > 0) {
-    nextSteps.push("Live Mettur storage (the tnsmart daily reservoir feed), not wired yet.");
+  if (s.canalHead && (s.canalPercent ?? 0) > 0) {
+    nextSteps.push(`Live ${s.canalHead.name} storage (${s.canalHead.liveGap}), not wired yet.`);
   }
   if (s.overExploited + s.critical > 0) {
     nextSteps.push(
@@ -565,13 +572,13 @@ function irrigationShares(aggregate: DistrictAggregate): MixShare[] {
   ];
 }
 
-function metturReading(
-  district: AtlasDistrict,
+function canalHeadReading(
+  head: CanalHead | null,
   aggregate: DistrictAggregate,
   blocks: BlockReading[],
-): MetturReading | null {
+): CanalHeadReading | null {
   const canal = aggregate.canalPercent;
-  if (district.basin?.basinId !== "cauvery-tn" || canal === null || canal <= 0) return null;
+  if (!head || canal === null || canal <= 0) return null;
   const topBlocks = [...blocks]
     .filter((b) => b.canalPercent !== null)
     .sort((a, b) => (b.canalPercent ?? 0) - (a.canalPercent ?? 0))
@@ -581,23 +588,24 @@ function metturReading(
   if (canal >= 50) {
     sentence =
       `With ${pct(canal)} of irrigated farmland on canal water, the district's water year is ` +
-      "decided by the release at Mettur, upstream of every block here. The canal share is the " +
+      `decided by the release at ${head.name}, upstream of every block here. The canal share is the ` +
       "Census 2011 pattern; whether a given season's release reached the tail end is not in any served source.";
   } else if (canal >= 20) {
     sentence =
       `Canal water reaches ${pct(canal)} of irrigated farmland, concentrated in ` +
-      `${listNames(topBlocks)}, so the Mettur release decides the season there and the ` +
+      `${listNames(topBlocks)}, so the ${head.name} release decides the season there and the ` +
       "aquifer decides it everywhere else.";
   } else {
     sentence =
       `Canal water reaches only ${pct(canal)} of irrigated farmland (${listNames(topBlocks)}); ` +
-      "the Mettur release is a local question here, not a district one.";
+      `the ${head.name} release is a local question here, not a district one.`;
   }
   return {
+    name: head.name,
     canalPercent: canal,
     sentence,
     gap:
-      "Live Mettur storage: not wired. The tnsmart daily reservoir feed is a named gap on this page; " +
+      `Live ${head.name} storage: not wired. ${capitalise(head.liveGap)} is a named gap on this page; ` +
       "no figure is shown rather than a stale one.",
   };
 }
@@ -872,6 +880,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       }
     : null;
   const currentMixLabel = current ? `${district.irrigationCurrentSource.label} ${current.edition}` : null;
+  const canalHead = (district.basin && tryGetBasinManifest(district.basin.basinId)?.canalHead) || null;
   const categories = groundwaterReading(aggregate, groundwater, projection);
   const gapBlocks = blocks
     .filter((b) => b.tapPercent !== null && b.tapPercent < 99)
@@ -894,7 +903,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     tapPercent: aggregate.tapPercent,
     households: aggregate.households.value,
     gapBlocks,
-    metturBasin: district.basin?.basinId === "cauvery-tn",
+    canalHead,
     currentMixLabel,
     unitLabel: categories.unitLabel,
     irrigationNextStep: district.irrigationCurrentSource.nextStep,
@@ -1172,7 +1181,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
       sentence: drinkingSentence,
       describes: `JJM, read ${jjmRetrieved}`,
     },
-    mettur: metturReading(district, aggregate, blocks),
+    canalHead: canalHeadReading(canalHead, aggregate, blocks),
     groundwater: categories,
     blocks,
     blockFindings: blockFindings(aggregate, blocks, categories.unitLabel),

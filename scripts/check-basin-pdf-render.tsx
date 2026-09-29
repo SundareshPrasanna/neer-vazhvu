@@ -16,6 +16,7 @@ import fs from "node:fs";
 import React from "react";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { tryGetBasinManifest } from "../src/lib/basins";
+import { readBasinJson } from "../src/lib/basins/data";
 import { parseReviewedMprSeries } from "../src/lib/basins/reviewed-mpr";
 import { sanitizeForPdf } from "../src/lib/basins/export-pdf";
 import { BasinReportDocument } from "../src/components/basin/basin-pdf-report";
@@ -26,7 +27,7 @@ import type {
   GapUnit,
   LegendItem,
   PrsData,
-} from "../src/components/basin/basin-atlas";
+} from "../src/lib/basins/panel-types";
 
 const basinId = process.argv[2] ?? "arkavathi";
 const maybeManifest = tryGetBasinManifest(basinId);
@@ -36,19 +37,11 @@ if (!maybeManifest) {
 }
 const manifest = maybeManifest!;
 
-function read<T>(file: string): T | null {
-  try {
-    return JSON.parse(fs.readFileSync(`public/data/basins/${basinId}/${file}`, "utf-8")) as T;
-  } catch {
-    return null;
-  }
-}
-
-const prs = read<PrsData>("prs.json");
-const acc = read<AccountabilityData>("accountability.json");
-const gapsRaw = read<Record<string, unknown>>("gaps.json");
-const inventory = read<BasinInventory>("inventory.json");
-const reviewedMpr = parseReviewedMprSeries(read("mpr-reviewed.json"));
+const prs = readBasinJson<PrsData>(basinId, "prs.json");
+const acc = readBasinJson<AccountabilityData>(basinId, "accountability.json");
+const gapsRaw = readBasinJson<Record<string, unknown>>(basinId, "gaps.json");
+const inventory = readBasinJson<BasinInventory>(basinId, "inventory.json");
+const reviewedMpr = parseReviewedMprSeries(readBasinJson(basinId, "mpr-reviewed.json"));
 const dep = gapsRaw?.version === 2 ? (gapsRaw as unknown as DepData) : null;
 const gapUnits: GapUnit[] = dep ? [] : Object.values((gapsRaw?.units as Record<string, GapUnit>) ?? {});
 

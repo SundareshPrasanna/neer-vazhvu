@@ -1,24 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import fs from "node:fs";
-import path from "node:path";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { isFeatureSupportedForCity } from "@/lib/cities/routing";
-import { basinsForCity, tryGetBasinManifest, type BasinInventory } from "@/lib/basins";
+import { basinsForCity, tryGetBasinManifest } from "@/lib/basins";
+import { loadBasinInventory } from "@/lib/basins/data";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient from "./rivers-client";
 import { RIVERS_CONTENT } from "@/content/rivers";
 import ChennaiRiversClient from "./chennai-rivers-client";
-
-function loadBasinInventory(basinId: string): BasinInventory | null {
-  const fp = path.join(process.cwd(), "public", "data", "basins", basinId, "inventory.json");
-  try {
-    return JSON.parse(fs.readFileSync(fp, "utf-8")) as BasinInventory;
-  } catch {
-    return null;
-  }
-}
 
 interface PageProps {
   params: Promise<{ cityId: string }>;

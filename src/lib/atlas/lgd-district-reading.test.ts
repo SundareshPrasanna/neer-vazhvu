@@ -25,7 +25,7 @@ for (const fixture of LGD_FIXTURE_DISTRICTS) {
     assert.ok(all.some((s) => /District Socio-Economic Review/.test(s)), "the state's own irrigation gap is named");
     assert.ok(reading.vintages.some((row) => /LGD edition/.test(row.describes)), "the identity vintage is the LGD edition");
     assert.ok(reading.vintages.some((row) => /register's own membership/.test(row.note)), "the projection says how the taluka reached the Panchayat");
-    assert.equal(reading.mettur, null);
+    assert.equal(reading.canalHead, null);
   });
 
   test(`${fixture.slug}: water bodies come from the census register, with the templated attributes withheld`, { skip: !present && "fixture not cut yet" }, () => {

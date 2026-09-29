@@ -9,6 +9,7 @@ import {
   type VerdictSignals,
 } from "./district-reading";
 import { FIXTURE_DISTRICTS, buildFixtureReading } from "./pipeline/test-support";
+import { CAUVERY_TN } from "../basins/cauvery-tn";
 
 const TONES = new Set(["positive", "warning", "neutral", "blocked"]);
 
@@ -25,7 +26,7 @@ function signals(overrides: Partial<VerdictSignals>): VerdictSignals {
     tapPercent: 100,
     households: 1000,
     gapBlocks: [],
-    metturBasin: true,
+    canalHead: CAUVERY_TN.canalHead!,
     currentMixLabel: null,
     ...overrides,
   };
@@ -161,8 +162,8 @@ test("without the current-mix artifact the reading still leads with groundwater 
 test("Thanjavur's fixture block reads as canal-fed on an over-drawn aquifer with the 100.0% artifact named", () => {
   const reading = buildFixtureReading("thanjavur");
   assert.equal(reading.irrigation.source, "canal");
-  assert.ok(reading.mettur, "a Cauvery delta district carries the Mettur reading");
-  assert.match(reading.mettur!.gap, /not wired/);
+  assert.equal(reading.canalHead?.name, "Mettur", "a Cauvery delta district carries the Mettur reading");
+  assert.match(reading.canalHead!.gap, /not wired/);
   assert.ok(reading.blockFindings.artifact, "exactly 100.0% taps is flagged");
   assert.match(reading.blockFindings.artifact!, /reporting convention/);
   assert.equal(reading.verdict.tone, "warning");

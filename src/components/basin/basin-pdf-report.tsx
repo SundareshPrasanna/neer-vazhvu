@@ -39,8 +39,6 @@ import {
   depThemeTitle,
   withEpochAccents,
 } from "@/lib/basins/panel-labels";
-// Type-only: erased at compile time, so this module never pulls the Leaflet
-// component tree in at runtime (which also keeps it renderable in Node tests).
 import type {
   AccountabilityData,
   AccRegion,
@@ -51,7 +49,7 @@ import type {
   PrsData,
   PrsTab,
   PrsUnit,
-} from "@/components/basin/basin-atlas";
+} from "@/lib/basins/panel-types";
 
 export interface BasinReportProps {
   manifest: BasinManifest;

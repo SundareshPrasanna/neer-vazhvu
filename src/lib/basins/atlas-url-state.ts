@@ -13,6 +13,7 @@
 // ship later. When the current set equals the passed defaults the param is
 // omitted, keeping untouched URLs clean.
 
+import { basinEmbedHref } from "./paths";
 import type { BasinLayer } from "./types";
 
 /** Toggle/state key for a layer: kind-filtered entries get their own key so
@@ -64,5 +65,5 @@ export function buildAtlasShareUrl(args: {
   if (args.layersParam) p.set("layers", args.layersParam);
   if (args.growth) p.set("growth", "1");
   const qs = p.toString();
-  return `${args.origin}/embed/basins/${args.basinId}${qs ? `?${qs}` : ""}`;
+  return `${args.origin}${basinEmbedHref(args.basinId)}${qs ? `?${qs}` : ""}`;
 }

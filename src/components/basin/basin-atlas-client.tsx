@@ -4,11 +4,12 @@ import dynamic from "next/dynamic";
 import { useState, type ReactNode } from "react";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 import { tryGetBasinManifest } from "@/lib/basins";
+import { basinDataUrl, basinEmbedHref } from "@/lib/basins/paths";
 import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // Leaflet needs the DOM; load both basin surfaces client-side only.
 const BasinAtlas = dynamic(
-  () => import("@/components/basin/basin-atlas").then((m) => m.BasinAtlas),
+  () => import("@/components/basin/atlas/basin-atlas").then((m) => m.BasinAtlas),
   {
     ssr: false,
     loading: () => (
@@ -65,10 +66,10 @@ export function BasinAtlasClient(props: {
     // refresh/share land on the basin being viewed. (In the city-page overlay
     // the rivers page owns the URL - leave it alone there.)
     if (props.embedded && typeof window !== "undefined" && window.location.pathname.startsWith("/embed/basins/")) {
-      window.history.replaceState(null, "", `/embed/basins/${basinId}`);
+      window.history.replaceState(null, "", basinEmbedHref(basinId));
     }
     setActive({ manifest, inventory: null });
-    fetchJsonOrNull(`/data/basins/${basinId}/inventory.json`)
+    fetchJsonOrNull(basinDataUrl(basinId, "inventory.json"))
       .catch(() => null)
       .then((inv) => {
         setActive((cur) =>
