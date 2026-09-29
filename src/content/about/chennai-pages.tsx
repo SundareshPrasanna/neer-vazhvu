@@ -17,12 +17,7 @@
  */
 
 import { useLanguage } from "@/lib/i18n/context";
-
-interface LostBodyEntry {
-  name: string;
-  status: "Fully lost" | "Severely reduced" | "Partially encroached";
-  source: string;
-}
+import { SubSection, type CityPagesProps, type LostBodyEntry } from "@/components/about/primitives";
 
 const LOST_WATER_BODY_SOURCES: LostBodyEntry[] = [
   { name: "Long Tank (Otteri Nullah)", status: "Fully lost", source: "Care Earth Trust / IIT Madras Water Bodies Study" },
@@ -42,32 +37,7 @@ const LOST_WATER_BODY_SOURCES: LostBodyEntry[] = [
   { name: "Chetpet Lake", status: "Severely reduced", source: "GCC / Care Earth Trust / Madras High Court order 2018" },
 ];
 
-function SubSection({
-  id,
-  title,
-  children,
-}: {
-  id?: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      id={id}
-      className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-5 bg-slate-50/50 dark:bg-slate-900/40 space-y-3"
-    >
-      <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">{title}</h3>
-      {children}
-    </div>
-  );
-}
-
-interface Props {
-  cityId: string;
-  cityName: string;
-}
-
-export function ChennaiPageDescriptions({ cityId: _cityId, cityName: _cityName }: Props) {
+export function ChennaiPageDescriptions({ cityId: _cityId, cityName: _cityName }: CityPagesProps) {
   const { t } = useLanguage();
 
   return (

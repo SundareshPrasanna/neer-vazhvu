@@ -23,33 +23,9 @@
  */
 
 import Link from "next/link";
+import { SubSection, type CityPagesProps } from "@/components/about/primitives";
 
-function SubSection({
-  id,
-  title,
-  children,
-}: {
-  id?: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      id={id}
-      className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-5 bg-slate-50/50 dark:bg-slate-900/40 space-y-3"
-    >
-      <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">{title}</h3>
-      {children}
-    </div>
-  );
-}
-
-interface Props {
-  cityId: string;
-  cityName: string;
-}
-
-export function HyderabadPageDescriptions({ cityId, cityName }: Props) {
+export function HyderabadPageDescriptions({ cityId, cityName }: CityPagesProps) {
   return (
     <>
       <SubSection id="page-dashboard" title="Home / dashboard">
