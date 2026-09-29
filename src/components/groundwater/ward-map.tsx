@@ -19,7 +19,7 @@ import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
 /** Flies the map to a given center when it changes */
-function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string }) {
+function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string | null }) {
   const map = useMap();
   const [geo, setGeo] = useState<GeoJSON.FeatureCollection | null>(null);
   useEffect(() => { getWardGeoJSON(wardGeoJsonUrl).then(setGeo); }, [wardGeoJsonUrl]);
@@ -61,7 +61,8 @@ interface WardMapProps {
   blockGeoJsonUrl: string;
   blocksJsonUrl: string;
   stationsJsonUrl: string;
-  wardGeoJsonUrl: string;
+  /** Null when the city has no ward geometry. */
+  wardGeoJsonUrl: string | null;
   mapCenter: [number, number];
   mapZoom?: number;
   /** Place id, used to overlay corporation boundaries for region places. */

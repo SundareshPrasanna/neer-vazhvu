@@ -35,7 +35,7 @@ import type {
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
-import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
+import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 

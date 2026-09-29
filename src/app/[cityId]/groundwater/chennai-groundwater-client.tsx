@@ -52,7 +52,7 @@ import { WardSearch } from "@/components/map/ward-search";
 import { useCityId } from "@/lib/hooks/use-city-id";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { gwStationsUrl, gwrBlocksUrl } from "@/lib/cities/data-paths";
-import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
+import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 
 function GroundwaterMapLoading() {
   const { t } = useLanguage();

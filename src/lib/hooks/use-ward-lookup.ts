@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useCityId } from "@/lib/hooks/use-city-id";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
-import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
+import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 
 // Module-level cache for turf imports (shared across all hook instances)
 let cachedPip: typeof import("@turf/boolean-point-in-polygon").default | null = null;

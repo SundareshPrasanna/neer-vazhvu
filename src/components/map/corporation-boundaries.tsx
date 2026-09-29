@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { GeoJSON, Pane, useMap } from "react-leaflet";
 import type { FeatureCollection } from "geojson";
 import { useMapTiles } from "@/lib/utils/map-tiles";
-import { corporationsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
+import { corporationsGeoJsonPathFor } from "@/lib/cities/data-paths";
 
 const LABEL_MIN_ZOOM = 11;
 

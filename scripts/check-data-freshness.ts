@@ -314,7 +314,7 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
   }
 
   // 3. Extra feeds.
-  const cityIds = new Set(places.map((p) => p.cityId));
+  const cityIds = new Set<string>(places.map((p) => p.cityId));
   for (const t of EXTRA_TABLE_FEEDS) {
     if (!cityIds.has(t.cityId)) {
       problems.push(`extra table feed ${t.id}: unknown cityId ${t.cityId}`);

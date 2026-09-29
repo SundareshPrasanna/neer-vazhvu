@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Bangalore was registered DISABLED through the onboarding window and
 // flipped to enabled: true on the cutover commit that merged PR #117 to
@@ -19,14 +19,24 @@ import type { CityConfig } from './types';
 // and Bangalore drinking in that order. The Bangalore home page hero
 // will surface these as an upstream-basin-storage panel rather than
 // Chennai-style days-left math.
-export const BANGALORE: CityConfig = {
+export const BANGALORE: PlaceConfig = {
   cityId: 'bangalore',
   displayName: 'Bengaluru',
   displayNameLocalized: { kn: 'ಬೆಂಗಳೂರು' },
   stateCode: 'KA',
-  timezone: 'Asia/Kolkata',
   center: { lat: 12.9716, lng: 77.5946 },
   bbox: { south: 12.83, north: 13.18, west: 77.40, east: 77.78 },
+  wardsVintage: "2025",
+  landing: {
+    hook:
+      "Cauvery pumped 100 km uphill, ward groundwater stress, the tanker market, and lake restoration.",
+    accent: "bg-emerald-700",
+  },
+  footerSources: [
+    { label: "BWSSB", href: "https://bwssb.karnataka.gov.in/" },
+    { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
   primaryAuthority: {
     code: 'bwssb',
     name: 'Bangalore Water Supply and Sewerage Board',
@@ -71,8 +81,6 @@ export const BANGALORE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 12.4247,
       longitude: 76.5722,
-      catchmentAreaSqkm: 10619.0,
-      displayOrder: 1,
       isPrimaryDrinkingSource: false,
     },
     {
@@ -83,8 +91,6 @@ export const BANGALORE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 12.5667,
       longitude: 76.4500,
-      catchmentAreaSqkm: 5410.0,
-      displayOrder: 2,
       isPrimaryDrinkingSource: false,
     },
     {
@@ -95,8 +101,6 @@ export const BANGALORE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 11.9735,
       longitude: 76.3528,
-      catchmentAreaSqkm: 2141.90,
-      displayOrder: 3,
       isPrimaryDrinkingSource: false,
     },
     {
@@ -107,8 +111,6 @@ export const BANGALORE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 12.4917,
       longitude: 75.9056,
-      catchmentAreaSqkm: 419.58,
-      displayOrder: 4,
       isPrimaryDrinkingSource: false,
     },
   ],
@@ -118,23 +120,5 @@ export const BANGALORE: CityConfig = {
   // (FloodRiskBangaloreContent), selected by named variant rather than a
   // city-id branch. Distinct data shape from the interactive Chennai map.
   flood: { variant: 'bangalore' },
-  // Basin Atlas: Arkavathi basin (Vrishabhavathi / Kumudavathi / Suvarnamukhi),
-  // co-built with Paani Earth. Data under public/data/basins/arkavathi/.
-  basinIds: ['arkavathi'],
-  sourceNameAliases: {
-    krs: 'krs',
-    'krishna raja sagar': 'krs',
-    'krishnaraja sagar': 'krs',
-    kannambadi: 'krs',
-    hemavathi: 'hemavathi',
-    hemavati: 'hemavathi',
-    gorur: 'hemavathi',
-    'gorur dam': 'hemavathi',
-    kabini: 'kabini',
-    kapila: 'kabini',
-    beechanahalli: 'kabini',
-    bichanahalli: 'kabini',
-    harangi: 'harangi',
-  },
   enabled: true,
 };

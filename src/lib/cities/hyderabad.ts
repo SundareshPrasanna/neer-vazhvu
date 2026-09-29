@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Hyderabad went LIVE on 2026-08-14 as the sixth city. This flag is the only
 // functional switch: the route guard in [cityId]/layout.tsx reads it, and the
@@ -45,12 +45,11 @@ import type { CityConfig } from './types';
 // 2026-07-26. Anything needing CPCB NWMP / polluted-river-stretch data for the
 // Musi runs via the India-IP runner path, never from CI. HMWSSB, TGDPS,
 // lakes.hmda.gov.in, India-WRIS and OpenCity are all reachable from anywhere.
-export const HYDERABAD: CityConfig = {
+export const HYDERABAD: PlaceConfig = {
   cityId: 'hyderabad',
   displayName: 'Hyderabad',
   displayNameLocalized: { te: 'హైదరాబాద్' },
   stateCode: 'TG',
-  timezone: 'Asia/Kolkata',
   center: { lat: 17.426, lng: 78.43 },
   // Computed from the GHMC 2022 ward KML (43,510 vertices): the 150-ward
   // corporation spans 17.2907-17.5610 N, 78.2390-78.6217 E. Padded outward to
@@ -60,6 +59,18 @@ export const HYDERABAD: CityConfig = {
   // Srisailam ~16.09 N) and render as source cards, not on the city map - the
   // Bangalore/Delhi pattern.
   bbox: { south: 17.15, north: 17.7, west: 78.1, east: 78.75 },
+  wardsVintage: null,
+  landing: {
+    hook:
+      "The Musi and its tank cascade, a 2,978-lake gazetted register, the utility's own tanker ledger, and a daily statement that publishes the draw as well as the storage.",
+    accent: "bg-slate-600",
+  },
+  footerSources: [
+    { label: "HMWSSB", href: "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx" },
+    { label: "HMDA Lakes", href: "https://lakes.hmda.gov.in/" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
   primaryAuthority: {
     code: 'hmwssb',
     name: 'Hyderabad Metropolitan Water Supply and Sewerage Board',
@@ -235,8 +246,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 1790.0,
       latitude: 17.3747,
       longitude: 78.2997,
-      catchmentAreaSqkm: null,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: true,
     },
@@ -248,8 +257,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 1763.5,
       latitude: 17.3136,
       longitude: 78.3572,
-      catchmentAreaSqkm: null,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: true,
     },
@@ -262,8 +269,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 1717.93,
       latitude: 17.7472,
       longitude: 77.9256,
-      catchmentAreaSqkm: null,
-      displayOrder: 3,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: true,
     },
@@ -282,8 +287,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 1651.75,
       latitude: 17.6568,
       longitude: 78.0756,
-      catchmentAreaSqkm: null,
-      displayOrder: 4,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: true,
     },
@@ -305,8 +308,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 803.81,
       latitude: 16.6891,
       longitude: 79.0957,
-      catchmentAreaSqkm: null,
-      displayOrder: 5,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: true,
     },
@@ -321,8 +322,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 485.56,
       latitude: 18.8457,
       longitude: 79.3764,
-      catchmentAreaSqkm: null,
-      displayOrder: 6,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: true,
     },
@@ -339,8 +338,6 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 590.0,
       latitude: 16.5417,
       longitude: 79.3183,
-      catchmentAreaSqkm: null,
-      displayOrder: 7,
       isPrimaryDrinkingSource: false,
       // FALSE, and deliberately so. HMWSSB does publish this level daily - it
       // was in today's statement. What does not happen is INGESTION: the
@@ -364,25 +361,11 @@ export const HYDERABAD: CityConfig = {
       fullTankLevelFt: 885.0,
       latitude: 16.0868,
       longitude: 78.897,
-      catchmentAreaSqkm: null,
-      displayOrder: 8,
       isPrimaryDrinkingSource: false,
       hasPublicFeed: false,
       noFeedNote:
         'HMWSSB publishes this level daily, but Srisailam is a parent Krishna storage reported for context, not a city source: it records a city draw of 0 MLD. Its level is the real constraint on Akkampally, which is why it is listed here.',
     },
   ],
-  // The feed prints these labels; map them to our canonical source codes so a
-  // relabelling upstream does not silently orphan a source.
-  sourceNameAliases: {
-    OsmanSagar: 'osman_sagar',
-    HimayathSagar: 'himayat_sagar',
-    'Singur(Ft./M)': 'singur',
-    Manjira: 'manjira',
-    'AkkamPally[Krishna](M)': 'akkampally',
-    'SriPadaYellampally(Godavari)': 'yellampally',
-    NagarjunSagar: 'nagarjuna_sagar',
-    Srisailam: 'srisailam',
-  },
   enabled: true,
 };

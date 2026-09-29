@@ -20,7 +20,8 @@ const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: 
 
 const cache = new Map<string, Promise<GeoJSON.FeatureCollection>>();
 
-export function getWardGeoJSON(url: string): Promise<GeoJSON.FeatureCollection> {
+export function getWardGeoJSON(url: string | null): Promise<GeoJSON.FeatureCollection> {
+  if (!url) return Promise.resolve(EMPTY);
   let entry = cache.get(url);
   if (!entry) {
     entry = fetch(url)

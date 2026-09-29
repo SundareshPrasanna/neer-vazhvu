@@ -23,7 +23,7 @@ export interface AtlasDistrict {
   stateCode: string;
   stateName: string;
   name: string;
-  /** One line for the landing card, in the same register as CITY_HOOKS. */
+  /** One line for the landing card, in the same register as a city's landing.hook. */
   hook: string;
   /** Basin id + sub-basin key this district sits in, for the basin link
    *  (src/lib/basins). Absent when the district is not inside a mapped basin. */

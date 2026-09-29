@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listAllPlaces } from "@/lib/cities";
 import { liveCityPhrase } from "@/lib/cities/roster";
-import { CityBadge, CityLandmark, CITY_ACCENT, DEFAULT_ACCENT, type CityStatus } from "@/components/landing/city-landmark";
+import { CityBadge, CityLandmark, type CityStatus } from "@/components/landing/city-landmark";
 import { PlaceBoard } from "@/components/landing/place-board";
 import {
   StateCard,
@@ -45,45 +45,13 @@ const GITHUB_URL = "https://github.com/SundareshPrasanna/neer-vazhvu";
 const CONTACT_EMAIL = "contact@neervazhvu.org";
 const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Neer Vazhvu")}`;
 
-// One-line hook per city. Keyed by cityId. Cities without a hook still
-// render from the registry with their authority + state, just no tagline.
-const CITY_HOOKS: Record<string, string> = {
-  chennai:
-    "Reservoir days-left, groundwater by ward, river health, flood risk, lost water bodies, and a satellite shoreline-change map. The origin city.",
-  madurai:
-    "Vaigai-basin reservoir runway, groundwater, water bodies, and flood context for the temple city.",
-  bangalore:
-    "Cauvery pumped 100 km uphill, ward groundwater stress, the tanker market, and lake restoration.",
-  // Status belongs to the badge, not the tagline: Mumbai's hook still said
-  // "Onboarding." after it went live, so the card carried a green Live badge
-  // and the word Onboarding at the same time.
-  mumbai:
-    "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps.",
-  delhi:
-    "The Yamuna, 237 groundwater wells, 250 MCD wards, and the five-state paper trail behind the city's taps.",
-  hyderabad:
-    "The Musi and its tank cascade, a 2,978-lake gazetted register, the utility's own tanker ledger, and a daily statement that publishes the draw as well as the storage.",
-  kolkata:
-    "Victorian sewers rated for 6 mm of rain an hour, KMC's own weekly waterlogging register, the wetlands that treat two-thirds of the city's sewage, and the Adi Ganga at zero dissolved oxygen.",
-  // Added with the city itself, NOT after cutover. buildCityBoard() maps over
-  // listAllPlaces(), so a registered-but-disabled city already renders a card
-  // here - a missing hook shows as an Onboarding badge above an empty line.
-  // That is exactly how Hyderabad and Mumbai both shipped a blank card, and
-  // this map is not derived from the registry, so nothing catches it for you.
-  pune:
-    "Four dams on the Mutha, a water budget where the leak is bigger than the shortfall, groundwater drilled to taluka, and the corporation's own record of every tanker it sent.",
-  surat:
-    "A live flood chain from Ukai to five khadis, six editions of river monitoring, and two CETPs against their own consent.",
-  gurugram:
-    "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
-};
-
 type BoardCity = {
   cityId: string;
   displayName: string;
   authorityAcronym: string;
   stateCode: string;
   hook: string;
+  accent: string;
   status: CityStatus;
 };
 
@@ -105,7 +73,8 @@ function buildCityBoard(): BoardCity[] {
     displayName: config.displayName,
     authorityAcronym: config.primaryAuthority.acronym,
     stateCode: config.stateCode,
-    hook: CITY_HOOKS[config.cityId] ?? "",
+    hook: config.landing.hook,
+    accent: config.landing.accent,
     status: config.enabled !== false ? "live" : "onboarding",
   }));
 
@@ -158,7 +127,7 @@ function CityCard({ city }: { city: BoardCity }) {
   // Live cities get their accent colour; cities that are not yet open get a
   // muted slate banner so colour alone signals live-vs-coming at a glance.
   const accent = isLive
-    ? CITY_ACCENT[city.cityId] ?? DEFAULT_ACCENT
+    ? city.accent
     : "bg-slate-400 dark:bg-slate-700";
 
   // Landmark banner. A licensed photograph can later replace the colour +

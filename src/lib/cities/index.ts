@@ -8,44 +8,32 @@ import { MADURAI } from './madurai';
 import { MUMBAI } from './mumbai';
 import { PUNE } from './pune';
 import { SURAT } from './surat';
+import { isCityId, type CityId } from './ids';
 import type { PlaceConfig } from './types';
 
 export * from './types';
-export {
-  BANGALORE,
-  CHENNAI,
-  DELHI,
-  GURUGRAM,
-  HYDERABAD,
-  KOLKATA,
-  MADURAI,
-  MUMBAI,
-  PUNE,
-  SURAT,
-};
+export { CITY_IDS, isCityId, type CityId } from './ids';
 
 // Registry contains every known city, enabled or not. Disabled cities
 // (config.enabled === false) are usable internally for scaffolding but
 // filtered out of listEnabledPlaces() and out of any user-facing surface
 // that calls it. Switch a city on by setting `enabled: true` on its
 // CityConfig AND flipping `enabled` to TRUE in the `cities` table.
-const REGISTRY: Record<string, PlaceConfig> = {
-  [CHENNAI.cityId]: CHENNAI,
-  [MADURAI.cityId]: MADURAI,
-  [BANGALORE.cityId]: BANGALORE,
-  [MUMBAI.cityId]: MUMBAI,
-  [DELHI.cityId]: DELHI,
-  [HYDERABAD.cityId]: HYDERABAD,
-  [KOLKATA.cityId]: KOLKATA,
-  [GURUGRAM.cityId]: GURUGRAM,
-  [PUNE.cityId]: PUNE,
-  [SURAT.cityId]: SURAT,
+const REGISTRY: Record<CityId, PlaceConfig> = {
+  chennai: CHENNAI,
+  madurai: MADURAI,
+  bangalore: BANGALORE,
+  mumbai: MUMBAI,
+  delhi: DELHI,
+  hyderabad: HYDERABAD,
+  kolkata: KOLKATA,
+  gurugram: GURUGRAM,
+  pune: PUNE,
+  surat: SURAT,
 };
 
-export const DEFAULT_CITY_ID = CHENNAI.cityId;
-
-export function getPlaceConfig(placeId: string = DEFAULT_CITY_ID): PlaceConfig {
-  const config = REGISTRY[placeId];
+export function getPlaceConfig(placeId: string): PlaceConfig {
+  const config = tryGetPlaceConfig(placeId);
   if (!config) {
     throw new Error(`Unknown place: ${placeId}`);
   }
@@ -58,7 +46,7 @@ export function getPlaceConfig(placeId: string = DEFAULT_CITY_ID): PlaceConfig {
  * or use listEnabledPlaces().
  */
 export function tryGetPlaceConfig(placeId: string): PlaceConfig | null {
-  return REGISTRY[placeId] ?? null;
+  return isCityId(placeId) ? REGISTRY[placeId] : null;
 }
 
 /** Cities visible to end users. Disabled cities are excluded. */

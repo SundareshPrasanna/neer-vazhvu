@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Gurugram went LIVE on 2026-08-15 as the ninth city. `enabled: true` is the
 // only functional switch: the route guard in [cityId]/layout.tsx reads it, and
@@ -43,12 +43,11 @@ import type { CityConfig } from './types';
 // far cuts against them: GMDA's own GIS publishes Chandu Budhera at 300 MLD
 // and Basai at 272, against the widely-quoted 400 and 270. Shipping a hero
 // on unverified numbers would be worse than shipping none.
-export const GURUGRAM: CityConfig = {
+export const GURUGRAM: PlaceConfig = {
   cityId: 'gurugram',
   displayName: 'Gurugram',
   displayNameLocalized: { hi: 'गुरुग्राम' },
   stateCode: 'HR',
-  timezone: 'Asia/Kolkata',
   // Centre and bbox are COMPUTED from the harvested MCG ward geometry
   // (public/geojson/gurugram-wards-2026.geojson), not looked up: the wards
   // span 76.9351-77.1762 E, 28.3306-28.5415 N. Padded west and south to
@@ -58,6 +57,17 @@ export const GURUGRAM: CityConfig = {
   // system, not the municipal boundary.
   center: { lat: 28.436, lng: 77.056 },
   bbox: { south: 28.2, north: 28.56, west: 76.64, east: 77.25 },
+  wardsVintage: "2026",
+  landing: {
+    hook:
+      "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
+    accent: "bg-lime-700",
+  },
+  footerSources: [
+    { label: "GMDA", href: "https://www.gmda.gov.in/" },
+    { label: "GMDA OneMap", href: "https://onemapdepts.gmda.gov.in/" },
+    { label: "HSPCB", href: "https://hspcb.gov.in/" },
+  ],
   primaryAuthority: {
     code: 'gmda',
     name: 'Gurugram Metropolitan Development Authority',
@@ -81,7 +91,6 @@ export const GURUGRAM: CityConfig = {
   // No reservoirs, no storage, nothing to impound. The empty array is the
   // point rather than an omission.
   waterSources: [],
-  sourceNameAliases: {},
   defaultConsumptionMld: null,
   defaultDesalinationMld: null,
   // 'cauvery-pumping' - whose own docstring describes "we pump it from a long
