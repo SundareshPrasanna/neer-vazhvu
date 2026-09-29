@@ -363,5 +363,11 @@ export const MUMBAI: PlaceConfig = {
   // belt) are honest terrain output. Enables the Catchments view on
   // /mumbai/water-bodies + the catchment/cascade about-page methodology.
   hasCatchments: true,
+  // The drinking-water reservoirs sit 70-110 km NE of the city (Thane/Palghar),
+  // so the water-bodies and catchment maps open on a regional frame that holds
+  // both the city and its supply lakes.
+  waterBodies: {
+    mapView: { center: [19.3, 73.05], zoom: 10 },
+  },
   enabled: true,
 };

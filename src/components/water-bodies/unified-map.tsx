@@ -44,6 +44,8 @@ interface UnifiedMapProps {
   censusData: CensusWaterBodyProperties[];
   onSelectCurrent: (body: SelectedWaterBody) => void;
   onSelectLost: (body: SelectedWaterBody) => void;
+  /** Receives the lost-bodies layer once fetched (null where the city has none). */
+  onLostLayer?: (layer: GeoJSON.FeatureCollection | null) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
   // City-aware, and REQUIRED - see the note above the props.
@@ -112,6 +114,7 @@ export function UnifiedMap({
   censusData,
   onSelectCurrent,
   onSelectLost,
+  onLostLayer,
   focusCenter,
   hiddenCategories,
   currentGeoJsonUrl,
@@ -257,9 +260,12 @@ export function UnifiedMap({
     // shapes; Bangalore's lost-kere data is tabular only (no polygons),
     // so this fetch will 404 there and that's fine.
     fetchJsonOrNull<GeoJSON.FeatureCollection>(lostGeoJsonUrl)
-      .then(setLostGeoJSON)
+      .then((fc) => {
+        setLostGeoJSON(fc);
+        onLostLayer?.(fc);
+      })
       .catch(console.error);
-  }, [currentGeoJsonUrl, lostGeoJsonUrl]);
+  }, [currentGeoJsonUrl, lostGeoJsonUrl, onLostLayer]);
 
   // Fetch THIS city's rich-body polygons from the registry, merge into
   // one FeatureCollection. Each feature stamps body_id so the click

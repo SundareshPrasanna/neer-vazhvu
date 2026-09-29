@@ -4,8 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
-import WaterBodiesMapClient from "./water-bodies-map-client";
-import { RichWaterBodiesContent } from "./rich-water-bodies-content";
+import { WaterBodiesClient, type LostNarrative } from "./water-bodies-client";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -22,21 +21,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-interface LostBody {
-  status: "Fully lost" | "Severely reduced" | "Partially encroached";
-}
-
 interface LostFile {
   summary: { fully_lost_count: number; severely_reduced_count: number };
-  lost_bodies: LostBody[];
-}
-
-interface CurrentGeoJsonFeature {
-  properties: { name?: string };
+  primary_source?: string | { citation?: string; name?: string };
+  lost_bodies: LostNarrative[];
 }
 
 interface CurrentGeoJson {
-  features: CurrentGeoJsonFeature[];
+  provenance?: { sources?: { publisher?: string }[] };
+  features: unknown[];
 }
 
 async function loadJson<T>(filename: string, dir: "data" | "geojson" = "data"): Promise<T | null> {
@@ -53,30 +46,13 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  // Cities whose data supports the rich surface (tabs, ranking, census, ward
-  // deep-linking, lost-bodies overlay, cascade/catchment atlas) get the
-  // parametrized rich renderer. Selected by capability flag, not city id.
-  if (config.waterBodies?.rankingTab) {
-    return <RichWaterBodiesContent cityId={cityId} />;
-  }
-
   const [lostFile, currentGeoJson] = await Promise.all([
     loadJson<LostFile>(`water-bodies-lost-${cityId}.json`, "data"),
     loadJson<CurrentGeoJson>(`${cityId}-water-bodies-current.geojson`, "geojson"),
   ]);
 
-  // Gate on the layer that actually DRAWS THE MAP, not on the optional
-  // lost-bodies overlay.
-  //
-  // This used to require `water-bodies-lost-<city>.json`, so a city could ship
-  // a complete current-water-bodies polygon layer and still be told "No
-  // curated water-body data files for this city yet." Gurugram was LIVE in
-  // exactly that state - `gurugram-water-bodies-current.geojson` present, page
-  // showing the empty stub - and Pune would have been the second. A
-  // lost-bodies register is the rare artifact, not the common one: no official
-  // register of Pune's lost water bodies exists at all, and Chennai's took a
-  // dedicated research pass. Keying the whole surface to it hid the common
-  // case behind the rare one.
+  // Gate on the layer that DRAWS THE MAP, not on the optional lost-bodies register: a register
+  // of lost water bodies is the rare artifact (none exists for Pune), the current layer the common one.
   if (!currentGeoJson && !lostFile) {
     return (
       <FeatureNotYetAvailable
@@ -94,32 +70,16 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
     );
   }
 
-  const namedOsmCount = currentGeoJson
-    ? currentGeoJson.features.filter((f) => f.properties?.name).length
-    : null;
-
-  // Mumbai's drinking-water reservoirs sit 70-110 km NE of the city (Thane/
-  // Palghar). A city-tight zoom hides them entirely, so the water-bodies +
-  // catchment maps open on a wider regional frame that includes both the city
-  // and its distant supply lakes ("expand the zone"). Users zoom in for the
-  // in-city lakes. Other cities keep the city-tight default.
-  const supplyShedView: Record<string, { center: [number, number]; zoom: number }> = {
-    mumbai: { center: [19.3, 73.05], zoom: 10 },
-  };
-  const view = supplyShedView[cityId];
-
+  const ps = lostFile?.primary_source;
+  const publishers = new Set(currentGeoJson?.provenance?.sources?.map((s) => s.publisher).filter(Boolean));
   return (
-    <WaterBodiesMapClient
+    <WaterBodiesClient
       cityId={cityId}
-      cityDisplayName={config.displayName}
-      cityState={config.stateCode}
-      mapCenter={view ? view.center : [config.center.lat, config.center.lng]}
-      mapZoom={view ? view.zoom : 11}
-      fullyLostCount={lostFile?.summary.fully_lost_count ?? null}
-      reducedCount={lostFile?.summary.severely_reduced_count ?? null}
-      namedOsmCount={namedOsmCount}
-      hasCatchments={config.hasCatchments ?? false}
-      catchmentsGapNote={config.catchmentsGapNote}
+      existingCount={currentGeoJson?.features.length ?? null}
+      lostSummary={lostFile ? { fullyLost: lostFile.summary.fully_lost_count, reduced: lostFile.summary.severely_reduced_count } : null}
+      lostNarratives={(lostFile?.lost_bodies ?? []).map(({ name, status, side, note }) => ({ name, status, side, note }))}
+      lostSource={(typeof ps === "string" ? ps : ps?.citation ?? ps?.name) ?? null}
+      currentSource={[...publishers].join(", ") || null}
     />
   );
 }

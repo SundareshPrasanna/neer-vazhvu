@@ -269,20 +269,29 @@ export interface WaterBodiesConfig {
   /** Pull the encroachment census from /api/water-bodies-census and join it
    *  to the OSM polygons. Chennai today. */
   censusSource?: boolean;
-  /** Show the Map / Ranking tabbed layout with the restoration ranking
-   *  table. */
+  /** Add a Ranking tab with the restoration ranking table (the page gets a
+   *  tab row whenever it has more than the map). */
   rankingTab?: boolean;
   /** Mount the ward-search box + ward deep-linking (needs
    *  `<cityId>-ward-profiles.json`). */
   wardSearch?: boolean;
-  /** Overlay the lost / vanished water bodies layer
-   *  (`<cityId>-water-bodies-lost.geojson`). */
+  /** Headline the lost-bodies layer (`<cityId>-water-bodies-lost.geojson`)
+   *  in the stats bar: count, hectares lost, tagline. The map draws the layer
+   *  wherever the file exists. */
   lostBodies?: boolean;
   /** Show the gazetted lake-register tab (`<cityId>-lake-register.json`).
    *  A different POPULATION from the map layer: the map draws visible OSM
    *  polygons, the register lists every statutorily gazetted lake and whether
    *  its FTL boundary is legally settled. Hyderabad today (HMDA). */
   legalRegister?: boolean;
+  /** OSM id of the body whose panel opens on first load. */
+  openOnLoad?: number;
+  /** Map frame for the water-bodies and catchment maps, where the city
+   *  centre at zoom 11 would leave its water bodies off-frame. */
+  mapView?: { center: [number, number]; zoom: number };
+  /** Ground-elevation bands on the map, shown where the city has a bands
+   *  file; false keeps them off. */
+  elevationBands?: boolean;
 }
 
 /**
