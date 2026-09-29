@@ -71,7 +71,7 @@
     "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-refresh-lgd-district.ts",
     "internal_inputs": [],
-    "note": "Identity directory for Kolhapur: 1025 LGD-coded Gram Panchayats in 12 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
+    "note": "Identity directory for Kolhapur: 1025 LGD-coded Gram Panchayats in 12 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats; a village the register lists as Partial coverage is shared with another Panchayat and is not summed into either's Census binding. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
     "conventions": {
       "key": "lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (taluka) code",
       "bindings": "jjm bindings carry matchClass (how the pairing was made) and status (proposed | verified); a census binding with matchClass lgd-coverage is the LGD register's own statement of which villages the Panchayat covers, joined to Census 2011 rows by village code, and is marked proposed only because no person has re-checked it",
@@ -150,17 +150,17 @@
     "summary": {
       "lgdGramPanchayats": 1025,
       "jjmBound": 1003,
-      "censusBound": 1003,
-      "bothBound": 981,
+      "censusBound": 988,
+      "bothBound": 966,
       "unbound": 0,
       "verifiedBindings": 0,
-      "proposedBindings": 2006,
+      "proposedBindings": 1991,
       "byMatchClass": {
         "exact": 915,
         "unique-folded": 46,
         "proposed-pairing": 41,
         "block-elimination": 1,
-        "lgd-coverage": 1003
+        "lgd-coverage": 988
       }
     }
   },
@@ -9153,33 +9153,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178316",
-        "cdBlockCode": "0342",
-        "gramPanchayatCode": "178316",
-        "gramPanchayatName": "Bhalekarwadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567833",
-            "villageName": "Vasnoli",
-            "subdistrictCode": "04291"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567833",
-            "name": "Vasnoli"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -14350,33 +14330,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178383",
-        "cdBlockCode": "0342",
-        "gramPanchayatCode": "178383",
-        "gramPanchayatName": "Ranewadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567807",
-            "villageName": "Sonarwadi",
-            "subdistrictCode": "04291"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567807",
-            "name": "Sonarwadi"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -14824,33 +14784,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178389",
-        "cdBlockCode": "0342",
-        "gramPanchayatCode": "178389",
-        "gramPanchayatName": "Sonarwadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567807",
-            "villageName": "Sonarwadi",
-            "subdistrictCode": "04291"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567807",
-            "name": "Sonarwadi"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -15378,33 +15318,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178396",
-        "cdBlockCode": "0342",
-        "gramPanchayatCode": "178396",
-        "gramPanchayatName": "Vasnoli",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567833",
-            "villageName": "Vasnoli",
-            "subdistrictCode": "04291"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567833",
-            "name": "Vasnoli"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -32208,33 +32128,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178616",
-        "cdBlockCode": "0336",
-        "gramPanchayatCode": "178616",
-        "gramPanchayatName": "June Pargaon",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567262",
-            "villageName": "Pargaon",
-            "subdistrictCode": "04285"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567262",
-            "name": "Pargaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -33806,33 +33706,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178637",
-        "cdBlockCode": "0336",
-        "gramPanchayatCode": "178637",
-        "gramPanchayatName": "Nave Pargaon",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567262",
-            "villageName": "Pargaon",
-            "subdistrictCode": "04285"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567262",
-            "name": "Pargaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -33962,33 +33842,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178639",
-        "cdBlockCode": "0336",
-        "gramPanchayatCode": "178639",
-        "gramPanchayatName": "Nilewadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567262",
-            "villageName": "Pargaon",
-            "subdistrictCode": "04285"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567262",
-            "name": "Pargaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -35977,33 +35837,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178665",
-        "cdBlockCode": "0341",
-        "gramPanchayatCode": "178665",
-        "gramPanchayatName": "Baleghol",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567737",
-            "villageName": "Baleghol",
-            "subdistrictCode": "04290"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567737",
-            "name": "Baleghol"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -37849,33 +37689,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178689",
-        "cdBlockCode": "0341",
-        "gramPanchayatCode": "178689",
-        "gramPanchayatName": "Hanbarwadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567737",
-            "villageName": "Baleghol",
-            "subdistrictCode": "04290"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567737",
-            "name": "Baleghol"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -43950,33 +43770,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178767",
-        "cdBlockCode": "0338",
-        "gramPanchayatCode": "178767",
-        "gramPanchayatName": "Gandhinagar",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567409",
-            "villageName": "Walivade",
-            "subdistrictCode": "04287"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567409",
-            "name": "Walivade"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -50776,33 +50576,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178856",
-        "cdBlockCode": "0338",
-        "gramPanchayatCode": "178856",
-        "gramPanchayatName": "Waliwade",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567409",
-            "villageName": "Walivade",
-            "subdistrictCode": "04287"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567409",
-            "name": "Walivade"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -53288,33 +53068,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178888",
-        "cdBlockCode": "0335",
-        "gramPanchayatCode": "178888",
-        "gramPanchayatName": "Injole",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567157",
-            "villageName": "Injole",
-            "subdistrictCode": "04284"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567157",
-            "name": "Injole"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -58324,33 +58084,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/178953",
-        "cdBlockCode": "0335",
-        "gramPanchayatCode": "178953",
-        "gramPanchayatName": "Somavar Peth",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567157",
-            "villageName": "Injole",
-            "subdistrictCode": "04284"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567157",
-            "name": "Injole"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -78208,33 +77948,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/179208",
-        "cdBlockCode": "0337",
-        "gramPanchayatCode": "179208",
-        "gramPanchayatName": "Rajapur",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567371",
-            "villageName": "Rajapur",
-            "subdistrictCode": "04286"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567371",
-            "name": "Rajapur"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -78286,33 +78006,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/179209",
-        "cdBlockCode": "0337",
-        "gramPanchayatCode": "179209",
-        "gramPanchayatName": "Rajapurwadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "567371",
-            "villageName": "Rajapur",
-            "subdistrictCode": "04286"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "567371",
-            "name": "Rajapur"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -81497,6 +81197,72 @@
       "villageCode": "568124",
       "villageName": "Humbarwadi",
       "subdistrictCode": "04294"
+    }
+  ],
+  "sharedCensusVillages": [
+    {
+      "villageCode": "567157",
+      "villageName": "Injole",
+      "subdistrictCode": "04284",
+      "partialUnder": [
+        "178888",
+        "178953"
+      ]
+    },
+    {
+      "villageCode": "567262",
+      "villageName": "Pargaon",
+      "subdistrictCode": "04285",
+      "partialUnder": [
+        "178616",
+        "178637",
+        "178639"
+      ]
+    },
+    {
+      "villageCode": "567371",
+      "villageName": "Rajapur",
+      "subdistrictCode": "04286",
+      "partialUnder": [
+        "179208",
+        "179209"
+      ]
+    },
+    {
+      "villageCode": "567409",
+      "villageName": "Walivade",
+      "subdistrictCode": "04287",
+      "partialUnder": [
+        "178767",
+        "178856"
+      ]
+    },
+    {
+      "villageCode": "567737",
+      "villageName": "Baleghol",
+      "subdistrictCode": "04290",
+      "partialUnder": [
+        "178665",
+        "178689"
+      ]
+    },
+    {
+      "villageCode": "567807",
+      "villageName": "Sonarwadi",
+      "subdistrictCode": "04291",
+      "partialUnder": [
+        "178383",
+        "178389"
+      ]
+    },
+    {
+      "villageCode": "567833",
+      "villageName": "Vasnoli",
+      "subdistrictCode": "04291",
+      "partialUnder": [
+        "178316",
+        "178396"
+      ]
     }
   ],
   "unbound": {
