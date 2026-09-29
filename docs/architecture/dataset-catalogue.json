@@ -48817,15 +48817,11 @@
    },
    "consumers": [
     "src/app/[cityId]/my-ward/my-ward-client.tsx",
-    "src/app/api/wards/route.ts",
-    "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
-    "src/lib/hooks/use-ward-profile.ts",
-    "src/lib/utils/load-profiles-server.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
    ],
@@ -63997,15 +63993,11 @@
    },
    "consumers": [
     "src/app/[cityId]/my-ward/my-ward-client.tsx",
-    "src/app/api/wards/route.ts",
-    "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
-    "src/lib/hooks/use-ward-profile.ts",
-    "src/lib/utils/load-profiles-server.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
    ],
@@ -64881,7 +64873,9 @@
      "stations"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/fetch-wris-groundwater-madurai.ts"
@@ -64918,7 +64912,9 @@
      "summary"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
     "neer-vazhvu-api/scripts/build_pune_gw_stations.py"
@@ -64952,7 +64948,8 @@
     ]
    },
    "consumers": [
-    "src/components/groundwater/ward-map.tsx"
+    "src/components/groundwater/ward-map.tsx",
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "scripts/fetch-wris-groundwater.ts"
@@ -64990,7 +64987,9 @@
      "years"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
     "scripts/fetch-wris-groundwater-bangalore.ts"
@@ -65027,7 +65026,9 @@
      "years"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
@@ -65071,6 +65072,7 @@
    },
    "consumers": [
     "src/content/story-gurugram-en.tsx",
+    "src/lib/cities/data-paths.ts",
     "src/lib/cities/gurugram.ts"
    ],
    "producer_refs": [
@@ -65109,7 +65111,9 @@
      "unit_label"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py"
@@ -65150,7 +65154,9 @@
      "unit_note"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py"
    ],
@@ -65185,7 +65191,9 @@
      "years"
     ]
    },
-   "consumers": [],
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
     "scripts/compute-madurai-derived-facts.ts",
@@ -65231,7 +65239,8 @@
     ]
    },
    "consumers": [
-    "src/content/story-pune-en.tsx"
+    "src/content/story-pune-en.tsx",
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
@@ -65275,6 +65284,7 @@
     ]
    },
    "consumers": [
+    "src/lib/cities/data-paths.ts",
     "src/lib/cities/surat.ts"
    ],
    "producer_refs": [
@@ -65313,7 +65323,7 @@
    "consumers": [
     "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/page.tsx",
-    "src/components/groundwater/ward-map.tsx",
+    "src/lib/cities/data-paths.ts",
     "src/lib/facts/derived-facts.ts",
     "src/lib/facts/static-facts.ts"
    ],
@@ -66637,15 +66647,11 @@
    },
    "consumers": [
     "src/app/[cityId]/my-ward/my-ward-client.tsx",
-    "src/app/api/wards/route.ts",
-    "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
-    "src/lib/hooks/use-ward-profile.ts",
-    "src/lib/utils/load-profiles-server.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
    ],
@@ -79941,8 +79947,7 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "scripts/compute-bangalore-ward-profiles.ts",
@@ -79986,8 +79991,7 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
@@ -80035,8 +80039,7 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_hyderabad_river_quality.py",
@@ -80085,8 +80088,7 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_kolkata_restoration.py",
@@ -80125,8 +80127,7 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/scrape_cpcb_nwmp_vaigai.py",
@@ -80172,8 +80173,7 @@
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "scripts/build_mumbai_rivers_basin.py",
@@ -80225,8 +80225,7 @@
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
     "src/content/story-pune-en.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
@@ -80269,8 +80268,7 @@
     "src/app/[cityId]/rivers/rivers-client.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
     "src/content/story-surat-en.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/hooks/use-ward-profile.ts"
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/extract_cpcb_nwmp_tapi.py",
@@ -80309,7 +80307,6 @@
     "src/lib/cities/data-paths.ts",
     "src/lib/facts/derived-facts.ts",
     "src/lib/facts/static-facts.ts",
-    "src/lib/hooks/use-ward-profile.ts",
     "src/types/industrial-pollution.ts"
    ],
    "producer_refs": [
@@ -80592,15 +80589,11 @@
    },
    "consumers": [
     "src/app/[cityId]/my-ward/my-ward-client.tsx",
-    "src/app/api/wards/route.ts",
-    "src/components/my-ward/ward-comparison-page.tsx",
     "src/components/my-ward/ward-selector.tsx",
     "src/lib/cities/data-paths.ts",
     "src/lib/cities/gurugram.ts",
     "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
-    "src/lib/hooks/use-ward-profile.ts",
-    "src/lib/utils/load-profiles-server.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
    ],
@@ -81800,6 +81793,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
@@ -82534,8 +82528,8 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/components/groundwater/ward-map.tsx",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
@@ -82574,7 +82568,7 @@
     ]
    },
    "consumers": [
-    "src/components/rivers/combined-rivers-map.tsx"
+    "src/app/[cityId]/rivers/chennai-rivers-client.tsx"
    ],
    "producer_refs": [
     "scripts/compute-ward-profiles.ts",
@@ -82616,7 +82610,6 @@
     "src/app/[cityId]/water-bodies/water-bodies-map-client.tsx",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/components/rivers/combined-rivers-map.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -82794,10 +82787,7 @@
      "ward_number"
     ]
    },
-   "consumers": [
-    "src/components/groundwater/ward-map.tsx",
-    "src/lib/data/ward-geo.ts"
-   ],
+   "consumers": [],
    "producer_refs": [
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
@@ -82968,6 +82958,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
@@ -83259,6 +83250,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/lib/cities/gurugram.ts",
     "src/lib/groundwater/districts-as-blocks.ts"
@@ -83419,6 +83411,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
@@ -83967,6 +83960,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
@@ -84065,9 +84059,7 @@
      "zone"
     ]
    },
-   "consumers": [
-    "src/lib/data/ward-geo.ts"
-   ],
+   "consumers": [],
    "producer_refs": [
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/compute-madurai-ward-risk.ts",
@@ -84620,6 +84612,7 @@
     ]
    },
    "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
@@ -91246,7 +91239,7 @@
    "bytes": 13743612,
    "schema_variants": 4,
    "registered": true,
-   "has_consumer": true
+   "has_consumer": false
   },
   {
    "family": "geojson-layers",
