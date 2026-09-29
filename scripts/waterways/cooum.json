@@ -232,5 +232,69 @@
         "osm-overpass"
       ]
     }
+  },
+  "gate": {
+    "_doc": "Publication gate for scripts/verify_waterway.py. Banned claims (DECISIONS.md C5) were each a real error in circulation during the Aug 2026 research: 8,552 cusecs (Poondi releases do not flow down the Cooum), 19,817 (not a Cooum resettlement figure), 76 miles (1905 postcard caption), 19,500 or 22,000 as cubic metres per second (the CMDA primary reads cusecs), 12,000 cusecs (Okkiyam Maduvu's, DIPR PR 446 of 27.07.2026), 345 mg without its 2021 vintage, 118 outfalls without their 2014 vintage, sewage-inlet data credited to Arappor (it is PWD via NEPT 2017).",
+    "scanned": [
+      "reaches",
+      "chapters",
+      "timeline",
+      "claims",
+      "today"
+    ],
+    "tiling_end_km": 62.9,
+    "photos": true,
+    "banned_text": [
+      {
+        "literal": [
+          "8,552",
+          "8552",
+          "19,817",
+          "19817",
+          "76 miles"
+        ],
+        "message": "banned: \"{s}\" appears in emitted text"
+      },
+      {
+        "pattern": "(19,?500|22,?000)[^.]{0,40}(m3/s|m³|cumec|cubic metre)",
+        "message": "banned: 19,500/22,000 rendered as cubic metres per second"
+      },
+      {
+        "pattern": "12,?000\\s*cusec",
+        "unless_near": "Okkiyam",
+        "message": "banned: 12,000 cusecs as a Cooum figure (it is Okkiyam Maduvu's)"
+      }
+    ],
+    "banned_claims": [
+      {
+        "in": "text+source",
+        "all": [
+          "345 mg"
+        ],
+        "none": [
+          "2021"
+        ],
+        "message": "345 mg/L without its 2021 vintage"
+      },
+      {
+        "in": "text+source",
+        "all": [
+          "(?i)outfall",
+          "\\b118\\b"
+        ],
+        "none": [
+          "2014"
+        ],
+        "message": "an outfall count of 118 without its 2014 vintage"
+      },
+      {
+        "in": "text+source",
+        "all": [
+          "(?i)inlet",
+          "(?i)arappor"
+        ],
+        "message": "sewage-inlet data attributed to Arappor (it is PWD data via NEPT 16(3) 2017)"
+      }
+    ]
   }
 }
