@@ -1500,6 +1500,10 @@ export const translations: Record<string, TranslationEntry> = {
   "flood.moderate": { en: "Moderate",                       ta: "மிதமான", kn: "ಮಧ್ಯಮ" },
   "flood.low": { en: "Low",                            ta: "குறைவு", kn: "ಕಡಿಮೆ" },
   "flood.very_low": { en: "Very Low",                       ta: "மிகக் குறைவு", kn: "ಅತಿ ಕಡಿಮೆ" },
+  // Bengaluru's hotspot classes (KSRSAC via OpenCity), as the ward profile names them
+  "flood.named_flood_prone": { en: "Named flood-prone", ta: "பெயரிடப்பட்ட வெள்ள-ஆபத்து", kn: "ಹೆಸರಿಸಲಾದ ಪ್ರವಾಹ-ಪೀಡಿತ" },
+  "flood.named_low_lying": { en: "Named low-lying", ta: "பெயரிடப்பட்ட தாழ்வான", kn: "ಹೆಸರಿಸಲಾದ ತಗ್ಗು-ಪ್ರದೇಶ" },
+  "flood.vulnerable_unnamed": { en: "Vulnerable (unnamed)", ta: "பாதிக்கப்படக்கூடியவை (பெயரிடப்படாத)", kn: "ದುರ್ಬಲ (ಹೆಸರಿಲ್ಲದ)" },
   "flood.zones": { en: "zones",                          ta: "மண்டலங்கள்", kn: "ವಲಯಗಳು" },
 
   // Stats bar

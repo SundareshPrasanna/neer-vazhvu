@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GeoJSON, useMap } from "react-leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
+import { wardNumberOf } from "@/lib/utils/ward-number";
 
 interface SelectedWardHighlightProps {
   wardNumber: number | null;
@@ -26,10 +27,7 @@ export function SelectedWardHighlight({ wardNumber, flyTo = false, wardGeoJsonUr
 
   useEffect(() => {
     if (!wardNumber || !wardGeoJSON || !flyTo) return;
-    const feature = wardGeoJSON.features.find((f) => {
-      const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
-      return num === wardNumber;
-    });
+    const feature = wardGeoJSON.features.find((f) => wardNumberOf(f.properties) === wardNumber);
     if (feature) {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const L = require("leaflet");
@@ -40,10 +38,7 @@ export function SelectedWardHighlight({ wardNumber, flyTo = false, wardGeoJsonUr
 
   if (!wardNumber || !wardGeoJSON) return null;
 
-  const selectedFeature = wardGeoJSON.features.find((f: Feature) => {
-    const num = Number(f.properties?.ward_number ?? f.properties?.Ward_No ?? f.properties?.ward_no);
-    return num === wardNumber;
-  });
+  const selectedFeature = wardGeoJSON.features.find((f: Feature) => wardNumberOf(f.properties) === wardNumber);
 
   if (!selectedFeature) return null;
 
