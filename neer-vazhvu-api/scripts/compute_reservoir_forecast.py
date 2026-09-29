@@ -1,30 +1,26 @@
 #!/usr/bin/env python3
 """
-AutoARIMA reservoir forecast for Bengaluru (KRS + Hemavathi +
-Kabini + Harangi - the 4 upstream Cauvery dams that feed BWSSB's
-T.K. Halli pumping operation). Reads daily storage history from
-reservoir_daily_v2 and writes 14-day-ahead predictions with
-confidence bands to reservoir_forecast_v2.
+AutoARIMA reservoir forecast for one v2 city (Madurai or Bengaluru). Reads
+daily storage history from reservoir_daily_v2 and writes 14-day-ahead
+predictions with confidence bands to reservoir_forecast_v2.
 
-Mirrors compute_reservoir_forecast_madurai.py one-for-one; only the
-CITY_ID constant differs. The "bangalore" rows in reservoir_daily_v2
-are populated by the shared scripts/backfill_tn_pwd_reservoirs.py
-pipeline (TN Agri's reservoir page lists the 4 KA Cauvery dams
-alongside the TN reservoirs because the basin is shared).
+Mirrors neer-vazhvu-api/app/intelligence/forecaster.py but stripped of
+Chennai-specific exogenous-variable handling - the charts need the basic
+predicted line + 80% confidence band.
 
 Usage:
     cd neer-vazhvu-api
-    python scripts/compute_reservoir_forecast_bangalore.py
-    python scripts/compute_reservoir_forecast_bangalore.py --horizon 30 --history-days 1825
+    python scripts/compute_reservoir_forecast.py --city madurai
+    python scripts/compute_reservoir_forecast.py --city bangalore --horizon 30 --history-days 1825
 
 Idempotent: forecasts upsert on (city_id, source_code, forecast_date,
 target_date), so re-running on the same day overwrites.
 
 Prereq: reservoir history backfill must be loaded first
-(scripts/backfill_tn_pwd_reservoirs.py with --cities bangalore or no
-filter). At least ~365 days of daily storage are needed for AutoARIMA
-to produce useful predictions; the script logs and skips sources with
-too little data.
+(scripts/backfill_tn_pwd_reservoirs.py; TN Agri's reservoir page also lists
+the 4 KA Cauvery dams that fill the "bangalore" rows). At least ~365 days of
+daily storage are needed for AutoARIMA to produce useful predictions; the
+script logs and skips sources with too little data.
 """
 
 import argparse
@@ -43,7 +39,11 @@ from supabase import create_client  # noqa: E402
 from statsforecast import StatsForecast  # noqa: E402
 from statsforecast.models import AutoARIMA  # noqa: E402
 
-CITY_ID = "bangalore"
+# city_id -> the dams it forecasts (for logs; sources come from water_sources)
+CITIES = {
+    "madurai": "Madurai (Vaigai + Mullaperiyar + Sothuparai)",
+    "bangalore": "Bengaluru (KRS + Hemavathi + Kabini + Harangi)",
+}
 DEFAULT_HORIZON_DAYS = 14
 DEFAULT_HISTORY_DAYS = 1825  # 5 years if available
 MIN_HISTORY_FOR_FIT = 180  # ~6 months minimum
@@ -63,7 +63,9 @@ def _today_ist() -> date:
     return datetime.now(ZoneInfo("Asia/Kolkata")).date()
 
 
-def _fetch_history(supabase, source_code: str, history_days: int) -> pd.DataFrame:
+def _fetch_history(
+    supabase, city_id: str, source_code: str, history_days: int
+) -> pd.DataFrame:
     cutoff = (_today_ist() - timedelta(days=history_days)).isoformat()
     rows: list[dict] = []
     PAGE_SIZE = 1000
@@ -73,7 +75,7 @@ def _fetch_history(supabase, source_code: str, history_days: int) -> pd.DataFram
         result = (
             supabase.table("reservoir_daily_v2")
             .select("date, storage_tmc")
-            .eq("city_id", CITY_ID)
+            .eq("city_id", city_id)
             .eq("source_code", source_code)
             .gte("date", cutoff)
             .order("date", desc=False)
@@ -97,7 +99,7 @@ def _fetch_history(supabase, source_code: str, history_days: int) -> pd.DataFram
 
 
 def _forecast_one_source(
-    source_code: str, df: pd.DataFrame, horizon: int
+    city_id: str, source_code: str, df: pd.DataFrame, horizon: int
 ) -> list[dict]:
     """Fit AutoARIMA on the source's history and return forecast rows."""
     if len(df) < MIN_HISTORY_FOR_FIT:
@@ -136,7 +138,7 @@ def _forecast_one_source(
         upper = max(0.0, float(row[hi_col]))
         out.append(
             {
-                "city_id": CITY_ID,
+                "city_id": city_id,
                 "source_code": source_code,
                 "forecast_date": today,
                 "target_date": pd.Timestamp(row["ds"]).strftime("%Y-%m-%d"),
@@ -151,28 +153,29 @@ def _forecast_one_source(
 
 async def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0].strip())
+    parser.add_argument("--city", required=True, choices=sorted(CITIES))
     parser.add_argument("--horizon", type=int, default=DEFAULT_HORIZON_DAYS)
     parser.add_argument("--history-days", type=int, default=DEFAULT_HISTORY_DAYS)
     args = parser.parse_args()
+    city_id = args.city
 
     supabase = create_client(_get_env("SUPABASE_URL"), _get_env("SUPABASE_SERVICE_KEY"))
 
-    # Pull the configured Madurai sources from the cities table so this
-    # stays in sync with the registry without hardcoding.
+    # Sources come from water_sources so this stays in sync with the registry.
     src_result = (
         supabase.table("water_sources")
         .select("source_code, display_name")
-        .eq("city_id", CITY_ID)
+        .eq("city_id", city_id)
         .order("display_order", desc=False)
         .execute()
     )
     sources = src_result.data or []
     if not sources:
-        print(f"ERROR: no water_sources rows for city_id={CITY_ID}", file=sys.stderr)
+        print(f"ERROR: no water_sources rows for city_id={city_id}", file=sys.stderr)
         return 1
 
     print(
-        f"Forecasting {len(sources)} Madurai sources, horizon={args.horizon}d",
+        f"Forecasting {len(sources)} {CITIES[city_id]} sources, horizon={args.horizon}d",
         flush=True,
     )
 
@@ -180,8 +183,8 @@ async def main() -> int:
     for s in sources:
         code = s["source_code"]
         print(f"  fitting {code}...", flush=True)
-        df = _fetch_history(supabase, code, args.history_days)
-        rows = _forecast_one_source(code, df, args.horizon)
+        df = _fetch_history(supabase, city_id, code, args.history_days)
+        rows = _forecast_one_source(city_id, code, df, args.horizon)
         if rows:
             print(
                 f"    -> {len(rows)} forecast points (model={rows[0]['model_name']})",

@@ -23,8 +23,8 @@ Outputs (public/data/waterways/<id>/ - corpus-managed json;
   reaches.json chapters.json timeline.json claims.json today.json
   width-profile.json centerline.geojson
 
-Companion gates: the per-waterway verify_waterway_*.py and numeric audit
-(run after every build).
+Companion gates: scripts/verify_waterway.py --waterway <id> and the numeric
+audit scripts/audit_waterway_numbers.py --waterway <id> (run after every build).
 """
 
 import argparse

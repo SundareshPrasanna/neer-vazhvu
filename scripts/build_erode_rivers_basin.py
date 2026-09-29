@@ -37,7 +37,8 @@ Inputs already in the repo:
 
 Writes public/data/basins/erode-rivers/<family>.geojson and inventory.json
 through nvdm_write.write_artifact so envelopes survive a re-run. Run
-scripts/nvdm_envelope_erode_rivers.py after the first build to stamp envelopes.
+scripts/nvdm_envelope_district_basin.py scripts/build_erode_rivers_basin.py
+after the first build to stamp envelopes.
 
 Usage:
   python3 scripts/build_erode_rivers_basin.py          full build (every family)
@@ -56,7 +57,9 @@ from shapely.ops import substring
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from lib.tn_district_basin import NWDP, TNGIS_LABEL, DistrictBasinBuild, area_km2, dms, feat, length_km  # noqa: E402
+from lib.tn_district_basin import (  # noqa: E402
+    NWDP, TN_ENVELOPE_READINGS, TN_ENVELOPE_SOURCES, TNGIS, TNGIS_LABEL, DistrictBasinBuild, area_km2, dms, feat, length_km, tn_envelope,
+)
 
 BASIN_ID = "erode-rivers"
 GENERATED_FROM = Path(__file__).name
@@ -233,6 +236,64 @@ def build_cepi_frame(b: DistrictBasinBuild) -> None:
 # Build order: the inventory lists families in this order.
 STEPS = ("waterways", "reservoirs", "repo-families", "industries", "estates", "quarries", "admin", "panchayats", "waterbodies",
          "watersheds", "groundwater-wells", build_prs, "canals", build_cepi_frame, "realtime-stations", "gauging-stations")
+
+# Envelopes (scripts/nvdm_envelope_district_basin.py): the shared TN families, plus the polluted stretch, CEPI and CETP record.
+ENVELOPE_SOURCES = {
+    **TN_ENVELOPE_SOURCES,
+    "tngis": ("tngis-open-geoserver", "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies register, named tanks, mine leases, industry register matched to land parcels",
+              "Tamil Nadu e-Governance Agency (TNGIS)", {"url": TNGIS}),
+    "sipcot": ("sipcot-gis-geoserver", "SIPCOT GIS (WFS): industrial complex outlines, Perundurai DTA and SEZ",
+               "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)", {"url": "https://sipcotgis.tn.gov.in/"}),
+    "osm": ("osm-overpass", "OpenStreetMap (Overpass API extract: named river and canal courses)", "OpenStreetMap contributors", {}),
+    "cwc-river": ("nwic-nwdp-cwc-river-data", "CWC river discharge (manual daily), surface water quality and daily reservoir levels for Tamil Nadu and the Cauvery basin, National Water Data Portal",
+                  "Central Water Commission, via the National Water Informatics Centre (NWIC)", {"url": f"{NWDP}/"}),
+    "cpcb-prs": ("cpcb-prs-report", "CPCB, Polluted River Stretches for Restoration of Water Quality, October 2025 (updated version)", "Central Pollution Control Board",
+                 {"url": "https://cpcb.gov.in/polluted-river-stretches/", "as_of": "2025-10"}),
+    "tnpcb-wq": ("tnpcb-prs-cauvery", "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)", "Tamil Nadu Pollution Control Board",
+                 {"url": "https://tnpcb.gov.in/pollutedriverstretches.php", "as_of": "2023-12"}),
+    "mpr": ("nmcg-ngt-mpr-listing", "Tamil Nadu monthly progress reports to NMCG under NGT O.A. 673/2018 (August 2020 to June 2026 editions)", "Government of Tamil Nadu, via the National Mission for Clean Ganga",
+            {"url": "https://nmcg.nic.in/ngtprogressreport.aspx", "as_of": "2026-06"}),
+    "tnpcb-plan": ("tnpcb-prs-cauvery", "TNPCB, Action Plan on Rejuvenation of River Cauvery, Mettur to Mayiladuthurai stretch (Priority I), 2019, with the preamble to the stretch action plans; TNPCB NWMP annual data 2024 (station 1320)", "Tamil Nadu Pollution Control Board",
+                   {"url": "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/actionplan/PrsCauvery24919.pdf", "as_of": "2019"}),
+    # One-time documents (closed + dated; no registry id exists for them).
+    "maws-notes": {"title": "Municipal Administration and Water Supply Department, policy notes 2020-21, 2024-25 and 2025-26 (Erode Corporation sewerage and solid waste)",
+                   "publisher": "Government of Tamil Nadu, Municipal Administration and Water Supply Department", "license": "public policy document, cited with attribution",
+                   "closed": True, "as_of": "2025", "role": "input"},
+    "textiles-nvc": {"title": "Nadanthai Vaazhi Cauvery: proposed common effluent treatment plants and common reject management systems (proposal of 13.03.2023), tntextiles.tn.gov.in",
+                     "publisher": "Department of Textiles, Government of Tamil Nadu", "license": "government plan document, cited with attribution",
+                     "closed": True, "as_of": "2023-03", "role": "input"},
+    "tnpcb-cetp-lists": {"title": "Details of Common Effluent Treatment Plants pertaining to the clusters of textile and tannery industries in Tamil Nadu (2020), tnpcb.gov.in/cept.php",
+                         "publisher": "Tamil Nadu Pollution Control Board", "license": "government register, cited with attribution", "closed": True, "as_of": "2020", "role": "input"},
+    "cepi-plan": {"title": "CEPI action plan for the Erode industrial cluster (September 2020), Table 1.1 and sections 1.1 and 1.6",
+                  "publisher": "Tamil Nadu Pollution Control Board, published by the Central Pollution Control Board", "license": "government plan document, cited with attribution",
+                  "closed": True, "as_of": "2020-09", "role": "input"},
+    "cpcb-minutes": {"title": "CPCB task team minutes under NGT O.A. 673/2018, 3rd and 5th meetings (2019)",
+                     "publisher": "Central Pollution Control Board", "license": "GoI publication, cited with attribution", "closed": True, "as_of": "2019", "role": "input"},
+}
+ENVELOPE_ARTIFACTS, ENVELOPE_INPUTS, ENVELOPE_NOTE = tn_envelope(BASIN_ID, ATLAS_SLUG, (
+    "Erode district's rivers, groundwater and industry (scope erode-rivers; the district's own scope id is tn-erode). "
+    "The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId)."))
+ENVELOPE_ARTIFACTS.update({
+    "rivers": ["osm", "cwc-canals", "tngis"],
+    "reservoirs": ["tngis", "cwc-river"],
+    "monitoring-points": ["tnpcb-wq", "osm", "tngis"],
+    "prs": ["cpcb-prs", "tnpcb-plan", "osm", "tngis"],
+    "prs-drains": ["tnpcb-plan", "tngis"],
+    "prs.json": ["cpcb-prs", "tnpcb-plan", "mpr", "maws-notes", "cpcb-minutes", "textiles-nvc", "tnpcb-cetp-lists", "cepi-plan"],
+    "treatment-plants": ["tngis", "textiles-nvc", "tnpcb-cetp-lists", "mpr"],
+    "cepi-area": ["cepi-plan", "tngis"],
+    "inventory": ["tngis", "osm", "sipcot", "cpcb-prs", "tnpcb-wq", "tnpcb-plan", "ingres", "nwdp-gw", "cwc-canals", "cwc-river", "tnpcb-rt"],
+})
+_SHEDS, _RIVERS = (f"public/data/basins/{BASIN_ID}/{f}.geojson" for f in ("sub-hydrosheds", "rivers"))
+ENVELOPE_INPUTS.update({
+    "tanks": ["public/data/basins/cauvery-tn/tanks.geojson", _SHEDS],
+    "monitoring-points": ["public/data/basins/cauvery-tn/wq-stations.geojson", _SHEDS],
+    "prs": [_RIVERS],
+    "prs-drains": [_RIVERS, _SHEDS],
+    "cepi-area": [_SHEDS],
+})
+ENVELOPE_AUTHORED = {"prs.json": "Authored from the documents' own pages, page-cited; every figure is quoted or transcribed from the cited source."}
+ENVELOPE_READINGS = TN_ENVELOPE_READINGS
 
 
 if __name__ == "__main__":

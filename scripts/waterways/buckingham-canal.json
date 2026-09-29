@@ -260,5 +260,52 @@
         "osm-overpass"
       ]
     }
+  },
+  "gate": {
+    "_doc": "Publication gate for scripts/verify_waterway.py. Banned claims are the corrected figures of 18 Aug 2026 that must never render: 7.51 (the unverified widening figure), 1,280 KLD (2010-vintage CPCL figure as current), a width table sourced to The Hindu, 242.73 tied to the canal alone.",
+    "scanned": [
+      "reaches",
+      "chapters",
+      "timeline",
+      "claims"
+    ],
+    "tiling_end_km": 74.5,
+    "photos": false,
+    "banned_text": [
+      {
+        "literal": [
+          "7.51"
+        ],
+        "message": "banned: \"{s}\" (unverified widening figure) appears"
+      },
+      {
+        "literal": [
+          "1,280 KLD",
+          "1280 KLD"
+        ],
+        "message": "banned: \"{s}\" (2010-vintage CPCL figure) appears"
+      }
+    ],
+    "banned_claims": [
+      {
+        "in": "text+source",
+        "all": [
+          "(?i)the hindu",
+          "(?i)width|143"
+        ],
+        "message": "width table attributed to The Hindu"
+      },
+      {
+        "in": "text",
+        "all": [
+          "242\\.73"
+        ],
+        "none": [
+          "(?i)water bodies",
+          "(?i)waterways"
+        ],
+        "message": "242.73 without the all-water-bodies qualifier"
+      }
+    ]
   }
 }
