@@ -165,8 +165,7 @@ jobs:
           curl -X POST "${{ secrets.PYTHON_API_URL }}/pipeline/run-post-scrape" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
-            --fail --max-time 90 \
-            --retry 1 --retry-delay 30
+            --fail --max-time 300
 
       # Standalone AutoARIMA forecasters for the v2 multi-city schema.
       # These don't need the FastAPI orchestrator - they fit AutoARIMA on

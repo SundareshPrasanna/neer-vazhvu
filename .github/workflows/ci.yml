@@ -15,6 +15,13 @@ on:
     branches: [main]
   push:
     branches: [main]
+    # Scheduled data refreshes can't change what this validates: the build
+    # swaps public/data and public/geojson for the corpus.lock pin. PRs keep
+    # full coverage.
+    paths-ignore:
+      - "public/data/**"
+      - "public/geojson/**"
+      - "docs/**"
 
 jobs:
   frontend:

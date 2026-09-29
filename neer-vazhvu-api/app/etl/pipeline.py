@@ -570,7 +570,9 @@ async def run_post_scrape() -> list[dict]:
 
     Runs: fetch_weather → fetch_opencity → compute_estimate → forecast → briefing.
     Skips the in-process CMWSSB scrape step so callers that already pushed
-    reservoir data to the DB don't redundantly hit upstream sites.
+    reservoir data to the DB don't redundantly hit upstream sites. No WRIS
+    steps: India-WRIS refuses datacenter IPs (ConnectTimeout daily since
+    June 2026), and each one burned its 60 s timeout inside this request.
     """
     steps = []
     step = await _run_step("fetch_weather", _step_fetch_weather)
@@ -580,18 +582,6 @@ async def run_post_scrape() -> list[dict]:
 
     steps.append(
         await _run_step("fetch_opencity", _step_fetch_opencity, required=False)
-    )
-
-    steps.append(await _run_step("fetch_wris", _step_fetch_wris, required=False))
-    steps.append(
-        await _run_step(
-            "fetch_wris_river_level", _step_fetch_wris_river_level, required=False
-        )
-    )
-    steps.append(
-        await _run_step(
-            "fetch_wris_rainfall", _step_fetch_wris_rainfall, required=False
-        )
     )
 
     step = await _run_step("compute_estimate", _step_compute_estimate)

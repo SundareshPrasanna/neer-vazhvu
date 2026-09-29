@@ -48,11 +48,10 @@ jobs:
           set -e
           CITIES="${{ inputs.city }}"
           if [ -z "$CITIES" ]; then
-            # Keep in lockstep with CITY_DEFAULTS in
-            # neer-vazhvu-api/scripts/generate_imd_rainfall.py. Delhi was
-            # missing here despite shipping an IMD series, so its quarterly
-            # refresh had silently never run; added with Kolkata.
-            CITIES="chennai madurai bangalore mumbai delhi kolkata"
+            # Every city with a default grid in generate_imd_rainfall.py. A
+            # hand-kept list here drifted twice (Delhi, then Hyderabad, Pune,
+            # Gurugram and Surat never refreshed).
+            CITIES="$(python neer-vazhvu-api/scripts/generate_imd_rainfall.py --list-cities)"
           fi
           for city in $CITIES; do
             echo "=== IMD refresh: $city ==="
