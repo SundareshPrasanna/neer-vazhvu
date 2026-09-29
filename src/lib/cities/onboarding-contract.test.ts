@@ -1,0 +1,78 @@
+/**
+ * The onboarding contract: what a city must declare before its routes can
+ * render its own content rather than a blank, a "coming soon", or another
+ * city's facts. The type system enforces most of it (CityId, required config
+ * fields, the hero union); this covers the rules that span config and content.
+ * A failure names the city and what it is missing.
+ */
+import { strict as assert } from "node:assert";
+import { test } from "node:test";
+import { CITY_IDS, tryGetPlaceConfig, type PlaceConfig } from "./index";
+import { riversVariant } from "./data-paths";
+import { RIVERS_CONTENT } from "../../content/rivers";
+import { FLOOD_CONTENT } from "../../content/flood";
+import { STORY_TAGLINES } from "../../content/story-taglines";
+
+const places: PlaceConfig[] = CITY_IDS.map((id) => {
+  const config = tryGetPlaceConfig(id);
+  assert.ok(config, `${id}: in CITY_IDS but not in the registry`);
+  return config;
+});
+
+test("every registered city is keyed by its own id", () => {
+  for (const [i, place] of places.entries()) assert.equal(place.cityId, CITY_IDS[i]);
+});
+
+test("every city ships a dashboard and an About page", () => {
+  for (const p of places) {
+    assert.ok(p.routes.includes(""), `${p.cityId}: routes lacks the dashboard ("")`);
+    assert.ok(p.routes.includes("about"), `${p.cityId}: routes lacks "about"`);
+  }
+});
+
+test("every city has its own landing hook and footer sources", () => {
+  for (const p of places) {
+    assert.ok(p.landing.hook.trim(), `${p.cityId}: empty landing.hook`);
+    assert.ok(p.footerSources.length > 0, `${p.cityId}: no footerSources`);
+    for (const s of p.footerSources) assert.match(s.href, /^https:\/\//, `${p.cityId}: footer source ${s.label}`);
+  }
+});
+
+test("a rivers route has curated river content (or its own variant)", () => {
+  for (const p of places.filter((p) => p.routes.includes("rivers"))) {
+    assert.ok(
+      riversVariant(p.cityId) || RIVERS_CONTENT[p.cityId]?.riverInfo,
+      `${p.cityId}: "rivers" is in routes but src/content/rivers has no riverInfo for it`,
+    );
+  }
+});
+
+test("a flood-risk route has a renderer: a named variant or a flood config", () => {
+  // Mumbai still has its own flood renderer, chosen by city id in the page.
+  const OWN_RENDERER = new Set(["mumbai"]);
+  for (const p of places.filter((p) => p.routes.includes("flood-risk"))) {
+    const variant = p.flood?.variant;
+    assert.ok(
+      variant === "interactive" || variant === "bangalore" || FLOOD_CONTENT[p.cityId]?.config || OWN_RENDERER.has(p.cityId),
+      `${p.cityId}: "flood-risk" is in routes but it has no variant and no src/content/flood config`,
+    );
+  }
+});
+
+test("a my-ward route has ward geometry", () => {
+  for (const p of places.filter((p) => p.routes.includes("my-ward"))) {
+    assert.ok(p.wardsVintage, `${p.cityId}: "my-ward" is in routes but wardsVintage is null`);
+  }
+});
+
+test("an Origins route has a tagline", () => {
+  for (const p of places.filter((p) => p.routes.includes("origins"))) {
+    assert.ok(STORY_TAGLINES[p.cityId]?.trim(), `${p.cityId}: no STORY_TAGLINES entry`);
+  }
+});
+
+test("a days-left hero has the city's own demand figure", () => {
+  for (const p of places.filter((p) => p.heroMode === "days-left")) {
+    assert.ok(p.defaultConsumptionMld != null, `${p.cityId}: days-left hero without defaultConsumptionMld`);
+  }
+});
