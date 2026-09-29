@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { previewIds } from "@/lib/utils/preview-ids";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,15 +24,7 @@ interface LayoutProps {
  * the UI to surface the link.
  */
 function isPreviewCity(cityId: string): boolean {
-  const raw =
-    process.env.NEXT_PUBLIC_PREVIEW_CITIES ??
-    process.env.PREVIEW_CITIES ??
-    "";
-  if (!raw) return false;
-  return raw
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .includes(cityId.toLowerCase());
+  return previewIds((process.env.NEXT_PUBLIC_PREVIEW_CITIES ?? process.env.PREVIEW_CITIES)?.toLowerCase()).has(cityId.toLowerCase());
 }
 
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {

@@ -13,6 +13,8 @@
  * adapter built a district's artifacts (TNRD for Tamil Nadu, the LGD
  * directory elsewhere) is recorded in the served directory, not here.
  */
+import { previewIds } from "../utils/preview-ids";
+
 export interface AtlasDistrict {
   /** URL slug under /atlas/<state>/, e.g. "thanjavur". */
   slug: string;
@@ -339,14 +341,8 @@ export function listPublishedAtlasDistricts(): AtlasDistrict[] {
  *  this one function, so a district cannot be linked from one place and 404
  *  in another. */
 export function listVisibleAtlasDistricts(): AtlasDistrict[] {
-  const published = listPublishedAtlasDistricts();
-  const raw = process.env.NEXT_PUBLIC_PREVIEW_DISTRICTS;
-  if (!raw) return published;
-  const slugs = new Set(
-    raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
-  );
-  const extras = ATLAS_DISTRICTS.filter((d) => !d.published && slugs.has(d.slug));
-  return [...published, ...extras];
+  const slugs = previewIds(process.env.NEXT_PUBLIC_PREVIEW_DISTRICTS?.toLowerCase());
+  return [...listPublishedAtlasDistricts(), ...ATLAS_DISTRICTS.filter((d) => !d.published && slugs.has(d.slug))];
 }
 
 export function isAtlasDistrictVisible(d: AtlasDistrict): boolean {

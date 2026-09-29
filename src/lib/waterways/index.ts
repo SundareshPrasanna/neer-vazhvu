@@ -1,4 +1,5 @@
 import type { WaterwayManifest } from "./types";
+import { previewIds } from "../utils/preview-ids";
 import { BUCKINGHAM_CANAL } from "./buckingham-canal";
 import { COOUM } from "./cooum";
 
@@ -12,16 +13,10 @@ const REGISTRY: Record<string, WaterwayManifest> = {
 /**
  * Preview gating mirrors the city registry: disabled waterways stay
  * invisible in production unless named in NEXT_PUBLIC_PREVIEW_WATERWAYS
- * (comma-separated ids) on that deploy.
+ * (comma-separated ids, matched case-sensitively, unlike cities and districts) on that deploy.
  */
 function isVisible(m: WaterwayManifest): boolean {
-  if (m.enabled) return true;
-  const raw = process.env.NEXT_PUBLIC_PREVIEW_WATERWAYS;
-  if (!raw) return false;
-  return raw
-    .split(",")
-    .map((s) => s.trim())
-    .includes(m.waterwayId);
+  return m.enabled || previewIds(process.env.NEXT_PUBLIC_PREVIEW_WATERWAYS).has(m.waterwayId);
 }
 
 export function tryGetWaterwayManifest(id: string): WaterwayManifest | null {
