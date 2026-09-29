@@ -13,6 +13,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { getPlaceConfig, tryGetPlaceConfig, type PlaceConfig } from "@/lib/cities";
 import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
+import { gwStationsUrl, gwrBlocksUrl } from "@/lib/cities/data-paths";
 import type {
   GroundwaterWard,
   WardRiskData,
@@ -112,9 +113,9 @@ interface CityGwAssets {
 
 function assetsForCity(config: PlaceConfig): CityGwAssets {
   return {
-    blocksJsonUrl: `/data/gwr-blocks-${config.cityId}.json`,
+    blocksJsonUrl: gwrBlocksUrl(config.cityId),
     blockGeoJsonUrl: `/geojson/${config.cityId}-gwr-blocks.geojson`,
-    stationsJsonUrl: `/data/gw-stations-${config.cityId}.json`,
+    stationsJsonUrl: gwStationsUrl(config.cityId),
     wardGeoJsonUrl: wardsGeoJsonPathFor(config.cityId),
     mapCenter: [config.center.lat, config.center.lng],
   };

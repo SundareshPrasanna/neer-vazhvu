@@ -3,8 +3,8 @@
 import { useLanguage } from "@/lib/i18n/context";
 
 interface NewsSectionProps {
-  /** City display name to seed the Google News search. Defaults to Chennai. */
-  cityDisplayName?: string;
+  /** City display name to seed the Google News search. */
+  cityDisplayName: string;
 }
 
 function newsUrlFor(cityName: string): string {
@@ -13,7 +13,7 @@ function newsUrlFor(cityName: string): string {
   return `https://news.google.com/search?${params.toString()}`;
 }
 
-export function NewsSection({ cityDisplayName = "Chennai" }: NewsSectionProps = {}) {
+export function NewsSection({ cityDisplayName }: NewsSectionProps) {
   const { t } = useLanguage();
   const url = newsUrlFor(cityDisplayName);
 

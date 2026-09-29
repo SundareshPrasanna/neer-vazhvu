@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useCityId } from "@/lib/hooks/use-city-id";
 import type { Language } from "@/lib/i18n/translations";
 import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
@@ -26,6 +27,7 @@ export interface WardSearchProps {
 
 export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   const { language, t } = useLanguage();
+  const cityId = useCityId();
   const [wards, setWards] = useState<WardEntry[]>([]);
   const [localities, setLocalities] = useState<LocalityEntry[]>([]);
   const [query, setQuery] = useState("");
@@ -44,15 +46,17 @@ export function WardSearch({ onSelect, className = "" }: WardSearchProps) {
   );
 
   useEffect(() => {
-    fetch("/api/wards")
+    if (!cityId) return;
+    const city = encodeURIComponent(cityId);
+    fetch(`/api/wards?city=${city}`)
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))
       .catch(console.error);
-    fetch("/api/localities")
+    fetch(`/api/localities?city=${city}`)
       .then((r) => r.json())
       .then((d) => setLocalities(d.localities || []))
       .catch(console.error);
-  }, []);
+  }, [cityId]);
 
   const zones = useMemo<ZoneEntry[]>(() => deriveZones(wards), [wards]);
 

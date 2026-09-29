@@ -4,7 +4,7 @@ import { resolve } from "path";
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { idwInterpolate, polygonCentroid, haversineKm, type IdwStation } from "@/lib/groundwater/idw";
 import { getGroundwaterStatus } from "@/types/groundwater";
-import { tryGetPlaceConfig } from "@/lib/cities";
+import { requireCity } from "@/lib/require-city";
 import { wardsVintageFor } from "@/lib/cities/wards-vintage";
 
 /**
@@ -66,11 +66,9 @@ function loadStaticWells(
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const cityId = (searchParams.get("city") || "madurai").toLowerCase();
-  const config = tryGetPlaceConfig(cityId);
-  if (!config) {
-    return NextResponse.json({ error: "Unknown city" }, { status: 404 });
-  }
+  const config = requireCity(searchParams);
+  if (config instanceof NextResponse) return config;
+  const cityId = config.cityId;
   // Cities with a live WRIS district read Supabase; cities without one
   // (e.g. Mumbai, whose WRIS feed went stale in 2023) fall back to the
   // curated static Year Book file public/data/{cityId}-cgwb-stations.json.

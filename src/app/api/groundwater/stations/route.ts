@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { internalServerError, logRouteError } from "@/lib/api-error";
-import { tryGetPlaceConfig } from "@/lib/cities";
+import { requireCity } from "@/lib/require-city";
 import { haversineKm } from "@/lib/groundwater/idw";
 
 /**
@@ -20,9 +20,8 @@ function isSupabaseConfigured(): boolean {
  * Returns CGWB monitoring station data from India WRIS.
  *
  * Query params:
- *   - city: cityId (optional, default "chennai") - filters by district.
- *           Supported: chennai, madurai. Bangalore and others land here as
- *           their daily ingestion ships.
+ *   - city: cityId (required without `station`) - filters by district.
+ *           A city with no WRIS district mapping gets an empty list.
  *   - station: station_code (optional, filter to one station)
  *   - mode: "Manual" | "Telemetric" (optional filter)
  *   - days: number of days of history (default 90, max 730) - only used with station param
@@ -53,9 +52,6 @@ export async function GET(request: NextRequest) {
   const modeFilter = searchParams.get("mode");
   const daysParam = searchParams.get("days");
   const days = Math.min(Math.max(parseInt(daysParam || "90", 10) || 90, 1), 730);
-  const cityParam = (searchParams.get("city") || "chennai").toLowerCase();
-  const district = DISTRICT_BY_CITY[cityParam] ?? "Chennai";
-
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
   const cutoff = cutoffDate.toISOString().slice(0, 10);
@@ -133,6 +129,11 @@ export async function GET(request: NextRequest) {
 
   // No station specified: return latest reading per station from the view,
   // filtered to the requested city's district.
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
+  const district = DISTRICT_BY_CITY[city.cityId];
+  if (!district) return NextResponse.json({ stations: [], totalStations: 0 });
+
   let listQuery = supabase
     .from("groundwater_wris_latest")
     .select(
@@ -153,14 +154,10 @@ export async function GET(request: NextRequest) {
 
   // Sanity-filter mislocated rows against the city's centre (some WRIS
   // records carry coordinates from a different state entirely).
-  const placeConfig = tryGetPlaceConfig(cityParam);
-  const cityCenter: [number, number] | null = placeConfig
-    ? [placeConfig.center.lat, placeConfig.center.lng]
-    : null;
+  const cityCenter: [number, number] = [city.center.lat, city.center.lng];
 
   const stations = (latestRows || [])
     .filter((r) => {
-      if (!cityCenter) return true;
       if (typeof r.latitude !== "number" || typeof r.longitude !== "number") return true;
       return haversineKm(cityCenter, [r.latitude as number, r.longitude as number]) <= MAX_STATION_DIST_KM;
     })

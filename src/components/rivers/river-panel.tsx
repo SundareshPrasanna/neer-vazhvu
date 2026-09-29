@@ -22,8 +22,8 @@ interface RiverPanelProps {
   onClose: () => void;
   onStationChange?: (stationId: string) => void;
   /** City id - threads through to RestorationSection so the right city's
-   *  restoration-projects-{cityId}.json gets loaded. Defaults to Chennai. */
-  cityId?: string;
+   *  restoration-projects-{cityId}.json gets loaded. */
+  cityId: string;
   /** City display name - seeds NewsContext's Google News query. */
   cityDisplayName?: string;
   /** Optional extra sections rendered after the standard panel content

@@ -3,14 +3,8 @@ import test from "node:test";
 
 import { resolveAvailableLanguagesForPath } from "./available-languages";
 
-test("root path resolves to Chennai's available languages (legacy)", () => {
-  const langs = resolveAvailableLanguagesForPath("/");
-  assert.deepEqual([...langs], ["en", "ta"]);
-});
-
-test("legacy unscoped path resolves to Chennai's languages", () => {
-  const langs = resolveAvailableLanguagesForPath("/water-bodies");
-  assert.deepEqual([...langs], ["en", "ta"]);
+test("the landing page is not a city and offers English only", () => {
+  assert.deepEqual([...resolveAvailableLanguagesForPath("/")], ["en"]);
 });
 
 test("madurai-scoped path resolves to Madurai's languages", () => {
@@ -23,11 +17,9 @@ test("explicit chennai-scoped path resolves to Chennai's languages", () => {
   assert.deepEqual([...langs], ["en", "ta"]);
 });
 
-test("unknown city slug falls back to Chennai (legacy default)", () => {
-  // Future-proofs the resolver: if a city is added without
-  // availableLanguages, we don't crash; we use the Chennai default.
-  const langs = resolveAvailableLanguagesForPath("/some-future-place/page");
-  assert.deepEqual([...langs], ["en", "ta"]);
+test("a path outside any city offers English only, not another city's languages", () => {
+  assert.deepEqual([...resolveAvailableLanguagesForPath("/some-future-place/page")], ["en"]);
+  assert.deepEqual([...resolveAvailableLanguagesForPath("/atlas/mh/satara")], ["en"]);
 });
 
 test("path with trailing slash and query is parsed correctly", () => {

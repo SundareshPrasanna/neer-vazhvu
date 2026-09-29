@@ -99,7 +99,7 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
   },
 };
 
-export default function CoastalClient({ cityId = "chennai" }: { cityId?: string }) {
+export default function CoastalClient({ cityId }: { cityId: string }) {
   // No entry -> render nothing (after the hooks - hooks must run
   // unconditionally) rather than fall back to another city's coastal copy
   // and statistics. FEATURE_AVAILABILITY gates this page to cities with an

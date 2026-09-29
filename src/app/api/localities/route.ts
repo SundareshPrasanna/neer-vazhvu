@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "fs/promises";
 import path from "path";
+import { requireCity } from "@/lib/require-city";
 
 export const revalidate = 86400; // cache for 24 hours
 
@@ -15,8 +16,7 @@ export interface LocalityEntry {
   zone_no: string;
 }
 
-/** Resolve the public/data/ filename for a city's locality list.
- *  Chennai uses the legacy chennai-localities.json. Other cities use
+/** Resolve the public/data/ filename for a city's locality list,
  *  <cityId>-localities.json. Missing file = 404 (the consumer treats
  *  that as "no locality search for this city" and falls back to ward
  *  number / zone name search only). */
@@ -25,7 +25,9 @@ function localitiesPathFor(cityId: string): string {
 }
 
 export async function GET(request: NextRequest) {
-  const cityId = (request.nextUrl.searchParams.get("city") || "chennai").toLowerCase();
+  const city = requireCity(request.nextUrl.searchParams);
+  if (city instanceof NextResponse) return city;
+  const cityId = city.cityId;
   let raw: string;
   try {
     raw = await readFile(localitiesPathFor(cityId), "utf-8");

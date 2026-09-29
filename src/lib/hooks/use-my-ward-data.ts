@@ -32,7 +32,7 @@ export interface MyWardData {
 
 export function useMyWardData(
   wardNumber: number | null,
-  cityId: string = "chennai",
+  cityId: string,
 ): MyWardData {
   const { profile, getRiverLabel, loaded: profileLoaded } = useWardProfile(wardNumber, cityId);
   const { representatives } = useWardRepresentatives(wardNumber, cityId);
@@ -49,23 +49,9 @@ export function useMyWardData(
     let cancelled = false;
     setGwLoading(true);
 
-    // Per-ward live groundwater is Chennai-only today (the API queries
-    // Supabase tables that only carry Chennai data). For other cities
-    // we skip the call and emit a no-data shape so the GW card renders
-    // an honest "not available for this city" state.
-    if (cityId !== "chennai") {
-      setGroundwater({
-        depthM: null,
-        trend: "unknown",
-        riskLevel: "noData",
-        riskScore: null,
-        riskComponents: null,
-      });
-      setGwLoading(false);
-      return;
-    }
-
-    fetch(`/api/groundwater/ward?ward=${wardNumber}`)
+    // The API returns the no-data shape for a city with no per-ward rows,
+    // so the GW card renders an honest "not available for this city" state.
+    fetch(`/api/groundwater/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
       .then((r) => r.json())
       .then((d) => {
         if (!cancelled) {

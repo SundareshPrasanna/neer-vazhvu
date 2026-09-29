@@ -211,37 +211,13 @@ function SiteHeader() {
   // navigate to / and silently reset the user back to Chennai.
   const { cityId } = parsePath(pathname);
 
-  // Resolve current page label for mobile indicator (client-only to avoid
-  // hydration mismatch). Compare against the city-aware href since that's
-  // what the nav actually links to.
-  const allItems = [...TOP_NAV, ...EXPLORE_ITEMS, ...AFTER_NAV];
-  const currentPage = mounted
-    ? allItems.find((item) => {
-        const cityHref = rewriteNavHref(item.href, cityId);
-        return cityHref === pathname && cityHref !== "/" && cityHref !== `/${cityId}`;
-      })
-    : null;
-  const currentPageLabel = currentPage ? t(currentPage.key) : null;
-
-  // Logo returns to the project landing page ("/") from any city. The
-  // per-city home is still reachable via the "Dashboard" nav item.
-  const homeHref = "/";
-
-  const isExploreActive =
-    EXPLORE_PATHS.has(pathname) ||
-    EXPLORE_ITEMS.filter((i) => isFeatureSupportedForCity(i.href, cityId)).some(
-      (i) => rewriteNavHref(i.href, cityId) === pathname,
-    );
-
-  // The root path "/" is the project landing page, not a city, /waterways/*
-  // pages span city boundaries, and /atlas/* is the district hierarchy.
-  // Render a minimal header on all of them: brand + theme toggle, with no
-  // per-city feature nav (Dashboard/Groundwater/... only make sense inside a
-  // city, and parsePath would silently resolve these routes to Chennai).
-  // The Atlas keeps the place switcher so a reader can move between a
-  // district and any city without going back to the landing page.
+  // Pages outside a city (the landing page "/", /waterways/* which spans
+  // city boundaries, /atlas/* the district hierarchy) get a minimal header:
+  // brand + theme toggle, with no per-city feature nav. The Atlas keeps the
+  // place switcher so a reader can move between a district and any city
+  // without going back to the landing page.
   const isAtlas = pathname.startsWith("/atlas");
-  if (pathname === "/" || pathname.startsWith("/waterways") || isAtlas) {
+  if (cityId === null) {
     return (
       <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -283,6 +259,28 @@ function SiteHeader() {
       </header>
     );
   }
+
+  // Resolve current page label for mobile indicator (client-only to avoid
+  // hydration mismatch). Compare against the city-aware href since that's
+  // what the nav actually links to.
+  const allItems = [...TOP_NAV, ...EXPLORE_ITEMS, ...AFTER_NAV];
+  const currentPage = mounted
+    ? allItems.find((item) => {
+        const cityHref = rewriteNavHref(item.href, cityId);
+        return cityHref === pathname && cityHref !== "/" && cityHref !== `/${cityId}`;
+      })
+    : null;
+  const currentPageLabel = currentPage ? t(currentPage.key) : null;
+
+  // Logo returns to the project landing page ("/") from any city. The
+  // per-city home is still reachable via the "Dashboard" nav item.
+  const homeHref = "/";
+
+  const isExploreActive =
+    EXPLORE_PATHS.has(pathname) ||
+    EXPLORE_ITEMS.filter((i) => isFeatureSupportedForCity(i.href, cityId)).some(
+      (i) => rewriteNavHref(i.href, cityId) === pathname,
+    );
 
   return (
     <header className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-[10000]">

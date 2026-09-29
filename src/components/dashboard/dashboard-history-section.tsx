@@ -86,7 +86,7 @@ export function DashboardHistorySection({
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`/api/reservoir/history?cityId=${encodeURIComponent(cityId)}`, {
+    fetch(`/api/reservoir/history?city=${encodeURIComponent(cityId)}`, {
       signal: controller.signal,
     })
       .then((response) => {

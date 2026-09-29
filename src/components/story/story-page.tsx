@@ -29,8 +29,8 @@ export function StoryPage({
   children,
 }: StoryPageProps) {
   const { t } = useLanguage();
-  const dashboardHref = cityId === "chennai" ? "/" : `/${cityId}`;
-  const factsHref = cityId === "chennai" ? "/facts" : `/${cityId}/facts`;
+  const dashboardHref = `/${cityId}`;
+  const factsHref = `/${cityId}/facts`;
 
   return (
     <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10">

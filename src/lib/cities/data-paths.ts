@@ -33,6 +33,16 @@ export function wardProfilesUrl(cityId: string): string {
   return `/data/${wardProfilesFile(cityId)}`;
 }
 
+/** public/data/gwr-blocks[-<cityId>].json (Chennai: gwr-blocks.json) */
+export function gwrBlocksUrl(cityId: string): string {
+  return cityId === CHENNAI ? "/data/gwr-blocks.json" : `/data/gwr-blocks-${cityId}.json`;
+}
+
+/** public/data/gw-stations[-<cityId>].json (Chennai: gw-stations.json) */
+export function gwStationsUrl(cityId: string): string {
+  return cityId === CHENNAI ? "/data/gw-stations.json" : `/data/gw-stations-${cityId}.json`;
+}
+
 /** public/data/<cityId>-ward-names.json (Chennai: ward-names.json) */
 export function wardNamesFile(cityId: string): string {
   return cityId === CHENNAI ? "ward-names.json" : `${cityId}-ward-names.json`;

@@ -49,6 +49,10 @@ import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
+import { useCityId } from "@/lib/hooks/use-city-id";
+import { tryGetPlaceConfig } from "@/lib/cities";
+import { gwStationsUrl, gwrBlocksUrl } from "@/lib/cities/data-paths";
+import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
 
 function GroundwaterMapLoading() {
   const { t } = useLanguage();
@@ -78,6 +82,8 @@ function GroundwaterPageContent() {
   const { t, language } = useLanguage();
   const locale = language === "ta" ? "ta-IN" : language === "kn" ? "kn-IN" : "en-IN";
   const searchParams = useSearchParams();
+  const cityId = useCityId() ?? "";
+  const center = tryGetPlaceConfig(cityId)?.center;
 
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
   const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
@@ -99,8 +105,8 @@ function GroundwaterPageContent() {
     Promise.all([
       fetch("/api/groundwater").then((r) => r.json()),
       fetch("/api/groundwater/risk").then((r) => r.json()),
-      fetch("/data/gwr-blocks.json").then((r) => r.json()),
-      fetch("/api/groundwater/stations")
+      fetch(gwrBlocksUrl(cityId)).then((r) => r.json()),
+      fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .then((r) => r.json())
         .catch(() => ({ stations: [] })),
     ])
@@ -129,7 +135,7 @@ function GroundwaterPageContent() {
       })
       .catch(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cityId]);
 
   if (loading) {
     return (
@@ -208,6 +214,11 @@ function GroundwaterPageContent() {
           wrisStations={wrisStations}
           selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
           hiddenCategories={hiddenCategories}
+          blockGeoJsonUrl={`/geojson/${cityId}-gwr-blocks.geojson`}
+          blocksJsonUrl={gwrBlocksUrl(cityId)}
+          stationsJsonUrl={gwStationsUrl(cityId)}
+          wardGeoJsonUrl={wardsGeoJsonPathFor(cityId)}
+          mapCenter={center ? [center.lat, center.lng] : [0, 0]}
         />
 
         {/* Legend overlay - shifts up on mobile when bottom sheet is open */}

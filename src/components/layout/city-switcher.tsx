@@ -42,13 +42,10 @@ export function CitySwitcher() {
   const places = listVisiblePlaces();
   const districts = listVisibleAtlasDistricts();
   const currentDistrict = parseAtlasPath(pathname);
-  // On an Atlas page parsePath would read "atlas/tn/..." as a Chennai
-  // feature; the city links must go to each city's home instead.
-  const parsed = parsePath(pathname, knownCityIds());
-  const currentCityId = currentDistrict ? null : parsed.cityId;
-  const feature = currentDistrict ? "" : parsed.feature;
-  const currentPlace = places.find((p) => p.cityId === currentCityId) ?? places[0];
-  const currentLabel = currentDistrict ? currentDistrict.name : currentPlace.displayName;
+  // Outside a city (atlas, landing) the city links go to each city's home.
+  const { cityId: currentCityId, feature } = parsePath(pathname, knownCityIds());
+  const currentPlace = places.find((p) => p.cityId === currentCityId);
+  const currentLabel = currentDistrict?.name ?? currentPlace?.displayName ?? "Choose a place";
 
   // Water-bodies view mode (?mode=catchments) to carry across a city switch.
   // Read lazily on the client only when the menu is open (avoids pulling

@@ -33,8 +33,8 @@ const CATEGORY_I18N: Record<RestorationCategory, string> = {
 
 interface RestorationSectionProps {
   riverId: RiverId;
-  /** Which city's restoration projects file to load. Defaults to Chennai. */
-  cityId?: string;
+  /** Which city's restoration projects file to load. */
+  cityId: string;
 }
 
 export function RestorationSection({ riverId, cityId }: RestorationSectionProps) {

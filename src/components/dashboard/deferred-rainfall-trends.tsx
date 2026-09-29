@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface DeferredRainfallTrendsProps {
-  cityId?: string;
+  cityId: string;
   cityDisplayName?: string;
 }
 

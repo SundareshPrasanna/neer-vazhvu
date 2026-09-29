@@ -1,6 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/context";
+import { useCityId } from "@/lib/hooks/use-city-id";
+import { tryGetPlaceConfig } from "@/lib/cities";
 import type { NewsDomain } from "@/types/news";
 
 /** Search terms per domain that produce relevant Google News results. */
@@ -18,11 +20,11 @@ interface NewsContextProps {
   zoneName?: string;
   /** Specific location name (e.g. river name "Adyar", water body name "Pallikaranai"). */
   locationName?: string;
-  /** City name to scope the search. Defaults to Chennai for back-compat. */
+  /** City name to scope the search. Defaults to the current route's city. */
   cityName?: string;
 }
 
-function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?: string, cityName: string = "Chennai"): string {
+function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?: string, cityName?: string): string {
   // Build a search query scoped to the city + domain
   const parts: string[] = [];
 
@@ -35,7 +37,7 @@ function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?
     parts.push(titleZone);
   }
 
-  parts.push(cityName);
+  if (cityName) parts.push(cityName);
   parts.push(DOMAIN_SEARCH_TERMS[domain]);
 
   const query = parts.join(" ");
@@ -44,8 +46,10 @@ function buildGoogleNewsUrl(domain: NewsDomain, zoneName?: string, locationName?
 
 export function NewsContext({ domain, zoneName, locationName, cityName }: NewsContextProps) {
   const { t } = useLanguage();
+  const cityId = useCityId();
+  const name = cityName ?? (cityId ? tryGetPlaceConfig(cityId)?.displayName : undefined);
 
-  const url = buildGoogleNewsUrl(domain, zoneName, locationName, cityName);
+  const url = buildGoogleNewsUrl(domain, zoneName, locationName, name);
 
   return (
     <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-3 pb-4">

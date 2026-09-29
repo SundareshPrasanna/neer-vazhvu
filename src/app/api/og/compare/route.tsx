@@ -1,7 +1,9 @@
 import { ImageResponse } from "next/og";
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import { NextResponse } from "next/server";
 import { loadProfilesServer } from "@/lib/utils/load-profiles-server";
+import { requireCity } from "@/lib/require-city";
 import { computeWardRankings } from "@/lib/utils/ward-rankings";
 import { parseWardsParam } from "@/lib/utils/parse-wards-param";
 import { GRADE_COLORS } from "@/lib/utils/grade-colors";
@@ -20,7 +22,14 @@ export async function GET(request: Request) {
     return new Response("Missing or invalid wards param", { status: 400 });
   }
 
-  const profiles = loadProfilesServer();
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
+  let profiles;
+  try {
+    profiles = loadProfilesServer(city.cityId);
+  } catch {
+    return new Response(`No ward profiles for ${city.displayName}`, { status: 404 });
+  }
   const rankings = wardNumbers
     .map((w) => computeWardRankings(w, profiles))
     .filter(Boolean);

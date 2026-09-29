@@ -78,9 +78,8 @@ export function Footer() {
     return null;
   }
 
-  // /waterways/* is not a city (parsePath would resolve it to Chennai and
-  // list CMWSSB as a core source of a canal page). No city source list;
-  // "all sources" points at the page's own methods panel.
+  // Outside a city (landing, atlas, waterways) there is no city source list;
+  // on a waterway "all sources" points at the page's own methods panel.
   const isWaterway = pathname.startsWith("/waterways");
   const { cityId } = parsePath(pathname);
   // Fall back to NOTHING, not to Chennai. The old `?? CITY_FOOTER_SOURCES.chennai`
@@ -88,10 +87,8 @@ export function Footer() {
   // Chennai's utility - was one of their core live sources. Kolkata shipped
   // live that way, and Gurugram would have. A city with no entry now renders
   // no source list, which is merely incomplete rather than false.
-  const sources = isWaterway ? [] : (CITY_FOOTER_SOURCES[cityId] ?? []);
-  const aboutHref = isWaterway
-    ? "#methods"
-    : cityId === "chennai" ? "/about#data-sources" : `/${cityId}/about#data-sources`;
+  const sources = cityId ? (CITY_FOOTER_SOURCES[cityId] ?? []) : [];
+  const aboutHref = isWaterway ? "#methods" : cityId ? `/${cityId}/about#data-sources` : null;
 
   return (
     <footer className="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 mt-12">
@@ -114,13 +111,15 @@ export function Footer() {
                 </a>
               </span>
             ))}
-            {sources.length > 0 && " - "}
-            <a
-              href={aboutHref}
-              className="text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              {t("footer.all_sources")}
-            </a>
+            {sources.length > 0 && aboutHref && " - "}
+            {aboutHref && (
+              <a
+                href={aboutHref}
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {t("footer.all_sources")}
+              </a>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <span>{t("footer.open_source")}</span>

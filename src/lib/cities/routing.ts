@@ -12,8 +12,6 @@
 
 import { listAllPlaces } from "./index";
 
-const CHENNAI_CITY_ID = "chennai";
-
 /** Per-city feature availability. Keep in sync with src/app/[cityId]/<feature>/page.tsx. */
 export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
   chennai: new Set([
@@ -256,23 +254,19 @@ export function knownCityIds(): Set<string> {
 }
 
 /**
- * Parse a pathname into (cityId, featurePath).
- * /                       -> ("chennai", "")
- * /groundwater            -> ("chennai", "groundwater")
+ * Parse a pathname into (cityId, featurePath). A path outside a city is not
+ * any city's: the landing page, /atlas/* and /waterways/* resolve to null.
+ * /                       -> (null, "")
+ * /atlas/tn/salem         -> (null, "")
  * /madurai                -> ("madurai", "")
  * /madurai/groundwater    -> ("madurai", "groundwater")
- * /my-ward/compare        -> ("chennai", "my-ward/compare")
  */
 export function parsePath(
   pathname: string,
   cityIds: Set<string> = knownCityIds(),
-): { cityId: string; feature: string } {
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 0) return { cityId: CHENNAI_CITY_ID, feature: "" };
-  if (cityIds.has(segments[0])) {
-    return { cityId: segments[0], feature: segments.slice(1).join("/") };
-  }
-  return { cityId: CHENNAI_CITY_ID, feature: segments.join("/") };
+): { cityId: string | null; feature: string } {
+  const [first = "", ...rest] = pathname.split("/").filter(Boolean);
+  return cityIds.has(first) ? { cityId: first, feature: rest.join("/") } : { cityId: null, feature: "" };
 }
 
 /**
