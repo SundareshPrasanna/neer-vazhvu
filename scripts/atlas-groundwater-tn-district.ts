@@ -19,6 +19,7 @@ import {
   buildTnDistrictGroundwaterExtract,
   summarizeGroundwater,
   validateTnDistrictGroundwaterExtract,
+  type GroundwaterHierarchy,
 } from "../src/lib/atlas/tn-groundwater";
 import type { TnDistrictGroundwaterExtract } from "../src/lib/atlas/tn-groundwater";
 import {
@@ -51,6 +52,7 @@ interface IngresPlan {
   stateName: string;
   unitType: string;
   upstream: UpstreamKey;
+  hierarchy: GroundwaterHierarchy;
 }
 
 function loadIngresPlan(district: ReturnType<typeof requireDistrict>): IngresPlan {
@@ -67,6 +69,7 @@ function loadIngresPlan(district: ReturnType<typeof requireDistrict>): IngresPla
       stateName: plan.district.ingresStateName,
       unitType: plan.district.ingresAssessmentUnitType,
       upstream: lgdStateUpstreams(district).ingres,
+      hierarchy: plan.district.blockModel === "development-block" ? "development-block" : "revenue",
     };
   }
   const plan = loadTnDistrictRefreshPlan(path);
@@ -77,6 +80,7 @@ function loadIngresPlan(district: ReturnType<typeof requireDistrict>): IngresPla
     stateName: "TAMILNADU",
     unitType: "TALUK",
     upstream: "ingres",
+    hierarchy: "revenue",
   };
 }
 
@@ -180,6 +184,7 @@ async function main(): Promise<void> {
       assessmentYear: year,
       acquiredAt: asOf,
       assessmentUnitType: plan.unitType,
+      hierarchy: plan.hierarchy,
       portalUrl:
         `https://ingres.iith.ac.in/gecdataonline/gis/INDIA;locname=${districtName}` +
         `;loctype=DISTRICT;locuuid=${String(districtRow.locationUUID)};year=${year}`,
@@ -219,7 +224,7 @@ async function main(): Promise<void> {
       "district figure and is not counted as a unit.",
     conventions: {
       assessment_year: `${groundwater.assessmentYear} is IN-GRES's hydrological-year label, not an edition year`,
-      hierarchy: `assessment units sit on the revenue hierarchy (${groundwater.source.assessmentUnitType.toLowerCase()}s), not the panchayat hierarchy`,
+      hierarchy: `assessment units sit on the ${groundwater.source.hierarchy === "development-block" ? "development-block" : "revenue"} hierarchy (${groundwater.source.assessmentUnitType.toLowerCase()}s), not the panchayat hierarchy`,
       categories: "safe | semi_critical | critical | over_exploited | saline, spelled as the portal spells them",
       units: "stage of extraction in percent; recharge and availability in ham; rainfall in mm",
     },

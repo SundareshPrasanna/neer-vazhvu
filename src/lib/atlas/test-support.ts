@@ -38,6 +38,7 @@ import {
 } from "./artifacts";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
 import type { EnvironmentPlanArtifact } from "./environment-plan";
+import type { BlockMembership } from "./block-membership";
 import type { DataMeetBoundaryExtract } from "./datameet-boundary";
 import {
   validateLgdDistrictRefreshPlan,
@@ -300,4 +301,28 @@ export function loadMiniResolution(
     fixturePath(slug, "crosswalk-resolution.json"),
     proposal,
   );
+}
+
+/** A two-block development-block membership for unit tests. */
+export function membershipFixture(overrides: Partial<BlockMembership> = {}): BlockMembership {
+  return {
+    schemaVersion: 1,
+    planId: "kl-test-v1",
+    authority: {
+      title: "Delimitation Commission final orders, Block Panchayats",
+      publisher: "Delimitation Commission, Kerala",
+      urls: ["https://example.test/FinalBlock_Chittur.pdf"],
+      asOf: "2025-07-07",
+    },
+    review: { status: "proposed", stagedAt: "2026-09-29", verifiedAt: null, verifiedBy: null },
+    blocks: [
+      { code: "1001", name: "Chittur" },
+      { code: "1002", name: "Kollengode" },
+    ],
+    members: [
+      { lgdGramPanchayatCode: "220001", name: "Nalleppilly", blockCode: "1001" },
+      { lgdGramPanchayatCode: "220002", name: "Muthalamada", blockCode: "1002" },
+    ],
+    ...overrides,
+  };
 }

@@ -9,6 +9,7 @@ import type { GramPanchayatCensusRollup } from "./tn-census-attributes";
 import type { CanonicalCrosswalkRecord } from "./tn-crosswalk-resolution";
 import { formatExtractionStage } from "./tn-groundwater-projection";
 import type { GroundwaterProjectionRecord } from "./tn-groundwater-projection";
+import type { GramPanchayatWells, WellQualityRecord } from "./groundwater-wells";
 import type { JjmGramPanchayatService } from "./tn-jjm-service";
 import type { RainfallRecord } from "./tn-rainfall";
 import type { TnWaterBodyRecord } from "./tn-water-bodies";
@@ -100,6 +101,8 @@ export interface PlaceEvidenceInputs {
   waterBodies: TnWaterBodyRecord | undefined;
   /** CPCB polluted stretches touching the district, the same for every place in it. */
   pollutedStretches?: PollutedStretchesEvidence | undefined;
+  /** Monitored wells inside the Panchayat's polygon (NWDP), where served. */
+  wells?: GramPanchayatWells | undefined;
 }
 
 export interface PollutedStretchesEvidence {
@@ -163,6 +166,87 @@ function adequate(
   limitations: string[] = [],
 ): RuleResult {
   return { state: "adequate", evidence: [evidence], limitations };
+}
+
+function daysBetween(from: string, to: string): number {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000);
+}
+
+/** JJM's published samples: the tap-water side of drinking-water quality. */
+function jjmQuality(inputs: PlaceEvidenceInputs, date: string): RuleResult | null {
+  const jjm = inputs.jjm;
+  if (!jjm || jjm.sampleRowCount === 0) return null;
+    const ageDays =
+      jjm.latestSampleDate === null
+        ? null
+        : Math.round(
+            (Date.parse(`${date}T00:00:00Z`) -
+              Date.parse(`${jjm.latestSampleDate}T00:00:00Z`)) /
+              86400000,
+          );
+    const limitations = [
+      "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+    ];
+    if (ageDays !== null && ageDays > 90) {
+      limitations.push(
+        `The most recent published sample is ${ageDays} days old, so this describes a past state rather than current water.`,
+      );
+    }
+    // A long series with no failures at all describes the reporting as much as
+    // the water, and reads as reassurance if left unsaid.
+    if (jjm.unsafeSampleCount === 0 && jjm.sampleRowCount >= 20) {
+      limitations.push(
+        `All ${jjm.sampleRowCount} published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination.`,
+      );
+    }
+    return adequate(
+      {
+        id: `${inputs.lgdGramPanchayatCode}-quality`,
+        sourceRefs: ["jjm-imis"],
+        localityClass: "direct-place",
+        projectionMethod: "direct-published",
+        evidenceDate: date,
+        notes:
+          `${jjm.sampleRowCount} samples across ${jjm.sampleYearsCovered} years ` +
+          `(${jjm.samplesAtSource} at source, ${jjm.samplesAtHousehold} at households); ` +
+          `latest ${jjm.latestSampleStatus ?? "unstated"} on ` +
+          `${jjm.latestSampleDate ?? "an unstated date"}` +
+          (ageDays === null ? "." : `, ${ageDays} days ago.`) +
+          (jjm.unsafeSampleCount > 0
+            ? ` ${jjm.unsafeSampleCount} sample(s) recorded not Safe.`
+            : ""),
+      },
+      limitations,
+    );
+}
+
+/** Monitoring-well chemistry inside the Panchayat: the groundwater side. */
+function wellQuality(records: WellQualityRecord[], code: string, date: string): RuleResult | null {
+  if (records.length === 0) return null;
+  const latest = [...records].sort((left, right) => right.sampledAt.localeCompare(left.sampledAt))[0];
+  const exceeding = records.filter((record) => record.exceedances.length > 0);
+  const ageDays = daysBetween(latest.sampledAt, date);
+  const limitations = [
+    "Monitoring wells are sampled for the aquifer's chemistry, not the taps or household wells people drink from.",
+  ];
+  if (ageDays > 365) limitations.push(`The latest well sample is ${ageDays} days old.`);
+  return adequate(
+    {
+      id: `${code}-well-quality`,
+      sourceRefs: ["nwdp-groundwater-quality"],
+      localityClass: "within-place",
+      projectionMethod: "station-assignment",
+      evidenceDate: latest.sampledAt,
+      notes:
+        `${records.length} monitored well${records.length === 1 ? "" : "s"} with chemistry inside this Panchayat, latest sampled ${latest.sampledAt}; ` +
+        (exceeding.length === 0
+          ? "every measured parameter within the BIS IS 10500 acceptable limits."
+          : exceeding
+              .map((record) => `${record.id} above the BIS acceptable limit for ${record.exceedances.map((item) => item.parameter).join(", ")}`)
+              .join("; ") + "."),
+    },
+    limitations,
+  );
 }
 
 /**
@@ -281,50 +365,69 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
   },
 
   "drinking-water-quality": (inputs, date) => {
-    const jjm = inputs.jjm;
-    if (!jjm || jjm.sampleRowCount === 0) return null;
-    const ageDays =
-      jjm.latestSampleDate === null
-        ? null
-        : Math.round(
-            (Date.parse(`${date}T00:00:00Z`) -
-              Date.parse(`${jjm.latestSampleDate}T00:00:00Z`)) /
-              86400000,
-          );
+    const tap = jjmQuality(inputs, date);
+    const wells = wellQuality(inputs.wells?.quality ?? [], inputs.lgdGramPanchayatCode, date);
+    if (!tap && !wells) return null;
+    return {
+      state: "adequate",
+      evidence: [...(tap?.evidence ?? []), ...(wells?.evidence ?? [])],
+      limitations: [...(tap?.limitations ?? []), ...(wells?.limitations ?? [])],
+    };
+  },
+
+  "groundwater-level-observation": (inputs, date) => {
+    const stations = inputs.wells?.stations ?? [];
+    if (stations.length === 0) return null;
+    const latest = [...stations].sort((left, right) => right.latest.date.localeCompare(left.latest.date))[0];
+    const networks = [...new Set(stations.map((station) => station.agency || station.network))].join(", ");
+    const ageDays = daysBetween(latest.latest.date, date);
     const limitations = [
-      "Sample rows are the portal's displayed set and do not establish a sampling regime or laboratory method.",
+      "A monitored well measures the aquifer at one point and one depth; levels differ across the Panchayat and between dug and bore wells.",
     ];
-    if (ageDays !== null && ageDays > 90) {
-      limitations.push(
-        `The most recent published sample is ${ageDays} days old, so this describes a past state rather than current water.`,
-      );
-    }
-    // A long series with no failures at all describes the reporting as much as
-    // the water, and reads as reassurance if left unsaid.
-    if (jjm.unsafeSampleCount === 0 && jjm.sampleRowCount >= 20) {
-      limitations.push(
-        `All ${jjm.sampleRowCount} published samples are recorded Safe, with none failing, so the series cannot distinguish clean water from undetected contamination.`,
-      );
-    }
+    if (ageDays > 180) limitations.push(`The latest reading is ${ageDays} days old.`);
     return adequate(
       {
-        id: `${inputs.lgdGramPanchayatCode}-quality`,
-        sourceRefs: ["jjm-imis"],
-        localityClass: "direct-place",
-        projectionMethod: "direct-published",
-        evidenceDate: date,
+        id: `${inputs.lgdGramPanchayatCode}-groundwater-level`,
+        sourceRefs: ["nwdp-groundwater-levels"],
+        localityClass: "within-place",
+        projectionMethod: "station-assignment",
+        evidenceDate: latest.latest.date,
         notes:
-          `${jjm.sampleRowCount} samples across ${jjm.sampleYearsCovered} years ` +
-          `(${jjm.samplesAtSource} at source, ${jjm.samplesAtHousehold} at households); ` +
-          `latest ${jjm.latestSampleStatus ?? "unstated"} on ` +
-          `${jjm.latestSampleDate ?? "an unstated date"}` +
-          (ageDays === null ? "." : `, ${ageDays} days ago.`) +
-          (jjm.unsafeSampleCount > 0
-            ? ` ${jjm.unsafeSampleCount} sample(s) recorded not Safe.`
-            : ""),
+          `${stations.length} monitored well${stations.length === 1 ? "" : "s"} inside this Panchayat (${networks}); ` +
+          `the latest reading is ${latest.latest.depthMbgl} m below ground on ${latest.latest.date} at ${latest.id}` +
+          (latest.wellType ? ` (${latest.wellType.toLowerCase()}).` : "."),
       },
       limitations,
     );
+  },
+
+  "groundwater-level-trend": (inputs) => {
+    const trended = (inputs.wells?.stations ?? []).filter((station) => station.preMonsoon?.trendMPerYear !== null && station.preMonsoon);
+    if (trended.length === 0) return null;
+    const evidence = trended.slice(0, 3).map((station) => {
+      const season = station.preMonsoon!;
+      const slope = season.trendMPerYear!;
+      return {
+        id: `${inputs.lgdGramPanchayatCode}-groundwater-trend-${station.id}`,
+        sourceRefs: ["nwdp-groundwater-levels"],
+        localityClass: "within-place" as const,
+        projectionMethod: "station-assignment" as const,
+        evidenceDate: `${season.latestYear}-05-31`,
+        notes:
+          `At ${station.id}, the ${season.season} level ${slope > 0 ? "deepened" : slope < 0 ? "rose" : "held"}` +
+          (slope === 0 ? "" : ` by ${Math.abs(slope)} m a year`) +
+          ` over ${season.trendYears} seasons to ${season.latestYear}; ${season.latestYear} stood at ${season.latestMbgl} m below ground` +
+          (season.priorMedianMbgl === null ? "." : ` against a median of ${season.priorMedianMbgl} m in the earlier seasons.`),
+      };
+    });
+    return {
+      state: "adequate",
+      evidence,
+      limitations: [
+        "A trend in one well's pre-monsoon medians, not a model of the aquifer; pumping near the well moves it too.",
+        ...(trended.length > 3 ? [`${trended.length - 3} more wells with a trend are in the served wells file.`] : []),
+      ],
+    };
   },
 
   "connected-supply-system": (inputs, date) => {
@@ -485,6 +588,7 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
     const groundwater = inputs.groundwater;
     if (!groundwater?.category) return null;
     const unit = inputs.provenance?.assessmentUnitLabel ?? "taluk";
+    const where = groundwater.containment === "block-membership" ? "development" : "revenue";
     return adequate(
       {
         id: `${inputs.lgdGramPanchayatCode}-groundwater`,
@@ -493,13 +597,13 @@ export const CAPABILITY_RULES: Record<string, Rule> = {
         projectionMethod: "administrative-proxy",
         evidenceDate: date,
         notes:
-          `The containing revenue ${unit} ${groundwater.talukName} is assessed ` +
+          `The containing ${where} ${unit} ${groundwater.talukName} is assessed ` +
           `${groundwater.category} at ` +
           `${formatExtractionStage(groundwater.stageOfExtractionPercent)} percent ` +
           "stage of extraction.",
       },
       [
-        `The assessment unit is a revenue ${unit}, not this Panchayat, so the category is containing-area context rather than a measurement of this place.`,
+        `The assessment unit is a ${where} ${unit}, not this Panchayat, so the category is containing-area context rather than a measurement of this place.`,
       ],
     );
   },

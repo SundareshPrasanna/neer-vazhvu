@@ -24,7 +24,13 @@ export const CONTAINMENT_METHODS = [
   /** The register places the Panchayat's villages in a taluka by code (LGD
    *  adapter): no geometry is consulted, and none is needed. */
   "village-subdistrict-code",
+  /** The reviewed block membership places the Panchayat in the development
+   *  block IN-GRES assesses (Kerala): administrative fact, no geometry. */
+  "block-membership",
 ] as const;
+
+/** Containments that are administrative statements rather than geometry. */
+const MEMBERSHIP_CONTAINMENTS: readonly ContainmentMethod[] = ["village-subdistrict-code", "block-membership"];
 
 /**
  * How a taluk figure reaches a Panchayat. Tamil Nadu intersects TNGIS
@@ -345,6 +351,9 @@ export function buildMembershipGroundwaterProjection(options: {
   projectedAt: string;
   talukDistrictLgdCode: string;
   talukLayer: string;
+  /** "block-membership" when the unit is a development block placed by the
+   *  reviewed membership; the register's sub-district code otherwise. */
+  containment?: "village-subdistrict-code" | "block-membership";
   places: MembershipProjectionPlace[];
   boundarySourceId: string;
   groundwater: TnDistrictGroundwaterExtract;
@@ -383,7 +392,7 @@ export function buildMembershipGroundwaterProjection(options: {
       // to the same key.
       ...(aliased !== place.subDistrictName ? { assessmentUnitName: aliased } : {}),
       subDistrictCode: place.subDistrictCode,
-      containment: "village-subdistrict-code",
+      containment: options.containment ?? "village-subdistrict-code",
       category: assessment.category,
       stageOfExtractionPercent: assessment.stageOfExtractionPercent,
     });
@@ -447,7 +456,7 @@ export function validateGroundwaterProjection(
     );
   }
   for (const record of projection.records) {
-    const spatial = record.containment !== "village-subdistrict-code";
+    const spatial = !MEMBERSHIP_CONTAINMENTS.includes(record.containment);
     if (spatial !== (projection.projectionMethod === "spatial-intersection")) {
       errors.push(
         `records[${record.lgdGramPanchayatCode}]: containment ${record.containment} ` +

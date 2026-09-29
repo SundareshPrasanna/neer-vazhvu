@@ -1,0 +1,171 @@
+{
+  "_doc": "Reviewed input for Palakkad's District Environment Plan, posted on palakkad.nic.in on 17/07/2020 as 'District Environment Plan ( PDF 523 KB )'. The PDF is the CPCB model plan's Excel workbook printed to 14 pages: one row per data item, a district column ('Please enter Measurable Outcome for Palakkad District') and one column per urban local body. Page 1 states the district column covers 'WHOLE DISTRICT INCLUDING 88 PANCHAYATHS AND 7 ULBS EXCEPT FOR SOLID WASTE MANAGEMENT PLAN AND PLASTIC WASTE MANAGEMENT PLAN'. Figures are the district column's water rows (water-quality inventory, groundwater, domestic sewage, industrial waste water); ULB columns are not transcribed. The plan carries no demand, supply or deficit water balance, so waterBalance stays null, and it has no narrative action points. Where the plan's own cells disagree the disagreement is recorded in document.quirks and the figure's detail, never corrected. Two readings on 2026-09-29: the PDF layout text layer (every quote is a whitespace-normalised substring of its page's pdftotext -layout text: the printed row line holding the row code and the district value) and the page images at 200 dpi (every value re-read, 12 of 12 agree). Producer: scripts/atlas-environment-plan-district.ts --district palakkad --as-of <date>.",
+  "schemaVersion": 1,
+  "id": "kl-palakkad-environment-plan-2020",
+  "sourceId": "ngt-dep-kl-palakkad",
+  "document": {
+    "title": "District Enviromental Plan - Palakkad District",
+    "publisher": "District Administration, Palakkad (palakkad.nic.in)",
+    "url": "https://cdn.s3waas.gov.in/s384d9ee44e457ddef7f2c4f25dc8fa865/uploads/2020/07/2020071743.pdf",
+    "listingUrl": "https://palakkad.nic.in/en/document/district-environment-plan-pdf-523-kb/",
+    "editionLabel": "2020",
+    "editionNote": "The workbook prints no date and no signature block; the date is the PDF's creation date, 16 July 2020, which matches the 2020/07 upload path and the listing's posting date of 17/07/2020. The title is transcribed as printed ('ENVIROMENTAL').",
+    "documentDate": "2020-07-16",
+    "pages": 14,
+    "sha256": "4710bcaa522d1bc7e162c3f69a29a0366a8a5c02132c0d39e1fb58c7f3af1995",
+    "bytes": 535179,
+    "retrievedAt": "2026-09-29",
+    "template": "The CPCB model District Environment Plan as its Excel data workbook (Details of Data Requirement / Units of Measurable Outcome / a district column / one column per ULB) for waste, water quality, domestic sewage, industrial waste water, air, mining and noise, printed to PDF without the narrative district profile or gap-and-action tables, and without naming the NGT order in its text.",
+    "quirks": [
+      "The print carries no page numbers, so printedPage repeats the viewer's page.",
+      "WQ1e, 'Total Quantity of sewage and industrial discharge in District [Automatic] (SW1a+IW1b)', prints 12.28 MLD. SW1a on PDF page 1 is total solid waste, 60.6 MT/Day, so the cell is not that sum; 12.28 equals the 10 printed in SM1g plus the 2.28 MLD of IWW1b (our arithmetic), while SM1a prints 3 MLD of sewage generated. 12.28 is not transcribed.",
+      "SM1g, 'Quantity of untreated or partially treated sewage [Automatic]', prints 10 with no unit, and WQ5a, 'Percentage of untreated sewage [%] (automatic SM1g/SM1a)', prints 10, while SM1a is 3 MLD (10 of 3 would be over 300 percent). Neither is transcribed.",
+      "WQ1d prints '9639 and 24 Hectares' for lakes and ponds: 24 hectares across 9,639 water bodies is under 25 square metres each, so only the count is transcribed.",
+      "WQ2a, 'Estimated number of bore-wells', and WQ2b, 'No of permissions given for extraction of groundwater', both print 11082 in the district column. Both are transcribed as printed.",
+      "Free-standing cells in the PALAKKAAD ULB column ('28000 litres per day' beside WQ1e, '20000 litres per day' beside SM1a, '5000 litre per day' beside IWW1b) belong to that ULB's column, not the district's, and are not transcribed."
+    ]
+  },
+  "waterBalance": null,
+  "figures": [
+    {
+      "id": "rivers",
+      "label": "Rivers in the district",
+      "value": 21,
+      "unit": "rivers",
+      "detail": "The cell prints '21 and 603 Km' against '[Nos] and [Length in Km]'.",
+      "quote": "WQ1a Rivers [Nos] and [Length in Km] 21 and 603 Km",
+      "section": "2.0 Water Quality Management Plan: WQ1 Inventory of water resources in District",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "river-length",
+      "label": "Length of those rivers",
+      "value": 603,
+      "unit": "km",
+      "detail": "The same cell as the river count.",
+      "quote": "WQ1a Rivers [Nos] and [Length in Km] 21 and 603 Km",
+      "section": "2.0 Water Quality Management Plan: WQ1 Inventory of water resources in District",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "lakes-ponds",
+      "label": "Lakes and ponds",
+      "value": 9639,
+      "unit": "lakes and ponds",
+      "detail": "The cell prints '9639 and 24 Hectares' against '[Nos] and [Area in Hectares]'; the area is not transcribed (see quirks). The First Census of Water Bodies (2017-18) is a separate count.",
+      "quote": "[Nos] and [Area in 9639 and 24",
+      "section": "2.0 Water Quality Management Plan: WQ1 Inventory of water resources in District",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "borewells-estimated",
+      "label": "Estimated number of bore wells",
+      "value": 11082,
+      "unit": "bore wells",
+      "detail": "Printed under 'Control of Groundwater Water'. The next row, permissions given for groundwater extraction, prints the same 11082.",
+      "quote": "WQ2a [Nos] 11082",
+      "section": "2.0 Water Quality Management Plan: Control of Groundwater Water",
+      "pdfPage": 8,
+      "printedPage": 8
+    },
+    {
+      "id": "groundwater-extraction-permissions",
+      "label": "Permissions given for extraction of groundwater",
+      "value": 11082,
+      "unit": "permissions",
+      "detail": "The same number the previous row gives as the estimated bore wells; the plan does not say whether one was copied from the other.",
+      "quote": "WQ2b [Nos] 11082",
+      "section": "2.0 Water Quality Management Plan: Control of Groundwater Water",
+      "pdfPage": 9,
+      "printedPage": 9
+    },
+    {
+      "id": "sewage-generated",
+      "label": "Sewage generated from Class II cities and above",
+      "value": 3,
+      "unit": "MLD",
+      "detail": "The plan counts one Class-II town and one Class-I town (SM1b, SM1c).",
+      "quote": "SM1a generated in District from [MLD] 3",
+      "section": "3.0 Domestic Sewage Management Plan: SM1 Inventory of Sewage Management",
+      "pdfPage": 10,
+      "printedPage": 10
+    },
+    {
+      "id": "towns-needing-stps",
+      "label": "Towns needing sewage treatment plants",
+      "value": 2,
+      "unit": "towns",
+      "detail": "",
+      "quote": "SM1d No of Towns needing STPs [Nos] 2",
+      "section": "3.0 Domestic Sewage Management Plan: SM1 Inventory of Sewage Management",
+      "pdfPage": 10,
+      "printedPage": 10
+    },
+    {
+      "id": "towns-with-stps",
+      "label": "Towns with sewage treatment plants installed",
+      "value": 0,
+      "unit": "towns",
+      "detail": "Printed as 'Nil'.",
+      "quote": "SM1e No of Towns STPs installed [Nos] Nil",
+      "section": "3.0 Domestic Sewage Management Plan: SM1 Inventory of Sewage Management",
+      "pdfPage": 10,
+      "printedPage": 10
+    },
+    {
+      "id": "industries-discharging-wastewater",
+      "label": "Industries discharging waste water",
+      "value": 579,
+      "unit": "industries",
+      "detail": "Prominent types printed as 'Agro based, Chemical dye, Mining, Automobile'.",
+      "quote": "IWW1a [Nos] 579",
+      "section": "4.0 Industrial Wastewater Management Plan: IWW1 Inventory of industrial wastewater Generation in District",
+      "pdfPage": 11,
+      "printedPage": 11
+    },
+    {
+      "id": "industrial-wastewater",
+      "label": "Industrial waste water generated",
+      "value": 2.28,
+      "unit": "MLD",
+      "detail": "",
+      "quote": "IWW1b [MLD] 2.28",
+      "section": "4.0 Industrial Wastewater Management Plan: IWW1 Inventory of industrial wastewater Generation in District",
+      "pdfPage": 11,
+      "printedPage": 11
+    },
+    {
+      "id": "treated-industrial-wastewater-to-rivers",
+      "label": "Treated industrial waste water discharged into drains and rivers",
+      "value": 0.225,
+      "unit": "MLD",
+      "detail": "Untreated or partially treated industrial waste water into lakes is printed as 'Nil' (IWW1d).",
+      "quote": "IWW1c discharged into Nalas / [MLD] 0.225",
+      "section": "4.0 Industrial Wastewater Management Plan: IWW1 Inventory of industrial wastewater Generation in District",
+      "pdfPage": 11,
+      "printedPage": 11
+    },
+    {
+      "id": "cetps",
+      "label": "Common effluent treatment plants",
+      "value": 0,
+      "unit": "plants",
+      "detail": "Printed as 'Nil'.",
+      "quote": "IWW1f [Nos] / [No CETPs] Nil",
+      "section": "4.0 Industrial Wastewater Management Plan: IWW1 Inventory of industrial wastewater Generation in District",
+      "pdfPage": 11,
+      "printedPage": 11
+    }
+  ],
+  "actionPoints": [],
+  "review": {
+    "status": "proposed",
+    "extractedAt": "2026-09-29",
+    "extractedBy": "transcribed from the PDF layout text layer and re-read against the page images by the maintainer's assistant (two readings, 2026-09-29)",
+    "verifiedAt": null,
+    "verifiedBy": null
+  }
+}

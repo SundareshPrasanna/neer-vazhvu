@@ -229,6 +229,13 @@ async function projectByMembership(
   talukDistrictLgdCode: string,
 ): Promise<void> {
   const blockNames = new Map(directory.blocks.map((block) => [block.code, block.name]));
+  const state = lgdStateUpstreams(district);
+  // Kerala: the unit is a development block and the reviewed membership,
+  // not the register's sub-district, is what places a Panchayat in it.
+  const developmentBlocks = directory.district.blockModel === "development-block";
+  if (developmentBlocks && !state.blockMembership) {
+    throw new Error(`${district.slug}: a development-block district needs its state's blockMembership upstream`);
+  }
   const plan = JSON.parse(
     readFileSync(reviewedInputPath(district, "refresh-plan.json"), "utf8"),
   ) as { district: { ingresTalukaAliases?: Record<string, string> } };
@@ -237,7 +244,8 @@ async function projectByMembership(
     planId: directory.district.planId,
     projectedAt: asOf,
     talukDistrictLgdCode,
-    talukLayer: "lgd-subdistricts-datagovin",
+    talukLayer: developmentBlocks ? SOURCE_IDS[state.blockMembership!] : "lgd-subdistricts-datagovin",
+    containment: developmentBlocks ? "block-membership" : "village-subdistrict-code",
     places: directory.panchayats.map((panchayat) => ({
       lgdGramPanchayatCode: panchayat.lgdCode,
       lgdGramPanchayatName: panchayat.name,
@@ -257,7 +265,9 @@ async function projectByMembership(
     family: "groundwater-projection",
     sources: [
       upstreamSource(lgdStateUpstreams(district).ingres, { role: "input", retrieved: groundwater.acquiredAt }),
-      upstreamSource("lgdSubdistricts", { role: "input", retrieved: directory.acquiredAt }),
+      developmentBlocks
+        ? upstreamSource(state.blockMembership!, { role: "input", retrieved: directory.acquiredAt })
+        : upstreamSource("lgdSubdistricts", { role: "input", retrieved: directory.acquiredAt }),
     ],
     method: "derived",
     producedAt: asOf,
@@ -270,8 +280,10 @@ async function projectByMembership(
       of: { kind: "district", id: district.scopeId },
       method: "administrative-rollup",
       limitations: [
-        `The assessment unit is a revenue ${unit}, not the Gram Panchayat: each Panchayat inherits its ${unit}'s category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.`,
-        `Membership is the Local Government Directory's own statement: the ${unit} the Panchayat's covered villages sit in, joined to the IN-GRES unit by name. No polygon is intersected; a Panchayat whose ${unit} IN-GRES does not assess is deferred, never guessed.`,
+        `The assessment unit is a ${developmentBlocks ? "development" : "revenue"} ${unit}, not the Gram Panchayat: each Panchayat inherits its ${unit}'s category and stage of extraction unchanged, as containing-area context rather than a measurement of the place.`,
+        developmentBlocks
+          ? `Membership is the reviewed block membership (the state's own statement of which Panchayats form each Block Panchayat), joined to the IN-GRES unit by name. No polygon is intersected; a Panchayat whose ${unit} IN-GRES does not assess is deferred, never guessed.`
+          : `Membership is the Local Government Directory's own statement: the ${unit} the Panchayat's covered villages sit in, joined to the IN-GRES unit by name. No polygon is intersected; a Panchayat whose ${unit} IN-GRES does not assess is deferred, never guessed.`,
         summary.blocksSpanningTaluks === 0
           ? `Blocks are the ${unit}s themselves in this district, so no block spans more than one assessment unit.`
           : `${summary.blocksSpanningTaluks} blocks span more than one ${unit}.`,

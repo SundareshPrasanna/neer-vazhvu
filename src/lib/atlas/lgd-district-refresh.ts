@@ -11,13 +11,18 @@
  *   - Gram Panchayats and their names: the LGD Local Bodies register.
  *   - Blocks: the LGD sub-districts (talukas), where the state's Panchayat
  *     Samitis are coterminous with them; a Panchayat's block is the taluka
- *     its covered villages sit in.
+ *     its covered villages sit in. Under blockModel "development-block"
+ *     (Kerala) the blocks and each Panchayat's block come from the reviewed
+ *     block membership instead.
  *   - JJM binding: the name crosswalk within a block, as in Tamil Nadu.
  *   - Census composition: the villages the LGD register lists under the
  *     Panchayat, joined to the Census 2011 rows by the register's own 2011
  *     code. The Maharashtra Census release has no Panchayat column, so this
  *     is the only composition there is, and it is authoritative but partial
- *     (the register names one covering village for most Panchayats).
+ *     (the register names one covering village for most Panchayats). A
+ *     village the register lists as Partial coverage is shared with another
+ *     Panchayat, so it is left out of the Census binding: summing it into
+ *     every Panchayat it touches would count it more than once.
  *
  * Fail-closed like the TNRD builder: counts must agree with the reviewed
  * plan, every reviewed target must resolve by identifier, and a Panchayat
@@ -40,6 +45,7 @@ import type {
   DirectoryPanchayat,
   DistrictDirectoryArtifact,
 } from "./artifacts";
+import { assertMembershipCoversPanchayats, type BlockMembership } from "./block-membership";
 import type { DataMeetBoundaryExtract } from "./datameet-boundary";
 import {
   validateLgdDistrictRefreshPlan,
@@ -60,24 +66,35 @@ import { findJjmRecordsForTarget } from "./tn-district-refresh";
  *  states the village belongs to the Panchayat, so no name was matched. */
 export const LGD_COVERAGE_MATCH_CLASS = "lgd-coverage";
 
+/** The LGD coverageType of a village the Panchayat shares with another. */
+export const LGD_PARTIAL_COVERAGE = "Partial";
+
 export interface LgdGramPanchayat {
   lgdCode: string;
   name: string;
   nameLocal: string;
-  /** The taluka (block) most of its covered villages sit in. */
+  /** The taluka most of its covered villages sit in. */
   subdistrictCode: string;
   subdistrictName: string;
   spansSubdistricts: boolean;
+  /** Its block: the taluka under the sub-district model, the reviewed
+   *  development block under the development-block model. */
+  blockCode: string;
+  blockName: string;
   coverage: LgdLocalBodyCoverageRecord[];
 }
 
 /**
- * The Panchayat list of the district: one record per local body, its block
+ * The Panchayat list of the district: one record per local body, its taluka
  * decided by its covered villages. A Panchayat covering villages in two
  * talukas goes to the taluka holding more of them (ties: the lower code),
- * and says so.
+ * and says so. With a block membership, the block is the membership's and
+ * the membership must list exactly the register's Panchayats.
  */
-export function collectLgdGramPanchayats(extract: LgdDistrictSourceExtract): LgdGramPanchayat[] {
+export function collectLgdGramPanchayats(
+  extract: LgdDistrictSourceExtract,
+  membership?: BlockMembership,
+): LgdGramPanchayat[] {
   const subdistrictOfVillage = new Map(
     extract.sources.lgdVillages.records.map((village) => [village.villageCode, village.subdistrictCode]),
   );
@@ -90,6 +107,17 @@ export function collectLgdGramPanchayats(extract: LgdDistrictSourceExtract): Lgd
     bucket.push(row);
     byCode.set(row.localBodyCode, bucket);
   }
+  let membershipBlock: Map<string, { code: string; name: string }> | undefined;
+  if (membership) {
+    assertMembershipCoversPanchayats(membership, [...byCode.keys()]);
+    const blockName = new Map(membership.blocks.map((block) => [block.code, block.name]));
+    membershipBlock = new Map(
+      membership.members.map((member) => [
+        member.lgdGramPanchayatCode,
+        { code: member.blockCode, name: blockName.get(member.blockCode) ?? member.blockCode },
+      ]),
+    );
+  }
   const panchayats: LgdGramPanchayat[] = [];
   for (const [code, coverage] of byCode) {
     const votes = new Map<string, number>();
@@ -101,6 +129,8 @@ export function collectLgdGramPanchayats(extract: LgdDistrictSourceExtract): Lgd
     const [winner] = [...votes.entries()].sort(
       (left, right) => right[1] - left[1] || left[0].localeCompare(right[0], "en", { numeric: true }),
     )[0];
+    const block = membershipBlock?.get(code);
+    if (membership && !block) throw new Error(`Panchayat ${code} has no block in the membership`);
     panchayats.push({
       lgdCode: code,
       name: coverage[0].localBodyName,
@@ -108,6 +138,8 @@ export function collectLgdGramPanchayats(extract: LgdDistrictSourceExtract): Lgd
       subdistrictCode: winner,
       subdistrictName: subdistrictName.get(winner) ?? winner,
       spansSubdistricts: votes.size > 1,
+      blockCode: block?.code ?? winner,
+      blockName: block?.name ?? subdistrictName.get(winner) ?? winner,
       coverage: [...coverage].sort((left, right) =>
         left.entityCode.localeCompare(right.entityCode, "en", { numeric: true }),
       ),
@@ -120,7 +152,8 @@ export function collectLgdGramPanchayats(extract: LgdDistrictSourceExtract): Lgd
  * The identity list in the shape the crosswalk machinery matches against:
  * the crosswalk was written for TNRD's LGD list and needs district, block
  * and Panchayat codes with names, which the LGD register supplies directly.
- * The block is the taluka.
+ * The block is the Panchayat's block (the taluka, or the reviewed
+ * development block).
  */
 export function lgdRecordsForCrosswalk(
   plan: LgdDistrictRefreshPlan,
@@ -129,8 +162,8 @@ export function lgdRecordsForCrosswalk(
   return panchayats.map((panchayat) => ({
     districtCode: plan.district.lgdDistrictCode,
     districtName: plan.district.displayName,
-    blockCode: panchayat.subdistrictCode,
-    blockName: panchayat.subdistrictName,
+    blockCode: panchayat.blockCode,
+    blockName: panchayat.blockName,
     gramPanchayatCode: panchayat.lgdCode,
     gramPanchayatName: panchayat.name,
   }));
@@ -236,8 +269,9 @@ export function resolveLgdReviewedTargets(
 export function crosswalkExtractOf(
   plan: LgdDistrictRefreshPlan,
   extract: LgdDistrictSourceExtract,
+  membership?: BlockMembership,
 ): TnDistrictSourceExtract {
-  const records = lgdRecordsForCrosswalk(plan, collectLgdGramPanchayats(extract));
+  const records = lgdRecordsForCrosswalk(plan, collectLgdGramPanchayats(extract, requireMembership(plan, membership)));
   const identity: AcquiredSourceRecordSet<(typeof records)[number]> = {
     sourceId: "tnrd-lgd-village-panchayat-list",
     sourceUrl: extract.sources.lgdLocalBodies.sourceUrl,
@@ -290,6 +324,21 @@ export function crosswalkExtractOf(
   };
 }
 
+/** A development-block plan cannot be built without its membership, and a
+ *  sub-district plan must not carry one. */
+export function requireMembership(
+  plan: LgdDistrictRefreshPlan,
+  membership: BlockMembership | undefined,
+): BlockMembership | undefined {
+  if (plan.district.blockModel === "development-block") {
+    if (!membership) throw new Error(`${plan.id}: blockModel development-block needs block-membership.json`);
+    if (membership.planId !== plan.id) throw new Error(`block membership is for ${membership.planId}, the plan is ${plan.id}`);
+    return membership;
+  }
+  if (membership) throw new Error(`${plan.id}: a block membership is only read under blockModel development-block`);
+  return undefined;
+}
+
 function bboxCentre(bbox: [number, number, number, number]): [number, number] {
   return [Number(((bbox[0] + bbox[2]) / 2).toFixed(6)), Number(((bbox[1] + bbox[3]) / 2).toFixed(6))];
 }
@@ -305,9 +354,11 @@ export function buildLgdDistrictDirectoryPayload(options: {
   proposal: TnDistrictCrosswalkProposal;
   canonical: CanonicalCrosswalk;
   boundary?: DataMeetBoundaryExtract;
+  membership?: BlockMembership;
 }): DirectoryPayload {
   const { district, plan, extract, proposal, canonical, boundary } = options;
-  const panchayats = collectLgdGramPanchayats(extract);
+  const membership = requireMembership(plan, options.membership);
+  const panchayats = collectLgdGramPanchayats(extract, membership);
   const reviewed = resolveLgdReviewedTargets(plan, extract, panchayats);
   if (canonical.planId !== plan.id || proposal.planId !== plan.id) {
     throw new Error("crosswalk and plan describe different districts");
@@ -367,7 +418,8 @@ export function buildLgdDistrictDirectoryPayload(options: {
 
     // Census composition through the register: each covered village's 2011
     // code names its Census row. A covered village with no 2011 code (created
-    // after the Census) stays in lgdCoverage but cannot join a Census row.
+    // after the Census) stays in lgdCoverage but cannot join a Census row, and
+    // a Partial one (shared with another Panchayat) stays there unsummed.
     const coverage = panchayat.coverage.map((row) => {
       const village = villages.get(row.entityCode);
       coveredVillages.add(row.entityCode);
@@ -379,6 +431,7 @@ export function buildLgdDistrictDirectoryPayload(options: {
       };
     });
     const censusVillages = coverage
+      .filter((item) => item.coverageType !== LGD_PARTIAL_COVERAGE)
       .map((item) => censusByCode.get(item.census2011Code))
       .filter((row): row is CensusVillageRecord => row !== undefined);
     const censusBinding: DirectoryPanchayat["census"] =
@@ -434,8 +487,8 @@ export function buildLgdDistrictDirectoryPayload(options: {
       lgdCode: panchayat.lgdCode,
       name: panchayat.name,
       ...(panchayat.nameLocal ? { nameLocal: panchayat.nameLocal } : {}),
-      blockCode: panchayat.subdistrictCode,
-      blockName: panchayat.subdistrictName,
+      blockCode: panchayat.blockCode,
+      blockName: panchayat.blockName,
       tnrdMaster: null,
       lgdCoverage: { villages: coverage },
       jjm: jjmBinding,
@@ -451,40 +504,61 @@ export function buildLgdDistrictDirectoryPayload(options: {
     panchayatsPerBlock.set(record.blockCode, (panchayatsPerBlock.get(record.blockCode) ?? 0) + 1);
   }
   const alignment = new Map(proposal.blocks.map((block) => [block.lgdBlockCode, block]));
-  // The Census CD block of a taluka is read from the Census rows themselves
-  // (every village row names its CD block), joined through the LGD's own
-  // Census 2011 sub-district code; the crosswalk's Census axis is empty here.
-  const cdBlockBySubdistrict = new Map<string, Map<string, { code: string; name: string; votes: number }>>();
-  for (const record of extract.sources.census.records) {
-    const bucket = cdBlockBySubdistrict.get(record.subdistrictCode) ?? new Map();
+  type CdBlockVotes = Map<string, { code: string; name: string; votes: number }>;
+  const vote = (bucket: CdBlockVotes, record: CensusVillageRecord): void => {
     for (const cdBlock of record.cdBlocks) {
       const entry = bucket.get(cdBlock.code) ?? { code: cdBlock.code, name: cdBlock.name, votes: 0 };
       entry.votes += 1;
       bucket.set(cdBlock.code, entry);
     }
-    cdBlockBySubdistrict.set(record.subdistrictCode, bucket);
+  };
+  const leader = (bucket: CdBlockVotes | undefined) =>
+    [...(bucket?.values() ?? [])].sort((left, right) => right.votes - left.votes || left.code.localeCompare(right.code))[0];
+  const blockRow = (code: string, name: string, cdBlock: { code: string; name: string } | undefined): DirectoryBlock => {
+    const aligned = alignment.get(code);
+    return {
+      code,
+      name,
+      jjmBlockId: aligned?.jjmBlockId ?? null,
+      jjmBlockName: aligned?.jjmBlockName ?? null,
+      censusCdBlockCode: cdBlock?.code ?? null,
+      censusCdBlockName: cdBlock?.name ?? null,
+      panchayatCount: panchayatsPerBlock.get(code) ?? 0,
+    };
+  };
+  let blocks: DirectoryBlock[];
+  if (membership) {
+    // A development block's CD block is the one its member Panchayats'
+    // Census-bound villages name most often.
+    const cdBlockByBlock = new Map<string, CdBlockVotes>();
+    for (const record of records) {
+      const bucket = cdBlockByBlock.get(record.blockCode) ?? new Map();
+      for (const village of record.census?.villages ?? []) {
+        const row = censusByCode.get(village.villageCode);
+        if (row) vote(bucket, row);
+      }
+      cdBlockByBlock.set(record.blockCode, bucket);
+    }
+    blocks = membership.blocks.map((block) => blockRow(block.code, block.name, leader(cdBlockByBlock.get(block.code))));
+  } else {
+    // The Census CD block of a taluka is read from the Census rows themselves
+    // (every village row names its CD block), joined through the LGD's own
+    // Census 2011 sub-district code; the crosswalk's Census axis is empty here.
+    const cdBlockBySubdistrict = new Map<string, CdBlockVotes>();
+    for (const record of extract.sources.census.records) {
+      const bucket = cdBlockBySubdistrict.get(record.subdistrictCode) ?? new Map();
+      vote(bucket, record);
+      cdBlockBySubdistrict.set(record.subdistrictCode, bucket);
+    }
+    blocks = extract.sources.lgdSubdistricts.records.map((row) =>
+      blockRow(row.subdistrictCode, row.subdistrictName, leader(cdBlockBySubdistrict.get(row.subdistrictCensus2011Code))),
+    );
   }
-  const blocks: DirectoryBlock[] = extract.sources.lgdSubdistricts.records
-    .map((row) => {
-      const aligned = alignment.get(row.subdistrictCode);
-      const cdBlocks = [...(cdBlockBySubdistrict.get(row.subdistrictCensus2011Code)?.values() ?? [])].sort(
-        (left, right) => right.votes - left.votes || left.code.localeCompare(right.code),
-      );
-      return {
-        code: row.subdistrictCode,
-        name: row.subdistrictName,
-        jjmBlockId: aligned?.jjmBlockId ?? null,
-        jjmBlockName: aligned?.jjmBlockName ?? null,
-        censusCdBlockCode: cdBlocks[0]?.code ?? null,
-        censusCdBlockName: cdBlocks[0]?.name ?? null,
-        panchayatCount: panchayatsPerBlock.get(row.subdistrictCode) ?? 0,
-      };
-    })
-    .sort((left, right) => left.code.localeCompare(right.code));
+  blocks.sort((left, right) => left.code.localeCompare(right.code));
   const blockCodes = new Set(blocks.map((block) => block.code));
   for (const record of records) {
     if (!blockCodes.has(record.blockCode)) {
-      throw new Error(`Gram Panchayat ${record.lgdCode} sits in taluka ${record.blockCode}, which the register does not list`);
+      throw new Error(`Gram Panchayat ${record.lgdCode} sits in block ${record.blockCode}, which the block list does not carry`);
     }
   }
 
@@ -507,6 +581,24 @@ export function buildLgdDistrictDirectoryPayload(options: {
       villageName: record.villageName,
       subdistrictCode: record.subdistrictCode,
     }));
+  const partialUnder = new Map<string, string[]>();
+  for (const record of records) {
+    for (const village of record.lgdCoverage?.villages ?? []) {
+      if (village.coverageType !== LGD_PARTIAL_COVERAGE || !censusByCode.has(village.census2011Code)) continue;
+      partialUnder.set(village.census2011Code, [...(partialUnder.get(village.census2011Code) ?? []), record.lgdCode]);
+    }
+  }
+  const sharedCensusVillages = [...partialUnder.entries()]
+    .map(([code, panchayatCodes]) => {
+      const row = censusByCode.get(code)!;
+      return {
+        villageCode: code,
+        villageName: row.villageName,
+        subdistrictCode: row.subdistrictCode,
+        partialUnder: [...panchayatCodes].sort(),
+      };
+    })
+    .sort((left, right) => left.villageCode.localeCompare(right.villageCode));
 
   const byMatchClass = { ...canonical.summary.byMatchClass };
   if (censusBound > 0) byMatchClass[LGD_COVERAGE_MATCH_CLASS] = censusBound;
@@ -575,6 +667,7 @@ export function buildLgdDistrictDirectoryPayload(options: {
     panchayats: records,
     uncoveredVillages,
     censusVillagesWithoutLgdRow,
+    ...(sharedCensusVillages.length > 0 ? { sharedCensusVillages } : {}),
     unbound: {
       jjm: [...jjmUnits.values()]
         .filter((unit) => !boundJjmUnits.has(unit.id))

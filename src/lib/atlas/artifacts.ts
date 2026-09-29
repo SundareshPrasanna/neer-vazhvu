@@ -41,6 +41,7 @@ export const ATLAS_FAMILIES = {
   irrigationCurrent: "irrigation-current",
   groundwaterTaluks: "groundwater-taluks",
   groundwaterProjection: "groundwater-projection",
+  groundwaterWells: "groundwater-wells",
   rainfall: "rainfall",
   jjmService: "jjm-service",
   census: "census-2011",
@@ -341,6 +342,17 @@ export interface DistrictDirectoryArtifact extends AtlasEnvelope {
     villageName: string;
     subdistrictCode: string;
   }>;
+  /** LGD adapter: Census 2011 villages the register lists as Partial
+   *  coverage under one or more Panchayats. A shared village is summed into
+   *  none of those Panchayats' Census bindings (it would be counted twice);
+   *  kept so the Census enumeration stays complete. Absent when none. */
+  sharedCensusVillages?: Array<{
+    villageCode: string;
+    villageName: string;
+    subdistrictCode: string;
+    /** LGD codes of the Panchayats that list it as Partial coverage. */
+    partialUnder: string[];
+  }>;
   /** TNRD adapter: Census 2011 rows the reviewed plan lists as carrying no
    *  usable Gram Panchayat (blank columns, or a name without a code). They
    *  belong to no crosswalk unit; kept so the Census enumeration stays
@@ -434,7 +446,7 @@ export interface GroundwaterTaluksArtifact extends AtlasEnvelope {
     sourceUrl: string;
     portalUrl: string;
     assessmentUnitType: string;
-    hierarchy: "revenue";
+    hierarchy: "revenue" | "development-block";
   };
   district: {
     locationName: string;
@@ -721,6 +733,9 @@ export function identityFromDirectory(
   for (const village of directory.censusVillagesWithoutLgdRow ?? []) {
     censusVillageCodes.add(village.villageCode);
   }
+  for (const village of directory.sharedCensusVillages ?? []) {
+    censusVillageCodes.add(village.villageCode);
+  }
   for (const village of directory.censusVillagesWithoutGramPanchayat ?? []) {
     censusVillageCodes.add(village.villageCode);
   }
@@ -782,6 +797,14 @@ export interface BoundaryProvenance {
   withheldNote?: string;
 }
 
+/** A state's own local-body layer, read under the state-lsg-layer boundary kind. */
+const STATE_BOUNDARY_LAYERS: Record<string, { label: string; description: string }> = {
+  "ksrec-lsg-boundaries": {
+    label: "KSREC",
+    description: "the Kerala State Remote Sensing and Environment Centre's local-body boundary layer",
+  },
+};
+
 /** Who drew the polygons a directory's centroids come from, with the copy
  *  the pages need. TNGIS-built directories predate the vintage's sourceId. */
 export function boundaryProvenance(directory: DistrictDirectoryArtifact): BoundaryProvenance | null {
@@ -794,6 +817,15 @@ export function boundaryProvenance(directory: DistrictDirectoryArtifact): Bounda
       label: "DataMeet",
       description:
         "DataMeet's community digitisation of the 2001 Census village map (ODbL), joined to the 2011 codes and dissolved to each Panchayat's member villages",
+      publicGeometry: boundary.publicGeometry ?? false,
+      ...(boundary.withheldNote ? { withheldNote: boundary.withheldNote } : {}),
+    };
+  }
+  const stateLayer = boundary.sourceId ? STATE_BOUNDARY_LAYERS[boundary.sourceId] : undefined;
+  if (boundary.sourceId && stateLayer) {
+    return {
+      sourceId: boundary.sourceId,
+      ...stateLayer,
       publicGeometry: boundary.publicGeometry ?? false,
       ...(boundary.withheldNote ? { withheldNote: boundary.withheldNote } : {}),
     };

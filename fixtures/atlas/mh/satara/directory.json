@@ -71,7 +71,7 @@
     "produced_at": "2026-09-01",
     "produced_by": "scripts/atlas-refresh-lgd-district.ts",
     "internal_inputs": [],
-    "note": "Identity directory for Satara: 1502 LGD-coded Gram Panchayats in 11 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
+    "note": "Identity directory for Satara: 1502 LGD-coded Gram Panchayats in 11 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats; a village the register lists as Partial coverage is shared with another Panchayat and is not summed into either's Census binding. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
     "conventions": {
       "key": "lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (taluka) code",
       "bindings": "jjm bindings carry matchClass (how the pairing was made) and status (proposed | verified); a census binding with matchClass lgd-coverage is the LGD register's own statement of which villages the Panchayat covers, joined to Census 2011 rows by village code, and is marked proposed only because no person has re-checked it",
@@ -150,15 +150,15 @@
     "summary": {
       "lgdGramPanchayats": 15,
       "jjmBound": 14,
-      "censusBound": 15,
-      "bothBound": 14,
+      "censusBound": 14,
+      "bothBound": 13,
       "unbound": 0,
       "verifiedBindings": 0,
-      "proposedBindings": 29,
+      "proposedBindings": 28,
       "byMatchClass": {
         "exact": 11,
         "unique-folded": 3,
-        "lgd-coverage": 15
+        "lgd-coverage": 14
       }
     }
   },
@@ -590,33 +590,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/189823",
-        "cdBlockCode": "0315",
-        "gramPanchayatCode": "189823",
-        "gramPanchayatName": "Adul Peth",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "564275",
-            "villageName": "Adul",
-            "subdistrictCode": "04264"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "564275",
-            "name": "Adul"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -1342,6 +1322,16 @@
   ],
   "uncoveredVillages": [],
   "censusVillagesWithoutLgdRow": [],
+  "sharedCensusVillages": [
+    {
+      "villageCode": "564275",
+      "villageName": "Adul",
+      "subdistrictCode": "04264",
+      "partialUnder": [
+        "189823"
+      ]
+    }
+  ],
   "unbound": {
     "jjm": [],
     "census": []

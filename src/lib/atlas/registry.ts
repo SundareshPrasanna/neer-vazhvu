@@ -74,6 +74,15 @@ const KA_IRRIGATION_GAP = {
 };
 
 
+/** The Kerala current-irrigation gap: no district irrigation-by-source table
+ *  is extracted for the state yet. */
+const KL_IRRIGATION_GAP = {
+  label: "district irrigation-by-source table",
+  nextStep: "no current irrigation-by-source table is extracted for Kerala districts yet.",
+  gapNote:
+    "No current reading is wired: no Kerala district irrigation-by-source table has been extracted yet, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
+};
+
 export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "thanjavur",
@@ -296,6 +305,20 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     waterBodiesGapNote:
       "The First Census of Water Bodies Karnataka return on data.gov.in lists 1,304 rows for Kolar, but each row's id carries a local serial rather than the Census 2011 village code the Panchayat join reads, and Mulbagal taluk has a single row, so nothing is counted here until a reviewed join exists.",
   },
+  {
+    slug: "palakkad",
+    scopeId: "kl-palakkad",
+    stateSlug: "kl",
+    stateCode: "KL",
+    stateName: "Kerala",
+    name: "Palakkad",
+    hook: "Kerala's rain-shadow district, behind the Palakkad Gap: the state's only two critical groundwater blocks, Chittur and Malampuzha, and 97 state wells read monthly since 2000.",
+    hasCuratedBriefs: false,
+    published: false,
+    irrigationCurrentSource: KL_IRRIGATION_GAP,
+    waterBodiesGapNote:
+      "The First Census of Water Bodies Kerala return is not joined yet: data.gov.in, which carries it, was unreachable when the district was built.",
+  },
 ];
 
 
@@ -359,6 +382,7 @@ const STATE_HOOKS: Record<string, string> = {
   tn: "Where the Atlas began: the Cauvery delta's canal country and the over-exploited west, read district by district.",
   mh: "The first state beyond Tamil Nadu: Koyna country first, with the drought and tanker belt to come.",
   ka: "The first district beyond Tamil Nadu and Maharashtra: Kolar, where every taluk draws more groundwater than recharges.",
+  kl: "Kerala begins in its rain shadow: Palakkad, home to the state's only critical groundwater blocks, read well by well.",
 };
 
 /** Group districts into state entries, preserving each state's first

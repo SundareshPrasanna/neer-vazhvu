@@ -19,6 +19,7 @@ import type {
   WaterBodiesShard,
 } from "./artifacts";
 import { identityFromDirectory } from "./artifacts";
+import { wellsByGramPanchayat, type GroundwaterWellsArtifact } from "./groundwater-wells";
 import type { PollutedStretchesArtifact } from "./polluted-stretches";
 import { villageWaterProfileV2 } from "./capability-assessment";
 import { generateCapabilityAssessment, lgdProvenanceFor } from "./capability-evidence";
@@ -34,6 +35,7 @@ import {
   loadJjmServiceShards,
   loadRainfall,
   loadWaterBodyShards,
+  loadGroundwaterWells,
   loadPollutedStretches,
 } from "./data";
 import { buildPlaceBrief, validatePlaceBrief } from "./place-brief";
@@ -59,6 +61,8 @@ export interface DistrictCorpus {
   briefs: BriefsShard[];
   /** Optional: the fixtures predate the family. */
   pollutedStretches?: PollutedStretchesArtifact | undefined;
+  /** Optional: only districts whose plan names NWDP wells (Kerala first). */
+  wells?: GroundwaterWellsArtifact | undefined;
 }
 
 /** The served families of one district, as read from disk or from a fixture.
@@ -76,6 +80,8 @@ export interface DistrictArtifacts {
   briefs: BriefsShard[];
   /** Optional: the fixtures predate the family. */
   pollutedStretches?: PollutedStretchesArtifact | undefined;
+  /** Optional: only districts whose plan names NWDP wells (Kerala first). */
+  wells?: GroundwaterWellsArtifact | undefined;
 }
 
 /** Check every served input against the directory's identity. Pure: the
@@ -137,6 +143,11 @@ export function assembleDistrictCorpus(artifacts: DistrictArtifacts): {
       }
     }
   }
+  for (const record of [...(artifacts.wells?.stations ?? []), ...(artifacts.wells?.quality ?? [])]) {
+    if (record.lgdGramPanchayatCode && !identity.gramPanchayats.has(record.lgdGramPanchayatCode)) {
+      errors.push(`groundwater-wells: ${record.id} is placed in ${record.lgdGramPanchayatCode}, which is not a Gram Panchayat`);
+    }
+  }
   return {
     corpus: {
       directory,
@@ -150,6 +161,7 @@ export function assembleDistrictCorpus(artifacts: DistrictArtifacts): {
       assessments: artifacts.assessments,
       briefs: artifacts.briefs,
       pollutedStretches: artifacts.pollutedStretches,
+      wells: artifacts.wells,
     },
     errors,
   };
@@ -176,6 +188,7 @@ export function loadDistrictCorpus(district: DistrictRef): {
     assessments: loadAssessmentShards(district),
     briefs: loadBriefShards(district),
     pollutedStretches: loadPollutedStretches(district),
+    wells: loadGroundwaterWells(district),
   });
 }
 
@@ -271,6 +284,7 @@ export function assembleEvidenceInputs(corpus: DistrictCorpus): PlaceEvidenceInp
         })),
       }
     : undefined;
+  const wellsByGp = corpus.wells ? wellsByGramPanchayat(corpus.wells) : undefined;
   return corpus.directory.panchayats.map((panchayat) => ({
     lgdGramPanchayatCode: panchayat.lgdCode,
     lgdGramPanchayatName: panchayat.name,
@@ -284,6 +298,7 @@ export function assembleEvidenceInputs(corpus: DistrictCorpus): PlaceEvidenceInp
     rainfallWindow: corpus.rainfall?.window,
     waterBodies: waterBodiesByGp.get(panchayat.lgdCode),
     pollutedStretches: stretchesEvidence,
+    ...(wellsByGp ? { wells: wellsByGp.get(panchayat.lgdCode) } : {}),
   }));
 }
 

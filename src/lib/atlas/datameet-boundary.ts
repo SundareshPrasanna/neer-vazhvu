@@ -236,6 +236,34 @@ export interface DataMeetBoundaryRecord extends TnBoundaryRecord {
   memberVillagesNotDrawn: string[];
 }
 
+/** DataMeet's ODbL terms, or a state layer published with attribution and
+ *  no stated licence (state-lsg-boundary.ts). */
+export interface BoundaryRights {
+  status: "share-alike" | "attribution";
+  license: string;
+  attribution: string;
+  termsUrl: string | null;
+  publicDisplay: "permitted-with-attribution";
+  redistribution: "permitted-share-alike" | "permitted-with-attribution";
+  commercialUse: "permitted-share-alike" | "unstated";
+}
+
+export const DATAMEET_RIGHTS: BoundaryRights = {
+  status: "share-alike",
+  license: DATAMEET_LICENSE,
+  attribution: DATAMEET_ATTRIBUTION,
+  termsUrl: DATAMEET_TERMS_URL,
+  publicDisplay: "permitted-with-attribution",
+  redistribution: "permitted-share-alike",
+  commercialUse: "permitted-share-alike",
+};
+
+/** A boundary extract from DataMeet's village map, one of its per-state
+ *  registry ids (datameet-village-boundaries-<state>). */
+export function isDataMeetSource(sourceId: string): boolean {
+  return sourceId.startsWith("datameet-village-boundaries-");
+}
+
 export interface DataMeetBoundaryExtract {
   schemaVersion: number;
   planId: string;
@@ -245,19 +273,12 @@ export interface DataMeetBoundaryExtract {
     sourceId: string;
     layer: string;
     sourceUrl: string;
-    crosswalkUrl: string;
+    /** DataMeet's 2001-to-2011 crosswalk; null for a state layer keyed by name. */
+    crosswalkUrl: string | null;
     retrievedAt: string;
-    rights: {
-      status: "share-alike";
-      license: string;
-      attribution: string;
-      termsUrl: string;
-      publicDisplay: "permitted-with-attribution";
-      redistribution: "permitted-share-alike";
-      commercialUse: "permitted-share-alike";
-    };
-    /** DataMeet digitised the 2001 map; the polygons are that vintage. */
-    mappingYear: "2001";
+    rights: BoundaryRights;
+    /** The map's vintage: "2001" for DataMeet, the layer's own for a state layer. */
+    mappingYear: string;
   };
   snapshotSha256: string;
   recordsSha256: string;
@@ -287,7 +308,11 @@ export function buildDataMeetBoundaryExtract(options: {
   districtLgdCode: string;
   acquiredAt: string;
   sourceUrl: string;
-  crosswalkUrl: string;
+  crosswalkUrl: string | null;
+  /** For a state layer: what a record is, its rights and its vintage. DataMeet's when absent. */
+  recordType?: string;
+  rights?: BoundaryRights;
+  mappingYear?: string;
   snapshotSha256: string;
   geometries: Map<string, PanchayatGeometry>;
   panchayats: PanchayatMembers[];
@@ -312,7 +337,7 @@ export function buildDataMeetBoundaryExtract(options: {
       lgdGramPanchayatCode: owner.lgdGramPanchayatCode,
       lgdBlockCode: owner.lgdBlockCode,
       name: owner.name,
-      type: "Village Panchayat (union of DataMeet village polygons)",
+      type: options.recordType ?? "Village Panchayat (union of DataMeet village polygons)",
       geometrySha256: createHash("sha256").update(JSON.stringify(entry.geometry)).digest("hex"),
       areaHectares: Number((squareMetres / 10000).toFixed(4)),
       bbox: [
@@ -340,16 +365,8 @@ export function buildDataMeetBoundaryExtract(options: {
       sourceUrl: options.sourceUrl,
       crosswalkUrl: options.crosswalkUrl,
       retrievedAt: options.acquiredAt,
-      rights: {
-        status: "share-alike",
-        license: DATAMEET_LICENSE,
-        attribution: DATAMEET_ATTRIBUTION,
-        termsUrl: DATAMEET_TERMS_URL,
-        publicDisplay: "permitted-with-attribution",
-        redistribution: "permitted-share-alike",
-        commercialUse: "permitted-share-alike",
-      },
-      mappingYear: "2001",
+      rights: options.rights ?? DATAMEET_RIGHTS,
+      mappingYear: options.mappingYear ?? "2001",
     },
     snapshotSha256: options.snapshotSha256,
     recordsSha256: computeRecordsSha256(records),
@@ -382,11 +399,16 @@ export function validateDataMeetBoundaryExtract(
     errors.push("recordsSha256: records do not match their digest");
   }
   const rights = boundary.source.rights;
-  if (rights?.status !== "share-alike" || rights.license !== DATAMEET_LICENSE) {
-    errors.push(`source.rights: DataMeet polygons are ${DATAMEET_LICENSE}, share-alike; the record may not say otherwise`);
-  }
-  if (!rights?.attribution?.includes("DataMeet")) {
-    errors.push("source.rights.attribution: must credit DataMeet");
+  const dataMeet = isDataMeetSource(boundary.source.sourceId);
+  if (dataMeet) {
+    if (rights?.status !== "share-alike" || rights.license !== DATAMEET_LICENSE) {
+      errors.push(`source.rights: DataMeet polygons are ${DATAMEET_LICENSE}, share-alike; the record may not say otherwise`);
+    }
+    if (!rights?.attribution?.includes("DataMeet")) {
+      errors.push("source.rights.attribution: must credit DataMeet");
+    }
+  } else if (!rights?.attribution?.trim()) {
+    errors.push("source.rights.attribution: a state layer is served with attribution, so it must name one");
   }
   const seen = new Set<string>();
   for (const record of boundary.records) {
@@ -404,7 +426,7 @@ export function validateDataMeetBoundaryExtract(
     } else if (known.blockCode !== record.lgdBlockCode) {
       errors.push(`join: boundary ${record.lgdGramPanchayatCode} disagrees with the LGD block`);
     }
-    if (record.memberVillagesDrawn.length === 0) {
+    if (dataMeet && record.memberVillagesDrawn.length === 0) {
       errors.push(`records[${record.lgdGramPanchayatCode}]: a boundary with no drawn member village`);
     }
   }

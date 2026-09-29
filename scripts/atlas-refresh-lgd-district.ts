@@ -31,6 +31,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { identityFromDirectory, type DistrictDirectoryArtifact } from "../src/lib/atlas/artifacts";
+import { loadBlockMembership, type BlockMembership } from "../src/lib/atlas/block-membership";
 import {
   buildDataMeetBoundaryExtract,
   buildPanchayatGeometries,
@@ -40,8 +41,10 @@ import {
   validateDataMeetBoundaryExtract,
   type DataMeetBoundaryExtract,
   type DataMeetVillageFeature,
+  type PanchayatGeometry,
   type PanchayatMembers,
 } from "../src/lib/atlas/datameet-boundary";
+import { bindStateLsgPolygons, type StateLsgFeature } from "../src/lib/atlas/state-lsg-boundary";
 import {
   validateLgdDistrictRefreshPlan,
   validateLgdDistrictSourceExtract,
@@ -54,6 +57,7 @@ import {
   buildLgdDistrictDirectoryPayload,
   collectLgdGramPanchayats,
   crosswalkExtractOf,
+  requireMembership,
 } from "../src/lib/atlas/lgd-district-refresh";
 import {
   buildTnDistrictCrosswalk,
@@ -93,6 +97,15 @@ const BOUNDARY_CACHE = "datameet-boundary-extract.json";
 /** Per-Panchayat MultiPolygons, for the boundaries producer and the map. */
 export const GEOMETRY_CACHE = "datameet-panchayat-geometry.json";
 
+/** The reviewed block membership a development-block plan reads; none otherwise. */
+export function loadPlanMembership(
+  district: ReturnType<typeof requireDistrict>,
+  plan: LgdDistrictRefreshPlan,
+): BlockMembership | undefined {
+  if (plan.district.blockModel !== "development-block") return undefined;
+  return loadBlockMembership(reviewedInputPath(district, "block-membership.json"), plan.id);
+}
+
 export function loadLgdDistrictRefreshPlan(path: string): LgdDistrictRefreshPlan {
   const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
   const errors = validateLgdDistrictRefreshPlan(parsed);
@@ -104,6 +117,88 @@ interface BoundaryInputs {
   plan: LgdDistrictRefreshPlan;
   extract: LgdDistrictSourceExtract;
   panchayats: PanchayatMembers[];
+  membership?: BlockMembership;
+}
+
+/** Writes the per-Panchayat MultiPolygons the boundaries producer serves. */
+function writeGeometryCache(
+  district: ReturnType<typeof requireDistrict>,
+  planId: string,
+  asOf: string,
+  sourceSha256: string,
+  geometries: Map<string, PanchayatGeometry>,
+): void {
+  writeCache(district, GEOMETRY_CACHE, {
+    planId,
+    acquiredAt: asOf,
+    sourceSha256,
+    geometries: Object.fromEntries(
+      [...geometries.values()].map((entry) => [
+        entry.lgdGramPanchayatCode,
+        {
+          geometry: entry.geometry,
+          memberVillagesDrawn: entry.memberVillagesDrawn,
+          memberVillagesNotDrawn: entry.memberVillagesNotDrawn,
+        },
+      ]),
+    ),
+  });
+}
+
+/** The state's own local-body layer (Kerala: KSREC), bound by name through
+ *  the block membership. */
+async function readStateLayerBoundary(
+  district: ReturnType<typeof requireDistrict>,
+  inputs: BoundaryInputs,
+  asOf: string,
+): Promise<DataMeetBoundaryExtract> {
+  const { plan, panchayats, membership } = inputs;
+  const source = plan.sources.boundary;
+  if (!membership || !source.fields || !source.attribution) {
+    throw new Error("a state-lsg-layer boundary needs the block membership, fields and attribution");
+  }
+  const cache = new ContentAddressedCache(cacheDir(district));
+  const layer = await fetchIntoCache(cache, source.geojsonUrl);
+  const parsed = JSON.parse(new TextDecoder().decode(layer.artifact.bytes)) as { features?: StateLsgFeature[] };
+  const { geometries, excludedFeatures } = bindStateLsgPolygons({
+    features: parsed.features ?? [],
+    fields: source.fields,
+    membership,
+  });
+  const { default: area } = await import("@turf/area");
+  const { default: bbox } = await import("@turf/bbox");
+  const boundary = buildDataMeetBoundaryExtract({
+    sourceId: SOURCE_IDS[lgdStateUpstreams(district).datameet],
+    layer: source.layerTitle ?? source.geojsonUrl,
+    planId: plan.id,
+    districtLgdCode: plan.district.lgdDistrictCode,
+    acquiredAt: asOf,
+    sourceUrl: source.geojsonUrl,
+    crosswalkUrl: null,
+    recordType: `Grama Panchayat (${source.layerTitle ?? "state local-body layer"})`,
+    rights: {
+      status: "attribution",
+      license: source.license,
+      attribution: source.attribution,
+      termsUrl: null,
+      publicDisplay: "permitted-with-attribution",
+      redistribution: "permitted-with-attribution",
+      commercialUse: "unstated",
+    },
+    mappingYear: source.mappingYear,
+    snapshotSha256: layer.artifact.sha256,
+    geometries,
+    panchayats,
+    area: (feature) => area(feature as never),
+    bbox: (feature) => bbox(feature as never) as number[],
+  });
+  writeCache(district, BOUNDARY_CACHE, boundary);
+  writeGeometryCache(district, plan.id, asOf, layer.artifact.sha256, geometries);
+  console.error(
+    `  boundary: ${boundary.recordCount} of ${panchayats.length} Panchayats bound to ${source.layerTitle} polygons ` +
+      `(${excludedFeatures} urban local bodies left out)`,
+  );
+  return boundary;
 }
 
 async function readBoundary(
@@ -117,15 +212,18 @@ async function readBoundary(
     const cached = readCacheJson<DataMeetBoundaryExtract>(district, BOUNDARY_CACHE);
     if (!cached) {
       console.error(
-        "  no cached DataMeet boundary; centroids will be absent (re-run with --fetch-boundary --as-of <date>)",
+        "  no cached boundary; centroids will be absent (re-run with --fetch-boundary --as-of <date>)",
       );
       return undefined;
     }
     return cached;
   }
+  if (plan.sources.boundary.kind === "state-lsg-layer") return readStateLayerBoundary(district, inputs, asOf);
+  const crosswalkUrl = plan.sources.boundary.crosswalkUrl;
+  if (!crosswalkUrl) throw new Error("a DataMeet boundary needs sources.boundary.crosswalkUrl");
   const cache = new ContentAddressedCache(cacheDir(district));
   const geojson = await fetchIntoCache(cache, plan.sources.boundary.geojsonUrl);
-  const crosswalkCsv = await fetchIntoCache(cache, plan.sources.boundary.crosswalkUrl);
+  const crosswalkCsv = await fetchIntoCache(cache, crosswalkUrl);
   const parsed = JSON.parse(new TextDecoder().decode(geojson.artifact.bytes)) as {
     features?: DataMeetVillageFeature[];
   };
@@ -159,7 +257,7 @@ async function readBoundary(
     districtLgdCode: plan.district.lgdDistrictCode,
     acquiredAt: asOf,
     sourceUrl: plan.sources.boundary.geojsonUrl,
-    crosswalkUrl: plan.sources.boundary.crosswalkUrl,
+    crosswalkUrl,
     snapshotSha256: geojson.artifact.sha256,
     geometries,
     panchayats,
@@ -167,21 +265,7 @@ async function readBoundary(
     bbox: (feature) => bbox(feature as never) as number[],
   });
   writeCache(district, BOUNDARY_CACHE, boundary);
-  writeCache(district, GEOMETRY_CACHE, {
-    planId: plan.id,
-    acquiredAt: asOf,
-    sourceSha256: geojson.artifact.sha256,
-    geometries: Object.fromEntries(
-      [...geometries.values()].map((entry) => [
-        entry.lgdGramPanchayatCode,
-        {
-          geometry: entry.geometry,
-          memberVillagesDrawn: entry.memberVillagesDrawn,
-          memberVillagesNotDrawn: entry.memberVillagesNotDrawn,
-        },
-      ]),
-    ),
-  });
+  writeGeometryCache(district, plan.id, asOf, geojson.artifact.sha256, geometries);
   console.error(
     `  boundary: ${features.length} DataMeet features (${unmatchedFeatures} without a 2011 code), ` +
       `${villagePolygons} villages drawn, ${boundary.recordCount} of ${panchayats.length} Panchayats ` +
@@ -190,14 +274,14 @@ async function readBoundary(
   return boundary;
 }
 
-function panchayatMembersOf(extract: LgdDistrictSourceExtract): PanchayatMembers[] {
+function panchayatMembersOf(extract: LgdDistrictSourceExtract, membership?: BlockMembership): PanchayatMembers[] {
   const census2011Of = new Map(
     extract.sources.lgdVillages.records.map((village) => [village.villageCode, village.villageCensus2011Code]),
   );
-  return collectLgdGramPanchayats(extract).map((panchayat) => ({
+  return collectLgdGramPanchayats(extract, membership).map((panchayat) => ({
     lgdGramPanchayatCode: panchayat.lgdCode,
     name: panchayat.name,
-    lgdBlockCode: panchayat.subdistrictCode,
+    lgdBlockCode: panchayat.blockCode,
     memberCensusCodes: panchayat.coverage
       .map((row) => census2011Of.get(row.entityCode) ?? "")
       .filter((code) => code.length > 0),
@@ -206,12 +290,15 @@ function panchayatMembersOf(extract: LgdDistrictSourceExtract): PanchayatMembers
 
 function validateServed(district: ReturnType<typeof requireDistrict>): void {
   const plan = loadLgdDistrictRefreshPlan(reviewedInputPath(district, "refresh-plan.json"));
+  const membership = loadPlanMembership(district, plan);
   const directory = readArtifact<DistrictDirectoryArtifact>(district, "directory");
   const errors = validateDirectoryPayload(directory);
   const identity = identityFromDirectory(directory);
   const counts: Array<[string, number, number]> = [
     ["lgdGramPanchayats", directory.panchayats.length, plan.expectedCounts.lgdGramPanchayats],
-    ["lgdSubdistricts", directory.blocks.length, plan.expectedCounts.lgdSubdistricts],
+    membership
+      ? ["blocks", directory.blocks.length, membership.blocks.length]
+      : ["lgdSubdistricts", directory.blocks.length, plan.expectedCounts.lgdSubdistricts],
     ["jjmVillages", identity.jjmVillagePaths.size, plan.expectedCounts.jjmVillages],
   ];
   for (const [name, observed, expected] of counts) {
@@ -233,7 +320,7 @@ function validateServed(district: ReturnType<typeof requireDistrict>): void {
   if (errors.length > 0) throw new Error(`Served directory fails validation:\n- ${errors.join("\n- ")}`);
   console.log(
     `${district.slug}: directory valid, ${directory.panchayats.length} Gram Panchayats in ` +
-      `${directory.blocks.length} talukas, ${directory.crosswalk.summary.jjmBound} JJM-bound, ` +
+      `${directory.blocks.length} ${membership ? "blocks" : "talukas"}, ${directory.crosswalk.summary.jjmBound} JJM-bound, ` +
       `${directory.crosswalk.summary.censusBound} with LGD-listed villages`,
   );
 }
@@ -249,6 +336,7 @@ async function main(): Promise<void> {
   const replay = hasFlag(argv, "--replay");
   if (fetchNow === replay) throw new Error("choose exactly one of --fetch or --replay");
   const plan = loadLgdDistrictRefreshPlan(reviewedInputPath(district, "refresh-plan.json"));
+  const membership = requireMembership(plan, loadPlanMembership(district, plan));
 
   let extract: LgdDistrictSourceExtract;
   if (fetchNow) {
@@ -289,7 +377,7 @@ async function main(): Promise<void> {
   assertLgdPlanMatchesExtract(plan, extract);
   const asOf = extract.acquiredAt;
 
-  const crosswalkExtract = crosswalkExtractOf(plan, extract);
+  const crosswalkExtract = crosswalkExtractOf(plan, extract, membership);
   writeCache(district, CROSSWALK_EXTRACT_CACHE, crosswalkExtract);
   const alignmentPath = reviewedInputPath(district, "block-alignment.json");
   const reviewedBlockAlignments = existsSync(alignmentPath)
@@ -313,7 +401,7 @@ async function main(): Promise<void> {
 
   const boundary = await readBoundary(
     district,
-    { plan, extract, panchayats: panchayatMembersOf(extract) },
+    { plan, extract, panchayats: panchayatMembersOf(extract, membership), membership },
     hasFlag(argv, "--fetch-boundary"),
     argValue(argv, "--as-of") ?? asOf,
   );
@@ -321,12 +409,16 @@ async function main(): Promise<void> {
     const identityForBoundary = {
       planId: plan.id,
       gramPanchayats: new Map(
-        collectLgdGramPanchayats(extract).map((panchayat) => [
+        collectLgdGramPanchayats(extract, membership).map((panchayat) => [
           panchayat.lgdCode,
-          { name: panchayat.name, blockCode: panchayat.subdistrictCode, blockName: panchayat.subdistrictName },
+          { name: panchayat.name, blockCode: panchayat.blockCode, blockName: panchayat.blockName },
         ]),
       ),
-      blocks: new Map(extract.sources.lgdSubdistricts.records.map((row) => [row.subdistrictCode, row.subdistrictName])),
+      blocks: new Map(
+        membership
+          ? membership.blocks.map((block) => [block.code, block.name])
+          : extract.sources.lgdSubdistricts.records.map((row) => [row.subdistrictCode, row.subdistrictName]),
+      ),
       jjmVillagePaths: new Set<string>(),
       censusVillageCodes: new Set<string>(),
     };
@@ -334,12 +426,20 @@ async function main(): Promise<void> {
     if (boundaryErrors.length > 0) throw new Error(`Invalid boundary extract:\n- ${boundaryErrors.join("\n- ")}`);
   }
 
-  const payload = buildLgdDistrictDirectoryPayload({ district, plan, extract, proposal, canonical, boundary });
+  const payload = buildLgdDistrictDirectoryPayload({ district, plan, extract, proposal, canonical, boundary, membership });
   const errors = validateDirectoryPayload(payload);
   if (errors.length > 0) throw new Error(`Directory payload is inconsistent:\n- ${errors.join("\n- ")}`);
 
   const state = lgdStateUpstreams(district);
   const unit = state.subdistrictUnit;
+  const stateLayer = plan.sources.boundary.kind === "state-lsg-layer";
+  const boundaryClause = stateLayer
+    ? `centroids and areas from ${plan.sources.boundary.layerTitle}, the state's own local-body polygons, ` +
+      "bound to LGD codes by name through the reviewed block membership"
+    : "centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk";
+  const blockKey = membership
+    ? "blockCode is the LGD code of the development block's Block Panchayat, from the reviewed block membership"
+    : `blockCode is the LGD sub-district (${unit}) code`;
   const coverage =
     state.coverageClause ??
     `the export lists ${extract.sources.lgdLocalBodies.recordCount} covering villages for ` +
@@ -351,9 +451,14 @@ async function main(): Promise<void> {
       upstreamSource("lgdLocalBodies", { as_of: extract.sources.lgdLocalBodies.sourceAsOf, retrieved: asOf }),
       upstreamSource("lgdVillages", { as_of: extract.sources.lgdVillages.sourceAsOf, retrieved: asOf }),
       upstreamSource("lgdSubdistricts", { as_of: extract.sources.lgdSubdistricts.sourceAsOf, retrieved: asOf }),
+      ...(membership && state.blockMembership
+        ? [upstreamSource(state.blockMembership, { as_of: membership.authority.asOf, retrieved: membership.review.stagedAt })]
+        : []),
       upstreamSource("jjm", { retrieved: asOf }),
       upstreamSource(state.census, { as_of: "2011", retrieved: extract.sources.census.retrievedAt }),
-      ...(boundary ? [upstreamSource(state.datameet, { as_of: "2001", retrieved: boundary.source.retrievedAt })] : []),
+      ...(boundary
+        ? [upstreamSource(state.datameet, { as_of: boundary.source.mappingYear, retrieved: boundary.source.retrievedAt })]
+        : []),
     ],
     method: "mixed",
     producedAt: asOf,
@@ -361,17 +466,17 @@ async function main(): Promise<void> {
     internalInputs: [],
     note:
       `Identity directory for ${plan.district.displayName}: ${payload.panchayats.length} LGD-coded Gram ` +
-      `Panchayats in ${payload.blocks.length} ${unit}s. The Panchayat list, each Panchayat's covered ` +
+      `Panchayats in ${payload.blocks.length} ${membership ? "block" : unit}s. The Panchayat list, each Panchayat's covered ` +
       `villages and the ${unit} list come from the Local Government Directory as republished monthly on ` +
       "data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); " +
-      `${state.censusClause}; centroids and areas from DataMeet's village ` +
-      `polygons (ODbL) joined through its 2001-to-2011 crosswalk. ${state.blockSentence} JJM bindings are the name crosswalk's, each ` +
+      `${state.censusClause}; ${boundaryClause}. ${state.blockSentence} JJM bindings are the name crosswalk's, each ` +
       "labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage " +
-      `(match class lgd-coverage), authoritative but partial because ${coverage}. ` +
+      `(match class lgd-coverage), authoritative but partial because ${coverage}; a village the register lists as ` +
+      "Partial coverage is shared with another Panchayat and is not summed into either's Census binding. " +
       "Raw responses are content-addressed under .cache/atlas/; the reviewed plan, " +
-      "resolution and block alignment live under pipeline-inputs/atlas/.",
+      `resolution${membership ? ", block membership" : ""} and block alignment live under pipeline-inputs/atlas/.`,
     conventions: {
-      key: `lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (${unit}) code`,
+      key: `lgdCode is the LGD local-body code of the Gram Panchayat; ${blockKey}`,
       bindings:
         "jjm bindings carry matchClass (how the pairing was made) and status (proposed | verified); a census " +
         "binding with matchClass lgd-coverage is the LGD register's own statement of which villages the " +
@@ -381,8 +486,16 @@ async function main(): Promise<void> {
         "reviewed = a plan target a person checked; crosswalk = the LGD-covered villages, authoritative but " +
         "possibly incomplete; unbound = the register lists no village with a Census row",
       uncoveredVillages: "district villages the Local Bodies register lists under no Panchayat, kept so the enumeration stays complete",
-      centroid: "[longitude, latitude] of the DataMeet MultiPolygon's bounding-box centre",
-      datameet: "ODbL 1.0: attribution required, share-alike on the derived polygons, which are served under boundaries/<block>.geojson",
+      ...(stateLayer
+        ? {
+            centroid: `[longitude, latitude] of the ${plan.sources.boundary.layerTitle} MultiPolygon's bounding-box centre`,
+            boundary: `${plan.sources.boundary.attribution}; ${plan.sources.boundary.license}. Served under boundaries/<block>.geojson with that attribution`,
+          }
+        : {
+            centroid: "[longitude, latitude] of the DataMeet MultiPolygon's bounding-box centre",
+            datameet:
+              "ODbL 1.0: attribution required, share-alike on the derived polygons, which are served under boundaries/<block>.geojson",
+          }),
     },
   });
   const rel = writeAtlasArtifact(district, "directory", undefined, envelope, payload);

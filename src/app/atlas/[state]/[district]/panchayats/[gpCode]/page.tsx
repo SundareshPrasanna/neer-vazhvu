@@ -202,11 +202,13 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
   // can never appear in one and be missing from the other.
   // "taluk" in Tamil Nadu, "taluka" in Maharashtra: the assessment unit's own name.
   const unit = unitLabelOf(loadGroundwaterTaluks(entry));
+  const projectionWhere = projection?.containment === "block-membership" ? "development" : "revenue";
   const chapters = [
     { id: "where", label: "Place and boundary", show: Boolean(detail?.boundary) },
     { id: "habitations", label: "Habitations", show: Boolean(detail && detail.habitations.length > 0) },
     { id: "water-sources", label: "Where the water comes from", show: Boolean(detail && detail.sources.length > 0) },
     { id: "groundwater", label: `Groundwater, projected from the ${unit}`, show: Boolean(projection) },
+    { id: "wells", label: "Monitored wells here", show: Boolean(detail?.groundwaterWells) },
     { id: "water-bodies", label: "Tanks and water bodies", show: Boolean(detail?.waterBodies) },
     { id: "sampling", label: "Water-quality testing", show: Boolean(detail?.sampling) },
     { id: "land", label: "Land and irrigation", show: Boolean(detail?.land) },
@@ -440,7 +442,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                 <Chapter
                   id="groundwater"
                   title={`Groundwater, projected from the ${unit}`}
-                  intro={`IN-GRES assesses revenue ${unit}s. This Panchayat inherits its containing ${unit}'s category unchanged, as containing-area context rather than a measurement of the place.`}
+                  intro={`IN-GRES assesses ${projectionWhere} ${unit}s. This Panchayat inherits its containing ${unit}'s category unchanged, as containing-area context rather than a measurement of the place.`}
                 >
                   <dl className="grid gap-4 sm:grid-cols-3">
                     <StatTile
@@ -458,17 +460,79 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                     />
                     <StatTile
                       value={displayTalukName(projection.talukName)}
-                      label={`containing revenue ${unit}`}
+                      label={`containing ${projectionWhere} ${unit}`}
                       flag={`${unit} projection`}
                       note={
-                        projection.containment === "village-subdistrict-code"
-                          ? "Sub-district on the revenue hierarchy, which the register itself places this Panchayat's villages in."
-                          : "Sub-district on the revenue hierarchy, which the Panchayat hierarchy does not nest inside."
+                        projection.containment === "block-membership"
+                          ? "Development block, which the state's own block orders place this Panchayat in."
+                          : projection.containment === "village-subdistrict-code"
+                            ? "Sub-district on the revenue hierarchy, which the register itself places this Panchayat's villages in."
+                            : "Sub-district on the revenue hierarchy, which the Panchayat hierarchy does not nest inside."
                       }
                     />
                   </dl>
                   {projectionLimitations.length > 0 ? (
                     <AtlasNote>{projectionLimitations.join(" ")}</AtlasNote>
+                  ) : null}
+                </Chapter>
+              ) : null}
+
+              {detail?.groundwaterWells ? (
+                <Chapter
+                  id="wells"
+                  title="Monitored wells here"
+                  intro="Wells the groundwater departments read inside this Panchayat's boundary, in metres below ground. The pre-monsoon season, March to May, is when levels are lowest before the rains."
+                >
+                  {detail.groundwaterWells.wells.length > 0 ? (
+                    <AtlasSortableTable label="Monitored wells">
+                      <table className={`${TABLE} min-w-[36rem]`}>
+                        <thead className={THEAD}>
+                          <tr>
+                            <th className={TH}>Well</th>
+                            <th className={TH}>Latest reading</th>
+                            <th className={TH}>Pre-monsoon, latest</th>
+                            <th className={TH}>Earlier seasons, median</th>
+                            <th className={TH}>Trend</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {detail.groundwaterWells.wells.map((well) => (
+                            <tr key={well.id} className={TR}>
+                              <td className={`${TD} font-medium text-slate-900 dark:text-slate-100`}>
+                                {well.id}
+                                <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
+                                  {[well.agency, well.wellType].filter(Boolean).join(", ")}
+                                </span>
+                              </td>
+                              <td className={TD}>{`${well.latestMbgl} m, ${well.latestDate}`}</td>
+                              <td className={TD}>{well.preMonsoonMbgl === null ? "none" : `${well.preMonsoonMbgl} m (${well.preMonsoonYear})`}</td>
+                              <td className={TD}>{well.priorMedianMbgl === null ? "too few seasons" : `${well.priorMedianMbgl} m`}</td>
+                              <td className={TD}>
+                                {well.trendMPerYear === null
+                                  ? "too few seasons"
+                                  : well.trendMPerYear === 0
+                                    ? `level over ${well.trendYears} seasons`
+                                    : `${well.trendMPerYear > 0 ? "deepening" : "rising"} ${Math.abs(well.trendMPerYear)} m a year over ${well.trendYears} seasons`}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </AtlasSortableTable>
+                  ) : null}
+                  {detail.groundwaterWells.quality.length > 0 ? (
+                    <AtlasNote>
+                      {detail.groundwaterWells.quality
+                        .map((record) =>
+                          record.exceedances.length === 0
+                            ? `${record.id}, sampled ${record.sampledAt}: within the BIS IS 10500 acceptable limits for what was measured.`
+                            : `${record.id}, sampled ${record.sampledAt}: above the BIS IS 10500 acceptable limit for ${record.exceedances
+                                .map((item) => `${item.parameter} (${item.value}; limit ${item.limit})`)
+                                .join(", ")}.`,
+                        )
+                        .join(" ")}{" "}
+                      Monitoring wells describe the aquifer at that point, not the water people draw from their own wells.
+                    </AtlasNote>
                   ) : null}
                 </Chapter>
               ) : null}
