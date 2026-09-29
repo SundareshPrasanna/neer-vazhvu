@@ -1,449 +1,470 @@
 {
- "nvdm": "1.0",
- "dataset": "basins/inventory",
- "scope": {
-  "kind": "basin",
-  "id": "palakkad-rivers"
- },
- "provenance": {
-  "sources": [
-   {
-    "id": "ksrec-open-geoserver",
-    "title": "KSREC GeoServer (WFS): local-body boundaries, watershed atlas, wetlands, paddy, notified wetland parcels, flood extents and quarries of Kerala",
-    "publisher": "Kerala State Remote Sensing and Environment Centre (KSREC)",
-    "license": "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
-    "role": "input",
-    "url": "http://ksrec.in:9090/geoserver/ows"
-   },
-   {
-    "id": "osm-overpass",
-    "title": "OpenStreetMap (Overpass API extract: named river courses; dam positions)",
-    "publisher": "OpenStreetMap contributors",
-    "license": "ODbL 1.0",
-    "role": "input"
-   },
-   {
-    "id": "nwic-nwdp-cwc-canal-network",
-    "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
-    "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
-    "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
-    "role": "input",
-    "url": "https://nwdp.nwic.gov.in",
-    "as_of": "2025"
-   },
-   {
-    "id": "nwic-nwdp-cwc-river-data",
-    "title": "CWC river discharge (manual daily) for Kerala, National Water Data Portal",
-    "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
-    "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
-    "role": "input",
-    "url": "https://nwdp.nwic.gov.in"
-   },
-   {
-    "id": "nwic-nwdp-groundwater-level",
-    "title": "National Water Data Portal: groundwater level datasets for Kerala (KSGWD manual monthly 2000-2030, KSGWD telemetry 2026-2030, CGWB telemetry 2026-2030)",
-    "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
-    "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
-    "role": "input",
-    "url": "https://nwdp.nwic.gov.in"
-   },
-   {
-    "id": "ksdma-dam-bulletins",
-    "title": "Kerala SDMA daily dam bulletins, irrigation reservoirs (IRR-SITE PDFs)",
-    "publisher": "Kerala State Disaster Management Authority",
-    "license": "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution.",
-    "role": "input",
-    "url": "https://sdma.kerala.gov.in/dam-water-level/"
-   }
-  ],
-  "method": "derived",
-  "produced_at": "2026-09-29",
-  "produced_by": "scripts/build_palakkad_rivers_basin.py",
-  "note": "Palakkad district's rivers, reservoirs, wetlands and groundwater (scope palakkad-rivers; the district's own scope id is kl-palakkad). The district is the union of its local bodies in KSREC's layer and the catchments (shedId) are the river basins of KSREC's watershed atlas cut to it. KSREC publishes no licence and its layers are served with attribution; its quarry layer is OpenStreetMap's (ODbL)."
- },
- "basinId": "palakkad-rivers",
- "generatedFrom": "build_palakkad_rivers_basin.py",
- "generatedOn": "2026-09-29",
- "families": {
-  "boundary": {
-   "featureCount": 1,
-   "sources": [
-    {
-     "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
-     "kind": null,
-     "count": 1,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: the district as the union of its local bodies' boundaries"
-    }
-   ],
-   "bytes": 21273,
-   "sliced": false
+  "nvdm": "1.0",
+  "dataset": "basins/inventory",
+  "scope": {
+    "kind": "basin",
+    "id": "palakkad-rivers"
   },
-  "sub-hydrosheds": {
-   "featureCount": 5,
-   "sources": [
-    {
-     "file": "Kerala:WATERSHED_KERALA",
-     "kind": null,
-     "count": 5,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: river basins of the Kerala watershed atlas (Kerala:WATERSHED_KERALA), grouped on the basin number that opens each watershed code, cut to the district"
-    }
-   ],
-   "bytes": 29173,
-   "sliced": false
+  "provenance": {
+    "sources": [
+      {
+        "id": "ksrec-open-geoserver",
+        "title": "KSREC GeoServer (WFS): local-body boundaries, watershed atlas, wetlands, paddy, notified wetland parcels, flood extents and quarries of Kerala",
+        "publisher": "Kerala State Remote Sensing and Environment Centre (KSREC)",
+        "license": "No licence or terms are stated on the GeoServer (WFS capabilities: AccessConstraints NONE). Served with attribution to KSREC by the maintainer's decision; layers KSREC derived from OpenStreetMap (quarries, waterbodies) carry ODbL 1.0.",
+        "role": "input",
+        "url": "http://ksrec.in:9090/geoserver/ows"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap (Overpass API extract: named river courses; dam positions)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "nwic-nwdp-cwc-canal-network",
+        "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-cwc-river-data",
+        "title": "CWC river discharge (manual daily) for Kerala, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-level",
+        "title": "National Water Data Portal: groundwater level datasets for Kerala (KSGWD manual monthly 2000-2030, KSGWD telemetry 2026-2030, CGWB telemetry 2026-2030)",
+        "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in"
+      },
+      {
+        "id": "ksdma-dam-bulletins",
+        "title": "Kerala SDMA daily dam bulletins, irrigation reservoirs (IRR-SITE PDFs)",
+        "publisher": "Kerala State Disaster Management Authority",
+        "license": "No licence or terms are stated on the bulletins or the page; a public disaster-management bulletin of the Government of Kerala, cited with attribution.",
+        "role": "input",
+        "url": "https://sdma.kerala.gov.in/dam-water-level/"
+      },
+      {
+        "id": "kspcb-nwmp-monthly",
+        "title": "Kerala State Pollution Control Board, monthly NWMP water quality data (PDF reports)",
+        "publisher": "Kerala State Pollution Control Board (KSPCB)",
+        "license": "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+        "role": "input",
+        "url": "https://kspcb.kerala.gov.in/nwmp"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-09-29",
+    "produced_by": "scripts/build_palakkad_rivers_basin.py",
+    "note": "Palakkad district's rivers, reservoirs, wetlands and groundwater (scope palakkad-rivers; the district's own scope id is kl-palakkad). The district is the union of its local bodies in KSREC's layer and the catchments (shedId) are the river basins of KSREC's watershed atlas cut to it. KSREC publishes no licence and its layers are served with attribution; its quarry layer is OpenStreetMap's (ODbL)."
   },
-  "rivers": {
-   "featureCount": 6,
-   "sources": [
-    {
-     "file": "osm-waterways.json",
-     "kind": null,
-     "count": 6,
-     "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+  "basinId": "palakkad-rivers",
+  "generatedFrom": "build_palakkad_rivers_basin.py",
+  "generatedOn": "2026-09-29",
+  "families": {
+    "boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
+          "kind": null,
+          "count": 1,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: the district as the union of its local bodies' boundaries"
+        }
+      ],
+      "bytes": 21273,
+      "sliced": false
+    },
+    "sub-hydrosheds": {
+      "featureCount": 5,
+      "sources": [
+        {
+          "file": "Kerala:WATERSHED_KERALA",
+          "kind": null,
+          "count": 5,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: river basins of the Kerala watershed atlas (Kerala:WATERSHED_KERALA), grouped on the basin number that opens each watershed code, cut to the district"
+        }
+      ],
+      "bytes": 29173,
+      "sliced": false
+    },
+    "rivers": {
+      "featureCount": 6,
+      "sources": [
+        {
+          "file": "osm-waterways.json",
+          "kind": null,
+          "count": 6,
+          "provenance": "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
+        }
+      ],
+      "bytes": 71934,
+      "sliced": false
+    },
+    "canals": {
+      "featureCount": 188,
+      "sources": [
+        {
+          "file": "canal_network.zip",
+          "kind": "distributary",
+          "count": 7,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "main",
+          "count": 116,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "minor",
+          "count": 65,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        }
+      ],
+      "bytes": 532767,
+      "sliced": false
+    },
+    "command-areas": {
+      "featureCount": 7,
+      "sources": [
+        {
+          "file": "command_area.zip",
+          "kind": "chitturpuzha",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "gayathri-stage-i-meenakara-dam-stage-ii-chulliyra-dam",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "kanhirapuzha",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "malampuzha",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "mangalam",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "pothundi",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        },
+        {
+          "file": "command_area.zip",
+          "kind": "walayar",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        }
+      ],
+      "bytes": 81536,
+      "sliced": false
+    },
+    "reservoirs": {
+      "featureCount": 11,
+      "sources": [
+        {
+          "file": "sdma.kerala.gov.in media library",
+          "kind": null,
+          "count": 11,
+          "provenance": "Kerala State Disaster Management Authority daily dam bulletins (irrigation reservoirs), the first bulletin of each month since the first posted and the latest: level, storage and live storage as printed; positions from OpenStreetMap"
+        }
+      ],
+      "bytes": 5815,
+      "sliced": false
+    },
+    "watersheds": {
+      "featureCount": 479,
+      "sources": [
+        {
+          "file": "Kerala:WATERSHED_KERALA",
+          "kind": null,
+          "count": 479,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: Kerala watershed atlas (Kerala:WATERSHED_KERALA), dissolved on the watershed code and cut to the district"
+        }
+      ],
+      "bytes": 391472,
+      "sliced": true,
+      "shedKeys": [
+        "RB16",
+        "RB19",
+        "RB20",
+        "RB22",
+        "RB23"
+      ]
+    },
+    "wetlands": {
+      "featureCount": 3170,
+      "sources": [
+        {
+          "file": "Kerala:Wetland_Keralaupdated",
+          "kind": "Mangroves",
+          "count": 1,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
+        },
+        {
+          "file": "Kerala:Wetland_Keralaupdated",
+          "kind": "Reservoir",
+          "count": 22,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
+        },
+        {
+          "file": "Kerala:Wetland_Keralaupdated",
+          "kind": "River/Stream",
+          "count": 343,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
+        },
+        {
+          "file": "Kerala:Wetland_Keralaupdated",
+          "kind": "Tanks/Ponds",
+          "count": 2531,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
+        },
+        {
+          "file": "Kerala:Wetland_Keralaupdated",
+          "kind": "Waterlogged",
+          "count": 273,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
+        }
+      ],
+      "bytes": 1766819,
+      "sliced": true,
+      "shedKeys": [
+        "RB16",
+        "RB19",
+        "RB20",
+        "RB22",
+        "RB23"
+      ]
+    },
+    "paddy": {
+      "featureCount": 5417,
+      "sources": [
+        {
+          "file": "Kerala:Paddy_Kerala",
+          "kind": "Fallow",
+          "count": 1236,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
+        },
+        {
+          "file": "Kerala:Paddy_Kerala",
+          "kind": "Minor",
+          "count": 3,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
+        },
+        {
+          "file": "Kerala:Paddy_Kerala",
+          "kind": "Paddy",
+          "count": 2833,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
+        },
+        {
+          "file": "Kerala:Paddy_Kerala",
+          "kind": "Puncha",
+          "count": 9,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
+        },
+        {
+          "file": "Kerala:Paddy_Kerala",
+          "kind": "Reclaimed",
+          "count": 1231,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
+        },
+        {
+          "file": "Kerala:Paddy_Kerala",
+          "kind": "Waterlogged",
+          "count": 105,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
+        }
+      ],
+      "bytes": 3134684,
+      "sliced": true,
+      "shedKeys": [
+        "RB16",
+        "RB19",
+        "RB20",
+        "RB22",
+        "RB23"
+      ]
+    },
+    "flood-zones": {
+      "featureCount": 6800,
+      "sources": [
+        {
+          "file": "Kerala:Flood_Kerala_GCS",
+          "kind": "10-year",
+          "count": 4011,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
+        },
+        {
+          "file": "Kerala:Flood_Kerala_GCS",
+          "kind": "100-year",
+          "count": 497,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
+        },
+        {
+          "file": "Kerala:Flood_Kerala_GCS",
+          "kind": "200-year",
+          "count": 611,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
+        },
+        {
+          "file": "Kerala:Flood_Kerala_GCS",
+          "kind": "25-year",
+          "count": 546,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
+        },
+        {
+          "file": "Kerala:Flood_Kerala_GCS",
+          "kind": "50-year",
+          "count": 489,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
+        },
+        {
+          "file": "Kerala:Flood_Kerala_GCS",
+          "kind": "500-year",
+          "count": 646,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
+        }
+      ],
+      "bytes": 2005171,
+      "sliced": true,
+      "shedKeys": [
+        "RB16",
+        "RB19",
+        "RB20",
+        "RB22",
+        "RB23"
+      ]
+    },
+    "quarries": {
+      "featureCount": 154,
+      "sources": [
+        {
+          "file": "Kerala:Quarry_Kerala",
+          "kind": null,
+          "count": 154,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: quarries (Kerala:Quarry_Kerala), as KSREC drew them from OpenStreetMap (landuse=quarry); ODbL 1.0, OpenStreetMap contributors"
+        }
+      ],
+      "bytes": 66870,
+      "sliced": false
+    },
+    "admin-gp": {
+      "featureCount": 88,
+      "sources": [
+        {
+          "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
+          "kind": null,
+          "count": 88,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: Grama Panchayat boundaries (Kerala:Kerala_Lsgd_Boundary_Lsgdcode)"
+        }
+      ],
+      "bytes": 328910,
+      "sliced": false
+    },
+    "admin-block": {
+      "featureCount": 13,
+      "sources": [
+        {
+          "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
+          "kind": null,
+          "count": 13,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: development blocks, each the union of its Grama Panchayats' boundaries (Kerala:Kerala_Lsgd_Boundary_Lsgdcode)"
+        }
+      ],
+      "bytes": 108221,
+      "sliced": false
+    },
+    "admin-ulb": {
+      "featureCount": 7,
+      "sources": [
+        {
+          "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
+          "kind": null,
+          "count": 7,
+          "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: municipality boundaries (Kerala:Kerala_Lsgd_Boundary_Lsgdcode)"
+        }
+      ],
+      "bytes": 21796,
+      "sliced": false
+    },
+    "groundwater-wells": {
+      "featureCount": 142,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-telemetry",
+          "count": 33,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "state-manual",
+          "count": 97,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "state-telemetry",
+          "count": 12,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
+        }
+      ],
+      "bytes": 58769,
+      "sliced": false
+    },
+    "gauging-stations": {
+      "featureCount": 4,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": null,
+          "count": 4,
+          "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
+        }
+      ],
+      "bytes": 3781,
+      "sliced": false
+    },
+    "monitoring-points": {
+      "featureCount": 9,
+      "sources": [
+        {
+          "file": "https://kspcb.kerala.gov.in/nwmp",
+          "kind": null,
+          "count": 9,
+          "provenance": "Kerala State Pollution Control Board monthly NWMP water quality data (kspcb.kerala.gov.in/nwmp), read from the PDF each month: stations the report places in Palakkad, positions as printed, one laboratory sample a month in readings/"
+        }
+      ],
+      "bytes": 8009,
+      "sliced": false
     }
-   ],
-   "bytes": 71934,
-   "sliced": false
-  },
-  "canals": {
-   "featureCount": 188,
-   "sources": [
-    {
-     "file": "canal_network.zip",
-     "kind": "distributary",
-     "count": 7,
-     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
-    },
-    {
-     "file": "canal_network.zip",
-     "kind": "main",
-     "count": 116,
-     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
-    },
-    {
-     "file": "canal_network.zip",
-     "kind": "minor",
-     "count": 65,
-     "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
-    }
-   ],
-   "bytes": 532767,
-   "sliced": false
-  },
-  "command-areas": {
-   "featureCount": 7,
-   "sources": [
-    {
-     "file": "command_area.zip",
-     "kind": "chitturpuzha",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    },
-    {
-     "file": "command_area.zip",
-     "kind": "gayathri-stage-i-meenakara-dam-stage-ii-chulliyra-dam",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    },
-    {
-     "file": "command_area.zip",
-     "kind": "kanhirapuzha",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    },
-    {
-     "file": "command_area.zip",
-     "kind": "malampuzha",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    },
-    {
-     "file": "command_area.zip",
-     "kind": "mangalam",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    },
-    {
-     "file": "command_area.zip",
-     "kind": "pothundi",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    },
-    {
-     "file": "command_area.zip",
-     "kind": "walayar",
-     "count": 1,
-     "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
-    }
-   ],
-   "bytes": 81536,
-   "sliced": false
-  },
-  "reservoirs": {
-   "featureCount": 11,
-   "sources": [
-    {
-     "file": "sdma.kerala.gov.in media library",
-     "kind": null,
-     "count": 11,
-     "provenance": "Kerala State Disaster Management Authority daily dam bulletins (irrigation reservoirs), the first bulletin of each month since the first posted and the latest: level, storage and live storage as printed; positions from OpenStreetMap"
-    }
-   ],
-   "bytes": 5815,
-   "sliced": false
-  },
-  "watersheds": {
-   "featureCount": 479,
-   "sources": [
-    {
-     "file": "Kerala:WATERSHED_KERALA",
-     "kind": null,
-     "count": 479,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: Kerala watershed atlas (Kerala:WATERSHED_KERALA), dissolved on the watershed code and cut to the district"
-    }
-   ],
-   "bytes": 391472,
-   "sliced": true,
-   "shedKeys": [
-    "RB16",
-    "RB19",
-    "RB20",
-    "RB22",
-    "RB23"
-   ]
-  },
-  "wetlands": {
-   "featureCount": 3170,
-   "sources": [
-    {
-     "file": "Kerala:Wetland_Keralaupdated",
-     "kind": "Mangroves",
-     "count": 1,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
-    },
-    {
-     "file": "Kerala:Wetland_Keralaupdated",
-     "kind": "Reservoir",
-     "count": 22,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
-    },
-    {
-     "file": "Kerala:Wetland_Keralaupdated",
-     "kind": "River/Stream",
-     "count": 343,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
-    },
-    {
-     "file": "Kerala:Wetland_Keralaupdated",
-     "kind": "Tanks/Ponds",
-     "count": 2531,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
-    },
-    {
-     "file": "Kerala:Wetland_Keralaupdated",
-     "kind": "Waterlogged",
-     "count": 273,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: wetlands of Kerala (Kerala:Wetland_Keralaupdated) other than paddy, by class as KSREC classifies them; parts under 0.1 ha left out"
-    }
-   ],
-   "bytes": 1766819,
-   "sliced": true,
-   "shedKeys": [
-    "RB16",
-    "RB19",
-    "RB20",
-    "RB22",
-    "RB23"
-   ]
-  },
-  "paddy": {
-   "featureCount": 5417,
-   "sources": [
-    {
-     "file": "Kerala:Paddy_Kerala",
-     "kind": "Fallow",
-     "count": 1236,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
-    },
-    {
-     "file": "Kerala:Paddy_Kerala",
-     "kind": "Minor",
-     "count": 3,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
-    },
-    {
-     "file": "Kerala:Paddy_Kerala",
-     "kind": "Paddy",
-     "count": 2833,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
-    },
-    {
-     "file": "Kerala:Paddy_Kerala",
-     "kind": "Puncha",
-     "count": 9,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
-    },
-    {
-     "file": "Kerala:Paddy_Kerala",
-     "kind": "Reclaimed",
-     "count": 1231,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
-    },
-    {
-     "file": "Kerala:Paddy_Kerala",
-     "kind": "Waterlogged",
-     "count": 105,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: paddy wetlands of Kerala (Kerala:Paddy_Kerala), by the status KSREC records for each parcel (Paddy, Fallow, Reclaimed, Waterlogged and others, as KSREC prints them); parts under 1 ha left out"
-    }
-   ],
-   "bytes": 3134684,
-   "sliced": true,
-   "shedKeys": [
-    "RB16",
-    "RB19",
-    "RB20",
-    "RB22",
-    "RB23"
-   ]
-  },
-  "flood-zones": {
-   "featureCount": 6800,
-   "sources": [
-    {
-     "file": "Kerala:Flood_Kerala_GCS",
-     "kind": "10-year",
-     "count": 4011,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
-    },
-    {
-     "file": "Kerala:Flood_Kerala_GCS",
-     "kind": "100-year",
-     "count": 497,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
-    },
-    {
-     "file": "Kerala:Flood_Kerala_GCS",
-     "kind": "200-year",
-     "count": 611,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
-    },
-    {
-     "file": "Kerala:Flood_Kerala_GCS",
-     "kind": "25-year",
-     "count": 546,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
-    },
-    {
-     "file": "Kerala:Flood_Kerala_GCS",
-     "kind": "50-year",
-     "count": 489,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
-    },
-    {
-     "file": "Kerala:Flood_Kerala_GCS",
-     "kind": "500-year",
-     "count": 646,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: flood extents by local body (Kerala:Flood_Kerala_GCS); the layer's 'Year' field carries 10, 25, 50, 100, 200 and 500, the return periods of the Kerala SDMA flood-hazard maps"
-    }
-   ],
-   "bytes": 2005171,
-   "sliced": true,
-   "shedKeys": [
-    "RB16",
-    "RB19",
-    "RB20",
-    "RB22",
-    "RB23"
-   ]
-  },
-  "quarries": {
-   "featureCount": 154,
-   "sources": [
-    {
-     "file": "Kerala:Quarry_Kerala",
-     "kind": null,
-     "count": 154,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: quarries (Kerala:Quarry_Kerala), as KSREC drew them from OpenStreetMap (landuse=quarry); ODbL 1.0, OpenStreetMap contributors"
-    }
-   ],
-   "bytes": 66870,
-   "sliced": false
-  },
-  "admin-gp": {
-   "featureCount": 88,
-   "sources": [
-    {
-     "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
-     "kind": null,
-     "count": 88,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: Grama Panchayat boundaries (Kerala:Kerala_Lsgd_Boundary_Lsgdcode)"
-    }
-   ],
-   "bytes": 328910,
-   "sliced": false
-  },
-  "admin-block": {
-   "featureCount": 13,
-   "sources": [
-    {
-     "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
-     "kind": null,
-     "count": 13,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: development blocks, each the union of its Grama Panchayats' boundaries (Kerala:Kerala_Lsgd_Boundary_Lsgdcode)"
-    }
-   ],
-   "bytes": 108221,
-   "sliced": false
-  },
-  "admin-ulb": {
-   "featureCount": 7,
-   "sources": [
-    {
-     "file": "Kerala:Kerala_Lsgd_Boundary_Lsgdcode",
-     "kind": null,
-     "count": 7,
-     "provenance": "KSREC GeoServer (ksrec.in), Kerala State Remote Sensing and Environment Centre: municipality boundaries (Kerala:Kerala_Lsgd_Boundary_Lsgdcode)"
-    }
-   ],
-   "bytes": 21796,
-   "sliced": false
-  },
-  "groundwater-wells": {
-   "featureCount": 142,
-   "sources": [
-    {
-     "file": "nwdp.nwic.gov.in datastore",
-     "kind": "cgwb-telemetry",
-     "count": 33,
-     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
-    },
-    {
-     "file": "nwdp.nwic.gov.in datastore",
-     "kind": "state-manual",
-     "count": 97,
-     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
-    },
-    {
-     "file": "nwdp.nwic.gov.in datastore",
-     "kind": "state-telemetry",
-     "count": 12,
-     "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
-    }
-   ],
-   "bytes": 58769,
-   "sliced": false
-  },
-  "gauging-stations": {
-   "featureCount": 4,
-   "sources": [
-    {
-     "file": "nwdp.nwic.gov.in datastore",
-     "kind": null,
-     "count": 4,
-     "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
-    }
-   ],
-   "bytes": 3781,
-   "sliced": false
   }
- }
 }

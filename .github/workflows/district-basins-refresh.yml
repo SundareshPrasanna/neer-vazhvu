@@ -65,7 +65,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           B=public/data/basins/${{ matrix.basin }}
           # The living feeds this basin serves (not every basin has real-time stations).
-          FEEDS=$(ls $B/groundwater-wells.geojson $B/gauging-stations.geojson $B/realtime-stations.geojson $B/reservoirs.geojson $B/inventory.json 2>/dev/null)
+          FEEDS=$(ls $B/groundwater-wells.geojson $B/gauging-stations.geojson $B/realtime-stations.geojson $B/reservoirs.geojson $B/monitoring-points.geojson $B/inventory.json 2>/dev/null)
           # Refresh gate: files enveloped at HEAD must still certify L2.
           bash scripts/nvdm-refresh-gate.sh $FEEDS $B/readings/*.json
           python3 scripts/build_dataset_catalogue.py

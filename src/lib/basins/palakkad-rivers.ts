@@ -16,7 +16,7 @@ export const PALAKKAD_RIVERS: BasinManifest = {
   displayName: "Palakkad district: rivers, reservoirs, wetlands and groundwater",
   displayNameLocal: "പാലക്കാട് ജില്ല: നദികൾ, അണക്കെട്ടുകൾ, തണ്ണീർത്തടങ്ങൾ, ഭൂഗർഭജലം",
   blurb:
-    "Palakkad district in one map: the Bharathapuzha and its tributaries, the Bhavani through Attappadi, eight reservoirs read from the Kerala SDMA dam bulletin since 2020, 142 monitored wells, KSREC's wetland, paddy and flood-extent layers, and the district's 88 Grama Panchayats in 13 development blocks. On 29 September 2026 Walayar held 3% of its live capacity, Meenkara 10% and Chulliyar 0%, against Malampuzha's 49%. KSREC classes 4,037 ha of the district's paddy parcels of 1 ha and more as 'Reclaimed' and 3,363 ha as 'Fallow'. Click a river to scope every layer to its basin.",
+    "Palakkad district in one map: the Bharathapuzha and its tributaries, the Bhavani through Attappadi, eight reservoirs read from the Kerala SDMA dam bulletin since 2020, 142 monitored wells, nine river water-quality stations KSPCB samples every month, KSREC's wetland, paddy and flood-extent layers, and the district's 88 Grama Panchayats in 13 development blocks. On 29 September 2026 Walayar held 3% of its live capacity, Meenkara 10% and Chulliyar 0%, against Malampuzha's 49%. KSREC classes 4,037 ha of the district's paddy parcels of 1 ha and more as 'Reclaimed' and 3,363 ha as 'Fallow'. Click a river to scope every layer to its basin.",
   mapCenter: [10.8, 76.55],
   mapZoom: 10,
   defaultFitFamilies: ["boundary"],
@@ -135,6 +135,8 @@ export const PALAKKAD_RIVERS: BasinManifest = {
     // Monitoring & evidence
     { family: "gauging-stations", label: "River flow (CWC gauges)", floor: "monitoring", geom: "point", color: "#0f766e", defaultOn: true, readings: true,
       legendRows: [{ sym: "dot", color: "#0f766e", label: "CWC gauge: river flow (tap for charts)" }] },
+    { family: "monitoring-points", label: "River water quality (KSPCB monthly samples)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true,
+      legendRows: [{ sym: "dot", color: "#059669", label: "KSPCB water-quality station (tap for charts)" }] },
     {
       family: "groundwater-wells", label: "Groundwater wells (depth to water)", floor: "monitoring", geom: "point", color: "#0369a1", defaultOn: true,
       classes: {
@@ -195,6 +197,7 @@ export const PALAKKAD_RIVERS: BasinManifest = {
     "Canals and command areas: Central Water Commission's canal network and water resource project layers, from the National Water Data Portal (NWIC).",
     "Groundwater wells: National Water Data Portal (NWIC), groundwater level datasets for Kerala: Kerala Ground Water Department wells read monthly (2000 to April 2026) and telemetry, and CGWB telemetry (2026). Depth is in metres below ground level; stuck sensors, sentinel values and readings outside a physical envelope are dropped.",
     "River flow at Kumbidi, Mankara, Pudur and Pulamanthole: Central Water Commission manual daily discharge, from the National Water Data Portal, shown as monthly means. CWC's Kottathara gauge in Attappadi is not drawn: the portal does not print its river and its position is 3.2 km from the mapped Bhavani.",
+    "River water quality: Kerala State Pollution Control Board's monthly NWMP data (kspcb.kerala.gov.in/nwmp), read from its monthly PDF reports from August 2025: the nine monthly river stations the reports place in Palakkad, at the positions the March 2026 report prints. A sample below the laboratory's detection limit is plotted at the limit. The criterion lines are CPCB's outdoor bathing criteria, drawn for reference; each station's use class, as KSPCB assigns it, heads its chart panel. KSPCB's state programme (SWMP) samples ten more sites in the district but prints no coordinates for them, so they are not drawn yet.",
     "No known public source gives a named register of Kerala's industrial units with their pollution category; the pressures floor carries quarries and flood extents only.",
   ],
 };

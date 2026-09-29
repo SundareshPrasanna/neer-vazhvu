@@ -39,6 +39,7 @@ from shapely.ops import linemerge, unary_union
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+from lib.sheet_print import columns as sheet_columns  # noqa: E402
 
 TODAY = date.today().isoformat()
 
@@ -113,11 +114,21 @@ WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per ca
 SHED_MIN_KM2 = 5.0  # boundary-mismatch slivers below this are dropped, and listed
 BOUNDARY_RIVER_BUFFER_DEG = 0.015  # ~1.6 km: keeps a river that runs along the district line
 UA = {"User-Agent": "neer-vazhvu/basin-build"}
-LIVE_PREFIXES = ("nwdp-", "tnpcb-rt-", "tnsmart-", "ksdma-list")  # caches a --live run always re-fetches
+LIVE_PREFIXES = ("nwdp-", "tnpcb-rt-", "tnsmart-", "ksdma-list", "wq-reports-list")  # caches a --live run always re-fetches
 KSDMA_MEDIA = "https://sdma.kerala.gov.in/wp-json/wp/v2/media"  # the Kerala SDMA site's media library: every daily dam bulletin PDF
 KSDMA_LEVEL_EXPLAINER = "Each point is the dam bulletin's 'Today's Water Level' in metres above mean sea level: the month's first bulletin, averaged with any later one read that month."
 KSDMA_STORAGE_EXPLAINER = "Each point is the bulletin's live storage as a share of the reservoir's live capacity: the month's first bulletin, averaged with any later one read that month."
-LIVE_FILES = ("groundwater-wells.geojson", "gauging-stations.geojson", "realtime-stations.geojson", "reservoirs.geojson", "inventory.json")
+# A state board's monthly NWMP results (see build_wq_report_stations): the header pattern (matched with the header's
+# spaces taken out), label, unit, criterion, criterion label, (lowest, highest) plausible value.
+WQ_REPORT_PARAMS = (
+    ("BOD", "BOD", "mg/L", 3, "BOD ≤ 3 mg/L (outdoor bathing criterion)", (0, 500)),
+    (r"Dissolv(e|ed)?d?O2", "Dissolved oxygen", "mg/L", 5, "DO ≥ 5 mg/L (outdoor bathing criterion)", (0, 25)),
+    ("FecalColiform", "Fecal coliform", "MPN/100ml", 2500, "FC ≤ 2500 MPN/100ml (outdoor bathing criterion)", (0, 1e8)),
+    ("pH", "pH", "", None, None, (2, 12)),
+    ("Conduc", "Conductivity", "µmho/cm", None, None, (1, 100000)),
+)
+WQ_REPORT_EXPLAINER = "Each point is the month's laboratory sample, as the board's monthly NWMP report prints it."
+LIVE_FILES = ("groundwater-wells.geojson", "gauging-stations.geojson", "realtime-stations.geojson", "reservoirs.geojson", "monitoring-points.geojson", "inventory.json")
 LIVE_MIN_SHARE = 0.8  # a feed returning under this share of last week's features is a partial response, not news
 
 CTX = ssl.create_default_context()
@@ -146,6 +157,8 @@ OPTIONAL = {
     "KSDMA_RESERVOIRS": (), "KSDMA_BULLETIN": "IRR-SITE",
     # The state's CWC resources on NWDP, when not Tamil Nadu's (an empty tuple reads none).
     "CWC_DISCHARGE": None, "CWC_WQ_CHEMICAL": None, "CWC_WQ_BIOLOGICAL": None, "NWDP_DISTRICT_ALIASES": (),
+    # A state board's monthly NWMP reports and the stations to read from them (see build_wq_report_stations).
+    "WQ_REPORTS": None, "WQ_REPORT_STATIONS": {},
 }
 
 
@@ -834,6 +847,113 @@ class DistrictBasinBuild:
         print(f"    {len(picks)} bulletins read ({bulletins[0][0]} to {bulletins[-1][0]}); {unread} reservoir rows not found or out of range")
         self.emit("reservoirs", feats, "Kerala State Disaster Management Authority daily dam bulletins (irrigation reservoirs), the first bulletin of each month since the first posted and the latest: level, storage and live storage as printed; positions from OpenStreetMap", "sdma.kerala.gov.in media library")
 
+    def wq_reports(self) -> list:
+        """(month, url) of each monthly report the board's page lists, oldest first."""
+        conf = self.cfg.WQ_REPORTS
+        def fetch() -> dict:
+            with urllib.request.urlopen(urllib.request.Request(conf["listing"], headers=UA), timeout=120, context=CTX) as r:
+                page = r.read().decode("utf-8", "replace")
+            rows = []
+            for href, text in re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', page, re.S):
+                m = re.search(conf["title"], re.sub(r"<[^>]+>|\s+", " ", text), re.I)
+                if m:
+                    rows.append([datetime.strptime(f"{m.group(1)[:3]} {m.group(2)}", "%b %Y").strftime("%Y-%m"), href + conf["raw"]])
+            return {"rows": rows}
+        return sorted({m: u for m, u in self.cached("wq-reports-list.json", fetch)["rows"]}.items())
+
+    def wq_report_pdf(self, month: str, url: str) -> Path:
+        """A month's report, cached by month: a posted report is read once."""
+        fp = self.CACHE / "wq-reports" / f"{month}.pdf"
+        if not fp.exists():
+            fp.parent.mkdir(parents=True, exist_ok=True)
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=180, context=CTX) as r:
+                body = r.read()
+            if not body.startswith(b"%PDF"):
+                raise SystemExit(f"water quality: the {month} report is not a PDF - check the listing's download link")
+            fp.write_bytes(body)
+            time.sleep(1)
+        return fp
+
+    def build_wq_report_stations(self) -> None:
+        """Water-quality stations from a state board's monthly NWMP reports (a spreadsheet printed to PDF, read by
+        scripts/lib/sheet_print.py): positions, names and use classes from the config, one laboratory sample a month
+        in readings/. The board's page lists only recent months, so the served series keeps every month read before;
+        a --live run reads only months newer than the served series. A value below the detection limit is plotted at
+        the limit, and the series note says so."""
+        cfg, sheds, conf = self.cfg, self.sheds, self.cfg.WQ_REPORTS
+        stations = cfg.WQ_REPORT_STATIONS
+        earlier = {code: json.loads(p.read_text()) for code in stations if (p := self.BASIN / "readings" / f"wq-{code}.json").exists()}
+        through = min((e["source"]["readThrough"] for e in earlier.values()), default="") if len(earlier) == len(stations) else ""
+        reports = [(m, u) for m, u in self.wq_reports() if not self.LIVE or m > through]
+        wanted = {label: re.compile(rx) for rx, label, *_ in WQ_REPORT_PARAMS}
+        limits = {label: rng for _, label, _, _, _, rng in WQ_REPORT_PARAMS}
+        # values[code][label][month] = (value, below detection limit)
+        values: dict[str, dict[str, dict[str, tuple]]] = {code: {} for code in stations}
+        dropped = 0
+        for month, url in reports:
+            rows, notes = sheet_columns(self.wq_report_pdf(month, url), re.compile(r"\d{1,5}"), wanted)
+            found = 0
+            for code in stations:
+                for label, cell in rows.get(code, {}).items():
+                    m = re.fullmatch(r"(\d+(?:\.\d+)?)(\(BDL\))?", cell.replace(" ", ""))
+                    if not m:
+                        continue
+                    v = float(m.group(1))
+                    lo, hi = limits[label]
+                    if not lo <= v <= hi:
+                        dropped += 1
+                        continue
+                    values[code].setdefault(label, {})[month] = (v, bool(m.group(2)))
+                found += bool(rows.get(code))
+            if found < len(stations) / 2:
+                raise SystemExit(f"water quality: the {month} report gives {found} of {len(stations)} stations - check the report's format")
+            print(f"    {month}: {found} of {len(stations)} stations" + (f"; {len(notes)} tile notes" if notes else ""))
+        feats = []
+        for code, (name, river, use_class, position) in stations.items():
+            for s_ in earlier.get(code, {}).get("series", []):  # months read before stay, unless read again now
+                for m, v in s_["points"]:
+                    values[code].setdefault(s_["param"], {}).setdefault(m, (v, m in s_.get("belowDetection", ())))
+            key = f"wq-{code}"
+            series = []
+            for _, label, unit, criterion, crit_label, _ in WQ_REPORT_PARAMS:
+                pts = sorted(values[code].get(label, {}).items())
+                if not pts:
+                    continue
+                below = [m for m, (_, bdl) in pts if bdl]
+                note = f"Below the laboratory's detection limit in {len(below)} of {len(pts)} months; those months are plotted at the limit, and the true value is lower." if below else None
+                series.append({"kind": "wq-param-series", "unit": unit, "verified": True, "label": f"{label} (monthly sample)", "param": label, "note": note,
+                               **({"criterion": criterion, "criterionLabel": crit_label} if criterion else {}), "explainer": WQ_REPORT_EXPLAINER,
+                               "points": [[m, v] for m, (v, _) in pts], **({"belowDetection": below} if below else {})})
+            pt = Point(position)
+            if not self.district.contains(pt):
+                raise SystemExit(f"water quality: station {code} ({name}) plots outside the district - check its position")
+            months = sorted({p[0] for s_ in series for p in s_["points"]})
+            if series:
+                self.write_pack(key, {
+                    "schemaVersion": 1,
+                    "station": {"stationKey": key, "name": f"{name} ({conf['agency']} {code})", "agency": conf["agency"], "siteType": f"River water-quality station, use class {use_class}", "river": river},
+                    "source": {"label": conf["label"], "url": conf["listing"], "fetched": TODAY, "readThrough": months[-1]},
+                    "period": {"from": months[0], "to": months[-1]},
+                    "series": series,
+                })
+            last = {s_["param"]: (*s_["points"][-1], s_["points"][-1][0] in s_.get("belowDetection", ())) for s_ in series}
+            def latest(label: str, unit: str) -> str | None:
+                if label not in last:
+                    return None
+                m, v, bdl = last[label]
+                return f"{'below ' if bdl else ''}{v:g}{' ' + unit if unit else ''} ({m})"
+            feats.append(feat(mapping(pt), {k: v for k, v in {
+                "name": name, "kind": "wq-station", "stationKey": key, "stationCode": code, "hasReadings": bool(series), "river": river,
+                "agency": conf["agency"], "purpose": conf["purpose"], "useClass": use_class,
+                "monthsWithReadings": f"{months[0]} to {months[-1]}" if months else None,
+                "latestBod": latest("BOD", "mg/L"), "latestDissolvedOxygen": latest("Dissolved oxygen", "mg/L"), "latestFecalColiform": latest("Fecal coliform", "MPN/100ml"),
+                "positionNote": conf["positionNote"], "dataUrl": conf["listing"], "shedId": sheds.for_point(pt),
+            }.items() if v is not None}))
+            print(f"    {code} {name:44} {len(months)} months" + (f", {months[0]} to {months[-1]}" if months else ""))
+        if dropped:
+            print(f"    {dropped} values outside the plausible range left out")
+        self.emit("monitoring-points", feats, conf["provenance"], conf["listing"])
+
     def build_repo_families(self) -> None:
         """Families another basin in the repo already serves, cut to the district."""
         district, sheds = self.district, self.sheds
@@ -1329,6 +1449,8 @@ class DistrictBasinBuild:
             self.build_gauging_stations()
             if self.cfg.KSDMA_RESERVOIRS:
                 self.build_ksdma_reservoirs()
+            if self.cfg.WQ_REPORTS:
+                self.build_wq_report_stations()
             res = json.loads((B / "reservoirs.geojson").read_text())
             for f in res["features"]:
                 f["properties"].update({k: v for k, v in (self.reservoir_level_pack(f["properties"]["name"]) or {}).items()})

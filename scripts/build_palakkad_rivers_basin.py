@@ -18,6 +18,7 @@ Sources (fetched once, cached under .cache/palakkad-rivers/, gitignored):
   Kerala SDMA daily dam bulletins (IRR-SITE PDFs)          reservoirs + readings/reservoir-<key>.json
   NWDP, KSGWD manual monthly + KSGWD and CGWB telemetry   groundwater-wells
   NWDP, CWC river discharge (Kerala)                       gauging-stations + readings/cwc-<station>.json
+  KSPCB monthly NWMP data (PDF, kspcb.kerala.gov.in/nwmp)  monitoring-points + readings/wq-<code>.json
 
 KSREC publishes no licence; its layers are served with attribution to KSREC.
 Layers KSREC derived from OpenStreetMap (quarries) carry ODbL.
@@ -127,6 +128,30 @@ NWDP_WELL_SETS = (
 )
 WELLS_PROVENANCE = "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Kerala, PALAKKAD-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values, stuck sensors and readings outside the physical envelope dropped"
 
+# KSPCB's monthly NWMP results: one sheet printed to PDF a month, the page listing the latest eight (the served series
+# keeps every month read before). Station code: name and river as the report prints them, the use class KSPCB assigns,
+# position (lon, lat) as the March 2026 report prints it. These are the nine monthly river stations the report places
+# in Palakkad. Its groundwater stations (2327, 5219) are left to the wells layer, and the state programme's (SWMP)
+# ten Palakkad stations print no coordinates, so they wait for reviewed positions.
+WQ_REPORTS = {
+    "listing": "https://kspcb.kerala.gov.in/nwmp", "title": r"NWMP DATA\s+([A-Za-z]+)\s+(\d{4})", "raw": "/0?raw=1",
+    "agency": "KSPCB", "purpose": "National Water Quality Monitoring Programme (NWMP), monthly river sample",
+    "label": "Kerala State Pollution Control Board, monthly NWMP water quality data",
+    "positionNote": "Position as KSPCB's March 2026 NWMP report prints it.",
+    "provenance": "Kerala State Pollution Control Board monthly NWMP water quality data (kspcb.kerala.gov.in/nwmp), read from the PDF each month: stations the report places in Palakkad, positions as printed, one laboratory sample a month in readings/",
+}
+WQ_REPORT_STATIONS = {
+    "2332": ("Bharathapuzha at Pattambi", "Bharathapuzha", "C (drinking water source)", (76.185131, 10.799658)),
+    "2328": ("Bharathapuzha reservoir at Malampuzha", "Bharathapuzha (Malampuzha)", "D (propagation of wildlife, fisheries)", (76.680693, 10.829122)),
+    "2326": ("Korayar near Naragampally bridge, Kanjikode", "Korayar", "D (propagation of wildlife, fisheries)", (76.717475, 10.789783)),
+    "3460": ("Kalpathi puzha at Kalpathi", "Kalpathi puzha", "D (propagation of wildlife, fisheries)", (76.651378, 10.791581)),
+    "5215": ("Chitturpuzha at Chittur bridge", "Chitturpuzha", "D (propagation of wildlife, fisheries)", (76.718696, 10.690035)),
+    "5216": ("Kannadippuzha at Thirunellayi bridge", "Kannadippuzha", "D (propagation of wildlife, fisheries)", (76.624268, 10.75357)),
+    "1208": ("Bhavani at Elachivazhy", "Bhavani", "D (propagation of wildlife, fisheries)", (76.692725, 11.169886)),
+    "5217": ("Nellipuzha at Nellipuzha bridge, Mannarkkad", "Nellipuzha", "E (irrigation, industrial cooling, controlled waste)", (76.469277, 10.992514)),
+    "5218": ("Kunthipuzha at Mannarkkad", "Kunthipuzha", "D (propagation of wildlife, fisheries)", (76.44377778, 10.9911111)),
+}
+
 # CWC river discharge for Kerala on NWDP (1950-2000, 2001-2025, 2026-2030). No Kerala water-quality set is read yet.
 CWC_DISCHARGE = ("7132d8ae-3174-408d-8ef3-37aa00752787", "c3cbe74d-2442-4496-aab2-21e8b5faa12e", "4c771ce1-6646-4dbc-9984-e40a3d5bd21f")
 CWC_WQ_CHEMICAL = ()
@@ -155,7 +180,7 @@ RIVER_NAMES = {"bharathapuzha": "Bharathapuzha", "gayathri": "Gayathripuzha", "k
                "kunthipuzha": "Kunthipuzha", "bhavani": "Bhavani", "parambikulam": "Parambikulam"}
 WATERWAYS_PROVENANCE = "Rivers: OpenStreetMap waterway courses (Overpass), clipped to the district plus 1.6 km so boundary rivers stay"
 
-STEPS = ("waterways", "canals", "ksdma-reservoirs", "wfs-families", "groundwater-wells", "gauging-stations")
+STEPS = ("waterways", "canals", "ksdma-reservoirs", "wfs-families", "groundwater-wells", "gauging-stations", "wq-report-stations")
 
 # Envelopes (scripts/nvdm_envelope_district_basin.py): registry id, title, publisher, extra fields.
 ENVELOPE_SOURCES = {
@@ -167,16 +192,18 @@ ENVELOPE_SOURCES = {
     "cwc-river": ("nwic-nwdp-cwc-river-data", "CWC river discharge (manual daily) for Kerala, National Water Data Portal", "Central Water Commission, via the National Water Informatics Centre (NWIC)", {"url": NWDP}),
     "nwdp-gw": ("nwic-nwdp-groundwater-level", "National Water Data Portal: groundwater level datasets for Kerala (KSGWD manual monthly 2000-2030, KSGWD telemetry 2026-2030, CGWB telemetry 2026-2030)",
                 "National Water Informatics Centre (NWIC), Ministry of Jal Shakti", {"url": NWDP}),
+    "kspcb": ("kspcb-nwmp-monthly", "Kerala State Pollution Control Board, monthly NWMP water quality data (PDF reports)", "Kerala State Pollution Control Board (KSPCB)",
+              {"url": "https://kspcb.kerala.gov.in/nwmp"}),
     "ksdma": ("ksdma-dam-bulletins", "Kerala SDMA daily dam bulletins, irrigation reservoirs (IRR-SITE PDFs)", "Kerala State Disaster Management Authority", {"url": "https://sdma.kerala.gov.in/dam-water-level/"}),
 }
 ENVELOPE_ARTIFACTS = {
     "boundary": ["ksrec"], "sub-hydrosheds": ["ksrec"], "rivers": ["osm", "ksrec"], "canals": ["cwc-canals", "ksrec"], "command-areas": ["cwc-canals", "ksrec"],
     "reservoirs": ["ksdma", "osm", "ksrec"], "watersheds": ["ksrec"], "wetlands": ["ksrec"], "paddy": ["ksrec"],
     "flood-zones": ["ksrec"], "quarries": ["ksrec"], "admin-gp": ["ksrec"], "admin-block": ["ksrec"], "admin-ulb": ["ksrec"],
-    "groundwater-wells": ["nwdp-gw", "ksrec"], "gauging-stations": ["cwc-river", "osm", "ksrec"],
-    "inventory": ["ksrec", "osm", "cwc-canals", "cwc-river", "nwdp-gw", "ksdma"],
+    "groundwater-wells": ["nwdp-gw", "ksrec"], "gauging-stations": ["cwc-river", "osm", "ksrec"], "monitoring-points": ["kspcb", "ksrec"],
+    "inventory": ["ksrec", "osm", "cwc-canals", "cwc-river", "nwdp-gw", "ksdma", "kspcb"],
 }
-ENVELOPE_READINGS = {"reservoir-": ["ksdma"], "cwc-": ["cwc-river"]}
+ENVELOPE_READINGS = {"reservoir-": ["ksdma"], "cwc-": ["cwc-river"], "wq-": ["kspcb"]}
 ENVELOPE_NOTE = (
     "Palakkad district's rivers, reservoirs, wetlands and groundwater (scope palakkad-rivers; the district's own scope id is kl-palakkad). "
     "The district is the union of its local bodies in KSREC's layer and the catchments (shedId) are the river basins of KSREC's watershed atlas cut to it. "

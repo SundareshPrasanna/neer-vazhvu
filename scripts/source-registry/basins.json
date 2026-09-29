@@ -956,6 +956,7 @@
         "public/data/basins/palakkad-rivers/admin-ulb.geojson",
         "public/data/basins/palakkad-rivers/groundwater-wells.geojson",
         "public/data/basins/palakkad-rivers/gauging-stations.geojson",
+        "public/data/basins/palakkad-rivers/monitoring-points.geojson",
         "public/data/basins/palakkad-rivers/inventory.json"
       ],
       "refreshMethod": "scripts/build_palakkad_rivers_basin.py (delete .cache/palakkad-rivers/ to re-fetch; the dissolved district and river-basin frame is frozen in pipeline-inputs/basins/palakkad-rivers/), then scripts/nvdm_envelope_district_basin.py scripts/build_palakkad_rivers_basin.py if the source list changed",
@@ -980,6 +981,26 @@
       ],
       "refreshMethod": "scripts/build_palakkad_rivers_basin.py reads each month's first IRR-SITE bulletin and the latest from the WordPress media API (/wp-json/wp/v2/media?search=IRR-SITE); --live, weekly by .github/workflows/district-basins-refresh.yml, reads only the newest and folds it into the served series",
       "notes": "The irrigation bulletin (IRR-SITE-<n>.pdf, about 20 reservoirs) prints full reservoir level, today's level, alert levels, gross and current storage, live storage as a share of capacity and outflow. Its layout moved in 2024 (numbers from the name's line to the next line), so the reader anchors each row on the reservoir's full reservoir level, which the config lists with every value the bulletins have printed (Kanjirappuzha: 97.23 m in 2020, 97.50 m now), and stops the build if a reservoir is found in under 80% of the bulletins read. Mullaperiyar is in neither bulletin (Tamil Nadu operates it). The archive starts on 2020-06-08 (KSEB) and 2020-08-20 (irrigation). The host is slow at times; the builder paces its requests."
+    },
+    {
+      "id": "kspcb-nwmp-monthly",
+      "scope": "palakkad-rivers",
+      "publisher": "Kerala State Pollution Control Board (KSPCB)",
+      "url": "https://kspcb.kerala.gov.in/nwmp",
+      "license": "KSPCB copyright policy (kspcb.kerala.gov.in/copyright-policy): contents may be reproduced with the source duly and prominently acknowledged, and not in a misleading, objectionable or derogatory context. Cited with attribution.",
+      "type": "file",
+      "cadence": "monthly data, posted in batches months after sampling (August to December 2025 printed in April 2026, January to March 2026 in July 2026); the page lists the latest eight",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/basins/palakkad-rivers/monitoring-points.geojson",
+        "public/data/basins/palakkad-rivers/readings",
+        "public/data/basins/palakkad-rivers/inventory.json"
+      ],
+      "refreshMethod": "scripts/build_palakkad_rivers_basin.py reads every report the NWMP page lists (each fileViewer link + '/0?raw=1' is the PDF) through scripts/lib/sheet_print.py; --live, weekly by .github/workflows/district-basins-refresh.yml, reads only months newer than the served series and keeps every month read before",
+      "notes": "Each report is an Excel sheet printed to PDF in tiles, every tile repeating the station code (STN Code). The reader places columns from word positions and skips any row it cannot place rather than guess; a header matching two parameters (a merged 'Dissolved O2 pH' cell) is left out for that tile. Layouts change month to month (December 2025 sets the code a few points below its row; the February 2026 report's tiles carry a 'JANUARY' title). About 184 stations statewide; the config names the nine monthly river stations in Palakkad and their positions as the March 2026 report prints them. The page lists only the latest eight months (August 2025 to March 2026 on 2026-09-29), so older months live only in the served series. The state programme's (SWMP) reports print no coordinates."
     }
   ]
 }
