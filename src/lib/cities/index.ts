@@ -12,7 +12,7 @@ import { isCityId, type CityId } from './ids';
 import type { PlaceConfig } from './types';
 
 export * from './types';
-export { CITY_IDS, isCityId, type CityId } from './ids';
+export { CITY_IDS } from './ids';
 
 // Registry contains every known city, enabled or not. Disabled cities
 // (config.enabled === false) are usable internally for scaffolding but

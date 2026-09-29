@@ -107,10 +107,3 @@ export function computeRiverStatus(river: RiverData): RiverQualityStatus {
 
   return worst ?? river.overall_status;
 }
-
-/** Boolean form for the common "anything-bad-or-worse" guard. */
-export function isBadStatus(status: RiverQualityStatus): boolean {
-  return SEVERITY[status] >= SEVERITY.degraded;
-}
-
-export const RIVER_CLASSIFICATION_NOTE_KEY = "rivers.classification_note";
