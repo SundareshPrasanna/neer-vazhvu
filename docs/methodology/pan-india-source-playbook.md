@@ -39,7 +39,7 @@
 | Sanity gate | Reject readings outside a physically defensible depth envelope and report what was dropped. Delhi used -5..100 m and caught two dead sensors (one emitting symmetric ±26.10 m, one emitting 660-890 m) |
 | Cross-check | Verify against known hydrogeology before trusting the transform. Delhi's ridge wells (Gadaipur, Sultanpur ~68 m) vs floodplain wells (Jagatpur, Coronation Pillar ~2 m) reproduced the published over-exploited districts |
 | Liveness | Do **not** assume live. Delhi's telemetry stops 2025-09-20 across the whole network |
-| Script | `neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py` - copy per city; caches raw rows to `.cache/` so re-runs skip the ~40 min download |
+| Script | `neer-vazhvu-api/scripts/build_cgwb_stations.py --city <id>` - one script; a new city is an entry in its `CITIES` table, never a copy. Delhi and Hyderabad cache raw rows to `.cache/` so re-runs skip the ~40 min download |
 | Proven in | Delhi (237 wells → station overlay, per-ward groundwater card, and the `risk_v2_dl` composite, 2026-07) |
 
 ## Scanned PCB analysis reports: the OCR recipe

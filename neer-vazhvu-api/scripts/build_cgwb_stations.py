@@ -2,8 +2,7 @@
 """
 CGWB groundwater observation wells from the India-WRIS Ground Water Level API.
 
-City-generic (the Delhi build has its own script with Delhi-specific sentinel
-and sign-convention handling; new cities use this one).
+One script for every city; per-city knowledge lives in CITIES as data.
 
     POST https://indiawris.gov.in/Dataset/Ground%20Water%20Level?<params>
 
@@ -27,19 +26,35 @@ than Delhi's 237-well network. But Howrah has been silent since Apr 2023 and
 Hooghly since Nov 2022 - those render as STALE, never interpolated over.
 Liveness is itself a reportable finding, so per-district recency is emitted.
 
+DELHI AND HYDERABAD keep the recipe they were first built with (their CITIES
+entries carry `years`): yearly windows cached to .cache/<city>-wris-gwl.jsonl
+(Delhi's is ~40 min to download; --refresh re-fetches), the sign convention
+taken from the median of each station's own readings with per-family
+agreement asserted, a depth envelope that keeps slightly negative readings
+(water above the sensor datum), known-bad sensors listed rather than averaged
+in, and their own output shape. Delhi carries three code families: numeric
+NHN codes and AAXI* read positive-down, CGWBDL* negative-down, with no
+disagreement. Delhi telemetry stops 2025-09-20; Hyderabad's is live.
+Telangana trap: WRIS keeps a partly PRE-2016 district set, so Ranga Reddy,
+Medak, Siddipet and Vikarabad return data while the post-2016 names return
+"No data found". Enumerate spellings empirically, never from the current list.
+
 Run:
   python3 neer-vazhvu-api/scripts/build_cgwb_stations.py --city kolkata
   python3 neer-vazhvu-api/scripts/build_cgwb_stations.py --city kolkata --kma
+  python3 neer-vazhvu-api/scripts/build_cgwb_stations.py --city delhi [--refresh]
 """
 
 import argparse
 import json
+import re
 import ssl
+import statistics as st
 import sys
 import time
 import urllib.parse
 import urllib.request
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
 
@@ -50,6 +65,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
 
 DATA_DIR = REPO_ROOT / "public" / "data"
+CACHE_DIR = Path(__file__).resolve().parent / ".cache"
 
 BASE = "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
 UA = "Mozilla/5.0 (neer-vazhvu civic water dashboard)"
@@ -83,6 +99,105 @@ CITIES = {
             "NADIA",
         ],
     },
+    "delhi": {
+        "state": "DELHI",
+        "districts": [
+            "CENTRAL",
+            "EAST",
+            "NEW DELHI",
+            "NORTH",
+            "NORTH EAST",
+            "NORTH WEST",
+            "SHAHDARA",
+            "SOUTH",
+            "SOUTH EAST",
+            "SOUTH WEST",
+            "WEST",
+        ],
+        "years": range(2015, 2026),
+        "suspect": {
+            "CGWBDL32": "emits perfectly symmetric +/-26.10 m readings (sensor sign fault)",
+            "CGWBDL46": "emits 660-890 m depths; Delhi's deepest genuine well is ~68 m",
+        },
+        # Ridge wells (Gadaipur, Sultanpur) genuinely reach ~68 m; nothing real sits past 100 m.
+        "depth_envelope": [-5.0, 100.0],
+        "doc": {
+            "_note": (
+                "CGWB observation wells across all 11 Delhi districts, from the India-WRIS "
+                "'Ground Water Level' dataset. This is the sub-district groundwater layer "
+                "Delhi previously lacked: the CGWB assessment choropleth resolves only to 11 "
+                "districts, these resolve to points. Later years are 6-hourly telemetric "
+                "(DWLR) readings; earlier years are periodic manual observations. Published "
+                "here as monthly means."
+            ),
+            "district": "Delhi NCT (all 11 districts)",
+            "aquifer": "Alluvial (Yamuna floodplain, Najafgarh depression) and quartzite ridge",
+            "cadence_note": (
+                "Telemetric digital water-level recorders and manual observation wells, "
+                "published here as monthly means. Telemetry stops 2025-09-20."
+            ),
+            "retrieved": "2026-07-25",
+            "period": "2015 to 2025",
+            "extra": {
+                "_feed_status": (
+                    "NOT a live feed. Telemetry across the Delhi network stops on 2025-09-20, the "
+                    "same month BBMB's public reservoir page froze (04.09.2025). Treated as a "
+                    "historical series, not an ingestion source."
+                ),
+            },
+        },
+    },
+    "hyderabad": {
+        "state": "Telangana",
+        # Legacy (pre-2016) spellings verified to return rows; the metro core plus the CUR ring.
+        "districts": ["Hyderabad", "Ranga Reddy", "Medak", "Siddipet", "Vikarabad"],
+        "years": range(2015, 2027),
+        # A suspect-sensor list is a per-network finding; none found here yet.
+        "suspect": {},
+        # Deccan hard rock: bores chase fractures past 70 m; 120 m still catches decimal slips.
+        "depth_envelope": [-5.0, 120.0],
+        "doc": {
+            "_note": (
+                "CGWB observation wells across the Hyderabad metro districts, from the "
+                "India-WRIS 'Ground Water Level' dataset. This is the sub-district "
+                "groundwater layer Hyderabad otherwise lacks: the CGWB assessment resolves "
+                "to mandal/district units, these resolve to points. Later years are 6-hourly "
+                "telemetric (DWLR) readings; earlier years are periodic manual observations. "
+                "Published here as monthly means."
+            ),
+            "district": "Hyderabad metro (Hyderabad, Ranga Reddy, Medak, Siddipet, Vikarabad)",
+            "aquifer": (
+                "Deccan hard rock - granite and gneiss, with weathered-zone and "
+                "fracture aquifers rather than a continuous alluvial water table"
+            ),
+            "cadence_note": (
+                "Telemetric digital water-level recorders and manual observation wells, "
+                "published here as monthly means."
+            ),
+            "retrieved": None,  # the build date
+            "period": "2015 to 2025",
+            "extra": {
+                "_feed_status": (
+                    "LIVE - telemetric readings run to 2026-06-04 as of the 2026-07-26 build, "
+                    "unlike Delhi's network which stopped 2025-09-20. Re-check liveness on each "
+                    "rebuild rather than assuming it."
+                ),
+                # Probed: statusCode 500 / "No data found" for any window.
+                "_districts_not_in_wris": [
+                    "Medchal-Malkajgiri",
+                    "Sangareddy",
+                    "Yadadri Bhuvanagiri",
+                ],
+                "_district_vocabulary_note": (
+                    "India-WRIS carries a partly PRE-2016 Telangana district set. Telangana "
+                    "reorganised from 10 districts to 33 in Oct 2016 and WRIS did not fully "
+                    "follow, so Medchal-Malkajgiri, Sangareddy and Yadadri Bhuvanagiri return "
+                    "zero rows for any window while the legacy names return data. Enumerate "
+                    "spellings empirically; do not derive them from the current district list."
+                ),
+            },
+        },
+    },
 }
 
 # Values that are placeholders rather than measurements.
@@ -100,14 +215,19 @@ MAX_PLAUSIBLE_DEPTH_M = 120.0
 # convention per station from the sign of its own readings, never globally.
 
 
-def fetch(state, district, page, size=9000, tries=4):
+def negative_down(vals) -> bool:
+    """A station is on the negative convention when its readings are overwhelmingly negative."""
+    return sum(1 for v in vals if v < 0) > 0.9 * len(vals)
+
+
+def fetch(state, district, page, size=9000, tries=4, start=START, end=END):
     q = urllib.parse.urlencode(
         {
             "stateName": state,
             "districtName": district,
             "agencyName": "CGWB",
-            "startdate": START,
-            "enddate": END,
+            "startdate": start,
+            "enddate": end,
             "download": "false",
             "page": page,
             "size": size,
@@ -176,12 +296,8 @@ def build(rows):
     by_station = defaultdict(list)
     sign_flipped = []
     for code, obs in raw.items():
-        vals = [v for _, v, _ in obs]
-        neg = sum(1 for v in vals if v < 0)
-        # A station is on the negative convention when its readings are
-        # overwhelmingly negative. Mixed-sign stations are left as-is and their
-        # out-of-range values fall away below.
-        flip = neg > 0.9 * len(vals)
+        # Mixed-sign stations are left as-is; their out-of-range values fall away below.
+        flip = negative_down([v for _, v, _ in obs])
         if flip:
             sign_flipped.append(code)
         for d, v, meta in obs:
@@ -289,15 +405,258 @@ def district_liveness(stations, today: str):
     return out
 
 
-def main() -> int:
+# ---- Delhi / Hyderabad recipe (CITIES entries with `years`) ----------------
+
+RAW_KEYS = (
+    "stationCode",
+    "stationName",
+    "district",
+    "tehsil",
+    "latitude",
+    "longitude",
+    "dataValue",
+    "dataTime",
+    "dataAcquisitionMode",
+    "stationStatus",
+)
+# Minimum readings before a station may vote on its family's sign convention (~a year of monthly reads).
+MIN_READINGS_FOR_FAMILY_VOTE = 12
+
+
+def load_yearly_raw(city, cfg, refresh: bool) -> list[dict]:
+    """Yearly windows per district, paged, cached as JSONL so re-runs skip the download."""
+    cache = CACHE_DIR / f"{city}-wris-gwl.jsonl"
+    if cache.exists() and not refresh:
+        print(f"using cached raw rows: {cache.relative_to(REPO_ROOT)}")
+        return [
+            json.loads(line) for line in cache.read_text().splitlines() if line.strip()
+        ]
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    rows = []
+    with cache.open("w") as fh:
+        for year in cfg["years"]:
+            n = 0
+            for d in cfg["districts"]:
+                for p in range(20):
+                    got = fetch(
+                        cfg["state"], d, p, start=f"{year}-01-01", end=f"{year}-12-31"
+                    )
+                    for r in got:
+                        if r.get("dataValue") is None:
+                            continue
+                        rec = {k: r.get(k) for k in RAW_KEYS}
+                        rows.append(rec)
+                        fh.write(json.dumps(rec) + "\n")
+                    n += len(got)
+                    if len(got) < 9000:
+                        break
+                time.sleep(0.4)
+            print(f"  {year}: {n:7d} rows", flush=True)
+    return rows
+
+
+def build_by_median(rows, suspect, envelope):
+    """Wells with the sign convention from each station's median reading; returns (wells, dropped)."""
+    meta, by_station = {}, defaultdict(list)
+    for r in rows:
+        meta.setdefault(r["stationCode"], r)
+        by_station[r["stationCode"]].append(r)
+
+    # Known-faulty sensors get no vote: CGWBDL32's sign-flipped duplicates would read positive and trip the assert.
+    convention, families, low_n = {}, defaultdict(Counter), []
+    for code, rs in by_station.items():
+        if code in suspect:
+            continue
+        vals = [r["dataValue"] for r in rs]
+        median_raw = st.median(vals)
+        convention[code] = "negative-down" if median_raw < 0 else "positive-down"
+        # Family = leading letters of the code (CGWBDL, AAXI, CGWHYD), else the numeric NHN codes.
+        m = re.match(r"^([A-Za-z]+)", code)
+        fam = m.group(1).upper() if m else "numeric"
+        # A handful of readings cannot establish what a family means (Telangana: one 2-reading well).
+        if len(vals) < MIN_READINGS_FOR_FAMILY_VOTE:
+            low_n.append((code, fam, len(vals), median_raw))
+            continue
+        families[fam][convention[code]] += 1
+
+    print(
+        f"sign convention by station-code family "
+        f"(suspect excluded; {len(low_n)} stations with "
+        f"<{MIN_READINGS_FOR_FAMILY_VOTE} readings excluded from the vote):"
+    )
+    for fam, counts in sorted(families.items()):
+        print(f"  {fam:8s} {dict(counts)}")
+        # Guard, not decoration: it caught Delhi's sign-faulty sensor and a mis-generalised classifier.
+        assert len(counts) == 1, (
+            f"family {fam} disagrees on sign convention: {dict(counts)}"
+        )
+    disagreeing = [
+        x
+        for x in low_n
+        if families.get(x[1])
+        and ("negative-down" if x[3] < 0 else "positive-down") not in families[x[1]]
+    ]
+    if disagreeing:
+        print(
+            f"  note: {len(disagreeing)} low-reading station(s) disagree with their "
+            "family and keep their own derived convention:"
+        )
+        for code, fam, n, med in disagreeing[:10]:
+            print(f"    {code} ({fam}, n={n}, median={med:.2f})")
+
+    lo, hi = envelope
+    monthly = defaultdict(list)
+    dropped = Counter()
+    for code, rs in by_station.items():
+        if code in suspect:
+            dropped["suspect_station"] += len(rs)
+            continue
+        flip = convention[code] == "negative-down"
+        for r in rs:
+            if abs(r["dataValue"]) in SENTINELS:
+                dropped["sentinel_value"] += 1
+                continue
+            depth = -r["dataValue"] if flip else r["dataValue"]
+            if not (lo <= depth <= hi):
+                dropped["out_of_envelope"] += 1
+                continue
+            t = r["dataTime"]
+            monthly[(code, int(t[:4]), int(t[5:7]))].append(depth)
+
+    wells = []
+    for code, m in sorted(meta.items()):
+        readings = [
+            {
+                "year": y,
+                "month": mo,
+                "depth_m_bgl": round(st.mean(v), 2),
+                "n_obs": len(v),
+            }
+            for (c, y, mo), v in sorted(monthly.items())
+            if c == code
+        ]
+        w = {
+            "name": m["stationName"],
+            "station_code": code,
+            # CgwbStation reads `block`; the assessment unit here is the district (unit_label).
+            "block": m.get("district"),
+            "district": m.get("district"),
+            "tehsil": m.get("tehsil"),
+            "lat": m["latitude"],
+            "lng": m["longitude"],
+            "acquisition": m.get("dataAcquisitionMode"),
+            "status": m.get("stationStatus"),
+            "sign_convention": convention.get(code),
+            "readings": readings,
+        }
+        if readings:
+            ds = [r["depth_m_bgl"] for r in readings]
+            w.update(
+                depth_min_m_bgl=min(ds),
+                depth_max_m_bgl=max(ds),
+                depth_latest_m_bgl=readings[-1]["depth_m_bgl"],
+                latest_reading=f"{readings[-1]['year']}-{readings[-1]['month']:02d}",
+            )
+        if code in suspect:
+            w["_data_status"] = "suspect"
+            w["_data_status_reason"] = suspect[code]
+        wells.append(w)
+    return wells, dropped
+
+
+def main_yearly(city, cfg, refresh: bool) -> int:
+    rows = load_yearly_raw(city, cfg, refresh)
+    print(f"raw readings: {len(rows):,}")
+    wells, dropped = build_by_median(rows, cfg["suspect"], cfg["depth_envelope"])
+    withr = [w for w in wells if w.get("readings")]
+    depths = [r["depth_m_bgl"] for w in withr for r in w["readings"]]
+    prose = cfg["doc"]
+    doc = {
+        "_note": prose["_note"],
+        "district": prose["district"],
+        "well_type": "Observation well / piezometer (manual + telemetric DWLR)",
+        "aquifer": prose["aquifer"],
+        "depth_unit": "m_bgl",
+        "source_label": "Central Ground Water Board, via India-WRIS Ground Water Level dataset",
+        "source_url": "https://indiawris.gov.in/wris/",
+        # CgwbStationPanel: not a Year Book transcription, so provenance + cadence override the TN defaults.
+        "series_label": "CGWB via India-WRIS",
+        "unit_label": "district",
+        "reading_kind": "monthly means",
+        "cadence_note": prose["cadence_note"],
+        "retrieved": prose["retrieved"] or date.today().isoformat(),
+        "coverage": {
+            "period": prose["period"],
+            "cadence_raw": "6-hourly (telemetric) / periodic (manual)",
+            "cadence_published_here": "monthly mean",
+        },
+        **prose["extra"],
+        "_sign_convention": (
+            "WRIS returns depth-to-water with a programme-dependent sign. Delhi has three "
+            "station-code families: numeric NHN codes and AAXI* report positive-down, "
+            "CGWBDL* reports negative-down. The convention is derived per station from the "
+            "median of its own readings (family agreement asserted at build time), never by "
+            "abs() - which would erase real water-above-datum readings in floodplain wells "
+            "and would launder sign-faulty sensors into plausible data."
+        ),
+        "_excluded": {
+            "suspect_stations": cfg["suspect"],
+            "depth_envelope_m_bgl": cfg["depth_envelope"],
+            "readings_dropped": dict(dropped),
+        },
+        "_api_contract": {
+            "method": "POST",
+            "url": BASE,
+            "mandatory_params": [
+                "stateName",
+                "districtName",
+                "agencyName",
+                "startdate",
+                "enddate",
+                "download",
+                "page",
+                "size",
+            ],
+            "gotcha": "blank districtName or agencyName returns zero rows, not all rows",
+            "pagination": "page=0,1,2... at size=9000 until a short page",
+        },
+        "summary": {
+            "stations": len(wells),
+            "stations_with_readings": len(withr),
+            "monthly_readings": len(depths),
+            "depth_median_m_bgl": round(st.median(depths), 2) if depths else None,
+            "depth_min_m_bgl": round(min(depths), 2) if depths else None,
+            "depth_max_m_bgl": round(max(depths), 2) if depths else None,
+        },
+        "wells": wells,
+    }
+    path = DATA_DIR / f"{city}-cgwb-stations.json"
+    write_artifact(path, doc)
+    s = doc["summary"]
+    print(f"\nwrote {path.relative_to(REPO_ROOT)}")
+    print(f"  stations {s['stations']} ({s['stations_with_readings']} with readings)")
+    print(f"  monthly readings {s['monthly_readings']:,}")
+    print(
+        f"  depth median {s['depth_median_m_bgl']} m, range {s['depth_min_m_bgl']}..{s['depth_max_m_bgl']} m"
+    )
+    print(f"  dropped {dict(dropped)}")
+    return 0
+
+
+def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--city", default="kolkata", choices=sorted(CITIES))
     ap.add_argument(
         "--kma", action="store_true", help="all KMA districts, not just the core"
     )
-    args = ap.parse_args()
+    ap.add_argument(
+        "--refresh", action="store_true", help="re-download a cached (yearly) city"
+    )
+    args = ap.parse_args(argv)
 
     cfg = CITIES[args.city]
+    if "years" in cfg:
+        return main_yearly(args.city, cfg, args.refresh)
     districts = cfg["kma_districts"] if args.kma else cfg["core_districts"]
     print(
         f"India-WRIS CGWB: {cfg['state']} / {len(districts)} districts, {START}..{END}",

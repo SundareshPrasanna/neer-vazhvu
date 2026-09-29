@@ -57,6 +57,13 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from nvdm_write import write_artifact  # noqa: E402
 
+# Sentinels, depth ceiling and sign rule are the shared CGWB builder's, not a copy.
+from build_cgwb_stations import (  # noqa: E402
+    MAX_PLAUSIBLE_DEPTH_M,
+    SENTINELS as GW_SENTINELS,
+    negative_down,
+)
+
 CITY = "surat"
 TODAY = date.today().isoformat()
 
@@ -155,13 +162,6 @@ def write(path: Path, payload: dict, compact: bool = False) -> None:
 # ---------------------------------------------------------------- groundwater
 
 
-# Sentinels and the plausibility ceiling, matching
-# neer-vazhvu-api/scripts/build_cgwb_stations.py. Values that are placeholders
-# rather than measurements, and a depth beyond which a reading is a data error.
-GW_SENTINELS = {99.0, 999.0, 9999.0, -999.0}
-MAX_PLAUSIBLE_DEPTH_M = 120.0
-
-
 def build_groundwater(drop: Path, root: Path) -> int:
     """India-WRIS Gujarat exports -> Surat point stations, in the CANONICAL shape.
 
@@ -255,7 +255,7 @@ def build_groundwater(drop: Path, root: Path) -> int:
     wells = []
     for name, obs in raw.items():
         vals = [v for _, v in obs]
-        flip = sum(1 for v in vals if v < 0) > 0.9 * len(vals)
+        flip = negative_down(vals)
         if flip:
             flipped.append(name)
         monthly: dict[tuple[int, int], list[float]] = defaultdict(list)
