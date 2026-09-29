@@ -161,6 +161,42 @@ OPTIONAL = {
     "WQ_REPORTS": None, "WQ_REPORT_STATIONS": {},
 }
 
+# Envelopes (scripts/nvdm_envelope_district_basin.py): what every Tamil Nadu district basin cites.
+TN_ENVELOPE_SOURCES = {
+    "ingres": ("ingres-gw-assessment-tn", "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk", "CGWB with IIT Hyderabad (IN-GRES)",
+               {"url": "https://ingres.iith.ac.in/", "as_of": "2025"}),  # assessment year 2024-2025; as_of takes a date, the title carries the span
+    "nwdp-gw": ("nwic-nwdp-groundwater-level", "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
+                "National Water Informatics Centre (NWIC), Ministry of Jal Shakti", {"url": f"{NWDP}/"}),
+    "cwc-canals": ("nwic-nwdp-cwc-canal-network", "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+                   "Central Water Commission, via the National Water Informatics Centre (NWIC)", {"url": f"{NWDP}/", "as_of": "2025"}),
+    "tnpcb-rt": ("tnpcb-realtime-wq-dashboard", "TNPCB real-time water quality monitoring dashboard: monthly means of sensor readings", "Tamil Nadu Pollution Control Board", {"url": TNPCB_RT}),
+}
+TN_ENVELOPE_READINGS = {"cwc-": ["cwc-river"], "reservoir-": ["cwc-river"], "": ["tnpcb-rt"]}  # the rest are TNPCB's sensor stations
+
+
+def tn_envelope(basin_id: str, atlas_slug: str, frame_note: str) -> tuple[dict, dict, str]:
+    """ENVELOPE_ARTIFACTS, ENVELOPE_INPUTS and ENVELOPE_NOTE for the families every TN district serves; configs adjust them."""
+    sheds = f"public/data/basins/{basin_id}/sub-hydrosheds.geojson"  # the shedId join
+    # The panchayat outlines carry each panchayat's tap-connection headline and Census 2011 totals from the district Atlas.
+    atlas = sorted(str(p.relative_to(ROOT)) for fam in ("briefs", "census-2011") for p in (ROOT / "public/data/atlas/tn" / atlas_slug / fam).glob("*.json"))
+    families = {
+        "boundary": (["tngis"], []), "sub-hydrosheds": (["tngis"], []), "rivers": (["osm", "tngis"], []),
+        "canals": (["cwc-canals", "tngis"], [sheds]), "command-areas": (["cwc-canals", "tngis"], [sheds]),
+        "industrial-estates": (["sipcot", "tngis"], [sheds]),
+        "groundwater-taluks": (["ingres", "tngis"], [f"public/data/atlas/tn/{atlas_slug}/groundwater-taluks.json", sheds]),
+        "groundwater-wells": (["nwdp-gw", "tngis"], [sheds]),
+        "gauging-stations": (["cwc-river", "osm", "tngis"], [f"public/data/basins/{basin_id}/rivers.geojson", sheds]),
+        "realtime-stations": (["tnpcb-rt", "tngis"], [sheds]),
+        "admin-gp": (["tngis"], [sheds, *atlas]),
+        **{f: (["tngis"], [sheds]) for f in ("reservoirs", "tanks", "industries", "treatment-plants", "quarries", "admin-taluk", "admin-block",
+                                              "waterbodies-major", "waterbodies-minor", "watersheds", "sub-watersheds", "mini-watersheds", "micro-watersheds")},
+        "inventory": (["tngis", "osm", "sipcot", "ingres", "nwdp-gw", "cwc-canals", "cwc-river", "tnpcb-rt"], []),
+    }
+    sectors = f"pipeline-inputs/basins/{basin_id}/tnpcb-type-sectors.json"  # named in the note: internal_inputs takes catalogued artifacts only
+    note = (f"{frame_note} The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; "
+            f"sector comes from the reviewed TNPCB type-code lookup {sectors}.")
+    return {f: list(src) for f, (src, _) in families.items()}, {f: ins for f, (_, ins) in families.items() if ins}, note
+
 
 def rnd(geom: dict, nd: int = 5) -> dict:
     def r(c):

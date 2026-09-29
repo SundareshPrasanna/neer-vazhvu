@@ -41,7 +41,8 @@ only. The Thenpennai's NWMP stations are not yet placed.
 
 Writes public/data/basins/krishnagiri-rivers/<family>.geojson and inventory.json
 through nvdm_write.write_artifact so envelopes survive a re-run. Run
-scripts/nvdm_envelope_krishnagiri_rivers.py after the first build to stamp envelopes.
+scripts/nvdm_envelope_district_basin.py scripts/build_krishnagiri_rivers_basin.py
+after the first build to stamp envelopes.
 
 Usage:
   python3 scripts/build_krishnagiri_rivers_basin.py          full build (every family)
@@ -54,7 +55,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from lib.tn_district_basin import NWDP, DistrictBasinBuild  # noqa: E402
+from lib.tn_district_basin import NWDP, TN_ENVELOPE_READINGS, TN_ENVELOPE_SOURCES, TNGIS, TNSMART, DistrictBasinBuild, tn_envelope  # noqa: E402
 
 BASIN_ID = "krishnagiri-rivers"
 GENERATED_FROM = Path(__file__).name
@@ -123,6 +124,26 @@ REPO_FAMILIES = ()
 # Build order: the inventory lists families in this order.
 STEPS = ("waterways", "reservoirs", "tanks", "industries", "estates", "quarries", "admin", "panchayats", "waterbodies",
          "watersheds", "groundwater-wells", "canals", "realtime-stations", "gauging-stations")
+
+# Envelopes (scripts/nvdm_envelope_district_basin.py): the shared TN families, plus TN-SMART on the reservoirs.
+ENVELOPE_SOURCES = {
+    **TN_ENVELOPE_SOURCES,
+    "tngis": ("tngis-open-geoserver", "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies and all-tanks registers, mine leases, industry register matched to land parcels",
+              "Tamil Nadu e-Governance Agency (TNGIS)", {"url": TNGIS}),
+    "sipcot": ("sipcot-gis-geoserver", "SIPCOT GIS (WFS): industrial complex outlines, Hosur phases I to IV, Shoolagiri and Bargur parks",
+               "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)", {"url": "https://sipcotgis.tn.gov.in/"}),
+    "osm": ("osm-overpass", "OpenStreetMap (Overpass API extract: named river courses)", "OpenStreetMap contributors", {}),
+    "cwc-river": ("nwic-nwdp-cwc-river-data", "CWC river discharge (manual daily) and surface water quality for Tamil Nadu, National Water Data Portal",
+                  "Central Water Commission, via the National Water Informatics Centre (NWIC)", {"url": f"{NWDP}/"}),
+    "tnsmart": ("tnsmart-rimes-reservoirs", "Tamil Nadu reservoir dashboard (TN-SMART): the day's storage, depth and percentage of capacity per reservoir",
+                "RIMES, relaying Tamil Nadu's daily reservoir storage", {"url": TNSMART}),
+}
+ENVELOPE_ARTIFACTS, ENVELOPE_INPUTS, ENVELOPE_NOTE = tn_envelope(BASIN_ID, ATLAS_SLUG, (
+    "Krishnagiri district's rivers, groundwater and industry (scope krishnagiri-rivers; the district's own scope id is tn-krishnagiri). "
+    "The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId): the Thenpennai's to the east, the Cauvery's Chinnar and Dodda Halla to the south-west."))
+ENVELOPE_ARTIFACTS["reservoirs"] = ["tngis", "tnsmart"]
+ENVELOPE_ARTIFACTS["inventory"].append("tnsmart")
+ENVELOPE_READINGS = TN_ENVELOPE_READINGS
 
 
 if __name__ == "__main__":
