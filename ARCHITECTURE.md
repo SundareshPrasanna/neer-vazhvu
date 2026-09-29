@@ -121,7 +121,7 @@ Every page that the user sees is keyed on a `cityId`. Chennai's pages live at th
 - **`primaryAuthority`** — utility name (CMWSSB / MMC / TWAD / BWSSB / BMC / DJB) used in MissingDataCard reasons and About-page citations.
 - **`availableLanguages`** — which UI languages render the language toggle for this city. Chennai: `['en', 'ta']`. Madurai: `['en', 'ta']`. Bengaluru: `['en', 'kn']`. Mumbai: `['en']` with `upcomingLanguages: ['mr']` - the switcher renders a greyed "coming soon" chip until the Marathi pass lands. Delhi follows the same posture with `upcomingLanguages: ['hi']`, Kolkata with `upcomingLanguages: ['bn']`, and Surat with `upcomingLanguages: ['gu']`.
 - **`placeKind` + `corporations[]`** — `'region'` models a metropolitan region rather than one corporation (Mumbai: the 9-corporation MMR). Region places render the `RegionalWaterSystem` dashboard section, and `dashboardScopes` supplies the scope badges ("Greater Mumbai · BMC's 7 lakes" vs "Mumbai Metropolitan Region · 9 corporations") so two geographies never blur on one dashboard.
-- **Capability flags** — `hasCommitments`, `hasAllocationLedger`, `hasShoreline`, `hasCascadeOverlay`, etc. gate whole surfaces; `FEATURE_AVAILABILITY` in `src/lib/cities/routing.ts` is the single source of truth for nav, sitemap AND direct-URL 404s (e.g. Mumbai ships without my-ward until the ward build lands).
+- **`routes`** - the /[cityId] routes a city ships, declared on its config with the reason for each. Nav, sitemap, direct-URL 404s and the exemptions register all derive from it (`FEATURE_AVAILABILITY` in `src/lib/cities/routing.ts` is built from the registry). Capability flags such as `hasCascadeOverlay` gate views inside a route.
 - **`sourceNameAliases`** — case-insensitive maps so the news-search query and reservoir-detail-dialog match a source under any spelling (e.g. "vaigai" / "vaigai dam" / "வைகை" → `vaigai`).
 
 Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `bangalore-iisc-stress-wards-2025.json`, `imd-rainfall-monthly-bangalore.json`). Chennai keeps legacy unsuffixed paths for back-compat.
@@ -140,7 +140,7 @@ nothing, an untranslated UI language, a water source whose authority publishes n
 The register is derived rather than hand-listed, so it cannot drift: routes-off come from diffing
 each city against the union of every route any city ships, and `npm run data:check` fails if the
 committed copy is stale **or if any omission has no reason recorded**. That second gate is the point
-- a page quietly dropped from `FEATURE_AVAILABILITY` now fails CI until someone writes down why.
+- a page quietly dropped from a city's `routes` now fails CI until someone writes down why.
 
 ### Parity verdicts, and the defect class behind them
 
