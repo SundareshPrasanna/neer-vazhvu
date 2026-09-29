@@ -201,12 +201,15 @@ export function useWardProfile(
     // from "loaded but no match." Intentional sync setState here.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoaded(false);
-    loadProfiles(cityId).then((profiles) => {
-      const p = profiles.find((w) => w.ward_number === wardNumber) ?? null;
-      setProfile(p);
-      setLoaded(true);
-    });
-    loadRiverQuality(cityId).then(setRiverData);
+    loadProfiles(cityId)
+      .then((profiles) => profiles.find((w) => w.ward_number === wardNumber) ?? null)
+      // A city with ward geometry but no ward profiles (Pune, Kolkata) has no ward to describe.
+      .catch(() => null)
+      .then((p) => {
+        setProfile(p);
+        setLoaded(true);
+      });
+    loadRiverQuality(cityId).then(setRiverData).catch(() => setRiverData(null));
   }, [wardNumber, cityId]);
 
   const getRiverLabel = useCallback(
