@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 90 |
-| Routes a city deliberately does not ship | 46 |
+| Routes a city deliberately does not ship | 40 |
 | Absences the product states on the page | 26 |
-| **Total** | **162** |
+| **Total** | **156** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -131,12 +131,10 @@ Derived by diffing each city against the union of every route any city ships, so
 | bangalore | climate-risk | Not built for this city. |
 | bangalore | shoreline | Landlocked. |
 | chennai | tanker | Not built for this city. |
-| delhi | cascades | Not a cascade geography. |
 | delhi | climate-risk | Not built for this city. |
 | delhi | shoreline | Landlocked. |
 | delhi | tanker | Not built for this city. |
 | gurugram | allocations | No published entitlement instrument has been located. Gurugram's canal share of Yamuna water is governed by inter-state arrangements that GMDA does not publish, and the ledger's primitive is entitled-vs-received against a named instrument - without the paper there is no row to write. |
-| gurugram | cascades | Not a cascade geography. Aravalli johads and village ponds are a real water heritage, but no chained-surplus system was engineered here the way it was in the Tamil kanmoi districts or the Bengaluru kere chains, so the cascade story must not be told about this city. Catchment delineation itself is buildable - GMDA publishes a 10-polygon watershed layer and a natural-flow-direction layer - and is a separate question from the cascade narrative. |
 | gurugram | climate-risk | Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. Genuinely buildable and simply not built, so this is backlog rather than refusal. |
 | gurugram | commitments | Buildable and not built. The dated commitments exist and are citable (the NGT's February 2026 orders on illegal extraction and rainwater harvesting, GMDA's Chandu Budhera fifth-unit target), but each needs primary-source verification before it goes in the register, and none has had it yet. |
 | gurugram | facts | Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do. |
@@ -148,7 +146,6 @@ Derived by diffing each city against the union of every route any city ships, so
 | hyderabad | climate-risk | Not built for this city. |
 | hyderabad | my-ward | The 300-ward delimitation gazetted 25 Dec 2025 has no public geometry, and with the corporations under a Special Officer there are no sitting councillors to attach to a ward either. Returns with the ward build, following the Mumbai precedent. |
 | hyderabad | shoreline | Landlocked. |
-| kolkata | cascades | Not a cascade geography. Tank cascades are a peninsular-India form; the Gangetic delta drains rather than cascading. |
 | kolkata | climate-risk | Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. It is genuinely buildable and simply not built yet, so this is a backlog item rather than a refusal. |
 | kolkata | my-ward | Ward-keyed surfaces are off until KMC wards 142-144 exist as geometry. 141 of 144 are mapped; the missing three are 18.93 km2, 9.2% of the city. KMC publishes no ward geometry through either its own portal or the newer DIGIT one, and OSM has no Kolkata ward relations at any admin_level, so this closes when someone digitises the 2012 delimitation, not by a better endpoint. |
 | kolkata | shoreline | Not a coastal city. Kolkata is a tidal river port roughly 130 km upstream of the Bay of Bengal; the riverbank/estuary variant of this surface is a different product and is unbuilt. |
@@ -156,19 +153,16 @@ Derived by diffing each city against the union of every route any city ships, so
 | madurai | climate-risk | Not built for this city. |
 | madurai | shoreline | Landlocked. |
 | madurai | tanker | Not built for this city. |
-| mumbai | cascades | Not a cascade geography. |
 | mumbai | climate-risk | Not built for this city. |
 | mumbai | my-ward | UNRECORDED: Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route. |
 | mumbai | tanker | Not built for this city. |
 | pune | allocations | The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger. |
-| pune | cascades | The cascade pipeline has not been run for Pune district. Backlog, not refusal. |
 | pune | climate-risk | Not built for this city. |
 | pune | commitments | Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register. |
 | pune | lake-restoration | No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere. |
 | pune | my-ward | The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker. |
 | pune | shoreline | Landlocked. |
 | surat | allocations | Surat has no published drinking-water entitlement to render. The research pass found infrastructure and treatment capacities but no sanctioned allocation instrument from Ukai or the Tapi - the ledger's whole subject is entitled-versus-received, and the entitled half does not exist in public. |
-| surat | cascades | Not a cascade geography. Tank cascades are chained systems where each tank's surplus feeds the next; Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. Rendering a cascade here would assert an inheritance the city does not have. |
 | surat | climate-risk | Buildable but not built. Chennai's sub-basin risk comes from HydroBASINS level 12, a global product that covers the lower Tapi as well, so this is a backlog item rather than a refusal. |
 | surat | lake-restoration | SMC restores lakes and says so - its reuse programme routes 2 MLD of treated water to lake rejuvenation - but publishes no restoration register: no project list, no dates, no budgets, no per-body status. A ranking surface needs a denominator the corporation has not published. |
 | surat | my-ward | Ward surfaces are off because "ward" in Surat means three incompatible things and none of them has usable geometry. There are 30 electoral wards (120 corporators), about 134 census/administrative wards in SMC's own 1961-2011 area table, and a third scheme inside SMC's GIS ward_boundary layer. That GIS layer is the authoritative one and it serves WMS only - WFS is disabled, so its geometry cannot be downloaded, only rendered. The analytical unit is instead the zone, which does carry live data, an official 2024 population and the city's own supply breakdown. This closes when SMC enables WFS or publishes ward boundaries, not by a better join. |
