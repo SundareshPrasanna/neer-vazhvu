@@ -93,6 +93,35 @@ export const KOLKATA: PlaceConfig = {
     { label: "WBPCB EMIS", href: "https://emis.wbpcb.gov.in/" },
     { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
   ],
+  // Kolkata V1 target set (preview-gated until cutover). Drainage-and-sewage
+  // first, which is what the city's data actually supports.
+  // No `cascades` (not a cascade geography), no `shoreline` (the riverbank /
+  // estuary variant is a different surface and is unbuilt), no `tanker`
+  // (KMC runs a municipal tanker service with published per-trip rates but
+  // publishes no volumes). `my-ward` is OFF until wards 142-144 are recovered
+  // and a ward-name/borough join exists - the KML carries bare numbers only.
+  // `allocations`: Both ship with verified, primary-sourced content: -
+  // allocations-kolkata.json: the two bulk sales KMC publishes (90 MLD to
+  // Bidhannagar, 22.7 MLD to Budge Budge). Unusual for this platform in that
+  // Kolkata has no entitlement document for its OWN water - run-of-river
+  // abstraction is not a quota with a receipt - so the ledger is entirely
+  // about what the city sells onward, plus five named gaps. -
+  // commitments-kolkata.json: the two KEIIP plants KMC's own Environment Plan
+  // recorded at 17% and 14% complete against a March 2022 deadline, in a
+  // document filed December 2021.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'kmc_wsd',
     name: 'Kolkata Municipal Corporation, Water Supply Department',
@@ -164,17 +193,6 @@ export const KOLKATA: PlaceConfig = {
   availableLanguages: ['en'],
   upcomingLanguages: ['bn'],
   heroMode: 'drainage-capacity',
-  // Both ship with verified, primary-sourced content:
-  // - allocations-kolkata.json: the two bulk sales KMC publishes (90 MLD to
-  //   Bidhannagar, 22.7 MLD to Budge Budge). Unusual for this platform in that
-  //   Kolkata has no entitlement document for its OWN water - run-of-river
-  //   abstraction is not a quota with a receipt - so the ledger is entirely
-  //   about what the city sells onward, plus five named gaps.
-  // - commitments-kolkata.json: the two KEIIP plants KMC's own Environment
-  //   Plan recorded at 17% and 14% complete against a March 2022 deadline, in
-  //   a document filed December 2021.
-  hasAllocationLedger: true,
-  hasCommitments: true,
   dashboard: {
     // The EKW sewage balance sits directly under the hero. For a city whose
     // emergency is sewage and drainage rather than scarcity, "where does it

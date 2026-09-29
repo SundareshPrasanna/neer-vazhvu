@@ -105,7 +105,7 @@ function allRoutes(): string[] {
 
 /**
  * Why each city omits each route. Derived omissions are only honest if the
- * reason is recorded; a route missing from FEATURE_AVAILABILITY with no entry
+ * reason is recorded; a route missing from a city's routes with no entry
  * here is reported as UNEXPLAINED and fails the register check, which is the
  * point - it is how a silently dropped page gets caught.
  *
@@ -274,13 +274,9 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "madurai:shoreline": "Landlocked.",
   "madurai:climate-risk": "Not built for this city.",
   "madurai:tanker": "Not built for this city.",
-  "madurai:commitments": "Not built for this city.",
-  "madurai:allocations": "Not built for this city.",
 
   // Chennai - the origin city ships nearly everything.
   "chennai:tanker": "Not built for this city.",
-  "chennai:commitments": "Not built for this city.",
-  "chennai:allocations": "Not built for this city.",
 };
 
 /** Assemble the whole register. */
@@ -303,8 +299,7 @@ export function collectExemptions(): Exemption[] {
 
   const routes = allRoutes();
   for (const place of listAllPlaces()) {
-    const has = FEATURE_AVAILABILITY[place.cityId];
-    if (!has) continue;
+    const has = new Set<string>(place.routes);
     for (const route of routes) {
       if (has.has(route)) continue;
       out.push({

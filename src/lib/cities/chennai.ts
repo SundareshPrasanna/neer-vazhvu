@@ -18,6 +18,31 @@ export const CHENNAI: PlaceConfig = {
     { label: "NASA POWER", href: "https://power.larc.nasa.gov/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  // `shoreline`: Coastal shoreline-change surface (Mahabalipuram to Pulicat),
+  // 1990-2026.
+  // `allocations`: Allocation Ledger: the Krishna/Telugu Ganga chain (1976
+  // tripartite 15 TMC -> 1983 accord 12 TMC net at the border -> ~2-3 TMC
+  // delivered) + Veeranam and the desal contracts, compiled in
+  // allocations-chennai.json.
+  // `commitments`: Commitments register: desal trio, metering policy, ring
+  // main, NGT sewage commitments, Cooum/Adyar/Buckingham restoration -
+  // commitments-chennai.json.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "climate-risk",
+    "shoreline",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'cmwssb',
     name: 'Chennai Metropolitan Water Supply and Sewerage Board',
@@ -145,13 +170,4 @@ export const CHENNAI: PlaceConfig = {
   // Day Zero anchor: "On this day in 2019" is the whole point in Chennai.
   heroComparisonYear: 2019,
   historyUnit: 'Mcft',
-  // Coastal shoreline-change surface (Mahabalipuram to Pulicat), 1990-2026.
-  hasShoreline: true,
-  // Allocation Ledger: the Krishna/Telugu Ganga chain (1976 tripartite 15 TMC ->
-  // 1983 accord 12 TMC net at the border -> ~2-3 TMC delivered) + Veeranam and
-  // the desal contracts, compiled in allocations-chennai.json.
-  hasAllocationLedger: true,
-  // Commitments register: desal trio, metering policy, ring main, NGT sewage
-  // commitments, Cooum/Adyar/Buckingham restoration - commitments-chennai.json.
-  hasCommitments: true,
 };

@@ -71,6 +71,41 @@ export const HYDERABAD: PlaceConfig = {
     { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  // Hyderabad V1 target set (preview-gated until cutover). No `shoreline`
+  // (landlocked). No `my-ward` at launch: the 300-ward delimitation gazetted
+  // 25 Dec 2025 has no public geometry yet, and with the corporations under a
+  // Special Officer there are no sitting councillors to attach to a ward
+  // either - it returns with the ward build, the Mumbai precedent.
+  // `tanker` IS in the set and is a signature surface rather than a
+  // nice-to-have: HMWSSB runs the tanker fleet itself and publishes monthly
+  // bookings AND deliveries per division/section. Note the fulfilment rate we
+  // expected to headline turned out flat at 99.95%, so that page leads on
+  // demand volume and seasonality instead.
+  // `allocations`: Both landed 2026-07-26 as seeds and deepen through the
+  // build. - allocations-hyderabad.json: the Krishna (Nagarjuna Sagar ->
+  // Akkampally), Godavari (Yellampally) and Manjira chains plus the Musi
+  // twins. Hyderabad INVERTS the usual shape of this primitive: receipts are
+  // MEASURED daily from the HMWSSB feed, and it is the entitlement column that
+  // is blank, because the governing GOs have not been obtained. -
+  // commitments-hyderabad.json: 7 entries. Most carry status 'unverifiable'
+  // rather than a hedge - Hyderabad's water promises are typically announced
+  // without a dated deliverable, so there is nothing to be overdue against.
+  // The FTL notification programme is the exception and is continuously
+  // auditable, because HMDA publishes the register that records it.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "tanker",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'hmwssb',
     name: 'Hyderabad Metropolitan Water Supply and Sewerage Board',
@@ -108,19 +143,6 @@ export const HYDERABAD: PlaceConfig = {
   // scenarios are all computable from measured data - Mumbai had to collapse
   // them to one line because Pravah publishes storage only.
   heroMode: 'days-left',
-  // Both landed 2026-07-26 as seeds and deepen through the build.
-  // - allocations-hyderabad.json: the Krishna (Nagarjuna Sagar -> Akkampally),
-  //   Godavari (Yellampally) and Manjira chains plus the Musi twins. Hyderabad
-  //   INVERTS the usual shape of this primitive: receipts are MEASURED daily
-  //   from the HMWSSB feed, and it is the entitlement column that is blank,
-  //   because the governing GOs have not been obtained.
-  // - commitments-hyderabad.json: 7 entries. Most carry status 'unverifiable'
-  //   rather than a hedge - Hyderabad's water promises are typically announced
-  //   without a dated deliverable, so there is nothing to be overdue against.
-  //   The FTL notification programme is the exception and is continuously
-  //   auditable, because HMDA publishes the register that records it.
-  hasAllocationLedger: true,
-  hasCommitments: true,
   // TGPCB publishes every STP by name with capacity in MLD and monthly
   // effluent quality (build_hyderabad_stps.py). This is what corrected the
   // earlier, wrong claim that Hyderabad's treatment capacity is unpublished.

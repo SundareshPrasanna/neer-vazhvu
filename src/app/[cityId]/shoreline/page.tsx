@@ -10,7 +10,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { cityId } = await params;
   const config = tryGetPlaceConfig(cityId);
-  if (!config || !config.hasShoreline) return { title: "Shoreline Change | Neer Vazhvu" };
+  if (!config || !config.routes.includes("shoreline")) return { title: "Shoreline Change | Neer Vazhvu" };
 
   const title = `${config.displayName} Shoreline Change | Neer Vazhvu`;
   // The corroborating-study sentence + acceleration stat are Chennai findings;
@@ -44,6 +44,6 @@ export default async function CoastalPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   // Coastal feature is gated by capability flag: inland cities have no
   // shoreline surface.
-  if (!config || !config.hasShoreline) notFound();
+  if (!config || !config.routes.includes("shoreline")) notFound();
   return <CoastalClient cityId={cityId} />;
 }

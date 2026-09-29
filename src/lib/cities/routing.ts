@@ -1,9 +1,6 @@
 /**
- * Shared client-side helpers for city-aware URL routing.
- *
- * Convention:
- *   - Chennai uses flat URLs at the root: "/", "/groundwater", "/about"
- *   - Other cities use a /[cityId] prefix: "/madurai", "/madurai/groundwater"
+ * Shared client-side helpers for city-aware URL routing. Every city lives
+ * under /[cityId] ("/madurai", "/madurai/groundwater"); "/" is the landing.
  *
  * The nav header and CitySwitcher both need to parse a pathname into
  * (cityId, feature) and build city-aware hrefs. Keep this logic in one
@@ -12,231 +9,11 @@
 
 import { listAllPlaces } from "./index";
 
-/** Per-city feature availability. Keep in sync with src/app/[cityId]/<feature>/page.tsx. */
-export const FEATURE_AVAILABILITY: Record<string, Set<string>> = {
-  chennai: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "climate-risk",
-    "shoreline",
-    "lake-restoration",
-    "my-ward",
-    "facts",
-    "origins",
-    "allocations",
-    "commitments",
-  ]),
-  madurai: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "my-ward",
-    "facts",
-    "origins",
-    "allocations",
-    "commitments",
-  ]),
-  bangalore: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "my-ward",
-    "facts",
-    "origins",
-    "tanker",
-    "allocations",
-    "commitments",
-  ]),
-  // Mumbai V1 target set. No `cascades` (Mumbai is reservoir-pumped, not a
-  // tank-cascade geography) and no `tanker` (deferred, RTI-gated). Features
-  // fill in across M1-M3; this set drives nav rendering while the city is
-  // preview-gated (NEXT_PUBLIC_PREVIEW_CITIES=mumbai).
-  mumbai: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "facts",
-    "origins",
-    "shoreline",
-    "allocations",
-    "commitments",
-  ]),
-  // Delhi V1 target set (preview-gated until cutover). No `cascades`
-  // (baoli/hauz heritage is not a tank-cascade geography), no `shoreline`
-  // (landlocked), no `tanker` (DJB booking portal scrape deferred).
-  // `allocations` + `commitments` are the signature surfaces: Delhi's supply
-  // is instrument-governed inter-state transfers, and the Yamuna programme
-  // is a stack of dated deadlines.
-  delhi: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "my-ward",
-    "facts",
-    "origins",
-    "allocations",
-    "commitments",
-  ]),
-  // Hyderabad V1 target set (preview-gated until cutover). No `shoreline`
-  // (landlocked). No `my-ward` at launch: the 300-ward delimitation gazetted
-  // 25 Dec 2025 has no public geometry yet, and with the corporations under a
-  // Special Officer there are no sitting councillors to attach to a ward
-  // either - it returns with the ward build, the Mumbai precedent.
-  // `tanker` IS in the set and is a signature surface rather than a
-  // nice-to-have: HMWSSB runs the tanker fleet itself and publishes monthly
-  // bookings AND deliveries per division/section. Note the fulfilment rate we
-  // expected to headline turned out flat at 99.95%, so that page leads on
-  // demand volume and seasonality instead.
-  // `cascades` shipped 2026-07-26: 428 nodes, 411 edges, max depth 9. The
-  // Musi is the only cascade on the platform with a documented catastrophic
-  // failure - 221 of 788 tanks breached on 28 September 1908.
-  hyderabad: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "tanker",
-    "facts",
-    "origins",
-    "allocations",
-    "commitments",
-  ]),
-  // Kolkata V1 target set (preview-gated until cutover). Drainage-and-sewage
-  // first, which is what the city's data actually supports.
-  // No `cascades` (not a cascade geography), no `shoreline` (the riverbank /
-  // estuary variant is a different surface and is unbuilt), no `tanker`
-  // (KMC runs a municipal tanker service with published per-trip rates but
-  // publishes no volumes). `my-ward` is OFF until wards 142-144 are recovered
-  // and a ward-name/borough join exists - the KML carries bare numbers only.
-  kolkata: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "lake-restoration",
-    "facts",
-    "origins",
-    "allocations",
-    "commitments",
-  ]),
-  // Gurugram's live set, deliberately small: six of the platform's sixteen
-  // routes. Only surfaces with measured content behind them are listed - see
-  // docs/cities/gurugram/parity-scorecard.md, which records the count for each
-  // (824 water-body features, 6 groundwater polygons, 29,284 tanker bookings).
-  //
-  // `groundwater` IS here, and it is here on the IN-GRES *assessment* (six
-  // districts, four years, Gurugram at 194.6% extraction), not on water-level
-  // depth. The depth series is the thinnest data in the city - 37 India-WRIS
-  // stations ending June 2020, and zero telemetry rows - so the page shows the
-  // stage-of-extraction choropleth and says plainly that current depth is not
-  // published. That distinction is the whole reason the page is honest.
-  //
-  // `rivers` is absent because Gurugram HAS no river: every NWMP station in
-  // the district is a lake or a borewell. That is N/A, not a gap - and it is
-  // the entry that exposed the hardcoded "parity: EASY" badge.
-  //
-  // `my-ward` is absent although the 36 ward polygons are harvested: nothing
-  // is joined to them yet, and the page rendered 296 characters. A route in
-  // the nav must have something in it.
-  //
-  // Features fill in as their artifacts land. Adding one here without content
-  // behind it is the failure mode this comment exists to prevent.
-  gurugram: new Set([
-    "",
-    "about",
-    "origins",
-    "groundwater",
-    "water-bodies",
-    "tanker",
-  ]),
-  // Pune preview set. Only surfaces with real artifacts behind them.
-  //
-  // `groundwater` is in and is the strongest layer: 14 talukas x 6 IN-GRES
-  // editions, reproducing CGWB's National Compilation 2025 exactly, with
-  // Shirur critical at 95.71% inside a district that reads SAFE at 63.73%.
-  // `rivers` is in because Pune has five and CPCB rates four of those
-  // stretches Priority I or II. `facts` is in because facts-pune.json
-  // ships 22 cards, every figure of which is READ from an artifact already in
-  // the repo rather than transcribed again, so a quoted card cannot drift from
-  // the dashboard it came from. `tanker` is in on the fourth tankerDataKind,
-  // `delivery-register`, added rather than bending Hyderabad's utility-ledger
-  // panel: PMC's register is a DISPATCH record with no bookings in it, so the
-  // fulfilment rate that page is built on does not exist here.
-  //
-  // `flood-risk` is in on the NARRATIVE variant, which needs no hazard
-  // polygons. It was off on the reasoning that WRD publishes Pune's flood
-  // lines only as scanned sheets in a statewide register so the hazard
-  // layer does not exist - true, but
-  // that was an argument about the INTERACTIVE variant. The narrative stack
-  // carries the event register plus PMC's 1,014 km nalla network, and the
-  // flood-line absence ships as a data gap on the page.
-  //
-  // NOT in, each for a stated reason rather than pending work:
-  // `my-ward` - the 41 prabhags exist as NAMED GEOMETRY in the repo, but no
-  //   ward rows exist in the database, so /api/wards?city=pune 404s and the
-  //   page renders a heading over nothing. Turned off at cutover rather than
-  //   shipped empty: a live-and-empty page is issue #279, filed against
-  //   Gurugram during this same onboarding. Kolkata is off for the same
-  //   reason. Returns with the ward seeding, not with a better endpoint.
-  // `lake-restoration`, `allocations`, `commitments` - no artifacts built.
-  // `cascades` - the cascade pipeline has not been run for Pune district.
-  // `shoreline` - landlocked.
-  pune: new Set([
-    "",
-    "about",
-    "origins",
-    "facts",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "tanker",
-  ]),
-  // Surat V1 target set. No `cascades` (not a cascade geography), no `my-ward`
-  // (zone is the analytical unit and all three ward schemes lack downloadable
-  // geometry - WFS is disabled on SMC's own GIS), no `allocations` (no
-  // published entitlement instrument exists), no `shoreline` (genuinely
-  // coastal, but the surface still reads Chennai coastal data), no `tanker`
-  // (95% piped coverage; tanker-served properties are NA in every year of the
-  // open data). Every omission carries a written reason in
-  // scripts/lib/exemptions.ts.
-  surat: new Set([
-    "",
-    "about",
-    "groundwater",
-    "water-bodies",
-    "rivers",
-    "flood-risk",
-    "facts",
-    "origins",
-    "commitments",
-  ]),
-};
+/** Each city's routes ("" is the dashboard), from its PlaceConfig. Derived
+ *  from the registry, so no city can be missing from it. */
+export const FEATURE_AVAILABILITY: Record<string, ReadonlySet<string>> = Object.fromEntries(
+  listAllPlaces().map((p) => [p.cityId, new Set<string>(p.routes)]),
+);
 
 /**
  * City IDs the URL parser should recognise. Uses listAllPlaces() (NOT
@@ -292,7 +69,7 @@ export function buildCityHref(targetCityId: string, feature: string): string {
 export function isFeatureSupportedForCity(navHref: string, cityId: string): boolean {
   const feature = navHref === "/" ? "" : navHref.replace(/^\//, "");
   const supported = FEATURE_AVAILABILITY[cityId];
-  if (!supported) return true; // unknown city, fall back to permissive
+  if (!supported) return false; // unknown city: no routes, not every route
   return supported.has(feature);
 }
 

@@ -43,7 +43,7 @@ cities added after this script was written.
 THE FOUR CHECKS
 ---------------
   LEAK    another registered city's proper nouns on this city's page
-  EMPTY   a route in FEATURE_AVAILABILITY with no map features, no table rows
+  EMPTY   a route in a city's routes list with no map features, no table rows
           and almost no prose
   CONSOLE React errors or uncaught exceptions (the duplicate-key bug and the
           dev error overlay both show up here immediately)
@@ -148,8 +148,9 @@ def registered_cities() -> list[dict]:
 
 
 def routes_for(city: str) -> list[str]:
-    text = (ROOT / "src/lib/cities/routing.ts").read_text()
-    m = re.search(rf"{city}:\s*new Set\(\[(.*?)\]\)", text, re.S)
+    path = ROOT / "src/lib/cities" / f"{city}.ts"
+    text = path.read_text() if path.exists() else ""
+    m = re.search(r"\n  routes: \[(.*?)\n  \]", text, re.S)
     if not m:
         return []
     return [
@@ -180,7 +181,7 @@ def audit(base: str, city: str, cities: list[dict], findings: list):
     routes = routes_for(city)
     if not routes:
         findings.append(
-            (city, "(config)", "NO-ROUTES", "city absent from FEATURE_AVAILABILITY")
+            (city, "(config)", "NO-ROUTES", "city config declares no routes")
         )
         return
 

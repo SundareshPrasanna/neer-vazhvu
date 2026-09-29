@@ -22,21 +22,15 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { listAllPlaces } from "../../lib/cities";
 
 const root = process.cwd();
-const routing = readFileSync(join(root, "src/lib/cities/routing.ts"), "utf-8");
 const card = readFileSync(join(root, "src/components/my-ward/ward-actions-card.tsx"), "utf-8");
 
 function citiesShippingMyWard(): string[] {
-  const block = routing.slice(
-    routing.indexOf("FEATURE_AVAILABILITY"),
-    routing.indexOf("\n};", routing.indexOf("FEATURE_AVAILABILITY")),
-  );
-  const out: string[] = [];
-  for (const m of block.matchAll(/^ {2}([a-z]+): new Set\(\[([\s\S]*?)\]\)/gm)) {
-    if (m[2].includes('"my-ward"')) out.push(m[1]);
-  }
-  return out;
+  return listAllPlaces()
+    .filter((p) => p.routes.includes("my-ward"))
+    .map((p) => p.cityId);
 }
 
 function citiesWithActions(): Set<string> {

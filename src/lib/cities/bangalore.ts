@@ -37,6 +37,27 @@ export const BANGALORE: PlaceConfig = {
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  // `allocations`: Allocation Ledger: the Cauvery award chain (CWDT 1.75 TMC
+  // -> SC 2018 +4.75 -> Karnataka's 19+10 TMC to BWSSB), compiled in
+  // allocations-bangalore.json.
+  // `commitments`: Commitments register: NGT lake deadlines
+  // (Bellandur/Varthur), Cauvery Stage V/VI, K-100, treated-water reuse,
+  // Mekedatu - commitments-bangalore.json.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+    "tanker",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'bwssb',
     name: 'Bangalore Water Supply and Sewerage Board',
@@ -52,12 +73,6 @@ export const BANGALORE: PlaceConfig = {
   defaultDesalinationMld: null,
   availableLanguages: ['en', 'kn'],
   heroMode: 'cauvery-pumping',
-  // Allocation Ledger: the Cauvery award chain (CWDT 1.75 TMC -> SC 2018 +4.75
-  // -> Karnataka's 19+10 TMC to BWSSB), compiled in allocations-bangalore.json.
-  hasAllocationLedger: true,
-  // Commitments register: NGT lake deadlines (Bellandur/Varthur), Cauvery Stage
-  // V/VI, K-100, treated-water reuse, Mekedatu - commitments-bangalore.json.
-  hasCommitments: true,
   // Per-ward GW depth interpolation (`depth`) is off because Bengaluru
   // has only 13 CGWB telemetric stations across 369 wards - density too
   // low to honestly IDW. `exploitation` is ON: 6 assessment blocks, every
