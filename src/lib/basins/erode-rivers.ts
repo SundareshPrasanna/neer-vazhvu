@@ -1,4 +1,8 @@
 import type { BasinManifest } from "./types";
+import {
+  districtFrame, TN_WRD_CATCHMENTS, CWC_CANALS, reservoirs, TNGIS_WATER_BODIES, TNGIS_WATERSHEDS, cwcGauges,
+  tnpcbRealtime, TN_GROUNDWATER_WELLS, tnpcbIndustries, INGRES_TALUKS, treatmentPlants, cwcCommandAreas, TN_ADMIN,
+} from "./district-layers";
 
 // Erode district's rivers, canals, groundwater and industry - a district-scoped
 // Basin Atlas instance on the Chennai-rivers / Mumbai-rivers pattern. The
@@ -140,115 +144,41 @@ export const ERODE_RIVERS: BasinManifest = {
   ],
   layers: [
     // Structural context
-    { family: "boundary", label: "Erode district boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
-    { family: "sub-hydrosheds", label: "Sub-basin catchments (TN WRD)", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
-    { family: "rivers", label: "Rivers and canals", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
+    ...districtFrame("Erode", TN_WRD_CATCHMENTS, "Rivers and canals"),
     // The stretch renders while its panel is open ("Explore the polluted stretch") or when toggled on; clicking it opens prs.json.
     { family: "prs", label: "Polluted stretch (CPCB)", floor: "hydrology", geom: "line", color: "#b91c1c", defaultOn: false, prs: true },
     { family: "prs-drains", label: "Sewage outfalls (TNPCB action plan, 2019)", floor: "hydrology", geom: "point", color: "#eab308", defaultOn: true },
-    {
-      family: "canals", label: "Canal network (CWC)", floor: "hydrology", geom: "line", color: "#0891b2", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "main", label: "Main and branch canals", color: "#0e7490" },
-          { value: "distributary", label: "Distributaries", color: "#06b6d4" },
-          { value: "minor", label: "Minors and sub-minors", color: "#67e8f9" },
-        ],
-      },
-    },
-    { family: "reservoirs", label: "Reservoirs (TN WRD register)", floor: "hydrology", geom: "point", color: "#0891b2", defaultOn: true, readings: true,
-      legendRows: [
-        { sym: "dot", color: "#0891b2", label: "Reservoir with a CWC level chart (tap)" },
-        { sym: "ring", color: "#0891b2", label: "Reservoir (no public level series)" },
-      ] },
-    { family: "waterbodies-major", label: "Tanks and water bodies (named or 5 ha and above)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true },
-    { family: "waterbodies-minor", label: "Smaller water bodies and stream parcels", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
-    { family: "tanks", label: "Named tanks (centre points)", floor: "hydrology", geom: "point", color: "#0284c7", defaultOn: false },
-    { family: "watersheds", label: "Watersheds", floor: "hydrology", geom: "fill", color: "#4f46e5", defaultOn: false, outline: true },
-    { family: "sub-watersheds", label: "Sub-watersheds", floor: "hydrology", geom: "fill", color: "#6366f1", defaultOn: false, outline: true },
-    { family: "mini-watersheds", label: "Mini-watersheds", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: false, outline: true },
-    { family: "micro-watersheds", label: "Micro-watersheds", floor: "hydrology", geom: "fill", color: "#a5b4fc", defaultOn: false, outline: true, heavy: true },
+    CWC_CANALS,
+    reservoirs("Reservoirs (TN WRD register)", "Reservoir with a CWC level chart (tap)", "Reservoir (no public level series)"),
+    ...TNGIS_WATER_BODIES,
+    ...TNGIS_WATERSHEDS,
 
     // Monitoring & evidence
-    { family: "gauging-stations", label: "River flow and water quality (CWC gauges)", floor: "monitoring", geom: "point", color: "#0f766e", defaultOn: true, readings: true,
-      legendRows: [{ sym: "dot", color: "#0f766e", label: "CWC gauge: river flow and water quality (tap for charts)" }] },
-    { family: "realtime-stations", label: "Real-time sensor stations (TNPCB)", floor: "monitoring", geom: "point", color: "#be185d", defaultOn: true, readings: true,
-      legendRows: [{ sym: "dot", color: "#be185d", label: "TNPCB real-time sensor station (tap for charts)" }] },
+    cwcGauges("River flow and water quality (CWC gauges)", "CWC gauge: river flow and water quality (tap for charts)"),
+    tnpcbRealtime("Real-time sensor stations (TNPCB)"),
     { family: "monitoring-points", label: "Water-quality stations (TNPCB, 2023)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true },
-
-    {
-      family: "groundwater-wells", label: "Groundwater wells (depth to water)", floor: "monitoring", geom: "point", color: "#0369a1", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "cgwb-telemetry", label: "CGWB telemetry, readings to September 2026", color: "#0369a1" },
-          { value: "state-telemetry", label: "Tamil Nadu state telemetry, readings to September 2026", color: "#0e7490" },
-          { value: "cgwb-manual", label: "CGWB manual wells, readings 2021 to 2024", color: "#64748b", defaultOff: true },
-        ],
-      },
-    },
+    TN_GROUNDWATER_WELLS,
 
     // Pressures: one register, one toggle per TNPCB category and sector
-    {
-      family: "industries", label: "Industrial units (TNPCB category and sector)", floor: "pressures", geom: "point", color: "#be123c", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "red-textile", label: "Red: textile processing", color: "#be123c" },
-          { value: "red-tannery", label: "Red: tanneries", color: "#7c2d12" },
-          { value: "red-paper", label: "Red: pulp and paper", color: "#a16207" },
-          { value: "red-chemicals", label: "Red: basic chemicals", color: "#7e22ce" },
-          { value: "red-other", label: "Red: other units", color: "#dc2626" },
-          { value: "red-quarry-mining", label: "Red: quarries and mining", color: "#78716c", defaultOff: true },
-          { value: "orange", label: "Orange category", color: "#f97316", defaultOff: true },
-          { value: "green-white", label: "Green and white category", color: "#16a34a", defaultOff: true },
-        ],
-      },
-    },
+    tnpcbIndustries([{ value: "red-textile", label: "Red: textile processing", color: "#be123c" }], "Orange category"),
     { family: "industrial-estates", label: "SIPCOT Perundurai estates", floor: "pressures", geom: "fill", color: "#C62828", defaultOn: true },
     { family: "quarries", label: "Mine and quarry leases", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: false },
     { family: "cepi-area", label: "CEPI severely polluted area: outer frame (TNPCB plan, 2020)", floor: "pressures", geom: "fill", color: "#9f1239", defaultOn: false, outline: true },
 
     // Governance: groundwater category by taluk, treatment, admin
-    {
-      family: "groundwater-taluks", label: "Groundwater category by taluk (IN-GRES, 2024-2025)", floor: "governance", geom: "fill", color: "#f59e0b", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "over-exploited", label: "Over-exploited (extraction above 100% of recharge)", color: "#b91c1c" },
-          { value: "critical", label: "Critical (90 to 100%)", color: "#ea580c" },
-          { value: "semi-critical", label: "Semi-critical (70 to 90%)", color: "#f59e0b" },
-          { value: "safe", label: "Safe (70% and below)", color: "#16a34a" },
-        ],
-      },
-    },
-    {
-      family: "treatment-plants", label: "Treatment plants", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "cetp-operating", label: "Common effluent treatment plants: operating", color: "#7e22ce" },
-          { value: "cetp-proposed", label: "Common effluent treatment plants: proposed, funding awaited", color: "#d8b4fe" },
-          { value: "stp", label: "Sewage treatment plants", color: "#4f46e5" },
-        ],
-      },
-    },
-    {
-      family: "command-areas", label: "Canal command areas (CWC)", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false, outline: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "lower-bhavani", label: "Lower Bhavani Project", color: "#15803d" },
-          { value: "kodivery-anicut-system", label: "Kodivery anicut system (Thadappally and Arakkankottai)", color: "#65a30d" },
-          { value: "kalingarayan-anicut-system", label: "Kalingarayan anicut system", color: "#7c3aed" },
-          { value: "mettur-canal-system", label: "Mettur canal system", color: "#1e3a8a" },
-        ],
-      },
-    },
-    { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
-    { family: "admin-block", label: "Blocks", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false },
-    { family: "admin-gp", label: "Village panchayats", floor: "governance", geom: "fill", color: "#66a61e", defaultOn: false, heavy: true },
+    INGRES_TALUKS,
+    treatmentPlants([
+      { value: "cetp-operating", label: "Common effluent treatment plants: operating", color: "#7e22ce" },
+      { value: "cetp-proposed", label: "Common effluent treatment plants: proposed, funding awaited", color: "#d8b4fe" },
+      { value: "stp", label: "Sewage treatment plants", color: "#4f46e5" },
+    ]),
+    cwcCommandAreas([
+      { value: "lower-bhavani", label: "Lower Bhavani Project", color: "#15803d" },
+      { value: "kodivery-anicut-system", label: "Kodivery anicut system (Thadappally and Arakkankottai)", color: "#65a30d" },
+      { value: "kalingarayan-anicut-system", label: "Kalingarayan anicut system", color: "#7c3aed" },
+      { value: "mettur-canal-system", label: "Mettur canal system", color: "#1e3a8a" },
+    ]),
+    ...TN_ADMIN,
   ],
   credits: [
     "District, taluk, block and village panchayat boundaries, sub-basin catchments, the four watershed levels, reservoirs, water bodies, named tanks and mine leases: TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency.",

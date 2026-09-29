@@ -1,4 +1,8 @@
 import type { BasinManifest } from "./types";
+import {
+  districtFrame, TN_WRD_CATCHMENTS, CWC_CANALS, reservoirs, TNGIS_WATER_BODIES, TNGIS_WATERSHEDS, cwcGauges,
+  tnpcbRealtime, TN_GROUNDWATER_WELLS, tnpcbIndustries, INGRES_TALUKS, treatmentPlants, cwcCommandAreas, TN_ADMIN,
+} from "./district-layers";
 
 // Krishnagiri district's rivers, groundwater and industry: Hosur's district on
 // the Basin Atlas, a district-scoped instance on the Erode pattern. The
@@ -141,104 +145,36 @@ export const KRISHNAGIRI_RIVERS: BasinManifest = {
   ],
   layers: [
     // Structural context
-    { family: "boundary", label: "Krishnagiri district boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
-    { family: "sub-hydrosheds", label: "Sub-basin catchments (TN WRD)", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
-    { family: "rivers", label: "Rivers", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
-    {
-      family: "canals", label: "Canal network (CWC)", floor: "hydrology", geom: "line", color: "#0891b2", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "main", label: "Main and branch canals", color: "#0e7490" },
-          { value: "distributary", label: "Distributaries", color: "#06b6d4" },
-          { value: "minor", label: "Minors and sub-minors", color: "#67e8f9" },
-        ],
-      },
-    },
-    { family: "reservoirs", label: "Reservoirs (TN WRD register)", floor: "hydrology", geom: "point", color: "#0891b2", defaultOn: true, readings: true,
-      legendRows: [
-        { sym: "dot", color: "#0891b2", label: "Reservoir with today's storage from the state dashboard" },
-        { sym: "ring", color: "#0891b2", label: "Reservoir with no public reading" },
-      ] },
-    { family: "waterbodies-major", label: "Tanks and water bodies (named or 5 ha and above)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true },
-    { family: "waterbodies-minor", label: "Smaller water bodies and stream parcels", floor: "hydrology", geom: "fill", color: "#0d9488", defaultOn: false, heavy: true },
-    { family: "tanks", label: "Named tanks (centre points)", floor: "hydrology", geom: "point", color: "#0284c7", defaultOn: false },
-    { family: "watersheds", label: "Watersheds", floor: "hydrology", geom: "fill", color: "#4f46e5", defaultOn: false, outline: true },
-    { family: "sub-watersheds", label: "Sub-watersheds", floor: "hydrology", geom: "fill", color: "#6366f1", defaultOn: false, outline: true },
-    { family: "mini-watersheds", label: "Mini-watersheds", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: false, outline: true },
-    { family: "micro-watersheds", label: "Micro-watersheds", floor: "hydrology", geom: "fill", color: "#a5b4fc", defaultOn: false, outline: true, heavy: true },
+    ...districtFrame("Krishnagiri", TN_WRD_CATCHMENTS, "Rivers"),
+    CWC_CANALS,
+    reservoirs("Reservoirs (TN WRD register)", "Reservoir with today's storage from the state dashboard", "Reservoir with no public reading"),
+    ...TNGIS_WATER_BODIES,
+    ...TNGIS_WATERSHEDS,
 
     // Monitoring & evidence
-    { family: "gauging-stations", label: "River flow and water quality (CWC gauge)", floor: "monitoring", geom: "point", color: "#0f766e", defaultOn: true, readings: true,
-      legendRows: [{ sym: "dot", color: "#0f766e", label: "CWC gauge: river flow and water quality (tap for charts)" }] },
-    { family: "realtime-stations", label: "Real-time sensor station (TNPCB)", floor: "monitoring", geom: "point", color: "#be185d", defaultOn: true, readings: true,
-      legendRows: [{ sym: "dot", color: "#be185d", label: "TNPCB real-time sensor station (tap for charts)" }] },
-    {
-      family: "groundwater-wells", label: "Groundwater wells (depth to water)", floor: "monitoring", geom: "point", color: "#0369a1", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "cgwb-telemetry", label: "CGWB telemetry, readings to September 2026", color: "#0369a1" },
-          { value: "state-telemetry", label: "Tamil Nadu state telemetry, readings to September 2026", color: "#0e7490" },
-          { value: "cgwb-manual", label: "CGWB manual wells, readings 2021 to 2024", color: "#64748b", defaultOff: true },
-        ],
-      },
-    },
+    cwcGauges("River flow and water quality (CWC gauge)", "CWC gauge: river flow and water quality (tap for charts)"),
+    tnpcbRealtime("Real-time sensor station (TNPCB)"),
+    TN_GROUNDWATER_WELLS,
 
     // Pressures: one register, one toggle per TNPCB category and sector
-    {
-      family: "industries", label: "Industrial units (TNPCB category and sector)", floor: "pressures", geom: "point", color: "#be123c", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "red-metal-treatment", label: "Red: metal surface treatment (pickling, plating)", color: "#be123c" },
-          { value: "red-textile", label: "Red: textile processing", color: "#9f1239" },
-          { value: "red-tannery", label: "Red: tanneries", color: "#7c2d12" },
-          { value: "red-paper", label: "Red: pulp and paper", color: "#a16207" },
-          { value: "red-chemicals", label: "Red: basic chemicals", color: "#7e22ce" },
-          { value: "red-other", label: "Red: other units", color: "#dc2626" },
-          { value: "red-quarry-mining", label: "Red: quarries and mining", color: "#78716c", defaultOff: true },
-          { value: "orange", label: "Orange category (stone cutting, crushers, M-sand, engineering)", color: "#f97316", defaultOff: true },
-          { value: "green-white", label: "Green and white category", color: "#16a34a", defaultOff: true },
-        ],
-      },
-    },
+    tnpcbIndustries(
+      [
+        { value: "red-metal-treatment", label: "Red: metal surface treatment (pickling, plating)", color: "#be123c" },
+        { value: "red-textile", label: "Red: textile processing", color: "#9f1239" },
+      ],
+      "Orange category (stone cutting, crushers, M-sand, engineering)",
+    ),
     { family: "industrial-estates", label: "SIPCOT estates (Hosur, Shoolagiri, Bargur)", floor: "pressures", geom: "fill", color: "#C62828", defaultOn: true },
     { family: "quarries", label: "Mine and quarry leases", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: true },
 
     // Governance: groundwater category by taluk, treatment, admin
-    {
-      family: "groundwater-taluks", label: "Groundwater category by taluk (IN-GRES, 2024-2025)", floor: "governance", geom: "fill", color: "#f59e0b", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "over-exploited", label: "Over-exploited (extraction above 100% of recharge)", color: "#b91c1c" },
-          { value: "critical", label: "Critical (90 to 100%)", color: "#ea580c" },
-          { value: "semi-critical", label: "Semi-critical (70 to 90%)", color: "#f59e0b" },
-          { value: "safe", label: "Safe (70% and below)", color: "#16a34a" },
-        ],
-      },
-    },
-    {
-      family: "treatment-plants", label: "Treatment plants", floor: "governance", geom: "point", color: "#a855f7", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [{ value: "stp", label: "Sewage treatment plants", color: "#4f46e5" }],
-      },
-    },
-    {
-      family: "command-areas", label: "Canal command areas (CWC)", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false, outline: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "krishnagiri", label: "Krishnagiri Reservoir Project (KRP) canals", color: "#15803d" },
-          { value: "barur-tank", label: "Barur tank system", color: "#65a30d" },
-        ],
-      },
-    },
-    { family: "admin-taluk", label: "Taluks", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },
-    { family: "admin-block", label: "Blocks", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false },
-    { family: "admin-gp", label: "Village panchayats", floor: "governance", geom: "fill", color: "#66a61e", defaultOn: false, heavy: true },
+    INGRES_TALUKS,
+    treatmentPlants([{ value: "stp", label: "Sewage treatment plants", color: "#4f46e5" }]),
+    cwcCommandAreas([
+      { value: "krishnagiri", label: "Krishnagiri Reservoir Project (KRP) canals", color: "#15803d" },
+      { value: "barur-tank", label: "Barur tank system", color: "#65a30d" },
+    ]),
+    ...TN_ADMIN,
   ],
   credits: [
     "District, taluk, block and village panchayat boundaries, sub-basin catchments, the four watershed levels, reservoirs, water bodies, named tanks and mine leases: TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency.",

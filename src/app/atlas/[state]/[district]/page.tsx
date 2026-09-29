@@ -30,7 +30,9 @@ import {
 import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { FloodStatement, ScarcityDistrictRead } from "@/components/atlas/scarcity-flood";
 import { getCuratedBriefs } from "@/lib/atlas/curated-briefs";
-import { hasBasinData, loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
+import { loadStateFloodClassification, loadStateScarcityTankers } from "@/lib/atlas/data";
+import { hasBasinData } from "@/lib/basins/data";
+import { basinEmbedHref } from "@/lib/basins/paths";
 import {
   districtFloodReading,
   districtScarcityReading,
@@ -108,9 +110,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
   if (!directory || !reading) notFound();
 
   const basePath = districtHref(entry);
-  const basinHref = entry.basin
-    ? `/embed/basins/${entry.basin.basinId}?sub=${entry.basin.subBasinKey}`
-    : null;
+  const basinHref = entry.basin ? basinEmbedHref(entry.basin.basinId, entry.basin.subBasinKey) : null;
   const reviewed = new Set(getCuratedBriefs(entry.slug).map((brief) => brief.lgdCode));
 
   // The state-scoped hazard families: rendered only when the artifact for
@@ -153,7 +153,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
       longitude: place.longitude!,
     }));
 
-  const { verdict, facts, irrigation, drinking, mettur, groundwater, blockFindings } = reading;
+  const { verdict, facts, irrigation, drinking, canalHead, groundwater, blockFindings } = reading;
   // "taluk" in Tamil Nadu, "taluka" in Maharashtra: the assessment unit's own name.
   const unit = groundwater.unitLabel;
   const Unit = unit.charAt(0).toUpperCase() + unit.slice(1);
@@ -362,13 +362,13 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                 <AtlasFinding className="mt-4">{drinking.sentence}</AtlasFinding>
               </AtlasCard>
             </div>
-            {mettur ? (
+            {canalHead ? (
               <div className="mt-4 grid gap-4 lg:grid-cols-[2fr_1fr]">
                 <AtlasCard>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">The Mettur dependence</h3>
-                  <AtlasFinding className="mt-2">{mettur.sentence}</AtlasFinding>
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">The {canalHead.name} dependence</h3>
+                  <AtlasFinding className="mt-2">{canalHead.sentence}</AtlasFinding>
                 </AtlasCard>
-                <AtlasGap title="Live Mettur storage">{mettur.gap}</AtlasGap>
+                <AtlasGap title={`Live ${canalHead.name} storage`}>{canalHead.gap}</AtlasGap>
               </div>
             ) : null}
           </AtlasSection>
@@ -811,7 +811,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
             <AtlasDistrictMap points={points} />
             {entry.deepDive && hasBasinData(entry.deepDive.basinId) ? (
               <p className="mt-3 text-sm">
-                <Link href={`/embed/basins/${entry.deepDive.basinId}`} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline">
+                <Link href={basinEmbedHref(entry.deepDive.basinId)} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline">
                   {entry.deepDive.label}
                 </Link>
               </p>

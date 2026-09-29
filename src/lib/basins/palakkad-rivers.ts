@@ -1,4 +1,5 @@
 import type { BasinManifest } from "./types";
+import { CWC_CANALS, cwcCommandAreas, cwcGauges, districtFrame, groundwaterWells, reservoirs } from "./district-layers";
 
 // Palakkad district's rivers, reservoirs, wetlands and groundwater: the first
 // Kerala district map, on the Erode pattern. The district (the union of its
@@ -84,25 +85,9 @@ export const PALAKKAD_RIVERS: BasinManifest = {
   ],
   layers: [
     // Structural context
-    { family: "boundary", label: "Palakkad district boundary", floor: "hydrology", geom: "fill", color: "#d946ef", defaultOn: true, context: true },
-    { family: "sub-hydrosheds", label: "River basins (KSREC watershed atlas)", floor: "hydrology", geom: "fill", color: "#818cf8", defaultOn: true, context: true },
-    { family: "rivers", label: "Rivers", floor: "hydrology", geom: "line", color: "#2563eb", defaultOn: true, context: true },
-    {
-      family: "canals", label: "Canal network (CWC)", floor: "hydrology", geom: "line", color: "#0891b2", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "main", label: "Main and branch canals", color: "#0e7490" },
-          { value: "distributary", label: "Distributaries", color: "#06b6d4" },
-          { value: "minor", label: "Minors and sub-minors", color: "#67e8f9" },
-        ],
-      },
-    },
-    { family: "reservoirs", label: "Reservoirs (Kerala SDMA dam bulletin)", floor: "hydrology", geom: "point", color: "#0891b2", defaultOn: true, readings: true,
-      legendRows: [
-        { sym: "dot", color: "#0891b2", label: "Reservoir with a level and storage chart (tap)" },
-        { sym: "ring", color: "#0891b2", label: "Reservoir not in the Kerala bulletin (no reading)" },
-      ] },
+    ...districtFrame("Palakkad", "River basins (KSREC watershed atlas)", "Rivers"),
+    CWC_CANALS,
+    reservoirs("Reservoirs (Kerala SDMA dam bulletin)", "Reservoir with a level and storage chart (tap)", "Reservoir not in the Kerala bulletin (no reading)"),
     {
       family: "wetlands", label: "Wetlands (KSREC)", floor: "hydrology", geom: "fill", color: "#0284c7", defaultOn: true, heavy: true,
       classes: {
@@ -133,21 +118,14 @@ export const PALAKKAD_RIVERS: BasinManifest = {
     { family: "watersheds", label: "Watersheds (KSREC watershed atlas)", floor: "hydrology", geom: "fill", color: "#4f46e5", defaultOn: false, outline: true, heavy: true },
 
     // Monitoring & evidence
-    { family: "gauging-stations", label: "River flow (CWC gauges)", floor: "monitoring", geom: "point", color: "#0f766e", defaultOn: true, readings: true,
-      legendRows: [{ sym: "dot", color: "#0f766e", label: "CWC gauge: river flow (tap for charts)" }] },
+    cwcGauges("River flow (CWC gauges)", "CWC gauge: river flow (tap for charts)"),
     { family: "monitoring-points", label: "River water quality (KSPCB monthly samples)", floor: "monitoring", geom: "point", color: "#059669", defaultOn: true, readings: true,
       legendRows: [{ sym: "dot", color: "#059669", label: "KSPCB water-quality station (tap for charts)" }] },
-    {
-      family: "groundwater-wells", label: "Groundwater wells (depth to water)", floor: "monitoring", geom: "point", color: "#0369a1", defaultOn: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "state-manual", label: "Kerala Ground Water Department wells, read monthly, 2000 to April 2026", color: "#0369a1" },
-          { value: "state-telemetry", label: "Kerala Ground Water Department telemetry, readings to September 2026", color: "#0e7490" },
-          { value: "cgwb-telemetry", label: "CGWB telemetry, readings to June 2026", color: "#64748b" },
-        ],
-      },
-    },
+    groundwaterWells([
+      { value: "state-manual", label: "Kerala Ground Water Department wells, read monthly, 2000 to April 2026", color: "#0369a1" },
+      { value: "state-telemetry", label: "Kerala Ground Water Department telemetry, readings to September 2026", color: "#0e7490" },
+      { value: "cgwb-telemetry", label: "CGWB telemetry, readings to June 2026", color: "#64748b" },
+    ]),
 
     // Hazards and pressures
     {
@@ -167,21 +145,15 @@ export const PALAKKAD_RIVERS: BasinManifest = {
     { family: "quarries", label: "Quarries (OpenStreetMap, via KSREC)", floor: "pressures", geom: "fill", color: "#ea580c", defaultOn: false },
 
     // Governance: irrigation commands and the admin layers
-    {
-      family: "command-areas", label: "Canal command areas (CWC)", floor: "governance", geom: "fill", color: "#65a30d", defaultOn: false, outline: true,
-      classes: {
-        prop: "kind",
-        rows: [
-          { value: "malampuzha", label: "Malampuzha", color: "#15803d" },
-          { value: "chitturpuzha", label: "Chitturpuzha", color: "#65a30d" },
-          { value: "kanhirapuzha", label: "Kanhirapuzha", color: "#4d7c0f" },
-          { value: "gayathri-stage-i-meenakara-dam-stage-ii-chulliyra-dam", label: "Gayathri (Meenkara and Chulliyar dams)", color: "#0d9488" },
-          { value: "pothundi", label: "Pothundi", color: "#0891b2" },
-          { value: "mangalam", label: "Mangalam", color: "#7c3aed" },
-          { value: "walayar", label: "Walayar", color: "#1e3a8a" },
-        ],
-      },
-    },
+    cwcCommandAreas([
+      { value: "malampuzha", label: "Malampuzha", color: "#15803d" },
+      { value: "chitturpuzha", label: "Chitturpuzha", color: "#65a30d" },
+      { value: "kanhirapuzha", label: "Kanhirapuzha", color: "#4d7c0f" },
+      { value: "gayathri-stage-i-meenakara-dam-stage-ii-chulliyra-dam", label: "Gayathri (Meenkara and Chulliyar dams)", color: "#0d9488" },
+      { value: "pothundi", label: "Pothundi", color: "#0891b2" },
+      { value: "mangalam", label: "Mangalam", color: "#7c3aed" },
+      { value: "walayar", label: "Walayar", color: "#1e3a8a" },
+    ]),
     { family: "admin-block", label: "Development blocks", floor: "governance", geom: "fill", color: "#1b9e77", defaultOn: false },
     { family: "admin-gp", label: "Grama Panchayats", floor: "governance", geom: "fill", color: "#66a61e", defaultOn: false },
     { family: "admin-ulb", label: "Municipalities", floor: "governance", geom: "fill", color: "#7570b3", defaultOn: false },

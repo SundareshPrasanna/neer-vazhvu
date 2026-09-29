@@ -26,6 +26,7 @@ import {
 import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { getCuratedBrief } from "@/lib/atlas/curated-briefs";
 import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks, loadWaterBodyShard } from "@/lib/atlas/data";
+import { basinEmbedHref } from "@/lib/basins/paths";
 import { censusIsSample, getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
 import { displayTalukName, formatExtractionStage, unitLabelOf } from "@/lib/atlas/district-reading";
 import {
@@ -132,9 +133,7 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
 
   const basePath = districtHref(entry);
   const blockPath = blockHref(entry, panchayat.blockCode);
-  const basinHref = entry.basin
-    ? `/embed/basins/${entry.basin.basinId}?sub=${entry.basin.subBasinKey}`
-    : null;
+  const basinHref = entry.basin ? basinEmbedHref(entry.basin.basinId, entry.basin.subBasinKey) : null;
   const brief = getDistrictBrief(entry.slug, gpCode);
   // A reviewer's brief is preferred where one exists. It carries what a
   // person understood about the place, which no rule derives.

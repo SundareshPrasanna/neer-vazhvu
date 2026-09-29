@@ -34,6 +34,7 @@ import type {
 } from "@/lib/basins";
 import { tryGetBasinManifest } from "@/lib/basins";
 import { withLiveStorage, type LiveStorageRow } from "@/lib/basins/live-storage";
+import { basinDataUrl } from "@/lib/basins/paths";
 import {
   parseReviewedMprSeries,
   reviewedMprConceptLabel,
@@ -695,7 +696,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // Skipped when embedded as an overlay so we don't clobber the rivers-page URL.
   // Cross-source gap intelligence for the gap layer's click panel (optional).
   useEffect(() => {
-    fetchJson(`/data/basins/${manifest.basinId}/gaps.json`)
+    fetchJson(basinDataUrl(manifest.basinId, "gaps.json"))
       .then((d) => {
         const v2 = d as unknown as DepData;
         if (v2?.version === 2 && Array.isArray(v2.districts)) {
@@ -716,15 +717,15 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   // PRS panel content (optional; only basins with a prs layer ship prs.json).
   useEffect(() => {
     if (!manifest.layers.some((l) => l.prs)) return;
-    fetchJson(`/data/basins/${manifest.basinId}/prs.json`)
+    fetchJson(basinDataUrl(manifest.basinId, "prs.json"))
       .then((d) => setPrsData((d as unknown as PrsData) ?? null))
       .catch(() => setPrsData(null));
     // Accountability matrix rides with the PRS story; absent file = section
     // simply not rendered (data-only onboarding for other basins).
-    fetchJson(`/data/basins/${manifest.basinId}/accountability.json`)
+    fetchJson(basinDataUrl(manifest.basinId, "accountability.json"))
       .then((d) => setAccData((d as unknown as AccountabilityData) ?? null))
       .catch(() => setAccData(null));
-    fetchJson(`/data/basins/${manifest.basinId}/mpr-reviewed.json`)
+    fetchJson(basinDataUrl(manifest.basinId, "mpr-reviewed.json"))
       .then((d) => setReviewedMpr(parseReviewedMprSeries(d)))
       .catch(() => setReviewedMpr(null));
   }, [manifest.basinId, manifest.layers]);
@@ -848,13 +849,13 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       if (l.heavy && selectedRiverId) {
         const sheds = selectedRiver?.subHydroshedIds ?? [];
         Promise.all(
-          sheds.map((s) => fetchJson(`/data/basins/${manifest.basinId}/${l.family}/${s}.geojson`)),
+          sheds.map((s) => fetchJson(basinDataUrl(manifest.basinId, `${l.family}/${s}.geojson`))),
         ).then((parts) => {
           const features = parts.filter(Boolean).flatMap((fc) => fc!.features);
           setData((d) => ({ ...d, [key]: { type: "FeatureCollection", features } }));
         });
       } else {
-        fetchJson(`/data/basins/${manifest.basinId}/${l.family}.geojson`).then((fc) =>
+        fetchJson(basinDataUrl(manifest.basinId, `${l.family}.geojson`)).then((fc) =>
           setData((d) => ({ ...d, [key]: fc })),
         );
       }

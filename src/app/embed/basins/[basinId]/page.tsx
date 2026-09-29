@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import fs from "node:fs";
-import path from "node:path";
-import { tryGetBasinManifest, type BasinFloor, type BasinInventory } from "@/lib/basins";
+import { tryGetBasinManifest, type BasinFloor } from "@/lib/basins";
+import { loadBasinInventory } from "@/lib/basins/data";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import { ForcedTheme } from "@/components/theme-provider";
@@ -25,15 +24,6 @@ import { ForcedTheme } from "@/components/theme-provider";
 // restores follow-the-visitor behaviour.
 
 const FLOORS: BasinFloor[] = ["hydrology", "monitoring", "pressures", "governance"];
-
-function loadBasinInventory(basinId: string): BasinInventory | null {
-  const fp = path.join(process.cwd(), "public", "data", "basins", basinId, "inventory.json");
-  try {
-    return JSON.parse(fs.readFileSync(fp, "utf-8")) as BasinInventory;
-  } catch {
-    return null;
-  }
-}
 
 interface PageProps {
   params: Promise<{ basinId: string }>;

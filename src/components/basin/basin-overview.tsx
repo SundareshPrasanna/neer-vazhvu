@@ -19,6 +19,7 @@ import { districtHref, listVisibleAtlasDistricts } from "@/lib/atlas/registry";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { BasinInventory, BasinManifest, SubBasinRef } from "@/lib/basins";
+import { basinDataUrl } from "@/lib/basins/paths";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { AccountabilityMatrix, type AccountabilityData } from "@/components/basin/basin-atlas";
 import { fetchJsonOrNull } from "@/lib/data/fetch-json";
@@ -196,7 +197,7 @@ export function BasinOverview({
   onNavigateBasin?: (basinId: string) => void;
 }) {
   const tiles = useMapTiles();
-  const base = `/data/basins/${manifest.basinId}`;
+  const base = basinDataUrl(manifest.basinId);
   const [boundary, setBoundary] = useState<FeatureCollection | null>(null);
   const [contextBoundary, setContextBoundary] = useState<FeatureCollection | null>(null);
   const [stateBoundary, setStateBoundary] = useState<FeatureCollection | null>(null);

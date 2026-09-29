@@ -25,6 +25,7 @@ export const CAUVERY_TN: BasinManifest = {
   parentBasinId: undefined,
   displayName: "Cauvery Basin (Tamil Nadu)",
   displayNameLocal: "காவிரி படுகை (தமிழ்நாடு)",
+  canalHead: { name: "Mettur", liveGap: "the tnsmart daily reservoir feed" },
   blurb:
     "Tamil Nadu's share of the Cauvery: ~47,500 sq km across eighteen sub-basins, from the Nilgiris and the Mettur reservoir to the Delta. This side of the basin is newly mapped: named tanks and river channels from Tamil Nadu's own open GIS, with CPCB's October 2025 polluted-stretch findings and TNPCB's own station readings (21 stations, 2023 - the last year the stretch series was published) on the sub-basins they touch.",
   mapCenter: [11.15, 78.3],

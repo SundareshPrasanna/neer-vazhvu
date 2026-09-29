@@ -190,6 +190,13 @@ export interface StationReadingsPack {
   insights?: { text: string; verified: boolean; basis?: string }[];
 }
 
+/** The reservoir whose release decides canal irrigation below it, and the live
+ *  storage feed for it that is not wired yet (a named gap, not a number). */
+export interface CanalHead {
+  name: string;
+  liveGap: string;
+}
+
 export interface BasinManifest {
   basinId: string;
   /** Host cities, for nav + capability gating. Empty for basins reached only
@@ -212,6 +219,8 @@ export interface BasinManifest {
   metricSources?: Record<string, string>;
   displayName: string;
   displayNameLocal?: string;
+  /** Read by the district Atlas pages of districts inside this basin. */
+  canalHead?: CanalHead;
   /** Landing blurb (plain text). */
   blurb: string;
   mapCenter: [number, number];
