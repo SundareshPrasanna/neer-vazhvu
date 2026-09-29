@@ -124,7 +124,7 @@ Shipped data with no Headwaters upstream to watch for new editions. Usually corr
 
 ## Routes a city deliberately does not ship
 
-Derived by diffing each city against the union of every route any city ships, so this table cannot drift from `FEATURE_AVAILABILITY`. A route dropped without a reason recorded fails `--check`.
+Derived by diffing each city against the union of every route any city ships, so this table cannot drift from each city's `routes`. A route dropped without a reason recorded fails `--check`.
 
 | Scope | Subject | Reason |
 |---|---|---|
