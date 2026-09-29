@@ -13,14 +13,17 @@
  * adapter built a district's artifacts (TNRD for Tamil Nadu, the LGD
  * directory elsewhere) is recorded in the served directory, not here.
  */
+import { scopeKind, scopeName, scopeRefs, scopeRelated } from "../scopes";
 import { previewIds } from "../utils/preview-ids";
 
 export interface AtlasDistrict {
   /** URL slug under /atlas/<state>/, e.g. "thanjavur". */
   slug: string;
-  /** NVDM scope id (schemas/nvdm/scopes.json), state-prefixed because
-   *  district names collide nationally: "tn-thanjavur". */
+  /** NVDM scope id (schemas/nvdm/scopes.json). Opaque: the tn- of legacy ids
+   *  is part of the name, never parsed. */
   scopeId: string;
+  /** Derived from the scope registry: the district's administrative parent,
+   *  its ISO 3166-2 subdivision (stateCode "TN", stateSlug "tn") and name. */
   stateSlug: string;
   stateCode: string;
   stateName: string;
@@ -85,13 +88,21 @@ const KL_IRRIGATION_GAP = {
     "No current reading is wired: no Kerala district irrigation-by-source table has been extracted yet, the national Land Use Statistics tables are reachable only from within India, and the 2017-18 Minor Irrigation Census (wells and tanks by village) is not wired yet.",
 };
 
-export const ATLAS_DISTRICTS: AtlasDistrict[] = [
+type DistrictEntry = Omit<AtlasDistrict, "stateSlug" | "stateCode" | "stateName">;
+
+/** A district's state, read from the scope registry rather than restated per entry. */
+function withState(d: DistrictEntry): AtlasDistrict {
+  const state = scopeRelated(d.scopeId, "administrative-parent").find((id) => scopeKind(id) === "state");
+  const iso = state && scopeRefs(state, "iso3166-2")[0];
+  if (!state || !iso) throw new Error(`${d.scopeId}: no registered state with an ISO 3166-2 ref in schemas/nvdm/scopes.json`);
+  const stateCode = iso.code.split("-")[1];
+  return { ...d, stateSlug: stateCode.toLowerCase(), stateCode, stateName: scopeName(state)! };
+}
+
+export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
   {
     slug: "thanjavur",
     scopeId: "tn-thanjavur",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Thanjavur",
     hook: "The rice bowl: 80% of irrigation is canal water released at Mettur, so the district's water year is decided upstream.",
     basin: { basinId: "cauvery-tn", subBasinKey: "116", subBasinName: "Cauvery Delta" },
@@ -102,9 +113,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "tiruchirappalli",
     scopeId: "tn-tiruchirappalli",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Tiruchirappalli",
     hook: "Thanjavur's inverse: 60% of irrigation is from wells, so its water security is a groundwater question.",
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
@@ -115,9 +123,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "salem",
     scopeId: "tn-salem",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Salem",
     hook: "Holds Mettur, the delta's canal head, and irrigates almost none of its own farmland from it: 13 of 14 taluks draw more groundwater than recharges.",
     basin: { basinId: "cauvery-tn", subBasinKey: "129", subBasinName: "Tirumanimuttar" },
@@ -128,9 +133,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "tirupathur",
     scopeId: "tn-tirupathur",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Tirupathur",
     hook: "The Palar tannery belt without a canal: every taluk is over-exploited and all irrigation is from wells.",
     hasCuratedBriefs: false,
@@ -140,9 +142,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "erode",
     scopeId: "tn-erode",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Erode",
     hook: "Canal country on the Bhavani: 39% of irrigation is canal water and 49% open wells, and Nambiyur taluk pumps 171% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "120", subBasinName: "Lower Bhavani" },
@@ -154,9 +153,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "namakkal",
     scopeId: "tn-namakkal",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Namakkal",
     hook: "Cauvery bank with almost no canal: 72% of irrigation is open wells, and 5 of 8 taluks are over-exploited, Rasipuram at 150% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
@@ -167,9 +163,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "karur",
     scopeId: "tn-karur",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Karur",
     hook: "Where the Amaravathi meets the Cauvery: 4 of 7 taluks are over-exploited and the other 3 critical, and 84% of irrigation is from wells.",
     basin: { basinId: "cauvery-tn", subBasinKey: "113", subBasinName: "Amaravathi" },
@@ -180,9 +173,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "tiruppur",
     scopeId: "tn-tiruppur",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Tiruppur",
     hook: "The Noyyal's dyeing belt: 22% of irrigation is canal water and 77% wells, and Palladam taluk pumps 121% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "126", subBasinName: "Noyyal" },
@@ -193,9 +183,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "vellore",
     scopeId: "tn-vellore",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Vellore",
     hook: "The Palar's fort town with no canal and no tank irrigation: 5 of 6 taluks are over-exploited, K.V. Kuppam at 151% of its recharge, and every hectare is watered from wells.",
     hasCuratedBriefs: false,
@@ -205,9 +192,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "ranipet",
     scopeId: "tn-ranipet",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Ranipet",
     hook: "The Palar below Vellore with no canal: 96% of irrigation is from wells and 4% from tanks, Arcot taluk is over-exploited at 113% of its recharge and Walajapet is critical.",
     hasCuratedBriefs: false,
@@ -217,9 +201,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "dindigul",
     scopeId: "tn-dindigul",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Dindigul",
     hook: "Under the Palani hills: 7 of 10 taluks are over-exploited, Gujiliamparai at 159% of its recharge, and 73% of irrigation is from open wells.",
     hasCuratedBriefs: false,
@@ -229,9 +210,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "tiruvallur",
     scopeId: "tn-tiruvallur",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Tiruvallur",
     hook: "The district north of Chennai has no canal irrigation: 80% of its irrigated land is on tube and bore wells and 11.5% on tanks, 6 of 9 taluks read safe and Avadi is the highest at 83% of its recharge.",
     hasCuratedBriefs: false,
@@ -241,9 +219,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "krishnagiri",
     scopeId: "tn-krishnagiri",
-    stateSlug: "tn",
-    stateCode: "TN",
-    stateName: "Tamil Nadu",
     name: "Krishnagiri",
     hook: "Hosur's district on the Thenpennai: 3 of 8 taluks are over-exploited, Uthangarai at 149% of its recharge, Hosur taluk is critical at 90%, and 89% of irrigation is from wells.",
     deepDive: { basinId: "krishnagiri-rivers", label: "Rivers, groundwater and industry on one map" },
@@ -254,9 +229,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "satara",
     scopeId: "mh-satara",
-    stateSlug: "mh",
-    stateCode: "MH",
-    stateName: "Maharashtra",
     name: "Satara",
     hook: "Koyna country with a dry eastern edge: the same district holds talukas at 20% and talukas at 76% of their groundwater.",
     hasCuratedBriefs: true,
@@ -272,9 +244,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "ahilyanagar",
     scopeId: "mh-ahilyanagar",
-    stateSlug: "mh",
-    stateCode: "MH",
-    stateName: "Maharashtra",
     name: "Ahilyanagar",
     hook: "The tanker district: 97 tankers were running in monsoon August 2026 while the assessment still reads semi-critical - the scarcity register sees what the annual number cannot.",
     hasCuratedBriefs: false,
@@ -284,9 +253,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "kolhapur",
     scopeId: "mh-kolhapur",
-    stateSlug: "mh",
-    stateCode: "MH",
-    stateName: "Maharashtra",
     name: "Kolhapur",
     hook: "Every taluka is within its groundwater; the water story here is the flood - the Krishna-Panchganga backwater that submerged the district in 2019 and 2021.",
     hasCuratedBriefs: false,
@@ -296,9 +262,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "kolar",
     scopeId: "ka-kolar",
-    stateSlug: "ka",
-    stateCode: "KA",
-    stateName: "Karnataka",
     name: "Kolar",
     hook: "Tank country east of Bengaluru: all 6 taluks draw more groundwater than recharges, Mulabagilu at 213%, and 79.8% of households are recorded with a tap.",
     hasCuratedBriefs: false,
@@ -310,9 +273,6 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
   {
     slug: "palakkad",
     scopeId: "kl-palakkad",
-    stateSlug: "kl",
-    stateCode: "KL",
-    stateName: "Kerala",
     name: "Palakkad",
     hook: "Kerala's rain-shadow district, behind the Palakkad Gap: the state's only two critical groundwater blocks, Chittur and Malampuzha, and 97 state wells read monthly since 2000.",
     hasCuratedBriefs: false,
@@ -321,7 +281,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = [
     waterBodiesGapNote:
       "The First Census of Water Bodies Kerala return is not joined yet: data.gov.in, which carries it, was unreachable when the district was built.",
   },
-];
+] satisfies DistrictEntry[]).map(withState);
 
 
 export function listAtlasDistricts(): AtlasDistrict[] {
