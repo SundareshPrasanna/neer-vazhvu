@@ -44,7 +44,7 @@ export function ConnectedInsight({
   // scroll/callback modes never navigate, so they pass through untouched.
   const { cityId } = parsePath(pathname);
   const href =
-    cityId !== "chennai" && linkHref.startsWith("/")
+    cityId && linkHref.startsWith("/")
       ? linkHref === "/"
         ? `/${cityId}`
         : `/${cityId}${linkHref}`

@@ -1,7 +1,9 @@
 import { ImageResponse } from "next/og";
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import { NextResponse } from "next/server";
 import { loadProfilesServer } from "@/lib/utils/load-profiles-server";
+import { requireCity } from "@/lib/require-city";
 import { computeWardRankings } from "@/lib/utils/ward-rankings";
 import { GRADE_COLORS } from "@/lib/utils/grade-colors";
 
@@ -28,7 +30,14 @@ export async function GET(request: Request) {
     return new Response("Missing or invalid ward param", { status: 400 });
   }
 
-  const profiles = loadProfilesServer();
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
+  let profiles;
+  try {
+    profiles = loadProfilesServer(city.cityId);
+  } catch {
+    return new Response(`No ward profiles for ${city.displayName}`, { status: 404 });
+  }
   const rankings = computeWardRankings(wardNumber, profiles);
 
   if (!rankings) {
@@ -36,6 +45,7 @@ export async function GET(request: Request) {
   }
 
   const gc = GRADE_COLORS[rankings.overallGrade] || GRADE_COLORS.C;
+  const zoneLine = [rankings.zoneNo && `Zone ${rankings.zoneNo}`, rankings.zoneName].filter(Boolean).join(" - ");
 
   const pills = rankings.metrics.map((m) => {
     const mc = m.grade ? GRADE_COLORS[m.grade] || GRADE_COLORS.C : { bg: "#334155", text: "#94a3b8" };
@@ -72,7 +82,7 @@ export async function GET(request: Request) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontSize: "48px", fontWeight: 800, color: "white" }}>Ward {rankings.wardNumber}</span>
-          <span style={{ fontSize: "22px", color: "#94a3b8", marginTop: "4px" }}>Zone {rankings.zoneNo} - {rankings.zoneName}</span>
+          <span style={{ fontSize: "22px", color: "#94a3b8", marginTop: "4px" }}>{`${city.displayName}${zoneLine ? ` · ${zoneLine}` : ""}`}</span>
         </div>
         <div style={{ width: "120px", height: "120px", borderRadius: "24px", backgroundColor: gc.bg, color: gc.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
           <span style={{ fontSize: "64px", fontWeight: 900, lineHeight: 1 }}>{rankings.overallGrade}</span>

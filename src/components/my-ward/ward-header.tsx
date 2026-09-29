@@ -19,7 +19,7 @@ interface WardHeaderProps {
 
 export function WardHeader({ wardNumber, zoneName, profile, groundwater, representatives }: WardHeaderProps) {
   const { t } = useLanguage();
-  const { cityPrefix } = useMyWardCity();
+  const { cityId, cityPrefix } = useMyWardCity();
 
   const shareUrl = typeof window !== "undefined"
     ? `${window.location.origin}${cityPrefix}/my-ward?ward=${wardNumber}`
@@ -87,7 +87,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
           url={shareUrl}
           title={`Ward ${wardNumber} - ${zoneName} | Neer Vazhvu`}
           description={t("share.ward_report")}
-          ogImageUrl={`/api/og/ward?ward=${wardNumber}`}
+          ogImageUrl={`/api/og/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`}
         />
 
         {/* Export CSV */}

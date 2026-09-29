@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useCityId } from "@/lib/hooks/use-city-id";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
 
@@ -20,17 +20,17 @@ let cachedHelpers: typeof import("@turf/helpers") | null = null;
  * what this did - silently tested every city's coordinates against CHENNAI's
  * 200 wards, so the answer was null everywhere outside Chennai and, worse,
  * would have been a plausible wrong ward had the boxes overlapped. Outside a
- * /[cityId] route there is no param, and Chennai's default is the right one.
+ * /[cityId] route there is no param, and lookups resolve to null.
  */
 export function useWardLookup() {
-  const params = useParams();
-  const cityId = typeof params?.cityId === "string" ? params.cityId : null;
+  const cityId = useCityId();
   const wardsUrl = cityId ? wardsGeoJsonPathFor(cityId) : undefined;
   const wardGeoRef = useRef<GeoJSON.FeatureCollection | null>(null);
 
   useEffect(() => {
     let mounted = true;
     wardGeoRef.current = null;
+    if (!wardsUrl) return;
     getWardGeoJSON(wardsUrl).then((geo) => {
       if (mounted) wardGeoRef.current = geo;
     });
@@ -44,6 +44,7 @@ export function useWardLookup() {
   }, [wardsUrl]);
 
   return useCallback(async (lat: number, lng: number): Promise<number | null> => {
+    if (!wardsUrl) return null;
     if (!wardGeoRef.current) {
       wardGeoRef.current = await getWardGeoJSON(wardsUrl);
     }

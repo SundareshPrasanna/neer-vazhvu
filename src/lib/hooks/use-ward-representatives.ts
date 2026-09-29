@@ -79,7 +79,7 @@ function repsUrl(cityId: string): string {
     : `/data/${cityId}-ward-representatives.json`;
 }
 
-function loadReps(cityId: string = "chennai"): Promise<RepsFile | null> {
+function loadReps(cityId: string): Promise<RepsFile | null> {
   let p = repsPromiseByCity.get(cityId);
   if (!p) {
     // Treat a missing file as a soft "no representatives data yet for
@@ -97,13 +97,13 @@ function loadReps(cityId: string = "chennai"): Promise<RepsFile | null> {
 
 export function useWardRepresentatives(
   wardNumber: number | null,
-  cityId: string = "chennai",
+  cityId: string | null,
 ) {
   const [data, setData] = useState<RepresentativeData | null>(null);
   const [meta, setMeta] = useState<RepsFile["meta"] | null>(null);
 
   useEffect(() => {
-    if (wardNumber == null) {
+    if (wardNumber == null || !cityId) {
       Promise.resolve().then(() => {
         setData(null);
         setMeta(null);

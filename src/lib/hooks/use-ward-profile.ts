@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { riverQualityUrl, wardProfilesUrl } from "@/lib/cities/data-paths";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -160,25 +161,10 @@ interface RiverQuality {
 const profilesPromiseByCity = new Map<string, Promise<WardProfile[]>>();
 const riverPromiseByCity = new Map<string, Promise<RiverQuality>>();
 
-/** Resolve the public/data/ filename for ward profiles. Chennai keeps the
- *  legacy unsuffixed path for back-compat; other cities use a -<cityId>
- *  suffix matching the compute scripts' output. */
-function profilesUrl(cityId: string): string {
-  return cityId === "chennai"
-    ? "/data/ward-profiles.json"
-    : `/data/${cityId}-ward-profiles.json`;
-}
-
-function riverQualityUrl(cityId: string): string {
-  return cityId === "chennai"
-    ? "/data/river-quality.json"
-    : `/data/river-quality-${cityId}.json`;
-}
-
-export function loadProfiles(cityId: string = "chennai"): Promise<WardProfile[]> {
+export function loadProfiles(cityId: string): Promise<WardProfile[]> {
   let p = profilesPromiseByCity.get(cityId);
   if (!p) {
-    p = fetch(profilesUrl(cityId))
+    p = fetch(wardProfilesUrl(cityId))
       .then((r) => r.json())
       // Legacy cities ship a bare array; NVDM-migrated cities (Madurai
       // onward) wrap it as { ...envelope, wards: [...] }. Accept both.
@@ -194,7 +180,7 @@ export function loadProfiles(cityId: string = "chennai"): Promise<WardProfile[]>
   return p;
 }
 
-function loadRiverQuality(cityId: string = "chennai"): Promise<RiverQuality> {
+function loadRiverQuality(cityId: string): Promise<RiverQuality> {
   let p = riverPromiseByCity.get(cityId);
   if (!p) {
     p = fetch(riverQualityUrl(cityId))
@@ -212,7 +198,7 @@ function loadRiverQuality(cityId: string = "chennai"): Promise<RiverQuality> {
 
 export function useWardProfile(
   wardNumber: number | null,
-  cityId: string = "chennai",
+  cityId: string | null,
 ) {
   const { language } = useLanguage();
   const [profile, setProfile] = useState<WardProfile | null>(null);
@@ -227,7 +213,7 @@ export function useWardProfile(
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (wardNumber == null) {
+    if (wardNumber == null || !cityId) {
       // Use microtask to avoid synchronous setState in effect body
       Promise.resolve().then(() => {
         setProfile(null);

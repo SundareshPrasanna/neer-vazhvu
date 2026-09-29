@@ -4,13 +4,12 @@ const cache = new Map<string, RestorationProject[]>();
 const inflight = new Map<string, Promise<RestorationProject[]>>();
 
 /**
- * Load this city's restoration projects. Default cityId="chennai" for
- * backward compat - existing call sites that don't pass a cityId
- * still hit /data/restoration-projects.json. Other cities load
- * /data/restoration-projects-{cityId}.json. Returns [] when the
+ * Load this city's restoration projects (Chennai's legacy file is
+ * /data/restoration-projects.json; other cities load
+ * /data/restoration-projects-{cityId}.json). Returns [] when the
  * city's file doesn't exist (instead of throwing).
  */
-export function getRestorationProjects(cityId: string = "chennai"): Promise<RestorationProject[]> {
+export function getRestorationProjects(cityId: string): Promise<RestorationProject[]> {
   const cached = cache.get(cityId);
   if (cached) return Promise.resolve(cached);
   const existing = inflight.get(cityId);

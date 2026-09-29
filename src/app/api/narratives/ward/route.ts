@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireCity } from "@/lib/require-city";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
   const wardParam = searchParams.get("ward");
 
   if (!wardParam) {
@@ -9,8 +12,8 @@ export async function GET(request: NextRequest) {
   }
 
   const wardNumber = parseInt(wardParam, 10);
-  if (isNaN(wardNumber) || wardNumber < 1 || wardNumber > 200) {
-    return NextResponse.json({ error: "ward must be 1-200" }, { status: 400 });
+  if (isNaN(wardNumber) || wardNumber < 1) {
+    return NextResponse.json({ error: "ward must be a positive integer" }, { status: 400 });
   }
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -23,6 +26,7 @@ export async function GET(request: NextRequest) {
   const { data } = await supabase
     .from("ward_narrative")
     .select("narrative_date, headline_en, headline_ta, body_en, body_ta, source_dates, key_facts, model")
+    .eq("city_id", city.cityId)
     .eq("ward_number", wardNumber)
     .order("narrative_date", { ascending: false })
     .limit(1);

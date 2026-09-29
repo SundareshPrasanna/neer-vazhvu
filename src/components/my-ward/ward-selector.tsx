@@ -54,10 +54,10 @@ interface WardSelectorProps {
   selectedWard: number | null;
   /** City id for the ward / locality data lookup. Defaults to Chennai
    *  for back-compat with the existing flat /my-ward route. */
-  cityId?: string;
+  cityId: string;
 }
 
-export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: WardSelectorProps) {
+export function WardSelector({ onSelect, selectedWard, cityId }: WardSelectorProps) {
   const { t, language } = useLanguage();
   const [wards, setWards] = useState<WardEntry[]>([]);
   const [localities, setLocalities] = useState<LocalityEntry[]>([]);
@@ -88,8 +88,8 @@ export function WardSelector({ onSelect, selectedWard, cityId = "chennai" }: War
     // and (optional) <city>-localities.json. Localities is allowed to 404
     // - some cities don't have a curated locality list yet, and the
     // selector still works (search by ward # / zone name only).
-    const wardsUrl = cityId === "chennai" ? "/api/wards" : `/api/wards?city=${encodeURIComponent(cityId)}`;
-    const locUrl = cityId === "chennai" ? "/api/localities" : `/api/localities?city=${encodeURIComponent(cityId)}`;
+    const wardsUrl = `/api/wards?city=${encodeURIComponent(cityId)}`;
+    const locUrl = `/api/localities?city=${encodeURIComponent(cityId)}`;
     fetch(wardsUrl)
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))

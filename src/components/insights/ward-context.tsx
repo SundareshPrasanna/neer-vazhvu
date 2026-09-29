@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWardProfile } from "@/lib/hooks/use-ward-profile";
+import { useCityId } from "@/lib/hooks/use-city-id";
 import { useLanguage } from "@/lib/i18n/context";
 
 interface WardContextProps {
@@ -28,23 +29,24 @@ const RISK_BADGE_COLORS: Record<string, string> = {
 
 export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardContextProps) {
   const { t } = useLanguage();
-  const { profile, getRiverLabel } = useWardProfile(wardNumber);
+  const cityId = useCityId();
+  const { profile, getRiverLabel } = useWardProfile(wardNumber, cityId);
   const [gw, setGW] = useState<GWData | null>(groundwater ?? null);
 
   // Fetch groundwater data only when not provided via props and not hidden
   useEffect(() => {
-    if (groundwater || hideGroundwater) return;
+    if (groundwater || hideGroundwater || !cityId) return;
     let cancelled = false;
-    fetch(`/api/groundwater/ward?ward=${wardNumber}`)
+    fetch(`/api/groundwater/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
       .then((r) => r.json())
       .then((d) => {
         if (!cancelled) setGW({ depthM: d.depthM, trend: d.trend, riskLevel: d.riskLevel });
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [wardNumber, groundwater, hideGroundwater]);
+  }, [wardNumber, groundwater, hideGroundwater, cityId]);
 
-  if (!profile) return null;
+  if (!profile || !cityId) return null;
 
   const riverLabel = getRiverLabel(
     profile.rivers.nearest_river_id,
@@ -60,7 +62,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Groundwater */}
         {!hideGroundwater && gw && gw.depthM != null && (
           <ContextRow
-            href={`/groundwater?ward=${wardNumber}`}
+            href={`/${cityId}/groundwater?ward=${wardNumber}`}
             label={t("ward_ctx.groundwater")}
             value={`${gw.depthM.toFixed(1)}m, ${t(`ward_ctx.trend_${gw.trend}`)}`}
             badge={gw.riskLevel !== "noData" ? gw.riskLevel : undefined}
@@ -70,7 +72,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Water bodies */}
         {profile.water_bodies.current_count > 0 && (
           <ContextRow
-            href={`/water-bodies?mode=restoration&ward=${wardNumber}`}
+            href={`/${cityId}/water-bodies?mode=restoration&ward=${wardNumber}`}
             label={t("ward_ctx.water_bodies")}
             value={
               profile.water_bodies.restoration_critical > 0
@@ -85,7 +87,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Flood - skip when ward profile has no flood data layer for this city */}
         {"dominant_hazard" in profile.flood && profile.flood.dominant_hazard && (
           <ContextRow
-            href={`/flood-risk?ward=${wardNumber}`}
+            href={`/${cityId}/flood-risk?ward=${wardNumber}`}
             label={t("ward_ctx.flood")}
             value={t("ward_ctx.dominant_hazard").replace(
               "{level}",
@@ -97,7 +99,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* River */}
         {riverLabel && profile.rivers.nearest_station_id && (
           <ContextRow
-            href={`/rivers?river=${profile.rivers.nearest_river_id}&station=${profile.rivers.nearest_station_id}`}
+            href={`/${cityId}/rivers?river=${profile.rivers.nearest_river_id}&station=${profile.rivers.nearest_station_id}`}
             label={t("ward_ctx.river")}
             value={
               profile.rivers.nearest_km != null
@@ -110,7 +112,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {/* Drainage - skip when ward profile has no drainage layer for this city */}
         {!("_data_status" in profile.drainage) && profile.drainage.line_count > 0 && (
           <ContextRow
-            href={`/flood-risk?ward=${wardNumber}&view=drainage`}
+            href={`/${cityId}/flood-risk?ward=${wardNumber}&view=drainage`}
             label={t("ward_ctx.drainage")}
             value={t("ward_ctx.drain_count").replace("{count}", String(profile.drainage.line_count))}
           />

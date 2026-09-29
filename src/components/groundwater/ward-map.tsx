@@ -18,13 +18,6 @@ import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight"
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 
-// Chennai-default URLs and map center. Other cities override via props.
-const DEFAULT_BLOCK_GEOJSON_URL = "/geojson/chennai-gwr-blocks.geojson";
-const DEFAULT_BLOCKS_JSON_URL = "/data/gwr-blocks.json";
-const DEFAULT_STATIONS_JSON_URL = "/data/gw-stations.json";
-const DEFAULT_WARDS_GEOJSON_URL = "/geojson/chennai-wards-2022.geojson";
-const DEFAULT_MAP_CENTER: [number, number] = [13.0827, 80.2707];
-
 /** Flies the map to a given center when it changes */
 function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string }) {
   const map = useMap();
@@ -64,12 +57,12 @@ interface WardMapProps {
   selectedCgwbStationName?: string | null;
   onCgwbStationSelect?: (station: CgwbStation | null) => void;
   hiddenCategories?: Set<string>;
-  // City-aware overrides; default to Chennai's paths for backward compat.
-  blockGeoJsonUrl?: string;
-  blocksJsonUrl?: string;
-  stationsJsonUrl?: string;
-  wardGeoJsonUrl?: string;
-  mapCenter?: [number, number];
+  // The city's data paths and centre; required, so no city inherits another's.
+  blockGeoJsonUrl: string;
+  blocksJsonUrl: string;
+  stationsJsonUrl: string;
+  wardGeoJsonUrl: string;
+  mapCenter: [number, number];
   mapZoom?: number;
   /** Place id, used to overlay corporation boundaries for region places. */
   cityId?: string;
@@ -90,11 +83,11 @@ export function WardMap({
   selectedCgwbStationName,
   onCgwbStationSelect,
   hiddenCategories,
-  blockGeoJsonUrl = DEFAULT_BLOCK_GEOJSON_URL,
-  blocksJsonUrl = DEFAULT_BLOCKS_JSON_URL,
-  stationsJsonUrl = DEFAULT_STATIONS_JSON_URL,
-  wardGeoJsonUrl = DEFAULT_WARDS_GEOJSON_URL,
-  mapCenter = DEFAULT_MAP_CENTER,
+  blockGeoJsonUrl,
+  blocksJsonUrl,
+  stationsJsonUrl,
+  wardGeoJsonUrl,
+  mapCenter,
   mapZoom = 11,
   cityId,
 }: WardMapProps) {

@@ -51,8 +51,8 @@ interface RecentRainfall {
 }
 
 interface RainfallTrendsProps {
-  /** City id for the data file lookup. Defaults to Chennai for back-compat. */
-  cityId?: string;
+  /** City id for the data file lookup. */
+  cityId: string;
   /** City display name shown in the chart title; falls back to a
    *  capitalised cityId. Pass it explicitly so the title matches the
    *  rest of the page header. */
@@ -66,9 +66,9 @@ interface RainfallTrendsProps {
 const DAY_ZERO_CITIES = new Set(["chennai"]);
 
 export function RainfallTrends({
-  cityId = "chennai",
+  cityId,
   cityDisplayName,
-}: RainfallTrendsProps = {}) {
+}: RainfallTrendsProps) {
   const { t, language } = useLanguage();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useCityId } from "@/lib/hooks/use-city-id";
 
 interface WardNarrativeData {
   date: string;
@@ -23,6 +24,7 @@ interface WardNarrativeProps {
 
 export function WardNarrative({ wardNumber }: WardNarrativeProps) {
   const { language, t } = useLanguage();
+  const cityId = useCityId();
   const [data, setData] = useState<WardNarrativeData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +34,11 @@ export function WardNarrative({ wardNumber }: WardNarrativeProps) {
     setLoading(true);
     setData(null);
 
-    fetch(`/api/narratives/ward?ward=${wardNumber}`)
+    if (!cityId) {
+      setLoading(false);
+      return;
+    }
+    fetch(`/api/narratives/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
       .then((r) => r.json())
       .then((json) => {
         if (!cancelled) {
@@ -47,7 +53,7 @@ export function WardNarrative({ wardNumber }: WardNarrativeProps) {
     return () => {
       cancelled = true;
     };
-  }, [wardNumber]);
+  }, [wardNumber, cityId]);
 
   if (loading || !data) return null;
 

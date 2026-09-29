@@ -26,9 +26,8 @@ interface CoastalMapProps {
   flyToFeaturedSignal?: number;
   mapCenter?: [number, number];
   mapZoom?: number;
-  /** City whose {cityId}-coastal-* geojsons to load. Defaults to Chennai
-   *  (the first coastal city) for back-compat. */
-  cityId?: string;
+  /** City whose {cityId}-coastal-* geojsons to load. */
+  cityId: string;
 }
 
 // Bump the per-city ?v when a file is regenerated so browsers don't serve a
@@ -79,7 +78,7 @@ export function CoastalMap({
   mapCenter = [13.15, 80.32],
   mapZoom = 11,
   flyToFeaturedSignal = 0,
-  cityId = "chennai",
+  cityId,
 }: CoastalMapProps) {
   const v = GEO_VERSIONS[cityId] ?? { zones: 1, hotspots: 1, transects: 1 };
   const zonesUrl = `/geojson/${cityId}-coastal-zones.geojson?v=${v.zones}`;

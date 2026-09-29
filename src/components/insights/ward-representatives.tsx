@@ -24,7 +24,7 @@ function partyBadgeClass(party: string): string {
 export function WardRepresentatives({ wardNumber }: WardRepresentativesProps) {
   const { t, language } = useLanguage();
   const { cityId } = useMyWardCity();
-  const { representatives: reps, meta } = useWardRepresentatives(wardNumber, cityId);
+  const { representatives: reps, meta } = useWardRepresentatives(wardNumber, cityId || null);
 
   if (!reps) return null;
 

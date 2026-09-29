@@ -35,6 +35,7 @@ import {
   riverQualityUrl,
   industrialSourcesUrl,
   sewageInletsUrl,
+  riversUrl,
   wardProfilesUrl,
 } from "@/lib/cities/data-paths";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
@@ -239,6 +240,8 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
             onSelectSource={(source) => { setSelectedSource(source); setSelectedRiver(null); }}
             focusCenter={focusCenter}
             hiddenCategories={hiddenCategories}
+            riversGeoJsonUrl={`${riversUrl(cityId)}?v=6`}
+            industrialZonesGeoJsonUrl={`/geojson/${cityId}-industrial-zones.geojson`}
             mapCenter={mapCenter}
             mapZoom={mapZoom}
           />

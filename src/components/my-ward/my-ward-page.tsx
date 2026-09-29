@@ -19,13 +19,11 @@ import { NewsContext } from "@/components/insights/news-context";
 import { MyWardCityProvider } from "./city-context";
 
 interface MyWardPageProps {
-  /** City id for which to render the page. Defaults to Chennai for
-   *  back-compat with the existing flat /my-ward route. Pass an
-   *  explicit cityId on the [cityId]/my-ward route. */
-  cityId?: string;
+  /** City id of the /[cityId]/my-ward route. */
+  cityId: string;
 }
 
-export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
+export function MyWardPage({ cityId }: MyWardPageProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useLanguage();
@@ -91,7 +89,7 @@ export function MyWardPage({ cityId = "chennai" }: MyWardPageProps = {}) {
               Other cities don't yet have a generation pipeline, so we
               hide the section rather than render Chennai's narrative
               under their ward number. */}
-          {cityId === "chennai" && <WardNarrative wardNumber={wardNumber} />}
+          <WardNarrative wardNumber={wardNumber} />
 
           {/* Bangalore ward profiles currently carry only administrative
               data (ward name, corporation, zone, population, centroid,

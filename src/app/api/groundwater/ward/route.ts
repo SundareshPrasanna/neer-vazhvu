@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireCity } from "@/lib/require-city";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
   const wardParam = searchParams.get("ward");
 
   if (!wardParam) {
@@ -9,8 +12,8 @@ export async function GET(request: NextRequest) {
   }
 
   const wardNumber = parseInt(wardParam, 10);
-  if (isNaN(wardNumber) || wardNumber < 1 || wardNumber > 200) {
-    return NextResponse.json({ error: "ward must be 1-200" }, { status: 400 });
+  if (isNaN(wardNumber) || wardNumber < 1) {
+    return NextResponse.json({ error: "ward must be a positive integer" }, { status: 400 });
   }
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -24,6 +27,7 @@ export async function GET(request: NextRequest) {
   const { data: gwData } = await supabase
     .from("groundwater_monthly")
     .select("depth_to_water_m, year, month")
+    .eq("city_id", city.cityId)
     .eq("ward_number", wardNumber)
     .order("year", { ascending: false })
     .order("month", { ascending: false })
@@ -37,7 +41,8 @@ export async function GET(request: NextRequest) {
     const { data: prevData } = await supabase
       .from("groundwater_monthly")
       .select("depth_to_water_m")
-      .eq("ward_number", wardNumber)
+      .eq("city_id", city.cityId)
+    .eq("ward_number", wardNumber)
       .eq("year", current.year - 1)
       .eq("month", current.month)
       .limit(1);
@@ -55,6 +60,7 @@ export async function GET(request: NextRequest) {
   const { data: riskData } = await supabase
     .from("ward_risk_score")
     .select("risk_score, risk_level, groundwater_component, trend_component, reservoir_component, seasonal_component")
+    .eq("city_id", city.cityId)
     .eq("ward_number", wardNumber)
     .order("computed_date", { ascending: false })
     .limit(1);

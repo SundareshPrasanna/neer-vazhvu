@@ -29,13 +29,13 @@ interface WardMultiSelectorProps {
   selectedWards: number[];
   onUpdate: (wards: number[]) => void;
   /** Defaults to Chennai for the legacy /my-ward/compare route. */
-  cityId?: string;
+  cityId: string;
 }
 
 export function WardMultiSelector({
   selectedWards,
   onUpdate,
-  cityId = "chennai",
+  cityId,
 }: WardMultiSelectorProps) {
   const { t, language } = useLanguage();
   const [wards, setWards] = useState<WardEntry[]>([]);
@@ -45,7 +45,7 @@ export function WardMultiSelector({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const url = cityId === "chennai" ? "/api/wards" : `/api/wards?city=${cityId}`;
+    const url = `/api/wards?city=${encodeURIComponent(cityId)}`;
     fetch(url)
       .then((r) => r.json())
       .then((d) => setWards(d.wards || []))

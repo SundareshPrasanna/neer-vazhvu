@@ -13,12 +13,11 @@ import { ComparisonTable } from "@/components/my-ward/comparison-table";
 import { ShareMenu } from "@/components/share-menu";
 
 interface WardComparisonPageProps {
-  /** City id - defaults to Chennai for the legacy /my-ward/compare
-   *  route. Pass an explicit cityId on /[cityId]/my-ward/compare. */
-  cityId?: string;
+  /** City id of the /[cityId]/my-ward/compare route. */
+  cityId: string;
 }
 
-export function WardComparisonPage({ cityId = "chennai" }: WardComparisonPageProps = {}) {
+export function WardComparisonPage({ cityId }: WardComparisonPageProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useLanguage();
@@ -131,15 +130,7 @@ export function WardComparisonPage({ cityId = "chennai" }: WardComparisonPagePro
             <ShareMenu
               url={shareUrl}
               title={`Comparing Wards ${validWards.join(", ")} | Neer Vazhvu`}
-              ogImageUrl={
-                // The OG image generator currently reads Chennai's
-                // ward-profiles.json directly. For other cities skip
-                // the image (ShareMenu accepts undefined) until we add
-                // a city-aware generator.
-                cityId === "chennai"
-                  ? `/api/og/compare?wards=${validWards.join(",")}`
-                  : undefined
-              }
+              ogImageUrl={`/api/og/compare?city=${encodeURIComponent(cityId)}&wards=${validWards.join(",")}`}
             />
             <button
               onClick={handleExport}

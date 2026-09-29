@@ -8,8 +8,8 @@ import { getWardGeoJSON } from "@/lib/data/ward-geo";
 interface SelectedWardHighlightProps {
   wardNumber: number | null;
   flyTo?: boolean;
-  /** Path to the city's ward GeoJSON. Defaults to Chennai's. */
-  wardGeoJsonUrl?: string;
+  /** Path to the city's ward GeoJSON. */
+  wardGeoJsonUrl: string;
 }
 
 /**

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { logRouteError } from "@/lib/api-error";
+import { requireCity } from "@/lib/require-city";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { createServerClient } from "@/lib/supabase/server";
 import {
@@ -201,14 +202,15 @@ async function loadV2History(cityId: string): Promise<HistoryPayload | null> {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const cityId = searchParams.get("cityId") || "chennai";
+  const city = requireCity(searchParams);
+  if (city instanceof NextResponse) return city;
 
   try {
-    if (cityId === "chennai") {
+    if (city.reservoirDataSource === "legacy-v1") {
       return json(await loadLegacyChennaiHistory());
     }
 
-    const payload = await loadV2History(cityId);
+    const payload = await loadV2History(city.cityId);
     if (!payload) return json(emptyPayload());
     return json(payload);
   } catch (error) {

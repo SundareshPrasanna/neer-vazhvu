@@ -1,8 +1,8 @@
 /**
  * Shared, module-cached loader for ward GeoJSON.
  * Ensures a single fetch per URL across ward-map, flood-risk-map, and
- * use-ward-lookup. Defaults to Chennai's wards GeoJSON; pass a different
- * URL for other cities (e.g. /geojson/madurai-wards-2022.geojson).
+ * use-ward-lookup. Callers pass the city's URL (wardsGeoJsonPathFor); there is
+ * no default city.
  *
  * MISSING WARD GEOMETRY IS A LEGITIMATE STATE, not an error. Hyderabad has
  * no public ward file at all - its 300-ward delimitation was gazetted in
@@ -18,12 +18,9 @@
  */
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 
-const DEFAULT_URL = "/geojson/chennai-wards-2022.geojson";
 const cache = new Map<string, Promise<GeoJSON.FeatureCollection>>();
 
-export function getWardGeoJSON(
-  url: string = DEFAULT_URL,
-): Promise<GeoJSON.FeatureCollection> {
+export function getWardGeoJSON(url: string): Promise<GeoJSON.FeatureCollection> {
   let entry = cache.get(url);
   if (!entry) {
     entry = fetch(url)

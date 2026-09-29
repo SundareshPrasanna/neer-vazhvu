@@ -55,11 +55,11 @@ interface CombinedRiversMapProps {
   onSelectSource: (source: PollutionSource | null) => void;
   focusCenter?: [number, number];
   hiddenCategories?: Set<string>;
-  /** Path to the city's rivers GeoJSON. Defaults to Chennai's. */
-  riversGeoJsonUrl?: string;
-  /** Path to the city's industrial-zones GeoJSON. Defaults to Chennai's. */
-  industrialZonesGeoJsonUrl?: string;
-  /** Initial map center. Defaults to Chennai's centroid. */
+  /** Path to the city's rivers GeoJSON. */
+  riversGeoJsonUrl: string;
+  /** Path to the city's industrial-zones GeoJSON. */
+  industrialZonesGeoJsonUrl: string;
+  /** Initial map center. */
   mapCenter?: [number, number];
   /** Initial map zoom. */
   mapZoom?: number;
@@ -74,8 +74,8 @@ export function CombinedRiversMap({
   onSelectSource,
   focusCenter,
   hiddenCategories,
-  riversGeoJsonUrl = "/geojson/chennai-rivers.geojson?v=6",
-  industrialZonesGeoJsonUrl = "/geojson/chennai-industrial-zones.geojson",
+  riversGeoJsonUrl,
+  industrialZonesGeoJsonUrl,
   mapCenter,
   mapZoom = 11,
 }: CombinedRiversMapProps) {
