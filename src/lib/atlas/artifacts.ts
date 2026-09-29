@@ -389,6 +389,9 @@ export interface DistrictDirectoryArtifact extends AtlasEnvelope {
   };
 }
 
+/** A directory without its envelope: what the refresh builders produce. */
+export type DirectoryPayload = Omit<DistrictDirectoryArtifact, keyof AtlasEnvelope>;
+
 /* ── district-grain families ───────────────────────────────────────────── */
 
 /** One source's slice of the current district irrigation mix. Percent is the

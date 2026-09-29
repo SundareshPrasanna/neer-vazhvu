@@ -1,4 +1,4 @@
-import { formatExtractionStage } from "./tn-groundwater-projection";
+import { formatExtractionStage } from "./district-reading";
 import type { GeneratedAssessment, PlaceEvidenceInputs } from "./capability-evidence";
 
 export const PLACE_BRIEF_SCHEMA_VERSION = 1;

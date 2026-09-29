@@ -45,10 +45,8 @@ import {
   loadTnDistrictCrosswalkResolution,
 } from "../src/lib/atlas/tn-crosswalk-resolution";
 import { acquireTnDistrictSourceExtract } from "../src/lib/atlas/tn-district-acquisition";
-import {
-  buildDistrictDirectoryPayload,
-  validateDirectoryPayload,
-} from "../src/lib/atlas/tn-district-refresh";
+import { validateDirectoryPayload } from "../src/lib/atlas/district-directory";
+import { buildDistrictDirectoryPayload } from "../src/lib/atlas/tn-district-refresh";
 import {
   ROOT,
   TNRD_LGD_EDITION,

@@ -7,6 +7,7 @@ import {
   validateCapabilityIds,
   validateCapabilityRegistry,
 } from "./capability-registry";
+import { isRecord } from "./json-guards";
 
 /**
  * Place kinds a profile may target. Only gram-panchayat is used today; the
@@ -141,10 +142,6 @@ const PROFILE_REQUIREMENT_KEYS = new Set([
   "dependencyIds",
   "maxEvidenceAgeDays",
 ]);
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 
 function isKnownValue<const T extends readonly string[]>(
   values: T,

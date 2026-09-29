@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 
 import registryJson from "./capabilities.json";
+import { ID_PATTERN, isRecord } from "./json-guards";
 
 export const CAPABILITY_REGISTRY_SCHEMA_VERSION = 1;
 
@@ -15,12 +16,6 @@ export interface CapabilityRegistry {
   schemaVersion: 1;
   id: "atlas-capabilities-v2";
   capabilities: CapabilityRegistryEntry[];
-}
-
-const ID_PATTERN = /^[a-z][a-z0-9-]*$/;
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export function validateCapabilityRegistry(raw: unknown): string[] {

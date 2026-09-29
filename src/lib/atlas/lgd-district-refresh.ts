@@ -43,6 +43,7 @@ import type {
   DirectoryBoundary,
   DirectoryComposition,
   DirectoryPanchayat,
+  DirectoryPayload,
   DistrictDirectoryArtifact,
 } from "./artifacts";
 import { assertMembershipCoversPanchayats, type BlockMembership } from "./block-membership";
@@ -59,7 +60,6 @@ import type { AtlasDistrict } from "./registry";
 import { collectJjmSourceUnits } from "./tn-crosswalk";
 import type { TnDistrictCrosswalkProposal } from "./tn-crosswalk";
 import type { CanonicalCrosswalk } from "./tn-crosswalk-resolution";
-import type { DirectoryPayload } from "./tn-district-refresh";
 import { findJjmRecordsForTarget } from "./tn-district-refresh";
 
 /** The match class an LGD coverage binding carries: the register itself

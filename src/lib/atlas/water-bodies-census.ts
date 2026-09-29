@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
-import { computeRecordsSha256, isRecord } from "./acquisition-validation";
+import { computeRecordsSha256 } from "./acquisition-validation";
+import { isRecord } from "./json-guards";
 import type { DistrictDirectoryArtifact, DistrictIdentity } from "./artifacts";
 import type { TnWaterBodyRecord } from "./tn-water-bodies";
 

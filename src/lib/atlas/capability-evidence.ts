@@ -7,7 +7,7 @@ import type {
 import type { TnBoundaryRecord } from "./tn-boundary";
 import type { GramPanchayatCensusRollup } from "./tn-census-attributes";
 import type { CanonicalCrosswalkRecord } from "./tn-crosswalk-resolution";
-import { formatExtractionStage } from "./tn-groundwater-projection";
+import { formatExtractionStage } from "./district-reading";
 import type { GroundwaterProjectionRecord } from "./tn-groundwater-projection";
 import type { GramPanchayatWells, WellQualityRecord } from "./groundwater-wells";
 import type { JjmGramPanchayatService } from "./tn-jjm-service";

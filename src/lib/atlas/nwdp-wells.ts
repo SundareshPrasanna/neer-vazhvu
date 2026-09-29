@@ -5,7 +5,7 @@
  * own way (KSGWD's manual set has 'Logitude'), so the plan carries the field
  * names beside the resource id and nothing here guesses them.
  */
-import { isNonEmptyString, isRecord } from "./acquisition-validation";
+import { isNonEmptyString, isRecord } from "./json-guards";
 import { QUALITY_PARAMETERS, type QualityParameter, type RawReading } from "./groundwater-wells";
 
 export const NWDP_DATASTORE_URL = "https://nwdp.nwic.gov.in/api/3/action/datastore_search";

@@ -12,7 +12,7 @@
  */
 import { readFileSync } from "node:fs";
 
-import { isNonEmptyString, isRecord, isValidDate, validateUrl } from "./acquisition-validation";
+import { isNonEmptyString, isRecord, isValidDate, validateUrl } from "./json-guards";
 
 export const BLOCK_MEMBERSHIP_SCHEMA_VERSION = 1;
 

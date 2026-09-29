@@ -1,13 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import type { DistrictDirectoryArtifact } from "./artifacts";
+import type { DirectoryPayload, DistrictDirectoryArtifact } from "./artifacts";
+import { validateDirectoryPayload } from "./district-directory";
 import { buildCanonicalCrosswalk } from "./tn-crosswalk-resolution";
-import {
-  buildDistrictDirectoryPayload,
-  validateDirectoryPayload,
-} from "./tn-district-refresh";
-import type { DirectoryPayload } from "./tn-district-refresh";
+import { buildDistrictDirectoryPayload } from "./tn-district-refresh";
 import {
   FIXTURE_DISTRICTS,
   buildMiniProposal,

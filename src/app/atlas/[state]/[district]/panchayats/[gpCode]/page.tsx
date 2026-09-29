@@ -27,7 +27,7 @@ import { AtlasSortableTable } from "@/components/atlas/sortable-table";
 import { getCuratedBrief } from "@/lib/atlas/curated-briefs";
 import { loadBoundaryShard, loadGroundwaterProjection, loadGroundwaterTaluks, loadWaterBodyShard } from "@/lib/atlas/data";
 import { censusIsSample, getDistrictBrief, getDistrictDirectory } from "@/lib/atlas/district-directory";
-import { displayTalukName, unitLabelOf } from "@/lib/atlas/district-reading";
+import { displayTalukName, formatExtractionStage, unitLabelOf } from "@/lib/atlas/district-reading";
 import {
   blockHref,
   districtHref,
@@ -37,7 +37,6 @@ import {
   panchayatHref,
   stateHref,
 } from "@/lib/atlas/registry";
-import { formatExtractionStage } from "@/lib/atlas/tn-groundwater-projection";
 
 const GAP_REASONS = [
   {

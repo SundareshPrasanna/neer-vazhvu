@@ -1,5 +1,5 @@
 import { loadBriefs, loadDirectory } from "./data";
-import type { BoundaryProvenance, DistrictDirectoryArtifact, IdentityAdapter } from "./artifacts";
+import type { BoundaryProvenance, DirectoryPayload, DistrictDirectoryArtifact, IdentityAdapter } from "./artifacts";
 import {
   boundaryProvenance,
   identityAdapterOf,
@@ -9,7 +9,6 @@ import {
 } from "./artifacts";
 import type { PlaceBrief } from "./place-brief";
 import { findAtlasDistrict, listAtlasDistricts, type AtlasDistrict } from "./registry";
-import { validateDirectoryPayload } from "./tn-district-refresh";
 
 export type DirectoryCoverage = "directory-only" | "water-profile";
 
@@ -84,6 +83,55 @@ export function directoryPlaceName(value: string): string {
   return trimmed === trimmed.toLocaleUpperCase("en-IN")
     ? displayName(trimmed)
     : trimmed;
+}
+
+/**
+ * Consistency checks on a directory as served: blocks partition the
+ * Panchayats, codes are unique, and every binding names villages. Used by the
+ * page loader and by the producers' --validate mode.
+ */
+export function validateDirectoryPayload(directory: DirectoryPayload): string[] {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+  const perBlock = new Map<string, number>();
+  for (const panchayat of directory.panchayats) {
+    if (seen.has(panchayat.lgdCode)) {
+      errors.push(`panchayats: duplicate LGD code ${panchayat.lgdCode}`);
+    }
+    seen.add(panchayat.lgdCode);
+    perBlock.set(panchayat.blockCode, (perBlock.get(panchayat.blockCode) ?? 0) + 1);
+    if (panchayat.jjm && panchayat.jjm.villages.length === 0) {
+      errors.push(`panchayats[${panchayat.lgdCode}]: JJM binding names no villages`);
+    }
+    if (panchayat.census && panchayat.census.villages.length === 0) {
+      errors.push(`panchayats[${panchayat.lgdCode}]: Census binding names no villages`);
+    }
+    if (panchayat.composition.status === "unbound" && panchayat.census) {
+      errors.push(`panchayats[${panchayat.lgdCode}]: bound to Census yet composition unbound`);
+    }
+  }
+  const blockCodes = new Set<string>();
+  for (const block of directory.blocks) {
+    if (blockCodes.has(block.code)) errors.push(`blocks: duplicate code ${block.code}`);
+    blockCodes.add(block.code);
+    if ((perBlock.get(block.code) ?? 0) !== block.panchayatCount) {
+      errors.push(
+        `blocks[${block.code}]: declares ${block.panchayatCount} Panchayats, ` +
+          `directory lists ${perBlock.get(block.code) ?? 0}`,
+      );
+    }
+  }
+  for (const code of perBlock.keys()) {
+    if (!blockCodes.has(code)) errors.push(`blocks: Panchayats in unlisted block ${code}`);
+  }
+  const identity = identityVintage(directory as DistrictDirectoryArtifact);
+  if (identity.recordCount !== directory.panchayats.length) {
+    errors.push(
+      `identity vintage recordCount ${identity.recordCount} does not ` +
+        `match ${directory.panchayats.length} Panchayats`,
+    );
+  }
+  return errors;
 }
 
 /**

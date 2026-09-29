@@ -69,7 +69,7 @@ import {
   loadTnDistrictCrosswalkResolution,
 } from "../src/lib/atlas/tn-crosswalk-resolution";
 import { ContentAddressedCache, fetchIntoCache } from "../src/lib/atlas/tn-district-acquisition";
-import { validateDirectoryPayload } from "../src/lib/atlas/tn-district-refresh";
+import { validateDirectoryPayload } from "../src/lib/atlas/district-directory";
 import {
   ROOT,
   argValue,

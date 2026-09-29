@@ -14,19 +14,21 @@
  * Samitis are coterminous with its talukas.
  */
 import {
+  validateAcquiredSource,
+  validateCensusComposition,
+  validateJjmRecord,
+  validateMappingExpectation,
+  validateUniqueValues,
+} from "./acquisition-validation";
+import {
   ID_PATTERN,
   isNonEmptyString,
   isPositiveInteger,
   isRecord,
   isValidDate,
-  validateAcquiredSource,
-  validateCensusComposition,
-  validateJjmRecord,
-  validateMappingExpectation,
   validateStringFields,
-  validateUniqueValues,
   validateUrl,
-} from "./acquisition-validation";
+} from "./json-guards";
 import type {
   AcquiredSourceRecordSet,
   CensusVillageRecord,

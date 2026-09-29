@@ -46,11 +46,6 @@ export interface GroundwaterAssessmentUnit {
 export const GROUNDWATER_HIERARCHIES = ["revenue", "development-block"] as const;
 export type GroundwaterHierarchy = (typeof GROUNDWATER_HIERARCHIES)[number];
 
-/** How prose names the unit's hierarchy: "revenue" taluk or "development" block. */
-export function hierarchyAdjective(hierarchy: GroundwaterHierarchy | undefined): "revenue" | "development" {
-  return hierarchy === "development-block" ? "development" : "revenue";
-}
-
 export interface TnDistrictGroundwaterExtract {
   schemaVersion: number;
   planId: string;

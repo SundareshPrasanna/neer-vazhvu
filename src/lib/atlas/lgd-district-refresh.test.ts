@@ -157,12 +157,12 @@ test("the membership projection attaches a taluka's IN-GRES figure by code join 
 
 import { existsSync } from "node:fs";
 
-import type { DistrictDirectoryArtifact } from "./artifacts";
+import type { DirectoryPayload, DistrictDirectoryArtifact } from "./artifacts";
 import { boundaryProvenance, identityAdapterOf, identityVintage } from "./artifacts";
+import { validateDirectoryPayload } from "./district-directory";
 import { LGD_COVERAGE_MATCH_CLASS, buildLgdDistrictDirectoryPayload, crosswalkExtractOf } from "./lgd-district-refresh";
 import { buildTnDistrictCrosswalk, loadReviewedBlockAlignmentTable } from "./tn-crosswalk";
 import { buildCanonicalCrosswalk, loadTnDistrictCrosswalkResolution } from "./tn-crosswalk-resolution";
-import { validateDirectoryPayload, type DirectoryPayload } from "./tn-district-refresh";
 import {
   LGD_FIXTURE_DISTRICTS,
   districtBySlug,

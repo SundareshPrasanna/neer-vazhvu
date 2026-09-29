@@ -7,7 +7,7 @@ import {
   isValidDate,
   validateStringFields,
   validateUrl,
-} from "./acquisition-validation";
+} from "./json-guards";
 import type { AtlasEnvelope } from "./artifacts";
 
 /**

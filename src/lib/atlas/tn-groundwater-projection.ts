@@ -67,19 +67,6 @@ export interface GroundwaterProjectionRecord {
   stageOfExtractionPercent: number | null;
 }
 
-/**
- * IN-GRES publishes the stage of extraction to four decimals, which reads as
- * a precision the assessment does not have: it is a taluk-wide ratio of two
- * estimated volumes. The stored value keeps the source's own digits so the
- * record stays faithful; everything shown to a reader goes through here.
- */
-export function formatExtractionStage(
-  value: number | null | undefined,
-): string {
-  if (typeof value !== "number") return "not stated";
-  return value.toFixed(1);
-}
-
 export interface GroundwaterProjectionReviewEntry {
   lgdGramPanchayatCode: string;
   lgdGramPanchayatName: string;
