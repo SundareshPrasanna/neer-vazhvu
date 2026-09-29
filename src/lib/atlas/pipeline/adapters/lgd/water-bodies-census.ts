@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 
 import { computeRecordsSha256 } from "../../core/acquisition-validation";
 import { isRecord } from "../../../json-guards";
-import type { DistrictDirectoryArtifact, DistrictIdentity } from "../../../artifacts";
+import type { DistrictDirectoryArtifact, DistrictIdentity, WaterBodiesUnassigned } from "../../../artifacts";
 import type { TnWaterBodyRecord } from "../tnrd/tn-water-bodies";
 
 /**
@@ -70,14 +70,6 @@ export type WaterBodyAssignmentKind =
   | "unknown-village"
   | "urban";
 
-export interface UnassignedCounts {
-  sharedVillage: number;
-  uncoveredVillage: number;
-  censusVillageWithoutLgdRow: number;
-  unknownVillage: number;
-  urban: number;
-}
-
 export interface CensusWaterBodyRecord extends TnWaterBodyRecord {
   register: typeof WATER_BODIES_CENSUS_REGISTER;
   lgdBlockCode: string;
@@ -122,8 +114,8 @@ export interface WaterBodiesCensusExtract {
   attributes: { waterspread: WaterspreadBasis; note: string; diagnostic: AttributeDiagnostic };
   districtBbox: [number, number, number, number] | null;
   pointsOutsideDistrict: number;
-  unassigned: UnassignedCounts;
-  unassignedByBlock: Record<string, UnassignedCounts>;
+  unassigned: WaterBodiesUnassigned;
+  unassignedByBlock: Record<string, WaterBodiesUnassigned>;
   contributingOwners: string[];
   types: Array<{ type: string; count: number }>;
   recordsSha256: string;
@@ -312,11 +304,11 @@ export function looksTemplated(diagnostic: AttributeDiagnostic): boolean {
 
 /* ── the extract ───────────────────────────────────────────────────────── */
 
-function emptyUnassigned(): UnassignedCounts {
+function emptyUnassigned(): WaterBodiesUnassigned {
   return { sharedVillage: 0, uncoveredVillage: 0, censusVillageWithoutLgdRow: 0, unknownVillage: 0, urban: 0 };
 }
 
-const UNASSIGNED_KEY: Record<Exclude<WaterBodyAssignmentKind, "panchayat">, keyof UnassignedCounts> = {
+const UNASSIGNED_KEY: Record<Exclude<WaterBodyAssignmentKind, "panchayat">, keyof WaterBodiesUnassigned> = {
   "shared-village": "sharedVillage",
   "uncovered-village": "uncoveredVillage",
   "census-village-without-lgd-row": "censusVillageWithoutLgdRow",
@@ -383,7 +375,7 @@ export function buildWaterBodiesCensusExtract(
   }
   const buckets = new Map<string, Bucket>();
   const unassigned = emptyUnassigned();
-  const unassignedByBlock = new Map<string, UnassignedCounts>();
+  const unassignedByBlock = new Map<string, WaterBodiesUnassigned>();
   const owners = new Map<string, number>();
   const types = new Map<string, number>();
   let pointsOutside = 0;

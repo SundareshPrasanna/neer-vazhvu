@@ -6,6 +6,7 @@
  * The extract is a producer intermediate cached under .cache/atlas/; what the
  * app reads is the served directory artifact built from it (see artifacts.ts).
  */
+import type { DirectoryCompositionExclusion, DirectoryCompositionMember } from "../../artifacts";
 
 export const ATLAS_SCHEMA_VERSION = 1;
 
@@ -127,18 +128,6 @@ export interface TnDistrictMappingExpectation {
   expectedRecordCount?: number;
 }
 
-export interface TnDistrictCensusCompositionMember {
-  kind: CensusSettlementKind;
-  code: string;
-  name: string;
-}
-
-export interface TnDistrictCensusCompositionExclusion
-  extends TnDistrictCensusCompositionMember {
-  reason: CensusCompositionExclusionReason;
-  ownerLgdGramPanchayatCode: string;
-}
-
 export interface TnDistrictCensusCompositionEvidence {
   id: string;
   sourceId: string;
@@ -153,8 +142,8 @@ export interface TnDistrictCensusCompositionReview {
   status: RecordSetCompletenessStatus;
   basis: RecordSetCompletenessBasis;
   expectedRecordCount?: number;
-  members: TnDistrictCensusCompositionMember[];
-  exclusions: TnDistrictCensusCompositionExclusion[];
+  members: DirectoryCompositionMember[];
+  exclusions: DirectoryCompositionExclusion[];
   evidence: TnDistrictCensusCompositionEvidence[];
 }
 

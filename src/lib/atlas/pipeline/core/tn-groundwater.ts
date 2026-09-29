@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 
+import type { AtlasEnvelope, GroundwaterTaluksArtifact } from "../../artifacts";
 import { computeRecordsSha256 } from "./acquisition-validation";
 
 export const GROUNDWATER_SCHEMA_VERSION = 1;
@@ -46,31 +47,7 @@ export interface GroundwaterAssessmentUnit {
 export const GROUNDWATER_HIERARCHIES = ["revenue", "development-block"] as const;
 export type GroundwaterHierarchy = (typeof GROUNDWATER_HIERARCHIES)[number];
 
-export interface TnDistrictGroundwaterExtract {
-  schemaVersion: number;
-  planId: string;
-  assessmentYear: string;
-  acquiredAt: string;
-  source: {
-    sourceId: string;
-    sourceUrl: string;
-    portalUrl: string;
-    /** The assessment unit level this district actually reports at. */
-    assessmentUnitType: string;
-    /** Where the unit sits: a revenue taluk (Tamil Nadu, Maharashtra,
-     *  Karnataka) or a development block (Kerala). Neither is the Panchayat. */
-    hierarchy: GroundwaterHierarchy;
-  };
-  district: {
-    locationName: string;
-    locationUUID: string;
-    category: GroundwaterCategory | null;
-    stageOfExtractionPercent: number | null;
-  };
-  recordsSha256: string;
-  recordCount: number;
-  records: GroundwaterAssessmentUnit[];
-}
+export type TnDistrictGroundwaterExtract = Omit<GroundwaterTaluksArtifact, keyof AtlasEnvelope>;
 
 function pickNumber(value: unknown, path: string[]): number | null {
   let node: unknown = value;

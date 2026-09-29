@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 import { computeRecordsSha256 } from "./acquisition-validation";
-import type { DistrictIdentity } from "../../artifacts";
+import type { AtlasEnvelope, DistrictIdentity, RainfallArtifact } from "../../artifacts";
 
 export const RAINFALL_SCHEMA_VERSION = 1;
 
@@ -49,26 +49,7 @@ export interface RainfallRecord {
   percentOfNormal?: number | null;
 }
 
-export interface TnDistrictRainfallExtract {
-  schemaVersion: number;
-  planId: string;
-  acquiredAt: string;
-  source: {
-    sourceId: string;
-    sourceUrl: string;
-    /**
-     * Open-Meteo serves modelled reanalysis interpolated to a point, not gauge
-     * observations. Recorded so a brief never implies a rain gauge in the
-     * village.
-     */
-    measurement: "modelled-reanalysis";
-    windowDays: number;
-  };
-  window: { start: string; end: string };
-  recordsSha256: string;
-  recordCount: number;
-  records: RainfallRecord[];
-}
+export type TnDistrictRainfallExtract = Omit<RainfallArtifact, keyof AtlasEnvelope>;
 
 const EARTH_RADIUS_KM = 6371;
 

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { computeRecordsSha256 } from "./acquisition-validation";
 import { foldTamilPlaceName } from "./tn-crosswalk";
 import type { GroundwaterCategory, TnDistrictGroundwaterExtract } from "./tn-groundwater";
-import type { DistrictIdentity } from "../../artifacts";
+import type { AtlasEnvelope, DistrictIdentity, GroundwaterProjectionArtifact } from "../../artifacts";
 
 export const GROUNDWATER_PROJECTION_SCHEMA_VERSION = 1;
 
@@ -75,41 +75,7 @@ export interface GroundwaterProjectionReviewEntry {
   detail: string;
 }
 
-export interface TnGroundwaterProjection {
-  schemaVersion: number;
-  planId: string;
-  assessmentYear: string;
-  projectedAt: string;
-  /**
-   * Named for the place-water model's vocabulary. This is emphatically not
-   * direct-published evidence: the Panchayat inherits its containing revenue
-   * taluk's figure.
-   */
-  projectionMethod: GroundwaterProjectionMethod;
-  source: {
-    talukLayer: string;
-    talukDistrictLgdCode: string;
-    groundwaterSourceId: string;
-    boundarySourceId: string;
-  };
-  recordsSha256: string;
-  recordCount: number;
-  records: GroundwaterProjectionRecord[];
-  review: GroundwaterProjectionReviewEntry[];
-  summary: {
-    gramPanchayats: number;
-    projected: number;
-    deferred: number;
-    byCategory: Record<string, number>;
-    /**
-     * TNRD blocks whose Panchayats fall in more than one revenue taluk. Any
-     * non-zero count is the proof that a block-to-taluk name match would have
-     * been wrong.
-     */
-    blocksSpanningTaluks: number;
-    talukCoverage: number;
-  };
-}
+export type TnGroundwaterProjection = Omit<GroundwaterProjectionArtifact, keyof AtlasEnvelope>;
 
 export interface TalukPolygon {
   talukName: string;

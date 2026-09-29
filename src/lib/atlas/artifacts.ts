@@ -23,7 +23,7 @@ import type { AtlasDistrict } from "./registry";
 import type { GeneratedAssessment } from "./pipeline/core/capability-evidence";
 import type { PlaceBrief } from "./pipeline/core/place-brief";
 import type { CensusVillageAttributes, GramPanchayatCensusRollup } from "./pipeline/core/tn-census-attributes";
-import type { GroundwaterAssessmentUnit, GroundwaterCategory } from "./pipeline/core/tn-groundwater";
+import type { GroundwaterAssessmentUnit, GroundwaterCategory, GroundwaterHierarchy } from "./pipeline/core/tn-groundwater";
 import type {
   GroundwaterProjectionMethod,
   GroundwaterProjectionRecord,
@@ -448,8 +448,11 @@ export interface GroundwaterTaluksArtifact extends AtlasEnvelope {
     sourceId: string;
     sourceUrl: string;
     portalUrl: string;
+    /** The assessment unit level this district actually reports at. */
     assessmentUnitType: string;
-    hierarchy: "revenue" | "development-block";
+    /** Where the unit sits: a revenue taluk (Tamil Nadu, Maharashtra,
+     *  Karnataka) or a development block (Kerala). Neither is the Panchayat. */
+    hierarchy: GroundwaterHierarchy;
   };
   district: {
     locationName: string;
@@ -467,6 +470,11 @@ export interface GroundwaterProjectionArtifact extends AtlasEnvelope {
   planId: string;
   assessmentYear: string;
   projectedAt: string;
+  /**
+   * Named for the place-water model's vocabulary. This is emphatically not
+   * direct-published evidence: the Panchayat inherits its containing revenue
+   * taluk's figure.
+   */
   projectionMethod: GroundwaterProjectionMethod;
   source: {
     talukLayer: string;
@@ -483,6 +491,11 @@ export interface GroundwaterProjectionArtifact extends AtlasEnvelope {
     projected: number;
     deferred: number;
     byCategory: Record<string, number>;
+    /**
+     * TNRD blocks whose Panchayats fall in more than one revenue taluk. Any
+     * non-zero count is the proof that a block-to-taluk name match would have
+     * been wrong.
+     */
     blocksSpanningTaluks: number;
     talukCoverage: number;
   };
@@ -495,6 +508,11 @@ export interface RainfallArtifact extends AtlasEnvelope {
   source: {
     sourceId: string;
     sourceUrl: string;
+    /**
+     * Open-Meteo serves modelled reanalysis interpolated to a point, not gauge
+     * observations. Recorded so a brief never implies a rain gauge in the
+     * village.
+     */
     measurement: "modelled-reanalysis";
     windowDays: number;
   };
