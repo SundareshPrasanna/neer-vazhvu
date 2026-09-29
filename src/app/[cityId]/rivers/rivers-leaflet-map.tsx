@@ -8,7 +8,7 @@ import { useMapTiles } from "@/lib/utils/map-tiles";
 import { useLanguage } from "@/lib/i18n/context";
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
-import type { RiverInfo } from "./rivers-client";
+import type { RiverInfo } from "@/content/rivers/types";
 
 export interface CpcbStationMarker {
   id: string;
