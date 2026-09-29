@@ -218,7 +218,7 @@ async def generate_briefing() -> dict:
             "recommendations": ["Run the daily pipeline to generate data."],
         }
         supabase.table("daily_briefing").upsert(
-            {**briefing, "city_id": CITY_ID}, on_conflict="briefing_date"
+            {**briefing, "city_id": CITY_ID}, on_conflict="city_id,briefing_date"
         ).execute()
         return briefing
 
@@ -299,7 +299,7 @@ async def generate_briefing() -> dict:
     }
 
     supabase.table("daily_briefing").upsert(
-        {**briefing, "city_id": CITY_ID}, on_conflict="briefing_date"
+        {**briefing, "city_id": CITY_ID}, on_conflict="city_id,briefing_date"
     ).execute()
 
     return briefing

@@ -118,7 +118,7 @@ async def main() -> int:
     for i in range(0, len(rows), batch_size):
         batch = rows[i : i + batch_size]
         supabase.table("groundwater_wris").upsert(
-            batch, on_conflict="station_code,reading_date"
+            batch, on_conflict="city_id,station_code,reading_date"
         ).execute()
         print(f"  Upserted {i + len(batch)}/{len(rows)}", flush=True)
 
