@@ -6,6 +6,7 @@ Components: groundwater depth (40%), trend (30%), reservoir stress (20%), season
 """
 
 from app.db import get_supabase
+from app.etl.constants import CITY_ID
 from app.utils.timezone import ist_today
 
 # --- Component weights ---
@@ -127,6 +128,7 @@ async def compute_risk_scores() -> list[dict]:
     gw_result = (
         supabase.table("groundwater_monthly")
         .select("ward_number, depth_to_water_m, year, month")
+        .eq("city_id", CITY_ID)
         .order("year", desc=True)
         .order("month", desc=True)
         .execute()
@@ -155,6 +157,7 @@ async def compute_risk_scores() -> list[dict]:
     est_result = (
         supabase.table("water_estimate_daily")
         .select("storage_pct")
+        .eq("city_id", CITY_ID)
         .order("date", desc=True)
         .limit(1)
         .execute()
@@ -196,6 +199,7 @@ async def compute_risk_scores() -> list[dict]:
 
         results.append(
             {
+                "city_id": CITY_ID,
                 "ward_number": ward_num,
                 "computed_date": today.isoformat(),
                 "risk_score": composite,
