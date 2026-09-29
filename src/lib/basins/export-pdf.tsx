@@ -22,7 +22,7 @@ import type {
   GapUnit,
   LegendItem,
   PrsData,
-} from "@/components/basin/basin-atlas";
+} from "./panel-types";
 
 // Characters WinAnsi (CP1252) can encode: ASCII + Latin-1 + the 0x80-0x9F
 // typographic extras (curly quotes, dashes, ellipsis, bullet, euro...).

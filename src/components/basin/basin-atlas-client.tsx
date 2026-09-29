@@ -9,7 +9,7 @@ import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // Leaflet needs the DOM; load both basin surfaces client-side only.
 const BasinAtlas = dynamic(
-  () => import("@/components/basin/basin-atlas").then((m) => m.BasinAtlas),
+  () => import("@/components/basin/atlas/basin-atlas").then((m) => m.BasinAtlas),
   {
     ssr: false,
     loading: () => (

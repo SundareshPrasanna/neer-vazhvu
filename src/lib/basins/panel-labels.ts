@@ -1,6 +1,6 @@
 // Shared plain-language labels for the Basin Atlas panels AND the PDF export.
 //
-// The atlas component (basin-atlas.tsx) pairs these with its Tailwind chip
+// The atlas panels (components/basin/atlas/panels) pair these with its Tailwind chip
 // classes; the PDF report (basin-pdf-report.tsx) pairs them with its own print
 // colors. Keeping the words here - and only the words - means the two surfaces
 // can never drift apart, and the PDF module never has to import the Leaflet

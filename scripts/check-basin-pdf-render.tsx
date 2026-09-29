@@ -27,7 +27,7 @@ import type {
   GapUnit,
   LegendItem,
   PrsData,
-} from "../src/components/basin/basin-atlas";
+} from "../src/lib/basins/panel-types";
 
 const basinId = process.argv[2] ?? "arkavathi";
 const maybeManifest = tryGetBasinManifest(basinId);
