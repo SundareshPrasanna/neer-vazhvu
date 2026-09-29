@@ -68,6 +68,37 @@ export const GURUGRAM: PlaceConfig = {
     { label: "GMDA OneMap", href: "https://onemapdepts.gmda.gov.in/" },
     { label: "HSPCB", href: "https://hspcb.gov.in/" },
   ],
+  // Gurugram's live set, deliberately small: six of the platform's sixteen
+  // routes. Only surfaces with measured content behind them are listed - see
+  // docs/cities/gurugram/parity-scorecard.md, which records the count for each
+  // (824 water-body features, 6 groundwater polygons, 29,284 tanker bookings).
+  //
+  // `groundwater` IS here, and it is here on the IN-GRES *assessment* (six
+  // districts, four years, Gurugram at 194.6% extraction), not on water-level
+  // depth. The depth series is the thinnest data in the city - 37 India-WRIS
+  // stations ending June 2020, and zero telemetry rows - so the page shows the
+  // stage-of-extraction choropleth and says plainly that current depth is not
+  // published. That distinction is the whole reason the page is honest.
+  //
+  // `rivers` is absent because Gurugram HAS no river: every NWMP station in
+  // the district is a lake or a borewell. That is N/A, not a gap - and it is
+  // the entry that exposed the hardcoded "parity: EASY" badge.
+  //
+  // `my-ward` is absent although the 36 ward polygons are harvested: nothing
+  // is joined to them yet, and the page rendered 296 characters. A route in
+  // the nav must have something in it.
+  //
+  // Features fill in as their artifacts land. Adding one here without content
+  // behind it is the failure mode this comment exists to prevent.
+  // `shoreline`: Landlocked.
+  routes: [
+    "",
+    "about",
+    "origins",
+    "groundwater",
+    "water-bodies",
+    "tanker",
+  ],
   primaryAuthority: {
     code: 'gmda',
     name: 'Gurugram Metropolitan Development Authority',
@@ -209,7 +240,5 @@ export const GURUGRAM: PlaceConfig = {
   // kanmoi districts or the Bengaluru kere chains, so the cascade narrative
   // must not be told about this city even once the catchment layer exists.
   hasCascadeOverlay: false,
-  // Landlocked.
-  hasShoreline: false,
   enabled: true,
 };

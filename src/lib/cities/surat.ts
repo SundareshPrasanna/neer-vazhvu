@@ -101,6 +101,37 @@ export const SURAT: PlaceConfig = {
     { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
     { label: "GEMI", href: "https://gemi.gujarat.gov.in/" },
   ],
+  // Surat V1 target set. No `cascades` (not a cascade geography), no `my-ward`
+  // (zone is the analytical unit and all three ward schemes lack downloadable
+  // geometry - WFS is disabled on SMC's own GIS), no `allocations` (no
+  // published entitlement instrument exists), no `shoreline` (genuinely
+  // coastal, but the surface still reads Chennai coastal data), no `tanker`
+  // (95% piped coverage; tanker-served properties are NA in every year of the
+  // open data). Every omission carries a written reason in
+  // scripts/lib/exemptions.ts.
+  // `shoreline`: Surat is coastal (Dumas, Hazira, the Tapi estuary) but the
+  // shoreline surface currently reads Chennai coastal data. Parametrising it
+  // is a separate piece of work, so the route stays off rather than shipping a
+  // map of another city's coast.
+  // `allocations`: Off at V1. Surat has no published drinking-water
+  // entitlement from Ukai that a ledger could render: the research pass found
+  // infrastructure and treatment capacities but no sanctioned allocation
+  // instrument. Recorded as a named gap rather than an empty page.
+  // `commitments`: On: SMC's own reuse programme carries dated,
+  // institutionally-owned commitments (70% of treated wastewater reused by
+  // 2030, 100% and zero liquid discharge by 2035), which is exactly the
+  // register's shape.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "facts",
+    "origins",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'smc_hydraulic',
     name: 'Surat Municipal Corporation, Hydraulic Department',
@@ -280,22 +311,8 @@ export const SURAT: PlaceConfig = {
   catchmentsGapNote:
     "Surat has no cascade view, and that is a judgement about the city rather than a missing dataset. The cascade layer reconstructs chained tank systems - the Tamil kanmoi networks and the Bengaluru kere chains, where each tank's surplus was engineered to feed the next over centuries. Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. The algorithm would find downhill neighbours here because it always does, and drawing them as a cascade would assert an inheritance the city does not have.",
 
-  // Surat is coastal (Dumas, Hazira, the Tapi estuary) but the shoreline
-  // surface currently reads Chennai coastal data. Parametrising it is a
-  // separate piece of work, so the route stays off rather than shipping a map
-  // of another city's coast.
-  hasShoreline: false,
 
-  // Off at V1. Surat has no published drinking-water entitlement from Ukai
-  // that a ledger could render: the research pass found infrastructure and
-  // treatment capacities but no sanctioned allocation instrument. Recorded as
-  // a named gap rather than an empty page.
-  hasAllocationLedger: false,
 
-  // On: SMC's own reuse programme carries dated, institutionally-owned
-  // commitments (70% of treated wastewater reused by 2030, 100% and zero
-  // liquid discharge by 2035), which is exactly the register's shape.
-  hasCommitments: true,
 
 
   // LIVE 2026-08-20. This flag is the only functional gate on the whole

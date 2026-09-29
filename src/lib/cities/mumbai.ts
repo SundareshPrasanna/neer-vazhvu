@@ -76,6 +76,35 @@ export const MUMBAI: PlaceConfig = {
     { label: "MPCB", href: "https://mpcb.gov.in/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  // Mumbai V1 target set. No `cascades` (Mumbai is reservoir-pumped, not a
+  // tank-cascade geography) and no `tanker` (deferred, RTI-gated). Features
+  // fill in across M1-M3; this set drives nav rendering while the city is
+  // preview-gated (NEXT_PUBLIC_PREVIEW_CITIES=mumbai).
+  // `shoreline`: Shoreline-change surface: same GEE MNDWI transect pipeline as
+  // Chennai (west-coast orientation), corroborated by the published record
+  // (NCCR 1990-2016 district table + MSMP 2017 risk grades) instead of a
+  // rate-publishing paper - none exists for Mumbai.
+  // `allocations`: The Allocation Ledger: the MMR is the richest instance of
+  // the primitive - four intermediaries (MIDC/STEM/MMRDA/CIDCO), nine buyers,
+  // an oversubscribed authority. ~16 arrangements compiled in
+  // allocations-mumbai.json.
+  // `commitments`: Commitments register: ~19 dated commitments (WWTF
+  // commissioning dates, NGT deadlines, flood-mitigation claims) with cited
+  // status histories.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "facts",
+    "origins",
+    "shoreline",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'bmc-he',
     name: 'BMC Hydraulic Engineer Department',
@@ -139,18 +168,6 @@ export const MUMBAI: PlaceConfig = {
     label: 'Storage data: Maharashtra WRD Pravah portal',
     url: 'https://mwrdpravah.in/damsafety/control/main',
   },
-  // Shoreline-change surface: same GEE MNDWI transect pipeline as Chennai
-  // (west-coast orientation), corroborated by the published record (NCCR
-  // 1990-2016 district table + MSMP 2017 risk grades) instead of a
-  // rate-publishing paper - none exists for Mumbai.
-  hasShoreline: true,
-  // The Allocation Ledger: the MMR is the richest instance of the primitive -
-  // four intermediaries (MIDC/STEM/MMRDA/CIDCO), nine buyers, an oversubscribed
-  // authority. ~16 arrangements compiled in allocations-mumbai.json.
-  hasAllocationLedger: true,
-  // Commitments register: ~19 dated commitments (WWTF commissioning dates, NGT
-  // deadlines, flood-mitigation claims) with cited status histories.
-  hasCommitments: true,
   groundwaterViews: {
     exploitation: false,
     // Ward depth is interpolated (IDW) from the curated Year Book wells via the

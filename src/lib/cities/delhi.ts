@@ -95,6 +95,33 @@ export const DELHI: PlaceConfig = {
     { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
     { label: "OpenCity", href: "https://data.opencity.in/" },
   ],
+  // Delhi V1 target set (preview-gated until cutover). No `cascades`
+  // (baoli/hauz heritage is not a tank-cascade geography), no `shoreline`
+  // (landlocked), no `tanker` (DJB booking portal scrape deferred).
+  // `allocations` + `commitments` are the signature surfaces: Delhi's supply
+  // is instrument-governed inter-state transfers, and the Yamuna programme
+  // is a stack of dated deadlines.
+  // `allocations`: Both ship as data work in P2, then flip: -
+  // allocations-delhi.json: MoU/Munak/Tehri/Bhakra/UGC instruments vs opaque
+  // realizations (audit refresh has the seed table). - commitments-delhi.json:
+  // 8 pre-qualified dated promises (39-drain trapping deadline 30-Jun-2026,
+  // Mission Sahibi, Rs 860 cr DSTPs, 1,250 MGD by Jun 2027, ...). Seed
+  // compilations landed 2026-07-20 (5 arrangements; 8 commitments) - enabled
+  // for preview; content deepens through the build.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'djb',
     name: 'Delhi Jal Board',
@@ -119,16 +146,6 @@ export const DELHI: PlaceConfig = {
   // anchored, with hero_copy overrides replacing the Bangalore-specific
   // pump.* narrative). See SUPPLY MODEL above.
   heroMode: 'cauvery-pumping',
-  // Both ship as data work in P2, then flip:
-  // - allocations-delhi.json: MoU/Munak/Tehri/Bhakra/UGC instruments vs
-  //   opaque realizations (audit refresh has the seed table).
-  // - commitments-delhi.json: 8 pre-qualified dated promises (39-drain
-  //   trapping deadline 30-Jun-2026, Mission Sahibi, Rs 860 cr DSTPs,
-  //   1,250 MGD by Jun 2027, ...).
-  // Seed compilations landed 2026-07-20 (5 arrangements; 8 commitments) -
-  // enabled for preview; content deepens through the build.
-  hasAllocationLedger: true,
-  hasCommitments: true,
   groundwaterViews: {
     // District-level CGWB Dynamic GWR 2025 choropleth (11 districts +
     // non-spatial Nazul Land), values + polygons both via OpenCity - no

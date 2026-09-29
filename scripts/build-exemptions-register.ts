@@ -8,7 +8,7 @@
  * `--check` runs in `npm run data:check`, so two things are enforced on every
  * PR: the committed register matches the code, and no deliberate omission ships
  * without a reason. The second is the one that matters - a route quietly
- * dropped from FEATURE_AVAILABILITY now fails CI until someone writes down why.
+ * dropped from a city's routes now fails CI until someone writes down why.
  *
  * Output is deterministic and carries NO timestamp, so regenerating on an
  * unchanged tree is a no-op (the dataset-catalogue pattern).
@@ -47,7 +47,7 @@ const KIND_BLURB: Record<string, string> = {
     "count that `check-upstream-editions.ts --validate` reports for coverage.",
   "route-off":
     "Derived by diffing each city against the union of every route any city ships, so this table cannot " +
-    "drift from `FEATURE_AVAILABILITY`. A route dropped without a reason recorded fails `--check`.",
+    "drift from each city's `routes`. A route dropped without a reason recorded fails `--check`.",
   "declared-absence":
     "Gaps the UI itself renders rather than hiding: the reason below is the copy a reader actually sees. " +
     "These stay owned by the config they are read from, and are reported here.",

@@ -18,6 +18,26 @@ export const MADURAI: PlaceConfig = {
     { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
     { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
   ],
+  // `allocations`: The Allocation Ledger page: Madurai's 1,500 mcft/yr
+  // PWD-letter entitlement (the allocation hero's underlying instrument) + the
+  // 1886 Periyar lease ancestry, compiled in allocations-madurai.json.
+  // `commitments`: Commitments register: HC water-bodies order, Mullaiperiyar
+  // 125 MLD, 24x7 conversion, UGSS, Vaigai riverfront/cleanup -
+  // commitments-madurai.json.
+  routes: [
+    "",
+    "about",
+    "groundwater",
+    "water-bodies",
+    "rivers",
+    "flood-risk",
+    "lake-restoration",
+    "my-ward",
+    "facts",
+    "origins",
+    "allocations",
+    "commitments",
+  ],
   primaryAuthority: {
     code: 'mmc',
     name: 'Madurai Municipal Corporation',
@@ -40,13 +60,6 @@ export const MADURAI: PlaceConfig = {
   // an order of magnitude. Use the allocation hero instead, anchored
   // on MMC's published Vaigai drinking-water allocation.
   heroMode: 'allocation',
-  // The Allocation Ledger page: Madurai's 1,500 mcft/yr PWD-letter entitlement
-  // (the allocation hero's underlying instrument) + the 1886 Periyar lease
-  // ancestry, compiled in allocations-madurai.json.
-  hasAllocationLedger: true,
-  // Commitments register: HC water-bodies order, Mullaiperiyar 125 MLD, 24x7
-  // conversion, UGSS, Vaigai riverfront/cleanup - commitments-madurai.json.
-  hasCommitments: true,
   urbanSupply: {
     allocatedSourceCodes: ['vaigai'],
     annualAllocationMcft: 1500,

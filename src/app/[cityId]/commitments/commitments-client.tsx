@@ -10,7 +10,7 @@ import { isFeatureSupportedForCity } from "@/lib/cities/routing";
    one headline lead; every commitment is ONE collapsed line (chip · title ·
    dates) that expands to the what/history/citations; slipped and overdue
    float to the top. Shared surface: city = commitments-{cityId}.json +
-   hasCommitments flag. No cityId branches. */
+   routes list. No cityId branches. */
 
 /* THE ALLOCATION LEDGER IS NOT UNIVERSAL. This register cross-links to it in
    two places, and both used to render unconditionally - so Surat, which ships

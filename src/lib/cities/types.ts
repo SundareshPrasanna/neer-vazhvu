@@ -1,5 +1,5 @@
 import type { LanguageCode } from '@/lib/i18n/translations';
-import type { CityId } from './ids';
+import type { CityId, RouteKey } from './ids';
 
 export type WaterSourceType =
   | 'reservoir'
@@ -371,6 +371,10 @@ export interface PlaceConfig {
   landing: { hook: string; accent: string };
   /** The core live sources the footer names on this city's pages. */
   footerSources: { label: string; href: string }[];
+  /** The /[cityId] routes this city ships ("" is the dashboard). Nav,
+   *  sitemap, route guards and the exemptions register derive from it; a
+   *  route listed here must have content behind it. */
+  routes: readonly RouteKey[];
   /** Per-city feature flags for the Groundwater page's view layers.
    *  Omit to inherit legacy behaviour (all views shown when their
    *  underlying data is present). */
@@ -472,18 +476,6 @@ export interface PlaceConfig {
    *  legacy data is stored in Mcft; v2 cities use TMC. Default 'TMC'. */
   historyUnit?: 'TMC' | 'Mcft';
 
-  /** Whether this city has the coastal shoreline-change surface
-   *  (/<city>/shoreline). Coastal cities only (Chennai today). The
-   *  shoreline map currently reads Chennai coastal data; a second coastal
-   *  city would parametrize it. Default false. */
-  hasShoreline?: boolean;
-
-  /** Ships /:cityId/allocations - the Allocation Ledger (entitled vs received
-   *  per supply arrangement, with instruments + confidence grades). Requires a
-   *  compiled public/data/allocations-{cityId}.json. See
-   *  docs/specs/allocation-ledger.md. */
-  hasAllocationLedger?: boolean;
-
   /** Optional honesty caveat rendered under the days-left hero's number -
    *  e.g. Mumbai's, naming the figure an upper bound because storage counts
    *  whole-dam water while capacity is the city's share. */
@@ -520,11 +512,6 @@ export interface PlaceConfig {
    *  promised the chart "fills in automatically", which will never happen.
    *  Set this and that promise is replaced by the actual reason. */
   reservoirHistoryAbsentNote?: string;
-
-  /** Ships /:cityId/commitments - the Commitments Register (dated commitments
-   *  by named institutions with a cited status lifecycle; history kept, never
-   *  overwritten). Requires public/data/commitments-{cityId}.json. */
-  hasCommitments?: boolean;
 
   /** Which dashboard hero to render for this city.
    *
