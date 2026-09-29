@@ -99,10 +99,6 @@ export function BangalorePageDescriptions({ cityId, cityName }: Props) {
           {t("bpd.wb.h_lost")}
         </h4>
         <p className="text-slate-600 dark:text-slate-400">{t("bpd.wb.p2")}</p>
-        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 pt-2">
-          {t("bpd.wb.h_cascade")}
-        </h4>
-        <p className="text-slate-600 dark:text-slate-400">{t("bpd.wb.p3")}</p>
       </SubSection>
 
       <SubSection id="page-rivers" title={t("bpd.rivers.title")}>

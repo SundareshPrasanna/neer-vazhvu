@@ -93,11 +93,6 @@ const nextConfig: NextConfig = {
     // NOTE: keys are globs - [cityId] would parse as a character class and
     // never match, so single-segment wildcards stand in for dynamic params.
     "/api/cascade/**": ["./public/data/cascade/**"],
-    // About + dashboard read the small cascade stats/health summaries.
-    "*": [
-      "./public/data/cascade/*-cascade-stats.json",
-      "./public/data/cascade/*-cascades-health.json",
-    ],
     // Water-bodies page reads the current-bodies geojson for census matching.
     "/*/water-bodies": ["./public/geojson/*-water-bodies-current.geojson"],
     // Ward-depth interpolation reads the ward polygons.
@@ -130,7 +125,6 @@ const nextConfig: NextConfig = {
     // link has been shared externally.
     const flatFeatures = [
       "about",
-      "cascades",
       "facts",
       "flood-risk",
       "groundwater",
@@ -140,6 +134,10 @@ const nextConfig: NextConfig = {
       "water-bodies",
     ];
     return [
+      // Cascades were retired; the catchment atlas is the water-bodies
+      // "Catchments" view. Old /cascades links land there in one hop.
+      { source: "/cascades", destination: "/chennai/water-bodies?mode=catchments", permanent: true },
+      { source: "/:cityId/cascades", destination: "/:cityId/water-bodies?mode=catchments", permanent: true },
       // Legacy lake-restoration -> Chennai water bodies (was -> /water-bodies).
       { source: "/lake-restoration", destination: "/chennai/water-bodies", permanent: true },
       { source: "/lake-restoration/:path*", destination: "/chennai/water-bodies", permanent: true },

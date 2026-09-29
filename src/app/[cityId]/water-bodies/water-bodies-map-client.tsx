@@ -50,8 +50,8 @@ interface ClientProps {
   fullyLostCount: number | null;
   reducedCount: number | null;
   namedOsmCount: number | null;
-  /** Whether the cascade reconstruction overlay is available for this
-   *  city (PMTiles produced by `scripts/run_cascade.py` exist). */
+  /** Whether this city has a lake catchment atlas (the "Catchments" view,
+   *  built by `scripts/run_cascade.py`). */
   hasCascadeOverlay?: boolean;
   catchmentsGapNote?: string;
 }

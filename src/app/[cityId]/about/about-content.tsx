@@ -5,10 +5,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
-import type { CascadeStats } from "@/lib/cascade-stats";
-import { resolveConvergenceExample } from "@/lib/cascade-stats";
-import type { CascadeSensitivity } from "@/lib/cascade-sensitivity";
-import { CascadeMethodologySection } from "@/components/cascade/cascade-methodology-section";
 import { CatchmentMethodologySection } from "@/components/cascade/catchment-methodology-section";
 
 const MaduraiPageDescriptions = dynamic(() =>
@@ -187,15 +183,7 @@ function DataSource({ name, url, description, frequency }: DataSourceItem) {
 
 /* ── main content ───────────────────────────────────────────────── */
 
-export function CityAboutContent({
-  config,
-  cascadeStats,
-  cascadeSensitivity,
-}: {
-  config: PlaceConfig;
-  cascadeStats: CascadeStats | null;
-  cascadeSensitivity?: CascadeSensitivity | null;
-}) {
+export function CityAboutContent({ config }: { config: PlaceConfig }) {
   const { t } = useLanguage();
   const cityName = config.displayName;
   const isMadurai = config.cityId === "madurai";
@@ -665,32 +653,6 @@ export function CityAboutContent({
             </>
           )}
         </Section>
-
-        {/* ─────────────────────────────────────────────────────────
-            Cascade Reconstruction Methodology - shown only when the
-            city has the overlay enabled. Anchor id is referenced from
-            the on-map "Full methodology -->" link.
-            ───────────────────────────────────────────────────────── */}
-        {config.hasCascadeOverlay && cascadeStats && (
-          <Section
-            id="cascade-methodology"
-            title={`Cascade reconstruction methodology - ${cityName}`}
-          >
-            <CascadeMethodologySection
-              cityDisplayName={cityName}
-              cityId={config.cityId}
-              nodeCount={cascadeStats.node_count}
-              edgeCount={cascadeStats.edge_count}
-              riverOutletCount={cascadeStats.river_outlet_count}
-              maxCascadeDepth={cascadeStats.max_cascade_depth}
-              topConvergenceExample={
-                resolveConvergenceExample(cascadeStats) ?? undefined
-              }
-              edgeConfidenceCounts={cascadeStats.edge_confidence_counts}
-              sensitivity={cascadeSensitivity}
-            />
-          </Section>
-        )}
 
         {/* ─────────────────────────────────────────────────────────
             Lake Catchment Atlas methodology - the "Catchments" view on
@@ -1430,7 +1392,7 @@ export function CityAboutContent({
               <DataSource
                 name="NGT Forward Foundation v State of Karnataka (OA 222/2014)"
                 url="https://greentribunal.gov.in/"
-                description="The 2016 NGT order that imposed the 75 m no-construction buffer around BBMP lakes + 50 m around rajakaluves + 30 m around secondary drains, and halted Mantri Tech Park (Espana) and Coremind constructions encroaching the Bellandur buffer. The legal anchor for every BBMP rich-body panel's status badges + the cascade-Layer-B court_anchor on K&amp;C foam cascade."
+                description="The 2016 NGT order that imposed the 75 m no-construction buffer around BBMP lakes + 50 m around rajakaluves + 30 m around secondary drains, and halted Mantri Tech Park (Espana) and Coremind constructions encroaching the Bellandur buffer. The legal anchor for every BBMP rich-body panel's status badges."
                 frequency="incident-driven (NGT orders + compliance hearings)"
               />
               <DataSource
@@ -1438,12 +1400,6 @@ export function CityAboutContent({
                 url={`/${config.cityId}/water-bodies`}
                 description="14 flagship lakes with the full deep-zoom panel: Bellandur, Varthur, Madivala, Ulsoor, Hebbal, Sankey, Yelahanka, Kempambudhi, Hesaraghatta, Agara, Puttenahalli, Jakkur, Rachenahalli, Iblur. Each ships polygon + 1 km halo + 37-year imagery slider (1990-2026 yearly) + JRC water-loss tint (1988-92 vs 2017-21) + Dynamic World water-class extension (2022-now) + Dynamic World built-gain tint (2016-18 vs 2023-25) + Open Buildings v3 + Overture Q1 2026 stats + curated timeline + sources modal."
                 frequency="periodic (cohort additions in rich-body rounds)"
-              />
-              <DataSource
-                name="Cascade reconstruction (terrain-derived + Layer B curation)"
-                url={`/${config.cityId}/water-bodies?mode=catchments`}
-                description="HydroSHEDS conditioned DEM + D8 flow direction + multi-outflow scoring produces 1,033 cascade nodes / 1,053 edges / 43 river outlets / max depth 11 for the BBMP-wide cascade graph. Layer B curation today: 4 named chains (K&amp;C foam cascade with NGT Forward Foundation anchor / Yelahanka-Hebbal north restoration model with JNNURM Jakkur anchor / Vrishabhavathi headwaters with 1894 Hesaraghatta anchor / Kempegowda old-city heritage fragments). 76 auto-derived chains scored LOW priority pending further Layer B. Lives as the Catchments view on the water-bodies page."
-                frequency="manual (regenerate after curation updates)"
               />
             </>
           )}

@@ -22,7 +22,6 @@ const FEATURE_HINTS: Record<
   "water-bodies": { changeFrequency: "monthly", priority: 0.8 },
   shoreline: { changeFrequency: "monthly", priority: 0.75 },
   tanker: { changeFrequency: "monthly", priority: 0.75 },
-  cascades: { changeFrequency: "yearly", priority: 0.6 },
   origins: { changeFrequency: "yearly", priority: 0.6 },
   about: { changeFrequency: "monthly", priority: 0.5 },
 };
