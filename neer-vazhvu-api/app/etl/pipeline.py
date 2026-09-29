@@ -174,7 +174,9 @@ async def _step_fetch_weather() -> dict:
         rows.append(row)
 
     if rows:
-        supabase.table("weather_daily").upsert(rows, on_conflict="date").execute()
+        supabase.table("weather_daily").upsert(
+            rows, on_conflict="city_id,date"
+        ).execute()
 
     return {"rows_affected": len(rows)}
 
@@ -206,7 +208,7 @@ async def _step_fetch_opencity() -> dict:
 
     if rows:
         supabase.table("groundwater_monthly").upsert(
-            rows, on_conflict="ward_number,year,month"
+            rows, on_conflict="city_id,ward_number,year,month"
         ).execute()
 
     return {"rows_affected": len(rows)}
@@ -256,7 +258,7 @@ async def _step_fetch_wris() -> dict:
         for i in range(0, len(rows), batch_size):
             batch = rows[i : i + batch_size]
             supabase.table("groundwater_wris").upsert(
-                batch, on_conflict="station_code,reading_date"
+                batch, on_conflict="city_id,station_code,reading_date"
             ).execute()
 
     return {"rows_affected": len(rows)}
@@ -308,7 +310,7 @@ async def _step_fetch_wris_river_level() -> dict:
         for i in range(0, len(rows), batch_size):
             batch = rows[i : i + batch_size]
             supabase.table("wris_river_level").upsert(
-                batch, on_conflict="station_code,reading_date"
+                batch, on_conflict="city_id,station_code,reading_date"
             ).execute()
     return {"rows_affected": len(rows)}
 
@@ -358,7 +360,7 @@ async def _step_fetch_wris_rainfall() -> dict:
         for i in range(0, len(rows), batch_size):
             batch = rows[i : i + batch_size]
             supabase.table("wris_rainfall").upsert(
-                batch, on_conflict="station_code,reading_date"
+                batch, on_conflict="city_id,station_code,reading_date"
             ).execute()
     return {"rows_affected": len(rows)}
 
@@ -475,7 +477,7 @@ async def _step_compute_estimate() -> dict:
             "days_left_moderate": result["moderate"],
             "days_left_optimistic": result["optimistic"],
         },
-        on_conflict="date",
+        on_conflict="city_id,date",
     ).execute()
 
     return {"rows_affected": 1}
@@ -689,7 +691,7 @@ async def _step_fetch_census() -> dict:
         batch = rows[i : i + batch_size]
         try:
             supabase.table("water_bodies_census").upsert(
-                batch, on_conflict="census_code"
+                batch, on_conflict="city_id,census_code"
             ).execute()
             total_upserted += len(batch)
         except Exception as batch_err:
@@ -703,7 +705,7 @@ async def _step_fetch_census() -> dict:
             for row in batch:
                 try:
                     supabase.table("water_bodies_census").upsert(
-                        [row], on_conflict="census_code"
+                        [row], on_conflict="city_id,census_code"
                     ).execute()
                     total_upserted += 1
                 except Exception as row_err:

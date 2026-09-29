@@ -439,6 +439,6 @@ def upsert_reservoir_context(rows: list[ReservoirCatchmentContextRow]) -> int:
 
     payload = [asdict(row) for row in rows]
     get_supabase().table("reservoir_catchment_context").upsert(
-        payload, on_conflict="reservoir,context_date,window_days"
+        payload, on_conflict="city_id,reservoir,context_date,window_days"
     ).execute()
     return len(payload)

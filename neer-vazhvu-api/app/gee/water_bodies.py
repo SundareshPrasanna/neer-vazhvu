@@ -668,7 +668,7 @@ def upsert_water_body_summaries(rows: list[WaterBodySatelliteSummaryRow]) -> int
 
     payload = [asdict(row) for row in rows]
     get_supabase().table("water_body_satellite_summary").upsert(
-        payload, on_conflict="gee_target_id,summary_date"
+        payload, on_conflict="city_id,gee_target_id,summary_date"
     ).execute()
     return len(payload)
 

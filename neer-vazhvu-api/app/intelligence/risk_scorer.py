@@ -215,7 +215,7 @@ async def compute_risk_scores() -> list[dict]:
     # 4. Upsert to Supabase
     if results:
         supabase.table("ward_risk_score").upsert(
-            results, on_conflict="ward_number,computed_date"
+            results, on_conflict="city_id,ward_number,computed_date"
         ).execute()
 
     return results

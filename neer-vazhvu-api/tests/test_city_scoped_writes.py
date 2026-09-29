@@ -12,6 +12,7 @@ class FakeSupabase:
         self.data = data
         self.eqs: list[tuple[str, str, object]] = []
         self.upserts: list[tuple[str, list[dict]]] = []
+        self.conflicts: list[str | None] = []
 
     def table(self, name: str) -> "FakeQuery":
         return FakeQuery(self, name)
@@ -27,6 +28,7 @@ class FakeQuery:
 
     def upsert(self, rows, on_conflict=None):
         self.db.upserts.append((self.table, rows if isinstance(rows, list) else [rows]))
+        self.db.conflicts.append(on_conflict)
         return self
 
     def execute(self):
@@ -56,6 +58,7 @@ def test_risk_scores_read_and_write_chennai(monkeypatch):
     )
     rows = [r for t, rs in db.upserts if t == "ward_risk_score" for r in rs]
     assert rows and all(r["city_id"] == "chennai" for r in rows)
+    assert db.conflicts == ["city_id,ward_number,computed_date"]
 
 
 def test_briefing_reads_and_writes_chennai(monkeypatch):
@@ -80,3 +83,4 @@ def test_briefing_reads_and_writes_chennai(monkeypatch):
         r["city_id"] for t, rs in db.upserts if t == "daily_briefing" for r in rs
     ] == ["chennai"]
     assert "city_id" not in out
+    assert db.conflicts == ["city_id,briefing_date"]

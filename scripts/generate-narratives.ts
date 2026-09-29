@@ -56,6 +56,9 @@ const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY });
 
 const CITY_NARRATIVE_MODEL = "claude-sonnet-5";
 const WARD_NARRATIVE_MODEL = "claude-haiku-4-5-20251001";
+// These narratives are Chennai's: the briefing, estimate, risk and groundwater
+// tables they read are written by the Chennai pipeline.
+const CITY_ID = "chennai";
 
 /** The response's text. Sonnet 5 thinks by default, so a thinking block can
  *  precede the text; never assume content[0]. */
@@ -139,6 +142,7 @@ async function fetchCityData() {
   const { data: briefing } = await supabase
     .from("daily_briefing")
     .select("*")
+    .eq("city_id", CITY_ID)
     .order("briefing_date", { ascending: false })
     .limit(1);
 
@@ -146,6 +150,7 @@ async function fetchCityData() {
   const { data: estimate } = await supabase
     .from("water_estimate_daily")
     .select("*")
+    .eq("city_id", CITY_ID)
     .order("date", { ascending: false })
     .limit(1);
 
@@ -153,6 +158,7 @@ async function fetchCityData() {
   const { data: riskRows } = await supabase
     .from("ward_risk_score")
     .select("risk_level")
+    .eq("city_id", CITY_ID)
     .order("computed_date", { ascending: false })
     .limit(200);
 
@@ -172,6 +178,7 @@ async function fetchCityData() {
   const { data: gwLatest } = await supabase
     .from("groundwater_monthly")
     .select("year, month")
+    .eq("city_id", CITY_ID)
     .order("year", { ascending: false })
     .order("month", { ascending: false })
     .limit(1);
@@ -184,6 +191,7 @@ async function fetchCityData() {
   const { data: riskLatest } = await supabase
     .from("ward_risk_score")
     .select("computed_date")
+    .eq("city_id", CITY_ID)
     .order("computed_date", { ascending: false })
     .limit(1);
 
@@ -200,27 +208,37 @@ async function fetchCityData() {
 }
 
 async function fetchWardData(wardNumber: number) {
-  // Latest groundwater for this ward (includes ward_name for locality label)
+  // Latest 13 months: the newest reading, and the same month a year earlier
+  // for the trend (the same +/-0.5 m rule as /api/groundwater/ward).
   const { data: gw } = await supabase
     .from("groundwater_monthly")
-    .select("depth_m, trend, ward_name")
+    .select("depth_to_water_m, ward_name, year, month")
+    .eq("city_id", CITY_ID)
     .eq("ward_number", wardNumber)
     .order("year", { ascending: false })
     .order("month", { ascending: false })
-    .limit(1);
+    .limit(13);
+  const current = gw?.[0];
+  const prev = current && gw?.find((r) => r.year === current.year - 1 && r.month === current.month);
+  let trend = "unknown";
+  if (current?.depth_to_water_m != null && prev?.depth_to_water_m != null) {
+    const diff = current.depth_to_water_m - prev.depth_to_water_m;
+    trend = diff < -0.5 ? "improving" : diff > 0.5 ? "declining" : "stable";
+  }
 
   // Latest risk score
   const { data: risk } = await supabase
     .from("ward_risk_score")
     .select("risk_score, risk_level, factors")
+    .eq("city_id", CITY_ID)
     .eq("ward_number", wardNumber)
     .order("computed_date", { ascending: false })
     .limit(1);
 
   return {
-    wardName: gw?.[0]?.ward_name ?? null,
-    depthM: gw?.[0]?.depth_m ?? null,
-    trend: gw?.[0]?.trend ?? "unknown",
+    wardName: current?.ward_name ?? null,
+    depthM: current?.depth_to_water_m ?? null,
+    trend,
     riskScore: risk?.[0]?.risk_score ?? null,
     riskLevel: risk?.[0]?.risk_level ?? "noData",
     factors: risk?.[0]?.factors ?? null,
@@ -398,6 +416,7 @@ async function writeCityNarrative(
   const { data: latest } = await supabase
     .from("daily_briefing")
     .select("briefing_date")
+    .eq("city_id", CITY_ID)
     .order("briefing_date", { ascending: false })
     .limit(1);
 
@@ -413,6 +432,7 @@ async function writeCityNarrative(
       ai_source_dates: sourceDates,
       ai_model: model,
     })
+    .eq("city_id", CITY_ID)
     .eq("briefing_date", targetDate);
 
   if (error) {
@@ -428,6 +448,7 @@ async function writeWardNarratives(
   model: string
 ) {
   const rows = Array.from(narratives.entries()).map(([wardNumber, n]) => ({
+    city_id: CITY_ID,
     ward_number: wardNumber,
     narrative_date: istDateStr,
     headline_en: n.headline_en,
@@ -444,7 +465,7 @@ async function writeWardNarratives(
     const batch = rows.slice(i, i + 50);
     const { error } = await supabase
       .from("ward_narrative")
-      .upsert(batch, { onConflict: "ward_number,narrative_date" });
+      .upsert(batch, { onConflict: "city_id,ward_number,narrative_date" });
 
     if (error) {
       console.error(`Failed to write ward narratives batch ${i / 50 + 1}:`, error.message);
