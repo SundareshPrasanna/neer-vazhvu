@@ -749,6 +749,5 @@ When Supabase is not configured (env vars missing), the dashboard falls back to 
 | GET | `/intelligence/forecast` | None | Latest reservoir forecasts |
 | GET | `/intelligence/risk-scores` | None | Ward-level risk scores |
 | GET | `/intelligence/briefing` | None | Daily intelligence briefing |
-| GET | `/api/groundwater/ward?ward=N` | None | Single ward groundwater depth + trend + risk |
-| GET | `/api/narratives/city` | None | Latest AI city narrative |
-| GET | `/api/narratives/ward?ward=N` | None | Latest AI ward narrative |
+| GET | `/api/groundwater/ward?city=<id>&ward=N` | None | Single ward groundwater depth + trend + risk |
+| GET | `/api/narratives/ward?city=<id>&ward=N` | None | Latest AI ward narrative |

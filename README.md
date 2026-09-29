@@ -196,18 +196,17 @@ Create `.env.local` for the frontend:
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-CRON_SECRET=your-secret
 ANTHROPIC_API_KEY=your-anthropic-key  # Required for AI narrative generation only
 ```
 
-Run in demo mode (no Supabase required):
+Run without a database:
 
 ```bash
 npm run dev
 # Open http://localhost:3000
 ```
 
-The app automatically falls back to demo mode with realistic mock data when Supabase isn't configured.
+Pages render from the static files in `public/data`; database-backed panels show as unavailable until Supabase is configured.
 
 ### 3. Database Setup
 

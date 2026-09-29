@@ -31,7 +31,6 @@ import { GroundwaterSnapshot } from "@/components/dashboard/groundwater-snapshot
 import { KeyFindings } from "@/components/dashboard/key-findings";
 import type { Fact } from "@/components/dashboard/key-findings";
 import { WeapBalanceTile } from "@/components/dashboard/weap-balance-tile";
-import { DemoDashboard } from "@/components/dashboard/demo-dashboard";
 import { CityStory } from "@/components/insights/city-story";
 import type { AiNarrative } from "@/components/insights/city-story";
 import { NewsSection } from "@/components/insights/news-section";
@@ -59,12 +58,6 @@ async function loadFacts(cityId: string): Promise<Fact[]> {
   } catch {
     return [];
   }
-}
-
-function isSupabaseConfigured(): boolean {
-  return !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -121,9 +114,22 @@ function waterBodiesBlurb(config: PlaceConfig): string {
 // pending follow-up tracked in docs/specs/multi-city-component-discipline.md.
 // ---------------------------------------------------------------------------
 
-async function getAiNarrative(): Promise<AiNarrative | null> {
+/** The Supabase client, or null when it is not configured (CI builds, local
+ *  dev without keys); the section then renders empty. An outage still throws
+ *  via failOnOutage so a cached page is not replaced. */
+async function serverClientOrNull() {
   const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+  try {
+    return { supabase: createServerClient(), failOnOutage };
+  } catch {
+    return null;
+  }
+}
+
+async function getAiNarrative(): Promise<AiNarrative | null> {
+  const client = await serverClientOrNull();
+  if (!client) return null;
+  const { supabase, failOnOutage } = client;
 
   // Scope to today's briefing (IST) so stale AI narratives trigger template fallback
   const todayIST = new Intl.DateTimeFormat("en-CA", {
@@ -158,8 +164,9 @@ async function getAiNarrative(): Promise<AiNarrative | null> {
 async function getReservoirCatchmentContextRows(): Promise<
   ReservoirCatchmentContextRow[] | null
 > {
-  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+  const client = await serverClientOrNull();
+  if (!client) return null;
+  const { supabase, failOnOutage } = client;
 
   const latestDateResult = await failOnOutage(
     supabase
@@ -205,8 +212,9 @@ async function getReservoirCatchmentContextRows(): Promise<
 async function getGroundwaterData(
   cityId: string,
 ): Promise<GroundwaterApiResponse | null> {
-  const { createServerClient, failOnOutage } = await import("@/lib/supabase/server");
-  const supabase = createServerClient();
+  const client = await serverClientOrNull();
+  if (!client) return null;
+  const { supabase, failOnOutage } = client;
 
   // Canonical ward zone names for this city (Chennai: ward-names.json).
   let canonicalNames = new Map<number, string>();
@@ -353,14 +361,6 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
   // guard this lookup; a throw here would turn a cached route's 404 into a 500.
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
-  const isLegacy = config.reservoirDataSource === "legacy-v1";
-
-  // Legacy-v1 cities (Chennai) keep the demo-mode fallback: when Supabase is
-  // unconfigured the page renders the scenario-switcher demo dashboard instead
-  // of an empty page. v2 cities never hit this path.
-  if (isLegacy && !isSupabaseConfigured()) {
-    return <DemoDashboard />;
-  }
 
   // The optional sections are flag-gated (Chennai today) because their
   // loaders assume single-tenant tables; other cities never query them. None
@@ -378,13 +378,6 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
         ? getReservoirCatchmentContextRows()
         : Promise.resolve(null),
     ]);
-
-  // Legacy-v1 cities with an empty reading table fall back to demo mode. An
-  // unreachable Supabase throws instead (failOnOutage), so the cached page
-  // stays up rather than being replaced by the demo.
-  if (isLegacy && !waterEstimate.lastUpdated) {
-    return <DemoDashboard />;
-  }
 
   // Compute the preview pill semantically.
   // The "PREVIEW - waiting for first daily ingestion" pill is meaningful only

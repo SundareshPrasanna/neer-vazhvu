@@ -24,11 +24,6 @@ export function todayIST(): string {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-/** Get today's year/month/day in IST */
-export function todayISTParts(): { year: number; month: number; day: number } {
-  return getDatePartsInTimeZone(new Date(), IST_TIME_ZONE);
-}
-
 /** Subtract N days from a date, returning YYYY-MM-DD */
 export function subtractDays(date: Date, days: number): string {
   const shifted = new Date(date.getTime() - days * 24 * 60 * 60 * 1000);
