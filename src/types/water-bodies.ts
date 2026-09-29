@@ -79,12 +79,6 @@ export type SelectedWaterBody =
   // bypassing the osm_id-based lookup the other kinds use.
   | { kind: "scored"; scored: ScoredWaterBody; latlng: [number, number] };
 
-export const STATUS_LABELS: Record<WaterBodyStatus, string> = {
-  fully_lost: "Fully Lost",
-  severely_reduced: "Severely Reduced",
-  partially_encroached: "Partially Encroached",
-};
-
 export const STATUS_COLORS: Record<WaterBodyStatus, string> = {
   fully_lost: "#dc2626",
   severely_reduced: "#f97316",

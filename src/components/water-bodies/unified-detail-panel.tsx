@@ -122,7 +122,7 @@ function componentLabel(key: string, t: (k: string) => string): string {
   return meta.tKey;
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -571,7 +571,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
         <div className="px-4">
           <ConnectedInsight
             messageKey="connected.wb_lost_proximity"
-            linkHref="/water-bodies?mode=existing"
+            linkHref="/water-bodies"
             linkKey="connected.flood_drainage_wb_link"
           />
         </div>
