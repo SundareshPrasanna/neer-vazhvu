@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import type {
   WaterwayLocatorAnchor,
@@ -8,6 +9,8 @@ import type {
   WaterwayIdentity,
   WaterwayManifest,
   WaterwayReach,
+  WaterwayStory,
+  WaterwayStoryVisual,
   WaterwayTimelineEntry,
   WaterwayToday,
   WaterwayWidthLedger,
@@ -17,151 +20,100 @@ import { LocatorMap } from "./locator-map";
 import { TimelineView } from "./timeline-view";
 import { TodayPanel } from "./today-panel";
 import { WidthLedger } from "./width-ledger";
-import { WidthProfileChart } from "./width-profile-chart";
+
+// recharts stays out of the first load; the placeholder matches the chart's height.
+const WidthProfileChart = dynamic(
+  () => import("./width-profile-chart").then((m) => m.WidthProfileChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-56 animate-pulse rounded-lg bg-muted/50" aria-hidden />
+    ),
+  },
+);
 
 /**
- * The Story: eight chapters, Ennore to Mahabalipuram, scroll = chainage.
+ * The Story: a waterway's chapters in chainage order, scroll = chainage.
  * Depth level L0 is what renders on first paint: a verdict and one visual
  * per chapter. Every denser layer (receipts, reaches, sources) arrives only
  * by the reader's click (DECISIONS.md W2).
  *
- * Chapter prose lives here by design: the story is this page's editorial
- * voice; the numbers it leans on all come from the curated, gated data
- * (facts carry claim ids; the verify script owns the banned-claims list).
+ * Chapter prose and visuals are the waterway's own (lib/waterways/<id>.story.ts);
+ * the numbers they lean on all come from the curated, gated data.
  */
-
-const CHAPTER_BODY: Record<string, string> = {
-  ennore:
-    "The canal enters Chennai through its heaviest industry: two power " +
-    "stations, a refinery belt, a port. The consent regime has steadily " +
-    "moved routine industrial discharge off the canal, and TNPCB's " +
-    "investigation of the August 2026 fish kill is under way. Continuous " +
-    "measurement alongside the regulator's is how such questions get " +
-    "answered quickly.",
-  squeeze:
-    "Through the city the canal runs under the MRTS railway, routed " +
-    "along it in the 1980s after a Planning Commission working group " +
-    "found no other corridor economically available. The reach now holds " +
-    "the alignment's narrowest water, and therefore the clearest case " +
-    "for the measured baseline that restoration planning needs.",
-  okkiyam:
-    "South Chennai drains through one channel into this canal; the marsh " +
-    "behind it breathes with the tide through the same gate. CMRL has " +
-    "invested in widening the water opening at this crossing, and 2026 field " +
-    "reports tracked a construction-phase narrowing alongside - the " +
-    "kind of change a live baseline registers as it happens.",
-  estuary:
-    "Below the city the canal widens into backwaters the tide still " +
-    "reaches, and everything changes: birds in the dozens of species, " +
-    "working fishers, a boat house, brackish water that stays naturally " +
-    "clear of hyacinth. The system hangs on mouths that sand closes for " +
-    "most of the year, and mouth management already has a budget line.",
-  ribbon:
-    "The last stretch is the canal at its most complete: banks " +
-    "un-encroached (though unprotected), no structures for eleven " +
-    "kilometres, a channel running green with vegetation. It is the " +
-    "least altered water on the alignment, and the easiest place to begin " +
-    "the restoration the current programmes plan.",
-  paper:
-    "The canal's record shows sustained intent: a national-waterway " +
-    "designation, a High Court mandate, detailed project reports, an " +
-    "umbrella sanction for the three waterways, and now the Urban " +
-    "Challenge Fund window with a water-metro study in procurement. " +
-    "Seventeen years of groundwork have come together; below is that record, " +
-    "dated and sourced.",
-  pilot:
-    "Neer Vazhvu built this page from public records and open satellites; " +
-    "keeping it current needs instruments on the water. The list is short " +
-    "and standard: levels and flow at the reaches that decide floods, " +
-    "dissolved oxygen where the monthly record stopped in 2023, the state " +
-    "of the mouths through the seasons, a boat-run depth profile - the " +
-    "first since 2014 - and field checks under the vegetation the " +
-    "satellite flags. This is the measurement layer Neer Vazhvu proposes " +
-    "to operate alongside the institutions doing the restoration; the " +
-    "page you are reading is its first deliverable.",
-};
-
 function ChapterVisual({
   chapter,
+  visual,
   manifest,
   identity,
   timeline,
 }: {
   chapter: WaterwayChapter;
+  visual: WaterwayStoryVisual | undefined;
   manifest: WaterwayManifest;
   identity: WaterwayIdentity;
   timeline: WaterwayTimelineEntry[];
 }) {
-  const chip = (name: string, alt: string) => (
-    <figure>
-      <div className="relative">
-        <Image
-          src={`/images/waterways/${manifest.waterwayId}/chips/${name}`}
-          alt={alt}
-          width={1100}
-          height={800}
-          loading="lazy"
-          unoptimized
-          className="w-full rounded-xl border border-border"
-        />
-        <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
-          Sentinel-2 · Jun–Aug 2026
-        </span>
-      </div>
-      <figcaption className="mt-1 text-[11px] text-muted-foreground">
-        Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
-        are a clearest-pixel composite (Jun–Aug 2026), about 8 km across;
-        segment views are a median composite of the same window. Contains modified Copernicus Sentinel data (2026).
-      </figcaption>
-    </figure>
-  );
-  switch (chapter.key) {
-    case "open":
-      return (
-        <div className="grid grid-cols-2 gap-3">
-          {identity.headline_stats.map((s) => (
-            <div
-              key={s.claim_id}
-              className="rounded-xl border border-border bg-card p-4"
-            >
-              <div className="text-2xl font-semibold tabular-nums text-foreground">
-                {s.value}
-              </div>
-              <div className="mt-1 text-xs leading-snug text-muted-foreground">
-                {s.label}
-                <SourceChip source={s.source} date={s.date} flag={s.flag} />
-              </div>
+  if (chapter.key === "open") {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        {identity.headline_stats.map((s) => (
+          <div
+            key={s.claim_id}
+            className="rounded-xl border border-border bg-card p-4"
+          >
+            <div className="text-2xl font-semibold tabular-nums text-foreground">
+              {s.value}
             </div>
-          ))}
-        </div>
+            <div className="mt-1 text-xs leading-snug text-muted-foreground">
+              {s.label}
+              <SourceChip source={s.source} date={s.date} flag={s.flag} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  switch (visual?.kind) {
+    case "chip":
+      return (
+        <figure>
+          <div className="relative">
+            <Image
+              src={`/images/waterways/${manifest.waterwayId}/chips/${visual.file}`}
+              alt={visual.alt}
+              width={1100}
+              height={800}
+              loading="lazy"
+              unoptimized
+              className="w-full rounded-xl border border-border"
+            />
+            <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+              Sentinel-2 · Jun–Aug 2026
+            </span>
+          </div>
+          <figcaption className="mt-1 text-[11px] text-muted-foreground">
+            Sentinel-2, 10 m per pixel: each dot is a 10 m square. Site views
+            are a clearest-pixel composite (Jun–Aug 2026), about 8 km across;
+            segment views are a median composite of the same window. Contains modified Copernicus Sentinel data (2026).
+          </figcaption>
+        </figure>
       );
-    case "ennore":
-      return chip("site-ennore-junction.jpg", "The Ennore creek junction from orbit");
-    case "squeeze":
+    case "width-profile":
       return (
         <WidthProfileChart
           waterwayId={manifest.waterwayId}
-          xLabel="km from Ennore"
+          xLabel={visual.xLabel}
+          band={visual.band}
+          caption={visual.caption}
         />
       );
-    case "okkiyam":
-      return chip("site-okkiyam-maduvu.jpg", "The Okkiyam Maduvu confluence area from orbit");
-    case "estuary":
-      return chip("site-muttukadu.jpg", "The Muttukadu backwater from orbit");
-    case "ribbon":
-      return chip("seg-km64-66.jpg", "The vegetation-choked southern canal from orbit");
-    case "paper":
+    case "timeline":
       return <TimelineView timeline={timeline} />;
-    case "pilot":
+    case "list":
       return (
         <ul className="space-y-2 rounded-xl border border-border bg-card p-4 text-sm text-foreground/90">
-          {[
-            "Water level and flow at the reaches that decide floods",
-            "Dissolved oxygen, resuming the monthly record",
-            "Mouth state at Ennore, Adyar and Muttukadu, continuously",
-            "A boat-run depth survey: the first since 2014",
-            "Field checks on the vegetation the satellite flags",
-          ].map((x) => (
+          {visual.items.map((x) => (
             <li key={x} className="flex gap-2">
               <span aria-hidden className="text-primary">■</span>
               {x}
@@ -178,6 +130,7 @@ export function StoryView({
   manifest,
   identity,
   chapters,
+  story,
   reaches,
   timeline,
   today,
@@ -188,6 +141,7 @@ export function StoryView({
   manifest: WaterwayManifest;
   identity: WaterwayIdentity;
   chapters: WaterwayChapter[];
+  story: WaterwayStory;
   reaches: WaterwayReach[];
   timeline: WaterwayTimelineEntry[];
   today: WaterwayToday;
@@ -265,18 +219,27 @@ export function StoryView({
                 {ch.verdict}
               </p>
               <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">
-                {CHAPTER_BODY[ch.key]}
+                {story.chapters[ch.key]?.body}
               </p>
 
               <div className="mt-6">
                 <ChapterVisual
                   chapter={ch}
+                  visual={story.chapters[ch.key]?.visual}
                   manifest={manifest}
                   identity={identity}
                   timeline={timeline}
                 />
-                {ch.key === "open" && <TodayPanel today={today} />}
-                {ch.key === "squeeze" && widthLedger && (
+                {ch.key === "open" && (
+                  <TodayPanel
+                    today={today}
+                    lengthKm={identity.length_km}
+                    anchors={locatorAnchors}
+                    noun={story.noun}
+                    note={story.todayNote}
+                  />
+                )}
+                {ch.key === story.ledgerChapter && widthLedger && (
                   <WidthLedger ledger={widthLedger} />
                 )}
               </div>
@@ -317,7 +280,7 @@ export function StoryView({
       </div>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [byId, chapters, reaches, timeline, today, widthLedger, locatorAnchors, manifest, identity, onExplore]
+    [byId, chapters, story, reaches, timeline, today, widthLedger, locatorAnchors, manifest, identity, onExplore]
   );
 
   return (

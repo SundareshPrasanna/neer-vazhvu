@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import fs from "node:fs";
 import path from "node:path";
 import { tryGetWaterwayManifest } from "@/lib/waterways";
+import { WATERWAY_STORIES } from "@/lib/waterways/stories";
 import type {
   WaterwayLocatorAnchor,
   WaterwayMethodsSection,
@@ -70,8 +71,10 @@ export default async function WaterwayPage({ params }: PageProps) {
   const todayFile = loadJson<{ today: WaterwayToday }>(
     waterwayId, "today.json");
 
+  const story = WATERWAY_STORIES[waterwayId];
+
   // A waterway without its measured reaches has nothing honest to show.
-  if (!reachesFile || !chaptersFile || !timelineFile || !claimsFile || !todayFile) notFound();
+  if (!reachesFile || !chaptersFile || !timelineFile || !claimsFile || !todayFile || !story) notFound();
 
   return (
     <WaterwayContent
@@ -79,6 +82,7 @@ export default async function WaterwayPage({ params }: PageProps) {
       identity={reachesFile.identity}
       reaches={reachesFile.reaches}
       chapters={chaptersFile.chapters}
+      story={story}
       timeline={timelineFile.timeline}
       claims={claimsFile.claims}
       today={todayFile.today}

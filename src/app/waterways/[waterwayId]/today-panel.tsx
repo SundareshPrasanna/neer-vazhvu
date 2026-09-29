@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { WaterwayToday } from "@/lib/waterways/types";
+import type { WaterwayLocatorAnchor, WaterwayToday } from "@/lib/waterways/types";
 import { FactLine, SourceChip } from "./claim-chip";
 
 /**
- * Today on the canal: the current-snapshot centrepiece. One ribbon of
- * surface condition over all 74.5 km from the latest satellite window,
- * three current tiles, and the silt ledger one click deep. Readiness
+ * Today on the waterway: the current-snapshot centrepiece. One ribbon of
+ * surface condition over its full length from the latest satellite window,
+ * the current tiles, and the silt ledger one click deep. Readiness
  * framing throughout - this panel is what a monitoring pilot would
  * refresh with every clear pass.
  */
@@ -18,17 +18,34 @@ const STATE_STYLE: Record<string, { cls: string; label: string }> = {
   "no-data": { cls: "fill-slate-200 dark:fill-slate-700", label: "no clear view" },
 };
 
-function ConditionRibbon({ today }: { today: WaterwayToday }) {
+function ConditionRibbon({
+  today,
+  lengthKm: total,
+  anchors,
+  noun,
+}: {
+  today: WaterwayToday;
+  lengthKm: number;
+  anchors: WaterwayLocatorAnchor[];
+  noun: string;
+}) {
   const W = 900;
   const H = 34;
-  const total = 74.5;
+  // Ticks every 15 km; none within half a step of the end label.
+  const ticks: number[] = [];
+  for (let km = 0; km < total - 7.5; km += 15) ticks.push(km);
+  ticks.push(total);
+  const place = (km: number) => {
+    const a = anchors.find((x) => x.km === km);
+    return a ? ` · ${a.label}` : "";
+  };
   return (
     <div>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="w-full"
         role="img"
-        aria-label="Surface condition along the canal, latest satellite window"
+        aria-label={`Surface condition along the ${noun}, latest satellite window`}
       >
         {today.strip.map((r, i) => (
           <rect
@@ -40,7 +57,7 @@ function ConditionRibbon({ today }: { today: WaterwayToday }) {
             className={STATE_STYLE[r.state]?.cls ?? "fill-slate-300"}
           />
         ))}
-        {[0, 15, 30, 45, 60, 74.5].map((km) => (
+        {ticks.map((km) => (
           <g key={km}>
             <line
               x1={(km / total) * W}
@@ -53,10 +70,10 @@ function ConditionRibbon({ today }: { today: WaterwayToday }) {
             <text
               x={(km / total) * W}
               y={33}
-              textAnchor={km === 0 ? "start" : km === 74.5 ? "end" : "middle"}
+              textAnchor={km === 0 ? "start" : km === total ? "end" : "middle"}
               className="fill-muted-foreground text-[9px]"
             >
-              {km === 0 ? "km 0 · Ennore" : km === 74.5 ? "74.5 · Mahabalipuram" : km}
+              {km === 0 ? `km 0${place(0)}` : km === total ? `${km}${place(km)}` : km}
             </text>
           </g>
         ))}
@@ -78,19 +95,31 @@ function ConditionRibbon({ today }: { today: WaterwayToday }) {
   );
 }
 
-export function TodayPanel({ today }: { today: WaterwayToday }) {
+export function TodayPanel({
+  today,
+  lengthKm,
+  anchors,
+  noun,
+  note,
+}: {
+  today: WaterwayToday;
+  lengthKm: number;
+  anchors: WaterwayLocatorAnchor[];
+  noun: string;
+  note: string;
+}) {
   const [siltOpen, setSiltOpen] = useState(false);
   return (
     <section className="mt-6 rounded-xl border border-border bg-card p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-          Today on the canal
+          {`Today on the ${noun}`}
         </h3>
         <span className="text-[11px] text-muted-foreground">{today.as_of}</span>
       </div>
 
       <div className="mt-3">
-        <ConditionRibbon today={today} />
+        <ConditionRibbon today={today} lengthKm={lengthKm} anchors={anchors} noun={noun} />
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -128,10 +157,7 @@ export function TodayPanel({ today }: { today: WaterwayToday }) {
         </ul>
       )}
       <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-        Ten-metre pixels read narrow city reaches conservatively; the ribbon
-        shows surface condition, not flow. Suspended-sediment readings cover
-        the reaches with enough open water; depth needs a boat, and the last
-        public depth survey is from 2014.
+        {note}
       </p>
     </section>
   );
