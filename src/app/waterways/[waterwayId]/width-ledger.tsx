@@ -4,9 +4,9 @@ import type { WaterwayWidthLedger } from "@/lib/waterways/types";
 import { SourceChip } from "./claim-chip";
 
 /**
- * The width ledger: the Cooum-Adyar link road by road, three vintages
+ * The width ledger: a waterway's surveyed stretches, three vintages
  * deep (original survey, HSCTC ~2012, our 2026 measurement in the
- * footer line). Lives one click deep in the city-squeeze chapter
+ * footer line). Lives one click deep in the chapter its Story names
  * (DECISIONS.md W2: no table on first paint).
  */
 export function WidthLedger({ ledger }: { ledger: WaterwayWidthLedger }) {

@@ -9,6 +9,7 @@ import type {
   WaterwayIdentity,
   WaterwayManifest,
   WaterwayReach,
+  WaterwayStory,
   WaterwayTimelineEntry,
   WaterwayToday,
   WaterwayWidthLedger,
@@ -32,6 +33,7 @@ export function WaterwayContent({
   identity,
   reaches,
   chapters,
+  story,
   timeline,
   claims,
   today,
@@ -43,6 +45,7 @@ export function WaterwayContent({
   identity: WaterwayIdentity;
   reaches: WaterwayReach[];
   chapters: WaterwayChapter[];
+  story: WaterwayStory;
   timeline: WaterwayTimelineEntry[];
   claims: WaterwayClaim[];
   today: WaterwayToday;
@@ -142,6 +145,7 @@ export function WaterwayContent({
             manifest={manifest}
             identity={identity}
             chapters={chapters}
+            story={story}
             reaches={reaches}
             timeline={timeline}
             today={today}

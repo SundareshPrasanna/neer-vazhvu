@@ -9,8 +9,9 @@
  * corridor, a waterway is data, not code: one WaterwayManifest plus a data
  * build under public/data/waterways/<waterwayId>/ produced by
  * scripts/build_waterway_<id>.py and gated by scripts/verify_waterway_<id>.py.
- * Onboarding the Cooum or the Vaigai later is a new manifest and a data
- * build, never a new component.
+ * Onboarding the Vaigai later is a new manifest, its Story copy
+ * (<id>.story.ts, registered in stories.ts) and a data build, never a new
+ * component.
  *
  * Editorial constitution: docs/waterways/buckingham-canal/DECISIONS.md
  * (progressive disclosure W2, receipts-on-every-number W3, banned corrected
@@ -176,6 +177,33 @@ export interface WaterwayToday {
 export interface WaterwayMethodsSection {
   title: string;
   body: string;
+}
+
+/** A Story chapter's visual, declared per waterway. */
+export type WaterwayStoryVisual =
+  | { kind: "chip"; file: string; alt: string }
+  | {
+      kind: "width-profile";
+      xLabel?: string;
+      /** Shaded chainage band, e.g. a city reach. */
+      band?: { from: number; to: number; label: string };
+      caption: string;
+    }
+  | { kind: "timeline" }
+  | { kind: "list"; items: string[] };
+
+/** A waterway's own Story copy (src/lib/waterways/<id>.story.ts). Kept out
+ *  of the manifest so the prose never ships in the nav's client bundle. */
+export interface WaterwayStory {
+  /** The water body in shared copy: "canal", "river". */
+  noun: string;
+  /** Closing caveat under the Today panel. */
+  todayNote: string;
+  /** Chapter key whose section carries the width ledger. */
+  ledgerChapter?: string;
+  /** Body prose and visual per chapter key; the "open" chapter always
+   *  shows the headline stats and the Today panel. */
+  chapters: Record<string, { body?: string; visual?: WaterwayStoryVisual }>;
 }
 
 /** A recognizable place pinned to the chainage, for the locator map. */

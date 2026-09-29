@@ -14,11 +14,12 @@ import {
 import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
- * The long profile: measured water-surface width over all 74.5 km.
+ * The long profile: measured water-surface width end to end.
  * Linear axes on purpose (a log axis with null/zero gaps renders blank in
  * recharts). Gaps stay gaps: unmeasured transects are not interpolated.
- * Open-water readings (backwaters) are capped for display so the city
- * squeeze stays legible; the cap is stated in the caption.
+ * Open-water readings (backwaters) are capped for display so narrow
+ * reaches stay legible; the cap is stated in the caption. The band and
+ * caption are the waterway's own (its Story visual).
  */
 interface ProfilePoint {
   km: number;
@@ -31,9 +32,13 @@ const DISPLAY_CAP_M = 160;
 export const WidthProfileChart = memo(function WidthProfileChart({
   waterwayId,
   xLabel = "km along the alignment",
+  band,
+  caption,
 }: {
   waterwayId: string;
   xLabel?: string;
+  band?: { from: number; to: number; label: string };
+  caption: string;
 }) {
   const [points, setPoints] = useState<ProfilePoint[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -102,19 +107,20 @@ export const WidthProfileChart = memo(function WidthProfileChart({
               tick={{ fontSize: 11 }}
               width={34}
             />
-            {/* The MRTS city squeeze, km ~20.5-32 */}
-            <ReferenceArea
-              x1={20.5}
-              x2={32}
-              fill="#94a3b8"
-              fillOpacity={0.18}
-              label={{
-                value: "MRTS reach",
-                position: "insideTop",
-                fontSize: 10,
-                fill: "#94a3b8",
-              }}
-            />
+            {band && (
+              <ReferenceArea
+                x1={band.from}
+                x2={band.to}
+                fill="#94a3b8"
+                fillOpacity={0.18}
+                label={{
+                  value: band.label,
+                  position: "insideTop",
+                  fontSize: 10,
+                  fill: "#94a3b8",
+                }}
+              />
+            )}
             <Tooltip
               formatter={(v) =>
                 typeof v === "number"
@@ -139,11 +145,8 @@ export const WidthProfileChart = memo(function WidthProfileChart({
         </ResponsiveContainer>
       </div>
       <figcaption className="mt-1 text-xs text-muted-foreground">
-        Water-surface width every 200 m, measured from OpenStreetMap water
-        polygons (contributor-traced; the polygons carry edits from 2018 to
-        March 2026, most since 2022; snapshot Jul 2026). Shaded band: the MRTS city reach (km 20.5\u201332). Readings
-        above {DISPLAY_CAP_M} m (backwaters) are capped for display; gaps are
-        unmeasured, not zero.
+        {caption} Readings above {DISPLAY_CAP_M} m (backwaters) are capped
+        for display; gaps are unmeasured, not zero.
       </figcaption>
     </figure>
   );
