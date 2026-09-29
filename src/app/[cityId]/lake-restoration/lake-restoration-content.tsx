@@ -421,11 +421,11 @@ export function LakeRestorationContent({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Link href={`/${cityId}/water-bodies`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 transition-colors">
-          <div className="text-sm font-semibold">{t("lake.cross_water_bodies")}</div>
+          <div className="text-sm font-semibold">{t("flood.cross_link_water_bodies")}</div>
           <div className="text-xs text-slate-500 mt-1">{t("lake.cross_water_bodies_desc")}</div>
         </Link>
         <Link href={`/${cityId}`} className="block rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-blue-400 dark:hover:border-blue-600 transition-colors">
-          <div className="text-sm font-semibold">{cityDisplayName} {t("lake.cross_home")}</div>
+          <div className="text-sm font-semibold">{cityDisplayName} {t("flood.cross_link_home")}</div>
           <div className="text-xs text-slate-500 mt-1">{t("lake.cross_home_desc")}</div>
         </Link>
       </div>

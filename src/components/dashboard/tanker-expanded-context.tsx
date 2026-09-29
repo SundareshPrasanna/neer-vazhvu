@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { TANKER_CONTEXT_COPY as C } from "@/content/tanker/bangalore";
 import { fetchJson } from "@/lib/data/fetch-json";
 
 function tFmt(template: string, params: Record<string, string | number>): string {
@@ -172,7 +173,7 @@ export function TankerExpandedContext() {
   if (error) {
     return (
       <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20 p-3 text-xs text-amber-700 dark:text-amber-200">
-        {t("tanker_ctx.error")}
+        {t(C.error)}
       </div>
     );
   }
@@ -185,10 +186,10 @@ export function TankerExpandedContext() {
       {/* 1. Structural anchor */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-2">
-          {t("tanker_ctx.section.structural_anchor")}
+          {t(C.section.structural_anchor)}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
-          {t("tanker_ctx.section.structural_body")}
+          {t(C.section.structural_body)}
         </p>
         <div className="space-y-2">
           {ctx.structural_anchor.breakdown.map((row, i) => (
@@ -219,19 +220,19 @@ export function TankerExpandedContext() {
           ))}
         </div>
         <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3">
-          {t("tanker_ctx.structural_footer").split("{source}")[0]}
+          {t(C.structural_footer).split("{source}")[0]}
           <SourceLink sourceKey={ctx.structural_anchor.source_key} sources={sources} />
-          {t("tanker_ctx.structural_footer").split("{source}")[1] ?? ""}
+          {t(C.structural_footer).split("{source}")[1] ?? ""}
         </p>
       </section>
 
       {/* 2. Crisis timeline */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {t("tanker_ctx.section.crisis_headline")}
+          {t(C.section.crisis_headline)}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {t("tanker_ctx.section.crisis_subtitle")}
+          {t(C.section.crisis_subtitle)}
         </p>
         <ol className="border-l-2 border-slate-200 dark:border-slate-700 pl-4 space-y-3">
           {ctx.crisis_timeline_2024.events.map((e) => (
@@ -257,10 +258,10 @@ export function TankerExpandedContext() {
       {/* 3. Rate gap */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {t("tanker_ctx.section.rate_gap_headline")}
+          {t(C.section.rate_gap_headline)}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {t("tanker_ctx.section.rate_gap_subtitle")}
+          {t(C.section.rate_gap_subtitle)}
         </p>
         <div className="space-y-3">
           {ctx.rate_gap.tiers.map((tier, i) => {
@@ -289,7 +290,7 @@ export function TankerExpandedContext() {
                   {pick(tier as unknown as Record<string, unknown>, "coverage")}
                   {tier.fleet_size != null && (
                     <span className="ml-2 text-slate-500 dark:text-slate-500">
-                      - {tFmt(t("tanker_ctx.fleet"), { n: tier.fleet_size.toLocaleString() })}
+                      - {tFmt(t(C.fleet), { n: tier.fleet_size.toLocaleString() })}
                     </span>
                   )}
                 </p>
@@ -305,16 +306,15 @@ export function TankerExpandedContext() {
       {/* 4. Extraction sites */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {t("tanker_ctx.section.extraction_headline")}
+          {t(C.section.extraction_headline)}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {t("tanker_ctx.section.extraction_subtitle")}
+          {t(C.section.extraction_subtitle)}
         </p>
         <div className="space-y-3">
           {ctx.extraction_sites.sites.map((s, i) => {
             const tone = SITE_TYPE_TONE[s.type] ?? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
-            const typeKey = `tanker_ctx.site_type.${s.type}`;
-            const typeLabel = t(typeKey);
+            const typeLabel = C.site_type[s.type as keyof typeof C.site_type];
             return (
               <div
                 key={i}
@@ -327,7 +327,7 @@ export function TankerExpandedContext() {
                   <span
                     className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${tone}`}
                   >
-                    {typeLabel === typeKey ? s.type : typeLabel}
+                    {typeLabel ? t(typeLabel) : s.type}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -339,23 +339,23 @@ export function TankerExpandedContext() {
           })}
         </div>
         <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-3 leading-relaxed">
-          {t("tanker_ctx.section.extraction_gap")}
+          {t(C.section.extraction_gap)}
         </p>
       </section>
 
       {/* 5. Dependency corridors */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900">
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {t("tanker_ctx.section.corridors_headline")}
+          {t(C.section.corridors_headline)}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-          {t("tanker_ctx.section.corridors_subtitle")}{" "}
+          {t(C.section.corridors_subtitle)}{" "}
           <SourceLink sourceKey={ctx.dependency_corridors.iisc_source_key} sources={sources} />
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-              {t("tanker_ctx.rates_heading")}
+              {t(C.rates_heading)}
             </h3>
             <div className="space-y-1.5">
               {ctx.dependency_corridors.highest_rate_corridors_2025.map((c, i) => (
@@ -378,7 +378,7 @@ export function TankerExpandedContext() {
           </div>
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-              {t("tanker_ctx.worst_served")}
+              {t(C.worst_served)}
             </h3>
             <div className="space-y-1.5">
               {ctx.dependency_corridors.worst_served_named_wards.map((w, i) => (
@@ -399,12 +399,12 @@ export function TankerExpandedContext() {
               ))}
             </div>
             <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-2 italic">
-              {t("tanker_ctx.mohua_note")} <SourceLink sourceKey="citizen_matters_cauvery_index" sources={sources} />
+              {t(C.mohua_note)} <SourceLink sourceKey="citizen_matters_cauvery_index" sources={sources} />
             </p>
           </div>
         </div>
         <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-4">
-          {tFmt(t("tanker_ctx.stress_footer"), { count: ctx.dependency_corridors.stress_ward_count })}
+          {tFmt(t(C.stress_footer), { count: ctx.dependency_corridors.stress_ward_count })}
         </p>
       </section>
 

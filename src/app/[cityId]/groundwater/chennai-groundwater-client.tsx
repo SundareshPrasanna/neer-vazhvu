@@ -141,7 +141,7 @@ function GroundwaterPageContent() {
     return (
       <div className="h-[calc(100vh-64px)] flex items-center justify-center">
         <div className="text-center text-slate-500 dark:text-slate-400">
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t("gw_page.title")}</h1>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t("nav.groundwater")}</h1>
           <p>{t("gw_page.no_data")}</p>
           <p className="text-sm mt-2">{t("gw_page.no_data_hint")}</p>
         </div>
@@ -318,7 +318,7 @@ function GroundwaterPageContent() {
                     : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 }`}
               >
-                {t("gw_page.risk_toggle")}
+                {t("legend.risk_title")}
               </button>
             )}
             <button

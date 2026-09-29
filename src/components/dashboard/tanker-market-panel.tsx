@@ -185,7 +185,7 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
         </div>
 
         <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
-          {t("rivers.source")}{" "}
+          {t("story.source")}{" "}
           <a
             href={data._source.url}
             target="_blank"

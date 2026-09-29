@@ -99,7 +99,7 @@ export function WardRepresentatives({ wardNumber }: WardRepresentativesProps) {
             rel="noopener noreferrer"
             className="hover:text-blue-500 underline"
           >
-            {t("reps.source")}
+            {t("hero.alloc_source_label")}
           </a>
           <span>|</span>
           <a

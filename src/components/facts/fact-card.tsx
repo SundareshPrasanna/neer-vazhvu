@@ -161,7 +161,7 @@ export function FactCard({ fact }: FactCardProps) {
             className="text-[11px] px-2 py-1 rounded-md border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
             aria-label={t("facts.copy_quote")}
           >
-            {copied ? t("facts.copied") : t("facts.copy_quote")}
+            {copied ? t("share.copied") : t("facts.copy_quote")}
           </button>
           <button
             onClick={tweet}

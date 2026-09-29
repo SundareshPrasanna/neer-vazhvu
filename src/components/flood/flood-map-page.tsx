@@ -29,7 +29,7 @@ export function FloodMapPage({ cityId, cityDisplayName, spec }: { cityId: string
     setChecked((s) => s.map((rows, i) => (i === li ? rows.map((v, j) => (j === ri ? !v : v)) : rows)));
 
   const tx = (x: FloodText): ReactNode => {
-    const s = interpolate(typeof x === "string" ? x : t(x.key), { city: cityDisplayName });
+    const s = interpolate(typeof x === "string" ? x : t(x), { city: cityDisplayName });
     if (typeof x === "string" || !x.link) return s;
     const { slot, href, label } = x.link;
     const parts = s.split(`{${slot}}`);

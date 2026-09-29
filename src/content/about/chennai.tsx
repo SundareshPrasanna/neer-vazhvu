@@ -23,9 +23,9 @@ export default function ChennaiAbout({ slot, cityId, fallback = null }: CityAbou
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
-                      <th className="pb-2 font-medium">{t("about.param")}</th>
+                      <th className="pb-2 font-medium">{t("about.col_parameter")}</th>
                       <th className="pb-2 font-medium">{t("about.default")}</th>
-                      <th className="pb-2 font-medium">{t("about.source_col")}</th>
+                      <th className="pb-2 font-medium">{t("hero.alloc_source_label")}</th>
                     </tr>
                   </thead>
                   <tbody className="text-slate-700 dark:text-slate-300">
@@ -117,7 +117,7 @@ export default function ChennaiAbout({ slot, cityId, fallback = null }: CityAbou
                 frequency={t("about.freq_one_time_gen")}
               />
 
-              <DataSourceGroupHeader title={t("about.ds_group_gw")} />
+              <DataSourceGroupHeader title={t("my_ward.groundwater")} />
               <DataSource
                 name="India WRIS Ground Water Level API (CGWB Stations)"
                 url="https://indiawris.gov.in/Dataset/Ground%20Water%20Level"

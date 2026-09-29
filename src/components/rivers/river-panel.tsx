@@ -184,7 +184,7 @@ export function RiverPanel({
 
         <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
           <p>
-            {t("rivers.source")}{" "}
+            {t("story.source")}{" "}
             <a href={qualityData.source_url ?? "https://cpcb.gov.in/nwmp-data-2024/"} target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">
               {qualityData.source_label ?? "NWMP Data by CPCB"}
             </a>
@@ -595,7 +595,7 @@ export function RiverPanel({
                 : "bg-slate-50 dark:bg-slate-800"
             }`}>
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-slate-500 dark:text-slate-400">{t("rivers.metals_title")}</span>
+                <span className="text-slate-500 dark:text-slate-400">{t("poll.heavy_metals")}</span>
                 <span className="text-[10px] text-slate-400 dark:text-slate-500">BIS {t("rivers.limits")}</span>
               </div>
               <div className="space-y-1 font-mono text-xs">
@@ -720,7 +720,7 @@ export function RiverPanel({
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
         <p>
-          {t("rivers.source")}{" "}
+          {t("story.source")}{" "}
           <a
             href={qualityData.source_url ?? "https://cpcb.gov.in/nwmp-data-2024/"}
             target="_blank"

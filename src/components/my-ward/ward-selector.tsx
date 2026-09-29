@@ -198,7 +198,7 @@ export function WardSelector({ onSelect, selectedWard, cityId }: WardSelectorPro
           </svg>
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">
-          {t("my_ward.title")}
+          {t("nav.my_ward")}
         </h1>
         <p className="text-slate-500 dark:text-slate-400 text-center mb-8 max-w-md">
           {t("my_ward.subtitle")}
@@ -409,7 +409,7 @@ function ResultRow({
         {getZoneLabel(z.zoneName, language)}
       </span>
       <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-        {z.wardCount} {t("ward_search.wards")}
+        {z.wardCount} {t("gw_snap.wards")}
       </span>
     </button>
   );

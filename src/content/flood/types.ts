@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import type { DrainageLayerSpec } from "@/components/flood/drainage-network-map";
+import type { TranslationEntry } from "@/lib/i18n/translations";
 
 /** English is the accessibility floor; other languages are optional and
  *  fall back to English at render time (Madurai carries ta, Delhi will
@@ -90,9 +91,9 @@ export interface FloodConfig {
   };
 }
 
-/** Copy on the map page: English in place, or an i18n key where the city's copy is
- *  translated. "{city}" becomes the display name; `link` fills its "{slot}". */
-export type FloodText = string | { key: string; link?: { slot: string; href: string; label: string } };
+/** Copy on the map page: English in place, or the city's translations. "{city}"
+ *  becomes the display name; `link` fills its "{slot}". */
+export type FloodText = string | (TranslationEntry & { link?: { slot: string; href: string; label: string } });
 /** Copy that carries emphasis or inline source links is JSX. It crosses the
  *  server/client boundary inside an array, so a fragment needs a key. */
 export type FloodRich = FloodText | ReactElement;

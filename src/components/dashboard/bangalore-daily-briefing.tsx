@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { BangaloreBriefing } from "@/lib/insights/bangalore-briefing";
 import { useLanguage } from "@/lib/i18n/context";
+import { BRIEFING_COPY as B } from "@/content/briefing/bangalore";
 
 interface Props {
   briefing: BangaloreBriefing;
@@ -52,7 +53,7 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
   // already pre-translated by the upstream pipeline).
   const headline = useAi
     ? aiOverride!.headline
-    : format(t(`briefing.headline.${briefing.variant}`), fieldsAsStrings);
+    : format(t(B.headline[briefing.variant]), fieldsAsStrings);
 
   const bullets = useAi
     ? aiOverride!.body
@@ -61,20 +62,20 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
         .filter(Boolean)
     : [
         f.lowName && f.highName
-          ? format(t("briefing.sentence.dam_range"), fieldsAsStrings)
+          ? format(t(B.sentence.dam_range), fieldsAsStrings)
           : null,
-        format(t("briefing.sentence.stage_v"), { design: f.stageVDesign, actual: f.stageVActual }),
-        format(t("briefing.sentence.demand_side"), {
+        format(t(B.sentence.stage_v), { design: f.stageVDesign, actual: f.stageVActual }),
+        format(t(B.sentence.demand_side), {
           served: f.served,
           gba: f.gba,
           tankers: f.tankers,
           wards: f.wards,
         }),
-        format(t(`briefing.sentence.tail.${briefing.variant}`), fieldsAsStrings),
+        format(t(B.sentence.tail[briefing.variant]), fieldsAsStrings),
       ].filter((s): s is string => Boolean(s));
 
   const badgeCls = VARIANT_BADGE_CLS[briefing.variant];
-  const badgeLabel = t(`briefing.variant.${briefing.variant}`);
+  const badgeLabel = t(B.variant[briefing.variant]);
 
   return (
     <div
@@ -82,7 +83,7 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
     >
       <div className="flex items-center justify-between gap-3 mb-2">
         <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-          {t("briefing.heading")}
+          {t(B.heading)}
         </h3>
         <span
           className={`text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide ${badgeCls}`}
@@ -109,7 +110,7 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
           href="/bangalore/groundwater"
           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1"
         >
-          {t("briefing.link_groundwater")}
+          {t(B.link_groundwater)}
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -118,7 +119,7 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
           href="/bangalore/tanker"
           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1"
         >
-          {t("briefing.link_tanker")}
+          {t(B.link_tanker)}
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -127,7 +128,7 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
           href="/bangalore/water-bodies"
           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1"
         >
-          {t("briefing.link_lakes")}
+          {t(B.link_lakes)}
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -136,10 +137,10 @@ export function BangaloreDailyBriefing({ briefing, aiOverride }: Props) {
 
       <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-3">
         {useAi && aiOverride?.sourceDates?.reservoir_date
-          ? `${t("briefing.cauvery_storage_label")}: ${aiOverride.sourceDates.reservoir_date}${aiOverride.model ? ` - ${aiOverride.model}` : ""}`
+          ? `${t(B.cauvery_storage_label)}: ${aiOverride.sourceDates.reservoir_date}${aiOverride.model ? ` - ${aiOverride.model}` : ""}`
           : briefing.freshnessDate
-            ? format(t("briefing.freshness.with_date"), { date: briefing.freshnessDate })
-            : t("briefing.freshness.pending")}
+            ? format(t(B.freshness.with_date), { date: briefing.freshnessDate })
+            : t(B.freshness.pending)}
       </p>
     </div>
   );

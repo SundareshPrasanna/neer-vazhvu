@@ -328,7 +328,7 @@ export function DaysLeftHero({
             <div className="mt-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-slate-600 dark:text-slate-400">{t("hero.consumption")}</span>
+                  <span className="text-slate-600 dark:text-slate-400">{t("about.row_consumption")}</span>
                   <span className="font-mono font-semibold">{consumption} MLD</span>
                 </div>
                 <Slider

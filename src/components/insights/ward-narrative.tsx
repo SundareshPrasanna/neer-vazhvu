@@ -66,7 +66,7 @@ export function WardNarrative({ wardNumber }: WardNarrativeProps) {
     freshnessParts.push(`${t("ai_narrative.reservoirs")}: ${data.source_dates.reservoir_date}`);
   }
   if (data.source_dates?.gw_period) {
-    freshnessParts.push(`${t("ai_narrative.groundwater")}: ${data.source_dates.gw_period}`);
+    freshnessParts.push(`${t("my_ward.groundwater")}: ${data.source_dates.gw_period}`);
   }
 
   return (

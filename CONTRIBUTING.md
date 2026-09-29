@@ -243,7 +243,7 @@ Current workflow note:
 
 ### Cross-city / shared
 - **Tamil prose review** - especially `src/app/[cityId]/about/madurai-page-descriptions.tsx` and the Madurai story pages. Native-speaker review wanted.
-- **Kannada prose review** - `src/app/[cityId]/about/bangalore-page-descriptions.tsx`, the BangaloreDailyBriefing variants in `translations.ts`, and the long-form story (`src/content/story-bangalore-kn.tsx`). Native-speaker review wanted.
+- **Kannada prose review** - `src/content/about/bangalore-pages.tsx`, the BangaloreDailyBriefing variants in `src/content/briefing/bangalore.ts`, and the long-form story (`src/content/story-bangalore-kn.tsx`). Native-speaker review wanted.
 - **Localization (UI)** - ~1,500 i18n keys covering EN + TA + KN; `npm run i18n:check` enforces parity.
 - **Testing** - Unit tests for scrapers, calculator, intelligence modules, and the shared `src/lib/utils/river-classification.ts` (CPCB Best-Use classifier).
 - **Adding a fifth city** - see the "Adding a new city" subsection above.

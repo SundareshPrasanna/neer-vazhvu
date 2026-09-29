@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useMyWardCity } from "./city-context";
+import { wardSources } from "@/content/my-ward/sources";
 
 interface Props {
   wardNumber: number;
@@ -16,6 +17,7 @@ export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
   const { t } = useLanguage();
   const { cityPrefix, cityId } = useMyWardCity();
   const rivers = profile.rivers;
+  const source = wardSources(cityId).river;
 
   const label = getRiverLabel(rivers.nearest_river_id, rivers.nearest_station_id);
 
@@ -48,7 +50,7 @@ export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
             <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">{label.river}</p>
             {label.station && (
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {t("my_ward.monitoring_station")}: {label.station}
+                {t("rivers_legend.monitoring_station")}: {label.station}
               </p>
             )}
           </div>
@@ -62,11 +64,11 @@ export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
           )}
         </div>
 
-        {/* Source & notes */}
-        <div className="text-[10px] text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-2">
-          {/* Delhi's river feed is DPCC monthly, not CPCB's annual NWMP. */}
-          <p>{t(cityId === "delhi" ? "my_ward.river_source_delhi" : "my_ward.river_source")}</p>
-        </div>
+        {source && (
+          <div className="text-[10px] text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-2">
+            <p>{t(source)}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

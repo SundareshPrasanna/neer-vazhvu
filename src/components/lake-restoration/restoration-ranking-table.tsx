@@ -78,9 +78,9 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
 
   const getName = (wb: ScoredWaterBody) => {
     if (language === "ta") {
-      return wb.name_ta?.trim() || wb.name || t("lr.unnamed");
+      return wb.name_ta?.trim() || wb.name || t("wb_panel.unnamed");
     }
-    return wb.name || t("lr.unnamed");
+    return wb.name || t("wb_panel.unnamed");
   };
 
   return (
@@ -107,7 +107,7 @@ export function RestorationRankingTable({ data, onSelect }: RestorationRankingTa
             <tr className="text-xs text-slate-500 dark:text-slate-400 uppercase">
               <th className="px-4 py-2 text-left w-12">{t("lr.rank")}</th>
               <th className="px-4 py-2 text-left">{t("lr.name")}</th>
-              <th className="px-4 py-2 text-left w-20">{t("lr.type")}</th>
+              <th className="px-4 py-2 text-left w-20">{t("wb_panel.type")}</th>
               <th className="px-4 py-2 text-right w-20">{t("lr.area_ha")}</th>
               <th className="px-4 py-2 text-right w-16">{t("lr.priority_score")}</th>
               <th className="px-4 py-2 text-center w-24">{t("lr.priority_level")}</th>

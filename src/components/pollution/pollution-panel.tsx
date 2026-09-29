@@ -176,8 +176,8 @@ export function PollutionPanel({ source, data, onClose }: PollutionPanelProps) {
 
       {/* Source */}
       <div className="text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3 space-y-0.5">
-        <p>{t("poll.source")} {source.source}</p>
-        <p>{t("poll.last_updated")} {data.last_updated}</p>
+        <p>{t("story.source")} {source.source}</p>
+        <p>{t("rivers.last_updated")} {data.last_updated}</p>
       </div>
     </div>
   );

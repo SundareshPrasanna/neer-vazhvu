@@ -58,7 +58,7 @@ export interface BangaloreBriefing {
   };
   /** Date string from the upstream daily ingest, or null if no live
    *  reading is available yet. The freshness label is built at render
-   *  time using t("briefing.freshness.*"). */
+   *  time from BRIEFING_COPY.freshness. */
   freshnessDate: string | null;
   /** Total live storage across the 4 upstream Cauvery dams, in TMC. */
   totalStorageTmc: number;
@@ -99,9 +99,9 @@ function pickVariant(totalPctFrl: number, monthIST: number): BangaloreBriefingVa
 
 
 /**
- * The prose has been moved out into i18n keys (briefing.headline.*,
- * briefing.sentence.*). The builder now returns only the structured
- * fields the client component plugs into those templates.
+ * The prose lives in content/briefing/bangalore.ts (headline.*,
+ * sentence.*). The builder returns only the structured fields the client
+ * component plugs into those templates.
  */
 
 

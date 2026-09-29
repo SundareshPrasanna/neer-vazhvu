@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils/format";
 import { useLanguage } from "@/lib/i18n/context";
+import type { I18nText } from "@/lib/i18n/translations";
 import { PUMPING_HERO_COPY, type PumpingHeroCopy } from "@/content/hero/pumping";
 import type { CityId } from "@/lib/cities/ids";
 import { fetchJsonShared } from "@/lib/data/fetch-json";
@@ -133,9 +134,9 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
   const projectCostCrore = data.project_cost?.total_inr_crore;
   const jicaLoanPct = data.project_cost?.funding_pattern?.jica_loan_pct;
   const copy: PumpingHeroCopy = { ...PUMPING_HERO_COPY[cityId as CityId], ...data.hero_copy };
-  // t() returns a non-key unchanged, so JSON literals and i18n keys read alike.
-  const text = (v: string, params: Record<string, string | number | undefined> = {}) => format(t(v), params);
-  const say = (v: string | undefined, params: Record<string, string | number | undefined> = {}) =>
+  // t() returns a non-key unchanged, so JSON literals, i18n keys and translated copy read alike.
+  const text = (v: I18nText, params: Record<string, string | number | undefined> = {}) => format(t(v), params);
+  const say = (v: I18nText | undefined, params: Record<string, string | number | undefined> = {}) =>
     v ? text(v, params) : undefined;
   const callout = (id: keyof NonNullable<PumpingHeroCopy["callouts"]>) => copy.callouts?.[id];
 

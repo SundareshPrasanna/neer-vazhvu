@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import { isSectionUnavailable } from "@/lib/hooks/use-ward-profile";
 import { useMyWardCity } from "./city-context";
+import { wardSources } from "@/content/my-ward/sources";
 
 interface Props {
   wardNumber: number;
@@ -13,11 +14,11 @@ interface Props {
 }
 
 export function WardInfrastructureCard({ wardNumber, profile }: Props) {
-  const { cityId } = useMyWardCity();
+  const { cityId, cityPrefix } = useMyWardCity();
   const { t } = useLanguage();
-  const { cityPrefix } = useMyWardCity();
   const drain = profile.drainage;
   const sewer = profile.sewerage;
+  const source = wardSources(cityId).infra;
 
   // Both sections marked not_available - render an honest "data not yet
   // sourced" card. (For Madurai today: no public drainage / sewerage
@@ -123,14 +124,14 @@ export function WardInfrastructureCard({ wardNumber, profile }: Props) {
               {sewer.sps_count > 0 && (
                 <div className="px-2 py-1.5 bg-slate-50 dark:bg-slate-800/50 rounded">
                   <div className="font-semibold text-slate-700 dark:text-slate-300">
-                    {sewer.sps_count} {t("my_ward.pumping_stations")}
+                    {sewer.sps_count} {t("flood.sps_count")}
                   </div>
                 </div>
               )}
               {sewer.pumping_main_count > 0 && (
                 <div className="px-2 py-1.5 bg-slate-50 dark:bg-slate-800/50 rounded">
                   <div className="font-semibold text-slate-700 dark:text-slate-300">
-                    {sewer.pumping_main_count} {t("my_ward.pumping_mains")}
+                    {sewer.pumping_main_count} {t("flood.pm_count")}
                   </div>
                 </div>
               )}
@@ -141,9 +142,7 @@ export function WardInfrastructureCard({ wardNumber, profile }: Props) {
         {/* Source & notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           {!isSectionUnavailable(sewer) && sewer.stp_count > 0 && <p>{t("my_ward.infra_stp_note")}</p>}
-          {/* Per-city infra provenance; the unsuffixed default is Chennai's
-              (GCC SWD + CMWSSB) and must never render for another city. */}
-          <p>{t(["bangalore", "mumbai", "delhi"].includes(cityId) ? `my_ward.infra_source_${cityId}` : "my_ward.infra_source")}</p>
+          {source && <p>{t(source)}</p>}
         </div>
       </CardContent>
     </Card>

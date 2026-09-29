@@ -8,9 +8,9 @@ import type { ViewMode } from "./view-mode-toggle";
 
 const WB_LEGEND_DEFS = [
   { id: "existing",         color: "#3b82f6", labelKey: "wb_legend.existing",         descKey: "wb_legend.surviving" },
-  { id: "fully_lost",       color: "#dc2626", labelKey: "wb_legend.fully_lost",       descKey: "wb_legend.fully_lost_desc" },
-  { id: "severely_reduced", color: "#f97316", labelKey: "wb_legend.severely_reduced", descKey: "wb_legend.severely_reduced_desc" },
-  { id: "encroached",       color: "#eab308", labelKey: "wb_legend.encroached",       descKey: "wb_legend.encroached_desc" },
+  { id: "fully_lost",       color: "#dc2626", labelKey: "about.fully_lost",       descKey: "wb_legend.fully_lost_desc" },
+  { id: "severely_reduced", color: "#f97316", labelKey: "about.severely_reduced", descKey: "wb_legend.severely_reduced_desc" },
+  { id: "encroached",       color: "#eab308", labelKey: "wb_panel.encroached",       descKey: "wb_legend.encroached_desc" },
   { id: "census_healthy",   color: "#10b981", labelKey: "wb_legend.census_healthy",   descKey: "wb_legend.census_healthy_desc" },
   { id: "census_encroached", color: "#ef4444", labelKey: "wb_legend.census_encroached", descKey: "wb_legend.census_encroached_desc" },
   { id: "census_degraded",  color: "#f97316", labelKey: "wb_legend.census_degraded",  descKey: "wb_legend.census_degraded_desc" },
@@ -42,7 +42,7 @@ export function UnifiedLegend({ viewMode, hiddenCategories, onToggleCategory, vi
   const allowed = visibleCategoryIds && new Set(visibleCategoryIds);
 
   return (
-    <MapLegend title={viewMode === "water-bodies" ? t("wb_legend.title") : t("lr.priority_level")}>
+    <MapLegend title={viewMode === "water-bodies" ? t("nav.water_bodies") : t("lr.priority_level")}>
       {viewMode === "water-bodies"
         ? WB_LEGEND_DEFS.filter((item) => !allowed || allowed.has(item.id)).map((item) => (
             <LegendRow key={item.id} id={item.id} hidden={hiddenCategories} onToggle={onToggleCategory}>

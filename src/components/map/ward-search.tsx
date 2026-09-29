@@ -272,7 +272,7 @@ function ResultRow({
         {getZoneLabel(z.zoneName, language)}
       </span>
       <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-        {z.wardCount} {t("ward_search.wards")}
+        {z.wardCount} {t("gw_snap.wards")}
       </span>
     </button>
   );

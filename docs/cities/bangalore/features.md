@@ -81,13 +81,13 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
 ### Localisation (Kannada)
 
 - Bengaluru's `availableLanguages` is `['en', 'kn']`. The language toggle in the header surfaces "ಕನ್ನಡ" alongside English.
-- Translation file (`src/lib/i18n/translations.ts`) covers ~1,500 keys with 100% Kannada coverage. Major chrome surfaces routed through `t()`:
-  - BangaloreDailyBriefing (variants + structured fields)
-  - CauveryPumpingHero (eyebrow, headline, body, stat labels, callouts, footer)
-  - TankerExpandedContext + TankerPageChrome (section headings + footer)
-  - the flood map page copy (`frb.*` keys, declared in `src/content/flood/bangalore.ts`)
-  - bangalore-page-descriptions (`bpd.*` keys, complete rewrite as single t()-driven renderer)
-  - IIScStressWardsMap (`iisc_map.*` keys)
+- Shared chrome is in `src/lib/i18n/translations.ts`; Bengaluru's own copy (en/ta/kn) lives in its content modules, read through the same `t()`:
+  - BangaloreDailyBriefing (`src/content/briefing/bangalore.ts`)
+  - CauveryPumpingHero narrative (`PUMPING_HERO_COPY.bangalore`, `src/content/hero/pumping.ts`)
+  - TankerExpandedContext + IIScStressWardsMap (`src/content/tanker/bangalore.ts`)
+  - the flood map page copy (`src/content/flood/bangalore.ts`)
+  - the about page's "what each page shows" (`src/content/about/bangalore-pages.tsx`)
+  - My Ward source lines (`src/content/my-ward/sources.ts`)
   - Facts page (`facts.bucket.*` + per-fact `_kn` variants in the JSON)
 - Per-language JSON field picking: city data files where prose differs per-language (tanker-context, facts) carry parallel `_kn` suffixes on every user-facing string. The `pick()` helper reads `_${language}` suffixed fields.
 

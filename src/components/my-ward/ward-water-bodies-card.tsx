@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useMyWardCity } from "./city-context";
+import { wardSources } from "@/content/my-ward/sources";
 
 const PRIORITY_COLORS: Record<string, string> = {
   critical: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
@@ -20,7 +21,8 @@ interface Props {
 
 export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
   const { t } = useLanguage();
-  const { cityPrefix } = useMyWardCity();
+  const { cityId, cityPrefix } = useMyWardCity();
+  const { lostNote } = wardSources(cityId);
   const wb = profile.water_bodies;
   const lost = profile.lost_bodies;
   const total = wb.current_count;
@@ -30,7 +32,7 @@ export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
       <Card>
         <CardHeader>
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.water_bodies")}
+            {t("nav.water_bodies")}
           </h2>
         </CardHeader>
         <CardContent>
@@ -45,7 +47,7 @@ export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.water_bodies")}
+            {t("nav.water_bodies")}
           </h2>
           <Link
             href={`${cityPrefix}/water-bodies?mode=restoration&ward=${wardNumber}`}
@@ -60,7 +62,7 @@ export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
         <div className="flex items-baseline gap-2">
           <span className="text-3xl font-bold text-slate-900 dark:text-slate-100">{total}</span>
           <span className="text-sm text-slate-500 dark:text-slate-400">
-            {t("my_ward.wb_label")}
+            {t("uplift.unit_water_body")}
           </span>
         </div>
 
@@ -119,9 +121,9 @@ export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
                 {lost.names.join(", ")}
               </p>
             )}
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
-              {t("my_ward.wb_lost_note")}
-            </p>
+            {lostNote && (
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{t(lostNote)}</p>
+            )}
           </div>
         )}
 

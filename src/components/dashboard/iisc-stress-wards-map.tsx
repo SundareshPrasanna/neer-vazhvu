@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { MapLoading } from "@/components/map/map-loading";
 import { useLanguage } from "@/lib/i18n/context";
+import { IISC_MAP_COPY as C } from "@/content/tanker/bangalore";
 import { fetchJson } from "@/lib/data/fetch-json";
 
 function tFmt(template: string, params: Record<string, string | number>): string {
@@ -67,7 +68,7 @@ export function IIScStressWardsMap() {
   if (error || !data) {
     return error ? (
       <div className="rounded-md border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20 p-3 text-xs text-amber-700 dark:text-amber-200">
-        {t("iisc_map.error")}
+        {t(C.error)}
       </div>
     ) : null;
   }
@@ -87,10 +88,10 @@ export function IIScStressWardsMap() {
     <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-5 bg-white dark:bg-slate-900 space-y-4">
       <div>
         <h2 className="text-base font-semibold text-slate-800 dark:text-slate-200 mb-1">
-          {t("iisc_map.heading")}
+          {t(C.heading)}
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-          {tFmt(t("iisc_map.intro"), {
+          {tFmt(t(C.intro), {
             date: data._source.submitted_date,
             target: data._source.projection_target,
           })}{" "}
@@ -100,11 +101,11 @@ export function IIScStressWardsMap() {
             rel="noopener noreferrer"
             className="text-blue-600 dark:text-blue-400 hover:underline text-[11px]"
           >
-            ({t("rivers.source")})
+            ({t("story.source")})
           </a>
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-          {t("iisc_map.predicted")}
+          {t(C.predicted)}
         </p>
       </div>
 
@@ -112,30 +113,30 @@ export function IIScStressWardsMap() {
         <IIScStressWardsLeafletMap wards={data.wards} />
         <div className="absolute bottom-3 left-3 z-[500] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-md shadow-md p-2 text-[11px] space-y-1.5 max-w-[260px]">
           <div className="font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide text-[10px]">
-            {t("iisc_map.legend_title")}
+            {t(C.legend_title)}
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm bg-red-600 opacity-50 border border-red-700" />
-            <span className="text-slate-600 dark:text-slate-400">{t("iisc_map.legend.two_plus")}</span>
+            <span className="text-slate-600 dark:text-slate-400">{t(C.legend.two_plus)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 rounded-sm bg-red-300 opacity-50 border border-red-400" />
-            <span className="text-slate-600 dark:text-slate-400">{t("iisc_map.legend.one")}</span>
+            <span className="text-slate-600 dark:text-slate-400">{t(C.legend.one)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-3 h-3 border border-slate-400" />
-            <span className="text-slate-600 dark:text-slate-400">{t("iisc_map.legend.hover_name")}</span>
+            <span className="text-slate-600 dark:text-slate-400">{t(C.legend.hover_name)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 border border-slate-900" />
-            <span className="text-slate-600 dark:text-slate-400">{t("iisc_map.legend.bbmp_centroid")}</span>
+            <span className="text-slate-600 dark:text-slate-400">{t(C.legend.bbmp_centroid)}</span>
           </div>
         </div>
       </div>
 
       <div>
         <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-          {t("iisc_map.group_heading")}
+          {t(C.group_heading)}
         </h3>
         <div className="space-y-3">
           {corpOrder.map((corp) => (

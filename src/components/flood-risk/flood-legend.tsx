@@ -52,8 +52,8 @@ export function FloodLegend({ viewMode, historicalEvent, hiddenCategories, onTog
       : viewMode === "historical"
         ? t("flood.legend_impact")
         : viewMode === "sewerage"
-          ? t("flood.legend_sewerage")
-          : t("flood.legend_drainage");
+          ? t("flood.view_sewerage")
+          : t("flood.view_drainage");
 
   return (
     <MapLegend title={title}>
@@ -115,7 +115,7 @@ export function FloodLegend({ viewMode, historicalEvent, hiddenCategories, onTog
           ))}
           <LegendRow id="river" {...row}>
             <span className="w-4 h-0 border-t-2 border-cyan-500" />
-            <span className={LABEL}>{t("flood.legend_river")}</span>
+            <span className={LABEL}>{t("wb_type.river")}</span>
           </LegendRow>
         </>
       )}
