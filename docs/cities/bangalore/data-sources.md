@@ -136,7 +136,7 @@ Powers the **Lake Catchment Atlas** ("Catchments" view on `/bangalore/water-bodi
 | | |
 |---|---|
 | **Bodies** | Bellandur, Varthur, Hesaraghatta, Hebbal, Ulsoor, Sankey, Madivala, Agara, Jakkur, Rachenahalli, Iblur, Kempambudhi, Puttenahalli, Yelahanka |
-| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 | **Outputs** | `public/data/rich-bodies/{body}-imagery-manifest.json`, `{body}-jrc-water-trend.json`, `{body}-dw-water-trend.json`, `{body}-dynamic-world-built-trend.json`, `{body}-open-buildings-verification.json`, `{body}-overture-buildings.json` + chips in `public/data/rich-bodies/imagery/{body}/*.jpg` + tints in Supabase Storage |
 
 **JRC → DW water-trend splice.** JRC GSW v1.4 ships annual water classification through 2021. Without a bridge, the per-body water-fraction chart would truncate at 2021 - misleading for Bengaluru bodies whose recent dynamics matter (Bellandur, Varthur, Hesaraghatta especially). The DW water-class extension (class 0) provides 2022-present in the same shape (`any_water_pct` key); `rich-body-stats-strip.tsx` reads JRC for ≤2021 and DW for ≥2022.

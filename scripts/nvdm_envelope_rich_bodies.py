@@ -4,7 +4,7 @@ The rich-body pipeline is body-agnostic and its provenance is identical
 whichever city a body sits in: the same six producers, the same registered
 sources, the same method. So it lives here once, and scope is derived the
 same way build_dataset_catalogue.py derives it: by reading city_id out of the
-rich-body registry, which is the only place that mapping is authoritative.
+rich-body registry data, which is the only place that mapping is authoritative.
 
 Usage:
   python scripts/nvdm_envelope_rich_bodies.py
@@ -177,18 +177,9 @@ def scope_kinds() -> dict[str, str]:
 
 
 def registry_cities() -> dict[str, str]:
-    """slug -> city_id, parsed from the rich-body registry (the only authority)."""
-    ts = (ROOT / "src/lib/water-bodies/rich-body-registry.ts").read_text()
-    pairs: dict[str, str] = {}
-    cur = None
-    for m in re.finditer(r'(?<![a-zA-Z_])(id|city_id):\s*"([^"]+)"', ts):
-        k, v = m.group(1), m.group(2)
-        if k == "id":
-            cur = v
-        elif cur:
-            pairs[cur] = v
-            cur = None
-    return pairs
+    """slug -> city_id from the rich-body registry data (the only authority)."""
+    registry = json.loads((ROOT / "src/lib/water-bodies/rich-bodies.json").read_text())
+    return {slug: b["city_id"] for slug, b in registry["bodies"].items()}
 
 
 def dump(merged: dict, raw: str) -> str:

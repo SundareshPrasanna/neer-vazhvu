@@ -75,7 +75,7 @@ Mumbai City + Mumbai Suburban are the only 2 of Maharashtra's 35 districts **exc
 | | |
 |---|---|
 | **Bodies** | Powai, Vihar, Tulsi (the Salsette lakes) + Tansa, Bhatsa (BMC supply reservoirs) |
-| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-body-registry.ts](../../../src/lib/water-bodies/rich-body-registry.ts) |
+| **Pipeline** | Body-agnostic scripts under `scripts/` and `scripts/_rich_body_zones.py`; per-body registry entry in [src/lib/water-bodies/rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
 | **Boundaries** | OpenStreetMap relation/way extracts via `scripts/fetch-rich-body-polygon.ts`; no gazetted GIS boundary is published for BMC's lakes, so there is no gazette-vs-OSM comparison of the kind Pallikaranai carries |
 | **Outputs** | `public/data/rich-bodies/{body}-imagery-manifest.json`, `{body}-jrc-water-trend.json`, `{body}-dw-water-trend.json`, `{body}-dynamic-world-built-trend.json`, `{body}-open-buildings-verification.json`, `{body}-overture-buildings.json`; chips and tints in Supabase Storage (`satellite-evidence`) |
 

@@ -34,7 +34,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 240   # every registry body, ~3-4 min each on a hosted runner
     permissions:
       contents: write
       pull-requests: write
@@ -56,8 +56,6 @@ jobs:
         run: |
           set +e
           ANOMALY_FOUND=0
-          BODY_IDS="pallikaranai sholavaram red-hills chembarambakkam porur velachery perumbakkam"  # keep in sync with rich-body-registry.ts
-
           ARGS=""
           if [ -n "${{ inputs.release }}" ]; then
             ARGS="$ARGS --release ${{ inputs.release }}"
@@ -66,18 +64,16 @@ jobs:
             ARGS="$ARGS --anomaly-pct ${{ inputs.anomaly_pct }}"
           fi
 
-          for body in $BODY_IDS; do
-            echo "=== refreshing $body ==="
-            python scripts/verify_rich_body_overture_buildings.py --body-id "$body" $ARGS
-            EXIT=$?
-            if [ "$EXIT" = "2" ]; then
-              echo "$body: anomaly detected, candidate file written"
-              ANOMALY_FOUND=1
-            elif [ "$EXIT" != "0" ]; then
-              echo "$body: script failed with exit code $EXIT"
-              exit "$EXIT"
-            fi
-          done
+          # --all reads every body id from src/lib/water-bodies/rich-bodies.json
+          python scripts/verify_rich_body_overture_buildings.py --all $ARGS
+          EXIT=$?
+          if [ "$EXIT" = "2" ]; then
+            echo "anomaly detected, candidate file(s) written"
+            ANOMALY_FOUND=1
+          elif [ "$EXIT" != "0" ]; then
+            echo "script failed with exit code $EXIT"
+            exit "$EXIT"
+          fi
 
           echo "anomaly_found=$ANOMALY_FOUND" >> "$GITHUB_OUTPUT"
 
@@ -123,7 +119,7 @@ jobs:
               - Investigate: dig into whether Overture changed methodology
                 or whether real construction/demolition happened.
 
-            See `scripts/verify_pallikaranai_overture_buildings.py` and the
+            See `scripts/verify_rich_body_overture_buildings.py` and the
             workflow run for raw deltas.
           branch: overture-buildings-anomaly-${{ github.run_id }}
           add-paths: |
