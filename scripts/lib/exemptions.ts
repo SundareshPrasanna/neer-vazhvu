@@ -118,8 +118,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // omissions follow directly from that.
   "surat:my-ward":
     "Ward surfaces are off because \"ward\" in Surat means three incompatible things and none of them has usable geometry. There are 30 electoral wards (120 corporators), about 134 census/administrative wards in SMC's own 1961-2011 area table, and a third scheme inside SMC's GIS ward_boundary layer. That GIS layer is the authoritative one and it serves WMS only - WFS is disabled, so its geometry cannot be downloaded, only rendered. The analytical unit is instead the zone, which does carry live data, an official 2024 population and the city's own supply breakdown. This closes when SMC enables WFS or publishes ward boundaries, not by a better join.",
-  "surat:cascades":
-    "Not a cascade geography. Tank cascades are chained systems where each tank's surplus feeds the next; Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. Rendering a cascade here would assert an inheritance the city does not have.",
   "surat:shoreline":
     "Surat is genuinely coastal - Dumas, Hazira, the Tapi estuary - so this is a backlog item rather than a refusal. The shoreline surface currently reads Chennai coastal data and has not been parametrised, and shipping a map of another city's coast would be worse than shipping none.",
   "surat:tanker":
@@ -134,8 +132,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // Kolkata - every omission is a decision, and each has a reason on the page.
   "kolkata:my-ward":
     "Ward-keyed surfaces are off until KMC wards 142-144 exist as geometry. 141 of 144 are mapped; the missing three are 18.93 km2, 9.2% of the city. KMC publishes no ward geometry through either its own portal or the newer DIGIT one, and OSM has no Kolkata ward relations at any admin_level, so this closes when someone digitises the 2012 delimitation, not by a better endpoint.",
-  "kolkata:cascades":
-    "Not a cascade geography. Tank cascades are a peninsular-India form; the Gangetic delta drains rather than cascading.",
   "kolkata:shoreline":
     "Not a coastal city. Kolkata is a tidal river port roughly 130 km upstream of the Bay of Bengal; the riverbank/estuary variant of this surface is a different product and is unbuilt.",
   "kolkata:tanker":
@@ -166,8 +162,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // MCG limit at 1985/1996/2008/2010/2015/2020, paired with the 2008 dark-zone
   // notification. Kept as a comment because a retired exemption is the evidence
   // that these removal conditions are real.
-  "gurugram:cascades":
-    "Not a cascade geography. Aravalli johads and village ponds are a real water heritage, but no chained-surplus system was engineered here the way it was in the Tamil kanmoi districts or the Bengaluru kere chains, so the cascade story must not be told about this city. Catchment delineation itself is buildable - GMDA publishes a 10-polygon watershed layer and a natural-flow-direction layer - and is a separate question from the cascade narrative.",
   "gurugram:allocations":
     "No published entitlement instrument has been located. Gurugram's canal share of Yamuna water is governed by inter-state arrangements that GMDA does not publish, and the ledger's primitive is entitled-vs-received against a named instrument - without the paper there is no row to write.",
   "gurugram:commitments":
@@ -249,8 +243,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
     "The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker.",
   "pune:lake-restoration":
     "No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere.",
-  "pune:cascades":
-    "The cascade pipeline has not been run for Pune district. Backlog, not refusal.",
   "pune:climate-risk": "Not built for this city.",
   "pune:shoreline": "Landlocked.",
 
@@ -261,7 +253,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "hyderabad:climate-risk": "Not built for this city.",
 
   // Delhi
-  "delhi:cascades": "Not a cascade geography.",
   "delhi:shoreline": "Landlocked.",
   "delhi:climate-risk": "Not built for this city.",
   "delhi:tanker": "Not built for this city.",
@@ -272,7 +263,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // PRODUCES a file, so a literal path in this prose made the catalogue credit
   // this register as the producer of Mumbai's ward geometry. It produces nothing.
   "mumbai:my-ward": `${UNRECORDED} Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route.`,
-  "mumbai:cascades": "Not a cascade geography.",
   "mumbai:climate-risk": "Not built for this city.",
   "mumbai:tanker": "Not built for this city.",
 
@@ -288,8 +278,6 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "madurai:allocations": "Not built for this city.",
 
   // Chennai - the origin city ships nearly everything.
-  "chennai:cascades":
-    "Chennai's cascade surface is served through the basin atlas rather than a city route.",
   "chennai:tanker": "Not built for this city.",
   "chennai:commitments": "Not built for this city.",
   "chennai:allocations": "Not built for this city.",

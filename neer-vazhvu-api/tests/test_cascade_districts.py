@@ -4,10 +4,7 @@ import pytest
 
 from app.cascade.districts import (
     CASCADE_OUTPUT_DIR,
-    CASCADE_TILE_DIR,
     DistrictCascadeConfig,
-    HistoricalEra,
-    NamedCascade,
     get_district_cascade_config,
     supported_district_ids,
 )
@@ -35,18 +32,6 @@ def test_madurai_config_points_at_madurai_assets():
     assert madurai.state == "tamil_nadu"
 
 
-def test_madurai_config_includes_pandya_and_nayak_eras():
-    madurai = get_district_cascade_config("madurai")
-    eras = {era.era for era in madurai.historical_eras}
-    assert eras == {"Pandya", "Nayak"}
-
-
-def test_chennai_config_starts_with_no_curation():
-    chennai = get_district_cascade_config("chennai")
-    assert chennai.named_cascades == ()
-    assert chennai.court_references == ()
-
-
 def test_bangalore_config_points_at_bangalore_assets():
     bangalore = get_district_cascade_config("bangalore")
     assert bangalore.tank_polygons_path.name == "bangalore-water-bodies-current.geojson"
@@ -57,47 +42,19 @@ def test_bangalore_config_points_at_bangalore_assets():
     assert bangalore.allow_multi_outflow is True
 
 
-def test_bangalore_config_includes_kempegowda_era():
-    bangalore = get_district_cascade_config("bangalore")
-    eras = {era.era for era in bangalore.historical_eras}
-    assert "Kempegowda" in eras
-
-
-def test_bangalore_config_includes_forward_foundation_court_anchor():
-    bangalore = get_district_cascade_config("bangalore")
-    case_ids = {case.case_id for case in bangalore.court_references}
-    assert "forward-foundation-ngt-2012" in case_ids
-
-
 def test_output_paths_are_district_scoped():
     madurai = get_district_cascade_config("madurai")
     assert madurai.cascade_nodes_geojson_path() == (
         CASCADE_OUTPUT_DIR / "madurai-cascade-nodes.geojson"
     )
-    assert madurai.cascade_edges_pmtiles_path() == (
-        CASCADE_TILE_DIR / "madurai-cascade-edges.pmtiles"
+    assert madurai.cascade_edges_geojson_path() == (
+        CASCADE_OUTPUT_DIR / "madurai-cascade-edges.geojson"
     )
-
-
-def test_named_cascade_dataclass_is_hashable_and_frozen():
-    # frozen=True + slots=True means equality is structural; this also
-    # guarantees curation entries can live in tuples on the config.
-    a = NamedCascade(cascade_id="vaigai-east", name="Vaigai East")
-    b = NamedCascade(cascade_id="vaigai-east", name="Vaigai East")
-    assert a == b
-    with pytest.raises(AttributeError):
-        a.name = "mutated"  # type: ignore[misc]
-
-
-def test_historical_era_carries_period_bounds():
-    era = HistoricalEra(era="Pandya", period_start=300, period_end=1300)
-    assert era.period_end - era.period_start == 1000
 
 
 def test_publish_write_geojson_roundtrips_to_disk(tmp_path, monkeypatch):
     # Redirect output dirs so the test doesn't pollute the real public/
     monkeypatch.setattr(publish, "CASCADE_OUTPUT_DIR", tmp_path / "data")
-    monkeypatch.setattr(publish, "CASCADE_TILE_DIR", tmp_path / "tiles")
 
     test_district = DistrictCascadeConfig(
         district_id="testville",
@@ -151,7 +108,6 @@ def test_publish_write_geojson_embeds_meta_in_each_collection(tmp_path, monkeypa
     # inputs_hash, and feature_type so a reviewer can trace any single
     # file back to the pipeline run that produced it.
     monkeypatch.setattr(publish, "CASCADE_OUTPUT_DIR", tmp_path / "data")
-    monkeypatch.setattr(publish, "CASCADE_TILE_DIR", tmp_path / "tiles")
 
     test_district = DistrictCascadeConfig(
         district_id="testville",
@@ -216,60 +172,6 @@ def test_publish_write_geojson_embeds_meta_in_each_collection(tmp_path, monkeypa
         assert meta["generated_at"].endswith("Z")
 
 
-def test_publish_write_systems_manifest_keeps_payload_geometry_free(
-    tmp_path, monkeypatch
-):
-    # Manifest is loaded on initial page render; must stay tiny. This
-    # test enforces that we don't accidentally inline geometry into it.
-    monkeypatch.setattr(publish, "CASCADE_OUTPUT_DIR", tmp_path / "data")
-    monkeypatch.setattr(publish, "CASCADE_TILE_DIR", tmp_path / "tiles")
-
-    test_district = DistrictCascadeConfig(
-        district_id="testville",
-        label="Testville",
-        state="tamil_nadu",
-        tank_polygons_path=tmp_path / "polygons.geojson",
-    )
-    manifest_path = tmp_path / "data" / "testville-cascade-systems.json"
-    monkeypatch.setattr(
-        DistrictCascadeConfig,
-        "cascade_systems_json_path",
-        lambda self: manifest_path,
-    )
-
-    publish.write_systems_manifest(
-        test_district,
-        systems={
-            "systems": [
-                {
-                    "cascade_id": "vaigai-east",
-                    "name": "Vaigai East",
-                    "tank_count": 12,
-                    "intact_link_pct": 33.3,
-                    "bbox": [78.0, 9.8, 78.3, 10.0],
-                }
-            ],
-            "summary": {"total_systems": 1},
-        },
-    )
-
-    payload = json.loads(manifest_path.read_text())
-    serialized = json.dumps(payload)
-    # Manifest must not contain any LineString or Polygon geometry strings.
-    assert "LineString" not in serialized
-    assert "Polygon" not in serialized
-    assert "coordinates" not in serialized
-
-
-def test_build_pmtiles_errors_clearly_when_tippecanoe_missing(monkeypatch):
-    # Force the availability check to fail so we exercise the error path
-    # without depending on whether tippecanoe is installed in CI.
-    monkeypatch.setattr(publish, "_tippecanoe_available", lambda: False)
-    madurai = get_district_cascade_config("madurai")
-    with pytest.raises(RuntimeError, match="tippecanoe is not installed"):
-        publish.build_pmtiles(madurai)
-
-
 def test_cascade_stats_json_path_is_district_scoped():
     madurai = get_district_cascade_config("madurai")
     assert madurai.cascade_stats_json_path() == (
@@ -295,7 +197,6 @@ def test_chennai_config_leaves_narrative_anchor_unset():
 def _stub_district_paths(monkeypatch, tmp_path):
     """Helper: redirect a test district's output paths into tmp_path."""
     monkeypatch.setattr(publish, "CASCADE_OUTPUT_DIR", tmp_path)
-    monkeypatch.setattr(publish, "CASCADE_TILE_DIR", tmp_path / "tiles")
     monkeypatch.setattr(
         DistrictCascadeConfig,
         "cascade_nodes_geojson_path",

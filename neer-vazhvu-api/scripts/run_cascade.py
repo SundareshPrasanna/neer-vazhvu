@@ -1,18 +1,14 @@
-"""CLI for the cascade reconstruction pipeline.
+"""CLI for the lake catchment pipeline (topology, then catchments).
 
 Usage:
     python scripts/run_cascade.py --district madurai build-topology
-    python scripts/run_cascade.py --district madurai cross-check-channels
-    python scripts/run_cascade.py --district madurai detect-encroachment
-    python scripts/run_cascade.py --district madurai score
-    python scripts/run_cascade.py --district madurai curate
-    python scripts/run_cascade.py --district madurai publish
+    python scripts/run_cascade.py --district madurai delineate-catchments
+    python scripts/run_cascade.py --district madurai enrich-catchments
     python scripts/run_cascade.py --district madurai stats
-    python scripts/run_cascade.py --district madurai tile
     python scripts/run_cascade.py --district madurai run-all
 
 Stages dispatch to pure functions in app.cascade.*. Outputs are
-deterministic files in public/data/cascade/ and public/tiles/cascade/.
+deterministic files in public/data/cascade/.
 
 The `stats` stage is a standalone refresh of {district}-cascade-stats.json
 from the published GeoJSONs - useful when re-running publish without
@@ -37,9 +33,8 @@ def cmd_build_topology(district_id: str) -> int:
     """Build the cascade graph AND publish nodes/edges GeoJSON in one shot.
 
     The graph is district-scoped state we don't keep in memory across
-    subcommands; persisting to GeoJSON here makes downstream stages
-    (cross-check-channels, detect-encroachment, score, tile) reload
-    from disk. Same pattern as the GEE manifests.
+    subcommands; persisting to GeoJSON here lets the catchment stages
+    reload the nodes from disk. Same pattern as the GEE manifests.
     """
     from app.cascade import publish, topology
     from app.cascade.districts import get_district_cascade_config
@@ -102,60 +97,6 @@ def cmd_enrich_catchments(district_id: str) -> int:
     return 0
 
 
-def cmd_cross_check_channels(district_id: str) -> int:
-    from app.cascade import channels
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    # Loads existing edges from publish output, threads through OSM + Sentinel.
-    channels.cross_check_osm(district, edges=[])
-    channels.cross_check_sentinel(district, edges=[])
-    return 0
-
-
-def cmd_detect_encroachment(district_id: str) -> int:
-    from app.cascade import encroachment
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    encroachment.overlay_built_up(district, edges=[])
-    return 0
-
-
-def cmd_score(district_id: str) -> int:
-    from app.cascade import scoring
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    scoring.classify_edge_status(district, edges=[])
-    scoring.cascade_health_scores(district, nodes=[], edges=[])
-    return 0
-
-
-def cmd_curate(district_id: str) -> int:
-    from app.cascade import curation
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    curation.attach_named_cascades(district, nodes=[], edges=[])
-    return 0
-
-
-def cmd_publish(district_id: str) -> int:
-    """Refuse: standalone `publish` had no real inputs and overwrote shipped
-    GeoJSONs with empty FeatureCollections (2026-08 baseline P0.3). The real
-    publish happens inside build-topology; `stats` refreshes manifests from
-    the existing GeoJSONs."""
-    print(
-        f"'publish' is disabled: it would overwrite {district_id}'s shipped "
-        f"cascade artifacts with empty data. Use 'build-topology' to build "
-        f"and publish, or 'stats' to refresh manifests from existing "
-        f"GeoJSONs.",
-        file=sys.stderr,
-    )
-    return 1
-
-
 def cmd_stats(district_id: str) -> int:
     """Compute and write the stats manifest from existing GeoJSONs.
 
@@ -172,86 +113,17 @@ def cmd_stats(district_id: str) -> int:
     return 0
 
 
-def cmd_sensitivity(district_id: str) -> int:
-    """Sweep each topology parameter and write a per-city sensitivity
-    table to {district}-cascade-sensitivity.json. Read by the
-    methodology section and the hydrologist-facing PDF.
-    """
-    from app.cascade import sensitivity
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    payload = sensitivity.run_sensitivity_analysis(district)
-    print(
-        json.dumps(
-            {
-                "district_id": payload["district_id"],
-                "sweeps": [
-                    {
-                        "parameter": s["parameter"],
-                        "default": s["default"],
-                        "result_count": len(s["results"]),
-                    }
-                    for s in payload["sweeps"]
-                ],
-            },
-            indent=2,
-        )
-    )
-    return 0
-
-
-def cmd_health(district_id: str) -> int:
-    """Score documented + auto-derived cascades for health and priority.
-
-    Reads documented chains from
-    public/data/cascade/{district}-cascades-documented.json, joins
-    them with the cascade GeoJSONs and (where present) the
-    lost-tanks JSON, writes {district}-cascades-health.json.
-    """
-    from app.cascade import health
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    payload = health.compute_cascade_health(district)
-    print(
-        json.dumps(
-            {
-                "district_id": payload["district_id"],
-                "summary": payload["summary"],
-            },
-            indent=2,
-        )
-    )
-    return 0
-
-
-def cmd_tile(district_id: str) -> int:
-    from app.cascade import publish
-    from app.cascade.districts import get_district_cascade_config
-
-    district = get_district_cascade_config(district_id)
-    result = publish.build_pmtiles(district)
-    print(json.dumps(result, indent=2))
-    return 0
-
-
 def cmd_run_all(district_id: str) -> int:
-    cmd_build_topology(district_id)
-    cmd_cross_check_channels(district_id)
-    cmd_detect_encroachment(district_id)
-    cmd_score(district_id)
-    cmd_curate(district_id)
-    # publish intentionally absent: build-topology already wrote the
-    # GeoJSONs; the old standalone publish step re-wrote them empty.
-    cmd_tile(district_id)
+    for stage in (cmd_build_topology, cmd_delineate_catchments, cmd_enrich_catchments):
+        if (code := stage(district_id)) != 0:
+            return code
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     from app.cascade.districts import supported_district_ids
 
-    parser = argparse.ArgumentParser(description="Cascade reconstruction pipeline")
+    parser = argparse.ArgumentParser(description="Lake catchment pipeline")
     parser.add_argument(
         "--district",
         required=True,
@@ -264,15 +136,7 @@ def build_parser() -> argparse.ArgumentParser:
         "build-topology",
         "delineate-catchments",
         "enrich-catchments",
-        "cross-check-channels",
-        "detect-encroachment",
-        "score",
-        "curate",
-        "publish",
         "stats",
-        "health",
-        "sensitivity",
-        "tile",
         "run-all",
     ):
         subparsers.add_parser(command, help=f"Run the {command} stage.")
@@ -288,23 +152,12 @@ def main() -> int:
         "build-topology": cmd_build_topology,
         "delineate-catchments": cmd_delineate_catchments,
         "enrich-catchments": cmd_enrich_catchments,
-        "cross-check-channels": cmd_cross_check_channels,
-        "detect-encroachment": cmd_detect_encroachment,
-        "score": cmd_score,
-        "curate": cmd_curate,
-        "publish": cmd_publish,
         "stats": cmd_stats,
-        "health": cmd_health,
-        "sensitivity": cmd_sensitivity,
-        "tile": cmd_tile,
         "run-all": cmd_run_all,
     }
 
     try:
         return dispatch[args.command](args.district)
-    except NotImplementedError as exc:
-        print(str(exc), file=sys.stderr)
-        return 2
     except RuntimeError as exc:
         print(str(exc), file=sys.stderr)
         return 1

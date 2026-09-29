@@ -1,74 +1,44 @@
-# Tank cascade reconstruction
+# Lake catchment pipeline
 
-Pipeline for reconstructing the historical chain-of-tanks (cascade)
-hydrology of a district, identifying broken links, and surfacing
-named-cascade health on the dashboard.
+Builds the lake catchment atlas: the "Catchments" view on
+`/<city>/water-bodies`. A district's tanks become a drains-to topology from
+the DEM, then each lake gets a terrain-derived contributing catchment and its
+rooftop-harvest potential. Methodology: `docs/methodology/catchment-atlas-v1.md`.
 
-## Two-layer separation
+The package keeps its `cascade` name from the retired tank-cascade product;
+only the topology it built survives, as the catchment stage's input.
 
-- **Layer A (universal)** - DEM-derived topology, OSM/Sentinel channel
-  evidence, Dynamic World built-up overlay. Same algorithm for every
-  district; zero district-specific code.
-- **Layer B (curated, optional)** - Named cascades, court cases, atlas
-  references, NGO partnerships, historical engineering eras. Each
-  district plugs in its own curation. The pipeline runs without it; the
-  outputs are richer with it.
-
-## Adding a new district
+## Adding a district
 
 1. Add a `DistrictCascadeConfig` entry to `_REGISTRY` in
-   [`districts.py`](districts.py). Required fields: `district_id`,
-   `label`, `state`, `tank_polygons_path`.
+   [`districts.py`](districts.py). Required fields: `district_id`, `label`,
+   `state`, `tank_polygons_path`.
 2. Make sure the tank-polygons GeoJSON exists at the configured path
    (typically `public/geojson/<city>-water-bodies-current.geojson`).
-3. Run the pipeline:
+3. Install the hydro extras (`pip install -e ".[hydro]"`) and run:
    ```bash
    python scripts/run_cascade.py --district <id> run-all
    ```
-4. (Optional) Populate Layer B fields on the config when curation
-   becomes available - named cascades, court refs, atlas refs, etc.
+4. Set `hasCascadeOverlay: true` on the city config to show the view.
 
-That's it. No code changes anywhere else.
-
-## Pipeline stages
+## Stages
 
 | Stage | Module | What it produces |
 |---|---|---|
-| `build-topology` | `topology.py` | Directed cascade graph from DEM + tank polygons |
-| `cross-check-channels` | `channels.py` | Edges annotated with OSM and Sentinel evidence |
-| `detect-encroachment` | `encroachment.py` | Edges annotated with built-up overlap |
-| `score` | `scoring.py` | Edge status (intact/partial/broken/encroached) + per-cascade health |
-| `curate` | `curation.py` | Layer B merge: named-cascade metadata onto graph |
-| `publish` | `publish.py` | Write GeoJSON + small JSON manifest |
-| `tile` | `publish.py` | Build PMTiles for the frontend map layer |
+| `build-topology` | `topology.py`, `publish.py` | Drains-to graph from DEM + tank polygons: nodes, edges, river outlets, stats |
+| `delineate-catchments` | `catchments.py` | Per-lake catchment polygons, quality, streams, basins, downstream paths; lake names via `enrich_names.py` |
+| `enrich-catchments` | `buildings.py` | Rooftop area, building count and harvest potential on the lakes GeoJSON |
+| `stats` | `publish.py` | Refresh the stats manifest from existing topology GeoJSON |
+| `run-all` | | `build-topology`, `delineate-catchments`, `enrich-catchments` |
 
-## Performance contract
-
-The cascade map layer must not regress the `<city>/water-bodies` page.
-Concretely:
-
-- **Initial page weight added by cascade layer**: 0 KB (lazy-loaded).
-- **Page weight when toggled on**: < 250 KB transferred (PMTiles +
-  manifest).
-- **JS bundle weight added**: < 20 KB gzipped (small toggle component
-  only; the layer renderer is dynamic-imported).
-- **No bulk GeoJSON** is ever loaded by the frontend map. GeoJSON is
-  written to `public/data/cascade/` for downloads and research use, but
-  the map renders from PMTiles.
-
-The `tile` stage requires
-[`tippecanoe`](https://github.com/felt/tippecanoe) on `PATH`
-(`brew install tippecanoe` on macOS).
-
-## Outputs
+## Outputs (`public/data/cascade/`)
 
 ```
-public/data/cascade/
-  <district>-cascade-nodes.geojson    # tanks with degree, position-in-cascade
-  <district>-cascade-edges.geojson    # links with status
-  <district>-cascade-systems.json     # named cascades + curation (no geometry)
-
-public/tiles/cascade/
-  <district>-cascade-nodes.pmtiles    # frontend nodes layer
-  <district>-cascade-edges.pmtiles    # frontend edges layer
+<district>-cascade-nodes.geojson          # topology nodes; read by delineate-catchments
+<district>-cascade-edges.geojson          # topology edges
+<district>-cascade-river-outlets.geojson  # topology outlets
+<district>-cascade-stats.json             # topology summary
+<district>-cascade-lakes.geojson          # the atlas map layer
+<district>-cascade-catchments.geojson     # per-lake catchments (served by /api/cascade)
+<district>-catchment-{quality,streams,basin,downstream}.json
 ```
