@@ -151,9 +151,7 @@ function GroundwaterPageContent() {
         <div className="text-center text-slate-500 dark:text-slate-400">
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t("gw_page.title")}</h1>
           <p>{t("gw_page.no_data")}</p>
-          <p className="text-sm mt-2 font-mono bg-slate-100 dark:bg-slate-800 inline-block px-3 py-1 rounded">
-            npx tsx scripts/seed-opencity-groundwater.ts
-          </p>
+          <p className="text-sm mt-2">{t("gw_page.no_data_hint")}</p>
         </div>
       </div>
     );

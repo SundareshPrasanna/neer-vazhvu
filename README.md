@@ -295,14 +295,9 @@ Current workflow note:
 - `.github/workflows/gee-phase1.yml` supports manual dispatch for `check-auth`, `build-targets`, `validate-catchments`, `run-reservoir-context`, `run-water-body-summaries`, and `run-all-refresh`
 - if you need the live app data refreshed today, run the CLI locally or trigger that workflow manually
 
-### 6. Seed Historical Data
+### 6. Historical Data
 
-```bash
-# From the repo root
-npx tsx scripts/seed-kaggle.ts                 # Reservoir history
-npx tsx scripts/seed-opencity-groundwater.ts   # Groundwater history
-npx tsx scripts/seed-opencity-lakes.ts         # Optional lake-level history
-```
+Reservoir history (Kaggle, 2004 to 2024), ward groundwater and lake levels (OpenCity) were one-time loads into the production database, and the scripts that ran them have been retired. A fresh database starts without that history; the monthly pipeline keeps OpenCity groundwater current from then on.
 
 ### 7. Refresh Static GeoJSON Data (optional)
 
@@ -317,9 +312,6 @@ npx tsx scripts/fetch-rivers-osm.ts
 
 # Industrial zone polygons (north Chennai bbox)
 npx tsx scripts/fetch-industrial-zones-osm.ts
-
-# Drainage network from OSM (supplementary)
-npx tsx scripts/fetch-drainage-osm.ts
 
 # CMWSSB sewerage network (STPs, pumping stations, pumping mains)
 python3 scripts/convert-sewerage-kml.py
