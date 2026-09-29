@@ -1,6 +1,9 @@
-"""The Tamil Nadu district basin engine: every build step of a district-framed
-Basin Atlas instance (Erode was the first), parametrised by a per-district
-config module so a second district is a config file, not a second script.
+"""The district basin engine: every build step of a district-framed Basin
+Atlas instance (Erode was the first), parametrised by a per-district config
+module so a second district is a config file, not a second script. The steps
+began with Tamil Nadu's sources (TNGIS, TNPCB, TN-SMART); a config for another
+state names its frame and layers as data instead (FRAME, WFS_FAMILIES,
+NWDP_WELL_SETS) and runs only the steps its sources support.
 
 A config module (scripts/build_<id>_basin.py) names the district (LGD code,
 names as the registers print them), the stations and resources to read, the
@@ -22,7 +25,9 @@ import ssl
 import subprocess
 import sys
 import tempfile
+import time
 import zipfile
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime
@@ -80,6 +85,17 @@ NWDP_WELL_SETS = (  # kind, CKAN resource id, cache file, network label
 )
 GWL_ENVELOPE_M = (-5.0, 200.0)  # physical envelope, metres below ground level; readings outside are dropped and counted
 GWL_SENTINELS = (0.0, 1.0, -1.0)  # placeholder values in the telemetry feeds
+NWDP_TELEMETRY_FIELDS = {"station": "Station", "agency": "Agency", "tehsil": "Tehsil", "lat": "Latitude", "lon": "Longitude", "time": "Data Acquisition Time"}
+
+
+def nwdp_time(value: str) -> datetime:
+    """The portal's timestamps: dd-mm-yyyy hh:mm on the telemetry sets, with seconds on Kerala's manual set."""
+    for fmt in ("%d-%m-%Y %H:%M", "%d-%m-%Y %H:%M:%S"):
+        try:
+            return datetime.strptime(value, fmt)
+        except ValueError:
+            continue
+    raise ValueError(value)
 REGISTER_FIELDS = "industry_name,category,classification,industry_type,taluk,village,centroid,user_id"
 REGISTER_NOTE = "Units TNGIS matched to a land parcel only; the register is a subset of TNPCB's consent register"
 # all_water_bodies prints a CLASS in water_body_name far more often than a name, and
@@ -97,7 +113,10 @@ WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per ca
 SHED_MIN_KM2 = 5.0  # boundary-mismatch slivers below this are dropped, and listed
 BOUNDARY_RIVER_BUFFER_DEG = 0.015  # ~1.6 km: keeps a river that runs along the district line
 UA = {"User-Agent": "neer-vazhvu/basin-build"}
-LIVE_PREFIXES = ("nwdp-", "tnpcb-rt-", "tnsmart-")  # caches a --live run always re-fetches
+LIVE_PREFIXES = ("nwdp-", "tnpcb-rt-", "tnsmart-", "ksdma-list")  # caches a --live run always re-fetches
+KSDMA_MEDIA = "https://sdma.kerala.gov.in/wp-json/wp/v2/media"  # the Kerala SDMA site's media library: every daily dam bulletin PDF
+KSDMA_LEVEL_EXPLAINER = "Each point is the dam bulletin's 'Today's Water Level' in metres above mean sea level: the month's first bulletin, averaged with any later one read that month."
+KSDMA_STORAGE_EXPLAINER = "Each point is the bulletin's live storage as a share of the reservoir's live capacity: the month's first bulletin, averaged with any later one read that month."
 LIVE_FILES = ("groundwater-wells.geojson", "gauging-stations.geojson", "realtime-stations.geojson", "reservoirs.geojson", "inventory.json")
 LIVE_MIN_SHARE = 0.8  # a feed returning under this share of last week's features is a partial response, not news
 
@@ -107,14 +126,26 @@ CTX.verify_mode = ssl.CERT_NONE  # tngis chain is incomplete; data is public
 
 # What a district config states. Names as the registers print them are data, not code.
 REQUIRED = (
-    "BASIN_ID", "GENERATED_FROM", "DISTRICT_LGD", "DISTRICT_NAME", "TNRD_DISTRICT_NAME", "NWDP_DISTRICT", "ATLAS_SLUG",
-    "CWC_CLIP", "CWC_LAYERS", "CWC_CANALS_FILE", "CWC_COMMAND_FILE", "SUB_BASIN_KEY", "RIVER_ALIASES", "RIVER_NAMES",
-    "WATERWAYS_PROVENANCE", "CANALS_PROVENANCE", "REGISTER_YEARS", "TNPCB_OFFICE", "SECTOR_LOOKUP", "STEPS",
+    "BASIN_ID", "GENERATED_FROM", "DISTRICT_LGD", "DISTRICT_NAME", "NWDP_DISTRICT", "ATLAS_SLUG",
+    "CWC_CLIP", "CWC_LAYERS", "CWC_CANALS_FILE", "CWC_COMMAND_FILE", "RIVER_ALIASES", "RIVER_NAMES",
+    "WATERWAYS_PROVENANCE", "CANALS_PROVENANCE", "STEPS",
 )
 OPTIONAL = {
     "CANAL_RIVERS": {}, "CANAL_NAMES": {}, "CANAL_DROP": None, "SIPCOT_PARKS": (), "ESTATES_PROVENANCE": "", "ESTATES_SOURCE_FILE": "",
     "TNPCB_RT_SITES": (), "CWC_STATIONS": {}, "CWC_FLOW_EXCLUDED_MONTHS": {}, "CWC_FLOW_EXCLUDED_NOTE": {}, "FLOW_MASS_BALANCE": {},
     "RESERVOIR_LEVELS": {}, "RESERVOIR_ALIASES": {}, "REPO_FAMILIES": (), "CETP_SCHEMES": None, "WB_NOT_A_NAME": {"", "none", "no"}, "RESERVOIR_STORAGE": {},
+    # Read only by the Tamil Nadu steps (TNGIS sub-basins, panchayats and industry register).
+    "TNRD_DISTRICT_NAME": None, "SUB_BASIN_KEY": {}, "REGISTER_YEARS": None, "TNPCB_OFFICE": {}, "SECTOR_LOOKUP": None,
+    # A frame read from a configured layer instead of TNGIS (see build_boundary / build_sheds).
+    "FRAME": None,
+    # Layers served as they are, cut to the district (see build_wfs_families).
+    "WFS_FAMILIES": (),
+    # The NWDP groundwater-level resources to read, when not Tamil Nadu's.
+    "NWDP_WELL_SETS": None, "WELLS_PROVENANCE": None,
+    # Reservoirs read from the Kerala SDMA daily dam bulletins (see build_ksdma_reservoirs).
+    "KSDMA_RESERVOIRS": (), "KSDMA_BULLETIN": "IRR-SITE",
+    # The state's CWC resources on NWDP, when not Tamil Nadu's (an empty tuple reads none).
+    "CWC_DISCHARGE": None, "CWC_WQ_CHEMICAL": None, "CWC_WQ_BIOLOGICAL": None, "NWDP_DISTRICT_ALIASES": (),
 }
 
 
@@ -179,7 +210,7 @@ def dms(t: tuple) -> float:
     return t[0] + t[1] / 60 + t[2] / 3600
 
 
-def wfs(type_name: str, cql: str | None = None, bbox: tuple | None = None) -> dict:
+def wfs(type_name: str, cql: str | None = None, bbox: tuple | None = None, url: str = TNGIS) -> dict:
     """WFS 1.0.0: lon,lat axis order, and the only version where bbox filters reliably here."""
     params = {"service": "WFS", "version": "1.0.0", "request": "GetFeature", "typeName": type_name,
               "outputFormat": "application/json", "srsName": "EPSG:4326"}
@@ -187,7 +218,7 @@ def wfs(type_name: str, cql: str | None = None, bbox: tuple | None = None) -> di
         params["CQL_FILTER"] = cql
     if bbox:
         params["bbox"] = ",".join(str(v) for v in bbox)
-    req = urllib.request.Request(f"{TNGIS}?{urllib.parse.urlencode(params)}", headers=UA)
+    req = urllib.request.Request(f"{url}?{urllib.parse.urlencode(params)}", headers=UA)
     with urllib.request.urlopen(req, timeout=240, context=CTX) as r:
         return json.load(r)
 
@@ -256,7 +287,8 @@ class DistrictBasinBuild:
         self.CACHE = ROOT / ".cache" / cfg.BASIN_ID
         # The frame every spatial test rests on is frozen in pipeline-inputs, so a weekly refresh places a well in the same
         # catchment as the full build did and never depends on TNGIS being up.
-        self.FROZEN = {"district.json": "tngis-district-boundary.json", "sub-basins.json": "tngis-sub-basins.json"}
+        self.FROZEN = {"district.json": "tngis-district-boundary.json", "sub-basins.json": "tngis-sub-basins.json",
+                       "frame-district.json": "frame-district.json", "frame-sheds.json": "frame-sheds.json"}
         self.FROZEN_DIR = ROOT / "pipeline-inputs/basins" / cfg.BASIN_ID
         self.LIVE = False
         self.inventory: dict = {"basinId": cfg.BASIN_ID, "generatedFrom": cfg.GENERATED_FROM, "generatedOn": TODAY, "families": {}}
@@ -335,18 +367,20 @@ class DistrictBasinBuild:
                     raise SystemExit("canals: ogr2ogr (GDAL) is needed once, to reproject CWC's shapefile") from None
         return json.loads(fp.read_text())
 
-    def nwdp_rows(self, resource_id: str, cache_name: str) -> list:
+    def nwdp_rows(self, resource_id: str, cache_name: str, fields: dict | None = None) -> list:
         """District-tagged rows of one NWDP (CKAN) groundwater-level resource, cached. The portal carries the same
-        station data India-WRIS serves; datastore_search pages at 5,000 rows and needs no key."""
+        station data India-WRIS serves; datastore_search pages at 5,000 rows and needs no key. fields names the
+        resource's own columns where they differ from the telemetry sets' (Kerala's manual wells: 'Well No')."""
+        f = {**NWDP_TELEMETRY_FIELDS, **(fields or {})}
         def fetch() -> dict:
-            rows, offset, value_field = [], 0, None
+            rows, offset, value_field = [], 0, f.get("value")
             while True:
                 q = urllib.parse.urlencode({"resource_id": resource_id, "filters": json.dumps({"District": self.cfg.NWDP_DISTRICT}), "limit": 5000, "offset": offset})
                 res = fetch_json(f"{NWDP}/api/3/action/datastore_search?{q}")["result"]
-                value_field = value_field or next(f["id"] for f in reversed(res["fields"]) if "Level" in f["id"])
+                value_field = value_field or next(x["id"] for x in reversed(res["fields"]) if "Level" in x["id"])
                 for r in res["records"]:
-                    rows.append({"station": r["Station"], "agency": r["Agency"], "tehsil": r.get("Tehsil"), "lat": r["Latitude"], "lon": r["Longitude"],
-                                 "time": r["Data Acquisition Time"], "value": r[value_field]})
+                    rows.append({"station": r[f["station"]], "agency": r[f["agency"]], "tehsil": r.get(f["tehsil"]), "lat": r[f["lat"]], "lon": r[f["lon"]],
+                                 "time": r[f["time"]], "value": r[value_field]})
                 offset += 5000
                 if len(res["records"]) < 5000:
                     return {"resource_id": resource_id, "valueField": value_field, "rows": rows}
@@ -372,6 +406,8 @@ class DistrictBasinBuild:
 
     def build_boundary(self, write: bool = True):
         cfg = self.cfg
+        if cfg.FRAME:
+            return self.build_frame_boundary(write)
         raw = self.cached("district.json", lambda: wfs("admin_master:administrative_boundary_district", f"district_lgd_code='{cfg.DISTRICT_LGD}'"))
         if len(raw["features"]) != 1:
             raise SystemExit(f"boundary: expected 1 district, got {len(raw['features'])}")
@@ -384,6 +420,8 @@ class DistrictBasinBuild:
 
     def build_sheds(self, district, write: bool = True) -> dict:
         """Emits sub-hydrosheds; returns shedId -> unsimplified clipped geometry for tagging."""
+        if self.cfg.FRAME:
+            return self.build_frame_sheds(district, write)
         bb = district.bounds
         raw = self.cached("sub-basins.json", lambda: wfs("generic_viewer:sub_basin", bbox=bb))
         feats, dropped, geoms = [], [], {}
@@ -411,6 +449,117 @@ class DistrictBasinBuild:
         covered = sum(x["properties"]["areaKm2"] for x in feats)
         print(f"    district {area_km2(district):.0f} sq km; sheds cover {covered:.0f} sq km; slivers dropped: {dropped}")
         return geoms
+
+    def frame(self, name: str, spec: dict, key_of) -> dict:
+        """A configured layer dissolved to one feature per key and cached dissolved (and so small enough to freeze in
+        pipeline-inputs, which a weekly refresh reads instead of the source)."""
+        def fetch() -> dict:
+            raw = wfs(spec["typeName"], spec.get("cql"), url=spec.get("url") or self.cfg.FRAME["url"])
+            groups: dict[str, list] = {}
+            names: dict[str, str] = {}
+            for f in raw["features"]:
+                key = key_of(f["properties"])
+                if key is None:
+                    continue
+                groups.setdefault(key, []).append(shape(f["geometry"]).buffer(0))
+                names.setdefault(key, str(f["properties"].get(spec.get("nameField", "")) or "").strip())
+            return {"type": "FeatureCollection", "features": [
+                feat(rnd(mapping(unary_union(parts).buffer(0))), {"key": key, "name": names[key]}) for key, parts in sorted(groups.items())]}
+        return self.cached(name, fetch)
+
+    def build_frame_boundary(self, write: bool = True):
+        """The district as the union of a configured layer's features (Kerala: KSREC's local bodies)."""
+        spec = self.cfg.FRAME["boundary"]
+        fc = self.frame("frame-district.json", spec, lambda p: "district")
+        if len(fc["features"]) != 1:
+            raise SystemExit(f"boundary: {spec['typeName']} returned no features for {spec.get('cql')}")
+        district = shape(fc["features"][0]["geometry"]).buffer(0)
+        if not write:
+            return district
+        self.emit("boundary", [feat(mapping(district.simplify(0.0005)), {"name": f"{self.cfg.DISTRICT_NAME} district", "areaKm2": round(area_km2(district), 1)})],
+                  spec["provenance"], spec["sourceFile"])
+        return district
+
+    def build_frame_sheds(self, district, write: bool = True) -> dict:
+        """Catchments from a configured layer, grouped on a code (Kerala: the river-basin number of KSREC's watershed atlas)."""
+        spec = self.cfg.FRAME["sheds"]
+        pattern = re.compile(spec["keyPattern"])
+        def key_of(p):
+            m = pattern.match(str(p.get(spec["keyField"]) or ""))
+            return m.group(1) if m else None
+        fc = self.frame("frame-sheds.json", spec, key_of)
+        feats, dropped, geoms = [], [], {}
+        for f in fc["features"]:
+            key = f["properties"]["key"]
+            part = polys_only(shape(f["geometry"]).buffer(0).intersection(district))
+            km2 = area_km2(part) if not part.is_empty else 0.0
+            name = spec.get("names", {}).get(key) or f["properties"]["name"].title()
+            if km2 < SHED_MIN_KM2:
+                if km2 > 0:
+                    dropped.append((name, round(km2, 2)))
+                continue
+            shed_id = f"{spec['idPrefix']}{key}"
+            geoms[shed_id] = part
+            feats.append(feat(mapping(part.simplify(0.0008)), {"shedId": shed_id, "name": name, "basinCode": key, "areaKm2": round(km2, 1)}))
+        feats.sort(key=lambda x: -x["properties"]["areaKm2"])
+        if not write:
+            return geoms
+        self.emit("sub-hydrosheds", feats, spec["provenance"], spec["sourceFile"])
+        covered = sum(x["properties"]["areaKm2"] for x in feats)
+        print(f"    district {area_km2(district):.0f} sq km; sheds cover {covered:.0f} sq km; slivers dropped: {dropped}")
+        return geoms
+
+    def build_wfs_families(self) -> None:
+        """Layers served as their source draws them, cut to the district: one config entry per family (WFS_FAMILIES).
+        A family's kind splits it into toggles; a heavy family is sliced per catchment."""
+        district, sheds = self.district, self.sheds
+        for spec in self.cfg.WFS_FAMILIES:
+            url = spec.get("url") or self.cfg.FRAME["url"]
+            raw = self.cached(f"wfs-{spec['family']}.json", lambda spec=spec, url=url: wfs(spec["typeName"], spec.get("cql"), None if spec.get("cql") else district.bounds, url=url))
+            feats, small = [], 0
+            kept = [f for f in raw["features"] if all(str(f["properties"].get(k) or "").strip() in allowed for k, allowed in spec.get("where", {}).items())]
+            if "dissolveBy" in spec:  # one feature per value of the field: a layer cut by local body, served whole
+                groups: dict[str, list] = {}
+                for f in kept:
+                    groups.setdefault(str(f["properties"].get(spec["dissolveBy"]) or "").strip(), []).append(f)
+                kept = [{"properties": fs[0]["properties"], "geometry": mapping(unary_union([shape(x["geometry"]).buffer(0) for x in fs]))}
+                        for key, fs in sorted(groups.items()) if key]
+            for f in kept:
+                p = f["properties"]
+                g = shape(f["geometry"])
+                if g.geom_type in ("Point", "MultiPoint"):
+                    if not district.contains(g):
+                        continue
+                    part, shed = g, sheds.for_point(g)
+                elif g.geom_type in ("LineString", "MultiLineString"):
+                    lines = lines_only(g.intersection(district))
+                    if not lines:
+                        continue
+                    part = MultiLineString(lines)
+                    shed = sheds.for_line(part)
+                else:
+                    part = polys_only(g.buffer(0).intersection(district))
+                    if part.is_empty:
+                        continue
+                    if area_km2(part) * 100 < spec.get("minAreaHa", 0):
+                        small += 1
+                        continue
+                    shed = sheds.for_geom(part)
+                props = {out: (str(p.get(src)).strip() if isinstance(p.get(src), str) else p.get(src)) for out, src in spec.get("properties", {}).items()}
+                props = {k: v for k, v in props.items() if v not in (None, "", "NULL")}
+                if "kindField" in spec:
+                    raw_kind = str(p.get(spec["kindField"]) or "").strip()
+                    props["kind"] = spec.get("kindMap", {}).get(raw_kind) or raw_kind or "not stated"
+                elif "kind" in spec:
+                    props["kind"] = spec["kind"]
+                if part.geom_type not in ("Point", "MultiPoint") and spec.get("simplify"):
+                    part = part.simplify(spec["simplify"])
+                if part.geom_type in ("Polygon", "MultiPolygon"):
+                    props["areaHa"] = round(area_km2(part) * 100, 2)
+                feats.append(feat(mapping(part), {**props, "shedId": shed}))
+            self.emit(spec["family"], feats, spec["provenance"], spec["sourceFile"], by_kind="kindField" in spec, sliced=spec.get("sliced", False))
+            if small:
+                print(f"    {small} features under {spec['minAreaHa']} ha left out")
 
     # ── hydrology ─────────────────────────────────────────────────────────────
 
@@ -542,6 +691,148 @@ class DistrictBasinBuild:
                 "waterspreadHa": round(area_km2(g) * 100, 1), "shedId": sheds.for_point(pt),
             }))
         self.emit("reservoirs", feats, f"{TNGIS_LABEL}: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon", "generic_viewer:reservoir")
+
+    def ksdma_bulletins(self) -> list:
+        """(date, url) of every bulletin in the SDMA media library under the configured file stem, oldest first."""
+        def fetch() -> dict:
+            rows, page = [], 1
+            while True:
+                q = urllib.parse.urlencode({"search": self.cfg.KSDMA_BULLETIN, "per_page": 100, "page": page, "_fields": "date,source_url"})
+                try:
+                    batch = fetch_json(f"{KSDMA_MEDIA}?{q}")
+                except urllib.error.HTTPError as e:
+                    if e.code == 400:  # WordPress answers past the last page with 400
+                        break
+                    raise
+                if not batch:
+                    break
+                rows += batch
+                page += 1
+            return {"rows": rows}
+        rows = self.cached(f"ksdma-list-{self.cfg.KSDMA_BULLETIN}.json", fetch)["rows"]
+        out = []
+        for r in rows:
+            url = r["source_url"] if r["source_url"].startswith("http") else f"https://sdma.kerala.gov.in{r['source_url']}"
+            if url.lower().endswith(".pdf"):
+                out.append((r["date"][:10], url))
+        return sorted(out)
+
+    def ksdma_text(self, url: str) -> str:
+        """One bulletin's text layer (pdftotext -layout), the PDF cached by its file name: a posted bulletin never changes."""
+        fp = self.CACHE / "ksdma" / f"{url.rsplit('/', 3)[-3]}-{url.rsplit('/', 3)[-2]}-{url.rsplit('/', 1)[-1]}"
+        if not fp.exists():
+            fp.parent.mkdir(parents=True, exist_ok=True)
+            for attempt in range(4):  # a public host: paced, and patient with a slow response
+                try:
+                    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=120, context=CTX) as r:
+                        fp.write_bytes(r.read())
+                    break
+                except (TimeoutError, urllib.error.URLError):
+                    if attempt == 3:
+                        raise
+                    time.sleep(10 * (attempt + 1))
+            time.sleep(0.5)
+        return subprocess.run(["pdftotext", "-layout", str(fp), "-"], check=True, capture_output=True, text=True).stdout
+
+    @staticmethod
+    def ksdma_row(text: str, names: tuple, frls: tuple) -> dict | None:
+        """A reservoir's row, anchored on its full reservoir level rather than on column positions: the bulletin's
+        layout has moved (numbers beside the name until 2023, on the next line since) but the FRL cell has not.
+        frls lists every FRL the bulletins have printed for it (Kanjirappuzha: 97.23 in 2020, 97.50 now)."""
+        lines = text.split("\n")
+        for i, line in enumerate(lines):
+            if not any(re.search(rf"\b{re.escape(n)}\b", line, re.I) for n in names):
+                continue
+            tokens = re.findall(r"\d+(?:\.\d+)?%?", line + " " + (lines[i + 1] if i + 1 < len(lines) else ""))
+            anchor = next((j for j, t in enumerate(tokens) if not t.endswith("%") and any(abs(float(t) - f) < 0.006 for f in frls)), None)
+            if anchor is None or anchor + 1 >= len(tokens) or tokens[anchor + 1].endswith("%"):
+                continue
+            level, frl = float(tokens[anchor + 1]), float(tokens[anchor])
+            if not frl - 80 < level <= frl + 1.5:
+                return None
+            pct_at = next((j for j in range(anchor + 2, len(tokens)) if tokens[j].endswith("%")), None)
+            row = {"levelM": level}
+            if pct_at is not None and pct_at - 2 > anchor + 1:
+                row.update({"liveStoragePct": float(tokens[pct_at][:-1]), "storageMcm": float(tokens[pct_at - 1]), "grossStorageMcm": float(tokens[pct_at - 2])})
+            return row
+        return None
+
+    def build_ksdma_reservoirs(self) -> None:
+        """Reservoirs from the Kerala SDMA daily dam bulletins: the latest reading on the map, monthly level and live
+        storage in readings/, positions from the config. A full build reads each month's first bulletin and the latest
+        (the host is slow and throttles); a --live run reads only the newest bulletin and adds it to the served series.
+        Every reading is checked against the reservoir's full reservoir level."""
+        cfg, sheds = self.cfg, self.sheds
+        bulletins = self.ksdma_bulletins()
+        monthly: dict[str, tuple] = {}
+        for d, url in bulletins:
+            monthly.setdefault(d[:7], (d, url))
+        picks = [bulletins[-1]] if self.LIVE else sorted(set(monthly.values()) | {bulletins[-1]})
+        readings: dict[str, list] = {r["key"]: [] for r in cfg.KSDMA_RESERVOIRS}
+        unread = 0
+        for d, url in picks:
+            text = self.ksdma_text(url)
+            printed = re.search(r"(\d{2})/(\d{2})/(\d{4})", text)
+            day = f"{printed.group(3)}-{printed.group(2)}-{printed.group(1)}" if printed else d
+            for res in cfg.KSDMA_RESERVOIRS:
+                if not res.get("gauged", True):
+                    continue
+                row = self.ksdma_row(text, res["names"], res["frls"])
+                if row is None:
+                    unread += 1
+                    continue
+                readings[res["key"]].append((day, row))
+        for res in cfg.KSDMA_RESERVOIRS:  # a format change shows as a reservoir the reader stops finding
+            if res.get("gauged", True) and len(readings[res["key"]]) < 0.8 * len(picks):
+                raise SystemExit(f"reservoirs: {res['display']} read from {len(readings[res['key']])} of {len(picks)} bulletins - check the bulletin format or its FRL")
+        feats = []
+        for res in cfg.KSDMA_RESERVOIRS:
+            series = sorted(readings[res["key"]])
+            key = f"reservoir-{res['key']}"
+            served = self.BASIN / "readings" / f"{key}.json"
+            earlier = json.loads(served.read_text()) if self.LIVE and served.exists() else None
+            if earlier and series and series[-1][0] <= earlier["source"].get("readThrough", ""):
+                series = []  # no bulletin newer than the one the served series already holds
+            pt = Point(res["position"])
+            props = {"name": res["display"], "kind": "reservoir", "operator": res.get("operator"), "frlM": res["frls"][0] if res.get("frls") else None, "positionSource": res["positionSource"],
+                     "note": res.get("note"), "hasReadings": bool(series), "shedId": sheds.for_point(pt)}
+            if earlier and not series:  # nothing new this week: the served reading and series stand
+                old = next((f["properties"] for f in json.loads((self.BASIN / "reservoirs.geojson").read_text())["features"] if f["properties"].get("stationKey") == key), {})
+                props.update({k: old[k] for k in ("stationKey", "latestReading", "latestLevelM", "liveStoragePct", "storageMcm", "grossStorageMcm") if k in old})
+                props["hasReadings"] = True
+            elif series:
+                last_day, last = series[-1]
+                # A month's point is the mean of the bulletins read that month; a --live run folds its reading into the
+                # served point for that month, weighted by the count the point already rests on.
+                sums: dict[tuple, list] = {}
+                for day, row in series:
+                    for label, field in (("m", "levelM"), ("%", "liveStoragePct")):
+                        if field in row:
+                            acc = sums.setdefault((label, day[:7]), [0.0, 0])
+                            acc[0] += row[field]
+                            acc[1] += 1
+                for s_ in (earlier or {}).get("series", []):
+                    for m, v, n in s_["points"]:
+                        acc = sums.setdefault((s_["unit"], m), [0.0, 0])
+                        acc[0] += v * n
+                        acc[1] += n
+                def points(unit: str, places: int) -> list:
+                    return [[m, round(t / n, places), n] for (u, m), (t, n) in sorted(sums.items()) if u == unit]
+                packs = [{"kind": "gauge-level-monthly", "unit": "m", "verified": True, "label": "Reservoir level (monthly)", "explainer": KSDMA_LEVEL_EXPLAINER, "note": None, "points": points("m", 2)}]
+                if points("%", 1):
+                    packs.append({"kind": "gauge-level-monthly", "unit": "%", "verified": True, "label": "Live storage, share of live capacity (monthly)", "explainer": KSDMA_STORAGE_EXPLAINER, "note": None, "points": points("%", 1)})
+                self.write_pack(key, {
+                    "schemaVersion": 1,
+                    "station": {"stationKey": key, "name": f"{res['display']} reservoir (KSDMA dam bulletin)", "agency": res.get("operator") or "Kerala Water Resources Department", "siteType": "Reservoir level"},
+                    "source": {"label": "Kerala State Disaster Management Authority, daily irrigation-reservoir bulletin", "url": "https://sdma.kerala.gov.in/dam-water-level/", "fetched": TODAY, "readThrough": last_day},
+                    "period": {"from": packs[0]["points"][0][0], "to": last_day[:7]},
+                    "series": packs,
+                })
+                props.update({"stationKey": key, "latestReading": last_day, "latestLevelM": last["levelM"], **{k: last[k] for k in ("liveStoragePct", "storageMcm", "grossStorageMcm") if k in last}})
+            feats.append(feat(mapping(pt), {k: v for k, v in props.items() if v is not None}))
+            print(f"    {res['display']:16} {len(series):4} readings" + (f", latest {series[-1][0]} at {series[-1][1]['levelM']} m" if series else ""))
+        print(f"    {len(picks)} bulletins read ({bulletins[0][0]} to {bulletins[-1][0]}); {unread} reservoir rows not found or out of range")
+        self.emit("reservoirs", feats, "Kerala State Disaster Management Authority daily dam bulletins (irrigation reservoirs), the first bulletin of each month since the first posted and the latest: level, storage and live storage as printed; positions from OpenStreetMap", "sdma.kerala.gov.in media library")
 
     def build_repo_families(self) -> None:
         """Families another basin in the repo already serves, cut to the district."""
@@ -842,9 +1133,11 @@ class DistrictBasinBuild:
     def build_groundwater_wells(self) -> None:
         cfg, district, sheds = self.cfg, self.district, self.sheds
         feats, dropped, outside = [], 0, 0
-        for kind, resource_id, cache_name, label in NWDP_WELL_SETS:
+        for well_set in cfg.NWDP_WELL_SETS or NWDP_WELL_SETS:
+            kind, resource_id, cache_name, label = well_set[:4]
+            fields = well_set[4] if len(well_set) > 4 else None
             by_station: dict[tuple, list] = {}
-            for r in self.nwdp_rows(resource_id, cache_name):
+            for r in self.nwdp_rows(resource_id, cache_name, fields):
                 by_station.setdefault((r["station"], r["lat"], r["lon"]), []).append(r)
             for (name, lat, lon), rs in sorted(by_station.items()):
                 pt = Point(float(lon), float(lat))
@@ -854,11 +1147,14 @@ class DistrictBasinBuild:
                 readings = []
                 for r in rs:
                     try:
-                        v, t = float(r["value"]), datetime.strptime(r["time"], "%d-%m-%Y %H:%M")
+                        v, t = float(r["value"]), nwdp_time(r["time"])
                     except (TypeError, ValueError):
                         continue
                     if v not in GWL_SENTINELS:
                         readings.append((t, v))
+                if len(readings) >= 3 and len({v for _, v in readings}) == 1:  # a sensor that never moves is stuck, not a water level
+                    dropped += len(rs)
+                    continue
                 if not readings:
                     continue
                 vals = sorted(v for _, v in readings)
@@ -877,7 +1173,7 @@ class DistrictBasinBuild:
                     "shallowestMbgl": round(min(depths), 2), "deepestMbgl": round(max(depths), 2),
                     "firstReading": ok[0][0].strftime("%Y-%m-%d"), "readingsCount": len(ok), "shedId": sheds.for_point(pt),
                 }))
-        self.emit("groundwater-wells", feats, f"National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, {cfg.NWDP_DISTRICT}-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped", "nwdp.nwic.gov.in datastore", by_kind=True)
+        self.emit("groundwater-wells", feats, cfg.WELLS_PROVENANCE or f"National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, {cfg.NWDP_DISTRICT}-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped", "nwdp.nwic.gov.in datastore", by_kind=True)
         print(f"    {outside} {cfg.NWDP_DISTRICT}-tagged stations fall outside the district polygon and are left out; {dropped} readings dropped as sentinel, sign-flipped or outside {GWL_ENVELOPE_M}")
 
     def build_realtime_stations(self) -> None:
@@ -926,10 +1222,11 @@ class DistrictBasinBuild:
     def build_gauging_stations(self) -> None:
         cfg, sheds = self.cfg, self.sheds
         rivers = self.rivers_by_id()
-        tagged = {"District": cfg.NWDP_DISTRICT}
-        flow = [r for rid in CWC_DISCHARGE for r in self.nwdp_records(rid, tagged)]
-        chem = [r for rid in CWC_WQ_CHEMICAL for r in self.nwdp_records(rid, tagged)]
-        bio = [r for rid in CWC_WQ_BIOLOGICAL for r in self.nwdp_records(rid, tagged)]
+        # The portal tags some stations with an older district spelling (Kerala: PALGHAT beside PALAKKAD).
+        tags = [({"District": d}, "" if d == cfg.NWDP_DISTRICT else f"-{d.lower()}") for d in (cfg.NWDP_DISTRICT, *cfg.NWDP_DISTRICT_ALIASES)]
+        flow = [r for rid in cfg.CWC_DISCHARGE or CWC_DISCHARGE for tagged, tag in tags for r in self.nwdp_records(rid, tagged, tag)]
+        chem = [r for rid in (CWC_WQ_CHEMICAL if cfg.CWC_WQ_CHEMICAL is None else cfg.CWC_WQ_CHEMICAL) for tagged, tag in tags for r in self.nwdp_records(rid, tagged, tag)]
+        bio = [r for rid in (CWC_WQ_BIOLOGICAL if cfg.CWC_WQ_BIOLOGICAL is None else cfg.CWC_WQ_BIOLOGICAL) for tagged, tag in tags for r in self.nwdp_records(rid, tagged, tag)]
         feats = []
         for station, river_id in cfg.CWC_STATIONS.items():
             mine = [r for r in flow if r["Station"] == station]
@@ -1019,15 +1316,19 @@ class DistrictBasinBuild:
         """The weekly job: living feeds only, previous files restored if a feed comes back thin."""
         self.LIVE = True
         B = self.BASIN
-        before = {p: p.read_bytes() for p in [B / f for f in LIVE_FILES] + sorted((B / "readings").glob("*.json"))}
-        counts = {f: len(json.loads((B / f).read_text())["features"]) for f in LIVE_FILES if f.endswith(".geojson")}
+        served = [f for f in LIVE_FILES if (B / f).exists()]  # not every basin serves every living feed
+        before = {p: p.read_bytes() for p in [B / f for f in served] + sorted((B / "readings").glob("*.json"))}
+        counts = {f: len(json.loads((B / f).read_text())["features"]) for f in served if f.endswith(".geojson")}
         self.inventory["families"] = json.loads((B / "inventory.json").read_text())["families"]
         try:
             self.district = self.build_boundary(write=False)
             self.sheds = Sheds(self.build_sheds(self.district, write=False))
             self.build_groundwater_wells()
-            self.build_realtime_stations()
+            if self.cfg.TNPCB_RT_SITES:
+                self.build_realtime_stations()
             self.build_gauging_stations()
+            if self.cfg.KSDMA_RESERVOIRS:
+                self.build_ksdma_reservoirs()
             res = json.loads((B / "reservoirs.geojson").read_text())
             for f in res["features"]:
                 f["properties"].update({k: v for k, v in (self.reservoir_level_pack(f["properties"]["name"]) or {}).items()})

@@ -36,7 +36,8 @@ CITY_TOKENS = [
     "pune",
     "surat",
 ]
-BASIN_SCOPES = {"arkavathi", "cauvery-ka", "cauvery-tn", "chennai-rivers", "erode-rivers", "kabini", "krishnagiri-rivers", "mumbai-rivers"}
+# Basin scopes are read from the scope registry, so a new district basin needs no edit here.
+BASIN_SCOPES = {sid for sid, kind in json.loads((ROOT / "schemas/nvdm/scopes.json").read_text())["scopes"].items() if kind == "basin"}
 
 # Chennai-era unprefixed filenames (see src/lib/cities/data-paths.ts).
 CHENNAI_LEGACY = {
