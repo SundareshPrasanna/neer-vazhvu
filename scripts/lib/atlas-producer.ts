@@ -373,6 +373,14 @@ export const SOURCE_IDS = {
   datameetKa: "datameet-village-boundaries-ka",
   ingresKa: "ingres-gw-assessment-ka",
   ngtDepKaKolar: "ngt-dep-ka-kolar",
+  // Kerala: development blocks from the Delimitation Commission's block
+  // orders, Panchayat polygons from KSREC, wells from the NWDP.
+  censusKl: "census-2011-village-amenities-kl",
+  ksrecGeoserver: "ksrec-open-geoserver",
+  ingresKl: "ingres-gw-assessment-kl",
+  keralaBlockOrders: "kerala-delimitation-block-orders-2025",
+  ngtDepKlPalakkad: "ngt-dep-kl-palakkad",
+  nwdpGroundwater: "nwic-nwdp-groundwater-level",
   // Tamil Nadu has no state listing: each collectorate publishes its own plan.
   ngtDepTnNamakkal: "ngt-dep-tn-namakkal",
   ngtDepTnKarur: "ngt-dep-tn-karur",
@@ -485,6 +493,36 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     publisher: "Office of the Deputy Commissioner, Kolar District",
     url: "https://kolar.nic.in/en/about-district/district-environmental-plan/",
   },
+  censusKl: {
+    title: "Census of India 2011 District Census Handbook: village amenities (Kerala village release)",
+    publisher: "Office of the Registrar General and Census Commissioner, India",
+    url: "https://censusindia.gov.in/nada/index.php/catalog/642",
+  },
+  ksrecGeoserver: {
+    title: "KSREC local self-government boundaries of Kerala (GeoServer WFS layer Kerala:Kerala_Lsgd_Boundary_Lsgdcode)",
+    publisher: "Kerala State Remote Sensing and Environment Centre (KSREC)",
+    url: "http://ksrec.in:9090/geoserver/ows",
+  },
+  ingresKl: {
+    title: "IN-GRES dynamic groundwater resource assessment, Kerala blocks",
+    publisher: "CGWB / IIT-Hyderabad (IN-GRES)",
+    url: "https://ingres.iith.ac.in/",
+  },
+  keralaBlockOrders: {
+    title: "Delimitation Commission, Kerala: final orders dividing each Block Panchayat into constituencies (2025), naming the Grama Panchayats in each",
+    publisher: "Delimitation Commission, Kerala",
+    url: "https://wardmap.ksmart.live/",
+  },
+  ngtDepKlPalakkad: {
+    title: "District Environmental Plan, Palakkad District (CPCB model plan workbook under the NGT's district environment plan directions, posted July 2020)",
+    publisher: "District Administration, Palakkad",
+    url: "https://palakkad.nic.in/en/document/district-environment-plan-pdf-523-kb/",
+  },
+  nwdpGroundwater: {
+    title: "National Water Data Portal: groundwater level and groundwater quality datasets (CKAN datastore)",
+    publisher: "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+    url: "https://nwdp.nwic.gov.in/",
+  },
   ngtDepTnNamakkal: {
     title: "District Environmental Plan, Namakkal District (CPCB model plan under the NGT's district environment plan directions, November 2019)",
     publisher: "District Collector, Namakkal, with the Tamil Nadu Pollution Control Board",
@@ -540,7 +578,11 @@ export function planIdentityAdapter(district: AtlasDistrict): PlanIdentityAdapte
  *  another state's sources. */
 export interface LgdStateUpstreams {
   census: UpstreamKey;
+  /** The Panchayat polygon source: the state's DataMeet file, or its own
+   *  local-body layer where the plan's boundary kind is state-lsg-layer. */
   datameet: UpstreamKey;
+  /** The authority a development-block membership was read from. */
+  blockMembership?: UpstreamKey;
   ingres: UpstreamKey;
   waterBodiesCensus?: UpstreamKey;
   /** What the state calls its revenue sub-district in prose. */
@@ -577,6 +619,18 @@ export const LGD_STATE_UPSTREAMS: Record<string, LgdStateUpstreams> = {
       "because that release prints each Panchayat's name without a code",
     blockSentence:
       "Blocks are LGD sub-districts (taluks), each aligned to a JJM block by name or by the reviewed block alignment.",
+  },
+  kl: {
+    census: "censusKl",
+    datameet: "ksrecGeoserver",
+    ingres: "ingresKl",
+    blockMembership: "keralaBlockOrders",
+    subdistrictUnit: "taluk",
+    censusClause:
+      "Census 2011 village rows from the Kerala DCHB release (xlsx extract), joined by village code",
+    blockSentence:
+      "Blocks are Kerala's development blocks (Block Panchayats), which cut across its taluks: each Panchayat's block " +
+      "is the reviewed block membership's, read from the Delimitation Commission's 2025 Block Panchayat orders.",
   },
 };
 

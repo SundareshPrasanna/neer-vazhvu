@@ -37,6 +37,7 @@ import {
   type WaterBodiesShard,
 } from "./artifacts";
 import type { EnvironmentPlanArtifact } from "./environment-plan";
+import type { GroundwaterWellsArtifact } from "./groundwater-wells";
 import type { PollutedStretchesArtifact } from "./polluted-stretches";
 import type { FloodClassificationArtifact, ScarcityTankersArtifact } from "./hazards";
 import type { PlaceBrief } from "./place-brief";
@@ -135,6 +136,10 @@ export function loadEnvironmentPlan(district: DistrictRef): EnvironmentPlanArtif
 
 export function loadPollutedStretches(district: DistrictRef): PollutedStretchesArtifact | undefined {
   return readDistrictArtifact<PollutedStretchesArtifact>(district, "polluted-stretches");
+}
+
+export function loadGroundwaterWells(district: DistrictRef): GroundwaterWellsArtifact | undefined {
+  return readDistrictArtifact<GroundwaterWellsArtifact>(district, "groundwater-wells");
 }
 
 export function loadJjmServiceShards(district: DistrictRef): JjmServiceShard[] {

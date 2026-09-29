@@ -35,14 +35,17 @@ import type {
   TnDistrictMappingExpectation,
 } from "./acquisition-model";
 import { ATLAS_SCHEMA_VERSION } from "./acquisition-model";
+import { validateNwdpWellsSource, type NwdpWellsSource } from "./nwdp-wells";
 
 export const LGD_IDENTITY_ADAPTER = "lgd-directory" as const;
 
 /** How a state's blocks are represented. Satara's eleven Panchayat Samitis
  *  are coterminous with its eleven talukas, so the LGD sub-district is the
- *  block layer there; a state whose development blocks cut across talukas
- *  would need the LGD block resource, which data.gov.in does not carry. */
-export const LGD_BLOCK_MODELS = ["sub-district"] as const;
+ *  block layer there. Kerala's development blocks cut across its taluks and
+ *  data.gov.in carries no LGD block resource, so "development-block" takes
+ *  each Panchayat's block from a reviewed block-membership.json instead
+ *  (block-membership.ts). */
+export const LGD_BLOCK_MODELS = ["sub-district", "development-block"] as const;
 export type LgdBlockModel = (typeof LGD_BLOCK_MODELS)[number];
 
 export interface LgdDistrictRefreshPlan {
@@ -80,11 +83,25 @@ export interface LgdDistrictRefreshPlan {
     jjm: { url: string };
     census: { url: string; catalogUrl: string; sourceAsOf: string };
     boundary: {
+      /** "datameet" (absent): Panchayats as unions of DataMeet's 2001 village
+       *  polygons. "state-lsg-layer": the state's own local-body polygons,
+       *  bound by the block membership's boundaryName (state-lsg-boundary.ts). */
+      kind?: "datameet" | "state-lsg-layer";
+      /** DataMeet: the state file. State layer: the WFS GetFeature url,
+       *  already filtered to the district. */
       geojsonUrl: string;
-      crosswalkUrl: string;
-      /** The DISTRICT property value in the DataMeet file. */
+      /** DataMeet only. */
+      crosswalkUrl?: string;
+      /** The DISTRICT property value in the DataMeet file; the district's
+       *  name in the state layer. */
       districtName: string;
       license: string;
+      /** State layer: who to credit, the layer's title and vintage, and the
+       *  feature properties the binding reads. */
+      attribution?: string;
+      layerTitle?: string;
+      mappingYear?: string;
+      fields?: { nameField: string; typeField: string; excludedTypes: string[] };
       /** How DataMeet keys the state's file: "cen2001-csv" (Maharashtra: a
        *  CEN_2001 property and mh.csv) or "village-code-mapping" (Karnataka:
        *  2001 district and village codes on each feature and a semicolon
@@ -102,6 +119,8 @@ export interface LgdDistrictRefreshPlan {
     /** The First Census of Water Bodies state resource on data.gov.in, when
      *  the district's water-body register is read from it. */
     waterBodiesCensus?: LgdWaterBodiesCensusSource;
+    /** Monitored wells on the National Water Data Portal (nwdp-wells.ts). */
+    wells?: NwdpWellsSource;
   };
   expectedCounts: {
     lgdSubdistricts: number;
@@ -289,8 +308,28 @@ export function validateLgdDistrictRefreshPlan(raw: unknown): string[] {
     if (!isRecord(boundary)) errors.push("sources.boundary: must be an object");
     else {
       validateUrl(boundary.geojsonUrl, "sources.boundary.geojsonUrl", errors);
-      validateUrl(boundary.crosswalkUrl, "sources.boundary.crosswalkUrl", errors);
       validateStringFields(boundary, ["districtName", "license"], "sources.boundary", errors);
+      if (boundary.kind !== undefined && boundary.kind !== "datameet" && boundary.kind !== "state-lsg-layer") {
+        errors.push("sources.boundary.kind: must be datameet or state-lsg-layer");
+      }
+      if (boundary.kind === "state-lsg-layer") {
+        validateStringFields(boundary, ["attribution", "layerTitle", "mappingYear"], "sources.boundary", errors);
+        const fields = boundary.fields;
+        if (
+          !isRecord(fields) ||
+          !isNonEmptyString(fields.nameField) ||
+          !isNonEmptyString(fields.typeField) ||
+          !Array.isArray(fields.excludedTypes) ||
+          !fields.excludedTypes.every(isNonEmptyString)
+        ) {
+          errors.push("sources.boundary.fields: a state layer needs nameField, typeField and excludedTypes");
+        }
+        if (raw.district && isRecord(raw.district) && raw.district.blockModel !== "development-block") {
+          errors.push("sources.boundary.kind: state-lsg-layer binds through the block membership, so it needs blockModel development-block");
+        }
+      } else {
+        validateUrl(boundary.crosswalkUrl, "sources.boundary.crosswalkUrl", errors);
+      }
       const format = boundary.crosswalkFormat;
       if (format !== undefined && format !== "cen2001-csv" && format !== "village-code-mapping") {
         errors.push("sources.boundary.crosswalkFormat: must be cen2001-csv or village-code-mapping");
@@ -302,6 +341,7 @@ export function validateLgdDistrictRefreshPlan(raw: unknown): string[] {
         errors.push("sources.boundary.polygonsNote: required when the polygons are withheld");
       }
     }
+    if (raw.sources.wells !== undefined) errors.push(...validateNwdpWellsSource(raw.sources.wells));
     const waterBodies = raw.sources.waterBodiesCensus;
     if (waterBodies !== undefined) {
       validateResourceSource(waterBodies, "sources.waterBodiesCensus", errors);

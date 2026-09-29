@@ -81,6 +81,32 @@ test("a Panchayat's taluka is the one holding most of its covered villages, and 
   );
 });
 
+test("under the development-block model the block is the membership's and the taluka is still recorded", () => {
+  const membership = membershipFixture({
+    planId: "mh-satara-v1",
+    blocks: [
+      { code: "9001", name: "Development A" },
+      { code: "9002", name: "Development B" },
+    ],
+    members: [
+      { lgdGramPanchayatCode: "189960", name: "Marul Haveli", blockCode: "9002" },
+      { lgdGramPanchayatCode: "200000", name: "Spanner", blockCode: "9001" },
+    ],
+  });
+  const panchayats = collectLgdGramPanchayats(extract, membership);
+  assert.deepEqual(
+    panchayats.map((p) => [p.lgdCode, p.blockCode, p.blockName, p.subdistrictCode]),
+    [
+      ["189960", "9002", "Development B", "4264"],
+      ["200000", "9001", "Development A", "4265"],
+    ],
+  );
+  assert.throws(
+    () => collectLgdGramPanchayats(extract, { ...membership, members: membership.members.slice(0, 1) }),
+    /not in the membership: 200000/,
+  );
+});
+
 test("the membership projection attaches a taluka's IN-GRES figure by code join and defers an unassessed taluka", () => {
   const groundwater: TnDistrictGroundwaterExtract = {
     schemaVersion: 1,
@@ -144,6 +170,7 @@ import {
   loadMiniDataMeetBoundary,
   loadMiniLgdExtract,
   loadMiniLgdPlan,
+  membershipFixture,
   readFixture,
 } from "./test-support";
 
@@ -188,6 +215,26 @@ for (const fixture of LGD_FIXTURE_DISTRICTS) {
     const served = readFixture<DistrictDirectoryArtifact>(fixture.slug, "directory.json");
     assert.deepEqual(rebuilt, withoutEnvelope(served));
     assert.deepEqual(validateDirectoryPayload(served), []);
+  });
+
+  test(`${fixture.slug}: a Partial-covered (shared) village is never summed into a Panchayat's Census binding`, { skip: !present && "fixture not cut yet" }, () => {
+    const district = districtBySlug(fixture.slug);
+    const plan = loadMiniLgdPlan(fixture.slug);
+    const extract = loadMiniLgdExtract(fixture.slug);
+    const proposal = buildTnDistrictCrosswalk(crosswalkExtractOf(plan, extract), {
+      id: `${fixture.slug}-crosswalk-v1`,
+      proposedAt: extract.acquiredAt,
+    });
+    const canonical = buildCanonicalCrosswalk(proposal, []);
+    const rebuilt = buildLgdDistrictDirectoryPayload({ district, plan, extract, proposal, canonical });
+    for (const panchayat of rebuilt.panchayats) {
+      const partial = new Set(
+        (panchayat.lgdCoverage?.villages ?? []).filter((v) => v.coverageType === "Partial").map((v) => v.census2011Code),
+      );
+      for (const village of panchayat.census?.villages ?? []) {
+        assert.ok(!partial.has(village.villageCode), `${panchayat.lgdCode} still sums Partial village ${village.villageCode}`);
+      }
+    }
   });
 
   test(`${fixture.slug}: the directory says which registers built it`, { skip: !present && "fixture not cut yet" }, () => {

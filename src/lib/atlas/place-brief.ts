@@ -105,6 +105,28 @@ export interface BriefDetail {
     areaBasis?: "stated" | "withheld";
     pointCount?: number;
   } | null;
+  /** Monitored wells inside the Panchayat (NWDP). Absent where the district
+   *  serves no wells file, so older briefs stay byte-for-byte what they were. */
+  groundwaterWells?: {
+    wells: Array<{
+      id: string;
+      agency: string;
+      wellType: string | null;
+      latestDate: string;
+      latestMbgl: number;
+      preMonsoonYear: number | null;
+      preMonsoonMbgl: number | null;
+      priorMedianMbgl: number | null;
+      trendMPerYear: number | null;
+      trendYears: number | null;
+    }>;
+    quality: Array<{
+      id: string;
+      wellType: string | null;
+      sampledAt: string;
+      exceedances: Array<{ parameter: string; value: number; limit: string }>;
+    }>;
+  } | null;
 }
 
 export interface PlaceBrief {
@@ -287,6 +309,7 @@ function buildDetail(inputs: PlaceEvidenceInputs): BriefDetail {
   const boundary = inputs.boundary;
   const rainfall = inputs.rainfall;
   const waterBodies = inputs.waterBodies;
+  const wells = inputs.wells;
 
   const sourceCounts = new Map<string, { category: string; count: number }>();
   for (const source of jjm?.sourceDetail ?? []) {
@@ -366,6 +389,33 @@ function buildDetail(inputs: PlaceEvidenceInputs): BriefDetail {
             : {}),
         }
       : null,
+    ...("wells" in inputs
+      ? {
+          groundwaterWells:
+            wells && (wells.stations.length > 0 || wells.quality.length > 0)
+              ? {
+                  wells: wells.stations.map((station) => ({
+                    id: station.id,
+                    agency: station.agency,
+                    wellType: station.wellType,
+                    latestDate: station.latest.date,
+                    latestMbgl: station.latest.depthMbgl,
+                    preMonsoonYear: station.preMonsoon?.latestYear ?? null,
+                    preMonsoonMbgl: station.preMonsoon?.latestMbgl ?? null,
+                    priorMedianMbgl: station.preMonsoon?.priorMedianMbgl ?? null,
+                    trendMPerYear: station.preMonsoon?.trendMPerYear ?? null,
+                    trendYears: station.preMonsoon?.trendYears ?? null,
+                  })),
+                  quality: wells.quality.map((record) => ({
+                    id: record.id,
+                    wellType: record.wellType,
+                    sampledAt: record.sampledAt,
+                    exceedances: record.exceedances,
+                  })),
+                }
+              : null,
+        }
+      : {}),
   };
 }
 

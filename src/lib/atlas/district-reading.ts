@@ -53,6 +53,7 @@ import {
 import { getDistrictBriefs } from "./district-directory";
 import type { BriefTone, PlaceBrief } from "./place-brief";
 import { findAtlasDistrict, type AtlasDistrict } from "./registry";
+import { hierarchyAdjective } from "./tn-groundwater";
 import { formatExtractionStage } from "./tn-groundwater-projection";
 
 /* ── shapes ────────────────────────────────────────────────────────────── */
@@ -1059,7 +1060,7 @@ export function buildDistrictReading(inputs: DistrictReadingInputs): DistrictRea
     groundwater,
     groundwater?.assessmentYear ?? "unstated",
     sourceOf(groundwater)?.retrieved,
-    `IN-GRES, assessed per revenue ${categories.unitLabel}. The year is the hydrological-year label.`,
+    `IN-GRES, assessed per ${hierarchyAdjective(groundwater?.source.hierarchy)} ${categories.unitLabel}. The year is the hydrological-year label.`,
   );
   push(
     "Groundwater projected to Panchayats",

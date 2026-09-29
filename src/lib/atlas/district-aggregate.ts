@@ -147,7 +147,10 @@ function collectVintages(inputs: DistrictAggregateInputs): SourceVintage[] {
         Number(groundwater?.assessmentYear?.slice(0, 4)) || null,
         asOf,
       ),
-      note: "IN-GRES, assessed per revenue taluk rather than per Panchayat.",
+      note:
+        groundwater?.source.hierarchy === "development-block"
+          ? "IN-GRES, assessed per development block rather than per Panchayat."
+          : "IN-GRES, assessed per revenue taluk rather than per Panchayat.",
     },
     directory && identityAdapterOf(directory) === "lgd-directory"
       ? {

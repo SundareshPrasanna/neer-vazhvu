@@ -43,6 +43,14 @@ export interface GroundwaterAssessmentUnit {
   rainfallMm: number | null;
 }
 
+export const GROUNDWATER_HIERARCHIES = ["revenue", "development-block"] as const;
+export type GroundwaterHierarchy = (typeof GROUNDWATER_HIERARCHIES)[number];
+
+/** How prose names the unit's hierarchy: "revenue" taluk or "development" block. */
+export function hierarchyAdjective(hierarchy: GroundwaterHierarchy | undefined): "revenue" | "development" {
+  return hierarchy === "development-block" ? "development" : "revenue";
+}
+
 export interface TnDistrictGroundwaterExtract {
   schemaVersion: number;
   planId: string;
@@ -54,7 +62,9 @@ export interface TnDistrictGroundwaterExtract {
     portalUrl: string;
     /** The assessment unit level this district actually reports at. */
     assessmentUnitType: string;
-    hierarchy: "revenue";
+    /** Where the unit sits: a revenue taluk (Tamil Nadu, Maharashtra,
+     *  Karnataka) or a development block (Kerala). Neither is the Panchayat. */
+    hierarchy: GroundwaterHierarchy;
   };
   district: {
     locationName: string;
@@ -111,6 +121,7 @@ export function buildTnDistrictGroundwaterExtract(options: {
   assessmentYear: string;
   acquiredAt: string;
   assessmentUnitType: string;
+  hierarchy?: GroundwaterHierarchy;
   portalUrl: string;
   districtRow: Record<string, unknown>;
   unitRows: Record<string, unknown>[];
@@ -137,7 +148,7 @@ export function buildTnDistrictGroundwaterExtract(options: {
       sourceUrl: INGRES_API_URL,
       portalUrl: options.portalUrl,
       assessmentUnitType: options.assessmentUnitType,
-      hierarchy: "revenue",
+      hierarchy: options.hierarchy ?? "revenue",
     },
     district: {
       locationName: district.locationName,
@@ -166,10 +177,10 @@ export function validateTnDistrictGroundwaterExtract(
         "do not convert it to a single edition year here",
     );
   }
-  if (extract.source.hierarchy !== "revenue") {
+  if (!GROUNDWATER_HIERARCHIES.includes(extract.source.hierarchy)) {
     errors.push(
-      "source.hierarchy: IN-GRES assessment units sit on the revenue " +
-        "hierarchy; recording anything else would imply Panchayat-level evidence",
+      "source.hierarchy: IN-GRES assessment units sit on the revenue or the " +
+        "development-block hierarchy; recording anything else would imply Panchayat-level evidence",
     );
   }
   if (extract.recordCount !== extract.records.length) {

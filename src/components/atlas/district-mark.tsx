@@ -33,6 +33,7 @@ export const DISTRICT_ACCENT: Record<string, string> = {
   "mh-ahilyanagar": "from-orange-500 to-red-700",
   "mh-kolhapur": "from-pink-500 to-rose-700",
   "ka-kolar": "from-amber-400 to-stone-700",
+  "kl-palakkad": "from-lime-600 to-teal-800",
 };
 
 /** The gradient every district shared before the per-district marks. */
@@ -369,6 +370,28 @@ function GenericTankCountry() {
   );
 }
 
+/** Palakkad - the Malampuzha dam below the Palakkad Gap in the Western
+ *  Ghats, with the palmyra palms that line the district's paddy bunds. */
+function PalakkadGapMalampuzha() {
+  return (
+    <g {...strokeProps}>
+      {/* the Ghats, broken by the Palakkad Gap */}
+      <path d="M0 40 L18 22 L34 30 L48 18 L62 36 Q76 46 90 36 L104 20 L122 30 L138 24" opacity={0.5} />
+      {/* the reservoir behind the wall */}
+      <path d="M30 50 q10 -3 20 0 M36 56 q8 -2 16 0" opacity={0.5} />
+      {/* the dam wall and its spillway shutters */}
+      <path d="M56 66 L64 46 H116 L124 66" />
+      <path d="M74 46 V56 M84 46 V56 M94 46 V56 M104 46 V56" opacity={0.7} />
+      {/* palmyra palms: a bare trunk under a fan crown */}
+      <path d="M160 66 V30 M184 66 V36" />
+      <path d="M160 30 l-8 -6 M160 30 l-4 -9 M160 30 l0 -10 M160 30 l4 -9 M160 30 l8 -6" opacity={0.8} />
+      <path d="M184 36 l-7 -5 M184 36 l-3 -8 M184 36 l0 -9 M184 36 l3 -8 M184 36 l7 -5" opacity={0.8} />
+      {/* paddy bunds */}
+      <path d="M0 70 H200 M0 76 H200" opacity={0.3} />
+    </g>
+  );
+}
+
 const DISTRICT_MARKS: Record<string, () => React.JSX.Element> = {
   "tn-thanjavur": ThanjavurDelta,
   "tn-tiruchirappalli": TiruchirappalliRockfort,
@@ -387,6 +410,7 @@ const DISTRICT_MARKS: Record<string, () => React.JSX.Element> = {
   "mh-ahilyanagar": AhilyanagarWatershed,
   "mh-kolhapur": KolhapurRankala,
   "ka-kolar": KolarHeadframeTanks,
+  "kl-palakkad": PalakkadGapMalampuzha,
 };
 
 /** True when the district has its own drawn mark (used by tests and the

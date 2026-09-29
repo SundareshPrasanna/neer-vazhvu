@@ -71,7 +71,7 @@
     "produced_at": "2026-09-02",
     "produced_by": "scripts/atlas-refresh-lgd-district.ts",
     "internal_inputs": [],
-    "note": "Identity directory for Ahilyanagar: 1325 LGD-coded Gram Panchayats in 14 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
+    "note": "Identity directory for Ahilyanagar: 1325 LGD-coded Gram Panchayats in 14 talukas. The Panchayat list, each Panchayat's covered villages and the taluka list come from the Local Government Directory as republished monthly on data.gov.in (api, bulk CSV export); the JJM village enumeration from the citizen corner (scrape); Census 2011 village rows from the Maharashtra DCHB release (xlsx extract), joined by village code because that release carries no Panchayat column; centroids and areas from DataMeet's village polygons (ODbL) joined through its 2001-to-2011 crosswalk. Blocks are LGD sub-districts: Satara's Panchayat Samitis are coterminous with its talukas. JJM bindings are the name crosswalk's, each labelled proposed until a reviewer verifies it; Census bindings are the register's own coverage (match class lgd-coverage), authoritative but partial because the export names one covering village for most Panchayats; a village the register lists as Partial coverage is shared with another Panchayat and is not summed into either's Census binding. Raw responses are content-addressed under .cache/atlas/; the reviewed plan, resolution and block alignment live under pipeline-inputs/atlas/.",
     "conventions": {
       "key": "lgdCode is the LGD local-body code of the Gram Panchayat; blockCode is the LGD sub-district (taluka) code",
       "bindings": "jjm bindings carry matchClass (how the pairing was made) and status (proposed | verified); a census binding with matchClass lgd-coverage is the LGD register's own statement of which villages the Panchayat covers, joined to Census 2011 rows by village code, and is marked proposed only because no person has re-checked it",
@@ -150,16 +150,16 @@
     "summary": {
       "lgdGramPanchayats": 1325,
       "jjmBound": 1297,
-      "censusBound": 1313,
-      "bothBound": 1286,
-      "unbound": 1,
+      "censusBound": 1299,
+      "bothBound": 1274,
+      "unbound": 3,
       "verifiedBindings": 0,
-      "proposedBindings": 2610,
+      "proposedBindings": 2596,
       "byMatchClass": {
         "proposed-pairing": 72,
         "exact": 1137,
         "unique-folded": 88,
-        "lgd-coverage": 1313
+        "lgd-coverage": 1299
       }
     }
   },
@@ -23860,33 +23860,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/167861",
-        "cdBlockCode": "0254",
-        "gramPanchayatCode": "167861",
-        "gramPanchayatName": "Chandekasare",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557550",
-            "villageName": "Chande Kasare",
-            "subdistrictCode": "04203"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557550",
-            "name": "Chande Kasare"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -28132,33 +28112,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/167916",
-        "cdBlockCode": "0254",
-        "gramPanchayatCode": "167916",
-        "gramPanchayatName": "Sonewadi",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557550",
-            "villageName": "Chande Kasare",
-            "subdistrictCode": "04203"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557550",
-            "name": "Chande Kasare"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -39365,33 +39325,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168062",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168062",
-        "gramPanchayatName": "Handi Nimgaon",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557750",
-            "villageName": "Handi Nimgaon",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557750",
-            "name": "Handi Nimgaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -39521,33 +39461,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168064",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168064",
-        "gramPanchayatName": "Jaygude Akhada",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557705",
-            "villageName": "Nevasa Bk.",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557705",
-            "name": "Nevasa Bk."
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -40929,33 +40849,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168082",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168082",
-        "gramPanchayatName": "Lekurwali Akhada",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557705",
-            "villageName": "Nevasa Bk.",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557705",
-            "name": "Nevasa Bk."
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -42189,33 +42089,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168098",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168098",
-        "gramPanchayatName": "Navi Chandgaon",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557749",
-            "villageName": "Usthal Dumala",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557749",
-            "name": "Usthal Dumala"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -42267,33 +42147,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168099",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168099",
-        "gramPanchayatName": "Newasa Budruk",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557705",
-            "villageName": "Nevasa Bk.",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557705",
-            "name": "Nevasa Bk."
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -44549,33 +44409,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168129",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168129",
-        "gramPanchayatName": "Sureshnagar",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557750",
-            "villageName": "Handi Nimgaon",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557750",
-            "name": "Handi Nimgaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -44947,33 +44787,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168134",
-        "cdBlockCode": "0257",
-        "gramPanchayatCode": "168134",
-        "gramPanchayatName": "Ustahl Dumala",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557749",
-            "villageName": "Usthal Dumala",
-            "subdistrictCode": "04206"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557749",
-            "name": "Usthal Dumala"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -75462,11 +75282,6 @@
         "status": "proposed",
         "villages": [
           {
-            "villageCode": "557449",
-            "villageName": "Sakur",
-            "subdistrictCode": "04202"
-          },
-          {
             "villageCode": "557450",
             "villageName": "Jambhulwadi (N.V.)",
             "subdistrictCode": "04202"
@@ -75479,11 +75294,6 @@
         "basis": "authoritative-crosswalk",
         "reviewedAt": null,
         "members": [
-          {
-            "kind": "village",
-            "code": "557449",
-            "name": "Sakur"
-          },
           {
             "kind": "village",
             "code": "557450",
@@ -81589,33 +81399,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168601",
-        "cdBlockCode": "0253",
-        "gramPanchayatCode": "168601",
-        "gramPanchayatName": "Sakur",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557449",
-            "villageName": "Sakur",
-            "subdistrictCode": "04202"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557449",
-            "name": "Sakur"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": null
@@ -86300,33 +86090,13 @@
         ]
       },
       "jjm": null,
-      "census": {
-        "sourceUnitId": "lgd/168661",
-        "cdBlockCode": "0258",
-        "gramPanchayatCode": "168661",
-        "gramPanchayatName": "Erandgaon Bhagwat",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557852",
-            "villageName": "Erandgaon",
-            "subdistrictCode": "04207"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557852",
-            "name": "Erandgaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -86382,33 +86152,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168662",
-        "cdBlockCode": "0258",
-        "gramPanchayatCode": "168662",
-        "gramPanchayatName": "Erandgaon Samsud",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557852",
-            "villageName": "Erandgaon",
-            "subdistrictCode": "04207"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557852",
-            "name": "Erandgaon"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": {
@@ -87339,33 +87089,13 @@
         ]
       },
       "jjm": null,
-      "census": {
-        "sourceUnitId": "lgd/168675",
-        "cdBlockCode": "0258",
-        "gramPanchayatCode": "168675",
-        "gramPanchayatName": "Navin Khampimpri",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557896",
-            "villageName": "Khampimpri",
-            "subdistrictCode": "04207"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557896",
-            "name": "Khampimpri"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": null
@@ -87405,33 +87135,13 @@
           }
         ]
       },
-      "census": {
-        "sourceUnitId": "lgd/168676",
-        "cdBlockCode": "0258",
-        "gramPanchayatCode": "168676",
-        "gramPanchayatName": "Khampimpri (Juni)",
-        "matchClass": "lgd-coverage",
-        "status": "proposed",
-        "villages": [
-          {
-            "villageCode": "557896",
-            "villageName": "Khampimpri",
-            "subdistrictCode": "04207"
-          }
-        ]
-      },
+      "census": null,
       "composition": {
-        "status": "crosswalk",
+        "status": "unbound",
         "completeness": "unknown",
-        "basis": "authoritative-crosswalk",
+        "basis": null,
         "reviewedAt": null,
-        "members": [
-          {
-            "kind": "village",
-            "code": "557896",
-            "name": "Khampimpri"
-          }
-        ],
+        "members": [],
         "exclusions": []
       },
       "boundary": null
@@ -105651,6 +105361,72 @@
       "villageCode": "558629",
       "villageName": "Manewadi",
       "subdistrictCode": "04213"
+    }
+  ],
+  "sharedCensusVillages": [
+    {
+      "villageCode": "557449",
+      "villageName": "Sakur",
+      "subdistrictCode": "04202",
+      "partialUnder": [
+        "168523",
+        "168601"
+      ]
+    },
+    {
+      "villageCode": "557550",
+      "villageName": "Chande Kasare",
+      "subdistrictCode": "04203",
+      "partialUnder": [
+        "167861",
+        "167916"
+      ]
+    },
+    {
+      "villageCode": "557705",
+      "villageName": "Nevasa Bk.",
+      "subdistrictCode": "04206",
+      "partialUnder": [
+        "168064",
+        "168082",
+        "168099"
+      ]
+    },
+    {
+      "villageCode": "557749",
+      "villageName": "Usthal Dumala",
+      "subdistrictCode": "04206",
+      "partialUnder": [
+        "168098",
+        "168134"
+      ]
+    },
+    {
+      "villageCode": "557750",
+      "villageName": "Handi Nimgaon",
+      "subdistrictCode": "04206",
+      "partialUnder": [
+        "168062",
+        "168129"
+      ]
+    },
+    {
+      "villageCode": "557852",
+      "villageName": "Erandgaon",
+      "subdistrictCode": "04207",
+      "partialUnder": [
+        "168661",
+        "168662"
+      ]
+    },
+    {
+      "villageCode": "557896",
+      "villageName": "Khampimpri",
+      "subdistrictCode": "04207",
+      "partialUnder": [
+        "168675",
+        "168676"
+      ]
     }
   ],
   "unbound": {

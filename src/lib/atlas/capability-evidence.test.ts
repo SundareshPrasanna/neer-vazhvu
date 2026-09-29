@@ -153,3 +153,50 @@ test("LGD provenance follows what the district serves; withheld polygons evidenc
   assert.equal(rule({ ...emptyInputs, boundary, provenance: karnataka }, "2026-09-19"), null);
   assert.notEqual(rule({ ...emptyInputs, boundary, provenance: LGD_PROVENANCE }, "2026-09-19"), null);
 });
+
+test("wells inside the Panchayat evidence its groundwater level, trend and chemistry within the place", () => {
+  const station = {
+    id: "KLPKDPZBW15",
+    network: "ksgwd-manual-monthly",
+    agency: "KSGWD",
+    wellType: "Bore Well",
+    lon: 76.75,
+    lat: 10.7,
+    lgdGramPanchayatCode: "228400",
+    readingsCount: 120,
+    firstReading: "2016-01-06",
+    latest: { date: "2026-04-07", depthMbgl: 9.28 },
+    preMonsoon: {
+      season: "March to May",
+      years: 10,
+      latestYear: 2026,
+      latestMbgl: 9.3,
+      priorMedianMbgl: 8.1,
+      changeM: 1.2,
+      trendMPerYear: 0.14,
+      trendYears: 10,
+    },
+  };
+  const sample = {
+    id: "KLPKDOW01",
+    agency: "KSGWD",
+    wellType: "Dug Well",
+    lon: 76.75,
+    lat: 10.7,
+    lgdGramPanchayatCode: "228400",
+    sampledAt: "2023-12-07",
+    samples: 12,
+    values: { nitrate: 60 },
+    exceedances: [{ parameter: "nitrate" as const, value: 60, limit: "at most 45 mg/l" }],
+  };
+  const inputs = { ...emptyInputs, wells: { stations: [station], quality: [sample] } };
+  const level = CAPABILITY_RULES["groundwater-level-observation"](inputs, "2026-09-29");
+  assert.equal(level?.evidence[0].localityClass, "within-place");
+  assert.match(level?.evidence[0].notes ?? "", /9\.28 m below ground on 2026-04-07/);
+  const trend = CAPABILITY_RULES["groundwater-level-trend"](inputs, "2026-09-29");
+  assert.match(trend?.evidence[0].notes ?? "", /deepened by 0\.14 m a year over 10 seasons/);
+  const quality = CAPABILITY_RULES["drinking-water-quality"](inputs, "2026-09-29");
+  assert.equal(quality?.evidence.length, 1, "no JJM samples here, so the wells stand alone");
+  assert.match(quality?.evidence[0].notes ?? "", /KLPKDOW01 above the BIS acceptable limit for nitrate/);
+  assert.equal(CAPABILITY_RULES["groundwater-level-trend"](emptyInputs, "2026-09-29"), null);
+});

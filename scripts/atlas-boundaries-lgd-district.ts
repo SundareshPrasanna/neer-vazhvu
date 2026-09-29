@@ -21,7 +21,12 @@ import {
   identityFromDirectory,
   type DistrictDirectoryArtifact,
 } from "../src/lib/atlas/artifacts";
-import { DATAMEET_ATTRIBUTION, DATAMEET_LICENSE } from "../src/lib/atlas/datameet-boundary";
+import {
+  DATAMEET_ATTRIBUTION,
+  DATAMEET_LICENSE,
+  isDataMeetSource,
+  type DataMeetBoundaryExtract,
+} from "../src/lib/atlas/datameet-boundary";
 import {
   atlasEnvelope,
   lgdStateUpstreams,
@@ -37,6 +42,8 @@ import {
 
 const PRODUCED_BY = "scripts/atlas-boundaries-lgd-district.ts";
 const GEOMETRY_CACHE = "datameet-panchayat-geometry.json";
+/** The boundary extract the identity refresh cached: which source, its rights. */
+const BOUNDARY_CACHE = "datameet-boundary-extract.json";
 /** Douglas-Peucker tolerance in degrees: about 20 m, well inside the source's
  *  own 2001-digitisation accuracy. */
 const SIMPLIFY_TOLERANCE = 0.0002;
@@ -79,7 +86,7 @@ async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const district = requireDistrict(argv);
   if (planIdentityAdapter(district) !== "lgd-directory") {
-    throw new Error(`${district.slug}: boundaries are served only for LGD-built districts (DataMeet, ODbL); TNGIS polygons stay withheld`);
+    throw new Error(`${district.slug}: boundaries are served only for LGD-built districts (DataMeet or a state layer); TNGIS polygons stay withheld`);
   }
   const asOf = requireAsOf(argv);
   const directory = readArtifact<DistrictDirectoryArtifact>(district, "directory");
@@ -99,6 +106,13 @@ async function main(): Promise<void> {
   if (cache.planId !== directory.district.planId) {
     throw new Error(`cached geometry is for ${cache.planId}, directory is ${directory.district.planId}`);
   }
+  // A state's own layer (Kerala: KSREC) serves each local body's polygon
+  // with the layer's attribution; DataMeet serves village unions, ODbL.
+  const extract = readCacheJson<DataMeetBoundaryExtract>(district, BOUNDARY_CACHE);
+  const stateLayer = extract !== undefined && !isDataMeetSource(extract.source.sourceId);
+  const rights = stateLayer
+    ? { status: "attribution", license: extract.source.rights.license, attribution: extract.source.rights.attribution }
+    : { status: "share-alike", license: DATAMEET_LICENSE, attribution: DATAMEET_ATTRIBUTION };
   const { default: simplify } = await import("@turf/simplify");
   const { default: area } = await import("@turf/area");
 
@@ -142,22 +156,38 @@ async function main(): Promise<void> {
     const envelope = atlasEnvelope({
       district,
       family: "boundaries",
-      sources: [upstreamSource(lgdStateUpstreams(district).datameet, { role: "input", as_of: "2001", retrieved: cache.acquiredAt })],
+      sources: [
+        upstreamSource(lgdStateUpstreams(district).datameet, {
+          role: "input",
+          as_of: stateLayer ? extract.source.mappingYear : "2001",
+          retrieved: cache.acquiredAt,
+        }),
+      ],
       method: "derived",
       producedAt: asOf,
       producedBy: PRODUCED_BY,
       internalInputs: [districtArtifactPath(district, "directory")],
-      note:
-        `Gram Panchayat polygons for ${features.length} Panchayats in ${blockName} ${lgdStateUpstreams(district).subdistrictUnit}: each is the ` +
-        "MultiPolygon of its LGD-listed member villages as DataMeet drew them from the 2001 Census village " +
-        "map, joined to the 2011 codes through DataMeet's own crosswalk, simplified to about 20 m " +
-        "(source polygons kept where simplification moved the area by more than a percent). Member " +
-        "villages the source did not draw are named on the feature. Indicative, not survey grade.",
-      conventions: {
-        license: `${DATAMEET_LICENSE}; ${DATAMEET_ATTRIBUTION}. Derived polygons are share-alike under the same licence.`,
-        geometry: "MultiPolygon of member villages, never dissolved, so the source parts stay auditable",
-        vintage: "the 2001 Census village map; boundaries changed since are not reflected",
-      },
+      note: stateLayer
+        ? `Gram Panchayat polygons for ${features.length} Panchayats in ${blockName} block: each is the local ` +
+          `body's own polygon in ${extract.source.layer}, bound to its LGD code by name through the reviewed ` +
+          "block membership, simplified to about 20 m (source polygons kept where simplification moved the " +
+          "area by more than a percent). Urban local bodies are not in the Panchayat Atlas and are not served."
+        : `Gram Panchayat polygons for ${features.length} Panchayats in ${blockName} ${lgdStateUpstreams(district).subdistrictUnit}: each is the ` +
+          "MultiPolygon of its LGD-listed member villages as DataMeet drew them from the 2001 Census village " +
+          "map, joined to the 2011 codes through DataMeet's own crosswalk, simplified to about 20 m " +
+          "(source polygons kept where simplification moved the area by more than a percent). Member " +
+          "villages the source did not draw are named on the feature. Indicative, not survey grade.",
+      conventions: stateLayer
+        ? {
+            license: `${rights.attribution}; ${rights.license}.`,
+            geometry: "the local body's polygon as the state layer draws it; memberVillagesDrawn is empty because no village union is involved",
+            vintage: `the layer as retrieved (${extract.source.mappingYear}); boundary changes after that are not reflected`,
+          }
+        : {
+            license: `${DATAMEET_LICENSE}; ${DATAMEET_ATTRIBUTION}. Derived polygons are share-alike under the same licence.`,
+            geometry: "MultiPolygon of member villages, never dissolved, so the source parts stay auditable",
+            vintage: "the 2001 Census village map; boundaries changed since are not reflected",
+          },
     });
     const collection: { type: "FeatureCollection"; features: typeof features; ext: Record<string, unknown> } = {
       type: "FeatureCollection",
@@ -171,11 +201,7 @@ async function main(): Promise<void> {
           acquiredAt: cache.acquiredAt,
           sourceSha256: cache.sourceSha256,
           featureCount: features.length,
-          rights: {
-            status: "share-alike",
-            license: DATAMEET_LICENSE,
-            attribution: DATAMEET_ATTRIBUTION,
-          },
+          rights,
         },
       },
     };
