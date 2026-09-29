@@ -239,7 +239,7 @@ export const HYDERABAD: PlaceConfig = {
   // failure: on 28 September 1908, 221 of the 788 tanks along the Musi
   // breached - the chain failing link by link - which is what prompted
   // Osman Sagar and Himayat Sagar.
-  hasCascadeOverlay: true,
+  hasCatchments: true,
   reservoirDataSource: 'v2',
   // Feed: HMWSSB's daily "Statements of WaterLevels in Reservoirs", scraped by
   // neer-vazhvu-api/scripts/scrape_hmwssb_reservoirs.py from

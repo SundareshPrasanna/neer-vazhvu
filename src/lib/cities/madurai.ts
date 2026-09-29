@@ -71,7 +71,7 @@ export const MADURAI: PlaceConfig = {
     sourceUrl: 'https://maduraicorporation.co.in/aboutus/water-supply/',
   },
   // Lake catchment atlas (the "Catchments" view on water-bodies).
-  hasCascadeOverlay: true,
+  hasCatchments: true,
   waterSources: [
     {
       sourceCode: 'vaigai',

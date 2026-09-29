@@ -130,6 +130,6 @@ export const BANGALORE: PlaceConfig = {
     },
   ],
   // Lake catchment atlas (the "Catchments" view on water-bodies).
-  hasCascadeOverlay: true,
+  hasCatchments: true,
   enabled: true,
 };

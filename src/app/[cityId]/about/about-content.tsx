@@ -2,7 +2,7 @@
 
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlaceConfig } from "@/lib/cities";
-import { CatchmentMethodologySection } from "@/components/cascade/catchment-methodology-section";
+import { CatchmentMethodologySection } from "@/components/catchments/catchment-methodology-section";
 import { CityAbout } from "@/components/about/city-about";
 import { Section, SubSection, DataSourceGroupHeader, DataSource } from "@/components/about/primitives";
 
@@ -167,7 +167,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             /water-bodies. Anchor id is referenced from the atlas side
             panel's "How this is built -->" link.
             ───────────────────────────────────────────────────────── */}
-        {config.hasCascadeOverlay && (
+        {config.hasCatchments && (
           <Section
             id="catchment-methodology"
             title={`Lake catchment atlas methodology - ${cityName}`}

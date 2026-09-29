@@ -362,6 +362,6 @@ export const MUMBAI: PlaceConfig = {
   // delineation + the modest local cascades (26 edges, mostly in the SGNP/Aarey
   // belt) are honest terrain output. Enables the Catchments view on
   // /mumbai/water-bodies + the catchment/cascade about-page methodology.
-  hasCascadeOverlay: true,
+  hasCatchments: true,
   enabled: true,
 };

@@ -344,7 +344,7 @@ export const PUNE: PlaceConfig = {
   // No cascade/catchment layer: the cascade pipeline has not been run for
   // Pune district. This is "not built yet", not a reasoned absence, so
   // catchmentsGapNote is deliberately omitted.
-  hasCascadeOverlay: false,
+  hasCatchments: false,
 
   availableLanguages: ['en'],
   upcomingLanguages: ['mr'],

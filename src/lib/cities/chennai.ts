@@ -60,7 +60,7 @@ export const CHENNAI: PlaceConfig = {
   defaultDesalinationMld: 190,
   availableLanguages: ['en', 'ta'],
   // Lake catchment atlas (the "Catchments" view on water-bodies).
-  hasCascadeOverlay: true,
+  hasCatchments: true,
   waterSources: [
     {
       sourceCode: 'chembarambakkam',

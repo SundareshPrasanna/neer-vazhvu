@@ -543,14 +543,13 @@ interface PlaceConfigBase {
 
   /** Whether this place has a lake catchment atlas: the "Catchments" view on
    *  /<city>/water-bodies, built by `scripts/run_cascade.py --district <id>
-   *  run-all`. Default false. (The name predates the retired cascade
-   *  overlay; the flag now gates catchments only.) */
-  hasCascadeOverlay?: boolean;
+   *  run-all`. Default false. */
+  hasCatchments?: boolean;
 
   /** Why this city has NO catchment view, shown on the water-bodies page in
    *  place of the missing toggle. Without it a city that cannot support
    *  catchment delineation just silently lacks a view mode, which reads as an
-   *  oversight rather than a decision. Set it wherever `hasCascadeOverlay` is
+   *  oversight rather than a decision. Set it wherever `hasCatchments` is
    *  false for a REASON (Kolkata: 11 m of relief across 40 km of delta);
    *  omit it where the layer is merely not built yet. */
   catchmentsGapNote?: string;

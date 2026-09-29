@@ -8,7 +8,7 @@ import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-pan
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle } from "@/components/water-bodies/view-mode-toggle";
 import type { ViewMode } from "@/components/water-bodies/view-mode-toggle";
-import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
+import { CatchmentAtlasClient } from "@/components/catchments/catchment-atlas-client";
 import { getPlaceConfig } from "@/lib/cities";
 import {
   restorationPriorityUrl,
@@ -57,7 +57,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const config = getPlaceConfig(cityId);
-  const hasCascadeOverlay = config.hasCascadeOverlay ?? false;
+  const hasCatchments = config.hasCatchments ?? false;
   const wb = config.waterBodies;
   const hasCensus = wb?.censusSource ?? false;
   const hasWardSearch = wb?.wardSearch ?? false;
@@ -67,7 +67,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     const m = searchParams.get("mode");
     if (m === "restoration") return "restoration";
-    if (m === "catchments" && hasCascadeOverlay) return "catchments";
+    if (m === "catchments" && hasCatchments) return "catchments";
     return "water-bodies";
   });
   const [selected, setSelected] = useState<SelectedWaterBody | null>(null);
@@ -426,7 +426,7 @@ function WaterBodiesPageContent({ cityId }: { cityId: string }) {
               <ViewModeToggle
                 value={viewMode}
                 onChange={(mode) => { setViewMode(mode); setHiddenCategories(new Set()); setSelected(null); }}
-                catchmentsAvailable={hasCascadeOverlay}
+                catchmentsAvailable={hasCatchments}
               />
             </div>
           )}

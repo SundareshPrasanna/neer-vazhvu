@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { UnifiedDetailPanel } from "@/components/water-bodies/unified-detail-panel";
 import { UnifiedLegend } from "@/components/water-bodies/unified-legend";
 import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mode-toggle";
-import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
+import { CatchmentAtlasClient } from "@/components/catchments/catchment-atlas-client";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { useElevationBands } from "@/components/map/elevation-bands";
@@ -55,7 +55,7 @@ interface ClientProps {
   namedOsmCount: number | null;
   /** Whether this city has a lake catchment atlas (the "Catchments" view,
    *  built by `scripts/run_cascade.py`). */
-  hasCascadeOverlay?: boolean;
+  hasCatchments?: boolean;
   catchmentsGapNote?: string;
 }
 
@@ -80,7 +80,7 @@ export default function WaterBodiesMapClient({
   fullyLostCount,
   reducedCount,
   namedOsmCount,
-  hasCascadeOverlay = false,
+  hasCatchments = false,
   catchmentsGapNote,
 }: ClientProps) {
   useLockBodyScroll();
@@ -108,7 +108,7 @@ export default function WaterBodiesMapClient({
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     const m = searchParams.get("mode");
     if (m === "restoration") return "restoration";
-    if (m === "catchments" && hasCascadeOverlay) return "catchments";
+    if (m === "catchments" && hasCatchments) return "catchments";
     return "water-bodies";
   });
 
@@ -286,7 +286,7 @@ export default function WaterBodiesMapClient({
           <ViewModeToggle
             value={viewMode}
             onChange={handleViewModeChange}
-            catchmentsAvailable={hasCascadeOverlay}
+            catchmentsAvailable={hasCatchments}
             catchmentsGapNote={catchmentsGapNote}
           />
         </div>

@@ -76,7 +76,7 @@ import type { PlaceConfig } from './types';
 // network is nowhere near dense enough to manufacture per-zone precision.
 //
 // NO TANK-CASCADE HERITAGE. Surat's water bodies are coastal wetlands, creeks
-// and urban talavs, not a chained kanmoi/kere system. hasCascadeOverlay stays
+// and urban talavs, not a chained kanmoi/kere system. hasCatchments stays
 // false and catchmentsGapNote says why on the page, because the cascade story
 // would assert a history the city does not have.
 export const SURAT: PlaceConfig = {
@@ -307,7 +307,7 @@ export const SURAT: PlaceConfig = {
   // Off by editorial decision, not for want of data. See NO TANK-CASCADE
   // HERITAGE above, and say so on the page rather than leaving the toggle
   // silently absent.
-  hasCascadeOverlay: false,
+  hasCatchments: false,
   catchmentsGapNote:
     "Surat has no cascade view, and that is a judgement about the city rather than a missing dataset. The cascade layer reconstructs chained tank systems - the Tamil kanmoi networks and the Bengaluru kere chains, where each tank's surplus was engineered to feed the next over centuries. Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. The algorithm would find downhill neighbours here because it always does, and drawing them as a cascade would assert an inheritance the city does not have.",
 

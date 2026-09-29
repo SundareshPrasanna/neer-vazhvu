@@ -239,6 +239,6 @@ export const GURUGRAM: PlaceConfig = {
   // chained-surplus system was engineered here the way it was in the Tamil
   // kanmoi districts or the Bengaluru kere chains, so the cascade narrative
   // must not be told about this city even once the catchment layer exists.
-  hasCascadeOverlay: false,
+  hasCatchments: false,
   enabled: true,
 };

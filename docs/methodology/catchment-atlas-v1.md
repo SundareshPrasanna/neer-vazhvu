@@ -59,7 +59,7 @@ The API route `src/app/api/cascade/[cityId]/catchment/route.ts` serves `{ catchm
 
 ## 5. Frontend
 
-`src/components/cascade/catchment-atlas.tsx`, mounted as the "Catchments" view mode on `/[city]/water-bodies`. One map, no toggle: everything is shown and click emphasises. On click a lake's own catchment (solid orange), inherited basin (dashed amber), feeder streams (blue, Strahler-graded), and downstream flow path (dotted violet) render, the map zooms to the basin, and the side panel shows the own/received/total hierarchy, named clickable upstream/downstream connectivity lists, the named downstream river, and the rooftop-harvest estimate. The panel footer deep-links to this methodology note on the about page (`#catchment-methodology`).
+`src/components/catchments/catchment-atlas.tsx`, mounted as the "Catchments" view mode on `/[city]/water-bodies`. One map, no toggle: everything is shown and click emphasises. On click a lake's own catchment (solid orange), inherited basin (dashed amber), feeder streams (blue, Strahler-graded), and downstream flow path (dotted violet) render, the map zooms to the basin, and the side panel shows the own/received/total hierarchy, named clickable upstream/downstream connectivity lists, the named downstream river, and the rooftop-harvest estimate. The panel footer deep-links to this methodology note on the about page (`#catchment-methodology`).
 
 ## 6. Naming
 
