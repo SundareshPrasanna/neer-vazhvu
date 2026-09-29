@@ -439,7 +439,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           get the allocation hero, which shows live dam fill + the city's
           published drinking-water allocation without the misleading
           days-of-water headline. Every city declares its heroMode. */}
-      {config.heroMode === "days-left" && waterEstimate.lastUpdated && (
+      {config.heroMode === "days-left" && config.defaultConsumptionMld != null && waterEstimate.lastUpdated && (
         <DaysLeftHero
           totalStorageMcft={waterEstimate.totalStorageMcft}
           totalCapacityMcft={waterEstimate.totalCapacityMcft}
@@ -450,7 +450,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           comparisonYear={waterEstimate.comparisonYear}
           comparisonIsApprox={waterEstimate.comparisonIsApprox}
           observedTrendMcftPerDay={waterEstimate.observedTrendMcftPerDay}
-          defaultConsumptionMld={config.defaultConsumptionMld ?? undefined}
+          defaultConsumptionMld={config.defaultConsumptionMld}
           // null in the city config means "this city has no desalination" -
           // pass 0 so DaysLeftHero doesn't fall back to Chennai's 190 MLD.
           defaultDesalinationMld={config.defaultDesalinationMld ?? 0}

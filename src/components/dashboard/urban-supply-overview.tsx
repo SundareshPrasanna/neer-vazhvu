@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useLanguage } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/utils/format";
+import { SUPPLY_TILE_COPY } from "@/content/hero/supply-tile";
+import type { CityId } from "@/lib/cities/ids";
 
 /**
  * Structural "city water supply at a glance" tile.
@@ -182,14 +184,11 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
   const currentMetPct = Math.min(100, currentMetPctRaw);
   const designPopulation = demand?.population_2034_design ?? demand?.population_design ?? 0;
 
-  // The supply_overview.subtitle i18n string names MMC and the ADB Tamil Nadu
-  // programme - facts about MADURAI, which is the city this panel was written
-  // for. A city without an override was being told its structural numbers came
-  // from a Tamil Nadu investment programme. Same failure as the hero's
-  // Bengaluru narrative and the footer's Chennai sources: fall back to nothing
-  // rather than to another city.
-  const overrideSubtitle =
-    data._view_overrides?.subtitle ?? (cityId === "madurai" ? t("supply_overview.subtitle") : null);
+  // The supply_overview.subtitle string names MMC and the ADB Tamil Nadu
+  // programme - Madurai's facts - so it comes from Madurai's content entry,
+  // never as a default: a city without its own subtitle shows none.
+  const subtitleKey = data._view_overrides?.subtitle ?? SUPPLY_TILE_COPY[cityId as CityId]?.subtitle;
+  const overrideSubtitle = subtitleKey ? t(subtitleKey) : null;
   const overrideWtpLabel = data._view_overrides?.wtp_label;
   const overrideDemandCaption = data._view_overrides?.demand_caption;
 

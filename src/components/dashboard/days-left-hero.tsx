@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { DEFAULT_CONSUMPTION_MLD, DEFAULT_DESALINATION_MLD, MLD_TO_MCFT } from "@/lib/utils/constants";
+import { MLD_TO_MCFT } from "@/lib/utils/constants";
 import { formatNumber, formatPct } from "@/lib/utils/format";
 import { useLanguage } from "@/lib/i18n/context";
 
@@ -18,10 +18,10 @@ interface DaysLeftHeroProps {
   comparisonYear: number | null;
   comparisonIsApprox?: boolean;
   observedTrendMcftPerDay?: number | null;
-  /** Place-specific default consumption (MLD). Defaults to Chennai's. */
-  defaultConsumptionMld?: number;
-  /** Place-specific default desalination (MLD). Defaults to Chennai's. */
-  defaultDesalinationMld?: number;
+  /** The city's daily demand (MLD); the runway is storage over this. */
+  defaultConsumptionMld: number;
+  /** The city's desalination supply (MLD); 0 where it has none. */
+  defaultDesalinationMld: number;
   /** Optional max for the consumption slider; sized to the city's demand. */
   consumptionSliderMax?: number;
   /** Optional max for the desalination slider; sized to the city's contribution. */
@@ -125,8 +125,8 @@ export function DaysLeftHero({
   heroNoteSource,
 }: DaysLeftHeroProps) {
   const { t } = useLanguage();
-  const baseConsumption = defaultConsumptionMld ?? DEFAULT_CONSUMPTION_MLD;
-  const baseDesalination = defaultDesalinationMld ?? DEFAULT_DESALINATION_MLD;
+  const baseConsumption = defaultConsumptionMld;
+  const baseDesalination = defaultDesalinationMld;
   const [consumption, setConsumption] = useState(baseConsumption);
   const [desalination, setDesalination] = useState(baseDesalination);
   const [inflowPct, setInflowPct] = useState(100);

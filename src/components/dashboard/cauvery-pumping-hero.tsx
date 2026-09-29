@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils/format";
 import { useLanguage } from "@/lib/i18n/context";
+import { PUMPING_HERO_COPY, type PumpingHeroCopy } from "@/content/hero/pumping";
+import type { CityId } from "@/lib/cities/ids";
 
-function format(template: string, params: Record<string, string | number>): string {
+function format(template: string, params: Record<string, string | number | undefined>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
 }
 
@@ -71,25 +73,8 @@ interface SupplyOverviewMin {
     components?: { name: string; inr_crore: number }[];
     funding_pattern?: { jica_loan_pct?: number };
   };
-  /** Per-city copy overrides. The pump.* i18n strings carry Bangalore's
-   *  specific narrative (Cauvery, TK Halli, Kempe Gowda); a second pumped
-   *  city overrides the story text through its own supply-overview JSON
-   *  instead of forking the component. Overrides are plain strings in the
-   *  city's launch language (English) - when the city's translation pass
-   *  lands, these graduate into city-keyed i18n entries. Absent fields
-   *  fall back to the pump.* strings, so Bangalore is untouched. */
-  hero_copy?: {
-    headline?: string;
-    body?: string;
-    wtp_label?: string;
-    wtp_sub?: string;
-    uphill_label?: string;
-    uphill_sub?: string;
-    nrw_sub?: string;
-    pop_label?: string;
-    pop_sub?: string;
-    footer?: string;
-  };
+  /** English-only narrative for this city; overrides PUMPING_HERO_COPY. */
+  hero_copy?: PumpingHeroCopy;
 }
 
 interface Props {
@@ -146,7 +131,12 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
   const deficit2049 = data.demand?.demand_gap_2049_mld;
   const projectCostCrore = data.project_cost?.total_inr_crore;
   const jicaLoanPct = data.project_cost?.funding_pattern?.jica_loan_pct;
-  const copy = data.hero_copy ?? {};
+  const copy: PumpingHeroCopy = { ...PUMPING_HERO_COPY[cityId as CityId], ...data.hero_copy };
+  // t() returns a non-key unchanged, so JSON literals and i18n keys read alike.
+  const text = (v: string, params: Record<string, string | number | undefined> = {}) => format(t(v), params);
+  const say = (v: string | undefined, params: Record<string, string | number | undefined> = {}) =>
+    v ? text(v, params) : undefined;
+  const callout = (id: keyof NonNullable<PumpingHeroCopy["callouts"]>) => copy.callouts?.[id];
 
   return (
     <Card className="border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-950/30 dark:to-cyan-950/30">
@@ -155,58 +145,34 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
           <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400">
             {format(t("pump.eyebrow"), { city: cityDisplayName })}
           </p>
-          {/* The pump.* fallbacks are BANGALORE'S narrative - the Cauvery, TK
-              Halli, Kempe Gowda's kere network, the three valleys - not a
-              generic pumped-city story. Falling back to them for another city
-              does not render something bland, it renders Bengaluru's water
-              system under that city's name. Gurugram's first draft did exactly
-              that in preview, claiming its water climbs 500 m from a river
-              600 km away.
-
-              So the narrative is city-keyed: Bengaluru keeps the i18n strings
-              it was written for, and any other city renders its own hero_copy
-              or renders no narrative at all. Nothing is better than another
-              city's story. The stat tiles below are safe either way - each is
-              already conditional on its own datum. */}
-          {(copy.headline || cityId === "bangalore") && (
+          {copy.headline && (
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-              {copy.headline ??
-                format(t("pump.headline"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+              {say(copy.headline, { km: transmissionKm, m: transmissionLiftM })}
             </h2>
           )}
-          {(copy.body || cityId === "bangalore") && (
+          {copy.body && (
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-              {copy.body ??
-                format(t("pump.body"), { city: cityDisplayName, km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+              {say(copy.body, { city: cityDisplayName, km: transmissionKm, m: transmissionLiftM })}
             </p>
           )}
         </div>
 
         {/* Top row: 4 big stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {/* Unlike the narrative above, this tile carries a real number for
-              any city, so it stays - but its default label says "Cauvery" and
-              its sub-label names TK Halli. Those are facts about Bengaluru, so
-              a city without overrides gets a neutral label rather than a wrong
-              one, and no sub-label at all rather than an invented provenance. */}
+          {/* A real number for any city; without the city's own label it reads
+              neutrally rather than naming another city's treatment plants. */}
           <Stat
             value={formatNumber(cauveryMld)}
             unit="MLD"
-            label={
-              copy.wtp_label ??
-              (cityId === "bangalore" ? t("pump.stat.wtp_label") : "Treatment capacity")
-            }
-            sub={copy.wtp_sub ?? (cityId === "bangalore" ? t("pump.stat.wtp_sub") : undefined)}
+            label={say(copy.wtp_label) ?? "Treatment capacity"}
+            sub={say(copy.wtp_sub)}
           />
           {transmissionKm && (
             <Stat
               value={String(transmissionKm)}
               unit="km"
-              label={copy.uphill_label ?? t("pump.stat.uphill_label")}
-              sub={
-                copy.uphill_sub ??
-                format(t("pump.stat.uphill_sub"), { m: transmissionLiftM ?? "~500" })
-              }
+              label={say(copy.uphill_label) ?? "Transmission distance"}
+              sub={say(copy.uphill_sub, { m: transmissionLiftM })}
             />
           )}
           {nrwPct != null && (
@@ -214,12 +180,7 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
               value={String(nrwPct)}
               unit="%"
               label={t("pump.stat.nrw_label")}
-              sub={
-                copy.nrw_sub ??
-                (lpcdSupply && lpcdConsumption
-                  ? format(t("pump.stat.nrw_sub"), { supply: lpcdSupply, consumer: lpcdConsumption })
-                  : t("pump.stat.nrw_sub_fallback"))
-              }
+              sub={say(copy.nrw_sub, { supply: lpcdSupply, consumer: lpcdConsumption })}
               warn
             />
           )}
@@ -227,66 +188,66 @@ export function CauveryPumpingHero({ cityId, cityDisplayName }: Props) {
             <Stat
               value={(populationServed / 1_000_000).toFixed(1)}
               unit={t("pump.stat.unit_m_people")}
-              label={copy.pop_label ?? t("pump.stat.pop_label")}
-              sub={copy.pop_sub ?? t("pump.stat.pop_sub")}
+              label={say(copy.pop_label) ?? t("pump.stat.pop_label")}
+              sub={say(copy.pop_sub)}
             />
           )}
         </div>
 
         {/* Story-callouts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          {stageVDesign && stageVActual != null && (
+          {stageVDesign && stageVActual != null  && callout("stage_v") && (
             <Callout
               icon="V"
-              title={format(t("pump.callout.stage_v_title"), { design: stageVDesign, actual: stageVActual })}
-              body={t("pump.callout.stage_v_body")}
+              title={text(callout("stage_v")!.title, { design: stageVDesign, actual: stageVActual })}
+              body={text(callout("stage_v")!.body, {})}
             />
           )}
-          {energyPct && (
+          {energyPct  && callout("energy") && (
             <Callout
               icon="$"
-              title={format(t("pump.callout.energy_title"), { pct: energyPct })}
-              body={format(t("pump.callout.energy_body"), { km: transmissionKm ?? 95, m: transmissionLiftM ?? 500 })}
+              title={text(callout("energy")!.title, { pct: energyPct })}
+              body={text(callout("energy")!.body, { km: transmissionKm, m: transmissionLiftM })}
             />
           )}
-          {groundwaterOfficial != null && groundwaterEstimate != null && (
+          {groundwaterOfficial != null && groundwaterEstimate != null  && callout("gw") && (
             <Callout
               icon="G"
-              title={format(t("pump.callout.gw_title"), { official: groundwaterOfficial, estimate: formatNumber(groundwaterEstimate) })}
-              body={t("pump.callout.gw_body")}
+              title={text(callout("gw")!.title, { official: groundwaterOfficial, estimate: formatNumber(groundwaterEstimate) })}
+              body={text(callout("gw")!.body, {})}
             />
           )}
-          {stressWards && (
+          {stressWards  && callout("stress") && (
             <Callout
               icon="!"
-              title={format(t("pump.callout.stress_title"), { count: stressWards })}
-              body={t("pump.callout.stress_body")}
+              title={text(callout("stress")!.title, { count: stressWards })}
+              body={text(callout("stress")!.body, {})}
             />
           )}
-          {demand2049 && deficit2049 && (
+          {demand2049 && deficit2049 && callout("demand") && (
             <Callout
               icon="2049"
-              title={format(t("pump.callout.demand_title"), {
+              title={text(callout("demand")!.title, {
                 demand: formatNumber(demand2049),
                 supply: formatNumber(demand2049 - deficit2049),
                 gap: formatNumber(deficit2049),
               })}
-              body={t("pump.callout.demand_body")}
+              body={text(callout("demand")!.body)}
               wide
             />
           )}
-          {projectCostCrore && (
+          {projectCostCrore  && callout("project") && (
             <Callout
               icon="₹"
-              title={format(t("pump.callout.project_title"), { cost: formatNumber(projectCostCrore) })}
-              body={format(t("pump.callout.project_body"), { jica: jicaLoanPct ?? 85 })}
+              title={text(callout("project")!.title, { cost: formatNumber(projectCostCrore) })}
+              body={text(callout("project")!.body, { jica: jicaLoanPct })}
               wide
             />
           )}
         </div>
 
         <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
-          {copy.footer ?? t("pump.footer")}
+          {say(copy.footer)}
         </p>
       </CardContent>
     </Card>
