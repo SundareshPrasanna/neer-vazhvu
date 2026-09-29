@@ -517,7 +517,7 @@ A subset of Chennai water bodies have a dedicated full-screen panel offering yea
 - `scripts/_rich_body_zones.py` - body-agnostic zone helper; emits `Body (primary)`, `OSM ecological` (where both layers exist), `Gap: body - OSM ecological`, `Halo: 1km buffer - body`
 - `scripts/verify_rich_body_{water_trend,built_trend,open_buildings,overture_buildings}.py` - all take `--body-id`
 - `scripts/ingest_rich_body_imagery.py` - yearly chip ingest
-- `scripts/ingest_rich_body_{water_loss,built_gain}_tint.py` - cumulative tint PNGs
+- `scripts/ingest_rich_body_tint.py --kind {water-loss,built-gain}` - cumulative tint PNGs
 
 **Refresh cron:** `.github/workflows/overture-buildings-refresh.yml` runs monthly across all 7 onboarded bodies; it queries the latest Overture quarterly release and opens a candidate-data PR if month-over-month building count moves more than the anomaly threshold (default 25 pct). The other inputs (JRC, Dynamic World, Open Buildings, yearly chips, tints) update infrequently enough that they are run on-demand rather than on a cron.
 

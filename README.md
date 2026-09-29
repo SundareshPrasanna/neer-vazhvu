@@ -136,7 +136,7 @@ For each body the build-time pipeline produces:
 
 Overture building counts refresh monthly via [.github/workflows/overture-buildings-refresh.yml](.github/workflows/overture-buildings-refresh.yml), which queries Overture's quarterly parquet release through DuckDB and opens a candidate-data PR when month-over-month change exceeds a tunable threshold.
 
-To onboard a new body, see [docs/cities/chennai/features.md](docs/cities/chennai/features.md#rich-data-deep-zoom-panel) for the registry pattern and `scripts/fetch-rich-body-polygon.ts`, `scripts/_rich_body_zones.py`, `scripts/verify_rich_body_*.py`, `scripts/ingest_rich_body_imagery.py`, and `scripts/ingest_rich_body_{water_loss,built_gain}_tint.py` for the pipeline scripts.
+To onboard a new body, see [docs/cities/chennai/features.md](docs/cities/chennai/features.md#rich-data-deep-zoom-panel) for the registry pattern and `scripts/fetch-rich-body-polygon.ts`, `scripts/_rich_body_zones.py`, `scripts/verify_rich_body_*.py`, `scripts/ingest_rich_body_imagery.py`, and `scripts/ingest_rich_body_tint.py --kind {water-loss,built-gain}` for the pipeline scripts.
 
 ## Lake Catchment Atlas
 
