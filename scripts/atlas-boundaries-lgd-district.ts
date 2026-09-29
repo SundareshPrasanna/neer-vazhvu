@@ -26,7 +26,7 @@ import {
   DATAMEET_LICENSE,
   isDataMeetSource,
   type DataMeetBoundaryExtract,
-} from "../src/lib/atlas/datameet-boundary";
+} from "../src/lib/atlas/pipeline/adapters/lgd/datameet-boundary";
 import {
   atlasEnvelope,
   lgdStateUpstreams,

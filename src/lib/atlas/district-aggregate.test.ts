@@ -11,7 +11,7 @@ import {
   fixtureBriefs,
   fixtureSlugsPresent,
   readFixture,
-} from "./test-support";
+} from "./pipeline/test-support";
 
 const AS_OF = "2026-07-26";
 

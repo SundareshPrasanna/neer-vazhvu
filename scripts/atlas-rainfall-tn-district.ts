@@ -9,7 +9,7 @@
  * Values are modelled reanalysis interpolated to a point, not gauge
  * observations, and are recorded as such.
  */
-import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import { computeRecordsSha256 } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import {
   boundaryProvenance,
   districtArtifactPath,
@@ -27,8 +27,8 @@ import {
   summarizeDailyRainfall,
   summarizeRainfall,
   validateTnDistrictRainfallExtract,
-} from "../src/lib/atlas/tn-rainfall";
-import type { RainfallRecord, TnDistrictRainfallExtract } from "../src/lib/atlas/tn-rainfall";
+} from "../src/lib/atlas/pipeline/core/tn-rainfall";
+import type { RainfallRecord, TnDistrictRainfallExtract } from "../src/lib/atlas/pipeline/core/tn-rainfall";
 import {
   atlasEnvelope,
   cachePath,

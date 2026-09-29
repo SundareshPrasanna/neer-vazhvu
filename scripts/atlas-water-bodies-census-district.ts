@@ -23,7 +23,7 @@
  */
 import { readFileSync } from "node:fs";
 
-import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import { computeRecordsSha256 } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import {
   districtArtifactPath,
   identityFromDirectory,
@@ -34,13 +34,13 @@ import {
 import {
   validateLgdDistrictRefreshPlan,
   type LgdDistrictRefreshPlan,
-} from "../src/lib/atlas/lgd-acquisition-model";
+} from "../src/lib/atlas/pipeline/adapters/lgd/lgd-acquisition-model";
 import {
   discoverResourceExport,
   exportKeyOf,
   patientFetchIntoCache,
-} from "../src/lib/atlas/lgd-district-acquisition";
-import { ContentAddressedCache, artifactText } from "../src/lib/atlas/tn-district-acquisition";
+} from "../src/lib/atlas/pipeline/adapters/lgd/lgd-district-acquisition";
+import { ContentAddressedCache, artifactText } from "../src/lib/atlas/pipeline/core/tn-district-acquisition";
 import {
   buildWaterBodiesCensusExtract,
   parseWaterBodiesCensusRows,
@@ -49,7 +49,7 @@ import {
   WATER_BODIES_CENSUS_LICENSE,
   WATER_BODIES_CENSUS_REGISTER,
   type CensusWaterBodyRecord,
-} from "../src/lib/atlas/water-bodies-census";
+} from "../src/lib/atlas/pipeline/adapters/lgd/water-bodies-census";
 import {
   SOURCE_IDS,
   atlasEnvelope,

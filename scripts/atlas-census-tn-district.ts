@@ -15,7 +15,7 @@
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 
-import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import { computeRecordsSha256 } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import {
   districtArtifactPath,
   identityFromDirectory,
@@ -25,11 +25,11 @@ import {
 import {
   rollUpCensusAttributesByGramPanchayat,
   validateTnDistrictCensusAttributes,
-} from "../src/lib/atlas/tn-census-attributes";
+} from "../src/lib/atlas/pipeline/core/tn-census-attributes";
 import type {
   CensusBinding,
   TnDistrictCensusAttributes,
-} from "../src/lib/atlas/tn-census-attributes";
+} from "../src/lib/atlas/pipeline/core/tn-census-attributes";
 import {
   ROOT,
   argValue,

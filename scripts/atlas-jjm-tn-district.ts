@@ -11,7 +11,7 @@
  * --limit) writes only the blocks it touched and records why it is partial;
  * a full run prunes shards for blocks that no longer exist.
  */
-import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import { computeRecordsSha256 } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import {
   districtArtifactPath,
   identityFromDirectory,
@@ -26,8 +26,8 @@ import {
   rollUpJjmServiceByGramPanchayat,
   validateJjmServiceRecords,
   validateTnDistrictJjmServiceExtract,
-} from "../src/lib/atlas/tn-jjm-service";
-import type { JjmVillageService, TnDistrictJjmServiceExtract } from "../src/lib/atlas/tn-jjm-service";
+} from "../src/lib/atlas/pipeline/core/tn-jjm-service";
+import type { JjmVillageService, TnDistrictJjmServiceExtract } from "../src/lib/atlas/pipeline/core/tn-jjm-service";
 import {
   argValue,
   atlasEnvelope,

@@ -15,7 +15,7 @@ import {
   districtBySlug,
   fixtureBriefs,
   readFixtureArtifacts,
-} from "./test-support";
+} from "./pipeline/test-support";
 
 test("TNRD's shouting names are shown in title case, mixed-case names untouched", () => {
   assert.equal(directoryPlaceName("KURUVIKKARAMBAI"), "Kuruvikkarambai");

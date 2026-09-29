@@ -8,7 +8,7 @@ import {
   listNames,
   type VerdictSignals,
 } from "./district-reading";
-import { FIXTURE_DISTRICTS, buildFixtureReading } from "./test-support";
+import { FIXTURE_DISTRICTS, buildFixtureReading } from "./pipeline/test-support";
 
 const TONES = new Set(["positive", "warning", "neutral", "blocked"]);
 

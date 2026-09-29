@@ -16,7 +16,7 @@ import {
   getDistrictDirectory,
   type DistrictDirectory,
 } from "./district-directory";
-import type { PlaceBrief } from "./place-brief";
+import type { PlaceBrief } from "./pipeline/core/place-brief";
 import { findAtlasDistrict, type AtlasDistrict } from "./registry";
 
 /**

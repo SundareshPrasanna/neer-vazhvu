@@ -10,7 +10,7 @@ import {
 } from "./curated-briefs";
 import type { CuratedBriefsArtifact } from "./curated-briefs";
 import { findBrief } from "./district-directory";
-import { districtBySlug, fixtureBriefs, readFixture, readFixtureArtifact } from "./test-support";
+import { districtBySlug, fixtureBriefs, readFixture, readFixtureArtifact } from "./pipeline/test-support";
 
 const CURATED_LGD_CODES = ["228400", "228711", "228911", "228767"];
 

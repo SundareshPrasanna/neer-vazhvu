@@ -24,8 +24,8 @@ import { resolve } from "node:path";
 import {
   loadTnDistrictRefreshPlan,
   validateTnDistrictSourceExtract,
-} from "../src/lib/atlas/acquisition-validation";
-import type { TnDistrictSourceExtract } from "../src/lib/atlas/acquisition-model";
+} from "../src/lib/atlas/pipeline/core/acquisition-validation";
+import type { TnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/acquisition-model";
 import { identityFromDirectory, identityFromExtract } from "../src/lib/atlas/artifacts";
 import type { DistrictDirectoryArtifact } from "../src/lib/atlas/artifacts";
 import {
@@ -33,22 +33,20 @@ import {
   buildTnDistrictBoundaryExtract,
   reportBoundaryJoin,
   validateTnDistrictBoundaryExtract,
-} from "../src/lib/atlas/tn-boundary";
-import type { TnDistrictBoundaryExtract } from "../src/lib/atlas/tn-boundary";
+} from "../src/lib/atlas/pipeline/adapters/tnrd/tn-boundary";
+import type { TnDistrictBoundaryExtract } from "../src/lib/atlas/pipeline/adapters/tnrd/tn-boundary";
 import {
   buildTnDistrictCrosswalk,
   loadReviewedBlockAlignmentTable,
   validateTnDistrictCrosswalkProposal,
-} from "../src/lib/atlas/tn-crosswalk";
+} from "../src/lib/atlas/pipeline/core/tn-crosswalk";
 import {
   buildCanonicalCrosswalk,
   loadTnDistrictCrosswalkResolution,
-} from "../src/lib/atlas/tn-crosswalk-resolution";
-import { acquireTnDistrictSourceExtract } from "../src/lib/atlas/tn-district-acquisition";
-import {
-  buildDistrictDirectoryPayload,
-  validateDirectoryPayload,
-} from "../src/lib/atlas/tn-district-refresh";
+} from "../src/lib/atlas/pipeline/core/tn-crosswalk-resolution";
+import { acquireTnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/tn-district-acquisition";
+import { validateDirectoryPayload } from "../src/lib/atlas/district-directory";
+import { buildDistrictDirectoryPayload } from "../src/lib/atlas/pipeline/adapters/tnrd/tn-district-refresh";
 import {
   ROOT,
   TNRD_LGD_EDITION,

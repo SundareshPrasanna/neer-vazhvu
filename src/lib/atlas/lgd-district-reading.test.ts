@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import test from "node:test";
 
-import { LGD_FIXTURE_DISTRICTS, buildFixtureAggregate, buildFixtureReading, fixturePath } from "./test-support";
+import { LGD_FIXTURE_DISTRICTS, buildFixtureAggregate, buildFixtureReading, fixturePath } from "./pipeline/test-support";
 
 /** Every string in the reading, however nested. */
 function strings(value: unknown, out: string[] = []): string[] {

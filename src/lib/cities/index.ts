@@ -10,6 +10,7 @@ import { PUNE } from './pune';
 import { SURAT } from './surat';
 import { isCityId, type CityId } from './ids';
 import type { PlaceConfig } from './types';
+import { previewIds } from '../utils/preview-ids';
 
 export * from './types';
 export { CITY_IDS } from './ids';
@@ -80,14 +81,9 @@ export function listAllPlaces(): PlaceConfig[] {
  *  in [cityId]/layout.tsx ALSO checks this env var, so the route
  *  resolves end-to-end. */
 export function listVisiblePlaces(): PlaceConfig[] {
-  const enabled = Object.values(REGISTRY).filter((p) => p.enabled !== false);
-  const previewRaw = process.env.NEXT_PUBLIC_PREVIEW_CITIES;
-  if (!previewRaw) return enabled;
-  const previewIds = new Set(
-    previewRaw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
-  );
-  const previewExtras = Object.values(REGISTRY).filter(
-    (p) => previewIds.has(p.cityId) && p.enabled === false,
-  );
-  return [...enabled, ...previewExtras];
+  const ids = previewIds(process.env.NEXT_PUBLIC_PREVIEW_CITIES?.toLowerCase());
+  return [
+    ...Object.values(REGISTRY).filter((p) => p.enabled !== false),
+    ...Object.values(REGISTRY).filter((p) => ids.has(p.cityId) && p.enabled === false),
+  ];
 }

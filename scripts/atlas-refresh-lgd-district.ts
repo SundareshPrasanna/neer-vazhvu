@@ -31,7 +31,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { identityFromDirectory, type DistrictDirectoryArtifact } from "../src/lib/atlas/artifacts";
-import { loadBlockMembership, type BlockMembership } from "../src/lib/atlas/block-membership";
+import { loadBlockMembership, type BlockMembership } from "../src/lib/atlas/pipeline/adapters/lgd/block-membership";
 import {
   buildDataMeetBoundaryExtract,
   buildPanchayatGeometries,
@@ -43,33 +43,33 @@ import {
   type DataMeetVillageFeature,
   type PanchayatGeometry,
   type PanchayatMembers,
-} from "../src/lib/atlas/datameet-boundary";
-import { bindStateLsgPolygons, type StateLsgFeature } from "../src/lib/atlas/state-lsg-boundary";
+} from "../src/lib/atlas/pipeline/adapters/lgd/datameet-boundary";
+import { bindStateLsgPolygons, type StateLsgFeature } from "../src/lib/atlas/pipeline/adapters/lgd/state-lsg-boundary";
 import {
   validateLgdDistrictRefreshPlan,
   validateLgdDistrictSourceExtract,
   type LgdDistrictRefreshPlan,
   type LgdDistrictSourceExtract,
-} from "../src/lib/atlas/lgd-acquisition-model";
-import { acquireLgdDistrictSourceExtract } from "../src/lib/atlas/lgd-district-acquisition";
+} from "../src/lib/atlas/pipeline/adapters/lgd/lgd-acquisition-model";
+import { acquireLgdDistrictSourceExtract } from "../src/lib/atlas/pipeline/adapters/lgd/lgd-district-acquisition";
 import {
   assertLgdPlanMatchesExtract,
   buildLgdDistrictDirectoryPayload,
   collectLgdGramPanchayats,
   crosswalkExtractOf,
   requireMembership,
-} from "../src/lib/atlas/lgd-district-refresh";
+} from "../src/lib/atlas/pipeline/adapters/lgd/lgd-district-refresh";
 import {
   buildTnDistrictCrosswalk,
   loadReviewedBlockAlignmentTable,
   validateTnDistrictCrosswalkProposal,
-} from "../src/lib/atlas/tn-crosswalk";
+} from "../src/lib/atlas/pipeline/core/tn-crosswalk";
 import {
   buildCanonicalCrosswalk,
   loadTnDistrictCrosswalkResolution,
-} from "../src/lib/atlas/tn-crosswalk-resolution";
-import { ContentAddressedCache, fetchIntoCache } from "../src/lib/atlas/tn-district-acquisition";
-import { validateDirectoryPayload } from "../src/lib/atlas/tn-district-refresh";
+} from "../src/lib/atlas/pipeline/core/tn-crosswalk-resolution";
+import { ContentAddressedCache, fetchIntoCache } from "../src/lib/atlas/pipeline/core/tn-district-acquisition";
+import { validateDirectoryPayload } from "../src/lib/atlas/district-directory";
 import {
   ROOT,
   argValue,

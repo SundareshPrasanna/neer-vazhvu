@@ -13,7 +13,7 @@
  * NODE_ENV branch, a reassignable binding and an ignore comment each made it
  * trace the whole project into every route that reaches this module. The
  * unit tests therefore never repoint these readers; they read the fixture
- * corpus themselves (src/lib/atlas/test-support.ts) and feed the pure
+ * corpus themselves (src/lib/atlas/pipeline/test-support.ts) and feed the pure
  * builders these readers feed.
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -37,10 +37,10 @@ import {
   type WaterBodiesShard,
 } from "./artifacts";
 import type { EnvironmentPlanArtifact } from "./environment-plan";
-import type { GroundwaterWellsArtifact } from "./groundwater-wells";
+import type { GroundwaterWellsArtifact } from "./pipeline/core/groundwater-wells";
 import type { PollutedStretchesArtifact } from "./polluted-stretches";
 import type { FloodClassificationArtifact, ScarcityTankersArtifact } from "./hazards";
-import type { PlaceBrief } from "./place-brief";
+import type { PlaceBrief } from "./pipeline/core/place-brief";
 
 const DATA_DIR = join(process.cwd(), "public", "data", "atlas");
 

@@ -51,10 +51,8 @@ import {
   type TalukGroundwater,
 } from "./district-aggregate";
 import { getDistrictBriefs } from "./district-directory";
-import type { BriefTone, PlaceBrief } from "./place-brief";
+import type { BriefTone, PlaceBrief } from "./pipeline/core/place-brief";
 import { findAtlasDistrict, type AtlasDistrict } from "./registry";
-import { hierarchyAdjective } from "./tn-groundwater";
-import { formatExtractionStage } from "./tn-groundwater-projection";
 
 /* ── shapes ────────────────────────────────────────────────────────────── */
 
@@ -269,6 +267,24 @@ export function displayTalukName(name: string): string {
   return name
     .toLocaleLowerCase("en-IN")
     .replace(/(^|[\s-])([a-z])/g, (_, boundary: string, letter: string) => boundary + letter.toLocaleUpperCase("en-IN"));
+}
+
+/**
+ * IN-GRES publishes the stage of extraction to four decimals, which reads as
+ * a precision the assessment does not have: it is a taluk-wide ratio of two
+ * estimated volumes. The stored value keeps the source's own digits so the
+ * record stays faithful; everything shown to a reader goes through here.
+ */
+export function formatExtractionStage(
+  value: number | null | undefined,
+): string {
+  if (typeof value !== "number") return "not stated";
+  return value.toFixed(1);
+}
+
+/** How prose names the unit's hierarchy: "revenue" taluk or "development" block. */
+function hierarchyAdjective(hierarchy: GroundwaterTaluksArtifact["source"]["hierarchy"] | undefined): "revenue" | "development" {
+  return hierarchy === "development-block" ? "development" : "revenue";
 }
 
 function yearOf(text: string): number | null {

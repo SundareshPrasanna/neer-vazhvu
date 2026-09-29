@@ -4,7 +4,7 @@
  *
  *   npx tsx scripts/atlas-cut-fixture.ts --district satara --block 4264 --panchayats 15 --keep 189960
  *
- * The fixture is what src/lib/atlas/test-support.ts reads: the served
+ * The fixture is what src/lib/atlas/pipeline/test-support.ts reads: the served
  * families (directory, groundwater-taluks, groundwater-projection, rainfall,
  * curated-briefs, and the block's jjm-service, census-2011, boundaries,
  * assessments and briefs shards) plus the mini acquisition inputs the
@@ -20,7 +20,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
-import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import { computeRecordsSha256 } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import type { AtlasDistrict } from "../src/lib/atlas/registry";
 import type {
   AssessmentsShard,
@@ -33,12 +33,12 @@ import type {
   JjmServiceShard,
   RainfallArtifact,
 } from "../src/lib/atlas/artifacts";
-import type { DataMeetBoundaryExtract } from "../src/lib/atlas/datameet-boundary";
-import type { LgdDistrictRefreshPlan, LgdDistrictSourceExtract } from "../src/lib/atlas/lgd-acquisition-model";
-import { buildLgdDistrictDirectoryPayload, crosswalkExtractOf } from "../src/lib/atlas/lgd-district-refresh";
-import { buildTnDistrictCrosswalk, loadReviewedBlockAlignmentTable, type ReviewedBlockAlignmentTable } from "../src/lib/atlas/tn-crosswalk";
-import { buildCanonicalCrosswalk, type TnDistrictCrosswalkResolution } from "../src/lib/atlas/tn-crosswalk-resolution";
-import type { TnDistrictSourceExtract } from "../src/lib/atlas/acquisition-model";
+import type { DataMeetBoundaryExtract } from "../src/lib/atlas/pipeline/adapters/lgd/datameet-boundary";
+import type { LgdDistrictRefreshPlan, LgdDistrictSourceExtract } from "../src/lib/atlas/pipeline/adapters/lgd/lgd-acquisition-model";
+import { buildLgdDistrictDirectoryPayload, crosswalkExtractOf } from "../src/lib/atlas/pipeline/adapters/lgd/lgd-district-refresh";
+import { buildTnDistrictCrosswalk, loadReviewedBlockAlignmentTable, type ReviewedBlockAlignmentTable } from "../src/lib/atlas/pipeline/core/tn-crosswalk";
+import { buildCanonicalCrosswalk, type TnDistrictCrosswalkResolution } from "../src/lib/atlas/pipeline/core/tn-crosswalk-resolution";
+import type { TnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/acquisition-model";
 import {
   ROOT,
   argValue,
