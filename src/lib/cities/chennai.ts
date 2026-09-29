@@ -43,6 +43,8 @@ export const CHENNAI: PlaceConfig = {
     "allocations",
     "commitments",
   ],
+  // Chennai's reservoirs ARE the urban supply, so storage / demand is the runway.
+  heroMode: 'days-left',
   primaryAuthority: {
     code: 'cmwssb',
     name: 'Chennai Metropolitan Water Supply and Sewerage Board',

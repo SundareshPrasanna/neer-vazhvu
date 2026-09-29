@@ -438,9 +438,8 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           where tracked storage is upstream irrigation (Madurai's Vaigai)
           get the allocation hero, which shows live dam fill + the city's
           published drinking-water allocation without the misleading
-          days-of-water headline. heroMode defaults to 'days-left' for
-          back-compat. */}
-      {(config.heroMode ?? "days-left") === "days-left" && waterEstimate.lastUpdated && (
+          days-of-water headline. Every city declares its heroMode. */}
+      {config.heroMode === "days-left" && waterEstimate.lastUpdated && (
         <DaysLeftHero
           totalStorageMcft={waterEstimate.totalStorageMcft}
           totalCapacityMcft={waterEstimate.totalCapacityMcft}
@@ -469,7 +468,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           the days-left numerator does not exist. Compares the drainage
           system's published design standard against measured hourly rainfall
           intensity. Kolkata today. */}
-      {config.heroMode === "drainage-capacity" && config.drainageCapacity && (
+      {config.heroMode === "drainage-capacity" && (
         <DrainageCapacityHero
           cityId={cityId}
           cityDisplayName={config.displayName}
@@ -480,7 +479,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
       {/* Cities that impound nothing but whose publisher states the trigger
           levels: the chain rain -> dam -> weir -> creek, rendered as distance
           to each published threshold. Surat today. */}
-      {config.heroMode === "flood-headroom" && config.floodChain && (
+      {config.heroMode === "flood-headroom" && (
         <FloodHeadroomHero
           cityId={cityId}
           cityDisplayName={config.displayName}
@@ -491,7 +490,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           is sewage and drainage rather than scarcity, "where does it go" is
           the question immediately after "how often do the drains fail". */}
       {config.dashboard?.sewageBalance && <SewageBalanceCard cityId={cityId} />}
-      {config.heroMode === "allocation" && config.urbanSupply && (
+      {config.heroMode === "allocation" && (
         <AllocationHero
           cityDisplayName={config.displayName}
           supply={config.urbanSupply}
