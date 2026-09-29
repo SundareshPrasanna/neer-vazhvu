@@ -192,7 +192,7 @@ Useful anchors for future implementation PRs:
 - Supabase service-role singleton lives in `neer-vazhvu-api/app/db.py`.
 - Chennai v1 orchestration lives in `neer-vazhvu-api/app/etl/pipeline.py`, `neer-vazhvu-api/app/intelligence/forecaster.py`, `neer-vazhvu-api/app/intelligence/risk_scorer.py`, and `neer-vazhvu-api/app/intelligence/briefing.py`.
 - v2 reservoir ingestion already exists in `neer-vazhvu-api/scripts/scrape_tn_pwd_reservoirs.py` and, on the Mumbai branch, `neer-vazhvu-api/scripts/scrape_numerical_mumbai_lakes.py`.
-- v2 reservoir forecasting is duplicated in `compute_reservoir_forecast_madurai.py` and `compute_reservoir_forecast_bangalore.py`.
+- v2 reservoir forecasting is one script, `compute_reservoir_forecast.py --city <id>` (Madurai, Bengaluru).
 - Next cron write routes still exist in `src/app/api/cron/**`.
 - No `vercel.json` exists and no GitHub workflow references `/api/cron/**`, so these routes have no repo-managed scheduled caller.
 - Next public read routes use direct Supabase reads and static-file composition under `src/app/api/**`.

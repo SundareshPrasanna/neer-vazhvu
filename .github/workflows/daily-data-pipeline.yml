@@ -181,7 +181,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/compute_reservoir_forecast_madurai.py --history-days 730
+        run: python scripts/compute_reservoir_forecast.py --city madurai --history-days 730
 
       - name: Forecast Bangalore reservoirs (AutoARIMA v2)
         id: forecast_bangalore
@@ -190,7 +190,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-        run: python scripts/compute_reservoir_forecast_bangalore.py --history-days 730
+        run: python scripts/compute_reservoir_forecast.py --city bangalore --history-days 730
 
       # Generate AI city narrative (skips IST days 1-3; monthly job owns those)
       # Also skips when force_monthly is true to avoid race with monthly job
