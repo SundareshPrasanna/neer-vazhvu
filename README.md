@@ -305,13 +305,13 @@ The water body, river, and industrial zone GeoJSON files are pre-generated and c
 
 ```bash
 # Current water bodies (lakes, tanks, reservoirs, ponds)
-npx tsx scripts/fetch-water-bodies-osm.ts
+npx tsx scripts/fetch-osm-layers.ts --city chennai --layer water-bodies
 
 # River polylines (Cooum, Adyar, Buckingham Canal, Kosasthalaiyar)
-npx tsx scripts/fetch-rivers-osm.ts
+npx tsx scripts/fetch-osm-layers.ts --city chennai --layer rivers
 
 # Industrial zone polygons (north Chennai bbox)
-npx tsx scripts/fetch-industrial-zones-osm.ts
+npx tsx scripts/fetch-osm-layers.ts --city chennai --layer industrial-zones
 
 # CMWSSB sewerage network (STPs, pumping stations, pumping mains)
 python3 scripts/convert-sewerage-kml.py

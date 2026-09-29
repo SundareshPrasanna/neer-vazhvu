@@ -1,0 +1,58 @@
+{
+  "_doc": "Delhi OSM layers for scripts/fetch-osm-layers.ts. Water bodies, drainage and localities use the NCT bbox (src/lib/cities/delhi.ts); rivers are Yamuna-basin scoped, Hathnikund to the Okhla exit.",
+  "lang": "hi",
+  "layers": {
+    "water-bodies": {
+      "method": "assembled",
+      "_note": "The 3,700 km engineered drain network is tagged water=drain or wastewater; it belongs to the drainage layer.",
+      "bbox": "28.40,76.85,28.90,77.40",
+      "refLat": 28.65,
+      "exclude": ["drain", "wastewater"]
+    },
+    "rivers": {
+      "method": "walk",
+      "_note": "Delhi's tributaries are engineered: the WYC/Munak carrier and the Najafgarh, Shahdara and Barapullah drains switch between canal and drain tags, hence per-channel waterways. Rivers are checked in order because the canal names contain 'yamuna'; the Eastern Yamuna Canal is a UP diversion outside Delhi's supply and would draw a phantom second Yamuna.",
+      "bbox": "28.30,76.30,30.50,77.85",
+      "timeout": 120,
+      "select": [
+        "way[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Yamuna|Hindon|Sahibi|Najafgarh|Barapulla|Shahdara|Munak\",i]",
+        "relation[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Yamuna|Hindon|Sahibi|Najafgarh|Barapulla|Shahdara|Munak\",i]"
+      ],
+      "skip": ["eastern yamuna"],
+      "rivers": [
+        { "id": "wyc_munak", "match": ["western yamuna", "munak", "carrier lined"], "local": "पश्चिमी यमुना नहर (मुनक)", "waterway": "canal" },
+        { "id": "najafgarh", "match": ["najafgarh"], "local": "नजफ़गढ़ नाला", "waterway": "drain", "waterways": ["drain", "canal"] },
+        { "id": "barapullah", "match": ["barapulla"], "local": "बारापुला नाला", "waterway": "drain" },
+        { "id": "shahdara", "match": ["shahdara"], "local": "शाहदरा नाला", "waterway": "drain", "waterways": ["drain", "canal"] },
+        { "id": "yamuna", "match": ["yamuna"], "local": "यमुना नदी", "waterway": "river" },
+        { "id": "hindon", "match": ["hindon"], "local": "हिंडन नदी", "waterway": "river" },
+        { "id": "sahibi", "_note": "The Sahibi's lower engineered course is the Najafgarh drain; OSM names the two reaches apart.", "match": ["sahibi", "sahibi nadi"], "local": "साहिबी नदी", "waterway": "river" }
+      ]
+    },
+    "drainage": {
+      "method": "measured",
+      "_note": "No official drain GIS is public, so OSM waterway=drain is the network geometry, labelled as a floor. Ditches are roadside noise at city scale; canals are in the rivers layer.",
+      "bbox": "28.40,76.85,28.90,77.40",
+      "timeout": 120,
+      "select": ["way[\"waterway\"=\"drain\"]", "relation[\"waterway\"=\"drain\"]"],
+      "metadata": {
+        "source": "OpenStreetMap (waterway=drain), (c) OpenStreetMap contributors, ODbL 1.0",
+        "note": "Best available Delhi drain-network geometry: no official drain GIS is public (the IFC 2018 Drainage Master Plan's 3,737 km across 11 agencies exists only as PDF maps). OSM coverage is partial and skews toward large open channels - lengths here are a floor, not the network total.",
+        "script": "scripts/fetch-drainage-osm-delhi.ts"
+      }
+    },
+    "localities": {
+      "method": "ward-join",
+      "_note": "Urban villages (Lal Dora) are still tagged place=village. NDMC and Cantonment localities fall outside the MCD wards by design.",
+      "bbox": "28.40,76.85,28.90,77.40",
+      "select": [
+        "node[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]",
+        "way[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]",
+        "relation[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]"
+      ],
+      "wards": "public/geojson/delhi-wards-2022.geojson",
+      "profiles": "public/data/delhi-ward-profiles.json",
+      "wikidata": { "parents": "wd:Q1353 wd:Q42941" }
+    }
+  }
+}

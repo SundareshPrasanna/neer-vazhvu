@@ -218,7 +218,7 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
 | HMWSSB tankers | `public/data/hyderabad-tankers.json` | `neer-vazhvu-api/scripts/build_hyderabad_tankers.py` | 1,316,215 bookings, 201 sections |
 | CGWB groundwater wells | `public/data/hyderabad-cgwb-stations.json` | `neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py` | 481 wells, 10,724 monthly readings |
 | TGDPS weather stations | `public/data/hyderabad-aws-stations.json` | `neer-vazhvu-api/scripts/fetch_tgdps_stations.py` | 161 in-city AWS with coordinates |
-| Rivers (Musi, Esi, Manjira, Haldi) | `public/geojson/hyderabad-rivers.geojson` | `scripts/fetch-rivers-osm-hyderabad.ts` | Musi ~244 km, Esi ~10 km |
+| Rivers (Musi, Esi, Manjira, Haldi) | `public/geojson/hyderabad-rivers.geojson` | `scripts/fetch-osm-layers.ts --city hyderabad --layer rivers` | Musi ~244 km, Esi ~10 km |
 | GHMC nalas | `public/geojson/hyderabad-nalas.geojson` | `neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py` | 96 nalas, 245 km |
 | Waterlogging points | `public/geojson/hyderabad-waterlogging.geojson` | same | 23 GHMC points |
 | Jal Dharohar census | `public/geojson/hyderabad-water-census.geojson` | same | 3,116 points |

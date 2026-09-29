@@ -1,0 +1,45 @@
+{
+  "_doc": "Kolkata OSM layers for scripts/fetch-osm-layers.ts. The bbox is KMC plus the verified out-of-KMC units (EKW east, Palta about 22 km north, Budge Budge south), matching src/lib/cities/kolkata.ts.",
+  "lang": "bn",
+  "layers": {
+    "water-bodies": {
+      "method": "allowlist",
+      "_note": "basin stays in the allowlist: the East Kolkata Wetlands' sewage-fed bheris map as basins.",
+      "bbox": "22.35,88.15,22.85,88.55",
+      "timeout": 180,
+      "minAreaSqm": 1000
+    },
+    "rivers": {
+      "method": "dissolve",
+      "_note": "Wider box: the Hooghly from above Palta to the estuary. KNOWN GAP, deliberate: the Saraswati renders in two pieces with a 10.6 km break (22.6750N-22.7644N) because OSM maps that reach as 'Kana' (the dead river) and 'Khal'; matching those would sweep in every khal in the delta and assert an identity OSM does not make. Revisit only with a source that establishes the Kana reach is the Saraswati.",
+      "bbox": "22.1,88,23,88.7",
+      "timeout": 180,
+      "select": [
+        "way[\"waterway\"~\"^(river|canal|stream)$\"][\"name\"~\"Hooghly|Hugli|Adi Ganga|Tolly|Bidyadhari|Kulti|Ganga|Bhagirathi|Saraswati\",i]",
+        "relation[\"waterway\"~\"^(river|canal)$\"][\"name\"~\"Hooghly|Hugli|Adi Ganga|Tolly|Bidyadhari|Kulti|Ganga|Bhagirathi|Saraswati\",i]"
+      ],
+      "rules": [
+        ["adi\\s*ganga|tolly", "adi-ganga"],
+        ["hooghly|hugli", "hooghly"],
+        ["bidyadhari", "bidyadhari"],
+        ["kulti", "kulti"],
+        ["saraswati", "saraswati"],
+        ["ganga|bhagirathi", "hooghly"]
+      ],
+      "labels": { "adi-ganga": "Adi Ganga", "hooghly": "Hooghly", "bidyadhari": "Bidyadhari", "kulti": "Kulti", "saraswati": "Saraswati" }
+    },
+    "drainage": {
+      "method": "plain",
+      "bbox": "22.35,88.15,22.85,88.55",
+      "timeout": 180,
+      "select": ["way[\"waterway\"=\"drain\"]", "way[\"waterway\"=\"ditch\"]"]
+    },
+    "localities": {
+      "method": "points",
+      "_note": "No ward join: Kolkata's ward geometry is 141 of 144 with no names, so a join would silently drop localities in the missing wards.",
+      "bbox": "22.35,88.15,22.85,88.55",
+      "timeout": 180,
+      "select": ["node[\"place\"~\"^(suburb|neighbourhood|quarter|village|town)$\"]"]
+    }
+  }
+}

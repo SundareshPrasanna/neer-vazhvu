@@ -1,0 +1,41 @@
+{
+  "_doc": "Madurai OSM layers for scripts/fetch-osm-layers.ts. Rivers are Vaigai-basin scoped (Periyar dam to the sea) and clipped to that same box so the whole reach renders.",
+  "lang": "ta",
+  "layers": {
+    "water-bodies": {
+      "method": "assembled",
+      "_note": "Expanded past MMC. Unnamed water=river polygons take the nearest river's name from madurai-rivers.geojson.",
+      "bbox": "9.5,77.4,10.2,78.4",
+      "refLat": 9.93,
+      "labelRivers": true
+    },
+    "rivers": {
+      "method": "walk",
+      "bbox": "9.2,77.0,10.2,79.0",
+      "select": [
+        "way[\"waterway\"=\"river\"][\"name\"~\"Vaigai|Suruliyaru|Suruli|Manjalar|Varaha|Periyar\",i]",
+        "relation[\"waterway\"=\"river\"][\"name\"~\"Vaigai|Suruliyaru|Suruli|Manjalar|Varaha|Periyar\",i]"
+      ],
+      "rivers": [
+        { "id": "vaigai", "match": ["vaigai"], "local": "வைகை ஆறு", "waterway": "river" },
+        { "id": "suruliyaru", "match": ["suruli"], "local": "சுருளியாறு", "waterway": "river" },
+        { "id": "manjalar", "match": ["manjalar"], "local": "மஞ்சளாறு", "waterway": "river" },
+        { "id": "varaha", "match": ["varaha"], "local": "வராஹா ஆறு", "waterway": "river" },
+        { "id": "periyar", "_note": "Kerala side; feeds the Vaigai via the Mullaperiyar tunnel.", "match": ["periyar"], "local": "பெரியாறு", "waterway": "river" }
+      ]
+    },
+    "localities": {
+      "method": "ward-join",
+      "_note": "MMC bbox padded about 2 km; village and hamlet kept because formerly rural areas inside MMC are still tagged that way. Wikidata fills the long tail.",
+      "bbox": "9.80,78.00,10.02,78.25",
+      "select": [
+        "node[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]",
+        "way[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]",
+        "relation[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]"
+      ],
+      "wards": "public/geojson/madurai-wards-2022.geojson",
+      "profiles": "public/data/madurai-ward-profiles.json",
+      "wikidata": { "parents": "wd:Q228405 wd:Q15184" }
+    }
+  }
+}

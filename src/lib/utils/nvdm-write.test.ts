@@ -48,3 +48,10 @@ test("writeArtifact writes bare payload when no envelope exists (unmigrated)", (
   const out = JSON.parse(readFileSync(p, "utf-8"));
   assert.deepEqual(out, { a: 1 });
 });
+
+test("writeArtifact writes a bare array as an array when no envelope exists", () => {
+  const dir = mkdtempSync(join(tmpdir(), "nvdm-write-"));
+  const p = join(dir, "rows.json");
+  writeArtifact(p, [{ name: "a" }, { name: "b" }]);
+  assert.equal(readFileSync(p, "utf-8"), JSON.stringify([{ name: "a" }, { name: "b" }], null, 2));
+});

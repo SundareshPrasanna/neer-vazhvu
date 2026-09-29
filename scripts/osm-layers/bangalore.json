@@ -1,0 +1,27 @@
+{
+  "_doc": "Bangalore OSM layers for scripts/fetch-osm-layers.ts. After a water-body re-fetch, re-run scripts/name-bangalore-water-bodies.py to restore the named-lake join (the envelope documents both steps).",
+  "lang": "kn",
+  "layers": {
+    "water-bodies": {
+      "method": "assembled",
+      "_note": "Wider than the GBA 369-ward bbox: south past Anekal, north past Yelahanka to the Arkavathi headworks, west to TG Halli. Drains and wastewater are conveyance, not water bodies.",
+      "bbox": "12.65,77.20,13.40,77.90",
+      "refLat": 12.97,
+      "exclude": ["drain", "wastewater"]
+    },
+    "rivers": {
+      "method": "walk",
+      "_note": "Extended past GBA to the Arkavati headwaters at Nandi Hills and the Vrishabhavathi's reach past Byramangala; clipped to the same box. OSM spells the rivers several ways, so each carries one canonical label.",
+      "bbox": "12.50,77.10,13.45,77.95",
+      "select": [
+        "way[\"waterway\"=\"river\"][\"name\"~\"Vrishabhavathi|Vrishabhavati|Vrishabavathi|Vrushabhavathi|Arkavati|Arkavathi|Dakshina Pinakini|Then Pennai|Ponnaiyar\",i]",
+        "relation[\"waterway\"=\"river\"][\"name\"~\"Vrishabhavathi|Vrishabhavati|Vrishabavathi|Vrushabhavathi|Arkavati|Arkavathi|Dakshina Pinakini|Then Pennai|Ponnaiyar\",i]"
+      ],
+      "rivers": [
+        { "id": "vrishabhavathi", "match": ["vrishabhav", "vrishabav", "vrushabhav"], "label": "Vrishabhavathi", "local": "ವೃಷಭಾವತಿ ನದಿ", "waterway": "river" },
+        { "id": "arkavati", "match": ["arkavati", "arkavathi"], "label": "Arkavati", "local": "ಅರ್ಕಾವತಿ ನದಿ", "waterway": "river" },
+        { "id": "dakshina-pinakini", "_note": "Then Pennai and Ponnaiyar are its Tamil Nadu names.", "match": ["dakshina pinakini", "then pennai", "ponnaiyar"], "label": "Dakshina Pinakini", "local": "ದಕ್ಷಿಣ ಪಿನಾಕಿನಿ", "waterway": "river" }
+      ]
+    }
+  }
+}

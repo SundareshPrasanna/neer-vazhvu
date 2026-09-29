@@ -436,7 +436,7 @@ def main():
 
     # NVDM v1 wrapped form (schemas/nvdm/ward-profiles.schema.json): envelope +
     # wards[]. Loaders accept both shapes during the migration (use-ward-profile,
-    # /api/wards, compute-delhi-ward-risk.py, fetch-localities-osm-delhi.ts).
+    # /api/wards, compute-delhi-ward-risk.py, fetch-osm-layers.ts).
     # PRODUCED_AT is a manual constant, bumped on regeneration, so identical
     # inputs still produce byte-identical output (no wall-clock in the artifact).
     PRODUCED_AT = "2026-07-30"

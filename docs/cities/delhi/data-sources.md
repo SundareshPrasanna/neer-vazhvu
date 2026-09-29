@@ -14,7 +14,7 @@ Supply model in one line: Delhi owns no impounded storage - ~90% of raw water ar
 |---|---|
 | **Source** | OpenStreetMap via Overpass API |
 | **License** | ODbL 1.0 - "(c) OpenStreetMap contributors" attribution required on every rendering surface |
-| **Script** | `scripts/fetch-water-bodies-osm-delhi.ts` (clone of the Bangalore fetcher: osmtogeojson assembly, drain/wastewater exclusion, 0.1 ha floor, Hindi `name:hi` capture) |
+| **Script** | `scripts/fetch-osm-layers.ts --city delhi --layer water-bodies` (osmtogeojson assembly, drain/wastewater exclusion, 0.1 ha floor, Hindi `name:hi` capture; rules in `scripts/osm-layers/delhi.json`) |
 | **File** | `public/geojson/delhi-water-bodies-current.geojson` |
 | **Fetched** | 2026-07-20 |
 | **Coverage** | 1,845 polygons, ~5,805 ha total, NCT bbox 28.40-28.90 N / 76.85-77.40 E. Largest: **Najafgarh Jheel remnant at 601.5 ha** - independent corroboration of the "226 sq km drained to ~7 sq km" collapse story (the OSM polygon is the surviving core). Only 87 of 1,845 are named; 4 carry Hindi names. |
@@ -24,7 +24,7 @@ Supply model in one line: Delhi owns no impounded storage - ~90% of raw water ar
 | | |
 |---|---|
 | **Source** | OpenStreetMap via Overpass API (ODbL, same attribution) |
-| **Script** | `scripts/fetch-rivers-osm-delhi.ts` (Madurai-pattern assembly + connectivity walk, extended: per-channel `waterways` sets because Delhi's channels switch tags along their course) |
+| **Script** | `scripts/fetch-osm-layers.ts --city delhi --layer rivers` (connectivity walk with per-channel `waterways` sets, because Delhi's channels switch tags along their course) |
 | **File** | `public/geojson/delhi-rivers.geojson` |
 | **Fetched** | 2026-07-20 |
 | **Coverage** | 5 channels over the Yamuna-basin reach (Hathnikund -> Okhla bbox, deliberately wider than NCT - the rivers page is basin-scoped and labelled as such): `yamuna` (~499 km incl. braided sections), `wyc_munak` (~302 km Western Yamuna Canal / Munak carrier - the ~70% raw-water lifeline), `hindon` (~319 km), `sahibi` (~52 km), `najafgarh` (3 km of explicitly-named fragments) |
