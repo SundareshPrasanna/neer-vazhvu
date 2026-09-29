@@ -8,6 +8,7 @@ import { useLanguage } from "@/lib/i18n/context";
 import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
 import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { measureWorst } from "@/lib/rivers/measure";
+import type { RiverInfo } from "@/content/rivers/types";
 // Shared types from the Chennai-baseline pollution + river-quality
 // models. Each city's industrial-sources-{cityId}.json conforms to
 // IndustrialPollutionData; PollutionSource is the per-row shape.
@@ -104,41 +105,6 @@ function mergeLineGeoms(geoms: Geometry[]): LineString | MultiLineString | null 
     : { type: "MultiLineString", coordinates: lines };
 }
 
-export interface RiverInfo {
-  display_name: string;
-  length_km_geom: number;
-  description: string;
-  upstream_terminus: string;
-  downstream_terminus: string;
-  feeds: string;
-  status: string;
-  cpcb_nwmp_stations: string[];
-  /** Polyline colour as a hex string (Leaflet takes CSS colours, not classes). */
-  color: string;
-  // Optional Tamil overrides. When the user has language=ta and the
-  // override is present, the *_ta version replaces its English sibling
-  // at render time. Falls back to English string if the override is
-  // omitted, so single-language cities (Chennai) need no schema change.
-  display_name_ta?: string;
-  description_ta?: string;
-  upstream_terminus_ta?: string;
-  downstream_terminus_ta?: string;
-  feeds_ta?: string;
-  status_ta?: string;
-  cpcb_nwmp_stations_ta?: string[];
-  /** Native-script name shown under the English name. Display-only, like the
-   *  ta name line - full per-language field overrides come with each city's
-   *  translation pass. One optional field per script rather than a single
-   *  `display_name_native`, so a city can carry more than one. */
-  display_name_hi?: string;
-  /** Native-script name shown under the English name (Telugu cities).
-   *  Display-only, same contract as display_name_hi - full te field
-   *  overrides come with Hyderabad's translation pass. */
-  display_name_te?: string;
-  display_name_bn?: string;
-  /** Native-script name shown under the English name (Marathi cities). */
-  display_name_mr?: string;
-}
 
 // CPCB reading shape used by the marker tooltip / colour-coding logic.
 // The full reading schema is now imported via RiverQualityData; the

@@ -1,0 +1,96 @@
+import type { DrainageLayerSpec } from "@/components/flood/drainage-network-map";
+
+/** English is the accessibility floor; other languages are optional and
+ *  fall back to English at render time (Madurai carries ta, Delhi will
+ *  carry hi after its translation pass). */
+export interface BilingualText {
+  en: string;
+  ta?: string;
+  hi?: string;
+}
+
+export interface HistoricalEvent {
+  year: number;
+  trigger: BilingualText;
+  impact: BilingualText;
+  /** Optional citation. Some flood events are well-attested but the
+   *  original news article has been removed from the publisher's site
+   *  - we'd rather drop the dead link than fabricate one. When absent,
+   *  the event card hides the citation footer entirely. */
+  source_url?: string;
+  source_label?: string;
+}
+
+export interface ExternalSource {
+  name: string;
+  description: BilingualText;
+  url: string;
+  cadence: string;
+}
+
+export interface FloodConfig {
+  headline: BilingualText;
+  /** Scope badge text (e.g. "Vaigai system scope", "Yamuna basin scope").
+   *  Config-driven so no city's system name leaks into another city's page. */
+  scope_label?: BilingualText;
+  /** Dam/barrage-release threshold, for cities whose flooding is
+   *  release-driven (Madurai's Vaigai, Delhi's Hathnikund). OPTIONAL: not
+   *  every flood geography has one. Hyderabad's flooding is rainfall plus
+   *  blocked storm-water drains, and Mumbai's is rainfall plus high tide -
+   *  requiring this field is what pushed Mumbai into its own component
+   *  rather than the shared narrative stack. Omit both and the threshold
+   *  card simply does not render. */
+  dam_release_threshold_cusecs?: number;
+  dam_release_note?: BilingualText;
+  /** The headline trigger for cities with no dam. Generic on purpose: the
+   *  value + unit + note shape fits any threshold a city actually has
+   *  (mm/hour of rainfall for Kolkata, and whatever the next city carries).
+   *  Hyderabad is the case that shows why this stays optional rather than
+   *  becoming the universal replacement: it has no dam release AND no
+   *  published drainage design capacity, so it renders neither card. */
+  primary_trigger?: {
+    value: number;
+    unit: BilingualText;
+    label: BilingualText;
+    note: BilingualText;
+  };
+  historical_events: HistoricalEvent[];
+  /** Optional storm-water drainage map for narrative cities that HOLD network
+   *  geometry but have none of the modelled hazard/hotspot layers the
+   *  interactive variant defaults to. Omit -> no map renders. */
+  drainage_map?: {
+    heading: BilingualText;
+    note: BilingualText;
+    zoom?: number;
+    layers: DrainageLayerSpec[];
+  };
+  /** Optional live operational register: a city that publishes, week by week,
+   *  where it actually sent crews. Counts are read from the artifact at render
+   *  rather than written into copy, because the artifact refreshes on a
+   *  schedule and hand-written counts would be wrong within the week. */
+  live_register?: {
+    heading: BilingualText;
+    note: BilingualText;
+    /** Artifact under public/ carrying `period` and `summary`. */
+    src: string;
+    sourceLabel: string;
+    sourceHref: string;
+  };
+  external_sources: ExternalSource[];
+  data_gaps: BilingualText[];
+  /** Cross-link card copy overrides. The flood.cross_link_* i18n defaults
+   *  carry Madurai's specifics (Vaigai dam / Vaigai river system); a second
+   *  narrative city overrides them here instead of leaking them. */
+  cross_links?: {
+    home_desc?: BilingualText;
+    rivers_label?: BilingualText;
+    rivers_desc?: BilingualText;
+    water_bodies_desc?: BilingualText;
+  };
+}
+
+/** Everything city-specific on /[cityId]/flood-risk (narrative variant). */
+export interface CityFloodContent {
+  metaDescription?: string;
+  config?: FloodConfig;
+}
