@@ -54,6 +54,15 @@ if (!ANTHROPIC_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY });
 
+const CITY_NARRATIVE_MODEL = "claude-sonnet-5";
+const WARD_NARRATIVE_MODEL = "claude-haiku-4-5-20251001";
+
+/** The response's text. Sonnet 5 thinks by default, so a thinking block can
+ *  precede the text; never assume content[0]. */
+function textOf(response: Anthropic.Message): string {
+  return response.content.find((b): b is Anthropic.TextBlock => b.type === "text")?.text ?? "";
+}
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface WardProfile {
@@ -258,8 +267,9 @@ DATA FRESHNESS:
   return parseJsonWithRetry<{ headline_en: string; headline_ta: string; body_en: string; body_ta: string }>(
     async () => {
       const response = await anthropic.messages.create({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4096,
+        model: CITY_NARRATIVE_MODEL,
+        max_tokens: 16000,
+        output_config: { effort: "low" },
         messages: [
           {
             role: "user",
@@ -283,7 +293,7 @@ Respond in this exact JSON format (no markdown, no code blocks):
           },
         ],
       });
-      return response.content[0].type === "text" ? response.content[0].text : "";
+      return textOf(response);
     },
     "city narrative",
   );
@@ -332,7 +342,7 @@ WARD ${p.ward_number} (${label}):
       }>>(
         async () => {
           const response = await anthropic.messages.create({
-            model: "claude-haiku-4-5-20251001",
+            model: WARD_NARRATIVE_MODEL,
             max_tokens: 8192,
             messages: [
               {
@@ -356,7 +366,7 @@ Respond in this exact JSON format (no markdown):
               },
             ],
           });
-          return response.content[0].type === "text" ? response.content[0].text : "";
+          return textOf(response);
         },
         `ward batch ${batch[0].ward_number}-${batch[batch.length - 1].ward_number}`,
       );
@@ -455,7 +465,7 @@ async function main() {
 
   console.log("Generating city narrative...");
   const cityNarrative = await generateCityNarrative(cityData);
-  await writeCityNarrative(cityNarrative, cityData.sourceDates, "claude-sonnet-4-20250514");
+  await writeCityNarrative(cityNarrative, cityData.sourceDates, CITY_NARRATIVE_MODEL);
 
   // Monthly: also generate ward narratives
   if (isMonthly) {
@@ -468,7 +478,7 @@ async function main() {
 
     console.log(`Generating narratives for ${profiles.length} wards...`);
     const wardNarratives = await generateWardNarratives(profiles);
-    await writeWardNarratives(wardNarratives, cityData.sourceDates, "claude-haiku-4-5-20251001");
+    await writeWardNarratives(wardNarratives, cityData.sourceDates, WARD_NARRATIVE_MODEL);
   }
 
   console.log("Done.");

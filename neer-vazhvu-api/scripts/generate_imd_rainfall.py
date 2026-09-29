@@ -179,6 +179,11 @@ def main() -> None:
     parser.add_argument(
         "--lng", type=float, default=None, help="Override grid lng (decimal degrees)"
     )
+    parser.add_argument(
+        "--list-cities",
+        action="store_true",
+        help="Print the cities that have a default grid, then exit",
+    )
     parser.add_argument("--start-year", type=int, default=START_YEAR)
     parser.add_argument("--end-year", type=int, default=date.today().year - 1)
     parser.add_argument(
@@ -187,6 +192,9 @@ def main() -> None:
         help="Output path (defaults to public/data/imd-rainfall-monthly[-{city}].json)",
     )
     args = parser.parse_args()
+    if args.list_cities:
+        print(" ".join(CITY_DEFAULTS))
+        return
 
     city_id = args.city.lower()
     defaults = CITY_DEFAULTS.get(city_id, (None, None, ""))
