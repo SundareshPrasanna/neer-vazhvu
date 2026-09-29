@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { FeatureCollection } from "geojson";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /* ── Ground-elevation bands (FABDEM) - data hook + palette ──────────────
    Leaflet-free on purpose: importable from SSR'd client components. The
@@ -32,8 +33,7 @@ export function useElevationBands(cityId: string, enabled: boolean) {
         .catch(() => !cancelled && setAvailable(false));
     }
     if (enabled && available && !data) {
-      fetch(`/data/elevation-bands-${cityId}.geojson`)
-        .then((r) => (r.ok ? (r.json() as Promise<FeatureCollection>) : null))
+      fetchJsonOrNull<FeatureCollection>(`/data/elevation-bands-${cityId}.geojson`)
         .then((d) => !cancelled && d && setData(d))
         .catch(() => {});
     }

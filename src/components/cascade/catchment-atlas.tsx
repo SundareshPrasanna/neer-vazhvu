@@ -13,6 +13,7 @@ import type { Layer, PathOptions } from "leaflet";
 import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 interface LakeProps {
   osm_id: number;
@@ -92,8 +93,7 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
   const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
-    fetch(`/data/cascade/${cityId}-cascade-lakes.geojson`)
-      .then((r) => r.json())
+    fetchJson<FeatureCollection>(`/data/cascade/${cityId}-cascade-lakes.geojson`)
       .then(setLakes)
       .catch(() => setLakes(null));
   }, [cityId]);
@@ -185,8 +185,9 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     setStreams(null);
     setDownflow(null);
     setLoading(true);
-    fetch(`/api/cascade/${cityId}/catchment?osm_id=${osmId}`)
-      .then((r) => (r.ok ? r.json() : null))
+    fetchJsonOrNull<{ catchment?: Feature; basin?: Geometry; streams?: FeatureCollection; downstream?: FeatureCollection }>(
+      `/api/cascade/${cityId}/catchment?osm_id=${osmId}`,
+    )
       .then((d) => {
         setCatchment(d?.catchment ?? null);
         setBasin(d?.basin ?? null);

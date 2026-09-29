@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useWardProfile, type WardProfile } from "./use-ward-profile";
 import { useWardRepresentatives, type RepresentativeData } from "./use-ward-representatives";
+import { fetchJsonShared } from "@/lib/data/fetch-json";
 
 export interface GroundwaterData {
   depthM: number | null;
@@ -51,8 +52,7 @@ export function useMyWardData(
 
     // The API returns the no-data shape for a city with no per-ward rows,
     // so the GW card renders an honest "not available for this city" state.
-    fetch(`/api/groundwater/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
-      .then((r) => r.json())
+    fetchJsonShared<GroundwaterData>(`/api/groundwater/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`)
       .then((d) => {
         if (!cancelled) {
           setGroundwater({

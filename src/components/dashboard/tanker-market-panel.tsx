@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils/format";
 import { useLanguage } from "@/lib/i18n/context";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 function tFmt(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
@@ -58,8 +59,7 @@ export function TankerMarketPanel({ cityId, cityDisplayName }: Props) {
   const [data, setData] = useState<SurveyData | null>(null);
 
   useEffect(() => {
-    fetch(`/data/${cityId}-tanker-survey.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<SurveyData>) : null))
+    fetchJsonOrNull<SurveyData>(`/data/${cityId}-tanker-survey.json`)
       .then(setData)
       .catch(() => setData(null));
   }, [cityId]);

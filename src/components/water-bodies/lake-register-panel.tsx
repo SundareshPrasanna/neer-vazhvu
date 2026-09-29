@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * Gazetted lake register panel.
@@ -53,9 +54,8 @@ export function LakeRegisterPanel({ cityId }: { cityId: string }) {
 
   useEffect(() => {
     let live = true;
-    fetch(`/data/${cityId}-lake-register.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: Register) => live && setReg(d))
+    fetchJson<Register>(`/data/${cityId}-lake-register.json`)
+      .then((d) => live && setReg(d))
       .catch(() => live && setErr(true));
     return () => {
       live = false;

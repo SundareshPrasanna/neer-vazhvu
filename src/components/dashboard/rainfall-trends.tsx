@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/lib/i18n/context";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 interface IMDRainfallData {
   source: string;
@@ -94,24 +95,14 @@ export function RainfallTrends({
       cityId === "chennai"
         ? "/data/imd-rainfall-monthly.json"
         : `/data/imd-rainfall-monthly-${cityId}.json`;
-    fetch(url)
-      .then((r) => {
-        if (!r.ok) {
-          setMissing(true);
-          return null;
-        }
-        return r.json();
-      })
-      .then((d) => {
-        if (d) setData(d);
-      })
+    fetchJsonOrNull<IMDRainfallData>(url)
+      .then((d) => (d ? setData(d) : setMissing(true)))
       .catch(() => setMissing(true));
     // Provisional recent months (daily-updated Open-Meteo fill for the gap
     // after IMD's last published month) - optional file, absent = no-op.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setRecent(null);
-    fetch(`/data/rainfall-recent-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<RecentRainfall>) : null))
+    fetchJsonOrNull<RecentRainfall>(`/data/rainfall-recent-${cityId}.json`)
       .then((d) => {
         if (d) setRecent(d);
       })

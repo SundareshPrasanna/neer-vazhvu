@@ -8,13 +8,12 @@ import type { Language } from "@/lib/i18n/translations";
 import { getZoneLabel } from "@/lib/utils/zone-label";
 import {
   filterWards,
-  type WardEntry,
-  type LocalityEntry,
   type ZoneEntry,
   type SearchResult,
   deriveZones,
   searchAll,
 } from "@/lib/utils/ward-filter";
+import { useLocalities, useWardList } from "@/lib/hooks/use-ward-list";
 
 const MAX_RECENT = 5;
 
@@ -59,8 +58,8 @@ interface WardSelectorProps {
 
 export function WardSelector({ onSelect, selectedWard, cityId }: WardSelectorProps) {
   const { t, language } = useLanguage();
-  const [wards, setWards] = useState<WardEntry[]>([]);
-  const [localities, setLocalities] = useState<LocalityEntry[]>([]);
+  const wards = useWardList(cityId);
+  const localities = useLocalities(cityId);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [recentWards, setRecentWards] = useState<number[]>([]);
@@ -81,24 +80,6 @@ export function WardSelector({ onSelect, selectedWard, cityId }: WardSelectorPro
     }),
     [t],
   );
-
-  useEffect(() => {
-    // For Chennai, hit the legacy unsuffixed API. For other cities, pass
-    // the cityId so the API can read the matching <city>-ward-profiles.json
-    // and (optional) <city>-localities.json. Localities is allowed to 404
-    // - some cities don't have a curated locality list yet, and the
-    // selector still works (search by ward # / zone name only).
-    const wardsUrl = `/api/wards?city=${encodeURIComponent(cityId)}`;
-    const locUrl = `/api/localities?city=${encodeURIComponent(cityId)}`;
-    fetch(wardsUrl)
-      .then((r) => r.json())
-      .then((d) => setWards(d.wards || []))
-      .catch(console.error);
-    fetch(locUrl)
-      .then((r) => (r.ok ? r.json() : { localities: [] }))
-      .then((d) => setLocalities(d.localities || []))
-      .catch(() => setLocalities([]));
-  }, [cityId]);
 
   const zones = useMemo<ZoneEntry[]>(() => deriveZones(wards), [wards]);
 

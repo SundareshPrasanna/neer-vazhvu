@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useState, type ReactNode } from "react";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 import { tryGetBasinManifest } from "@/lib/basins";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 // Leaflet needs the DOM; load both basin surfaces client-side only.
 const BasinAtlas = dynamic(
@@ -67,8 +68,7 @@ export function BasinAtlasClient(props: {
       window.history.replaceState(null, "", `/embed/basins/${basinId}`);
     }
     setActive({ manifest, inventory: null });
-    fetch(`/data/basins/${basinId}/inventory.json`)
-      .then((r) => (r.ok ? r.json() : null))
+    fetchJsonOrNull(`/data/basins/${basinId}/inventory.json`)
       .catch(() => null)
       .then((inv) => {
         setActive((cur) =>

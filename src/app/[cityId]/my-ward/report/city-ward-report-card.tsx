@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 interface WardRow {
   ward_number: number;
@@ -99,12 +100,8 @@ export function CityWardReportCard({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/data/ward-risk-${cityId}.json`)
-      .then((r) => {
-        if (!r.ok) throw new Error("Risk file not yet computed for this city");
-        return r.json() as Promise<RiskFile>;
-      })
-      .then(setRiskFile)
+    fetchJsonOrNull<RiskFile>(`/data/ward-risk-${cityId}.json`)
+      .then((d) => (d ? setRiskFile(d) : setError("Risk file not yet computed for this city")))
       .catch((e) => setError(e.message));
   }, [cityId]);
 

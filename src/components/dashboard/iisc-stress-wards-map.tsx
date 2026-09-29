@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/i18n/context";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 function tFmt(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
@@ -61,8 +62,7 @@ export function IIScStressWardsMap() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch("/data/bangalore-iisc-stress-wards-2025.json")
-      .then((r) => (r.ok ? (r.json() as Promise<StressData>) : Promise.reject()))
+    fetchJson<StressData>("/data/bangalore-iisc-stress-wards-2025.json")
       .then(setData)
       .catch(() => setError(true));
   }, []);

@@ -17,6 +17,7 @@ import {
   type SelectedCoastal,
 } from "@/types/coastal";
 import "leaflet/dist/leaflet.css";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 interface CoastalMapProps {
   selected: SelectedCoastal | null;
@@ -96,11 +97,11 @@ export function CoastalMap({
 
   useEffect(() => {
     Promise.all([
-      fetch(zonesUrl).then((r) => (r.ok ? r.json() : null)),
-      fetch(hotspotsUrl).then((r) => (r.ok ? r.json() : null)),
-      fetch(transectsUrl).then((r) => (r.ok ? r.json() : null)),
+      fetchJsonOrNull<FeatureCollection>(zonesUrl),
+      fetchJsonOrNull<FeatureCollection>(hotspotsUrl),
+      fetchJsonOrNull<FeatureCollection>(transectsUrl),
     ])
-      .then(([z, h, t]: [FeatureCollection | null, FeatureCollection | null, FeatureCollection | null]) => {
+      .then(([z, h, t]) => {
         setZones(z);
         setHotspots(h);
         setTransects(t);

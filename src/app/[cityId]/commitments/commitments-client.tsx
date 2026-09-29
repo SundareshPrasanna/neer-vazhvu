@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { isFeatureSupportedForCity } from "@/lib/cities/routing";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /* ── The Commitments Register ───────────────────────────────────────────
    Dated commitments by named institutions, with a verification lifecycle. UX contract (locked with
@@ -164,8 +165,7 @@ export default function CommitmentsClient({ cityId }: { cityId: string }) {
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    fetch(`/data/commitments-${cityId}.json`)
-      .then((r) => (r.ok ? (r.json() as Promise<CommitmentsFile>) : null))
+    fetchJsonOrNull<CommitmentsFile>(`/data/commitments-${cityId}.json`)
       .then((d) => (d ? setData(d) : setFailed(true)))
       .catch(() => setFailed(true));
   }, [cityId]);

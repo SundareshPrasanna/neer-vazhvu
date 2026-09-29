@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import type { FeatureCollection, Feature } from "geojson";
 import type { PathOptions } from "leaflet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /**
  * Storm-water drainage network map for the NARRATIVE flood variant.
@@ -85,8 +86,7 @@ export function DrainageNetworkMap({
     let live = true;
     Promise.all(
       layers.map((l) =>
-        fetch(l.url)
-          .then((r) => (r.ok ? r.json() : null))
+        fetchJsonOrNull(l.url)
           .catch(() => null)
           .then((d) => [l.url, toFeatureCollection(d, l)] as const),
       ),

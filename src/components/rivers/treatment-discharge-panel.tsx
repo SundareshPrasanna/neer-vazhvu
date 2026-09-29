@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /**
  * Treatment & discharge panel.
@@ -83,8 +84,8 @@ export function TreatmentDischargePanel({
   useEffect(() => {
     let live = true;
     Promise.all([
-      fetch(`/data/${cityId}-stps.json`).then((r) => (r.ok ? r.json() : Promise.reject(new Error("stp")))),
-      fetch(`/data/river-quality-${cityId}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetchJson(`/data/${cityId}-stps.json`),
+      fetchJsonOrNull(`/data/river-quality-${cityId}.json`).catch(() => null),
     ])
       .then(([s, rv]) => {
         if (!live) return;

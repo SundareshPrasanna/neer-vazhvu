@@ -53,6 +53,7 @@ import { useCityId } from "@/lib/hooks/use-city-id";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { gwStationsUrl, gwrBlocksUrl } from "@/lib/cities/data-paths";
 import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 function GroundwaterMapLoading() {
   const { t } = useLanguage();
@@ -103,14 +104,13 @@ function GroundwaterPageContent() {
     const wardParam = searchParams.get("ward");
 
     Promise.all([
-      fetch("/api/groundwater").then((r) => r.json()),
-      fetch("/api/groundwater/risk").then((r) => r.json()),
-      fetch(gwrBlocksUrl(cityId)).then((r) => r.json()),
-      fetch(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
-        .then((r) => r.json())
-        .catch(() => ({ stations: [] })),
+      fetchJson<GroundwaterApiResponse>("/api/groundwater"),
+      fetchJson<RiskApiResponse>("/api/groundwater/risk"),
+      fetchJson<{ blocks: GWBlock[] }>(gwrBlocksUrl(cityId)),
+      fetchJson<WrisStationsResponse>(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
+        .catch(() => ({ stations: [], totalStations: 0 }) as WrisStationsResponse),
     ])
-      .then(([gw, risk, gwrBlocks, wris]: [GroundwaterApiResponse, RiskApiResponse, { blocks: GWBlock[] }, WrisStationsResponse]) => {
+      .then(([gw, risk, gwrBlocks, wris]) => {
         setData(gw);
         setRiskApiData(risk);
         setBlocks(gwrBlocks.blocks ?? []);

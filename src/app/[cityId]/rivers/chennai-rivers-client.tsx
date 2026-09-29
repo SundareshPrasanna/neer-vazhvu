@@ -39,6 +39,7 @@ import {
 } from "@/lib/cities/data-paths";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface ChennaiRiversClientProps {
   cityId: string;
@@ -108,13 +109,13 @@ function RiversPageContent({ cityId, cityDisplayName, mapCenter, mapZoom, basin 
     const inletsUrl = sewageInletsUrl(cityId);
 
     Promise.all([
-      fetch(riverQualityUrl(cityId)).then((r) => r.json()),
-      fetch(industrialSourcesUrl(cityId)).then((r) => r.json()),
+      fetchJson<RiverQualityData>(riverQualityUrl(cityId)),
+      fetchJson<IndustrialPollutionData>(industrialSourcesUrl(cityId)),
       inletsUrl
-        ? fetch(inletsUrl).then((r) => r.json()).catch(() => null)
+        ? fetchJson<SewageInletData>(inletsUrl).catch(() => null)
         : Promise.resolve(null),
     ])
-      .then(([quality, pollution, inlets]: [RiverQualityData, IndustrialPollutionData, SewageInletData | null]) => {
+      .then(([quality, pollution, inlets]) => {
         setQualityData(quality);
         setSewageInletData(inlets);
         setPollutionData(pollution);

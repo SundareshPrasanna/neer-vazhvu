@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css";
 import type * as L from "leaflet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface StressWard {
   bbmp_ward_no: number;
@@ -41,8 +42,7 @@ export function IIScStressWardsLeafletMap({ wards }: Props) {
   const [gbaWards, setGbaWards] = useState<FeatureCollection | null>(null);
 
   useEffect(() => {
-    fetch("/geojson/bangalore-wards-2025.geojson")
-      .then((r) => r.json() as Promise<FeatureCollection>)
+    fetchJson<FeatureCollection>("/geojson/bangalore-wards-2025.geojson")
       .then(setGbaWards)
       .catch(() => setGbaWards({ type: "FeatureCollection", features: [] }));
   }, []);

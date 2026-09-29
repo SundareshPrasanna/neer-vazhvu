@@ -15,6 +15,7 @@ import {
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface ClimateRiskMapProps {
   cityId: string;
@@ -48,8 +49,7 @@ export function ClimateRiskMap({
 
   useEffect(() => {
     if (data) return; // content owns the data
-    fetch(`/geojson/${cityId}-sub-basins-risk.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-sub-basins-risk.geojson`)
       .then(setFetched)
       .catch(console.error);
   }, [cityId, data]);

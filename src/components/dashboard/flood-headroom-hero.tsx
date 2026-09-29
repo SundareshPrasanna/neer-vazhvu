@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { FloodChainConfig } from "@/lib/cities/types";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * "Flood-headroom" hero for the city dashboard.
@@ -224,9 +225,8 @@ export function FloodHeadroomHero({
 
   useEffect(() => {
     let live = true;
-    fetch(`/data/${cityId}-flood-chain.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: ChainData) => {
+    fetchJson<ChainData>(`/data/${cityId}-flood-chain.json`)
+      .then((d) => {
         if (live) {
           setData(d);
           setLoadedAt(Date.now());

@@ -13,10 +13,11 @@ import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { CorporationBoundaries } from "@/components/map/corporation-boundaries";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { useMapTiles } from "@/lib/utils/map-tiles";
-import { districtsAsBlocks } from "@/lib/groundwater/districts-as-blocks";
+import { districtsAsBlocks, type DistrictEntry } from "@/lib/groundwater/districts-as-blocks";
 import { SelectedWardHighlight } from "@/components/map/selected-ward-highlight";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
+import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /** Flies the map to a given center when it changes */
 function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string | null }) {
@@ -113,8 +114,7 @@ export function WardMap({
     // block assessment (Mumbai) or without a curated blocks file ship no
     // gwr-blocks geojson/json, and parsing the 404 HTML error page as JSON
     // throws a SyntaxError that leaves the map stuck loading.
-    fetch(blockGeoJsonUrl)
-      .then((r) => (r.ok ? r.json() : null))
+    fetchJsonOrNull<GeoJSON.FeatureCollection>(blockGeoJsonUrl)
       .then(setBlockGeoJSON)
       .catch(console.error)
       .finally(() => setBlockGeoResolved(true));
@@ -124,18 +124,15 @@ export function WardMap({
     // alone left the CHOROPLETH still reading an empty array - Gurugram drew
     // six polygons in the "no data" grey while the page title and legend, which
     // read the client's copy, said the data was there.
-    fetch(blocksJsonUrl)
-      .then((r) => (r.ok ? r.json() : { blocks: [] }))
-      .then((d) => setBlocks(districtsAsBlocks(d)))
+    fetchJsonOrNull<{ blocks?: GWBlock[]; districts?: DistrictEntry[] }>(blocksJsonUrl)
+      .then((d) => setBlocks(districtsAsBlocks(d ?? {})))
       .catch(console.error);
 
     // Static gw-stations.json is Chennai's fallback metadata bundle;
     // Bangalore has no equivalent file (live WRIS readings come through
-    // the wrisStations prop instead). Guard r.ok so a 404 doesn't try to
-    // parse the Next.js HTML error page as JSON.
-    fetch(stationsJsonUrl)
-      .then((r) => (r.ok ? r.json() : { stations: [] }))
-      .then((d) => setStations(d.stations ?? []))
+    // the wrisStations prop instead), so a 404 is an empty list.
+    fetchJsonOrNull<{ stations?: GWStation[] }>(stationsJsonUrl)
+      .then((d) => setStations(d?.stations ?? []))
       .catch(() => setStations([]));
   }, [wardGeoJsonUrl, blockGeoJsonUrl, blocksJsonUrl, stationsJsonUrl]);
 

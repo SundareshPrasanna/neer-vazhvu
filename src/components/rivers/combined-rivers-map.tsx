@@ -15,6 +15,7 @@ import { useMapTiles } from "@/lib/utils/map-tiles";
 import { computeRiverStatus } from "@/lib/utils/river-classification";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
+import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /** Flies the map to a given center when it changes */
 function FlyToCenter({ center }: { center: [number, number] }) {
@@ -88,10 +89,10 @@ export function CombinedRiversMap({
 
   useEffect(() => {
     Promise.all([
-      fetch(riversGeoJsonUrl).then((r) => r.json()),
-      fetch(industrialZonesGeoJsonUrl).then((r) => (r.ok ? r.json() : null)),
+      fetchJson<FeatureCollection>(riversGeoJsonUrl),
+      fetchJsonOrNull<FeatureCollection>(industrialZonesGeoJsonUrl),
     ])
-      .then(([rivers, zones]: [FeatureCollection, FeatureCollection | null]) => {
+      .then(([rivers, zones]) => {
         setRiversGeoJSON(rivers);
         setZonesGeoJSON(zones);
       })

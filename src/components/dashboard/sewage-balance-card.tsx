@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 /**
  * "Where does this city's sewage actually go" card.
@@ -84,8 +85,7 @@ export function SewageBalanceCard({ cityId }: { cityId: string }) {
 
   useEffect(() => {
     let live = true;
-    fetch(`/data/${cityId}-sewage-balance.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+    fetchJson<SewageBalanceFile>(`/data/${cityId}-sewage-balance.json`)
       .then((d) => live && setData(d))
       .catch(() => live && setFailed(true));
     return () => {

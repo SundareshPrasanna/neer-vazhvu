@@ -38,6 +38,7 @@ import { getWardGeoJSON } from "@/lib/data/ward-geo";
 import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
+import { fetchJson } from "@/lib/data/fetch-json";
 
 interface FloodRiskMapProps {
   cityId: string;
@@ -96,33 +97,27 @@ export function FloodRiskMap({
 
   // Fetch data on mount
   useEffect(() => {
-    fetch(`/geojson/${cityId}-flood-hazard-zones.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-flood-hazard-zones.geojson`)
       .then(setHazardGeo)
       .catch(console.error);
 
-    fetch(`/geojson/${cityId}-flood-inundation-depth.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-flood-inundation-depth.geojson`)
       .then(setDepthGeo)
       .catch(console.error);
 
-    fetch(`/geojson/${cityId}-flood-2015-hotspots.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-flood-2015-hotspots.geojson`)
       .then(setHotspot2015Geo)
       .catch(console.error);
 
-    fetch(`/geojson/${cityId}-flood-2020-hotspots.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-flood-2020-hotspots.geojson`)
       .then(setHotspot2020Geo)
       .catch(console.error);
 
-    fetch(`/geojson/${cityId}-drainage.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-drainage.geojson`)
       .then(setDrainageGeo)
       .catch(console.error);
 
-    fetch(`/geojson/${cityId}-rivers.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-rivers.geojson`)
       .then(setRiversGeo)
       .catch(console.error);
 
@@ -136,8 +131,7 @@ export function FloodRiskMap({
       .then(setWardsGeo)
       .catch(console.error);
 
-    fetch(`/geojson/${cityId}-sewerage.geojson`)
-      .then((r) => r.json())
+    fetchJson<GeoJSON.FeatureCollection>(`/geojson/${cityId}-sewerage.geojson`)
       .then(setSewerageGeo)
       .catch(console.error);
   }, [cityId]);

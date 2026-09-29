@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useLanguage } from "@/lib/i18n/context";
 import { riverQualityUrl, wardProfilesUrl } from "@/lib/cities/data-paths";
+import { fetchJsonShared } from "@/lib/data/fetch-json";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -154,44 +155,18 @@ interface RiverQuality {
   }>;
 }
 
-// ── Module-level caches ──────────────────────────────────────────────────────
-// Per-city caches so a Chennai consumer and a Madurai consumer in the
-// same session don't fight over a single shared promise.
-
-const profilesPromiseByCity = new Map<string, Promise<WardProfile[]>>();
-const riverPromiseByCity = new Map<string, Promise<RiverQuality>>();
+// Both loaders share one request per city per session (fetchJsonShared keys
+// on the URL, which carries the city).
 
 export function loadProfiles(cityId: string): Promise<WardProfile[]> {
-  let p = profilesPromiseByCity.get(cityId);
-  if (!p) {
-    p = fetch(wardProfilesUrl(cityId))
-      .then((r) => r.json())
-      // Legacy cities ship a bare array; NVDM-migrated cities (Madurai
-      // onward) wrap it as { ...envelope, wards: [...] }. Accept both.
-      .then((raw: WardProfile[] | { wards: WardProfile[] }) =>
-        Array.isArray(raw) ? raw : raw.wards,
-      )
-      .catch((err) => {
-        profilesPromiseByCity.delete(cityId);
-        throw err;
-      });
-    profilesPromiseByCity.set(cityId, p);
-  }
-  return p;
+  // Legacy cities ship a bare array; NVDM-migrated cities (Madurai onward)
+  // wrap it as { ...envelope, wards: [...] }. Accept both.
+  return fetchJsonShared<WardProfile[] | { wards: WardProfile[] }>(wardProfilesUrl(cityId))
+    .then((raw) => (Array.isArray(raw) ? raw : raw.wards));
 }
 
 function loadRiverQuality(cityId: string): Promise<RiverQuality> {
-  let p = riverPromiseByCity.get(cityId);
-  if (!p) {
-    p = fetch(riverQualityUrl(cityId))
-      .then((r) => r.json())
-      .catch((err) => {
-        riverPromiseByCity.delete(cityId);
-        throw err;
-      });
-    riverPromiseByCity.set(cityId, p);
-  }
-  return p;
+  return fetchJsonShared<RiverQuality>(riverQualityUrl(cityId));
 }
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
