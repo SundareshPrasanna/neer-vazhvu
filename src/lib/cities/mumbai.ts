@@ -260,12 +260,8 @@ export const MUMBAI: PlaceConfig = {
   // The 9 municipal corporations of the MMR (boundaries in
   // public/geojson/mumbai-corporations-2024.geojson, from OSM). The corporation
   // is the region's always-present comparable sub-unit; ward drill-down + deep
-  // data are per-corporation enrichments (the `data` flags), only fully present
-  // for BMC today. center/bbox are OSM-derived. servedBySourceCodes wires the
-  // source -> corporation supply graph; only BMC's edges are known at P0 (the
-  // 7 lakes) - the rest (Barvi/Morbe/Surya/Hetawane/Ulhas) land in P2 once those
-  // sources are added to waterSources. wardCount/data for non-BMC corps stay
-  // null/false until their data is sourced (shown as named gaps, not faked).
+  // data are fully present only for BMC today. center/bbox are OSM-derived.
+  // wardCount for non-BMC corps stays null until sourced (a named gap, not faked).
   corporations: [
     {
       corporationId: 'bmc',

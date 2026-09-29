@@ -6,14 +6,6 @@ export function formatNumber(n: number, decimals = 0): string {
   });
 }
 
-/** Format mcft values with appropriate precision */
-export function formatMcft(mcft: number): string {
-  if (mcft >= 1000) {
-    return `${formatNumber(mcft, 0)} mcft`;
-  }
-  return `${formatNumber(mcft, 1)} mcft`;
-}
-
 /** Format percentage */
 export function formatPct(pct: number): string {
   return `${pct.toFixed(1)}%`;
@@ -36,18 +28,4 @@ export function interpolate(template: string, params: Record<string, string | nu
     result = result.replace(`{${key}}`, String(value));
   }
   return result;
-}
-
-/** Format date for "Updated X ago" style display */
-export function formatRelativeDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffHours < 1) return 'just now';
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays === 1) return 'yesterday';
-  return `${diffDays} days ago`;
 }

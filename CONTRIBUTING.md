@@ -219,7 +219,7 @@ Current workflow note:
 - **Frontend**: `npm run test` (runs `tsx --test` for utility tests) and `npm run build` (catches type errors)
 - **Python API**: `cd neer-vazhvu-api && pytest`
 - **i18n validation**: `npm run i18n:check` (verifies TA + KN translations exist for all keys)
-- Test coverage is thin — writing tests is a great way to contribute! See [todo_tests.md](todo_tests.md) for the test roadmap.
+- Test coverage is thin, and writing tests is a great way to contribute. See [docs/backlog.md](docs/backlog.md) for open test work.
 
 ## Areas Where Help Is Needed
 
