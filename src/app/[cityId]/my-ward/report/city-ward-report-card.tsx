@@ -85,6 +85,11 @@ function MetricRow({
   );
 }
 
+function isPercentileModel(file: RiskFile): boolean {
+  const w = file.wards?.[0];
+  return !!file.grade_counts && !!w && "pct_gw_depth" in w && "pct_wb_health" in w;
+}
+
 export function CityWardReportCard({
   cityId,
   cityDisplayName,
@@ -101,7 +106,12 @@ export function CityWardReportCard({
 
   useEffect(() => {
     fetchJsonOrNull<RiskFile>(`/data/ward-risk-${cityId}.json`)
-      .then((d) => (d ? setRiskFile(d) : setError("Risk file not yet computed for this city")))
+      .then((d) =>
+        // The card renders Madurai's model (grade counts, three percentile
+        // factors); other cities' risk files score different factors, so they
+        // get the not-available note rather than a crash or Madurai's weights.
+        d && isPercentileModel(d) ? setRiskFile(d) : setError("Risk file not in the report card's model"),
+      )
       .catch((e) => setError(e.message));
   }, [cityId]);
 
@@ -128,11 +138,7 @@ export function CityWardReportCard({
          instruction addressed to us, rendered to readers. Say what is
          missing and point somewhere useful instead. */
       <div className="max-w-3xl mx-auto p-6 text-sm text-slate-600 dark:text-slate-400">
-        <p>
-          The ward report card is not available for {cityDisplayName} yet. The
-          composite ward risk score behind it has not been published for this
-          city.
-        </p>
+        <p>The ward report card is not available for {cityDisplayName} yet.</p>
         <p className="mt-2">
           The ward map and the ward rankings cover {cityDisplayName} in the
           meantime.
