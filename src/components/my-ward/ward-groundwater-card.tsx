@@ -8,6 +8,7 @@ import type { GroundwaterData } from "@/lib/hooks/use-my-ward-data";
 import type { WardProfile, WardGroundwaterAssessment } from "@/lib/hooks/use-ward-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyWardCity } from "./city-context";
+import { wardSources } from "@/content/my-ward/sources";
 
 const STATUS_COLORS: Record<string, string> = {
   low: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -43,16 +44,10 @@ interface Props {
   loading: boolean;
 }
 
-/* Cities with their own groundwater-source citation. The unsuffixed key
-   names Tamil Nadu's Year Book, which is right for Chennai and Madurai and
-   WRONG for everyone else - Delhi was citing Tamil Nadu in production until
-   2026-07-26. Add a city here the moment it gets its own groundwater source. */
-const CITY_GW_SOURCE_KEYS = new Set(["bangalore", "mumbai", "delhi"]);
-
 export function WardGroundwaterCard({ wardNumber, groundwater, profile, loading }: Props) {
-  const { cityId } = useMyWardCity();
+  const { cityId, cityPrefix } = useMyWardCity();
   const { t } = useLanguage();
-  const { cityPrefix } = useMyWardCity();
+  const source = wardSources(cityId).gw;
 
   if (loading) {
     return (
@@ -191,7 +186,7 @@ export function WardGroundwaterCard({ wardNumber, groundwater, profile, loading 
           <p>{t("ward.depth_note1")}</p>
           <p>{t("ward.depth_note2")}</p>
           <p>{t("my_ward.gw_seasonal_note")}</p>
-          <p>{t("my_ward.gw_source")}</p>
+          {source && <p>{t(source)}</p>}
         </div>
 
         {/* History chart */}
@@ -214,6 +209,7 @@ function CgwbAssessmentCard({
 }) {
   const { cityId } = useMyWardCity();
   const { t } = useLanguage();
+  const { gwYearbook, gwNoWell } = wardSources(cityId);
   const block = assessment.block;
   const well = assessment.nearest_well;
   const blockBadgeClass =
@@ -294,18 +290,16 @@ function CgwbAssessmentCard({
               </div>
             </div>
           </div>
-        ) : (
+        ) : gwNoWell ? (
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.gw_no_nearest_well_${cityId}` : "my_ward.gw_no_nearest_well")}
-            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t(gwNoWell)}</p>
           </div>
-        )}
+        ) : null}
 
         {/* Explanatory notes */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           <p>{t("my_ward.gw_block_note")}</p>
-          <p>{t(CITY_GW_SOURCE_KEYS.has(cityId) ? `my_ward.gw_source_cgwb_yearbook_${cityId}` : "my_ward.gw_source_cgwb_yearbook")}</p>
+          {gwYearbook && <p>{t(gwYearbook)}</p>}
         </div>
       </CardContent>
     </Card>

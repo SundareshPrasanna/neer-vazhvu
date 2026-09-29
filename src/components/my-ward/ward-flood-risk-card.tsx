@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 import { isSectionUnavailable } from "@/lib/hooks/use-ward-profile";
 import { useMyWardCity } from "./city-context";
+import { wardSources } from "@/content/my-ward/sources";
 
 const HAZARD_COLORS: Record<string, { bg: string; bar: string }> = {
   very_high: { bg: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", bar: "bg-red-500" },
@@ -21,10 +22,10 @@ interface Props {
 }
 
 export function WardFloodRiskCard({ wardNumber, profile }: Props) {
-  const { cityId } = useMyWardCity();
+  const { cityId, cityPrefix } = useMyWardCity();
   const { t } = useLanguage();
-  const { cityPrefix } = useMyWardCity();
   const flood = profile.flood;
+  const source = wardSources(cityId).flood;
 
   // Sections marked not_available (e.g. Madurai - no public CFLOWS layer)
   // render an honest "data not yet sourced" card rather than fabricating
@@ -34,7 +35,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
       <Card>
         <CardHeader>
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.flood_risk")}
+            {t("nav.flood_risk")}
           </h2>
         </CardHeader>
         <CardContent>
@@ -62,7 +63,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
       <Card>
         <CardHeader>
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.flood_risk")}
+            {t("nav.flood_risk")}
           </h2>
         </CardHeader>
         <CardContent>
@@ -81,7 +82,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
       <Card>
         <CardHeader>
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.flood_risk")}
+            {t("nav.flood_risk")}
           </h2>
         </CardHeader>
         <CardContent>
@@ -126,7 +127,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
       <Card>
         <CardHeader>
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.flood_risk")}
+            {t("nav.flood_risk")}
           </h2>
         </CardHeader>
         <CardContent>
@@ -151,7 +152,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase">
-            {t("my_ward.flood_risk")}
+            {t("nav.flood_risk")}
           </h2>
           <Link
             href={`${cityPrefix}/flood-risk?ward=${wardNumber}`}
@@ -256,7 +257,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
         {/* Source & caveats */}
         <div className="text-[10px] text-slate-400 dark:text-slate-500 space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2">
           <p>{t("my_ward.flood_hazard_note")}</p>
-          <p>{t(cityId === "bangalore" || cityId === "mumbai" ? `my_ward.flood_source_${cityId}` : "my_ward.flood_source")}</p>
+          {source && <p>{t(source)}</p>}
         </div>
       </CardContent>
     </Card>

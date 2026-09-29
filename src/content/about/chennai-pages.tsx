@@ -249,7 +249,7 @@ export function ChennaiPageDescriptions({ cityId: _cityId, cityName: _cityName }
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-slate-500 dark:text-slate-400 border-b">
-                <th className="pb-2 font-medium">{t("about.wb_col_name")}</th>
+                <th className="pb-2 font-medium">{t("wb_panel.water_body")}</th>
                 <th className="pb-2 font-medium">{t("about.wb_col_status")}</th>
                 <th className="pb-2 font-medium">{t("about.wb_col_source_ref")}</th>
               </tr>
@@ -419,7 +419,7 @@ export function ChennaiPageDescriptions({ cityId: _cityId, cityName: _cityName }
 
         {/* Uplift planner methodology */}
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-4 bg-white dark:bg-slate-900/40 space-y-3">
-          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t("about.uplift_title")}</h4>
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{t("uplift.title")}</h4>
           <p className="text-sm text-slate-600 dark:text-slate-400">
             {t("about.uplift_desc")}
           </p>

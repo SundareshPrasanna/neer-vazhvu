@@ -207,7 +207,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
         {/* Supply chain visualization - horizontal pipeline */}
         <div>
           <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
-            {t("supply_overview.chain_label")}
+            {t("hero.alloc_chain_label")}
           </h3>
           {/* Optional-chained deliberately. `supply_chain` and `_sources`
            *  were the only two arrays in this component mapped unguarded,

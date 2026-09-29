@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { translations, isLanguageCode } from "./translations";
-import type { Language, LanguageCode } from "./translations";
+import type { I18nText, Language, LanguageCode } from "./translations";
 import { resolveAvailableLanguagesForPath } from "./available-languages";
 
 interface LanguageContextValue {
@@ -15,7 +15,7 @@ interface LanguageContextValue {
    */
   availableLanguages: readonly LanguageCode[];
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: I18nText) => string;
 }
 
 const STORAGE_KEY = "neer-vazhvu-lang";
@@ -24,7 +24,7 @@ const LanguageContext = createContext<LanguageContextValue>({
   language: "en",
   availableLanguages: ["en"],
   setLanguage: () => {},
-  t: (key) => translations[key]?.en ?? key,
+  t: (key) => (typeof key === "string" ? (translations[key]?.en ?? key) : key.en),
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
@@ -81,9 +81,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setStoredLanguage(lang);
   }
 
-  function t(key: string): string {
-    const entry = translations[key];
-    if (!entry) return key;
+  function t(key: I18nText): string {
+    const entry = typeof key === "string" ? translations[key] : key;
+    if (!entry) return key as string;
     return entry[language] ?? entry.en;
   }
 

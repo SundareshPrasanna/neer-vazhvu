@@ -184,7 +184,7 @@ function Hotspot2015Content({ props }: { props: { location: string; vulnerabilit
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.inundation_ft}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.ward")} / {t("flood.zone_label")}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("ward.ward")} / {t("flood.zone_label")}</div>
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">W{props.ward} / Z{props.zone}</div>
         </div>
       </div>
@@ -226,7 +226,7 @@ function DrainageContent({ props }: { props: DrainageProperties }) {
   return (
     <>
       <div>
-        <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.waterway_type")}</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400">{t("wb_panel.type")}</div>
         <div className="flex items-center gap-2">
           <span className="inline-block w-6 h-0 border-t-2" style={{ borderColor: color }} />
           <span className="text-sm font-semibold" style={{ color }}>{props.drain_type}</span>
@@ -246,14 +246,14 @@ function DrainageContent({ props }: { props: DrainageProperties }) {
       )}
       {(props.ward || props.zone) && (
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.ward")} / {t("flood.zone_label")}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("ward.ward")} / {t("flood.zone_label")}</div>
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.ward} / {props.zone}</div>
         </div>
       )}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {props.drain_len > 0 && (
           <div>
-            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.length")}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("rivers.length")}</div>
             <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{Math.round(props.drain_len)} m</div>
           </div>
         )}
@@ -371,7 +371,7 @@ function STPContent({ props }: { props: STPProperties }) {
       <ConnectedInsight
         messageKey="connected.flood_stp_river"
         linkHref="/rivers"
-        linkKey="connected.flood_stp_river_link"
+        linkKey="connected.wb_river_link"
       />
     </>
   );
@@ -436,7 +436,7 @@ function PumpingMainContent({ props }: { props: PumpingMainProperties }) {
         )}
         {props.length_m != null && (
           <div>
-            <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.pipe_length")}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{t("rivers.length")}</div>
             <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.length_m} m</div>
           </div>
         )}

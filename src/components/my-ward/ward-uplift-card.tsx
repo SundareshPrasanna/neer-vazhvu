@@ -237,7 +237,7 @@ export function WardUpliftCard({ wardNumber }: Props) {
               <thead>
                 <tr className="text-left text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-800">
                   <th className="pb-1.5 pr-2">{t("uplift.col_factor")}</th>
-                  <th className="pb-1.5 pr-2 text-right">{t("uplift.col_current")}</th>
+                  <th className="pb-1.5 pr-2 text-right">{t("uplift.grade_before")}</th>
                   <th className="pb-1.5 pr-2 text-right">{t("uplift.col_city_median")}</th>
                   <th className="pb-1.5 pr-2 text-right">{t("uplift.col_gap")}</th>
                   <th className="pb-1.5 text-center">{t("uplift.col_grade")}</th>

@@ -96,7 +96,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
               <div className="flex gap-3">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
                 <div>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">{t("about.current_trend")}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{t("hero.current_trend")}</span>
                   <span className="text-slate-600 dark:text-slate-400"> {t("about.current_desc")}</span>
                 </div>
               </div>

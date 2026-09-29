@@ -64,7 +64,7 @@ export function WardContext({ wardNumber, groundwater, hideGroundwater }: WardCo
         {!hideGroundwater && gw && gw.depthM != null && (
           <ContextRow
             href={`/${cityId}/groundwater?ward=${wardNumber}`}
-            label={t("ward_ctx.groundwater")}
+            label={t("my_ward.groundwater")}
             value={`${gw.depthM.toFixed(1)}m, ${t(`ward_ctx.trend_${gw.trend}`)}`}
             badge={gw.riskLevel !== "noData" ? gw.riskLevel : undefined}
           />

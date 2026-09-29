@@ -34,7 +34,7 @@ export function ViewModeToggle({ value, onChange, catchmentsAvailable = false, c
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5">
-        {btn("water-bodies", t("wb.view_bodies"))}
+        {btn("water-bodies", t("nav.water_bodies"))}
         {btn("restoration", t("wb.view_restoration"))}
         {catchmentsAvailable && btn("catchments", t("wb.view_catchments"))}
       </div>

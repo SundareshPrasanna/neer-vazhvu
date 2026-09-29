@@ -41,7 +41,7 @@ function AiFreshness({ sourceDates, t }: { sourceDates: AiNarrative["source_date
     parts.push(`${t("ai_narrative.reservoirs")}: ${sourceDates.reservoir_date}`);
   }
   if (sourceDates.gw_period) {
-    parts.push(`${t("ai_narrative.groundwater")}: ${sourceDates.gw_period}`);
+    parts.push(`${t("my_ward.groundwater")}: ${sourceDates.gw_period}`);
   }
   if (sourceDates.risk_date) {
     parts.push(`${t("ai_narrative.risk_scores")}: ${sourceDates.risk_date}`);

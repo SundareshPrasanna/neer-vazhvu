@@ -108,7 +108,7 @@ export const METRICS: MetricDef[] = [
   },
   {
     key: "drainage",
-    label: "report.metric_drainage",
+    label: "uplift.factor_drainage",
     description: "report.metric_drainage_desc",
     unit: "km/sq km",
     extract: (p) => {

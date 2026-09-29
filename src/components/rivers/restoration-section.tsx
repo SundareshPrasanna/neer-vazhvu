@@ -27,7 +27,7 @@ const STATUS_I18N: Record<RestorationStatus, string> = {
 const CATEGORY_I18N: Record<RestorationCategory, string> = {
   eco_restoration: "restoration.cat_eco",
   river_restoration: "restoration.cat_river",
-  infrastructure: "restoration.cat_infra",
+  infrastructure: "my_ward.infrastructure",
   canal_restoration: "restoration.cat_canal",
 };
 

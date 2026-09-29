@@ -198,7 +198,7 @@ export function WardDetailPanel({ ward, riskData, onClose }: WardDetailPanelProp
             <ConnectedInsight
               messageKey="connected.ward_seasonal"
               linkHref="#ward-history"
-              linkKey="connected.ward_seasonal_link"
+              linkKey="connected.ward_trend_link"
               scrollTarget="ward-history"
             />
           )}

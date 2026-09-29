@@ -565,7 +565,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
           <ConnectedInsight
             messageKey="connected.wb_lost_proximity"
             linkHref="/water-bodies?mode=existing"
-            linkKey="connected.wb_lost_link"
+            linkKey="connected.flood_drainage_wb_link"
           />
         </div>
       )}
@@ -815,7 +815,7 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
         {/* Status */}
         <div className="px-4 pt-3">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-            {t("wb_panel.existing")}
+            {t("wb_legend.existing")}
           </span>
         </div>
 
@@ -902,7 +902,7 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
 
               <div className="px-4 pb-3">
                 <p className="text-xs text-slate-400 dark:text-slate-500">
-                  <span className="font-medium">{t("wb_panel.source")}</span>{" "}
+                  <span className="font-medium">{t("story.source")}</span>{" "}
                   {t("wb_panel.census_source_label")}
                 </p>
               </div>
@@ -1002,7 +1002,7 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
         {/* Source */}
         <div className="px-4 pb-4">
           <p className="text-xs text-slate-400 dark:text-slate-500">
-            <span className="font-medium">{t("wb_panel.source")}</span>{" "}
+            <span className="font-medium">{t("story.source")}</span>{" "}
             {t("wb_panel.census_source_label")}
           </p>
         </div>
@@ -1112,7 +1112,7 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
       {/* Source */}
       <div className="px-4 pb-4">
         <p className="text-xs text-slate-400 dark:text-slate-500">
-          <span className="font-medium">{t("wb_panel.source")}</span> {props.source}
+          <span className="font-medium">{t("story.source")}</span> {props.source}
         </p>
       </div>
       {resolvedWard && (
