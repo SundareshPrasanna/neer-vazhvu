@@ -694,6 +694,7 @@ export const translations: Record<string, TranslationEntry> = {
   "gw_page.loading_data": { en: "Loading groundwater data...",    ta: "நிலத்தடி நீர் தரவு ஏற்றுகிறது...", kn: "ಅಂತರ್ಜಲ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
   "gw_page.title": { en: "Groundwater Map",                ta: "நிலத்தடி நீர் வரைபடம்", kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
   "gw_page.no_data": { en: "No groundwater data available yet.", ta: "இன்னும் நிலத்தடி நீர் தரவு இல்லை.", kn: "ಇನ್ನೂ ಅಂತರ್ಜಲ ದತ್ತಾಂಶ ಲಭ್ಯವಿಲ್ಲ." },
+  "gw_page.no_data_hint": { en: "Ward readings are loaded from OpenCity's groundwater dataset by the monthly data pipeline.", ta: "வார்டு அளவீடுகள் மாதாந்திர தரவுச் செயல்முறை மூலம் OpenCity நிலத்தடி நீர் தரவுத்தொகுப்பிலிருந்து ஏற்றப்படுகின்றன.", kn: "ವಾರ್ಡ್ ಮಾಪನಗಳನ್ನು ಮಾಸಿಕ ದತ್ತಾಂಶ ಪ್ರಕ್ರಿಯೆಯು OpenCity ಅಂತರ್ಜಲ ದತ್ತಾಂಶದಿಂದ ಲೋಡ್ ಮಾಡುತ್ತದೆ." },
   "gw_page.showing_for": { en: "Showing data for",               ta: "காட்டப்படும் காலம்:", kn: "ತೋರಿಸಲಾದ ಅವಧಿ:" },
   "gw_page.city_avg": { en: "City average:",                  ta: "நகர சராசரி:", kn: "ನಗರ ಸರಾಸರಿ:" },
   "gw_page.depth_toggle": { en: "Depth",                          ta: "ஆழம்", kn: "ಆಳ" },

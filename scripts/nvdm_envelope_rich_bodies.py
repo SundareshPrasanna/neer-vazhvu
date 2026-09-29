@@ -2,17 +2,9 @@
 
 The rich-body pipeline is body-agnostic and its provenance is identical
 whichever city a body sits in: the same six producers, the same registered
-sources, the same method. Copying that block into each nvdm_envelope_<city>.py
-was already two copies (Mumbai, Hyderabad) and Delhi, Kolkata, Pune and
-Gurugram would have made six. So it lives here once instead, and scope is
-derived the same way build_dataset_catalogue.py derives it: by reading
-city_id out of the rich-body registry, which is the only place that mapping
-is authoritative.
-
-This also sidesteps a real blocker. nvdm_envelope_delhi.py currently refuses
-to run at all because an unrelated artifact (bbmb-dam-storage) has no
-provenance map, and Kolkata, Pune and Gurugram have no envelope script of
-their own. Rich bodies should not wait on any of that.
+sources, the same method. So it lives here once, and scope is derived the
+same way build_dataset_catalogue.py derives it: by reading city_id out of the
+rich-body registry, which is the only place that mapping is authoritative.
 
 Usage:
   python scripts/nvdm_envelope_rich_bodies.py
@@ -200,7 +192,7 @@ def registry_cities() -> dict[str, str]:
 
 
 def dump(merged: dict, raw: str) -> str:
-    """Preserve the artifact's storage style (see nvdm_envelope_mumbai.dump)."""
+    """Preserve the artifact's storage style: compact one-liner or indented."""
     if raw.count("\n") <= 3:
         head = raw[:100_000]
         compact = head.count('","') + head.count('":"') >= head.count('", "') + head.count('": "')

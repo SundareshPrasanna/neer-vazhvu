@@ -234,7 +234,7 @@
 |---|---|
 | **Source** | [India WRIS Ground Water Level API](https://indiawris.gov.in/Dataset/Ground%20Water%20Level) / CGWB |
 | **Method** | Python scraper `neer-vazhvu-api/app/scrapers/wris.py` pulling daily station-level readings for Chennai district; upserted into Supabase via `pipeline.py` |
-| **Frequency** | Daily fetch (as part of the monthly pipeline run); historical backfill via `neer-vazhvu-api/scripts/backfill_wris_metadata.py` |
+| **Frequency** | Daily fetch (as part of the monthly pipeline run); one-time historical backfill (script retired) |
 | **Coverage** | ~35 CGWB stations in Chennai district (mix of Manual dug wells and Telemetric DWLR bore wells) |
 | **Fields** | `station_code`, `station_name`, `latitude`, `longitude`, `reading_date`, `depth_to_water_m`, `acquisition_mode` (Manual / Telemetric), `agency`, `district`, `well_type` (Dug Well / Bore Well / Piezometer), `well_depth_m`, `well_aquifer_type` (Unconfined / Confined / Semi Confined) |
 | **Storage** | Supabase tables `groundwater_wris` (raw time series) and `groundwater_wris_latest` view (per-station latest reading + quality flag) |
@@ -267,7 +267,7 @@ The view also returns `recent_count` and `recent_range_m` so downstream UIs can 
 - A handful of stations have `Not Available` metadata fields - these are normalized to NULL in the stations API route.
 - The stuck-sensor detector currently only flags Telemetric stations. Manual stations with flat readings are assumed to be seasonal and left alone.
 - Well metadata (`well_type`, `well_depth_m`, `well_aquifer_type`) is backfilled from the WRIS metadata endpoint; stations added after the last backfill will have NULLs until the next pipeline run.
-- To backfill metadata on existing rows: `cd neer-vazhvu-api && python scripts/backfill_wris_metadata.py`
+- Metadata on rows that predate the pipeline was filled by a one-time backfill script, since retired.
 
 ## Flood Risk Data - OpenCity Chennai
 
@@ -607,11 +607,11 @@ A subset of Chennai water bodies have a dedicated full-screen panel offering yea
 
 ## Historical Seeding
 
-For initial database population, seed scripts in `scripts/` import from:
+The initial database population was a one-time import from:
 
-- **Kaggle** (`seed-kaggle.ts`) -Monthly reservoir storage 2004–2024
-- **OpenCity** (`seed-opencity-groundwater.ts`) -Ward groundwater 2021–2024
-- **OpenCity** (`seed-opencity-lakes.ts`) -Historical lake-level readings
+- **Kaggle**: monthly reservoir storage 2004–2024
+- **OpenCity**: ward groundwater 2021–2024
+- **OpenCity**: historical lake-level readings
 
-These are one-time imports; daily pipeline keeps data current after seeding.
+The seed scripts that ran it have been retired; the daily and monthly pipelines keep the data current.
 
