@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Delhi is registered DISABLED through the onboarding window. It is flipped to
 // enabled: true on the cutover commit once data + UI land; the Supabase
@@ -12,7 +12,7 @@ import type { CityConfig } from './types';
 // supply or regional data spine - none of the conditions that justified the MMR
 // re-scope hold. The genuinely trans-boundary Yamuna story (Hathnikund -> Munak
 // -> 22 km Delhi stretch -> Okhla -> Agra) belongs to a future Yamuna basin
-// surface via basinIds, not to city scope. Pages declare their scope per the
+// basin surface, not to city scope. Pages declare their scope per the
 // Madurai rule: NCT for dashboard/groundwater/my-ward, Yamuna-basin context
 // (labelled) for rivers/flood-risk.
 //
@@ -73,17 +73,28 @@ import type { CityConfig } from './types';
 // NICNET host (cpcb.nic.in, yamuna-revival.nic.in, arc.indiawris.gov.in,
 // Bhuvan/NDRF) refuses non-India IPs. All such scrapers run via the India-IP
 // runner path (launchd stopgap pattern), never from CI.
-export const DELHI: CityConfig = {
+export const DELHI: PlaceConfig = {
   cityId: 'delhi',
   displayName: 'Delhi',
   displayNameLocalized: { hi: 'दिल्ली' },
   stateCode: 'DL',
-  timezone: 'Asia/Kolkata',
   center: { lat: 28.61, lng: 77.21 },
   // NCT extent per the audit: 28.40-28.90 N, 76.85-77.40 E. The supply
   // reservoirs (Bhakra ~31.4N, Tehri ~30.4N) sit hundreds of km outside and
   // render as source cards, not on the city map - the Bangalore pattern.
   bbox: { south: 28.4, north: 28.9, west: 76.85, east: 77.4 },
+  wardsVintage: "2022",
+  landing: {
+    hook:
+      "The Yamuna, 237 groundwater wells, 250 MCD wards, and the five-state paper trail behind the city's taps.",
+    accent: "bg-rose-600",
+  },
+  footerSources: [
+    { label: "DJB", href: "https://delhijalboard.delhi.gov.in/" },
+    { label: "DPCC", href: "https://dpcc.delhi.gov.in/dpcc/analysis-reports" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
   primaryAuthority: {
     code: 'djb',
     name: 'Delhi Jal Board',
@@ -160,8 +171,6 @@ export const DELHI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 28.71,
       longitude: 77.23,
-      catchmentAreaSqkm: null,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
       noFeedNote:
@@ -178,8 +187,6 @@ export const DELHI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 29.05,
       longitude: 76.98,
-      catchmentAreaSqkm: null,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
       noFeedNote:
@@ -195,8 +202,6 @@ export const DELHI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 28.78,
       longitude: 77.5,
-      catchmentAreaSqkm: null,
-      displayOrder: 3,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
       noFeedNote:
@@ -214,8 +219,6 @@ export const DELHI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 31.41,
       longitude: 76.43,
-      catchmentAreaSqkm: null,
-      displayOrder: 4,
       isPrimaryDrinkingSource: false,
       // CORRECTED 2026-07-26. The 2026-07-25 verification recorded BBMB as
       // frozen since 04.09.2025; it has RESUMED. The bulletin now publishes
@@ -247,8 +250,6 @@ export const DELHI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 30.38,
       longitude: 78.48,
-      catchmentAreaSqkm: null,
-      displayOrder: 5,
       isPrimaryDrinkingSource: false,
       hasPublicFeed: false,
       noFeedNote:
@@ -264,30 +265,12 @@ export const DELHI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 28.61,
       longitude: 77.21,
-      catchmentAreaSqkm: null,
-      displayOrder: 6,
       isPrimaryDrinkingSource: false,
       hasPublicFeed: false,
       noFeedNote:
         "No public tube-well register exists - the CAG's audit records its absence as a finding.",
     },
   ],
-  sourceNameAliases: {
-    yamuna: 'yamuna_wazirabad',
-    wazirabad: 'yamuna_wazirabad',
-    'munak canal': 'munak_canal',
-    munak: 'munak_canal',
-    clc: 'munak_canal',
-    'carrier lined channel': 'munak_canal',
-    'upper ganga canal': 'upper_ganga_canal',
-    ugc: 'upper_ganga_canal',
-    muradnagar: 'upper_ganga_canal',
-    bhakra: 'bhakra',
-    'gobind sagar': 'bhakra',
-    'भाखड़ा': 'bhakra',
-    tehri: 'tehri',
-    'टिहरी': 'tehri',
-  },
   // Launch cutover 2026-07-26. THIS is the switch that matters: it gates the
   // /delhi route guard in [cityId]/layout.tsx and promotes Delhi from
   // "onboarding" to "live" on the landing status board.

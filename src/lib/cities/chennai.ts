@@ -1,13 +1,23 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
-export const CHENNAI: CityConfig = {
+export const CHENNAI: PlaceConfig = {
   cityId: 'chennai',
   displayName: 'Chennai',
   displayNameLocalized: { ta: 'சென்னை' },
   stateCode: 'TN',
-  timezone: 'Asia/Kolkata',
   center: { lat: 13.0827, lng: 80.2707 },
   bbox: { south: 12.7, north: 13.4, west: 79.9, east: 80.4 },
+  wardsVintage: "2022",
+  landing: {
+    hook:
+      "Reservoir days-left, groundwater by ward, river health, flood risk, lost water bodies, and a satellite shoreline-change map. The origin city.",
+    accent: "bg-cyan-700",
+  },
+  footerSources: [
+    { label: "CMWSSB", href: "https://cmwssb.tn.gov.in/lake-level" },
+    { label: "NASA POWER", href: "https://power.larc.nasa.gov/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
   primaryAuthority: {
     code: 'cmwssb',
     name: 'Chennai Metropolitan Water Supply and Sewerage Board',
@@ -33,8 +43,6 @@ export const CHENNAI: CityConfig = {
       fullTankLevelFt: 24.0,
       latitude: 12.9517,
       longitude: 80.0551,
-      catchmentAreaSqkm: 71.6,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -45,8 +53,6 @@ export const CHENNAI: CityConfig = {
       fullTankLevelFt: 48.5,
       latitude: 13.171,
       longitude: 80.1811,
-      catchmentAreaSqkm: 60.3,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -57,8 +63,6 @@ export const CHENNAI: CityConfig = {
       fullTankLevelFt: 36.0,
       latitude: 13.3542,
       longitude: 80.0678,
-      catchmentAreaSqkm: 2530.0,
-      displayOrder: 3,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -69,8 +73,6 @@ export const CHENNAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 11.35,
       longitude: 79.54,
-      catchmentAreaSqkm: null,
-      displayOrder: 4,
       isPrimaryDrinkingSource: false,
     },
     {
@@ -81,8 +83,6 @@ export const CHENNAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 12.82,
       longitude: 79.98,
-      catchmentAreaSqkm: null,
-      displayOrder: 5,
       isPrimaryDrinkingSource: false,
     },
     {
@@ -93,8 +93,6 @@ export const CHENNAI: CityConfig = {
       fullTankLevelFt: 22.0,
       latitude: 13.2184,
       longitude: 80.1499,
-      catchmentAreaSqkm: 77.4,
-      displayOrder: 6,
       isPrimaryDrinkingSource: true,
     },
   ],
@@ -156,14 +154,4 @@ export const CHENNAI: CityConfig = {
   // Commitments register: desal trio, metering policy, ring main, NGT sewage
   // commitments, Cooum/Adyar/Buckingham restoration - commitments-chennai.json.
   hasCommitments: true,
-  sourceNameAliases: {
-    poondi: 'poondi',
-    cholavaram: 'cholavaram',
-    puzhal: 'redhills',
-    'red hills': 'redhills',
-    chembarambakkam: 'chembarambakkam',
-    veeranam: 'veeranam',
-    kannankottai: 'kannankottai',
-    'thervoy kandigai': 'kannankottai',
-  },
 };

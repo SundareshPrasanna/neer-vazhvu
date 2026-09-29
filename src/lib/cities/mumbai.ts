@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Mumbai is registered DISABLED through the onboarding window (M0). It is
 // flipped to enabled: true on the cutover commit once M1 data + M2 UI land;
@@ -50,12 +50,11 @@ import type { CityConfig } from './types';
 // Ward unit is the 24 BMC administrative wards (A..T, data-rich, geometry from
 // datameet BMC_Wards.geojson), NOT the 227 electoral wards (SEC PDFs, no
 // GeoJSON, no per-ward data - logged as a gap).
-export const MUMBAI: CityConfig = {
+export const MUMBAI: PlaceConfig = {
   cityId: 'mumbai',
   displayName: 'Mumbai',
   displayNameLocalized: { mr: 'मुंबई' },
   stateCode: 'MH',
-  timezone: 'Asia/Kolkata',
   // MMR re-scope (docs/specs/mumbai-mmr.md): "mumbai" now models the Mumbai
   // Metropolitan Region, not just Greater Mumbai. placeKind:'region' + the
   // corporations[] array below carry the region structure; displayName stays
@@ -66,6 +65,17 @@ export const MUMBAI: CityConfig = {
   // Regional extent: the 9 corporations (island city -> Vasai-Virar/Panvel) plus
   // the Western Ghats supply reservoirs (Bhatsa/Vaitarna, ~73.5E / ~19.85N).
   bbox: { south: 18.85, north: 20.0, west: 72.65, east: 73.7 },
+  wardsVintage: "2023",
+  landing: {
+    hook:
+      "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps.",
+    accent: "bg-indigo-600",
+  },
+  footerSources: [
+    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
+    { label: "MPCB", href: "https://mpcb.gov.in/" },
+    { label: "OpenCity", href: "https://data.opencity.in/" },
+  ],
   primaryAuthority: {
     code: 'bmc-he',
     name: 'BMC Hydraulic Engineer Department',
@@ -165,8 +175,6 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.534,
       longitude: 73.439,
-      catchmentAreaSqkm: null,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -177,8 +185,6 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.829,
       longitude: 73.514,
-      catchmentAreaSqkm: null,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -189,8 +195,6 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.706,
       longitude: 73.433,
-      catchmentAreaSqkm: null,
-      displayOrder: 3,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -201,8 +205,6 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.677,
       longitude: 73.318,
-      catchmentAreaSqkm: null,
-      displayOrder: 4,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -213,8 +215,6 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.569,
       longitude: 73.266,
-      catchmentAreaSqkm: null,
-      displayOrder: 5,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -225,8 +225,6 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.191,
       longitude: 72.918,
-      catchmentAreaSqkm: null,
-      displayOrder: 6,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
     },
@@ -238,27 +236,10 @@ export const MUMBAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 19.154,
       longitude: 72.911,
-      catchmentAreaSqkm: null,
-      displayOrder: 7,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
     },
   ],
-  sourceNameAliases: {
-    bhatsa: 'bhatsa',
-    'भातसा': 'bhatsa',
-    'upper vaitarna': 'upper_vaitarna',
-    'middle vaitarna': 'middle_vaitarna',
-    vaitarna: 'upper_vaitarna',
-    'modak sagar': 'modak_sagar',
-    modaksagar: 'modak_sagar',
-    'lower vaitarna': 'modak_sagar',
-    'मोडकसागर': 'modak_sagar',
-    tansa: 'tansa',
-    'तानसा': 'tansa',
-    tulsi: 'tulsi',
-    vihar: 'vihar',
-  },
   // The 9 municipal corporations of the MMR (boundaries in
   // public/geojson/mumbai-corporations-2024.geojson, from OSM). The corporation
   // is the region's always-present comparable sub-unit; ward drill-down + deep
@@ -279,11 +260,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.06, lng: 72.8325 },
       bbox: { south: 18.8922, north: 19.2695, west: 72.7732, east: 72.9817 },
       wardCount: 24,
-      wardsVintage: '2023',
-      servedBySourceCodes: [
-        'bhatsa', 'upper_vaitarna', 'middle_vaitarna', 'modak_sagar', 'tansa', 'tulsi', 'vihar',
-      ],
-      data: { hasWardGeometry: true, hasSupplyData: true, hasEquityData: true, hasRiskComposite: true },
     },
     {
       corporationId: 'tmc',
@@ -294,8 +270,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.1976, lng: 72.9893 },
       bbox: { south: 19.1316, north: 19.3002, west: 72.9104, east: 73.0771 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'kdmc',
@@ -306,8 +280,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.2183, lng: 73.1322 },
       bbox: { south: 19.1422, north: 19.3118, west: 73.0612, east: 73.2399 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'nmmc',
@@ -318,8 +290,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.0637, lng: 73.0059 },
       bbox: { south: 18.9984, north: 19.1895, west: 72.9779, east: 73.0497 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'mbmc',
@@ -330,8 +300,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.2735, lng: 72.8202 },
       bbox: { south: 19.2307, north: 19.3283, west: 72.7786, east: 72.9376 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'vvcmc',
@@ -342,8 +310,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.4226, lng: 72.8226 },
       bbox: { south: 19.287, north: 19.5275, west: 72.7442, east: 72.9625 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'bncmc',
@@ -354,8 +320,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.2899, lng: 73.0653 },
       bbox: { south: 19.2645, north: 19.3235, west: 73.0325, east: 73.1036 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'umc',
@@ -366,8 +330,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.22, lng: 73.1658 },
       bbox: { south: 19.1909, north: 19.2548, west: 73.146, east: 73.1794 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
     {
       corporationId: 'pmc',
@@ -378,8 +340,6 @@ export const MUMBAI: CityConfig = {
       center: { lat: 19.0282, lng: 73.1005 },
       bbox: { south: 18.9684, north: 19.1146, west: 73.0437, east: 73.1489 },
       wardCount: null,
-      servedBySourceCodes: [],
-      data: {},
     },
   ],
   // Lake Catchment Atlas: per-water-body area-of-influence over Mumbai's ~84

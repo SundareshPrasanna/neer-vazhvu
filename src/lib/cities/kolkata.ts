@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Kolkata is registered DISABLED through the onboarding window (the Delhi
 // pattern): flipped to enabled: true on the cutover commit once data + UI land,
@@ -73,16 +73,26 @@ import type { CityConfig } from './types';
 // only 1-141; 142, 143 and 144 are absent, and the sole attribute is a bare
 // `WARD` number with no name and no borough. Ward surfaces stay off until the
 // three missing wards are recovered and a name/borough join is built.
-export const KOLKATA: CityConfig = {
+export const KOLKATA: PlaceConfig = {
   cityId: 'kolkata',
   displayName: 'Kolkata',
   displayNameLocalized: { bn: 'কলকাতা' },
   stateCode: 'WB',
-  timezone: 'Asia/Kolkata',
   center: { lat: 22.5726, lng: 88.3639 },
   // Wide enough to hold KMC (206.08 km²) plus the verified out-of-KMC units:
   // the EKW east of the city, Palta intake ~22 km north, Budge Budge south.
   bbox: { south: 22.35, north: 22.85, west: 88.15, east: 88.55 },
+  wardsVintage: "2022",
+  landing: {
+    hook:
+      "Victorian sewers rated for 6 mm of rain an hour, KMC's own weekly waterlogging register, the wetlands that treat two-thirds of the city's sewage, and the Adi Ganga at zero dissolved oxygen.",
+    accent: "bg-fuchsia-700",
+  },
+  footerSources: [
+    { label: "KMC", href: "https://www.kmcgov.in/" },
+    { label: "WBPCB EMIS", href: "https://emis.wbpcb.gov.in/" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+  ],
   primaryAuthority: {
     code: 'kmc_wsd',
     name: 'Kolkata Municipal Corporation, Water Supply Department',
@@ -124,11 +134,6 @@ export const KOLKATA: CityConfig = {
       center: { lat: 22.5726, lng: 88.3639 },
       bbox: { south: 22.45, north: 22.65, west: 88.28, east: 88.44 },
       wardCount: 144,
-      // Ward geometry is 141/144 with no names or boroughs - see WARDS above.
-      // hasWardGeometry stays false until the join is built; a partial ward
-      // layer that silently drops three wards is worse than none.
-      servedBySourceCodes: ['hooghly_palta', 'garden_reach', 'dhapa', 'kmc_tubewells'],
-      data: { hasWardGeometry: false, hasSupplyData: true, hasEquityData: false },
     },
     {
       corporationId: 'bidhannagar',
@@ -139,10 +144,6 @@ export const KOLKATA: CityConfig = {
       center: { lat: 22.5697, lng: 88.4297 },
       bbox: { south: 22.52, north: 22.63, west: 88.38, east: 88.49 },
       wardCount: null,
-      // Verified relationship: KMC sells it 90 MLD in bulk - an Allocation
-      // Ledger row, and the reason it is in scope at all.
-      servedBySourceCodes: ['hooghly_palta'],
-      data: { hasWardGeometry: false, hasSupplyData: true, hasEquityData: false },
     },
     {
       corporationId: 'budge_budge',
@@ -153,9 +154,6 @@ export const KOLKATA: CityConfig = {
       center: { lat: 22.4708, lng: 88.1748 },
       bbox: { south: 22.43, north: 22.51, west: 88.14, east: 88.22 },
       wardCount: null,
-      // Verified relationship: 22.7 MLD bulk purchase from KMC.
-      servedBySourceCodes: ['garden_reach'],
-      data: { hasWardGeometry: false, hasSupplyData: true, hasEquityData: false },
     },
   ],
   // See CONTESTED DENOMINATOR above - deliberately null.
@@ -270,8 +268,6 @@ export const KOLKATA: CityConfig = {
       fullTankLevelFt: null,
       latitude: 22.7925,
       longitude: 88.3722,
-      catchmentAreaSqkm: null,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
       noFeedNote:
@@ -285,8 +281,6 @@ export const KOLKATA: CityConfig = {
       fullTankLevelFt: null,
       latitude: 22.5484,
       longitude: 88.2921,
-      catchmentAreaSqkm: null,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
       noFeedNote:
@@ -300,8 +294,6 @@ export const KOLKATA: CityConfig = {
       fullTankLevelFt: null,
       latitude: 22.5453,
       longitude: 88.4142,
-      catchmentAreaSqkm: null,
-      displayOrder: 3,
       isPrimaryDrinkingSource: true,
       hasPublicFeed: false,
       noFeedNote: "No public daily production series; 136.3 MLD is a design capacity.",
@@ -316,27 +308,12 @@ export const KOLKATA: CityConfig = {
       fullTankLevelFt: null,
       latitude: 22.5726,
       longitude: 88.3639,
-      catchmentAreaSqkm: null,
-      displayOrder: 4,
       isPrimaryDrinkingSource: false,
       hasPublicFeed: false,
       noFeedNote:
         "No public tube-well register or daily draw. The ~110 MLD figure is a single line on KMC's water-distribution page.",
     },
   ],
-  sourceNameAliases: {
-    hooghly: 'hooghly_palta',
-    palta: 'hooghly_palta',
-    'indira gandhi wtp': 'hooghly_palta',
-    igwtp: 'hooghly_palta',
-    'হুগলি': 'hooghly_palta',
-    'garden reach': 'garden_reach',
-    grww: 'garden_reach',
-    dhapa: 'dhapa',
-    'jai hind jal prokolpo': 'dhapa',
-    'tube wells': 'kmc_tubewells',
-    'tubewells': 'kmc_tubewells',
-  },
   // LIVE 2026-08-14 as the seventh city. This flag is the only functional gate
   // (route guard in [cityId]/layout.tsx); supabase/migrations/042_kolkata_enable.sql
   // keeps the seeded row in step as a record, but that column gates nothing

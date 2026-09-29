@@ -13,6 +13,8 @@
  * return the public path (for client `fetch`).
  */
 
+import { tryGetPlaceConfig } from "./index";
+
 const CHENNAI = "chennai";
 
 /** public/data/restoration-priority[-<cityId>].json */
@@ -97,4 +99,22 @@ export function industrialSourcesUrl(cityId: string): string {
  *  Only Chennai ships this overlay today; returns null where absent. */
 export function sewageInletsUrl(cityId: string): string | null {
   return cityId === CHENNAI ? "/data/cooum-sewage-inlets.json" : null;
+}
+
+/** public/geojson/<cityId>-wards-<vintage>.geojson, or null when the city has
+ *  no ward geometry (PlaceConfig.wardsVintage is null). */
+export function wardsGeoJsonPathFor(cityId: string): string | null {
+  const vintage = tryGetPlaceConfig(cityId)?.wardsVintage;
+  return vintage ? `/geojson/${cityId}-wards-${vintage}.geojson` : null;
+}
+
+/** Municipal-corporation boundaries of a region place (the MMR); null for
+ *  every other place. */
+const CORPORATIONS_VINTAGE: Record<string, string> = {
+  mumbai: "2024",
+};
+
+export function corporationsGeoJsonPathFor(cityId: string): string | null {
+  const vintage = CORPORATIONS_VINTAGE[cityId];
+  return vintage ? `/geojson/${cityId}-corporations-${vintage}.geojson` : null;
 }

@@ -1,3 +1,5 @@
+import type { CityId } from "@/lib/cities/ids";
+
 /**
  * Per-city landmark line-art for the landing-page city cards. The art is
  * original, simple line work (license-safe for the open-source repo) drawn
@@ -8,20 +10,6 @@
  * viewBox is a consistent 0 0 200 80; landmarks sit on the baseline (~y=66)
  * so they read as a skyline silhouette along the bottom of the banner.
  */
-
-/** Per-city accent colour (Tailwind class) for the card banner. */
-export const CITY_ACCENT: Record<string, string> = {
-  chennai: "bg-cyan-700",
-  madurai: "bg-amber-600",
-  bangalore: "bg-emerald-700",
-  mumbai: "bg-indigo-600",
-  delhi: "bg-rose-600",
-  kolkata: "bg-fuchsia-700",
-  gurugram: "bg-lime-700",
-  pune: "bg-sky-700",
-};
-
-export const DEFAULT_ACCENT = "bg-slate-600";
 
 const strokeProps = {
   fill: "none",
@@ -166,7 +154,7 @@ function PuneShaniwarWada() {
   );
 }
 
-const LANDMARKS: Record<string, () => React.JSX.Element> = {
+const LANDMARKS: Partial<Record<CityId, () => React.JSX.Element>> = {
   chennai: ChennaiLighthouse,
   madurai: MaduraiGopuram,
   bangalore: BangaloreVidhanaSoudha,
@@ -187,7 +175,7 @@ function GenericSkyline() {
 }
 
 export function CityLandmark({ cityId, className }: { cityId: string; className?: string }) {
-  const Art = LANDMARKS[cityId] ?? GenericSkyline;
+  const Art = LANDMARKS[cityId as CityId] ?? GenericSkyline;
   return (
     <svg
       viewBox="0 0 200 80"

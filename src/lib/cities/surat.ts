@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 // Surat is registered DISABLED through the onboarding window (the Delhi and
 // Kolkata pattern): flipped to enabled: true on a cutover commit once data and
@@ -79,18 +79,28 @@ import type { CityConfig } from './types';
 // and urban talavs, not a chained kanmoi/kere system. hasCascadeOverlay stays
 // false and catchmentsGapNote says why on the page, because the cascade story
 // would assert a history the city does not have.
-export const SURAT: CityConfig = {
+export const SURAT: PlaceConfig = {
   cityId: 'surat',
   displayName: 'Surat',
   displayNameLocalized: { gu: 'સુરત' },
   stateCode: 'GJ',
-  timezone: 'Asia/Kolkata',
   center: { lat: 21.1702, lng: 72.8311 },
   // SMC's limit after the June 2020 extension is 462.149 km2 per the
   // corporation's own wardwise area table. The box is drawn to hold that plus
   // the Hazira industrial belt and the Dumas coast to the south-west, since
   // the river and groundwater surfaces legitimately reach past the city line.
   bbox: { south: 21.0, north: 21.35, west: 72.6, east: 72.99 },
+  wardsVintage: null,
+  landing: {
+    hook:
+      "A live flood chain from Ukai to five khadis, six editions of river monitoring, and two CETPs against their own consent.",
+    accent: "bg-slate-600",
+  },
+  footerSources: [
+    { label: "Surat Municipal Corporation", href: "https://www.suratmunicipal.gov.in/Home/RainfallInfo" },
+    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
+    { label: "GEMI", href: "https://gemi.gujarat.gov.in/" },
+  ],
   primaryAuthority: {
     code: 'smc_hydraulic',
     name: 'Surat Municipal Corporation, Hydraulic Department',
@@ -147,8 +157,6 @@ export const SURAT: CityConfig = {
       fullTankLevelFt: 345.0,
       latitude: 21.2483,
       longitude: 73.5903,
-      catchmentAreaSqkm: null,
-      displayOrder: 1,
       isPrimaryDrinkingSource: false,
       // FALSE for the same reason as singanpor_weir below: SMC republishes
       // Ukai's level hourly, so a feed exists, but it lands in the scraped
@@ -169,8 +177,6 @@ export const SURAT: CityConfig = {
       fullTankLevelFt: null,
       latitude: 21.2167,
       longitude: 72.8236,
-      catchmentAreaSqkm: null,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
       // FALSE, and the flag's own doc is what decides it: "such sources are
       // excluded from ingestion-liveness checks: they can never have a
@@ -291,16 +297,6 @@ export const SURAT: CityConfig = {
   // liquid discharge by 2035), which is exactly the register's shape.
   hasCommitments: true,
 
-  sourceNameAliases: {
-    ukai: 'ukai',
-    'ukai dam': 'ukai',
-    tapi: 'singanpor_weir',
-    weir: 'singanpor_weir',
-    'weir cum causeway': 'singanpor_weir',
-    'weir-cum-causeway': 'singanpor_weir',
-    singanpor: 'singanpor_weir',
-    singanpore: 'singanpor_weir',
-  },
 
   // LIVE 2026-08-20. This flag is the only functional gate on the whole
   // cutover: [cityId]/layout.tsx reads it, and the `enabled` COLUMN in the

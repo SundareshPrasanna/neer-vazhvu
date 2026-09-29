@@ -1,4 +1,5 @@
 import type { LanguageCode } from '@/lib/i18n/translations';
+import type { CityId } from './ids';
 
 export type WaterSourceType =
   | 'reservoir'
@@ -39,8 +40,6 @@ export interface WaterSourceConfig {
   fullTankLevelFt: number | null;
   latitude: number;
   longitude: number;
-  catchmentAreaSqkm: number | null;
-  displayOrder: number;
   isPrimaryDrinkingSource: boolean;
   /** False when no public data feed exists for this source (e.g. Mumbai's
    *  Vihar and Tulsi - BMC-owned, absent from every state/central bulletin).
@@ -191,17 +190,6 @@ export interface FloodViewConfig {
 }
 
 /**
- * The drainage design standard a city's storm-water network was built to,
- * plus its citation. Consumed by the `drainage-capacity` hero, which asks how
- * often measured rainfall intensity beats it.
- *
- * This exists because for some cities the honest headline is not "how much
- * water is left" but "how much water the city cannot get rid of". Kolkata has
- * no impounded storage at all, so the days-left runway is undefined there;
- * what it does have is a published, falsifiable engineering promise that the
- * sky routinely breaks.
- */
-/**
  * Editorial framing for the `flood-headroom` hero.
  *
  * Deliberately thin. Unlike `drainageCapacity`, this config carries NO
@@ -228,6 +216,17 @@ export interface FloodChainConfig {
   sourceLink?: { label: string; href: string };
 }
 
+/**
+ * The drainage design standard a city's storm-water network was built to,
+ * plus its citation. Consumed by the `drainage-capacity` hero, which asks how
+ * often measured rainfall intensity beats it.
+ *
+ * This exists because for some cities the honest headline is not "how much
+ * water is left" but "how much water the city cannot get rid of". Kolkata has
+ * no impounded storage at all, so the days-left runway is undefined there;
+ * what it does have is a published, falsifiable engineering promise that the
+ * sky routinely breaks.
+ */
 export interface DrainageCapacityConfig {
   /** The design standard, in mm of rainfall per hour. Must be one of the
    *  thresholds on the ladder precomputed by
@@ -325,25 +324,6 @@ export interface UrbanSupplyConfig {
 export type PlaceKind = 'city' | 'region';
 
 /**
- * Per-corporation data-availability flags. A region's corporations have wildly
- * uneven data (BMC is rich; smaller corporations are thin). Rather than block a
- * corporation on missing data, we render its boundary + identity always and
- * flag what deeper data exists, surfacing the rest as named gaps. See
- * docs/specs/mumbai-mmr.md (the "corporation = always-present unit, ward =
- * enrichment" contract).
- */
-export interface AdminUnitDataFlags {
-  /** A `{corporationId}-wards-{vintage}.geojson` exists for ward drill-down. */
-  hasWardGeometry?: boolean;
-  /** Per-corporation supply (draw, sources, hours) data exists. */
-  hasSupplyData?: boolean;
-  /** Per-corporation equity data (LPCD / supply-hours / coverage) exists. */
-  hasEquityData?: boolean;
-  /** This corporation participates in the region-level risk ranking. */
-  hasRiskComposite?: boolean;
-}
-
-/**
  * One municipal corporation within a `region` place. The corporation is the
  * region's always-present comparable sub-unit (every one has a boundary +
  * identity + the sources that feed it); wards are an optional enrichment per
@@ -362,16 +342,13 @@ export interface CorporationConfig {
   bbox: GeoBounds;
   /** Published ward count, or null where wards aren't available. */
   wardCount: number | null;
-  /** Vintage tag for `{corporationId}-wards-{vintage}.geojson`, if any. */
-  wardsVintage?: string;
-  /** Source codes (subset of the region's `waterSources`) feeding this
-   *  corporation - the edges of the source -> corporation supply graph. */
-  servedBySourceCodes: string[];
-  data: AdminUnitDataFlags;
 }
 
-export interface BasePlaceConfig {
-  cityId: string;
+/** A city is this config plus its data files. Required fields are the ones a
+ *  new city must decide; leaving one out is a type error, not another city's
+ *  default. */
+export interface PlaceConfig {
+  cityId: CityId;
   displayName: string;
   /** Localized display names per language. Used wherever copy renders
    *  the city name in a specific regional script (e.g. `{ ta: 'சென்னை' }`
@@ -379,14 +356,21 @@ export interface BasePlaceConfig {
    *  Falls back to `displayName` when the requested language is missing. */
   displayNameLocalized?: Partial<Record<LanguageCode, string>>;
   stateCode: string;
-  timezone: string;
   center: Coordinates;
   bbox: GeoBounds;
   primaryAuthority: Authority;
   defaultConsumptionMld: number | null;
   defaultDesalinationMld: number | null;
   waterSources: WaterSourceConfig[];
-  sourceNameAliases: Record<string, string>;
+  localGovernment: LocalGovernment;
+  /** Vintage of `public/geojson/<cityId>-wards-<vintage>.geojson`, or null
+   *  when the city has no ward geometry yet (a stated gap, not a default). */
+  wardsVintage: string | null;
+  /** Landing-page card: one-line hook and the banner's Tailwind background
+   *  class. */
+  landing: { hook: string; accent: string };
+  /** The core live sources the footer names on this city's pages. */
+  footerSources: { label: string; href: string }[];
   /** Per-city feature flags for the Groundwater page's view layers.
    *  Omit to inherit legacy behaviour (all views shown when their
    *  underlying data is present). */
@@ -654,13 +638,6 @@ export interface BasePlaceConfig {
    *  omit it where the layer is merely not built yet. */
   catchmentsGapNote?: string;
 
-  /** Basin Atlas surfaces hosted by this city. Each id must have a manifest
-   *  in src/lib/basins/ and ingested data under public/data/basins/<id>/.
-   *  Drives the /<city>/basins/<id> route guard and any basin nav entry.
-   *  Basins legitimately exceed city limits; the page states its true extent.
-   *  Omit/empty -> the city offers no basin atlas. */
-  basinIds?: string[];
-
   /** When false, the city is registered (data + scrapers can be wired
    *  up) but excluded from user-facing surfaces: listEnabledPlaces(),
    *  the [cityId] route guard, the city switcher, the nav. Mirrors the
@@ -690,9 +667,3 @@ export interface BasePlaceConfig {
    *  are optional per-corporation enrichments. See docs/specs/mumbai-mmr.md. */
   corporations?: CorporationConfig[];
 }
-
-export interface CityConfig extends BasePlaceConfig {
-  localGovernment: LocalGovernment;
-}
-
-export type PlaceConfig = CityConfig;

@@ -1,4 +1,4 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
 /**
  * Pune - city ten.
@@ -54,12 +54,11 @@ import type { CityConfig } from './types';
  * irrigation-dam-with-a-drinking-share problem), `src/lib/cities/mumbai.ts`
  * (the other Maharashtra place, and the other consumer of the Pravah feed).
  */
-export const PUNE: CityConfig = {
+export const PUNE: PlaceConfig = {
   cityId: 'pune',
   displayName: 'Pune',
   displayNameLocalized: { mr: 'पुणे' },
   stateCode: 'MH',
-  timezone: 'Asia/Kolkata',
 
   // Centre is the centroid of the 41 PMC prabhag polygons (18.5036, 73.8751),
   // nudged to the Sangam where the Mula meets the Mutha, which is the point
@@ -73,6 +72,17 @@ export const PUNE: CityConfig = {
   // clipped to the corporation would show the taps and hide the sources.
   bbox: { south: 18.3, north: 18.95, west: 73.4, east: 74.05 },
 
+  wardsVintage: "2025",
+  landing: {
+    hook:
+      "Four dams on the Mutha, a water budget where the leak is bigger than the shortfall, groundwater drilled to taluka, and the corporation's own record of every tanker it sent.",
+    accent: "bg-sky-700",
+  },
+  footerSources: [
+    { label: "PMC", href: "https://webadmin.pmc.gov.in/en/jsonapi/node/reports_and_dpr" },
+    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
+    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
+  ],
   primaryAuthority: {
     code: 'PMC_WS',
     name: 'Pune Municipal Corporation, Water Supply Department',
@@ -121,8 +131,6 @@ export const PUNE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 18.4163,
       longitude: 73.7225,
-      catchmentAreaSqkm: null,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
       // Pravah PUBLISHES this daily - the generic card line ('PMC does not
       // publish daily levels') would be false. What is missing is our first
@@ -138,8 +146,6 @@ export const PUNE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 18.35,
       longitude: 73.5507,
-      catchmentAreaSqkm: null,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
       // Pravah PUBLISHES this daily - the generic card line ('PMC does not
       // publish daily levels') would be false. What is missing is our first
@@ -157,8 +163,6 @@ export const PUNE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 18.3857,
       longitude: 73.5278,
-      catchmentAreaSqkm: null,
-      displayOrder: 3,
       isPrimaryDrinkingSource: true,
       // Pravah PUBLISHES this daily - the generic card line ('PMC does not
       // publish daily levels') would be false. What is missing is our first
@@ -174,8 +178,6 @@ export const PUNE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 18.453,
       longitude: 73.5176,
-      catchmentAreaSqkm: null,
-      displayOrder: 4,
       isPrimaryDrinkingSource: true,
       // Pravah PUBLISHES this daily - the generic card line ('PMC does not
       // publish daily levels') would be false. What is missing is our first
@@ -191,8 +193,6 @@ export const PUNE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 18.8842,
       longitude: 73.6688,
-      catchmentAreaSqkm: null,
-      displayOrder: 5,
       isPrimaryDrinkingSource: true,
       // Pravah PUBLISHES this daily - the generic card line ('PMC does not
       // publish daily levels') would be false. What is missing is our first
@@ -213,8 +213,6 @@ export const PUNE: CityConfig = {
       fullTankLevelFt: null,
       latitude: 18.6594,
       longitude: 73.4509,
-      catchmentAreaSqkm: null,
-      displayOrder: 6,
       isPrimaryDrinkingSource: false,
       // Pravah PUBLISHES this daily - the generic card line ('PMC does not
       // publish daily levels') would be false. What is missing is our first
@@ -224,20 +222,6 @@ export const PUNE: CityConfig = {
     },
   ],
 
-  // Three government sources spell one dam three ways: Pravah "Khadakwasla",
-  // CWC "KHADAKVASLA", India-WRIS "Khadakwasala_1". Warasgaon/Varasgaon and
-  // Panshet/Tanajisagar are the same story.
-  sourceNameAliases: {
-    Khadakvasla: 'khadakwasla',
-    Khadakwasala: 'khadakwasla',
-    Khadakwasala_1: 'khadakwasla',
-    Tanajisagar: 'panshet',
-    'Panshet Tanajisagar': 'panshet',
-    Varasgaon: 'warasgaon',
-    'Vir Baji Pasalkar': 'warasgaon',
-    Pavana: 'pawana',
-    Pawana_1: 'pawana',
-  },
 
   // Supply-overview hero, not days-left. See the header: the tracked storage
   // is an irrigation complex with a drinking share, so a runway computed off

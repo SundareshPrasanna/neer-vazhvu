@@ -1,13 +1,23 @@
-import type { CityConfig } from './types';
+import type { PlaceConfig } from './types';
 
-export const MADURAI: CityConfig = {
+export const MADURAI: PlaceConfig = {
   cityId: 'madurai',
   displayName: 'Madurai',
   displayNameLocalized: { ta: 'மதுரை' },
   stateCode: 'TN',
-  timezone: 'Asia/Kolkata',
   center: { lat: 9.9252, lng: 78.1198 },
   bbox: { south: 9.85, north: 10.0, west: 78.05, east: 78.2 },
+  wardsVintage: "2022",
+  landing: {
+    hook:
+      "Vaigai-basin reservoir runway, groundwater, water bodies, and flood context for the temple city.",
+    accent: "bg-amber-600",
+  },
+  footerSources: [
+    { label: "TN Agriculture", href: "https://www.tnagrisnet.tn.gov.in/" },
+    { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
+    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
+  ],
   primaryAuthority: {
     code: 'mmc',
     name: 'Madurai Municipal Corporation',
@@ -61,8 +71,6 @@ export const MADURAI: CityConfig = {
       fullTankLevelFt: 71.0,
       latitude: 10.0533,
       longitude: 77.5897,
-      catchmentAreaSqkm: 2253.0,
-      displayOrder: 1,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -75,8 +83,6 @@ export const MADURAI: CityConfig = {
       fullTankLevelFt: 142.0,
       latitude: 9.5394,
       longitude: 77.1422,
-      catchmentAreaSqkm: 624.0,
-      displayOrder: 2,
       isPrimaryDrinkingSource: true,
     },
     {
@@ -89,8 +95,6 @@ export const MADURAI: CityConfig = {
       fullTankLevelFt: null,
       latitude: 10.07,
       longitude: 77.45,
-      catchmentAreaSqkm: null,
-      displayOrder: 3,
       isPrimaryDrinkingSource: false,
       hasPublicFeed: false,
     },
@@ -107,18 +111,5 @@ export const MADURAI: CityConfig = {
     depth: false,
     risk: false,
     cgwbStations: true,
-  },
-  sourceNameAliases: {
-    vaigai: 'vaigai',
-    'vaigai dam': 'vaigai',
-    'வைகை': 'vaigai',
-    mullaperiyar: 'mullaperiyar',
-    'mullai periyar': 'mullaperiyar',
-    periyar: 'mullaperiyar',
-    'periyar dam': 'mullaperiyar',
-    'மூலைப்பெரியார்': 'mullaperiyar',
-    sothuparai: 'sothuparai',
-    'sothuparai dam': 'sothuparai',
-    'சோத்துப்பாறை': 'sothuparai',
   },
 };

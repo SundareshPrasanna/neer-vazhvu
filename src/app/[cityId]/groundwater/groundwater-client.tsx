@@ -12,7 +12,7 @@ import { BottomSheet } from "@/components/map/bottom-sheet";
 import { useLanguage } from "@/lib/i18n/context";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { getPlaceConfig, tryGetPlaceConfig, type PlaceConfig } from "@/lib/cities";
-import { wardsGeoJsonPathFor } from "@/lib/cities/wards-vintage";
+import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 import { gwStationsUrl, gwrBlocksUrl } from "@/lib/cities/data-paths";
 import type {
   GroundwaterWard,
@@ -107,7 +107,7 @@ interface CityGwAssets {
   blocksJsonUrl: string;
   blockGeoJsonUrl: string;
   stationsJsonUrl: string;
-  wardGeoJsonUrl: string;
+  wardGeoJsonUrl: string | null;
   mapCenter: [number, number];
 }
 

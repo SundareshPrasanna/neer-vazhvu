@@ -5,7 +5,7 @@ import { internalServerError, logRouteError } from "@/lib/api-error";
 import { idwInterpolate, polygonCentroid, haversineKm, type IdwStation } from "@/lib/groundwater/idw";
 import { getGroundwaterStatus } from "@/types/groundwater";
 import { requireCity } from "@/lib/require-city";
-import { wardsVintageFor } from "@/lib/cities/wards-vintage";
+import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 
 /**
  * Ward groundwater depth via IDW from CGWB / WRIS stations.
@@ -81,12 +81,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // 1. Load ward polygons (vintage per city - Bangalore uses GBA 2025
-  //    not GCC/MMC 2022).
-  const geojsonPath = resolve(
-    process.cwd(),
-    `public/geojson/${cityId}-wards-${wardsVintageFor(cityId)}.geojson`,
-  );
+  // 1. Load ward polygons (the vintage is on the city's config).
+  const wardsPath = wardsGeoJsonPathFor(cityId);
+  if (!wardsPath) {
+    return NextResponse.json({ error: "City has no ward geometry" }, { status: 404 });
+  }
+  const geojsonPath = resolve(process.cwd(), `public${wardsPath}`);
   let geojson: {
     features: Array<{
       properties: Record<string, unknown>;

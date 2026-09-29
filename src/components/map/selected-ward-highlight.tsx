@@ -9,7 +9,7 @@ interface SelectedWardHighlightProps {
   wardNumber: number | null;
   flyTo?: boolean;
   /** Path to the city's ward GeoJSON. */
-  wardGeoJsonUrl: string;
+  wardGeoJsonUrl: string | null;
 }
 
 /**

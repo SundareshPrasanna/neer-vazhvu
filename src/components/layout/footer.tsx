@@ -3,70 +3,10 @@
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/i18n/context";
 import { parsePath } from "@/lib/cities/routing";
+import { tryGetPlaceConfig } from "@/lib/cities";
 
 /** Full-screen map pages where the footer would cause a second scrollbar */
 const FULL_SCREEN_PAGES = ["/rivers", "/groundwater", "/water-bodies"];
-
-/** Top three live sources we surface in the footer per city. The full
- *  per-city catalogue lives on the city's about page; this is the
- *  recognisable shorthand readers see on every other surface. */
-const CITY_FOOTER_SOURCES: Record<
-  string,
-  { label: string; href: string }[]
-> = {
-  chennai: [
-    { label: "CMWSSB", href: "https://cmwssb.tn.gov.in/lake-level" },
-    { label: "NASA POWER", href: "https://power.larc.nasa.gov/" },
-    { label: "OpenCity", href: "https://data.opencity.in/" },
-  ],
-  madurai: [
-    { label: "TN Agriculture", href: "https://www.tnagrisnet.tn.gov.in/" },
-    { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
-    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
-  ],
-  bangalore: [
-    { label: "BWSSB", href: "https://bwssb.karnataka.gov.in/" },
-    { label: "India WRIS", href: "https://indiawris.gov.in/wris/" },
-    { label: "OpenCity", href: "https://data.opencity.in/" },
-  ],
-  pune: [
-    { label: "PMC", href: "https://webadmin.pmc.gov.in/en/jsonapi/node/reports_and_dpr" },
-    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
-    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
-  ],
-  surat: [
-    { label: "Surat Municipal Corporation", href: "https://www.suratmunicipal.gov.in/Home/RainfallInfo" },
-    { label: "CPCB NWMP", href: "https://cpcb.gov.in/water-quality-data/" },
-    { label: "GEMI", href: "https://gemi.gujarat.gov.in/" },
-  ],
-  mumbai: [
-    { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },
-    { label: "MPCB", href: "https://mpcb.gov.in/" },
-    { label: "OpenCity", href: "https://data.opencity.in/" },
-  ],
-  delhi: [
-    { label: "DJB", href: "https://delhijalboard.delhi.gov.in/" },
-    { label: "DPCC", href: "https://dpcc.delhi.gov.in/dpcc/analysis-reports" },
-    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
-    { label: "OpenCity", href: "https://data.opencity.in/" },
-  ],
-  hyderabad: [
-    { label: "HMWSSB", href: "https://bms.hyderabadwater.gov.in/wlrreport/showreport1.aspx" },
-    { label: "HMDA Lakes", href: "https://lakes.hmda.gov.in/" },
-    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
-    { label: "OpenCity", href: "https://data.opencity.in/" },
-  ],
-  kolkata: [
-    { label: "KMC", href: "https://www.kmcgov.in/" },
-    { label: "WBPCB EMIS", href: "https://emis.wbpcb.gov.in/" },
-    { label: "IN-GRES", href: "https://ingres.iith.ac.in/" },
-  ],
-  gurugram: [
-    { label: "GMDA", href: "https://www.gmda.gov.in/" },
-    { label: "GMDA OneMap", href: "https://onemapdepts.gmda.gov.in/" },
-    { label: "HSPCB", href: "https://hspcb.gov.in/" },
-  ],
-};
 
 export function Footer() {
   const { t } = useLanguage();
@@ -87,7 +27,7 @@ export function Footer() {
   // Chennai's utility - was one of their core live sources. Kolkata shipped
   // live that way, and Gurugram would have. A city with no entry now renders
   // no source list, which is merely incomplete rather than false.
-  const sources = cityId ? (CITY_FOOTER_SOURCES[cityId] ?? []) : [];
+  const sources = cityId ? (tryGetPlaceConfig(cityId)?.footerSources ?? []) : [];
   const aboutHref = isWaterway ? "#methods" : cityId ? `/${cityId}/about#data-sources` : null;
 
   return (
