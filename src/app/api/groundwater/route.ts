@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from '@/lib/api-error';
+import { dataServiceUnavailable, internalServerError, logRouteError } from '@/lib/api-error';
 import { getGroundwaterStatus } from '@/types/groundwater';
-import { generateMockGroundwater } from '@/lib/mock-data';
 
 // Load canonical ward data once at module level
 const wardNamesPath = resolve(process.cwd(), 'public/data/ward-names.json');
@@ -22,17 +21,7 @@ function isSupabaseConfigured(): boolean {
 }
 
 export async function GET(request: NextRequest) {
-  // Mock data only behind explicit demo mode; a bare missing config is an
-  // error, not a fallback (baseline P0.4).
-  if (!isSupabaseConfigured()) {
-    if (!isExplicitDemoMode()) return dataServiceUnavailable();
-    const { searchParams } = new URL(request.url);
-    const VALID_STYLES = ['healthy', 'declining', 'crisis', 'recovering'] as const;
-    const rawStyle = searchParams.get('style');
-    const style = VALID_STYLES.includes(rawStyle as typeof VALID_STYLES[number]) ? (rawStyle as typeof VALID_STYLES[number]) : 'healthy';
-    const mockData = generateMockGroundwater(style);
-    return NextResponse.json(mockData);
-  }
+  if (!isSupabaseConfigured()) return dataServiceUnavailable();
 
   const { createServerClient } = await import('@/lib/supabase/server');
 

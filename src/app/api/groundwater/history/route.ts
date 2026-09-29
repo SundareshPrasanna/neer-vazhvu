@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireCity } from "@/lib/require-city";
-import { dataServiceUnavailable, internalServerError, isExplicitDemoMode, logRouteError } from "@/lib/api-error";
-import { generateMockWardHistory } from "@/lib/mock-data";
+import { dataServiceUnavailable, internalServerError, logRouteError } from "@/lib/api-error";
 
 function isSupabaseConfigured(): boolean {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -22,10 +21,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "ward must be a positive integer" }, { status: 400 });
   }
 
-  if (!isSupabaseConfigured()) {
-    if (!isExplicitDemoMode()) return dataServiceUnavailable();
-    return NextResponse.json(generateMockWardHistory(wardNumber));
-  }
+  if (!isSupabaseConfigured()) return dataServiceUnavailable();
 
   const { createServerClient } = await import("@/lib/supabase/server");
   const supabase = createServerClient();

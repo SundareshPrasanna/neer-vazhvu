@@ -11,8 +11,7 @@ const CACHE_TTL: Record<string, number> = {
   '/api/groundwater/history': 3600,       // hourly - monthly data
   '/api/groundwater': 1800,               // 30min - monthly data
   '/api/water-bodies-census': 86400,      // daily - census data rarely changes
-  '/api/reservoir': 900,                  // 15min - matches homepage ISR
-  '/api/calculator': 900,                 // 15min - based on reservoir data
+  '/api/reservoir': 900,                  // 15min - basin + history, matches homepage ISR
   '/api/narratives': 3600,                // hourly - generated once per pipeline run
   '/api/health': 60,                      // 1min
 };
@@ -29,11 +28,6 @@ export function middleware(request: NextRequest) {
 
   // Only rate-limit API routes (not pages, static assets, etc.)
   if (!pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  // Skip rate limiting for cron routes (already auth-gated)
-  if (pathname.startsWith('/api/cron/')) {
     return NextResponse.next();
   }
 

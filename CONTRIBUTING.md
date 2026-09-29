@@ -19,7 +19,7 @@ npm install
 npm run dev
 ```
 
-The app runs in **demo mode** with realistic mock data when Supabase is not configured — no database setup needed to start contributing to the UI.
+Without Supabase configured, pages render from the static files in `public/data` and the database-backed panels show as unavailable, so most UI work needs no database setup.
 
 ### Python API (FastAPI)
 
