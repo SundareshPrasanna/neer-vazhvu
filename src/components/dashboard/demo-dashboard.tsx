@@ -17,6 +17,7 @@ import {
 } from "@/lib/mock-data";
 import { formatDate } from "@/lib/utils/format";
 import type { ReservoirSummary } from "@/types/reservoir";
+import { DEFAULT_CONSUMPTION_MLD, DEFAULT_DESALINATION_MLD } from "@/lib/utils/constants";
 
 export function DemoDashboard() {
   const [scenario, setScenario] = useState<ScenarioKey>("post_monsoon");
@@ -89,6 +90,8 @@ export function DemoDashboard() {
         lastUpdated={formatDate("2026-03-01")}
         comparisonStorage={s.comparisonStorage}
         comparisonYear={s.comparisonYear}
+        defaultConsumptionMld={DEFAULT_CONSUMPTION_MLD}
+        defaultDesalinationMld={DEFAULT_DESALINATION_MLD}
       />
 
       <ReservoirCards

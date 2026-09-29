@@ -28,6 +28,7 @@ import { translations, ALL_LANGUAGES, LANGUAGE_LABELS } from "../src/lib/i18n/tr
 /** Key prefixes filled in at runtime from data (river names, water-body types,
  *  pollutant codes), so they never appear as a literal `t("...")` call. */
 const DYNAMIC_PREFIXES = [
+  "pump.", // referenced from src/content/hero/pumping.ts
   "rivers_legend.",
   "poll.",
   "wb_type.",
