@@ -22,13 +22,14 @@ import {
   CTA,
   ThenNow,
 } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function MaduraiStoryEn() {
   return (
     <StoryPage
       cityId="madurai"
       cityDisplayName="Madurai"
-      tagline="The history of water in Madurai"
+      tagline={STORY_TAGLINES.madurai}
       lastRevised="May 2026"
     >
       <Hero

@@ -24,13 +24,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function DelhiStoryEn() {
   return (
     <StoryPage
       cityId="delhi"
       cityDisplayName="Delhi"
-      tagline="The city that stored water for a thousand years - and the twenty-two kilometres where its river dies"
+      tagline={STORY_TAGLINES.delhi}
       lastRevised="July 2026"
     >
       <Hero

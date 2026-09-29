@@ -30,13 +30,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function KolkataStoryEn() {
   return (
     <StoryPage
       cityId="kolkata"
       cityDisplayName="Kolkata"
-      tagline="The city that built itself around a pond - and the wetland that takes what it throws away"
+      tagline={STORY_TAGLINES.kolkata}
       lastRevised="July 2026"
     >
       <Hero

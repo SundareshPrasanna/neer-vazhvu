@@ -1,17 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
-import { MaduraiStory } from "@/content/story-madurai";
-import { ChennaiStory } from "@/content/story-chennai";
-import { BangaloreStory } from "@/content/story-bangalore";
-import { MumbaiStory } from "@/content/story-mumbai";
-import { DelhiStory } from "@/content/story-delhi";
-import { HyderabadStory } from "@/content/story-hyderabad";
-import { KolkataStory } from "@/content/story-kolkata";
-import { GurugramStory } from "@/content/story-gurugram";
-import { PuneStory } from "@/content/story-pune";
-import { SuratStory } from "@/content/story-surat";
-import { ComingSoonStory } from "@/components/story/coming-soon";
+import { CityStory } from "@/components/story/city-story";
+import { STORY_TAGLINES } from "@/content/story-taglines";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -22,28 +13,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const config = tryGetPlaceConfig(cityId);
   if (!config) return { title: "Origins | Neer Vazhvu" };
 
-  const tagline =
-    cityId === "madurai"
-      ? "City of Tanks - what is left of the cascade"
-      : cityId === "chennai"
-        ? "City of estuaries - what is left of the sponge"
-        : cityId === "bangalore"
-          ? "City of stolen kere - what Kempegowda built and what Bengaluru built over it"
-          : cityId === "mumbai"
-            ? "City of seven islands - a place with no river, and the forty-five litres that divide it"
-            : cityId === "hyderabad"
-              ? "City of tanks - how Hyderabad engineered its way out of a flood, and what it still owes that system"
-              : cityId === "delhi"
-              ? "The city that stored water for a thousand years - and the twenty-two kilometres where its river dies"
-            : cityId === "kolkata"
-              ? "The city that built itself around a pond - and the wetland that takes what it throws away"
-            : cityId === "gurugram"
-              ? "The city that outgrew its water in twelve years"
-            : cityId === "pune"
-              ? "The city that dammed one river four times and still counts four hours"
-            : cityId === "surat"
-              ? "The city the river made, unmade, and made again"
-              : `${config.displayName} water story`;
+  const tagline = STORY_TAGLINES[config.cityId];
 
   return {
     title: `${tagline} | Neer Vazhvu`,
@@ -63,44 +33,5 @@ export default async function CityStoryPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  if (cityId === "madurai") {
-    return <MaduraiStory />;
-  }
-
-  if (cityId === "chennai") {
-    return <ChennaiStory />;
-  }
-
-  if (cityId === "bangalore") {
-    return <BangaloreStory />;
-  }
-
-  if (cityId === "mumbai") {
-    return <MumbaiStory />;
-  }
-
-  if (cityId === "kolkata") {
-    return <KolkataStory />;
-  }
-  if (cityId === "delhi") {
-    return <DelhiStory />;
-  }
-
-  if (cityId === "hyderabad") {
-    return <HyderabadStory />;
-  }
-
-  if (cityId === "gurugram") {
-    return <GurugramStory />;
-  }
-
-  if (cityId === "pune") {
-    return <PuneStory />;
-  }
-
-  if (cityId === "surat") {
-    return <SuratStory />;
-  }
-
-  return <ComingSoonStory cityDisplayName={config.displayName} />;
+  return <CityStory cityId={config.cityId} cityDisplayName={config.displayName} />;
 }

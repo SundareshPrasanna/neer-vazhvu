@@ -49,13 +49,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function HyderabadStoryEn() {
   return (
     <StoryPage
       cityId="hyderabad"
       cityDisplayName="Hyderabad"
-      tagline="City of tanks - how Hyderabad engineered its way out of a flood, and what it still owes that system"
+      tagline={STORY_TAGLINES.hyderabad}
       lastRevised="July 2026"
     >
       <Hero
