@@ -10,8 +10,8 @@
  * assessment units are revenue taluks: a Gram Panchayat only ever inherits
  * them as containing-area context, which atlas-project-groundwater.ts does.
  */
-import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/acquisition-validation";
-import { validateLgdDistrictRefreshPlan, type LgdDistrictRefreshPlan } from "../src/lib/atlas/lgd-acquisition-model";
+import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/pipeline/core/acquisition-validation";
+import { validateLgdDistrictRefreshPlan, type LgdDistrictRefreshPlan } from "../src/lib/atlas/pipeline/adapters/lgd/lgd-acquisition-model";
 import { readFileSync } from "node:fs";
 import {
   INDIA_LOCATION_UUID,
@@ -20,8 +20,8 @@ import {
   summarizeGroundwater,
   validateTnDistrictGroundwaterExtract,
   type GroundwaterHierarchy,
-} from "../src/lib/atlas/tn-groundwater";
-import type { TnDistrictGroundwaterExtract } from "../src/lib/atlas/tn-groundwater";
+} from "../src/lib/atlas/pipeline/core/tn-groundwater";
+import type { TnDistrictGroundwaterExtract } from "../src/lib/atlas/pipeline/core/tn-groundwater";
 import {
   argValue,
   atlasEnvelope,

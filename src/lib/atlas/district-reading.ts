@@ -51,7 +51,7 @@ import {
   type TalukGroundwater,
 } from "./district-aggregate";
 import { getDistrictBriefs } from "./district-directory";
-import type { BriefTone, PlaceBrief } from "./place-brief";
+import type { BriefTone, PlaceBrief } from "./pipeline/core/place-brief";
 import { findAtlasDistrict, type AtlasDistrict } from "./registry";
 
 /* ── shapes ────────────────────────────────────────────────────────────── */

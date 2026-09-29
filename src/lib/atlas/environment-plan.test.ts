@@ -7,7 +7,7 @@ import {
   type EnvironmentPlanArtifact,
   type EnvironmentPlanInput,
 } from "./environment-plan";
-import { LGD_FIXTURE_DISTRICTS, fixtureSlugsPresent, readFixtureArtifacts } from "./test-support";
+import { LGD_FIXTURE_DISTRICTS, fixtureSlugsPresent, readFixtureArtifacts } from "./pipeline/test-support";
 
 function input(): EnvironmentPlanInput {
   return {

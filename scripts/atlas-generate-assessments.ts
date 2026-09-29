@@ -9,14 +9,14 @@
  * Inputs are the served directory, jjm-service, census-2011, groundwater-taluks,
  * groundwater-projection, rainfall and water-bodies artifacts, read through
  * src/lib/atlas/data.ts (run from the repository root); nothing is fetched.
- * The assembly and the rules live in src/lib/atlas/district-assessment.ts so
+ * The assembly and the rules live in src/lib/atlas/pipeline/core/district-assessment.ts so
  * the tests regenerate the fixture corpus with the same code. --validate runs the whole-corpus assertions (every family joins the
  * directory by LGD code, cardinalities match the reviewed plan, every brief
  * validates, shards partition the blocks) and exits non-zero on any failure.
  */
 import { readFileSync } from "node:fs";
 
-import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/acquisition-validation";
+import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import {
   districtArtifactPath,
   identityAdapterOf,
@@ -24,14 +24,14 @@ import {
   type AssessmentsShard,
   type BriefsShard,
 } from "../src/lib/atlas/artifacts";
-import type { GeneratedAssessment } from "../src/lib/atlas/capability-evidence";
+import type { GeneratedAssessment } from "../src/lib/atlas/pipeline/core/capability-evidence";
 import {
   generateDistrictAssessments,
   loadDistrictCorpus,
   type DistrictCorpus,
-} from "../src/lib/atlas/district-assessment";
-import { summarizeBriefs, validatePlaceBrief } from "../src/lib/atlas/place-brief";
-import type { PlaceBrief } from "../src/lib/atlas/place-brief";
+} from "../src/lib/atlas/pipeline/core/district-assessment";
+import { summarizeBriefs, validatePlaceBrief } from "../src/lib/atlas/pipeline/core/place-brief";
+import type { PlaceBrief } from "../src/lib/atlas/pipeline/core/place-brief";
 import {
   atlasEnvelope,
   hasFlag,
@@ -214,6 +214,7 @@ function main(): void {
       producedAt: assessedAt,
       producedBy: PRODUCED_BY,
       internalInputs,
+      // The rules moved to pipeline/core/; the served note keeps the old path until the next deliberate regeneration.
       note:
         `${run.profileId}: ${bucket.assessments.length} Gram Panchayats in ${blockName} block assessed ` +
         "against 40 capabilities by the evidence rules in src/lib/atlas/capability-evidence.ts " +

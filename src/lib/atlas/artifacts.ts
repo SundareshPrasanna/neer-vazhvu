@@ -18,20 +18,20 @@ import type {
   RecordSetCompletenessBasis,
   RecordSetCompletenessStatus,
   TnDistrictSourceExtract,
-} from "./acquisition-model";
+} from "./pipeline/core/acquisition-model";
 import type { AtlasDistrict } from "./registry";
-import type { GeneratedAssessment } from "./capability-evidence";
-import type { PlaceBrief } from "./place-brief";
-import type { CensusVillageAttributes, GramPanchayatCensusRollup } from "./tn-census-attributes";
-import type { GroundwaterAssessmentUnit, GroundwaterCategory } from "./tn-groundwater";
+import type { GeneratedAssessment } from "./pipeline/core/capability-evidence";
+import type { PlaceBrief } from "./pipeline/core/place-brief";
+import type { CensusVillageAttributes, GramPanchayatCensusRollup } from "./pipeline/core/tn-census-attributes";
+import type { GroundwaterAssessmentUnit, GroundwaterCategory } from "./pipeline/core/tn-groundwater";
 import type {
   GroundwaterProjectionMethod,
   GroundwaterProjectionRecord,
   GroundwaterProjectionReviewEntry,
-} from "./tn-groundwater-projection";
-import type { JjmVillageService } from "./tn-jjm-service";
-import type { RainfallRecord } from "./tn-rainfall";
-import type { TnWaterBodyRecord } from "./tn-water-bodies";
+} from "./pipeline/core/tn-groundwater-projection";
+import type { JjmVillageService } from "./pipeline/core/tn-jjm-service";
+import type { RainfallRecord } from "./pipeline/core/tn-rainfall";
+import type { TnWaterBodyRecord } from "./pipeline/adapters/tnrd/tn-water-bodies";
 
 export const ATLAS_DATA_ROOT = "public/data/atlas";
 

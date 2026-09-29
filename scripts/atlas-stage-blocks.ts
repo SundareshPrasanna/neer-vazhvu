@@ -2,11 +2,11 @@ import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
-import { validateTnDistrictSourceExtract } from "../src/lib/atlas/acquisition-validation";
-import type { TnDistrictSourceExtract } from "../src/lib/atlas/acquisition-model";
-import { bestCandidate, foldedSimilarity } from "../src/lib/atlas/name-similarity";
-import { validateReviewedBlockAlignmentTable } from "../src/lib/atlas/tn-crosswalk";
-import type { ReviewedBlockAlignment } from "../src/lib/atlas/tn-crosswalk";
+import { validateTnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/acquisition-validation";
+import type { TnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/acquisition-model";
+import { bestCandidate, foldedSimilarity } from "../src/lib/atlas/pipeline/core/name-similarity";
+import { validateReviewedBlockAlignmentTable } from "../src/lib/atlas/pipeline/core/tn-crosswalk";
+import type { ReviewedBlockAlignment } from "../src/lib/atlas/pipeline/core/tn-crosswalk";
 import {
   cachePath,
   readCacheJson,

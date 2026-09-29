@@ -7,7 +7,7 @@ import {
   identityMasterVintage,
   identityVintage,
 } from "./artifacts";
-import type { PlaceBrief } from "./place-brief";
+import type { PlaceBrief } from "./pipeline/core/place-brief";
 import { findAtlasDistrict, listAtlasDistricts, type AtlasDistrict } from "./registry";
 
 export type DirectoryCoverage = "directory-only" | "water-profile";

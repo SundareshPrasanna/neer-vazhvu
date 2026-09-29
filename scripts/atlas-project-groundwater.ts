@@ -17,15 +17,15 @@ import {
   type DistrictDirectoryArtifact,
   type GroundwaterTaluksArtifact,
 } from "../src/lib/atlas/artifacts";
-import { BOUNDARY_SOURCE_ID } from "../src/lib/atlas/tn-boundary";
-import { validateTnDistrictGroundwaterExtract } from "../src/lib/atlas/tn-groundwater";
+import { BOUNDARY_SOURCE_ID } from "../src/lib/atlas/pipeline/adapters/tnrd/tn-boundary";
+import { validateTnDistrictGroundwaterExtract } from "../src/lib/atlas/pipeline/core/tn-groundwater";
 import {
   TALUK_BOUNDARY_LAYER,
   buildGroundwaterProjection,
   validateGroundwaterProjection,
-} from "../src/lib/atlas/tn-groundwater-projection";
-import type { TalukPolygon } from "../src/lib/atlas/tn-groundwater-projection";
-import { buildMembershipGroundwaterProjection } from "../src/lib/atlas/tn-groundwater-projection";
+} from "../src/lib/atlas/pipeline/core/tn-groundwater-projection";
+import type { TalukPolygon } from "../src/lib/atlas/pipeline/core/tn-groundwater-projection";
+import { buildMembershipGroundwaterProjection } from "../src/lib/atlas/pipeline/core/tn-groundwater-projection";
 import {
   SOURCE_IDS,
   atlasEnvelope,

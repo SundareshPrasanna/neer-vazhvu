@@ -23,7 +23,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 
-import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/acquisition-validation";
+import { loadTnDistrictRefreshPlan } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import type {
   IrrigationCurrentArtifact,
   IrrigationCurrentShare,

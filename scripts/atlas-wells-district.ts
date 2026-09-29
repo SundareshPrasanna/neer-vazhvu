@@ -27,8 +27,8 @@ import {
   type QualityParameter,
   type WellQualityRecord,
   type WellStationRecord,
-} from "../src/lib/atlas/groundwater-wells";
-import type { LgdDistrictRefreshPlan } from "../src/lib/atlas/lgd-acquisition-model";
+} from "../src/lib/atlas/pipeline/core/groundwater-wells";
+import type { LgdDistrictRefreshPlan } from "../src/lib/atlas/pipeline/adapters/lgd/lgd-acquisition-model";
 import {
   NWDP_DATASTORE_URL,
   coarseCoordinates,
@@ -36,7 +36,7 @@ import {
   nwdpNumber,
   stationsFromRows,
   type NwdpWellsSource,
-} from "../src/lib/atlas/nwdp-wells";
+} from "../src/lib/atlas/pipeline/core/nwdp-wells";
 import {
   SOURCE_IDS,
   atlasEnvelope,

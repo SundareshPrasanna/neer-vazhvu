@@ -2,13 +2,13 @@ import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
-import { validateTnDistrictSourceExtract } from "../src/lib/atlas/acquisition-validation";
-import type { TnDistrictSourceExtract } from "../src/lib/atlas/acquisition-model";
-import { bestCandidate } from "../src/lib/atlas/name-similarity";
-import { validateTnDistrictCrosswalkProposal } from "../src/lib/atlas/tn-crosswalk";
-import type { TnDistrictCrosswalkProposal } from "../src/lib/atlas/tn-crosswalk";
-import { validateTnDistrictCrosswalkResolution } from "../src/lib/atlas/tn-crosswalk-resolution";
-import type { CrosswalkResolutionDecision } from "../src/lib/atlas/tn-crosswalk-resolution";
+import { validateTnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/acquisition-validation";
+import type { TnDistrictSourceExtract } from "../src/lib/atlas/pipeline/core/acquisition-model";
+import { bestCandidate } from "../src/lib/atlas/pipeline/core/name-similarity";
+import { validateTnDistrictCrosswalkProposal } from "../src/lib/atlas/pipeline/core/tn-crosswalk";
+import type { TnDistrictCrosswalkProposal } from "../src/lib/atlas/pipeline/core/tn-crosswalk";
+import { validateTnDistrictCrosswalkResolution } from "../src/lib/atlas/pipeline/core/tn-crosswalk-resolution";
+import type { CrosswalkResolutionDecision } from "../src/lib/atlas/pipeline/core/tn-crosswalk-resolution";
 import {
   argValue,
   cachePath,

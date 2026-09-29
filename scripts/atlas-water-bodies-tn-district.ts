@@ -18,13 +18,13 @@ import {
   type WaterBodiesShard,
   type WaterBodyFeature,
 } from "../src/lib/atlas/artifacts";
-import { computeRecordsSha256 } from "../src/lib/atlas/acquisition-validation";
+import { computeRecordsSha256 } from "../src/lib/atlas/pipeline/core/acquisition-validation";
 import {
   WATER_BODY_LAYER,
   buildTnDistrictWaterBodyExtract,
   reportWaterBodyJoin,
   validateTnDistrictWaterBodyExtract,
-} from "../src/lib/atlas/tn-water-bodies";
+} from "../src/lib/atlas/pipeline/adapters/tnrd/tn-water-bodies";
 import {
   atlasEnvelope,
   hasFlag,
