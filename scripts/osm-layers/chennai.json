@@ -1,0 +1,41 @@
+{
+  "_doc": "Chennai OSM layers for scripts/fetch-osm-layers.ts. Water bodies and industrial zones are hand-assembled rings (the original Chennai assembly, kept so the published layers do not shift); areas are shoelace hectares at 13 N. Localities are still fetched by scripts/fetch-localities-osm.ts: Overpass returned 504 on every capture attempt, so its port has no byte-identical proof yet.",
+  "lang": "ta",
+  "layers": {
+    "water-bodies": {
+      "method": "rings",
+      "bbox": "12.7,79.9,13.4,80.4",
+      "refLat": 13,
+      "waterProps": true
+    },
+    "rivers": {
+      "method": "walk",
+      "_note": "Wider than the water-body bbox for upstream reaches; the display clip is tighter, except the Kosasthalaiyar keeps its Ponneri-side approach.",
+      "bbox": "12.6,79.8,13.5,80.5",
+      "select": [
+        "way[\"waterway\"=\"river\"]",
+        "relation[\"waterway\"=\"river\"][\"name\"~\"Cooum|Adyar|Kosasthalaiyar|Kortallaiyar\",i]",
+        "way[\"waterway\"=\"canal\"][\"name\"~\"Buckingham\",i]",
+        "relation[\"waterway\"=\"canal\"][\"name\"~\"Buckingham\",i]"
+      ],
+      "clip": { "south": 12.75, "north": 13.35, "west": 80.0, "east": 80.35 },
+      "rivers": [
+        { "id": "cooum", "match": ["cooum", "koovam"], "local": "கூவம் ஆறு", "waterway": "river" },
+        { "id": "adyar", "match": ["adyar"], "local": "அடையாறு", "waterway": "river" },
+        { "id": "kosasthalaiyar", "match": ["kosasthalaiyar", "kosasthalai", "kortallaiyar"], "local": "கொசஸ்தலையாறு", "waterway": "river", "clip": { "west": 79.8 } },
+        { "id": "buckingham-canal", "match": ["buckingham"], "local": "பக்கிங்காம் கால்வாய்", "waterway": "canal" }
+      ]
+    },
+    "industrial-zones": {
+      "method": "rings",
+      "_note": "North Chennai only (Ennore, Manali, Ambattur); parcels under 5 ha dropped.",
+      "bbox": "13.0,80.1,13.4,80.4",
+      "select": [
+        "way[\"landuse\"=\"industrial\"]",
+        "relation[\"landuse\"=\"industrial\"][\"type\"=\"multipolygon\"]"
+      ],
+      "refLat": 13,
+      "minAreaHa": 5
+    }
+  }
+}

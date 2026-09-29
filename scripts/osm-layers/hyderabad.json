@@ -1,0 +1,22 @@
+{
+  "_doc": "Hyderabad OSM layers for scripts/fetch-osm-layers.ts. Rivers are basin scoped, Anantagiri hills to the Krishna, with the Manjira on the supply side. Water bodies are still fetched by scripts/fetch-water-bodies-osm-hyderabad.ts: Overpass returned 504 on every capture attempt, so its port has no byte-identical proof yet.",
+  "lang": "te",
+  "layers": {
+    "rivers": {
+      "method": "walk",
+      "_note": "OSM maps the Musi as 'Musi River', 'Musi' and 'Musa' (name census 2026-07-26); they collapse to one river, checked last so Manjira, Esi and Haldi win first.",
+      "bbox": "17.05,77.60,18.05,79.20",
+      "timeout": 120,
+      "select": [
+        "way[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Musi|Musa|Esi|Manjira|Haldi|Kurel\",i]",
+        "relation[\"waterway\"~\"^(river|canal|drain)$\"][\"name\"~\"Musi|Musa|Esi|Manjira|Haldi|Kurel\",i]"
+      ],
+      "rivers": [
+        { "id": "manjira", "_note": "Supply side: Singur and the Manjira barrage.", "match": ["manjira"], "local": "మంజీరా నది", "waterway": "river" },
+        { "id": "esi", "_note": "The tributary Himayat Sagar impounds; one OSM way carries the name.", "match": ["esi"], "local": "ఈసీ నది", "waterway": "river", "waterways": ["river", "stream"] },
+        { "id": "haldi", "match": ["haldi"], "local": "", "waterway": "river", "waterways": ["river", "stream"] },
+        { "id": "musi", "match": ["musi", "musa"], "local": "మూసీ నది", "waterway": "river", "waterways": ["river", "stream"] }
+      ]
+    }
+  }
+}

@@ -76,8 +76,9 @@ neer-vazhvu/
 │   ├── compute-bangalore-ward-risk.py       # Bangalore ward-risk composite (over 198 BBMP wards; 3-factor reduced variant)
 │   ├── ingest_rich_body_imagery.py          # Body-agnostic Sentinel-2 / Landsat chip ingest (merges with existing manifest)
 │   ├── verify_rich_body_dw_water_trend.py   # DW water class (2022-present) per body; bridges JRC's 2021 cutoff
-│   ├── fetch-localities-osm.ts              # Chennai OSM neighbourhood points
-│   └── fetch-localities-osm-madurai.ts      # Madurai equivalent (51 OSM points + Wikidata SPARQL fallback)
+│   ├── fetch-osm-layers.ts                  # City OSM layers (water bodies, rivers, drainage, localities); per-city rules in osm-layers/<city>.json
+│   ├── osm-layers/                          # Per-city bbox, Overpass select statements, river-name rules, ward join
+│   └── fetch-localities-osm.ts              # Chennai OSM neighbourhood points (not yet folded into fetch-osm-layers.ts)
 ├── neer-vazhvu-api/scripts/
 │   └── generate_imd_rainfall.py             # Multi-city IMD gridded rainfall extractor (Chennai 13.0/80.0, Madurai 9.9/78.0, Bangalore 13.0/77.5)
 ├── supabase/migrations/           # Database schema

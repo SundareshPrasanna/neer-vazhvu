@@ -228,7 +228,7 @@ Each fact card carries `title_ta`, `interpretation_ta`, `title_kn`, `interpretat
 | | |
 |---|---|
 | **Sources** | OpenStreetMap (Overpass `place=suburb/neighbourhood/quarter/village/hamlet` widened for peri-urban coverage) + Wikidata SPARQL fallback for Kannada-named entries |
-| **Method** | Same script template as Madurai (`fetch-localities-osm-{madurai,bangalore}.ts`) |
+| **Method** | No fetcher in the repo: the file arrived with the Bengaluru onboarding (#117), and `scripts/osm-layers/bangalore.json` has no localities layer |
 | **Frequency** | Periodic |
 | **Output** | `public/data/bangalore-localities.json` |
 

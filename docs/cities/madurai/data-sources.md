@@ -137,7 +137,7 @@ Same pipeline as Chennai's IMD generator; just a different point.
 | | |
 |---|---|
 | **Sources** | OpenStreetMap (Overpass `place=suburb/neighbourhood/quarter/village/hamlet`) + Wikidata SPARQL fallback |
-| **Method** | `scripts/fetch-localities-osm-madurai.ts` |
+| **Method** | `scripts/fetch-osm-layers.ts --city madurai --layer localities` |
 | **Frequency** | Periodic (one-off for now) |
 | **Output** | `public/data/madurai-localities.json` (51 entries, 49/51 with Tamil names) |
 

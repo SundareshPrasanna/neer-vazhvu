@@ -40,9 +40,12 @@ export function writeArtifact(
       envelope = {};
     }
   }
-  const out: Record<string, unknown> = { ...envelope };
-  for (const [k, v] of Object.entries(payload)) {
-    if (!(k in envelope)) out[k] = v;
+  // A bare array has nowhere to carry an envelope: with none on disk it is written as it is.
+  const out: unknown = Array.isArray(payload) && !Object.keys(envelope).length ? payload : { ...envelope };
+  if (out !== payload) {
+    for (const [k, v] of Object.entries(payload)) {
+      if (!(k in envelope)) (out as Record<string, unknown>)[k] = v;
+    }
   }
   writeFileSync(path, opts.compact ? JSON.stringify(out) : JSON.stringify(out, null, 2));
 }

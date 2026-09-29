@@ -134,7 +134,7 @@
 | | |
 |---|---|
 | **Source** | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) |
-| **Method** | Script: `scripts/fetch-rivers-osm.ts` (run once, re-run after major OSM edits) |
+| **Method** | Script: `scripts/fetch-osm-layers.ts --city chennai --layer rivers` (rules in `scripts/osm-layers/chennai.json`; run once, re-run after major OSM edits) |
 | **Frequency** | One-time fetch; re-run manually if OSM geometry improves |
 | **Coverage** | 4 rivers clipped to Chennai city bbox (12.75–13.35°N, 80.0–80.35°E) |
 | **Fields** | MultiLineString geometry (way coordinate arrays grouped by river name tag) |
@@ -143,7 +143,7 @@
 **Known limitations:**
 - OSM river way coverage varies -some urban stretches may be missing or misaligned
 - The Buckingham Canal is a national waterway; bbox clipping limits it to the Chennai stretch (~72 km)
-- Run `npx tsx scripts/fetch-rivers-osm.ts` to regenerate after OSM data improves
+- Run `npx tsx scripts/fetch-osm-layers.ts --city chennai --layer rivers` to regenerate after OSM data improves
 
 ## Industrial Pollution Sources -NGT / TNPCB / CPCB
 
@@ -174,7 +174,7 @@
 | | |
 |---|---|
 | **Source** | [OpenStreetMap](https://www.openstreetmap.org/) via [Overpass API](https://overpass-api.de/) |
-| **Method** | Script: `scripts/fetch-industrial-zones-osm.ts` (run once, re-run after major OSM edits) |
+| **Method** | Script: `scripts/fetch-osm-layers.ts --city chennai --layer industrial-zones` (run once, re-run after major OSM edits) |
 | **Frequency** | One-time fetch; re-run manually if OSM industrial zone coverage improves |
 | **Coverage** | North Chennai industrial corridor (bbox: 13.0–13.4°N, 80.1–80.4°E) |
 | **Fields** | Polygon geometry for `landuse=industrial` ways and relations; properties: `osm_id`, `name`, `area_ha` |
@@ -182,7 +182,7 @@
 
 **Known limitations:**
 - OSM industrial zone coverage varies -some facilities may be partially mapped or missing
-- Run `npx tsx scripts/fetch-industrial-zones-osm.ts` to regenerate after OSM data improves
+- Run `npx tsx scripts/fetch-osm-layers.ts --city chennai --layer industrial-zones` to regenerate after OSM data improves
 
 ## IMD Historical Rainfall
 
