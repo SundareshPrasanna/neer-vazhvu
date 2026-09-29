@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Polyline, CircleMarker, Tooltip, useMap } from "react-leaflet";
+import { Polyline, CircleMarker, Tooltip, useMap } from "react-leaflet";
+import { MapLoading } from "@/components/map/map-loading";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 import type { FeatureCollection, LineString, Point } from "geojson";
-import { MapResizer } from "@/components/map-resizer";
 import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import {
@@ -147,11 +148,7 @@ export function CoastalMap({
   }, []);
 
   if (!zones) {
-    return (
-      <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">Loading map…</span>
-      </div>
-    );
+    return <MapLoading />;
   }
 
   const selectedZoneId = selected?.kind === "zone" ? selected.props.zone_id : undefined;
@@ -159,15 +156,12 @@ export function CoastalMap({
   const selectedTransectId = selected?.kind === "transect" ? selected.props.transect_id : undefined;
 
   return (
-    <MapContainer
+    <BaseMap
       center={mapCenter}
       zoom={mapZoom}
-      className="h-full w-full"
       scrollWheelZoom
       preferCanvas
     >
-      <MapResizer />
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Default load frames the entire coastline; clicks zoom in via FlyTo. */}
       <FitToBounds bounds={geoJsonBounds(zones)} resetKey="coastal-full" maxZoom={12} />
       <FlyTo target={flyTarget} />
@@ -332,6 +326,6 @@ export function CoastalMap({
           </CircleMarker>
         );
       })}
-    </MapContainer>
+    </BaseMap>
   );
 }

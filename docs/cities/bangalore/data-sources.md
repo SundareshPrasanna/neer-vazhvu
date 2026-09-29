@@ -184,7 +184,7 @@ Surfaces:
 | **Frequency** | Episodic (refresh after each major event) |
 | **Output** | `public/geojson/bangalore-flood-prone-zones.geojson`, `public/data/bangalore-flood-hotspots.json` |
 
-Surfaces on `/bangalore/flood-risk` via `flood-risk-bangalore-leaflet-map.tsx`. The Sep 2022 IT corridor flooding (Whitefield, Sarjapur Road) is annotated; KSNDMC ward-day rainfall layer pending.
+Surfaces on `/bangalore/flood-risk` via the shared flood map page (layers declared in `src/content/flood/bangalore.ts`). The Sep 2022 IT corridor flooding (Whitefield, Sarjapur Road) is annotated; KSNDMC ward-day rainfall layer pending.
 
 **Compared to Chennai's CFLOWS:** narrower coverage and lower-resolution hazard tiers (KSNDMC doesn't publish a CFLOWS-equivalent probabilistic surface). The page leans on the BBMP hotspot inventory + corridor narrative rather than a hazard choropleth.
 

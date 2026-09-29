@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
 import { WrisStationPanel } from "@/components/groundwater/wris-station-panel";
 import { CgwbStationPanel } from "@/components/groundwater/cgwb-station-panel";
@@ -45,15 +46,6 @@ function resolveGwViews(config: PlaceConfig | undefined | null) {
     cgwbStations: v?.cgwbStations ?? false,
     iisc: v?.iisc ?? false,
   };
-}
-
-function MapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("gw_page.loading_map")}</span>
-    </div>
-  );
 }
 
 const WardMap = dynamic(

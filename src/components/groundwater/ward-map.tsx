@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip, useMap, Pane } from "react-leaflet";
-import { MapResizer } from "@/components/map-resizer";
+import { GeoJSON, CircleMarker, Tooltip, useMap, Pane } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
@@ -307,10 +307,9 @@ export function WardMap({
   }, [wardGeoJSON, cgwbStations]);
 
   return (
-    <MapContainer
+    <BaseMap
       center={mapCenter}
       zoom={mapZoom}
-      className="h-full w-full"
       scrollWheelZoom={true}
     >
       {layerLoading && (
@@ -318,8 +317,6 @@ export function WardMap({
           <span className="text-slate-500 dark:text-slate-400 text-sm">{t("common.loading_map")}</span>
         </div>
       )}
-      <MapResizer />
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* Region places (the MMR) overlay their corporation boundaries as
           context. No-op for single-city places / when cityId is absent. */}
       {cityId && tryGetPlaceConfig(cityId)?.placeKind === "region" && (
@@ -576,6 +573,6 @@ export function WardMap({
           </Pane>
         </>
       )}
-    </MapContainer>
+    </BaseMap>
   );
 }

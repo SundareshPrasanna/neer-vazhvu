@@ -6,7 +6,9 @@ import dynamic from "next/dynamic";
 import { FloodViewToggle } from "@/components/flood-risk/flood-view-toggle";
 import { FloodLegend } from "@/components/flood-risk/flood-legend";
 import { FloodDetailPanel } from "@/components/flood-risk/flood-detail-panel";
-import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
+import { useElevationBands } from "@/components/map/elevation-bands";
+import { ElevationBandsControl } from "@/components/map/elevation-bands-control";
+import { MapLoading } from "@/components/map/map-loading";
 import { HAZARD_COLORS } from "@/types/flood-risk";
 import type { FloodViewMode, HazardCategory, SelectedFloodFeature } from "@/types/flood-risk";
 import { useLanguage } from "@/lib/i18n/context";
@@ -16,15 +18,6 @@ import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
 import { tryGetPlaceConfig } from "@/lib/cities";
-
-function MapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("flood.loading_map")}</span>
-    </div>
-  );
-}
 
 const FloodRiskMap = dynamic(
   () =>
@@ -58,8 +51,7 @@ function InteractiveFloodContentInner({ cityId }: { cityId: string }) {
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
 
   // Ground-elevation bands (FABDEM); self-hides for cities without a file.
-  const [showElevation, setShowElevation] = useState(false);
-  const elevation = useElevationBands(cityId, showElevation);
+  const elevation = useElevationBands(cityId);
 
   const config = tryGetPlaceConfig(cityId);
   const center: [number, number] | undefined = config
@@ -207,39 +199,10 @@ function InteractiveFloodContentInner({ cityId }: { cityId: string }) {
             hiddenCategories={hiddenCategories}
             elevationData={elevation.data}
           />
-          {elevation.available && (
-            <div className="absolute bottom-2 right-2 md:bottom-8 md:left-2.5 md:right-auto z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs max-w-[46vw] md:max-w-[240px] space-y-1.5">
-              <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 dark:text-slate-300">
-                <input
-                  type="checkbox"
-                  checked={showElevation}
-                  onChange={() => setShowElevation((v) => !v)}
-                  className="accent-sky-700"
-                />
-                <span className="flex items-center gap-1.5">
-                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-gradient-to-r from-sky-800 via-lime-400 to-amber-800" />
-                  Ground elevation (FABDEM)
-                </span>
-              </label>
-              {showElevation && (
-                <>
-                  <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
-                    {elevationLegendEntries(elevation.data).map(({ band, color }) => (
-                      <span key={band} className="inline-flex items-center gap-1">
-                        <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
-                        {band}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
-                    Ground height above sea level from satellite (FABDEM 30 m, buildings and
-                    forests removed). The blue bands are where water collects. Read as bands,
-                    not spot heights (~2 m vertical accuracy).
-                  </p>
-                </>
-              )}
-            </div>
-          )}
+          <ElevationBandsControl
+            elevation={elevation}
+            note="Ground height above sea level from satellite (FABDEM 30 m, buildings and forests removed). The blue bands are where water collects. Read as bands, not spot heights (~2 m vertical accuracy)."
+          />
           <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${hasPanel ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
             <FloodLegend
               viewMode={viewMode}

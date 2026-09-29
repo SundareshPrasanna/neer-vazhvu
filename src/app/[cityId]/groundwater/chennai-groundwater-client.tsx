@@ -30,6 +30,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { WardDetailPanel } from "@/components/groundwater/ward-detail-panel";
 import { BlockDetailPanel } from "@/components/groundwater/block-detail-panel";
 import { WrisStationPanel } from "@/components/groundwater/wris-station-panel";
@@ -55,19 +56,10 @@ import { gwStationsUrl, gwrBlocksUrl } from "@/lib/cities/data-paths";
 import { wardsGeoJsonPathFor } from "@/lib/cities/data-paths";
 import { fetchJson } from "@/lib/data/fetch-json";
 
-function GroundwaterMapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("gw_page.loading_map")}</span>
-    </div>
-  );
-}
-
 // Leaflet must be loaded client-side only (no SSR)
 const WardMap = dynamic(() => import("@/components/groundwater/ward-map").then((m) => m.WardMap), {
   ssr: false,
-  loading: () => <GroundwaterMapLoading />,
+  loading: () => <MapLoading />,
 });
 
 export default function ChennaiGroundwaterClient() {

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Polyline, Tooltip, useMap } from "react-leaflet";
-import { MapResizer } from "@/components/map-resizer";
+import { GeoJSON, CircleMarker, Polyline, Tooltip, useMap } from "react-leaflet";
+import { MapLoading } from "@/components/map/map-loading";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
@@ -393,23 +394,16 @@ export function CombinedRiversMap({
   // optional (some cities don't have an industrial-zones polygon set
   // - that's fine, the zones layer just doesn't draw).
   if (!riversGeoJSON) {
-    return (
-      <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
-      </div>
-    );
+    return <MapLoading />;
   }
 
   return (
-    <MapContainer
+    <BaseMap
       center={mapCenter ?? [13.05, 80.22]}
       zoom={mapZoom}
-      className="h-full w-full"
       scrollWheelZoom={true}
     >
-      <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <FitToBounds
         bounds={geoJsonBounds(riversGeoJSON)}
         resetKey={`rivers:${riversGeoJSON?.features?.length ?? 0}`}
@@ -507,6 +501,6 @@ export function CombinedRiversMap({
           />
         );
       })()}
-    </MapContainer>
+    </BaseMap>
   );
 }

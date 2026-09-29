@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { CircleMarker, GeoJSON, MapContainer, TileLayer, Tooltip } from "react-leaflet";
+import { CircleMarker, GeoJSON, Tooltip } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
-import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import type { AtlasMapMarker, AtlasMapPoint, AtlasMapPolygons } from "./atlas-map";
 
@@ -87,15 +87,12 @@ export function AtlasDistrictMapInner({
   if ((points.length === 0 && !polygons?.features.length) || !bounds) return null;
   const center = bounds.getCenter();
   return (
-    <MapContainer
+    <BaseMap
       center={[center.lat, center.lng]}
       zoom={9}
       scrollWheelZoom={false}
-      className="h-full w-full"
     >
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <FitToBounds bounds={bounds} padding={[16, 16]} maxZoom={polygons?.features.length ? 13 : 11} />
-      <MapResizer />
       <PolygonLayer polygons={polygons} isDark={tiles.isDark} />
       {points.map((point) => (
         <CircleMarker
@@ -111,7 +108,7 @@ export function AtlasDistrictMapInner({
           </Tooltip>
         </CircleMarker>
       ))}
-    </MapContainer>
+    </BaseMap>
   );
 }
 
@@ -138,10 +135,8 @@ export function AtlasPlaceMapInner({
     ]);
   }, [polygons, markers, point.latitude, point.longitude]);
   return (
-    <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="h-full w-full">
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
+    <BaseMap center={center} zoom={13} scrollWheelZoom={false}>
       {bounds ? <FitToBounds bounds={bounds} padding={[12, 12]} maxZoom={14} /> : null}
-      <MapResizer />
       <PolygonLayer polygons={polygons} isDark={tiles.isDark} />
       {markers.map((marker) => (
         <CircleMarker
@@ -162,6 +157,6 @@ export function AtlasPlaceMapInner({
           <span>{point.blockName} block</span>
         </Tooltip>
       </CircleMarker>
-    </MapContainer>
+    </BaseMap>
   );
 }

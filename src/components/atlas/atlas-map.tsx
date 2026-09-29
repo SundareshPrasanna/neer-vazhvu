@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import type { FeatureCollection, MultiPolygon } from "geojson";
 
 export interface AtlasMapPoint {
@@ -25,25 +26,14 @@ export interface AtlasMapMarker {
   label: string;
 }
 
-function MapLoading() {
-  return (
-    <div
-      role="status"
-      className="flex h-full w-full items-center justify-center bg-slate-100 dark:bg-slate-800 text-sm text-slate-500 dark:text-slate-400"
-    >
-      Loading map
-    </div>
-  );
-}
-
 const DistrictMap = dynamic(() => import("./atlas-map-inner").then((m) => m.AtlasDistrictMapInner), {
   ssr: false,
-  loading: MapLoading,
+  loading: () => <MapLoading />,
 });
 
 const PlaceMap = dynamic(() => import("./atlas-map-inner").then((m) => m.AtlasPlaceMapInner), {
   ssr: false,
-  loading: MapLoading,
+  loading: () => <MapLoading />,
 });
 
 /** Every mapped Panchayat as a point, framed to the district's own extent. */

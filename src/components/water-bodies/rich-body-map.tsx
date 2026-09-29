@@ -10,6 +10,7 @@ import {
   Pane,
   useMap,
 } from "react-leaflet";
+import { MapLoading } from "@/components/map/map-loading";
 import L from "leaflet";
 import type { FeatureCollection } from "geojson";
 import { Maximize2 } from "lucide-react";
@@ -181,11 +182,7 @@ export function RichBodyMap({ body, year, onManifestLoaded }: RichBodyMapProps) 
   }, [mapInstance, initialBounds]);
 
   if (!manifest || !bounds || !initialBounds || !polygon) {
-    return (
-      <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-sm text-slate-500 dark:text-slate-400">Loading map…</span>
-      </div>
-    );
+    return <MapLoading />;
   }
 
   return (

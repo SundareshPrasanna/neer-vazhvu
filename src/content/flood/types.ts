@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import type { DrainageLayerSpec } from "@/components/flood/drainage-network-map";
 
 /** English is the accessibility floor; other languages are optional and
@@ -89,8 +90,82 @@ export interface FloodConfig {
   };
 }
 
-/** Everything city-specific on /[cityId]/flood-risk (narrative variant). */
+/** Copy on the map page: English in place, or an i18n key where the city's copy is
+ *  translated. "{city}" becomes the display name; `link` fills its "{slot}". */
+export type FloodText = string | { key: string; link?: { slot: string; href: string; label: string } };
+/** Copy that carries emphasis or inline source links is JSX. It crosses the
+ *  server/client boundary inside an array, so a fragment needs a key. */
+export type FloodRich = FloodText | ReactElement;
+
+/** A layer-panel row: one checkbox, drawn with Tailwind classes written out in full
+ *  so the stylesheet keeps them. */
+export interface FloodMapRow {
+  label: FloodText;
+  swatch: string;
+  accent: string;
+  /** Checked on first load. */
+  on?: boolean;
+  /** Categorised point layers: this row shows features whose `categoryProp` equals it. */
+  value?: string;
+  fillColor?: string;
+  radius?: number;
+}
+
+/** One GeoJSON file on the map, fetched the first time one of its rows is checked. */
+export interface FloodMapLayer {
+  url: string;
+  kind: "line" | "point";
+  rows: FloodMapRow[];
+  /** Starts a ruled-off group in the layer panel. */
+  divider?: boolean;
+  /** Leaflet style; point rows may override fillColor and radius. */
+  style: { color: string; weight: number; opacity?: number; fillColor?: string; fillOpacity?: number; radius?: number };
+  /** Point layers: property holding each feature's category (features in no row are dropped). */
+  categoryProp?: string;
+  /** Hover label: this property, else `nameFallback`; a line without either has none. */
+  nameProp?: string;
+  nameFallback?: string;
+  /** Point labels: same-line suffix, then 11 px lines (`always` prints an empty value). */
+  suffix?: { prop: string; prefix: string };
+  lines?: { prop: string; prefix?: string; muted?: boolean; always?: boolean }[];
+  /** Point layers: the label also opens on tap, with this note under it. */
+  popup?: boolean;
+  popupNote?: string;
+  /** Line layers: frame the map on this layer when no points are showing. */
+  fit?: boolean;
+}
+
+/** A full-height map with a layer panel and a text sidebar, for a city whose flood
+ *  record is a set of mapped registers rather than a modelled hazard surface. */
+export interface FloodMapSpec {
+  center: [number, number];
+  zoom: number;
+  /** Context bar above the map. */
+  scope: FloodText;
+  summary: FloodText;
+  layersTitle: FloodText;
+  /** The layer panel starts closed on phones, where it would cover the map. */
+  collapsible?: boolean;
+  /** In panel order; the top row draws on top, lines under points. */
+  layers: FloodMapLayer[];
+  /** Caption under the ground-elevation legend. */
+  elevationNote: string;
+  sidebar: {
+    heading: FloodText;
+    intro: FloodRich;
+    shows: { heading: FloodText; items: FloodRich[] };
+    gaps: { heading: FloodText; items: FloodRich[] };
+    /** Show the official flood-line sheets (flood-lines-<city>.json) after the gaps. */
+    floodLines?: boolean;
+    sources: { heading: FloodText; separator: string; items: { href: string; label: string; note: FloodText }[] };
+    /** Small print: an optional headed list of layer sources, then paragraphs. */
+    footer: { heading?: FloodText; items?: FloodRich[]; paras: FloodRich[] };
+  };
+}
+
+/** Everything city-specific on /[cityId]/flood-risk: a narrative `config`, or a `map`. */
 export interface CityFloodContent {
   metaDescription?: string;
   config?: FloodConfig;
+  map?: FloodMapSpec;
 }

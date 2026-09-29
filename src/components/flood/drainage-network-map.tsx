@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, GeoJSON } from "react-leaflet";
+import { CircleMarker, Tooltip, GeoJSON } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import "leaflet/dist/leaflet.css";
 import type { FeatureCollection, Feature } from "geojson";
 import type { PathOptions } from "leaflet";
-import { useMapTiles } from "@/lib/utils/map-tiles";
 import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 
 /**
@@ -78,7 +78,6 @@ export function DrainageNetworkMap({
   zoom: number;
   layers: DrainageLayerSpec[];
 }) {
-  const tiles = useMapTiles();
   const [data, setData] = useState<Record<string, FeatureCollection | null>>({});
   const [hidden, setHidden] = useState<Set<string>>(new Set());
 
@@ -137,8 +136,7 @@ export function DrainageNetworkMap({
       </div>
 
       <div className="h-[420px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-        <MapContainer center={center} zoom={zoom} className="h-full w-full" scrollWheelZoom={false}>
-          <TileLayer url={tiles.url} attribution={tiles.attribution} />
+        <BaseMap center={center} zoom={zoom} scrollWheelZoom={false}>
           {layers.map((l) => {
             const fc = data[l.url];
             if (!fc || hidden.has(l.url)) return null;
@@ -187,7 +185,7 @@ export function DrainageNetworkMap({
               />
             );
           })}
-        </MapContainer>
+        </BaseMap>
       </div>
     </div>
   );

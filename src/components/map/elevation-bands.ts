@@ -19,7 +19,17 @@ export const ELEVATION_BAND_COLORS: Record<number, string> = {
   6: "#92400e", // 100+    amber-800
 };
 
-export function useElevationBands(cityId: string, enabled: boolean) {
+export interface ElevationBands {
+  /** The bands while shown, else null. */
+  data: FeatureCollection | null;
+  available: boolean;
+  show: boolean;
+  toggle: () => void;
+}
+
+/** Bands for a city, off until the user shows them; pair with ElevationBandsControl. */
+export function useElevationBands(cityId: string): ElevationBands {
+  const [enabled, setEnabled] = useState(false);
   const [data, setData] = useState<FeatureCollection | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
 
@@ -42,7 +52,12 @@ export function useElevationBands(cityId: string, enabled: boolean) {
     };
   }, [cityId, enabled, available, data]);
 
-  return { data: enabled ? data : null, available: available === true };
+  return {
+    data: enabled ? data : null,
+    available: available === true,
+    show: enabled,
+    toggle: () => setEnabled((v) => !v),
+  };
 }
 
 export interface ElevationLegendEntry {

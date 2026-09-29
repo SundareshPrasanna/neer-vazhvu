@@ -2,15 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
+import { GeoJSON, Pane, useMap } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
-import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
+import { useElevationBands } from "@/components/map/elevation-bands";
+import { ElevationBandsControl } from "@/components/map/elevation-bands-control";
 import { CorporationBoundaries } from "@/components/map/corporation-boundaries";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
-import { MapResizer } from "@/components/map-resizer";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import "leaflet/dist/leaflet.css";
 import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
@@ -79,8 +80,7 @@ function MapController({
 export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: Props) {
   // Ground-elevation bands (FABDEM) - the terrain that MAKES the
   // catchments. Self-hides for cities without a bands file.
-  const [showElevation, setShowElevation] = useState(false);
-  const elevation = useElevationBands(cityId, showElevation);
+  const elevation = useElevationBands(cityId);
 
   const tiles = useMapTiles();
   const [lakes, setLakes] = useState<FeatureCollection | null>(null);
@@ -230,15 +230,13 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
     <div className="h-full flex flex-col md:flex-row">
       <div className="relative h-[45vh] shrink-0 md:h-full md:flex-1 md:shrink">
         {/* Mobile: explicit height - the flex-basis-0 collapse (see #157). */}
-        <MapContainer center={center} zoom={zoom} className="h-full w-full" preferCanvas zoomSnap={1}>
-          <MapResizer />
+        <BaseMap center={center} zoom={zoom} preferCanvas zoomSnap={1}>
           <MapController
             fitGeom={basin ? ({ type: "Feature", properties: {}, geometry: basin } as Feature) : catchment}
             resetKey={resetKey}
             center={center}
             zoom={zoom}
           />
-          <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
           <ElevationBandsLayer data={elevation.data} />
 
           {/* Region places (the MMR) overlay their corporation boundaries as
@@ -327,40 +325,11 @@ export function CatchmentAtlas({ cityId, cityDisplayName, center, zoom = 11 }: P
               />
             )}
           </Pane>
-        </MapContainer>
-        {elevation.available && (
-          <div className="absolute bottom-2 right-2 md:bottom-8 md:left-2.5 md:right-auto z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs max-w-[46vw] md:max-w-[240px] space-y-1.5">
-            <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 dark:text-slate-300">
-              <input
-                type="checkbox"
-                checked={showElevation}
-                onChange={() => setShowElevation((v) => !v)}
-                className="accent-sky-700"
-              />
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-sm bg-gradient-to-r from-sky-800 via-lime-400 to-amber-800" />
-                Ground elevation (FABDEM)
-              </span>
-            </label>
-            {showElevation && (
-              <>
-                <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
-                  {elevationLegendEntries(elevation.data).map(({ band, color }) => (
-                    <span key={band} className="inline-flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
-                      {band}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
-                  Ground height above sea level from satellite (FABDEM 30 m, buildings and
-                  forests removed) - the relief that shapes each catchment. Read as bands,
-                  not spot heights (~2 m vertical accuracy).
-                </p>
-              </>
-            )}
-          </div>
-        )}
+        </BaseMap>
+        <ElevationBandsControl
+          elevation={elevation}
+          note="Ground height above sea level from satellite (FABDEM 30 m, buildings and forests removed) - the relief that shapes each catchment. Read as bands, not spot heights (~2 m vertical accuracy)."
+        />
 
         {selected != null && (
           <button

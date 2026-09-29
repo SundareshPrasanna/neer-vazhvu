@@ -28,16 +28,8 @@ import { MapInfoButton } from "@/components/map/map-info-button";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { WardSearch } from "@/components/map/ward-search";
 import { RichBodyOverlay } from "@/components/water-bodies/rich-body-overlay";
+import { MapLoading } from "@/components/map/map-loading";
 import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
-
-function MapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("wb.loading")}</span>
-    </div>
-  );
-}
 
 const UnifiedMap = dynamic(
   () =>

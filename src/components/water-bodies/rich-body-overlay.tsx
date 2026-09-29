@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { getRichBody } from "@/lib/water-bodies/rich-body-registry";
 import { RichBodyTimelineSlider } from "./rich-body-timeline-slider";
 import { RichBodyStatsStrip } from "./rich-body-stats-strip";
@@ -24,11 +25,7 @@ const RichBodyMap = dynamic(
   () => import("./rich-body-map").then((m) => m.RichBodyMap),
   {
     ssr: false,
-    loading: () => (
-      <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-sm text-slate-500 dark:text-slate-400">Loading map…</span>
-      </div>
-    ),
+    loading: () => <MapLoading />,
   }
 );
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef, useCallback, type ReactNode } from "react";
-import { MapContainer, TileLayer, GeoJSON, Tooltip, LayerGroup, Circle, useMap, Pane } from "react-leaflet";
-import { MapResizer } from "@/components/map-resizer";
+import { GeoJSON, Tooltip, LayerGroup, Circle, useMap, Pane } from "react-leaflet";
+import { MapLoading } from "@/components/map/map-loading";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 import type { Layer } from "leaflet";
 import type { Feature } from "geojson";
@@ -713,23 +714,16 @@ export function UnifiedMap({
   };
 
   if (!currentGeoJSON && !lostGeoJSON) {
-    return (
-      <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-        <span className="text-slate-500 dark:text-slate-400">{t("common.loading_map")}</span>
-      </div>
-    );
+    return <MapLoading />;
   }
 
   return (
-    <MapContainer
+    <BaseMap
       center={mapCenter}
       zoom={mapZoom}
-      className="h-full w-full"
       scrollWheelZoom={true}
     >
-      <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {/* No FitToBounds here: the OSM water-body collection's extent
           includes far-flung outliers (Pulicat in the north for Chennai,
           Hesaraghatta in the west for Bengaluru) which pull the auto-fit
@@ -933,6 +927,6 @@ export function UnifiedMap({
         </Pane>
       )}
       {children}
-    </MapContainer>
+    </BaseMap>
   );
 }

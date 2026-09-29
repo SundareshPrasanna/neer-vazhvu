@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { useLanguage } from "@/lib/i18n/context";
 import { fetchJson } from "@/lib/data/fetch-json";
 
@@ -16,11 +17,7 @@ const IIScStressWardsLeafletMap = dynamic(
     ),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-[420px] w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm text-slate-500">
-        Loading map…
-      </div>
-    ),
+    loading: () => <MapLoading className="h-[420px] w-full" />,
   },
 );
 

@@ -131,9 +131,5 @@ export const BANGALORE: PlaceConfig = {
   ],
   // Lake catchment atlas (the "Catchments" view on water-bodies).
   hasCascadeOverlay: true,
-  // Flood-risk renderer: the KSRSAC-hotspot + BBMP-rajakaluve map
-  // (FloodRiskBangaloreContent), selected by named variant rather than a
-  // city-id branch. Distinct data shape from the interactive Chennai map.
-  flood: { variant: 'bangalore' },
   enabled: true,
 };
