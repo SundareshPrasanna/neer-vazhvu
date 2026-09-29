@@ -6,7 +6,9 @@ provenance + conventions), per-dataset payload contracts, the scope registry,
 and worked examples.
 
 **Status: NVDM v1 ACCEPTED 2026-07-30** after four adversarial review rounds.
-The gate on changed data artifacts (`scripts/nvdm-gate.sh`) is ENFORCING.
+The gate on changed data artifacts (`scripts/nvdm-gate.sh`) is ENFORCING. **1.1** (additive,
+no artifact changes) gives places their hierarchy and external identities in
+the scope registry; see below.
 
 The full normative prose specification is maintained privately while its
 publication is decided; for validation purposes **these schemas and the
@@ -20,9 +22,30 @@ validator are authoritative**. Spec section references in schema descriptions
   `projection`, `envelope`.
 - `<dataset>.schema.json` - Tier-A payload contracts, keyed by full dataset id
   in `scripts/validate_nvdm.py` (`CONTRACTS`).
-- `scopes.json` - the scope registry (id -> kind, append-only).
+- `scopes.json` - the scope registry (append-only), one place registry for
+  the platform; `scopes.schema.json` closes its vocabularies. Read it through
+  `scripts/nvdm_scopes.py` or `src/lib/scopes.ts`, never directly.
 - `examples/` - conformant artifacts, one per major shape; exercised by the
   validator selftest.
+
+## 1.1: places carry their hierarchy in the registry
+
+- **Ids are opaque.** A scope id is a name, never parsed. The `tn-` of
+  `tn-thanjavur` is part of a legacy name; hierarchy is a relation, not a spelling.
+- **Entry shape.** `{kind, name, refs[], relations[]}`. `refs` are namespaced
+  external identities in the PlaceRef grammar (`system`, `level`, `code`,
+  `as_of` = source vintage): `iso3166-1`, `iso3166-2`, `lgd`, `census-2011`.
+  `relations` are typed: `administrative-parent` (place to parent place),
+  `intersects` (water system to a place it crosses, geometry only) and
+  `projection-of` (an administrative view to its canonical water system:
+  `cauvery-ka` and `cauvery-tn` are views of `cauvery`).
+- **Country is derived, never stored.** A place walks `administrative-parent`
+  to a `country` scope (`country` is a new scope kind); a water system goes
+  through the places it intersects and may legitimately reach two.
+- **Validator rules.** Closed vocabularies, registered targets on the right
+  axis, an acyclic parent graph, exactly one country per place, and no
+  external code claimed by two scopes. A TypeScript test holds `CITY_IDS`,
+  the city configs and the seeded `cities` table to the registry.
 
 ## Conformance levels (assessed by `scripts/validate_nvdm.py`)
 

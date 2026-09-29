@@ -1,0 +1,42 @@
+{
+  "$id": "scopes.schema.json",
+  "title": "NVDM 1.1 scope registry entry",
+  "description": "One entry of schemas/nvdm/scopes.json. The vocabularies are closed: appending a ref system, level or relation type is a one-line MINOR change, made when the first entry needs it. Graph rules (targets registered, administrative-parent acyclic, one country per place) are enforced by scripts/validate_nvdm.py.",
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name"],
+      "properties": {
+        "kind": { "$ref": "envelope.schema.json#/$defs/scope/properties/kind" },
+        "name": { "type": "string", "minLength": 1 },
+        "refs": { "type": "array", "items": { "$ref": "#/$defs/ref" } },
+        "relations": { "type": "array", "items": { "$ref": "#/$defs/relation" } }
+      }
+    },
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "level", "code"],
+      "description": "A namespaced external identity (place model 4.1 PlaceRef). A code is never guessed: it is read from a file already in the repo or verified at its publisher.",
+      "properties": {
+        "system": { "enum": ["iso3166-1", "iso3166-2", "lgd", "census-2011"] },
+        "level": { "enum": ["country", "state", "union-territory", "district"] },
+        "code": { "type": "string", "minLength": 1 },
+        "as_of": { "$ref": "envelope.schema.json#/$defs/date", "description": "Source vintage of the code, where known." }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "target"],
+      "properties": {
+        "type": {
+          "enum": ["administrative-parent", "intersects", "projection-of"],
+          "description": "administrative-parent: place to parent place (place model 5). intersects: water system to a place it crosses, geometry only, never supply or entitlement (place model 6, 6.1). projection-of: an administrative view to its canonical water system (place model 7; the registry form of the envelope's projection.of)."
+        },
+        "target": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+      }
+    }
+  }
+}

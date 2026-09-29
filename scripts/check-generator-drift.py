@@ -87,6 +87,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
+import nvdm_scopes  # noqa: E402
 from registry_license import registry_licenses  # noqa: E402
 
 REG = registry_licenses()
@@ -712,10 +713,7 @@ def scope_path_errors() -> tuple[list[str], int]:
     """
     errs: list[str] = []
     checked = 0
-    scopes = json.loads((ROOT / "schemas/nvdm/scopes.json").read_text())["scopes"]
-    cities = sorted(
-        [k for k, v in scopes.items() if v == "city"], key=len, reverse=True
-    )
+    cities = sorted(nvdm_scopes.ids("city"), key=len, reverse=True)
     for top in ("public/data", "public/geojson"):
         for p in sorted((ROOT / top).rglob("*")):
             if p.suffix not in (".json", ".geojson") or not p.is_file():
