@@ -799,7 +799,7 @@ export interface BoundaryProvenance {
 
 /** A state's own local-body layer, read under the state-lsg-layer boundary kind. */
 const STATE_BOUNDARY_LAYERS: Record<string, { label: string; description: string }> = {
-  "ksrec-lsg-boundaries": {
+  "ksrec-open-geoserver": {
     label: "KSREC",
     description: "the Kerala State Remote Sensing and Environment Centre's local-body boundary layer",
   },

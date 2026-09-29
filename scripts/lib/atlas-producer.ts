@@ -376,7 +376,7 @@ export const SOURCE_IDS = {
   // Kerala: development blocks from the Delimitation Commission's block
   // orders, Panchayat polygons from KSREC, wells from the NWDP.
   censusKl: "census-2011-village-amenities-kl",
-  ksrecLsgBoundaries: "ksrec-lsg-boundaries",
+  ksrecGeoserver: "ksrec-open-geoserver",
   ingresKl: "ingres-gw-assessment-kl",
   keralaBlockOrders: "kerala-delimitation-block-orders-2025",
   ngtDepKlPalakkad: "ngt-dep-kl-palakkad",
@@ -498,7 +498,7 @@ const UPSTREAMS: Record<UpstreamKey, Omit<RegisteredSourceSpec, "id" | "role" | 
     publisher: "Office of the Registrar General and Census Commissioner, India",
     url: "https://censusindia.gov.in/nada/index.php/catalog/642",
   },
-  ksrecLsgBoundaries: {
+  ksrecGeoserver: {
     title: "KSREC local self-government boundaries of Kerala (GeoServer WFS layer Kerala:Kerala_Lsgd_Boundary_Lsgdcode)",
     publisher: "Kerala State Remote Sensing and Environment Centre (KSREC)",
     url: "http://ksrec.in:9090/geoserver/ows",
@@ -622,7 +622,7 @@ export const LGD_STATE_UPSTREAMS: Record<string, LgdStateUpstreams> = {
   },
   kl: {
     census: "censusKl",
-    datameet: "ksrecLsgBoundaries",
+    datameet: "ksrecGeoserver",
     ingres: "ingresKl",
     blockMembership: "keralaBlockOrders",
     subdistrictUnit: "taluk",
