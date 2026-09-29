@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { ClimateRiskPanel } from "@/components/climate-risk/climate-risk-panel";
 import { ClimateRiskLegend } from "@/components/climate-risk/climate-risk-legend";
 import { ClimateRiskDetailPanel } from "@/components/climate-risk/climate-risk-detail-panel";
@@ -13,15 +14,6 @@ import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { fetchJson } from "@/lib/data/fetch-json";
-
-function MapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("climate.loading_map")}</span>
-    </div>
-  );
-}
 
 const ClimateRiskMap = dynamic(
   () => import("@/components/climate-risk/climate-risk-map").then((m) => m.ClimateRiskMap),

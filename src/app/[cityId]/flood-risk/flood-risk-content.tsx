@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { useLanguage } from "@/lib/i18n/context";
 import { LiveRegisterCard } from "@/components/flood/live-register-card";
 import { getPlaceConfig } from "@/lib/cities";
@@ -14,9 +15,7 @@ const DrainageNetworkMap = dynamic(
   () => import("@/components/flood/drainage-network-map").then((m) => m.DrainageNetworkMap),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-[420px] rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800" />
-    ),
+    loading: () => <MapLoading className="h-[420px] rounded-lg border border-slate-200 dark:border-slate-700" />,
   },
 );
 

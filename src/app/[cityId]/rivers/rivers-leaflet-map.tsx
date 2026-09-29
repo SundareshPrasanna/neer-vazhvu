@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { MapContainer, TileLayer, Polyline, Tooltip, CircleMarker } from "react-leaflet";
+import { Polyline, Tooltip, CircleMarker } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
-import { MapResizer } from "@/components/map-resizer";
-import { useMapTiles } from "@/lib/utils/map-tiles";
 import { useLanguage } from "@/lib/i18n/context";
 import { FitToBounds, pointsBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
@@ -117,7 +116,6 @@ export function RiversLeafletMap({
   industrialSources = [],
   drains = [],
 }: MapProps) {
-  const tiles = useMapTiles();
   const { language } = useLanguage();
   const localizedName = (info: RiverInfo | undefined, fallback: string) =>
     info ? (language === "ta" ? info.display_name_ta ?? info.display_name : info.display_name) : fallback;
@@ -139,14 +137,11 @@ export function RiversLeafletMap({
   }, [rivers]);
 
   return (
-    <MapContainer
+    <BaseMap
       center={mapCenter}
       zoom={mapZoom}
-      className="h-full w-full"
       scrollWheelZoom={true}
     >
-      <MapResizer />
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <FitToBounds
         bounds={pointsBounds(segments.flatMap((s) => s.coords))}
         resetKey={`rivers:${segments.length}`}
@@ -337,6 +332,6 @@ export function RiversLeafletMap({
           </CircleMarker>
         );
       })}
-    </MapContainer>
+    </BaseMap>
   );
 }

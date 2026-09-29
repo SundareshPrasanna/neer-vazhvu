@@ -47,14 +47,12 @@ test("a rivers route has curated river content (or its own variant)", () => {
   }
 });
 
-test("a flood-risk route has a renderer: a named variant or a flood config", () => {
-  // Mumbai still has its own flood renderer, chosen by city id in the page.
-  const OWN_RENDERER = new Set(["mumbai"]);
+test("a flood-risk route has a renderer: the interactive variant, a flood map or a flood config", () => {
   for (const p of places.filter((p) => p.routes.includes("flood-risk"))) {
-    const variant = p.flood?.variant;
+    const content = FLOOD_CONTENT[p.cityId];
     assert.ok(
-      variant === "interactive" || variant === "bangalore" || FLOOD_CONTENT[p.cityId]?.config || OWN_RENDERER.has(p.cityId),
-      `${p.cityId}: "flood-risk" is in routes but it has no variant and no src/content/flood config`,
+      p.flood?.variant === "interactive" || content?.map || content?.config,
+      `${p.cityId}: "flood-risk" is in routes but it has no variant and no src/content/flood map or config`,
     );
   }
 });

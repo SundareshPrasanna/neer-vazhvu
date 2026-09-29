@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from "react-leaflet";
+import { GeoJSON, CircleMarker, Tooltip } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import type { Feature, FeatureCollection } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type * as L from "leaflet";
@@ -60,17 +61,11 @@ export function IIScStressWardsLeafletMap({ wards }: Props) {
 
   return (
     <div className="h-[420px] w-full rounded-md overflow-hidden border border-slate-200 dark:border-slate-700">
-      <MapContainer
+      <BaseMap
         center={[12.97, 77.58]}
         zoom={11}
-        className="h-full w-full"
         scrollWheelZoom
       >
-        <TileLayer
-          key={tiles.url}
-          url={tiles.url}
-          attribution={tiles.attribution}
-        />
         <FitToBounds
           bounds={pointsBounds(
             wards.map((w) => [w.centroid_lat, w.centroid_lng] as [number, number]),
@@ -143,7 +138,7 @@ export function IIScStressWardsLeafletMap({ wards }: Props) {
             </CircleMarker>
           );
         })}
-      </MapContainer>
+      </BaseMap>
     </div>
   );
 }

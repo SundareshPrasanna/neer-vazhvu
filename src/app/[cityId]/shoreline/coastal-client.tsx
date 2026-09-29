@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
 import { CoastalLegend } from "@/components/coastal/coastal-legend";
@@ -10,14 +11,6 @@ import { CoastalDetailPanel } from "@/components/coastal/coastal-detail-panel";
 import { ShorelineSummary, type ShorelineSummaryCopy } from "@/components/coastal/shoreline-summary";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import type { SelectedCoastal, CoastalSummary } from "@/types/coastal";
-
-function MapLoading() {
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">Loading map…</span>
-    </div>
-  );
-}
 
 const CoastalMap = dynamic(
   () => import("@/components/coastal/coastal-map").then((m) => m.CoastalMap),

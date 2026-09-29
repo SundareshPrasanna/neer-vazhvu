@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-import { MapResizer } from "@/components/map-resizer";
+import { GeoJSON } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import type { Layer } from "leaflet";
 import type L from "leaflet";
 import type { Feature } from "geojson";
@@ -95,15 +95,13 @@ export function ClimateRiskMap({
   const fitBounds = rawBounds ? rawBounds.pad(wideViewport ? -0.12 : 0) : null;
 
   return (
-    <MapContainer
+    <BaseMap
       center={center ?? DEFAULT_CENTER}
       zoom={DEFAULT_ZOOM}
       className="h-full w-full z-0"
       zoomControl={true}
       scrollWheelZoom={true}
     >
-      <MapResizer />
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <FitToBounds
         bounds={fitBounds}
         resetKey={`climate:${geo?.features?.length ?? 0}`}
@@ -123,6 +121,6 @@ export function ClimateRiskMap({
           onEachFeature={onEach}
         />
       )}
-    </MapContainer>
+    </BaseMap>
   );
 }

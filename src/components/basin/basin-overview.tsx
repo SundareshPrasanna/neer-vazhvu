@@ -12,7 +12,8 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Marker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
+import { GeoJSON, CircleMarker, Marker, Tooltip as LeafletTooltip, Popup, useMap } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 import { districtHref, listVisibleAtlasDistricts } from "@/lib/atlas/registry";
 import type { Feature, FeatureCollection } from "geojson";
@@ -694,13 +695,12 @@ export function BasinOverview({
           content needs, by scrolling inside itself. On desktop the row puts
           the map on the flexible side instead. */}
       <div className="relative h-[45vh] shrink-0 md:h-full md:flex-1 md:shrink">
-        <MapContainer
+        <BaseMap
           center={manifest.mapCenter}
           zoom={manifest.mapZoom}
           className="absolute inset-0"
           preferCanvas
         >
-          <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
           {/* The administrative frame, drawn first and left unclipped: the
               useful part is where the state line and the basin part company,
               above all the southern border the Cauvery crosses into TN. */}
@@ -951,7 +951,7 @@ export function BasinOverview({
             );
           })}
           </Fragment>
-        </MapContainer>
+        </BaseMap>
 
         {/* Metric switcher (only when there is actually a choice) + legend */}
         <div className="absolute top-3 right-3 z-[500] flex flex-col items-end gap-1.5">

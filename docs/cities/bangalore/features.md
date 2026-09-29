@@ -56,7 +56,7 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
 
 ### Flood Risk (Bengaluru)
 
-- **KSNDMC flood-prone zones** + **BBMP Sept 2022 hotspots** rendered via `flood-risk-bangalore-content.tsx` and `flood-risk-bangalore-leaflet-map.tsx`.
+- **KSNDMC flood-prone zones** + **BBMP Sept 2022 hotspots** declared in `src/content/flood/bangalore.ts` and drawn by the shared `FloodMapPage` (`src/components/flood/flood-map-page.tsx`).
 - The Sep 2022 IT corridor flooding (Whitefield, Sarjapur Road) is annotated as an event marker.
 - **Narrower than Chennai's CFLOWS.** No CFLOWS-equivalent probabilistic hazard surface for Bengaluru; the page leans on the BBMP hotspot inventory + corridor narrative. Full `t()`-driven for EN + KN parity.
 
@@ -85,7 +85,7 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
   - BangaloreDailyBriefing (variants + structured fields)
   - CauveryPumpingHero (eyebrow, headline, body, stat labels, callouts, footer)
   - TankerExpandedContext + TankerPageChrome (section headings + footer)
-  - flood-risk-bangalore-content (`frb.*` keys)
+  - the flood map page copy (`frb.*` keys, declared in `src/content/flood/bangalore.ts`)
   - bangalore-page-descriptions (`bpd.*` keys, complete rewrite as single t()-driven renderer)
   - IIScStressWardsMap (`iisc_map.*` keys)
   - Facts page (`facts.bucket.*` + per-fact `_kn` variants in the JSON)

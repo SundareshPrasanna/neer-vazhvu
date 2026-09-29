@@ -9,7 +9,9 @@ import { ViewModeToggle, type ViewMode } from "@/components/water-bodies/view-mo
 import { CatchmentAtlasClient } from "@/components/cascade/catchment-atlas-client";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { MapInfoButton } from "@/components/map/map-info-button";
-import { elevationLegendEntries, useElevationBands } from "@/components/map/elevation-bands";
+import { useElevationBands } from "@/components/map/elevation-bands";
+import { ElevationBandsControl } from "@/components/map/elevation-bands-control";
+import { MapLoading } from "@/components/map/map-loading";
 
 const ElevationBandsLayer = dynamic(
   () => import("@/components/map/elevation-bands-layer").then((m) => m.ElevationBandsLayer),
@@ -55,15 +57,6 @@ interface ClientProps {
    *  built by `scripts/run_cascade.py`). */
   hasCascadeOverlay?: boolean;
   catchmentsGapNote?: string;
-}
-
-function MapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("wb.loading")}</span>
-    </div>
-  );
 }
 
 const UnifiedMap = dynamic(
@@ -122,8 +115,7 @@ export default function WaterBodiesMapClient({
   // Persist toggle to the URL so the chosen view survives refresh and
   // shareable links open in the right mode.
   // Ground-elevation bands (FABDEM) - self-hides for cities without the file.
-  const [showElevation, setShowElevation] = useState(false);
-  const elevation = useElevationBands(cityId, showElevation);
+  const elevation = useElevationBands(cityId);
 
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
@@ -336,39 +328,10 @@ export default function WaterBodiesMapClient({
               <CorporationBoundaries cityId={cityId} />
             )}
           </UnifiedMap>
-          {elevation.available && (
-            <div className="absolute bottom-2 right-2 md:bottom-8 md:left-2.5 md:right-auto z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs max-w-[46vw] md:max-w-[240px] space-y-1.5">
-              <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 dark:text-slate-300">
-                <input
-                  type="checkbox"
-                  checked={showElevation}
-                  onChange={() => setShowElevation((v) => !v)}
-                  className="accent-sky-700"
-                />
-                <span className="flex items-center gap-1.5">
-                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-gradient-to-r from-sky-800 via-lime-400 to-amber-800" />
-                  Ground elevation (FABDEM)
-                </span>
-              </label>
-              {showElevation && (
-                <>
-                  <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
-                  {elevationLegendEntries(elevation.data).map(({ band, color }) => (
-                    <span key={band} className="inline-flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-sm" style={{ backgroundColor: color }} />
-                      {band}
-                    </span>
-                  ))}
-                </div>
-                  <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
-                    Ground height above sea level from satellite (FABDEM 30 m, buildings and
-                    forests removed) - the terrain each water body drains. Read as bands, not
-                    spot heights (~2 m vertical accuracy).
-                  </p>
-                </>
-              )}
-            </div>
-          )}
+          <ElevationBandsControl
+            elevation={elevation}
+            note="Ground height above sea level from satellite (FABDEM 30 m, buildings and forests removed) - the terrain each water body drains. Read as bands, not spot heights (~2 m vertical accuracy)."
+          />
 
           {/* Legend overlay */}
           <div

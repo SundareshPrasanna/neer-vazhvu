@@ -631,7 +631,6 @@ export const translations: Record<string, TranslationEntry> = {
   "legend.high_risk": { en: "High Risk",            ta: "அதிக ஆபத்து", kn: "ಹೆಚ್ಚಿನ ಅಪಾಯ" },
 
   // ── Groundwater Page ──────────────────────────────────────────────────────
-  "gw_page.loading_map": { en: "Loading map...",                 ta: "வரைபடம் ஏற்றுகிறது...", kn: "ನಕ್ಷೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
   "gw_page.loading_data": { en: "Loading groundwater data...",    ta: "நிலத்தடி நீர் தரவு ஏற்றுகிறது...", kn: "ಅಂತರ್ಜಲ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
   "gw_page.title": { en: "Groundwater Map",                ta: "நிலத்தடி நீர் வரைபடம்", kn: "ಅಂತರ್ಜಲ ನಕ್ಷೆ" },
   "gw_page.no_data": { en: "No groundwater data available yet.", ta: "இன்னும் நிலத்தடி நீர் தரவு இல்லை.", kn: "ಇನ್ನೂ ಅಂತರ್ಜಲ ದತ್ತಾಂಶ ಲಭ್ಯವಿಲ್ಲ." },
@@ -754,7 +753,6 @@ export const translations: Record<string, TranslationEntry> = {
   "wb.lost": { en: "documented lost or encroached",          ta: "ஆவணப்படுத்தப்பட்ட இழந்த அல்லது ஆக்கிரமிக்கப்பட்டவை", kn: "ದಾಖಲಿತ ಕಳೆದು ಹೋದ ಅಥವಾ ಒತ್ತುವರಿಯಾದ" },
   "wb.ha_lost": { en: "of water surface lost",                  ta: "நீர் மேற்பரப்பு இழந்தது", kn: "ಕಳೆದು ಹೋದ ನೀರಿನ ಮೇಲ್ಮೈ" },
   "wb.tagline": { en: "{lostCount} water bodies lost to urbanization - their absence increases flood vulnerability and reduces groundwater recharge", ta: "நகரமயமாக்கலால் {lostCount} நீர்நிலைகள் இழப்பு - அவற்றின் இன்மை வெள்ள பாதிப்பை அதிகரிக்கிறது, நிலத்தடி நீர் நிரப்புதலைக் குறைக்கிறது", kn: "ನಗರೀಕರಣಕ್ಕೆ ಬಲಿಯಾದ {lostCount} ಜಲಮೂಲಗಳು - ಅವುಗಳ ಅನುಪಸ್ಥಿತಿ ಪ್ರವಾಹ ದುರ್ಬಲತೆಯನ್ನು ಹೆಚ್ಚಿಸುತ್ತದೆ ಮತ್ತು ಅಂತರ್ಜಲ ಮರುಪೂರಣವನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತದೆ" },
-  "wb.loading": { en: "Loading map...",                         ta: "வரைபடம் ஏற்றுகிறது...", kn: "ನಕ್ಷೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
   "wb.osm_source": { en: "Current water bodies from",              ta: "தற்போதைய நீர்நிலைகள் இதிலிருந்து:", kn: "ಪ್ರಸ್ತುತ ಜಲಮೂಲಗಳು:" },
   "wb.lost_source": { en: "Lost bodies curated from",               ta: "இழந்த நீர்நிலைகள் இதிலிருந்து:", kn: "ಕಳೆದು ಹೋದ ಜಲಮೂಲಗಳು:" },
   "wb.lost_source_value": { en: "Care Earth Trust & NGT records",         ta: "Care Earth Trust & NGT பதிவுகள்", kn: "Care Earth Trust ಮತ್ತು NGT ದಾಖಲೆಗಳು" },
@@ -1039,7 +1037,6 @@ export const translations: Record<string, TranslationEntry> = {
 
   // ── Rivers page ───────────────────────────────────────────────────────────
   "rivers_page.loading": { en: "Loading river data...",          ta: "ஆற்று தரவு ஏற்றுகிறது...", kn: "ನದಿ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
-  "rivers_page.loading_map": { en: "Loading map...",                 ta: "வரைபடம் ஏற்றப்படுகிறது...", kn: "ನಕ್ಷೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
   "rivers_page.title": { en: "River Health",                   ta: "ஆற்று ஆரோக்கியம்", kn: "ನದಿ ಆರೋಗ್ಯ" },
   "rivers_page.no_data": { en: "River data not available.",      ta: "ஆற்று தரவு கிடைக்கவில்லை.", kn: "ನದಿ ದತ್ತಾಂಶ ಲಭ್ಯವಿಲ್ಲ." },
   "rivers_page.rivers": { en: "rivers",                         ta: "ஆறுகள்", kn: "ನದಿಗಳು" },
@@ -1282,7 +1279,6 @@ export const translations: Record<string, TranslationEntry> = {
   "lr.source_note_flagship": { en: "Data: hand-curated flagship inventory (court orders, Ramsar records, civic reporting) + OpenStreetMap geometry", ta: "தரவு: தேர்ந்தெடுத்த முதன்மை பட்டியல் (நீதிமன்ற உத்தரவுகள், ராம்சார் பதிவுகள், குடிமை செய்திகள்) + OpenStreetMap வடிவங்கள்", kn: "ದತ್ತಾಂಶ: ಆಯ್ದ ಪ್ರಮುಖ ಪಟ್ಟಿ (ನ್ಯಾಯಾಲಯ ಆದೇಶಗಳು, ರಾಮ್ಸರ್ ದಾಖಲೆಗಳು, ನಾಗರಿಕ ವರದಿಗಾರಿಕೆ) + OpenStreetMap ಜ್ಯಾಮಿತಿ" },
 
   // ── Climate Risk page (sub-basin risk index) ────────────
-  "climate.loading_map": { en: "Loading climate risk map...", ta: "காலநிலை ஆபத்து வரைபடம் ஏற்றப்படுகிறது..." },
   "climate.headline": { en: "The Cooum and Kosasthalaiyar sub-basins carry the highest climate risk to Chennai's water.", ta: "சென்னையின் நீருக்கு கூவம் மற்றும் கொசஸ்தலையாறு துணை-நீர்ப்பிடிப்புகள் அதிக காலநிலை ஆபத்தைக் கொண்டுள்ளன." },
   // Subtheme toggle
   "climate.sub.risk": { en: "Overall risk", ta: "மொத்த ஆபத்து" },
@@ -1345,7 +1341,6 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.allocations": { en: "Allocations", ta: "\u0b92\u0ba4\u0bc1\u0b95\u0bcd\u0b95\u0bc0\u0b9f\u0bc1\u0b95\u0bb3\u0bcd", kn: "\u0cb9\u0c82\u0c9a\u0cbf\u0c95\u0cc6\u0c97\u0cb3\u0cc1" },
   "nav.commitments": { en: "Commitments", ta: "உறுதிமொழிகள்", kn: "ಬದ್ಧತೆಗಳು" },
   "flood.loading": { en: "Loading flood data...",           ta: "வெள்ள தரவு ஏற்றப்படுகிறது...", kn: "ಪ್ರವಾಹ ದತ್ತಾಂಶ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
-  "flood.loading_map": { en: "Loading flood risk map...",       ta: "வெள்ள அபாய வரைபடம் ஏற்றப்படுகிறது...", kn: "ಪ್ರವಾಹ ಅಪಾಯ ನಕ್ಷೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ..." },
 
   // View toggle
   "flood.view_hazard": { en: "Hazard Zones",                   ta: "ஆபத்து மண்டலங்கள்", kn: "ಅಪಾಯ ವಲಯಗಳು" },

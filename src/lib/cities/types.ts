@@ -181,12 +181,12 @@ export interface FactsConfig {
  * - `interactive`: the full hazard / historical / drainage / sewerage map
  *   (city-agnostic; reads `<cityId>-flood-*`, `<cityId>-drainage`,
  *   `<cityId>-sewerage`, `<cityId>-rivers` GeoJSON). Chennai today.
- * - `bangalore`: Bangalore's bespoke hotspot + drain-toggle map.
- * - `narrative` (default when a narrative config exists): dam-threshold +
- *   historical-events card stack (Madurai).
+ * - `narrative` / omitted: whatever src/content/flood/<city> declares - a
+ *   layer `map` (Bengaluru, Mumbai) or the dam-threshold + historical-events
+ *   card stack (Madurai).
  */
 export interface FloodViewConfig {
-  variant?: 'interactive' | 'bangalore' | 'narrative';
+  variant?: 'interactive' | 'narrative';
 }
 
 /**

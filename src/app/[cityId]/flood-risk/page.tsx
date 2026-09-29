@@ -4,8 +4,7 @@ import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { FloodRiskContent } from "./flood-risk-content";
 import { FLOOD_CONTENT } from "@/content/flood";
-import { FloodRiskBangaloreContent } from "./flood-risk-bangalore-content";
-import { FloodRiskMumbaiContent } from "./flood-risk-mumbai-content";
+import { FloodMapPage } from "@/components/flood/flood-map-page";
 import { InteractiveFloodContent } from "./interactive-flood-content";
 
 interface PageProps {
@@ -32,38 +31,24 @@ export default async function CityFloodRiskPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  // Renderer is selected by declared variant, not city id (see
-  // docs/specs/multi-city-component-discipline.md rule 3). Any city can
-  // adopt any variant by setting `flood.variant` in its config.
-  //
-  //  - 'interactive': full interactive flood map (4 view modes -
-  //    hazard/historical/drainage/sewerage, legend, detail panel, ward
-  //    search, stats bar). City-agnostic; reads `<cityId>-flood-*`.
-  //    The same content component also backs the flat /flood-risk route.
-  //  - 'bangalore': distinct map-based page (KSRSAC hotspots + BBMP
-  //    rajakaluve network) whose data shape differs from the interactive
-  //    map (no single dam-release threshold; rainfall + drainage capacity
-  //    is the driver).
-  //  - 'narrative' / undefined: the Madurai-style narrative card stack
-  //    (FLOOD_CONFIG_BY_CITY) or the not-yet-available placeholder.
-  const variant = config.flood?.variant;
-
-  if (variant === "interactive") {
+  // Renderer is selected by declared variant or by what the city's flood
+  // content declares, never by city id (docs/specs/multi-city-component-discipline.md
+  // rule 3):
+  //  - flood.variant 'interactive': the full hazard / historical / drainage /
+  //    sewerage map (Chennai), reading `<cityId>-flood-*`.
+  //  - a `map` in src/content/flood/<city>: a layer map with a text sidebar,
+  //    for cities whose flood record is mapped registers (Bengaluru, Mumbai).
+  //  - a narrative `config`: the card stack (Madurai), else not-yet-available.
+  if (config.flood?.variant === "interactive") {
     return <InteractiveFloodContent cityId={cityId} />;
   }
 
-  if (variant === "bangalore") {
-    return <FloodRiskBangaloreContent cityDisplayName={config.displayName} />;
+  const content = FLOOD_CONTENT[config.cityId];
+  if (content?.map) {
+    return <FloodMapPage cityId={cityId} cityDisplayName={config.displayName} spec={content.map} />;
   }
 
-  // Mumbai's flooding is rainfall + high-tide + drainage driven (not a
-  // dam-release threshold), with a distinct chronic-spot map - its own
-  // component rather than the Madurai dam-release config shape.
-  if (cityId === "mumbai") {
-    return <FloodRiskMumbaiContent cityDisplayName={config.displayName} />;
-  }
-
-  const cfg = FLOOD_CONTENT[config.cityId]?.config;
+  const cfg = content?.config;
   if (!cfg) {
     return (
       <FeatureNotYetAvailable

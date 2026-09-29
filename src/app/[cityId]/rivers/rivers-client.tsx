@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import type { Feature, Geometry, LineString, MultiLineString } from "geojson";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
-import { useLanguage } from "@/lib/i18n/context";
 import { TreatmentDischargePanel } from "@/components/rivers/treatment-discharge-panel";
 import { WaterwayLinks } from "@/components/waterways/waterway-links";
 import { measureWorst } from "@/lib/rivers/measure";
@@ -164,15 +164,6 @@ interface RiverGeoFile {
     name_ta?: string;
     length_km?: number;
   }>>;
-}
-
-function MapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("rivers_page.loading_map") || "Loading map..."}</span>
-    </div>
-  );
 }
 
 const RiversLeafletMap = dynamic(

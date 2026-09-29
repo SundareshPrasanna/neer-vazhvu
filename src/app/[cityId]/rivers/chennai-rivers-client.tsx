@@ -16,6 +16,7 @@ import { Suspense, useEffect, useState } from "react";
 import { measureWorst } from "@/lib/rivers/measure";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { MapLoading } from "@/components/map/map-loading";
 import { RiverPanel } from "@/components/rivers/river-panel";
 import { PollutionPanel } from "@/components/pollution/pollution-panel";
 import { RiversLegend } from "@/components/rivers/rivers-legend";
@@ -51,15 +52,6 @@ interface ChennaiRiversClientProps {
   basin?: { manifest: BasinManifest; inventory: BasinInventory | null } | null;
 }
 
-function RiversMapLoading() {
-  const { t } = useLanguage();
-  return (
-    <div className="h-full w-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-      <span className="text-slate-500 dark:text-slate-400">{t("rivers_page.loading_map")}</span>
-    </div>
-  );
-}
-
 // Leaflet must be loaded client-side only (no SSR)
 // Shared with the standard rivers client so dismissing the drill-in hint in
 // one place dismisses it everywhere.
@@ -72,7 +64,7 @@ const CombinedRiversMap = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <RiversMapLoading />,
+    loading: () => <MapLoading />,
   }
 );
 

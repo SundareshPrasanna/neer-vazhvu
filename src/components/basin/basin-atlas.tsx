@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, GeoJSON, CircleMarker, Circle, Tooltip, ZoomCo
 import L from "leaflet";
 import type { Feature, FeatureCollection } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
-import { MapResizer } from "@/components/map-resizer";
+import { MapResizer } from "@/components/map/base-map";
 import { BottomSheet } from "@/components/map/bottom-sheet";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import { ELEVATION_BAND_COLORS, elevationLegendEntries } from "@/components/map/elevation-bands";

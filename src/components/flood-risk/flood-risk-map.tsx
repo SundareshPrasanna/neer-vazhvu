@@ -1,16 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  GeoJSON,
-  CircleMarker,
-  Tooltip,
-  useMap,
-} from "react-leaflet";
+import { GeoJSON, CircleMarker, Tooltip, useMap } from "react-leaflet";
+import { BaseMap } from "@/components/map/base-map";
 import { ElevationBandsLayer } from "@/components/map/elevation-bands-layer";
-import { MapResizer } from "@/components/map-resizer";
 import type { Layer } from "leaflet";
 import L from "leaflet";
 import type { Feature } from "geojson";
@@ -315,16 +308,14 @@ export function FloodRiskMap({
   }, [hiddenCategories, drainageStyle]);
 
   return (
-    <MapContainer
+    <BaseMap
       center={center ?? DEFAULT_CENTER}
       zoom={DEFAULT_ZOOM}
       className="h-full w-full z-0"
       zoomControl={true}
       scrollWheelZoom={true}
     >
-      <MapResizer />
       {focusCenter && <FlyToCenter center={focusCenter} />}
-      <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       <ElevationBandsLayer data={elevationData ?? null} />
       <FitToBounds
         bounds={geoJsonBounds(wardsGeo) ?? geoJsonBounds(hazardGeo)}
@@ -545,6 +536,6 @@ export function FloodRiskMap({
           })}
         </>
       )}
-    </MapContainer>
+    </BaseMap>
   );
 }
