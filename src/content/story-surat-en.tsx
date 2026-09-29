@@ -55,13 +55,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function SuratStoryEn() {
   return (
     <StoryPage
       cityId="surat"
       cityDisplayName="Surat"
-      tagline="The city the river made, unmade, and made again"
+      tagline={STORY_TAGLINES.surat}
       lastRevised="August 2026"
     >
       <Hero

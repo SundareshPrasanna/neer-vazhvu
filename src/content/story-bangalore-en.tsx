@@ -31,13 +31,14 @@ import {
   PullQuote,
   ThenNow,
 } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function BangaloreStoryEn() {
   return (
     <StoryPage
       cityId="bangalore"
       cityDisplayName="Bengaluru"
-      tagline="City of stolen kere: what Kempegowda built and what Bengaluru built over it"
+      tagline={STORY_TAGLINES.bangalore}
       lastRevised="May 2026"
     >
       <Hero

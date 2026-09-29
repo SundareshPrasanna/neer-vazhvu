@@ -63,13 +63,14 @@ import {
   CTA,
   ThenNow,
 } from "@/components/story/story-shortcodes";
+import { STORY_TAGLINES } from "./story-taglines";
 
 export function PuneStoryEn() {
   return (
     <StoryPage
       cityId="pune"
       cityDisplayName="Pune"
-      tagline="The city that dammed one river four times and still counts four hours"
+      tagline={STORY_TAGLINES.pune}
       lastRevised="August 2026"
     >
       <Hero
