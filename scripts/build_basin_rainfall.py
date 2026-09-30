@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "docs" / "research" / "rainfall-normals-cache.json"
 NORMAL_YEARS = (1991, 2020)
 SEASON_START_MD = (6, 1)  # Jun 1
+NORMALS_END_MD = (8, 31)  # the cached 1991-2020 normals stop here
 ERA5_LAG_DAYS = 7  # archive completeness lag; cutoff = today - lag
 API = "https://archive-api.open-meteo.com/v1/archive"
 
@@ -125,6 +126,9 @@ def main(basin_ids):
     cutoff_md = (cutoff.month, cutoff.day)
     if cutoff_md < SEASON_START_MD:
         sys.exit(f"cutoff {cutoff} precedes Jun 1 - season has not started; refusing to write")
+    if cutoff_md > NORMALS_END_MD:
+        # The actual would run past the normal and still be labelled "same window".
+        sys.exit(f"cutoff {cutoff} is past the cached normals (Jun 1 - Aug 31); refusing to write")
     start = date(NORMAL_YEARS[0], 6, 1)
 
     for basin_id in basin_ids:
@@ -153,9 +157,9 @@ def main(basin_ids):
                 if ck not in cache:
                     # one-time 30-year pull, Jun-Aug only (weight ~4x lighter
                     # than a full-year pull); cached for every later run
-                    ntimes, nvals = fetch_daily(lon, lat, start, date(NORMAL_YEARS[1], 8, 31))
+                    ntimes, nvals = fetch_daily(lon, lat, start, date(NORMAL_YEARS[1], *NORMALS_END_MD))
                     cache[ck] = [[t, v] for t, v in zip(ntimes, nvals)
-                                 if v is not None and 6 <= int(t[5:7]) <= 8]
+                                 if v is not None and SEASON_START_MD[0] <= int(t[5:7]) <= NORMALS_END_MD[0]]
                     CACHE.parent.mkdir(parents=True, exist_ok=True)
                     CACHE.write_text(json.dumps(cache))
                     time.sleep(3)
