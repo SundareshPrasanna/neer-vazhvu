@@ -146,7 +146,7 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     // run (both scoreboards are written together).
     maxAgeDays: 15,
     dateFrom: 'regex:"rainfallDeviationPct":\\s*\\{[^}]*"asOf": "(\\d{4}-\\d{2}-\\d{2})"',
-    note: "Cauvery sub-basin rainfall deviation (self-computed, both states). Refresh: python3 scripts/build_basin_rainfall.py cauvery-ka cauvery-tn",
+    note: "Cauvery sub-basin rainfall deviation (self-computed, both states). Refresh: python3 scripts/build_basin_rainfall.py cauvery-ka cauvery-tn; its normals are cached for Jun 1 - Aug 31 only and it refuses a later cutoff",
   },
 ];
 
