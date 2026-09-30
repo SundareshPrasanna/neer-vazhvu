@@ -5,8 +5,7 @@
  * a WATER ledger - entitlements in TMC against receipts in MLD. Billing is
  * money, and putting revenue rows into that frame would blur it. What billing
  * DOES share with the tanker ledger is the operational geography: both key on
- * HMWSSB division and section, so the two can be read against each other and
- * 198 of 201 tanker sections join exactly.
+ * HMWSSB division and section, so the two can be read against each other.
  *
  * The join yields tanker bookings per piped connection. Read the caution below
  * before reading the table: this is NOT a deprivation map.
@@ -32,7 +31,8 @@ export type BillingLedger = {
   sections: { era: string; division: string; section: string; demand: number; collection: number; collection_pct: number | null; connections_last_known: number; connections_as_of: string | null }[];
 };
 
-export type TankerSection = { section: string; division: string; bookings: number };
+/** The tanker ledger's pre-recut era: the scheme this billing join uses. */
+export type TankerEra = { from: string; to: string; sections: { section: string; division: string; bookings: number }[] };
 
 const nf = new Intl.NumberFormat("en-IN");
 
@@ -48,19 +48,20 @@ function crore(rupees: number): string {
 
 export function BillingLedgerPanel({
   billing,
-  tankerSections,
+  tankerEra,
   cityDisplayName,
 }: {
   billing: BillingLedger;
-  tankerSections: TankerSection[];
+  tankerEra: TankerEra;
   cityDisplayName: string;
 }) {
   const t = billing.totals;
   const first = billing.monthly[0];
   const last = billing.monthly[billing.monthly.length - 1];
 
-  // Join on (division, section). Only the pre-recut era is comparable: the
-  // tanker series ends Feb 2024 and HMWSSB re-cut its section scheme in Feb 2026.
+  // Join on (division, section). Only the pre-recut era is comparable: HMWSSB
+  // re-cut its section scheme in Feb 2026.
+  const tankerSections = tankerEra.sections;
   const bill = new Map(
     billing.sections
       .filter((s) => s.era === "pre_recut")
@@ -147,15 +148,16 @@ export function BillingLedgerPanel({
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-3xl">
             {joined.length} of {tankerSections.length} tanker sections join to the billing ledger on
-            division and section. Bookings are the full tanker series; connections are the last month
-            each section reported them, dated per row.
+            division and section. Bookings are the tanker series from {tankerEra.from} to{" "}
+            {tankerEra.to}; connections are the last month each section reported them, dated per row.
           </p>
 
           {/* The caution has to come BEFORE the table. */}
           <div className="mt-3 rounded-md border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60 p-3 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             <strong className="font-semibold">This is not a deprivation map. Read it the other way round.</strong>{" "}
-            The highest rates sit in {joined[0].section.split("(")[0].trim()}, Jubilee Hills and Banjara
-            Hills - the IT corridor and the affluent west, not the historic core. HMWSSB tankers are paid
+            The highest rates sit in{" "}
+            {joined.slice(0, 3).map((r) => r.section.split("(")[0].trim()).join(", ")} - the western
+            growth belt, not the historic core. HMWSSB tankers are paid
             for, and booking one needs storage to receive it. So this measures where households can
             afford and accommodate tankers as much as where the pipe network falls short. A section at
             the bottom of this table is not necessarily well served; it may simply not be buying.
@@ -206,14 +208,14 @@ export function BillingLedgerPanel({
           How to read this comparison
         </h3>
         <p>
-          <strong>The two series do not cover the same window.</strong> Tanker bookings run to
-          February 2024; connection counts are dated per row and can be later. The ratio is a rough
+          <strong>The two series do not cover the same window.</strong> Tanker bookings cover{" "}
+          {tankerEra.from} to {tankerEra.to}; connection counts are dated per row. The ratio is a rough
           intensity measure, not a rate for a fixed period.
         </p>
         <p>
           <strong>Only the pre-2026 section scheme is comparable.</strong> HMWSSB re-cut its
-          divisions and sections in February 2026, so the join uses the earlier geography - the one
-          the tanker series was recorded in.
+          divisions and sections in February 2026, so the join uses the earlier geography and the
+          months before it.
         </p>
         {billing._caveats?.slice(0, 2).map((c) => <p key={c}>{c}</p>)}
         <p className="pt-1 border-t border-slate-200 dark:border-slate-700">

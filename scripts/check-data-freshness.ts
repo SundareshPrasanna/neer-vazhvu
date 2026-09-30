@@ -126,6 +126,18 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "BBMB Bhakra/Pong daily bulletin (launchd; BBMB overwrites daily, no archive)",
   },
   {
+    id: "hyderabad-tankers",
+    cityId: "hyderabad",
+    file: "public/data/hyderabad-tankers.json",
+    // HMWSSB adds a month to the Telangana portal early each month; this is
+    // the portal's own `modified` date, so it ages when the portal stops
+    // moving or when the local job stops picking it up (the portal refuses
+    // runners). Monthly plus a month's grace.
+    maxAgeDays: 62,
+    dateFrom: "json:_upstream_modified",
+    note: "HMWSSB monthly tanker ledger. Refresh: python3 neer-vazhvu-api/scripts/build_hyderabad_tankers.py --out public/data/hyderabad-tankers.json",
+  },
+  {
     id: "cauvery-ka-scoreboard",
     cityId: "bangalore",
     file: "public/data/basins/cauvery-ka/scoreboard.json",

@@ -200,24 +200,28 @@ export function HyderabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
         <p className="text-slate-600 dark:text-slate-400">
           {cityName} is the one city where the tanker market is run by the
           utility itself and reported. HMWSSB publishes monthly bookings and
-          deliveries for each of its 201 operational sections -{" "}
+          deliveries for each of its operational sections -{" "}
           <Link
             href={`/${cityId}/tanker`}
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
-            1.32 million bookings
+            5.36 million bookings
           </Link>{" "}
-          between January 2022 and February 2024. Bengaluru&apos;s equivalent
+          between January 2022 and August 2026, with a month added as HMWSSB
+          publishes it. Bengaluru&apos;s equivalent
           page rests on household surveys because that market is private and
           unreported.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          We looked for a fulfilment gap and there isn&apos;t one: 99.95% of
-          bookings were delivered, and the worst of 201 sections still ran at
-          98.4%. So the page reports demand instead, which is where the signal
-          is. Bookings triple between October and June, and the heaviest demand
-          is not in the old city but in Madhapur, Kondapur, Hafeezpet,
-          Gachibowli and Manikonda - the IT corridor.
+          The page leads on demand. Bookings more than doubled between 2023
+          and 2025, they are about four times higher in April than in
+          September, and the heaviest demand is not in the old city but in
+          Kondapur, Madhapur and Manikonda - the IT corridor. The share of
+          bookings recorded as delivered was 98% or higher in every month to
+          May 2026 and 92.1%, 89.2% and 92.4% for June to August 2026. The
+          portal does not say whether the other bookings were cancelled, were
+          still pending or were delivered later, so the page states the counts
+          and no cause.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           We used to describe that as tanker dependence tracking where the city
@@ -230,16 +234,18 @@ export function HyderabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           The page also carries HMWSSB&apos;s billing ledger, which uses the
-          same division and section units - 198 of the 201 tanker sections join
-          exactly. That gives bookings per piped connection, and it is the
+          same division and section units - 214 of the 221 tanker sections in
+          use before February 2026 join exactly. That gives bookings per piped connection, and it is the
           reason the caution above is stated before the table rather than after
           it. The billing record is also the utility&apos;s own answer on
           revenue: it collected 69.5% of what it billed over fifty-four months.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          Two gaps, both upstream: the published series stops at February 2024,
-          and December 2022 is missing entirely - the file exists but is empty
-          at source. Neither month is interpolated. Sections are HMWSSB&apos;s
+          One gap upstream: December 2022 is missing entirely - the file
+          exists but is empty at source, and the month is not interpolated.
+          HMWSSB re-cut its divisions and sections in February 2026, so section
+          rankings are given before and after that month and are not added
+          together. Sections are HMWSSB&apos;s
           own operational units and no public boundary file exists for them, so
           this is a ranked table rather than a map.
         </p>

@@ -32,8 +32,8 @@
  *     the 136% growth, and the GO 111 twin-share series are computed from it.
  *   - HMDA gazetted lake register (in-repo): 2,978 lakes, 1,352 finally
  *     notified, district breakdown.
- *   - HMWSSB tanker bookings via OpenCity (in-repo): 1,316,215 bookings,
- *     201 sections, Jan 2022 - Feb 2024.
+ *   - HMWSSB tanker bookings, Telangana Open Data Portal (in-repo): 3,805,437
+ *     bookings, 221 sections, Jan 2022 - Jan 2026 (before the section re-cut).
  *   - GHMC nala layer via OpenCity (in-repo): 96 nalas, 245 km, encroachment
  *     columns published empty.
  *   - GO 111 repeal: 84 villages / 1.32 lakh acres, Telangana cabinet 2022
@@ -292,10 +292,11 @@ export function HyderabadStoryEn() {
           an unusually precise thing to ask it to fill.
         </p>
         <p>
-          Meanwhile the demand shows up where the map is newest. Across 1.32
-          million tanker bookings, the heaviest are not in the old city but in
-          Madhapur, Kondapur and Hafeezpet, then Gachibowli, Manikonda,
-          Nizampet - the IT corridor, plus Banjara Hills and Jubilee Hills. It
+          Meanwhile the demand shows up where the map is newest. Across 3.8
+          million tanker bookings to January 2026, the heaviest are not in the
+          old city but in Kondapur, Madhapur and Manikonda, then KPHB,
+          Nizampet and Pragathinagar - the IT corridor and the western growth
+          belt, plus Banjara Hills and Jubilee Hills. It
           is the same geography as the unfinished lake boundaries. The city
           grew faster than its pipes, and where the pipes have not arrived, the
           tankers have.

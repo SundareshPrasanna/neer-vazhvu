@@ -10,51 +10,51 @@ many tankers ran. Chennai's is mixed. Hyderabad is the exception - HMWSSB runs
 the tanker fleet ITSELF, takes bookings through its own portal, and publishes
 monthly counts of bookings AND deliveries per division and section.
 
-WHAT THE DATA ACTUALLY SHOWS (checked before designing the page)
----------------------------------------------------------------
-The obvious metric - a booking-to-delivery fulfilment rate by locality - turns
-out to be a DEAD END, and that is itself the finding: HMWSSB delivers 1,315,622
-of 1,316,215 bookings, 99.95%, and the worst-performing section of 201 still
-sits at 98.4%. The tanker system is not rationed. Shipping a fulfilment chart
-would mean shipping a flat line at 100% and implying it meant something.
-
-So the page is built on the two dimensions that DO carry signal:
-
-  1. SEASONALITY. Bookings swing ~3x within a year - 28-33k/month in the
-     Sep-Nov post-monsoon trough against 78-93k in the Mar-Jun summer peak.
-     Tanker demand is a drought signal, not a baseline.
-  2. GEOGRAPHY, which is the real story. The top sections are Madhapur,
-     Kondapur, Hafeezpet, Gachibowli, Manikonda, Nizampet, KPHB - i.e. the
-     western IT corridor and the new growth belt, plus Banjara Hills and
-     Jubilee Hills. NOT the old city. Tanker dependence in Hyderabad tracks
-     where the city was built faster than its piped network, which cuts
-     against the usual assumption that tankers serve the poorest areas.
-     It is also the same geography as the lake register's weakest legal
-     coverage (Rangareddy: 891 lakes, only 34.5% finally notified).
+WHAT THE PAGE IS BUILT ON
+-------------------------
+  1. VOLUME. Bookings have risen every year since 2022.
+  2. SEASONALITY. Bookings swing several-fold within a year, from the
+     Sep-Nov post-monsoon trough to the Mar-Jun summer peak.
+  3. GEOGRAPHY. The top sections are Kondapur, Madhapur, Manikonda, KPHB,
+     Nizampet - the western IT corridor and the new growth belt - plus Banjara
+     Hills and Jubilee Hills. Not the old city.
+  4. DELIVERED SHARE. Near 100% for four years, lower from Jun 2026 (below).
 
 Source
 ------
-OpenCity dataset `hyderabad-water-supply-through-tankers-data` (HMWSSB data,
-OpenCity digitisation - attribute BOTH). 26 monthly CSVs, Jan 2022 - Feb 2024.
+Telangana Open Data Portal dataset 7f408a3a-7cdb-4d33-bfa3-1869f88c0e25,
+"HMWSSB water tankers data" - HMWSSB's own monthly CSVs, one per month from
+Jan 2022, added to each month. The file list is read from the portal's
+metastore, not built from a URL pattern (the files sit under two paths).
 Schema: year,month,division,section,noofbookings,delivered
+
+The same 25 months OpenCity mirrored (Jan 2022 - Feb 2024) are identical here
+month for month; this is the publisher's copy and it keeps going.
 
 `section` is HMWSSB's own sub-ward operational unit (zone > circle > division >
 section), NOT a GHMC ward. There is no published section-boundary geometry, so
-this ships as a ranked table keyed on section name, not a choropleth. Said
-plainly rather than faked with a ward join that would be wrong.
+this ships as a ranked table keyed on section name, not a choropleth.
 
-KNOWN GAPS, both upstream and both recorded in the output:
-  - The published series STOPS at Feb 2024. Watched by the Headwaters entry
-    `opencity-hyderabad-tankers`; a new CSV appearing there is the event we want.
-  - **Dec 2022 is missing.** The resource exists on OpenCity but the file is
-    11 bytes - empty at source, not a parse failure. Verified 2026-07-26. The
-    month is reported as a gap rather than interpolated.
+TWO THINGS THE LONGER SERIES CHANGED
+  - HMWSSB re-cut its divisions and sections in Feb 2026 (the GHMC
+    trifurcation). No section name survives from Jan to Feb 2026, and from
+    March the list carries "(OLD)" and "(NEW)" rows beside plain names. Section
+    and division rankings are therefore computed PER ERA and never summed
+    across the break. Names are kept as published.
+  - The delivered share is no longer flat. It stayed above 98% in every month
+    to May 2026, then read 92.1%, 89.2% and 92.4% for Jun-Aug 2026. The portal
+    does not say whether those bookings were cancelled, pending or delivered
+    later, so the artifact carries the counts and asserts no cause.
+
+**Dec 2022 is missing**: the file exists but is 11 bytes, empty at source. The
+month is reported as a gap rather than interpolated.
 
 Run
 ---
     cd neer-vazhvu-api
-    python3 scripts/build_hyderabad_tankers.py \
-        --out ../public/data/hyderabad-tankers.json
+    python3 scripts/build_hyderabad_tankers.py --out ../public/data/hyderabad-tankers.json
+    # scheduled: rebuild only when the portal's `modified` date has moved
+    python3 scripts/build_hyderabad_tankers.py --out ... --if-changed
 """
 
 import argparse
@@ -62,8 +62,8 @@ import csv
 import io
 import json
 import sys
+import time
 from pathlib import Path
-import urllib.parse
 import urllib.request
 from collections import defaultdict
 from datetime import date
@@ -75,8 +75,10 @@ from registry_license import registry_license  # noqa: E402
 from nvdm_write import write_artifact  # noqa: E402
 
 
-CKAN = "https://data.opencity.in/api/3/action/package_show?id="
-DATASET = "hyderabad-water-supply-through-tankers-data"
+SOURCE_ID = "tg-opendata-hmwssb-tankers"
+ITEM = "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/7f408a3a-7cdb-4d33-bfa3-1869f88c0e25"
+DATASET_URL = "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data"
+RECUT = "2026-02"  # first month of HMWSSB's re-cut division/section scheme
 
 MONTHS = [
     "",
@@ -95,40 +97,176 @@ MONTHS = [
 ]
 
 
-def _get(url: str, timeout: int = 90) -> bytes:
+def _get(url: str, timeout: int = 90, tries: int = 3) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": "neervazhvu-hyd-tankers"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read()
+    for attempt in range(tries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read()
+        except Exception:  # noqa: BLE001 - retried, then raised
+            if attempt == tries - 1:
+                raise
+            time.sleep(5 * (attempt + 1))
 
 
-def resource_urls() -> list:
-    meta = json.loads(_get(CKAN + urllib.parse.quote(DATASET)))
-    if not meta.get("success"):
-        raise RuntimeError("CKAN package_show failed")
-    out = []
-    for r in meta["result"].get("resources", []):
-        if (r.get("format") or "").upper() == "CSV" and r.get("url"):
-            out.append((r.get("name") or "", r["url"]))
-    return out
+def resources() -> tuple[str, list]:
+    """The portal's `modified` date and its (title, url) CSV list."""
+    item = json.loads(_get(ITEM))
+    dists = [d.get("data", d) for d in item.get("distribution", [])]
+    return item["modified"][:10], [
+        (d.get("title") or "", d["downloadURL"]) for d in dists if d.get("downloadURL")
+    ]
+
+
+def rank_sections(rows: list) -> list:
+    by = defaultdict(
+        lambda: {"bookings": 0, "delivered": 0, "months": 0, "division": ""}
+    )
+    for r in rows:
+        s = by[r["section"]]
+        s["bookings"] += r["bookings"]
+        s["delivered"] += r["delivered"]
+        s["months"] += 1
+        s["division"] = s["division"] or r["division"]
+    return sorted(
+        (
+            {
+                "section": name,
+                "division": v["division"],
+                "bookings": v["bookings"],
+                "delivered": v["delivered"],
+                "shortfall": v["bookings"] - v["delivered"],
+                "months_reporting": v["months"],
+            }
+            for name, v in by.items()
+        ),
+        key=lambda x: -x["bookings"],
+    )
+
+
+def rank_divisions(rows: list) -> list:
+    by = defaultdict(lambda: {"bookings": 0, "delivered": 0, "sections": set()})
+    for r in rows:
+        d = by[r["division"]]
+        d["bookings"] += r["bookings"]
+        d["delivered"] += r["delivered"]
+        d["sections"].add(r["section"])
+    return sorted(
+        (
+            {
+                "division": k,
+                "bookings": v["bookings"],
+                "delivered": v["delivered"],
+                "sections": len(v["sections"]),
+            }
+            for k, v in by.items()
+        ),
+        key=lambda x: -x["bookings"],
+    )
+
+
+def summarise(rows: list) -> dict:
+    """Totals, monthly series, seasonality and per-era rankings from parsed rows."""
+    # Monthly totals.
+    by_month = defaultdict(lambda: {"bookings": 0, "delivered": 0, "sections": 0})
+    for r in rows:
+        k = f"{r['year']:04d}-{r['month']:02d}"
+        by_month[k]["bookings"] += r["bookings"]
+        by_month[k]["delivered"] += r["delivered"]
+        by_month[k]["sections"] += 1
+    monthly = [
+        {
+            "month": k,
+            "label": f"{MONTHS[int(k[5:])]} {k[:4]}",
+            "bookings": v["bookings"],
+            "delivered": v["delivered"],
+            "fulfilment_pct": round(v["delivered"] / v["bookings"] * 100, 1)
+            if v["bookings"]
+            else None,
+            "sections_reporting": v["sections"],
+        }
+        for k, v in sorted(by_month.items())
+    ]
+
+    # Seasonality: mean bookings per calendar month over COMPLETE years only.
+    # Bookings grow every year, so a month present in more years than another
+    # would read as busier for that reason alone.
+    full = {
+        y for y in {k[:4] for k in by_month} if sum(k[:4] == y for k in by_month) == 12
+    }
+    per_cal = defaultdict(list)
+    for k, v in by_month.items():
+        if k[:4] in full or not full:
+            per_cal[int(k[5:])].append(v["bookings"])
+    seasonality = [
+        {
+            "month": mi,
+            "label": MONTHS[mi],
+            "mean_bookings": round(sum(vals) / len(vals)),
+            "years": len(vals),
+        }
+        for mi, vals in sorted(per_cal.items())
+    ]
+
+    # Rankings per era: the Feb 2026 re-cut changed every section name.
+    def era(era_id: str, keep) -> dict:
+        part = [r for r in rows if keep(f"{r['year']:04d}-{r['month']:02d}")]
+        months = [m for m in monthly if keep(m["month"])]
+        return {
+            "id": era_id,
+            "from": months[0]["label"],
+            "to": months[-1]["label"],
+            "months": len(months),
+            "bookings": sum(r["bookings"] for r in part),
+            "delivered": sum(r["delivered"] for r in part),
+            "sections": rank_sections(part),
+            "divisions": rank_divisions(part),
+        }
+
+    eras = [era("pre_recut", lambda m: m < RECUT)]
+    if monthly[-1]["month"] >= RECUT:
+        eras.append(era("post_recut", lambda m: m >= RECUT))
+
+    tot_b = sum(r["bookings"] for r in rows)
+    tot_d = sum(r["delivered"] for r in rows)
+
+    return {
+        "totals": {
+            "bookings": tot_b,
+            "delivered": tot_d,
+            "shortfall": tot_b - tot_d,
+            "fulfilment_pct": round(tot_d / tot_b * 100, 1) if tot_b else None,
+            "months": len(monthly),
+        },
+        "monthly": monthly,
+        "seasonality": seasonality,
+        "eras": eras,
+    }
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", help="write JSON here")
+    ap.add_argument(
+        "--if-changed",
+        action="store_true",
+        help="do nothing when --out already carries the portal's current modified date",
+    )
     args = ap.parse_args()
 
-    resources = resource_urls()
-    print(f"CKAN lists {len(resources)} CSV resources", file=sys.stderr)
+    modified, csvs = resources()
+    if args.if_changed and args.out and Path(args.out).exists():
+        if json.loads(Path(args.out).read_text()).get("_upstream_modified") == modified:
+            print(f"Portal unchanged since {modified}; nothing to do", file=sys.stderr)
+            return 0
+    print(f"Portal lists {len(csvs)} CSVs, modified {modified}", file=sys.stderr)
 
+    # A CSV that will not download raises: a missing month would otherwise read
+    # as a month with no tankers.
     rows = []
-    failed = []
     empty = []
-    for name, url in resources:
-        try:
-            raw = _get(url).decode("utf8", "ignore")
-        except Exception as exc:  # noqa: BLE001 - one bad month must not kill the build
-            failed.append((name, str(exc)[:60]))
-            continue
+    for name, url in csvs:
+        raw = _get(url).decode("utf8", "ignore")
         n_before = len(rows)
         for rec in csv.DictReader(io.StringIO(raw)):
             try:
@@ -160,141 +298,56 @@ def main() -> int:
         print("No tanker rows parsed", file=sys.stderr)
         return 1
 
-    # Monthly totals.
-    by_month = defaultdict(lambda: {"bookings": 0, "delivered": 0, "sections": 0})
-    for r in rows:
-        k = f"{r['year']:04d}-{r['month']:02d}"
-        by_month[k]["bookings"] += r["bookings"]
-        by_month[k]["delivered"] += r["delivered"]
-        by_month[k]["sections"] += 1
-    monthly = [
-        {
-            "month": k,
-            "label": f"{MONTHS[int(k[5:])]} {k[:4]}",
-            "bookings": v["bookings"],
-            "delivered": v["delivered"],
-            "fulfilment_pct": round(v["delivered"] / v["bookings"] * 100, 1)
-            if v["bookings"]
-            else None,
-            "sections_reporting": v["sections"],
-        }
-        for k, v in sorted(by_month.items())
-    ]
-
-    # Per-section totals across the whole series.
-    by_section = defaultdict(
-        lambda: {"bookings": 0, "delivered": 0, "months": 0, "division": ""}
-    )
-    for r in rows:
-        s = by_section[r["section"]]
-        s["bookings"] += r["bookings"]
-        s["delivered"] += r["delivered"]
-        s["months"] += 1
-        s["division"] = s["division"] or r["division"]
-    sections = sorted(
-        (
-            {
-                "section": name,
-                "division": v["division"],
-                "bookings": v["bookings"],
-                "delivered": v["delivered"],
-                "shortfall": v["bookings"] - v["delivered"],
-                "fulfilment_pct": round(v["delivered"] / v["bookings"] * 100, 1)
-                if v["bookings"]
-                else None,
-                "months_reporting": v["months"],
-            }
-            for name, v in by_section.items()
-        ),
-        key=lambda x: -x["bookings"],
-    )
-
-    # Seasonality: mean bookings per calendar month across all years present.
-    per_cal = defaultdict(list)
-    for k, v in by_month.items():
-        per_cal[int(k[5:])].append(v["bookings"])
-    seasonality = [
-        {
-            "month": mi,
-            "label": MONTHS[mi],
-            "mean_bookings": round(sum(vals) / len(vals)),
-            "years": len(vals),
-        }
-        for mi, vals in sorted(per_cal.items())
-    ]
-
-    by_div = defaultdict(lambda: {"bookings": 0, "delivered": 0, "sections": set()})
-    for r in rows:
-        d = by_div[r["division"]]
-        d["bookings"] += r["bookings"]
-        d["delivered"] += r["delivered"]
-        d["sections"].add(r["section"])
-    divisions = sorted(
-        (
-            {
-                "division": k,
-                "bookings": v["bookings"],
-                "delivered": v["delivered"],
-                "sections": len(v["sections"]),
-            }
-            for k, v in by_div.items()
-        ),
-        key=lambda x: -x["bookings"],
-    )
-
-    tot_b = sum(r["bookings"] for r in rows)
-    tot_d = sum(r["delivered"] for r in rows)
+    body = summarise(rows)
+    monthly, seasonality, eras = body["monthly"], body["seasonality"], body["eras"]
+    out_path = Path(args.out) if args.out else None
+    if out_path and out_path.exists():
+        had = json.loads(out_path.read_text()).get("totals", {}).get("months", 0)
+        if len(monthly) < had:
+            # This runs unattended and commits: a shorter series is never an update.
+            print(
+                f"Portal has {len(monthly)} months, artifact has {had}; refusing",
+                file=sys.stderr,
+            )
+            return 1
 
     out = {
         "_source": "HMWSSB tanker bookings and deliveries",
-        "_source_url": f"https://data.opencity.in/dataset/{DATASET}",
-        "_licence": registry_license("opencity-hyderabad-tankers"),
+        "_source_url": DATASET_URL,
+        "_licence": registry_license(SOURCE_ID),
         "_fetched": date.today().isoformat(),
+        "_upstream_modified": modified,
         "_note": (
-            "Monthly tanker bookings AND deliveries per HMWSSB division and section. "
-            "Unique on the platform: Bengaluru's tanker page rests on household surveys "
-            "because that market is private and RTI-gated, whereas HMWSSB runs the fleet "
-            "itself. 'section' is HMWSSB's own operational unit, NOT a GHMC ward, and no "
-            "public section-boundary geometry exists - so this renders as a ranked table, "
-            "not a map."
+            "Monthly tanker bookings AND deliveries per HMWSSB division and section, from "
+            "HMWSSB's own files on the Telangana Open Data Portal. 'section' is HMWSSB's "
+            "operational unit, NOT a GHMC ward, and no public section-boundary geometry "
+            "exists - so this renders as ranked tables, not a map. HMWSSB re-cut its "
+            "divisions and sections in Feb 2026; rankings are given per era and section "
+            "names are kept as published."
         ),
-        "_coverage_gap": (
-            f"Series runs {monthly[0]['label']} to {monthly[-1]['label']}. No known public "
-            "release after that; the Headwaters entry opencity-hyderabad-tankers watches "
-            "for one."
+        "_coverage": (
+            f"Series runs {monthly[0]['label']} to {monthly[-1]['label']}, as the portal "
+            f"stood on {modified}. It adds a month at a time."
         ),
-        "totals": {
-            "bookings": tot_b,
-            "delivered": tot_d,
-            "shortfall": tot_b - tot_d,
-            "fulfilment_pct": round(tot_d / tot_b * 100, 1) if tot_b else None,
-            "months": len(monthly),
-            "sections": len(sections),
-        },
-        "monthly": monthly,
-        "seasonality": seasonality,
-        "divisions": divisions,
-        "sections": sections,
+        **body,
     }
     if empty:
         out["_empty_upstream_months"] = empty
-    if failed:
-        out["_failed_resources"] = [{"name": n, "error": e} for n, e in failed]
 
-    if args.out:
-        write_artifact(Path(args.out), out, indent=1)
+    if out_path:
+        write_artifact(out_path, out, indent=1)
 
     t = out["totals"]
     print(
         f"Tankers: {t['bookings']:,} bookings / {t['delivered']:,} delivered "
-        f"({t['fulfilment_pct']}%) across {t['months']} months, {t['sections']} sections",
+        f"({t['fulfilment_pct']}%) across {t['months']} months",
         file=sys.stderr,
     )
     print(f"   range: {monthly[0]['label']} .. {monthly[-1]['label']}", file=sys.stderr)
-    print("   top sections by demand:", file=sys.stderr)
-    for s in sections[:8]:
+    for e in eras:
         print(
-            f"      {s['section'][:30]:<32}{s['bookings']:>9,}  (div {s['division']})",
+            f"   {e['id']} {e['from']} .. {e['to']}: {e['bookings']:,} bookings, "
+            f"{len(e['sections'])} sections, top {[x['section'] for x in e['sections'][:3]]}",
             file=sys.stderr,
         )
     peak = max(seasonality, key=lambda x: x["mean_bookings"])
@@ -307,8 +360,6 @@ def main() -> int:
     )
     if empty:
         print(f"   !! empty upstream month(s): {', '.join(empty)}", file=sys.stderr)
-    if failed:
-        print(f"   !! {len(failed)} resource(s) failed to download", file=sys.stderr)
     return 0
 
 

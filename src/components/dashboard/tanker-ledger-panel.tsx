@@ -8,11 +8,23 @@
  * different question - "who ASKS for tankers, and when?" - and must not borrow
  * the survey page's price framing.
  *
- * Deliberate editorial choice: fulfilment is NOT the headline. It sits at
- * 99.95% (593 undelivered out of 1.32 million bookings), which is a flat,
- * uninformative number. The signal is demand volume, seasonality and
- * geographic concentration.
+ * Every number and date range here is read from the ledger, which is rebuilt
+ * when HMWSSB publishes a month, so nothing on this panel is typed in. The
+ * first counter is the latest month. Section rankings are per era: HMWSSB
+ * re-cut its divisions and sections in February 2026.
  */
+
+type Section = { section: string; division: string; bookings: number; delivered: number; shortfall: number; months_reporting: number };
+type Era = {
+  id: string;
+  from: string;
+  to: string;
+  months: number;
+  bookings: number;
+  delivered: number;
+  sections: Section[];
+  divisions: { division: string; bookings: number; delivered: number; sections: number }[];
+};
 
 export type TankerLedger = {
   _source: string;
@@ -20,19 +32,11 @@ export type TankerLedger = {
   _licence: string;
   _fetched: string;
   _note: string;
-  _coverage_gap: string;
-  totals: {
-    bookings: number;
-    delivered: number;
-    shortfall: number;
-    fulfilment_pct: number;
-    months: number;
-    sections: number;
-  };
+  _coverage: string;
+  totals: { bookings: number; delivered: number; shortfall: number; fulfilment_pct: number; months: number };
   monthly: { month: string; label: string; bookings: number; delivered: number; sections_reporting: number }[];
   seasonality: { month: number; label: string; mean_bookings: number; years: number }[];
-  divisions: { division: string; bookings: number; delivered: number; sections: number }[];
-  sections: { section: string; division: string; bookings: number; delivered: number; shortfall: number; months_reporting: number }[];
+  eras: Era[];
   _empty_upstream_months?: string[];
 };
 
@@ -49,31 +53,40 @@ export function TankerLedgerPanel({
   ledger: TankerLedger;
   cityDisplayName: string;
 }) {
-  const { totals, seasonality, divisions, sections, monthly } = ledger;
+  const { totals, seasonality, eras, monthly } = ledger;
+  const latest = monthly[monthly.length - 1];
+  const share = (m: { bookings: number; delivered: number }) => (m.delivered / m.bookings) * 100;
 
   const peak = seasonality.reduce((a, b) => (b.mean_bookings > a.mean_bookings ? b : a));
   const trough = seasonality.reduce((a, b) => (b.mean_bookings < a.mean_bookings ? b : a));
   const swing = peak.mean_bookings / trough.mean_bookings;
   const maxSeason = peak.mean_bookings;
 
-  // Computed here rather than read from totals.fulfilment_pct: the upstream
-  // field is pre-rounded to 100.0, which reads as "nothing was missed" when
-  // 593 bookings went undelivered. Two decimals keep the shortfall visible.
-  const fulfilment = (totals.delivered / totals.bookings) * 100;
+  // Calendar years with all twelve months, for a like-for-like yearly total.
+  const byYear = new Map<string, { n: number; bookings: number }>();
+  for (const m of monthly) {
+    const y = byYear.get(m.month.slice(0, 4)) ?? { n: 0, bookings: 0 };
+    byYear.set(m.month.slice(0, 4), { n: y.n + 1, bookings: y.bookings + m.bookings });
+  }
+  const fullYears = [...byYear].filter(([, y]) => y.n === 12);
+  const [firstYear, lastYear] = [fullYears[0], fullYears[fullYears.length - 1]];
 
-  const topSections = [...sections].sort((a, b) => b.bookings - a.bookings).slice(0, 10);
-  const topDivisions = [...divisions].sort((a, b) => b.bookings - a.bookings).slice(0, 6);
-  const top3 = topSections.slice(0, 3).reduce((s, x) => s + x.bookings, 0);
+  // Months where under 95% of bookings are recorded as delivered.
+  const low = monthly.filter((m) => share(m) < 95);
+  const before = low.length ? monthly.slice(0, monthly.indexOf(low[0])) : monthly;
+  const floor = Math.floor(Math.min(...before.map(share)));
 
   return (
     <div className="space-y-6">
-      {/* Headline counters */}
+      {/* Headline counters: the latest month first */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Tanker bookings", value: nf.format(totals.bookings), sub: `${totals.months} months, Jan 2022 - Feb 2024` },
-          { label: "Peak-to-trough swing", value: `${swing.toFixed(2)}x`, sub: `${peak.label} vs ${trough.label}, mean bookings` },
-          { label: "HMWSSB sections", value: nf.format(totals.sections), sub: `across ${divisions.length} divisions` },
-          { label: "Delivered", value: `${fulfilment.toFixed(2)}%`, sub: `${nf.format(totals.shortfall)} undelivered of ${nf.format(totals.bookings)}` },
+          { label: `Bookings in ${latest.label}`, value: nf.format(latest.bookings), sub: `${share(latest).toFixed(1)}% recorded as delivered` },
+          { label: "Bookings in the series", value: nf.format(totals.bookings), sub: `${totals.months} months, ${monthly[0].label} to ${latest.label}` },
+          lastYear && firstYear !== lastYear
+            ? { label: `Bookings in ${lastYear[0]}`, value: nf.format(lastYear[1].bookings), sub: `${(lastYear[1].bookings / firstYear[1].bookings).toFixed(1)}x the ${firstYear[0]} total` }
+            : { label: "Delivered over the series", value: `${share(totals).toFixed(2)}%`, sub: `${nf.format(totals.shortfall)} not recorded as delivered` },
+          { label: "Peak-to-trough swing", value: `${swing.toFixed(1)}x`, sub: `${peak.label} against ${trough.label}, mean over ${peak.years} full years` },
         ].map((c) => (
           <div key={c.label} className="rounded-lg border border-slate-200 dark:border-slate-700 p-3">
             <div className="text-xs text-slate-500 dark:text-slate-400">{c.label}</div>
@@ -83,16 +96,23 @@ export function TankerLedgerPanel({
         ))}
       </section>
 
-      {/* Why fulfilment is not the story */}
-      <section className="rounded-md border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 p-4 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-        <strong className="font-semibold">Read the fulfilment rate carefully.</strong>{" "}
-        HMWSSB delivered {fulfilment.toFixed(2)}% of bookings over this
-        period - {nf.format(totals.shortfall)} undelivered out of{" "}
-        {nf.format(totals.bookings)}. That is a near-flat number and we do not
-        headline it: it measures whether a booked tanker arrived, not whether a
-        household needed one, could afford one, or got piped water instead. The
-        informative signals here are how much demand there is, when it spikes,
-        and where it concentrates.
+      {/* Delivered share, stated as published */}
+      <section className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/40 p-4 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+        <strong className="font-semibold">Bookings recorded as delivered.</strong>{" "}
+        Over the series, {nf.format(totals.delivered)} of {nf.format(totals.bookings)} bookings
+        ({share(totals).toFixed(2)}%) are recorded as delivered.{" "}
+        {low.length > 0 ? (
+          <>
+            The monthly share was {floor}% or higher in every month before {low[0].label}. It reads{" "}
+            {low.slice(-6).map((m) => `${share(m).toFixed(1)}% for ${m.label}`).join(", ")}. The
+            portal does not say whether the other bookings were cancelled, were still pending or
+            were delivered in a later month.
+          </>
+        ) : (
+          <>The monthly share is {floor}% or higher in every month.</>
+        )}{" "}
+        This share counts whether a booked tanker is recorded as delivered. It does not show
+        whether a household needed one, could pay for one, or received piped water instead.
       </section>
 
       {/* Seasonality */}
@@ -101,12 +121,10 @@ export function TankerLedgerPanel({
           When {cityDisplayName} books tankers
         </h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Mean bookings per calendar month across the series. Demand peaks in{" "}
-          {peak.label} at {nf.format(peak.mean_bookings)} and falls to{" "}
-          {nf.format(trough.mean_bookings)} in {trough.label}: a{" "}
-          {swing.toFixed(2)}x swing between the hot-season peak and the
-          post-monsoon trough. Bookings climb from February and stay high
-          through June, then collapse once the monsoon is established.
+          Mean bookings per calendar month over {peak.years} full calendar years. Bookings
+          peak in {peak.label} at {nf.format(peak.mean_bookings)} and are lowest in{" "}
+          {trough.label} at {nf.format(trough.mean_bookings)}, a {swing.toFixed(1)}x swing
+          between the hot season and the months after the monsoon.
         </p>
         <div className="mt-4 space-y-1.5">
           {seasonality.map((m) => (
@@ -126,73 +144,65 @@ export function TankerLedgerPanel({
         </div>
       </section>
 
-      {/* Geographic concentration */}
-      <section className="rounded-lg border border-slate-200 dark:border-slate-700 p-4">
-        <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-          Where the demand sits
-        </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          The three busiest sections - {topSections[0].section},{" "}
-          {topSections[1].section} and {topSections[2].section}, all in Division{" "}
-          {topSections[0].division} - account for {pct(top3, totals.bookings)} of every
-          tanker booked in the city. This is the IT corridor, not the historic
-          core.
-        </p>
-
-        <div className="mt-4 grid md:grid-cols-2 gap-4">
-          <div>
-            <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">
-              Top sections
-            </h3>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left font-medium py-1">Section</th>
-                  <th className="text-right font-medium py-1">Div</th>
-                  <th className="text-right font-medium py-1">Bookings</th>
-                  <th className="text-right font-medium py-1">Share</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topSections.map((s) => (
-                  <tr key={`${s.division}-${s.section}`} className="border-b border-slate-100 dark:border-slate-800">
-                    <td className="py-1 text-slate-700 dark:text-slate-300">{s.section}</td>
-                    <td className="py-1 text-right text-slate-500 tabular-nums">{s.division}</td>
-                    <td className="py-1 text-right text-slate-700 dark:text-slate-300 tabular-nums">{nf.format(s.bookings)}</td>
-                    <td className="py-1 text-right text-slate-500 tabular-nums">{pct(s.bookings, totals.bookings)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">
-              Top divisions
-            </h3>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left font-medium py-1">Division</th>
-                  <th className="text-right font-medium py-1">Sections</th>
-                  <th className="text-right font-medium py-1">Bookings</th>
-                  <th className="text-right font-medium py-1">Share</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topDivisions.map((d) => (
-                  <tr key={d.division} className="border-b border-slate-100 dark:border-slate-800">
-                    <td className="py-1 text-slate-700 dark:text-slate-300">Division {d.division}</td>
-                    <td className="py-1 text-right text-slate-500 tabular-nums">{d.sections}</td>
-                    <td className="py-1 text-right text-slate-700 dark:text-slate-300 tabular-nums">{nf.format(d.bookings)}</td>
-                    <td className="py-1 text-right text-slate-500 tabular-nums">{pct(d.bookings, totals.bookings)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+      {/* Geographic concentration, one block per section scheme */}
+      {eras.map((era) => {
+        const top = era.sections.slice(0, 10);
+        const top3 = top.slice(0, 3).reduce((n, x) => n + x.bookings, 0);
+        const recut = era.id === "post_recut";
+        return (
+          <section key={era.id} className="rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+            <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+              Where the demand sits, {era.from} to {era.to}
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              {recut ? (
+                <>
+                  HMWSSB re-cut its divisions and sections in February 2026. Its files since then
+                  list old and new sections side by side, some marked (OLD) or (NEW). Rows are
+                  shown as published and are not added to the earlier table.
+                </>
+              ) : (
+                <>
+                  The three busiest sections, {top[0].section}, {top[1].section} and{" "}
+                  {top[2].section}, account for {pct(top3, era.bookings)} of the{" "}
+                  {nf.format(era.bookings)} bookings in these {era.months} months. They sit in the
+                  western IT corridor, not the historic core.
+                </>
+              )}
+            </p>
+            <div className="mt-4 grid md:grid-cols-2 gap-4">
+              {[
+                { title: "Top sections", head: ["Section", "Div"], rows: top.map((x) => [x.section, x.division, x.bookings] as const) },
+                { title: "Top divisions", head: ["Division", "Sections"], rows: era.divisions.slice(0, 6).map((d) => [`Division ${d.division}`, d.sections, d.bookings] as const) },
+              ].map((t) => (
+                <div key={t.title}>
+                  <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">{t.title}</h3>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                        <th className="text-left font-medium py-1">{t.head[0]}</th>
+                        <th className="text-right font-medium py-1">{t.head[1]}</th>
+                        <th className="text-right font-medium py-1">Bookings</th>
+                        <th className="text-right font-medium py-1">Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {t.rows.map(([name, second, bookings]) => (
+                        <tr key={`${name}-${second}`} className="border-b border-slate-100 dark:border-slate-800">
+                          <td className="py-1 text-slate-700 dark:text-slate-300">{name}</td>
+                          <td className="py-1 text-right text-slate-500 tabular-nums">{second}</td>
+                          <td className="py-1 text-right text-slate-700 dark:text-slate-300 tabular-nums">{nf.format(bookings)}</td>
+                          <td className="py-1 text-right text-slate-500 tabular-nums">{pct(bookings, era.bookings)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
 
       {/* Honest gaps */}
       <section className="rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-900/40 p-4 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -212,7 +222,7 @@ export function TankerLedgerPanel({
           population or to any equity denominator.
         </p>
         <p>
-          <strong>The series stops.</strong> {ledger._coverage_gap}
+          <strong>Coverage.</strong> {ledger._coverage}
         </p>
         {ledger._empty_upstream_months && ledger._empty_upstream_months.length > 0 && (
           <p>

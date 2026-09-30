@@ -78,9 +78,8 @@ export const HYDERABAD: PlaceConfig = {
   // either - it returns with the ward build, the Mumbai precedent.
   // `tanker` IS in the set and is a signature surface rather than a
   // nice-to-have: HMWSSB runs the tanker fleet itself and publishes monthly
-  // bookings AND deliveries per division/section. Note the fulfilment rate we
-  // expected to headline turned out flat at 99.95%, so that page leads on
-  // demand volume and seasonality instead.
+  // bookings AND deliveries per division/section. The page leads on demand
+  // volume, seasonality and geography; the delivered share is stated as published.
   // `allocations`: Both landed 2026-07-26 as seeds and deepen through the
   // build. - allocations-hyderabad.json: the Krishna (Nagarjuna Sagar ->
   // Akkampally), Godavari (Yellampally) and Manjira chains plus the Musi
@@ -150,10 +149,9 @@ export const HYDERABAD: PlaceConfig = {
   tankerDataKind: 'utility-ledger',
   // Hyderabad's tanker data is NOT the Bangalore household-price survey. HMWSSB
   // runs the fleet itself and publishes its own ledger: monthly bookings and
-  // deliveries per division/section (26 OpenCity CSVs,
-  // build_hyderabad_tankers.py). Fulfilment turned out flat at 99.95%, so the
-  // page leads on demand volume, ~3.0x summer seasonality and the IT-corridor
-  // geography instead of on a price or a service-failure rate.
+  // deliveries per division/section (monthly CSVs on the Telangana Open Data
+  // Portal, build_hyderabad_tankers.py). The page leads on demand volume,
+  // seasonality and the IT-corridor geography, not on a price.
   tankerSummary:
     "HMWSSB's own tanker ledger - monthly bookings and deliveries by division and section.",
   waterBodies: {
