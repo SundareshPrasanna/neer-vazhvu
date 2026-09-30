@@ -5,13 +5,14 @@ name: NVDM conformance
 #   1. Validator selftest - the schemas and rules keep rejecting what they
 #      must reject (including adversarial probes, gate selector and ratchet
 #      regressions).
-#   2. Catalogue + conformance-report freshness - the committed outputs match
-#      the tree (same pattern as the ward-profiles.json CI gate). Regenerate
-#      with: python3 scripts/build_dataset_catalogue.py && python3 scripts/validate_nvdm.py
+#   2. Catalogue, conformance-report and REFERENCE.md freshness - the committed
+#      outputs match the tree (same pattern as the ward-profiles.json CI gate).
+#      Regenerate in this order: python3 scripts/build_dataset_catalogue.py &&
+#      python3 scripts/validate_nvdm.py && python3 scripts/build_nvdm_reference.py
 #   3. scripts/nvdm-gate.sh on every changed data artifact - ENFORCING since
 #      NVDM v1 acceptance (2026-07-30): a new artifact must reach L2, one at L2
 #      or L3 must keep its level. Files below L2 stay report-only. See
-#      schemas/nvdm/README.md.
+#      schemas/nvdm/RULES.md Part 10 and schemas/nvdm/GUIDE.md.
 
 on:
   pull_request:
@@ -22,6 +23,7 @@ on:
       - 'schemas/nvdm/**'
       - 'scripts/build_dataset_catalogue.py'
       - 'scripts/validate_nvdm.py'
+      - 'scripts/build_nvdm_reference.py'
       - 'scripts/nvdm_scopes.py'
       - 'scripts/nvdm-gate.sh'
       - 'scripts/source-registry/**'
@@ -58,10 +60,15 @@ jobs:
           python3 scripts/validate_nvdm.py
           git diff --exit-code docs/architecture/nvdm-conformance.md
 
+      - name: Reference freshness
+        run: |
+          python3 scripts/build_nvdm_reference.py
+          git diff --exit-code schemas/nvdm/REFERENCE.md
+
       - name: NVDM gate on changed data artifacts (ENFORCING - NVDM v1 accepted 2026-07-30)
         if: github.event_name == 'pull_request'
         run: |
           if ! bash scripts/nvdm-gate.sh "${{ github.event.pull_request.base.sha }}"; then
-            echo "::error title=NVDM gate::A new data artifact must reach L2 and one at L2 or L3 must keep its level. See schemas/nvdm/README.md."
+            echo "::error title=NVDM gate::A new data artifact must reach L2 and one at L2 or L3 must keep its level. Find the message above in schemas/nvdm/GUIDE.md#the-gate-failed for its fix."
             exit 1
           fi
