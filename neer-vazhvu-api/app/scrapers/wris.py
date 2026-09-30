@@ -20,6 +20,12 @@ logger = logging.getLogger(__name__)
 WRIS_API_BASE = "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
 PAGE_SIZE = 1000
 MAX_PAGES = 50  # safety cap
+MAX_ABS_LEVEL_M = 50  # readings beyond this are sensor errors
+PLACEHOLDERS = {0.0, 1.0}  # WIMS writes these for a missing six-hourly reading
+
+
+def is_reading(value: float) -> bool:
+    return value not in PLACEHOLDERS and abs(value) <= MAX_ABS_LEVEL_M
 
 
 async def fetch_wris_groundwater(
@@ -69,6 +75,9 @@ async def fetch_wris_groundwater(
 
                 data = response.json()
                 if data.get("statusCode") != 200:
+                    # An empty window is answered as an error body, not an empty list.
+                    if "No data found" in str(data.get("message")):
+                        break
                     raise ValueError(
                         f"WRIS API error ({current_agency}): {data.get('message')}"
                     )
@@ -111,7 +120,7 @@ async def fetch_wris_groundwater(
 def _deduplicate_daily(raw: list[dict]) -> list[WrisGroundwaterRecord]:
     """
     Group by (station_code, date) and average the values.
-    Filters out obvious outliers (e.g. positive values > 50m which are sensor errors).
+    Filters out placeholders and obvious outliers (beyond 50 m, sensor errors).
     """
     from collections import defaultdict
 
@@ -128,8 +137,7 @@ def _deduplicate_daily(raw: list[dict]) -> list[WrisGroundwaterRecord]:
         if not station_code or not data_time or value is None:
             continue
 
-        # Filter obvious sensor errors
-        if abs(value) > 50:
+        if not is_reading(value):
             continue
 
         date_str = data_time[:10]  # YYYY-MM-DD

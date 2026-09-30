@@ -494,7 +494,7 @@ export const translations: Record<string, TranslationEntry> = {
   "wris.history_title": { en: "Recent readings",               ta: "சமீபத்திய அளவீடுகள்", kn: "ಇತ್ತೀಚಿನ ಮಾಪನಗಳು" },
   "wris.history_error": { en: "Could not load readings",       ta: "அளவீடுகளை ஏற்ற முடியவில்லை", kn: "ಮಾಪನಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ" },
   "wris.history_none": { en: "No readings available",         ta: "அளவீடுகள் இல்லை", kn: "ಮಾಪನಗಳು ಲಭ್ಯವಿಲ್ಲ" },
-  "wris.source_note": { en: "Source: India WRIS - CGWB monitoring stations.", ta: "ஆதாரம்: இந்தியா WRIS - CGWB கண்காணிப்பு நிலையங்கள்.", kn: "ಮೂಲ: India WRIS - CGWB ಮೇಲ್ವಿಚಾರಣಾ ನಿಲ್ದಾಣಗಳು." },
+  "wris.source_note": { en: "Source: CGWB and state monitoring stations, via India WRIS and the National Water Data Portal (NWIC).", ta: "ஆதாரம்: CGWB மற்றும் மாநில கண்காணிப்பு நிலையங்கள், இந்தியா WRIS மற்றும் தேசிய நீர் தரவு தளம் (NWIC) வழியாக.", kn: "ಮೂಲ: CGWB ಮತ್ತು ರಾಜ್ಯ ಮೇಲ್ವಿಚಾರಣಾ ನಿಲ್ದಾಣಗಳು, India WRIS ಮತ್ತು ರಾಷ್ಟ್ರೀಯ ಜಲ ದತ್ತಾಂಶ ಪೋರ್ಟಲ್ (NWIC) ಮೂಲಕ." },
   "wris.days_ago": { en: "{n} days ago",                  ta: "{n} நாட்களுக்கு முன்", kn: "{n} ದಿನಗಳ ಹಿಂದೆ" },
   "wris.today": { en: "today",                          ta: "இன்று", kn: "ಇಂದು" },
   "wris.yesterday": { en: "yesterday",                      ta: "நேற்று", kn: "ನಿನ್ನೆ" },
