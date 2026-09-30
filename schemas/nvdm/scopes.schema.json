@@ -1,7 +1,7 @@
 {
   "$id": "scopes.schema.json",
   "title": "NVDM 1.1 scope registry entry",
-  "description": "One entry of schemas/nvdm/scopes.json. The vocabularies are closed: appending a ref system, level or relation type is a one-line MINOR change, made when the first entry needs it. Graph rules (targets registered, administrative-parent acyclic, one country per place) are enforced by scripts/validate_nvdm.py.",
+  "description": "One entry of schemas/nvdm/scopes.json. The vocabularies are closed: appending a ref system, level or relation type is a one-line MINOR change, made when the first entry needs it. Graph rules (targets registered, administrative-parent acyclic, one country per place, method and evidence on every intersects) are enforced by scripts/validate_nvdm.py.",
   "$defs": {
     "entry": {
       "type": "object",
@@ -35,8 +35,14 @@
           "enum": ["administrative-parent", "intersects", "projection-of"],
           "description": "administrative-parent: place to parent place (place model 5). intersects: water system to a place it crosses, geometry only, never supply or entitlement (place model 6, 6.1). projection-of: an administrative view to its canonical water system (place model 7; the registry form of the envelope's projection.of)."
         },
-        "target": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
-      }
+        "target": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "method": {
+          "enum": ["geometry", "published", "crosswalk", "manual"],
+          "description": "How the relation was established (place model 6). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping."
+        },
+        "evidence": { "type": "string", "minLength": 1, "description": "A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested." }
+      },
+      "allOf": [{ "if": { "properties": { "type": { "const": "intersects" } } }, "then": { "required": ["method", "evidence"] } }]
     }
   }
 }

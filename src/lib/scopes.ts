@@ -11,7 +11,7 @@ export interface ScopeEntry {
   kind: string;
   name: string;
   refs?: ScopeRef[];
-  relations?: { type: string; target: string }[];
+  relations?: { type: string; target: string; method?: string; evidence?: string }[];
 }
 
 const SCOPES: Record<string, ScopeEntry> = registry.scopes;

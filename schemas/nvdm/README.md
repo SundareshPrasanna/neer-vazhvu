@@ -39,12 +39,15 @@ validator are authoritative**. Spec section references in schema descriptions
   `intersects` (water system to a place it crosses, geometry only) and
   `projection-of` (an administrative view to its canonical water system:
   `cauvery-ka` and `cauvery-tn` are views of `cauvery`).
+- **An `intersects` is auditable.** Each carries `method` (`geometry`,
+  `published`, `crosswalk`, `manual`) and `evidence`, a repo path or URL: for
+  `geometry`, the boundary or centerline that was tested against the place.
 - **Country is derived, never stored.** A place walks `administrative-parent`
   to a `country` scope (`country` is a new scope kind); a water system goes
   through the places it intersects and may legitimately reach two.
 - **Validator rules.** Closed vocabularies, registered targets on the right
-  axis, an acyclic parent graph, exactly one country per place, and no
-  external code claimed by two scopes. A TypeScript test holds `CITY_IDS`,
+  axis, method and evidence on every `intersects`, an acyclic parent graph,
+  exactly one country per place, and no external code claimed by two scopes. A TypeScript test holds `CITY_IDS`,
   the city configs and the seeded `cities` table to the registry.
 
 ## Conformance levels (assessed by `scripts/validate_nvdm.py`)
