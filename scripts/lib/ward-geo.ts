@@ -107,6 +107,17 @@ export function findWard(lng: number, lat: number, wards: WardGeo[], grid: GridI
   return null;
 }
 
+/** Count point features into the ward each sits in. A feature's own ward attribute is never read. */
+export function countPointsByWard(features: GeoJSON.Feature[], wards: WardGeo[], grid: GridIndex): Map<number, number> {
+  const counts = new Map<number, number>();
+  for (const f of features) {
+    const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
+    const ward = findWard(lng, lat, wards, grid);
+    if (ward != null) counts.set(ward, (counts.get(ward) ?? 0) + 1);
+  }
+  return counts;
+}
+
 /** Sample the line every sampleStepKm and credit each sample's share of its length to the ward it falls in. */
 export function distributeLineLengthByWard(
   geom: GeoJSON.LineString,
