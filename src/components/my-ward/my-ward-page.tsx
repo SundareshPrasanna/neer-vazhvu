@@ -91,13 +91,7 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
               under their ward number. */}
           <WardNarrative wardNumber={wardNumber} />
 
-          {/* Bangalore ward profiles currently carry only administrative
-              data (ward name, corporation, zone, population, centroid,
-              area) - the analytical compute that joins water bodies,
-              flood, drainage, sewerage, rivers, etc. per ward hasn't
-              been run on the GBA 369-ward boundaries yet. Render an
-              honest "analytical layers pending" message that links to
-              the city-level views where that content does live. */}
+          {/* Fallback for a profile with no per-ward analytical joins (no city ships one today): say so and link to the city-level views. */}
           {profile.water_bodies == null && (
             <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 p-5 space-y-3">
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -108,12 +102,8 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
                 zone, population, voter range, centroid, area).
                 Per-ward water-bodies, flood, drainage, sewerage,
                 groundwater-depth, and river-quality joins are produced
-                by a build-time spatial-join pipeline that runs on the
-                stable BBMP 198-ward boundary today. We carry the GBA
-                369-ward boundaries (post 15 May 2025 delimitation) for
-                administrative lookup, but the analytical compute on
-                top hasn&apos;t been re-run on them. Tracked as an open
-                gap at{" "}
+                by a build-time spatial join that has not been run on
+                this ward layer yet. Tracked as an open gap at{" "}
                 <Link
                   href={`${cityPrefix}/about`}
                   className="text-blue-600 dark:text-blue-400 hover:underline"
@@ -252,46 +242,25 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
         </div>
       )}
 
-      {/* Out-of-range ward: the profile fetch is complete but no ward
-          matched the entered number. Most common for Bangalore visitors
-          who enter a GBA-era ward number (199-369) against our pre-GBA
-          BBMP 198-ward dataset. Render an honest "not in our dataset"
-          message instead of stalling. */}
+      {/* Out-of-range ward: the profile fetch is complete and no ward matched the entered number. */}
       {notFound && (
         <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/40 dark:bg-amber-950/20 p-5">
           <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-300 mb-2">
             Ward {wardNumber} is not in our dataset
           </h3>
           <div className="text-xs text-slate-700 dark:text-slate-300 space-y-2">
-            {cityId === "bangalore" ? (
-              <>
-                <p>
-                  The dashboard currently uses BBMP&apos;s pre-reorganization{" "}
-                  <span className="font-semibold">198 wards</span>. The Greater
-                  Bengaluru Authority (GBA) 369-ward boundary file (notified
-                  19 November 2025) isn&apos;t yet available in any ingestable
-                  public format. We&apos;re tracking it as an open data gap at{" "}
-                  <Link
-                    href={`${cityPrefix}/about`}
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    /bangalore/about
-                  </Link>
-                  .
-                </p>
-                <p>
-                  Try a ward number between 1 and 198 (BBMP) for now. We&apos;ll
-                  migrate to GBA 369 wards when the boundary file becomes
-                  publicly available.
-                </p>
-              </>
-            ) : (
+            {cityId === "bangalore" && (
               <p>
-                The dashboard doesn&apos;t carry a profile for ward{" "}
-                {wardNumber} in this city. Use the search above to find a
-                covered ward.
+                Bengaluru is mapped on the Greater Bengaluru Authority&apos;s{" "}
+                <span className="font-semibold">369 wards</span> (delimitation
+                notified 19 November 2025), numbered here 1 to 369.
               </p>
             )}
+            <p>
+              The dashboard doesn&apos;t carry a profile for ward{" "}
+              {wardNumber} in this city. Use the search above to find a
+              covered ward.
+            </p>
           </div>
         </div>
       )}

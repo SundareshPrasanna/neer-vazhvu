@@ -178,13 +178,7 @@ export function useWardProfile(
   const { language } = useLanguage();
   const [profile, setProfile] = useState<WardProfile | null>(null);
   const [riverData, setRiverData] = useState<RiverQuality | null>(null);
-  // `loaded` flips to true once the profiles fetch has resolved for this
-  // wardNumber/cityId pair, regardless of whether a matching ward was
-  // found. Distinguishes "still loading" from "loaded but not in dataset"
-  // so callers can render an honest "ward N is not in our 198-ward
-  // Bangalore dataset" state instead of stalling on a loading spinner
-  // forever (which is what the previous code did for out-of-range wards
-  // like GBA-era ward 302).
+  // True once the profiles fetch resolves for this ward and city, matched or not: tells "still loading" from "not in the dataset".
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

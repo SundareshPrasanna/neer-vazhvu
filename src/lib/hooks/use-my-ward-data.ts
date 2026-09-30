@@ -75,11 +75,7 @@ export function useMyWardData(
     return () => { cancelled = true; };
   }, [wardNumber, cityId]);
 
-  // Stop reporting "loading" once the profile fetch has resolved. If a
-  // ward number was given but no matching profile was found (e.g. a GBA
-  // ward number 199-369 entered against our BBMP 198-ward dataset), flip
-  // to notFound: true so the UI can render a friendly out-of-range
-  // message instead of a perpetual loading spinner.
+  // A ward number with no matching profile once the fetch resolves is notFound, not a perpetual spinner.
   const notFound = wardNumber != null && profileLoaded && profile == null;
   const loading = wardNumber != null && !notFound && (profile == null || gwLoading);
 
