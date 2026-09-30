@@ -10,7 +10,7 @@
     "build": "bash scripts/fetch-corpus.sh && unset CORPUS_REPO_TOKEN && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "find src -name '*.test.ts' | xargs tsx --test",
+    "test": "find src .github -name '*.test.ts' | xargs tsx --test",
     "test:watch": "find src -name '*.test.ts' | xargs tsx --test --watch",
     "i18n:check": "tsx scripts/check-i18n.ts",
     "data:check": "tsx scripts/check-restoration-data.ts && tsx scripts/check-data-freshness.ts --validate && tsx scripts/check-upstream-editions.ts --validate && python3 scripts/check-mirrored-documents.py && tsx scripts/build-exemptions-register.ts --check",

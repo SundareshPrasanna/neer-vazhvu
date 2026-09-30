@@ -122,4 +122,66 @@ async function rollingAlert({ github, context, title, labels, report, keys, foot
   });
 }
 
-module.exports = { rollingAlert, readState, writeState, diff };
+/**
+ * One issue per flagged item, for a channel where a long-lived item must not
+ * hide a new one. The freshness channel's rolling issue stayed open 46 days on
+ * one dead upstream while other feeds went stale inside it as comments nobody
+ * read. Here:
+ *
+ *   - an item opens its own issue; the new issue is the notification
+ *   - the body is rewritten each run; a comment only when the item's `level`
+ *     rises (the checker decides what a level is)
+ *   - the issue closes itself when the item is no longer flagged
+ *
+ * Issues are matched by the state marker in the body, not the title.
+ *
+ * @param {object} o
+ * @param {{id: string, title: string, body: string, summary: string, level: number}[]} o.items
+ * @param {string[]} [o.unknown]   ids that could not be checked this run: left as they are
+ * @param {boolean} [o.complete]   false when `items` is not the full picture: nothing closes
+ */
+async function itemAlerts({ github, context, labels, items, unknown = [], complete = true, footer }) {
+  const { owner, repo } = context.repo;
+  const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+  const open = await github.paginate(github.rest.issues.listForRepo, {
+    owner, repo, labels: labels[0], state: "open", per_page: 100,
+  });
+  const field = (issue, name) =>
+    readState(issue.body).find((k) => k.startsWith(`${name}:`))?.slice(name.length + 1);
+  const managed = open.filter((i) => field(i, "item") !== undefined);
+
+  for (const item of items) {
+    const body = [
+      item.summary, "", item.body, "", footer, "", `**Run:** ${runUrl}`, "",
+      "This issue is rewritten in place on every run and closes itself when the",
+      "item clears. A comment here means it has got worse.",
+      "",
+      writeState([`item:${item.id}`, `level:${item.level}`]),
+    ].join("\n");
+    const existing = managed.find((i) => field(i, "item") === item.id);
+    if (!existing) {
+      await github.rest.issues.create({ owner, repo, title: item.title, labels, body });
+      continue;
+    }
+    const before = Number(field(existing, "level"));
+    await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+    if (item.level > before) {
+      await github.rest.issues.createComment({
+        owner, repo, issue_number: existing.number,
+        body: `Still flagged: ${item.summary}\n\n**Run:** ${runUrl}`,
+      });
+    }
+  }
+
+  if (!complete) return;
+  const keep = new Set([...items.map((i) => i.id), ...unknown]);
+  for (const issue of managed.filter((i) => !keep.has(field(i, "item")))) {
+    await github.rest.issues.createComment({
+      owner, repo, issue_number: issue.number,
+      body: `Cleared as of this run.\n\n**Run:** ${runUrl}`,
+    });
+    await github.rest.issues.update({ owner, repo, issue_number: issue.number, state: "closed" });
+  }
+}
+
+module.exports = { rollingAlert, itemAlerts, readState, writeState, diff };

@@ -15,8 +15,9 @@
  *     The actual staleness sweep, run daily by
  *     .github/workflows/data-freshness.yml after the morning pipelines.
  *     Queries Supabase for reservoir feeds and reads committed artifacts
- *     for file feeds. Writes freshness-report.md and exits 1 when
- *     anything is stale (the workflow turns that into a GitHub issue).
+ *     for file feeds. Writes freshness-report.md and freshness-alerts.json
+ *     and exits 1 when anything is stale (the workflow opens one GitHub
+ *     issue per stale feed).
  *
  * Checks are DERIVED, not hand-listed:
  *   - Reservoir feeds: every waterSource with hasPublicFeed !== false,
@@ -145,7 +146,7 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     // run (both scoreboards are written together).
     maxAgeDays: 15,
     dateFrom: 'regex:"rainfallDeviationPct":\\s*\\{[^}]*"asOf": "(\\d{4}-\\d{2}-\\d{2})"',
-    note: "Cauvery sub-basin rainfall deviation (self-computed, both states)",
+    note: "Cauvery sub-basin rainfall deviation (self-computed, both states). Refresh: python3 scripts/build_basin_rainfall.py cauvery-ka cauvery-tn",
   },
 ];
 
@@ -196,23 +197,19 @@ const EXTRA_TABLE_FEEDS: ExtraTableFeed[] = [
     maxAgeDays: 12, // weekly (Mondays 06:45 IST) + grace
     note: "GEE water-body extent summaries, all cities (weekly pass)",
   },
-  {
-    id: "wris-groundwater",
-    cityId: "madurai",
+  // Station groundwater, one check per city: the table is shared, and a single
+  // unfiltered check reported Madurai while Chennai and Bengaluru froze unseen.
+  // Tracks the SERIES, not the scrape: `ingested_at` only moves on INSERT, so a
+  // run that re-upserts unchanged rows leaves it untouched (verified 2026-07-26).
+  ...["chennai", "madurai", "bangalore"].map((cityId) => ({
+    id: `${cityId}:wris-groundwater`,
+    cityId,
     table: "groundwater_wris",
     dateColumn: "reading_date",
-    // Tracks the SERIES, not the scrape. `ingested_at` looks like the better
-    // "did our job run" signal but is not: it only moves on INSERT, so a run
-    // that re-upserts unchanged rows leaves it untouched (verified 2026-07-26).
-    //
-    // CURRENTLY ALERTING, CORRECTLY: WRIS telemetry for Madurai + Bangalore
-    // stops at 2026-06-04. Left alerting on purpose rather than tuned away -
-    // an upstream that stopped publishing is a finding. Delhi shows the same
-    // pattern (its telemetry stopped 2025-09-20), so this may be systemic to
-    // WRIS rather than per-district.
+    cityColumn: "city_id",
     maxAgeDays: 21,
-    note: "India-WRIS station series (daily pipeline step, Madurai + Bangalore)",
-  },
+    note: "CGWB and state station series (scrape_wris_groundwater.py)",
+  })),
 ];
 
 // Edition-watches (did UPSTREAM publish something new?) do not belong here -
@@ -346,7 +343,7 @@ function deriveChecks(places: PlaceConfig[]): { checks: Check[]; problems: strin
   for (const d of listPublishedAtlasDistricts()) {
     const base = `public/data/atlas/${d.stateSlug}/${d.slug}`;
     for (const feed of [
-      { id: "atlas-directory", file: `${base}/directory.json`, note: "identity refresh (TNRD, JJM, Census bindings)" },
+      { id: "atlas-directory", file: `${base}/directory.json`, note: `identity refresh (TNRD, JJM, Census bindings). Refresh: bash scripts/atlas-refresh-district.sh ${d.slug}, from a machine censusindia.gov.in answers (it did not answer the runner on 2026-09-02)` },
       { id: "atlas-rainfall", file: `${base}/rainfall.json`, note: "Open-Meteo 30-day window per Gram Panchayat" },
     ]) {
       const key = `${d.scopeId}:${feed.id}`;
@@ -413,10 +410,26 @@ function loadEnv(): { url: string; key: string } {
   return { url, key };
 }
 
+/** First row of a Supabase REST query. Retried, so one 504 is not an alert. */
+async function firstRow(
+  env: { url: string; key: string },
+  check: Check,
+  params: string,
+): Promise<Record<string, string> | undefined> {
+  for (let attempt = 1; ; attempt++) {
+    const res = await fetch(`${env.url}/rest/v1/${check.table}?${params}&limit=1`, {
+      headers: { apikey: env.key, Authorization: `Bearer ${env.key}` },
+    });
+    if (res.ok) return ((await res.json()) as Record<string, string>[])[0];
+    if (attempt === 3) throw new Error(`supabase ${res.status} for ${check.id}`);
+    await new Promise((r) => setTimeout(r, 5000 * attempt));
+  }
+}
+
 /**
  * Latest date in any dated Supabase table. This is the P5-1 half of the
  * checker: several artifacts are written by scheduled workflows straight into
- * Supabase (GEE satellite summaries, reservoir catchment context, WRIS
+ * Supabase (GEE satellite summaries, reservoir catchment context, station
  * groundwater), so neither the file-feed path below nor the edition registry
  * could see them. If one of those workflows silently stops, nothing alerted.
  */
@@ -425,30 +438,19 @@ async function latestTableDate(
   check: Check,
 ): Promise<string | null> {
   const filter = check.cityColumn ? `&${check.cityColumn}=eq.${check.cityId}` : "";
-  const params = `select=${check.dateColumn}&order=${check.dateColumn}.desc&limit=1${filter}`;
-  const res = await fetch(`${env.url}/rest/v1/${check.table}?${params}`, {
-    headers: { apikey: env.key, Authorization: `Bearer ${env.key}` },
-  });
-  if (!res.ok) throw new Error(`supabase ${res.status} for ${check.id}`);
-  const rows = (await res.json()) as Record<string, string>[];
-  const v = rows[0]?.[check.dateColumn!];
-  return v ? v.slice(0, 10) : null;
+  const row = await firstRow(env, check, `select=${check.dateColumn}&order=${check.dateColumn}.desc${filter}`);
+  return row?.[check.dateColumn!]?.slice(0, 10) ?? null;
 }
 
 async function latestReservoirDate(
   env: { url: string; key: string },
   check: Check,
 ): Promise<string | null> {
-  const params =
+  const filter =
     check.table === "reservoir_daily"
-      ? `select=date&order=date.desc&limit=1`
-      : `select=date&city_id=eq.${check.cityId}&source_code=eq.${check.sourceCode}&order=date.desc&limit=1`;
-  const res = await fetch(`${env.url}/rest/v1/${check.table}?${params}`, {
-    headers: { apikey: env.key, Authorization: `Bearer ${env.key}` },
-  });
-  if (!res.ok) throw new Error(`supabase ${res.status} for ${check.id}`);
-  const rows = (await res.json()) as { date: string }[];
-  return rows[0]?.date ?? null;
+      ? ""
+      : `&city_id=eq.${check.cityId}&source_code=eq.${check.sourceCode}`;
+  return (await firstRow(env, check, `select=date&order=date.desc${filter}`))?.date ?? null;
 }
 
 /* ── Main ──────────────────────────────────────────────────────────────── */
@@ -541,24 +543,45 @@ async function main() {
 
   const report = lines.join("\n");
   writeFileSync(resolve(ROOT, "freshness-report.md"), report);
-  // Machine-readable companion for .github/workflows/lib/rolling-alert.js.
-  // The alert channel notifies on CHANGE, which means it needs stable keys to
-  // diff rather than prose to scrape. Registry problems are keyed separately
-  // so a checker fault is never mistaken for a stale feed.
+  // Machine-readable companion for itemAlerts in
+  // .github/workflows/lib/rolling-alert.js: one item per stale feed, so each
+  // opens its own issue. `level` rises each time the age doubles past the
+  // tolerance, which is what re-notifies; the age itself changes daily and
+  // would make the channel comment daily.
+  const row = (r: Row) =>
+    `| ${r.check.id} | ${r.check.cityId} | ${r.last ?? "-"} | ${r.age ?? "-"} | ${r.check.maxAgeDays} |`;
+  const table = (rs: Row[]) =>
+    ["| feed | city | last data | age (d) | max |", "|---|---|---|---|---|", ...rs.map(row)].join("\n");
+  const dated = stale.filter((r) => r.last);
+  const unchecked = stale.filter((r) => !r.last);
+  const items = dated.map((r) => ({
+    id: r.check.id,
+    title: `Stale feed: ${r.check.id}`,
+    level: Math.floor(Math.log2(r.age! / r.check.maxAgeDays)),
+    summary: `${r.age} days since the last data (${r.last}); tolerance ${r.check.maxAgeDays}.`,
+    body: [table([r]), "", r.check.note ?? ""].join("\n"),
+  }));
+  // A feed that could not be read is unknown, not stale: one shared item, and
+  // `unknown` keeps that feed's own issue from being closed as recovered.
+  if (unchecked.length)
+    items.push({
+      id: "unchecked",
+      title: "Freshness check: feeds that could not be read",
+      level: 0,
+      summary: `${unchecked.length} feeds could not be checked.`,
+      body: unchecked.map((r) => `- ${r.check.id}: ${r.error}`).join("\n"),
+    });
+  if (problems.length)
+    items.push({
+      id: "registry",
+      title: "Freshness check: registry problems",
+      level: 0,
+      summary: `${problems.length} registry problems.`,
+      body: problems.map((p) => `- ${p}`).join("\n"),
+    });
   writeFileSync(
-    resolve(ROOT, "freshness-keys.json"),
-    JSON.stringify(
-      [
-        // NOTE the key is the feed id plus, at most, the ERROR - never the age.
-        // Age changes every day, and a key that changes every day would make
-        // the channel comment every day, which is the exact noise this
-        // replaces. "Still stale, one day staler" is not news.
-        ...stale.map((r) => (r.error ? `${r.check.id} (${r.error})` : r.check.id)),
-        ...problems.map((p) => `registry: ${p}`),
-      ],
-      null,
-      2,
-    ) + "\n",
+    resolve(ROOT, "freshness-alerts.json"),
+    JSON.stringify({ items, unknown: unchecked.map((r) => r.check.id) }, null, 2) + "\n",
   );
   console.log(report);
   if (stale.length || problems.length) process.exit(1);
