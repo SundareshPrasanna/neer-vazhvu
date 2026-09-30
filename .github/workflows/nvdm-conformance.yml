@@ -3,14 +3,15 @@ name: NVDM conformance
 # Guards the machine-readable arm of the NVDM data-model standard
 # (schemas/nvdm/ + the dataset catalogue). Three checks:
 #   1. Validator selftest - the schemas and rules keep rejecting what they
-#      must reject (including adversarial probes and L2 gate selector
+#      must reject (including adversarial probes, gate selector and ratchet
 #      regressions).
 #   2. Catalogue + conformance-report freshness - the committed outputs match
 #      the tree (same pattern as the ward-profiles.json CI gate). Regenerate
 #      with: python3 scripts/build_dataset_catalogue.py && python3 scripts/validate_nvdm.py
-#   3. L2 envelope gate on NEWLY ADDED data artifacts - ENFORCING since NVDM
-#      v1 acceptance (2026-07-30): a new artifact below L2 fails the PR.
-#      Legacy files stay report-only. See schemas/nvdm/README.md.
+#   3. scripts/nvdm-gate.sh on every changed data artifact - ENFORCING since
+#      NVDM v1 acceptance (2026-07-30): a new artifact must reach L2, one at L2
+#      or L3 must keep its level. Files below L2 stay report-only. See
+#      schemas/nvdm/README.md.
 
 on:
   pull_request:
@@ -21,7 +22,7 @@ on:
       - 'schemas/nvdm/**'
       - 'scripts/build_dataset_catalogue.py'
       - 'scripts/validate_nvdm.py'
-      - 'scripts/nvdm-l2-gate.sh'
+      - 'scripts/nvdm-gate.sh'
       - 'scripts/source-registry/**'
       - 'src/lib/cities/data-paths.ts'
       - 'src/lib/water-bodies/rich-body-registry.ts'
@@ -56,10 +57,10 @@ jobs:
           python3 scripts/validate_nvdm.py
           git diff --exit-code docs/architecture/nvdm-conformance.md
 
-      - name: L2 gate on new/renamed-in data artifacts (ENFORCING - NVDM v1 accepted 2026-07-30)
+      - name: NVDM gate on changed data artifacts (ENFORCING - NVDM v1 accepted 2026-07-30)
         if: github.event_name == 'pull_request'
         run: |
-          if ! bash scripts/nvdm-l2-gate.sh "${{ github.event.pull_request.base.sha }}"; then
-            echo "::error title=NVDM L2::New or renamed-in data artifacts must carry a valid NVDM envelope (L2). NVDM v1 is accepted and this gate is enforcing. See schemas/nvdm/README.md."
+          if ! bash scripts/nvdm-gate.sh "${{ github.event.pull_request.base.sha }}"; then
+            echo "::error title=NVDM gate::A new data artifact must reach L2 and one at L2 or L3 must keep its level. See schemas/nvdm/README.md."
             exit 1
           fi

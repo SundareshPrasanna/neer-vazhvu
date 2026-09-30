@@ -194,12 +194,13 @@ def dump(merged: dict, raw: str) -> str:
     return json.dumps(merged, indent=indent, ensure_ascii=False)
 
 
-def produced_at(doc: dict) -> str:
-    for k in ("computed_at", "generated_at", "fetched_at", "updated"):
-        v = doc.get(k)
+def produced_at(doc: dict, label: str) -> str:
+    """The envelope's own date on a refresh, else the payload's; never a made-up one."""
+    prior = doc.get("provenance", {}).get("produced_at") if "nvdm" in doc else None
+    for v in (prior, *(doc.get(k) for k in ("computed_at", "generated_at", "fetched_at", "updated"))):
         if isinstance(v, str) and v[:4].isdigit():
             return v[:10]
-    return "1970-01-01"
+    raise SystemExit(f"{label}: no produced_at, computed_at, generated_at, fetched_at or updated to date the envelope")
 
 
 SCOPE_KINDS: dict[str, str] = {}
@@ -214,7 +215,7 @@ def envelope_for(slug: str, city: str, dataset: str, spec: dict, doc: dict) -> d
     prov = {
         "sources": sources,
         "method": spec["method"],
-        "produced_at": produced_at(doc),
+        "produced_at": produced_at(doc, f"{slug} {dataset}"),
         "produced_by": spec["produced_by"],
     }
     if spec.get("internal_inputs") is not None:
@@ -236,10 +237,7 @@ def apply(path: Path, slug: str, city: str, dataset: str, spec: dict, refresh: b
         return False
     if "nvdm" in doc and not refresh:
         return False
-    prior = doc.get("provenance", {}).get("produced_at") if "nvdm" in doc else None
     env = envelope_for(slug, city, dataset, spec, doc)
-    if prior:
-        env["provenance"]["produced_at"] = prior
     merged = {**env, **{k: v for k, v in doc.items() if k not in env}}
     out = dump(merged, raw)
     path.write_text(out + ("\n" if raw.endswith("\n") else ""))

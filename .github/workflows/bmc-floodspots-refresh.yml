@@ -51,13 +51,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Refresh gate: files enveloped at HEAD must still certify L2
-          # (report mode below cannot fail; this can - round-2 review)
-          bash scripts/nvdm-refresh-gate.sh public/data/mumbai-flood-hotspots.geojson
-          # NVDM conformance before publishing (review 2026-07-30: direct
-          # pushes bypass the PR gate - so the gate runs here instead;
-          # any failure aborts before commit)
+          # Direct pushes skip the PR gate, so the NVDM gate runs here against HEAD, after
+          # the catalogue so a new file is assessed; any failure aborts before commit.
           python3 scripts/build_dataset_catalogue.py
+          bash scripts/nvdm-gate.sh HEAD public/data/mumbai-flood-hotspots.geojson
           python3 scripts/validate_nvdm.py
           python3 scripts/validate_nvdm.py --selftest
           git add public/data/mumbai-flood-hotspots.geojson docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md

@@ -6,7 +6,7 @@ provenance + conventions), per-dataset payload contracts, the scope registry,
 and worked examples.
 
 **Status: NVDM v1 ACCEPTED 2026-07-30** after four adversarial review rounds.
-The L2 gate on newly added data artifacts is ENFORCING.
+The gate on changed data artifacts (`scripts/nvdm-gate.sh`) is ENFORCING.
 
 The full normative prose specification is maintained privately while its
 publication is decided; for validation purposes **these schemas and the
@@ -30,11 +30,12 @@ validator are authoritative**. Spec section references in schema descriptions
 - **L1 Registered** - upstream sources joined to the Headwaters registry
   (`scripts/source-registry/`) via `dependsOn`.
 - **L2 Enveloped** - valid envelope; identity agrees with path and scope
-  registry; every source registered or explicitly `closed` + dated; derived
-  artifacts name their generator and input sources.
+  registry; every source registered or explicitly `closed` + dated; dates
+  real, none in the future, production dates from 2000 on; derived artifacts
+  name their generator and input sources; per-record source references on
+  claim datasets, contracted or not.
 - **L3 Contracted** - payload validates against the dataset's schema;
-  per-record source references on claim datasets; undeclared top-level keys
-  rejected (per-scope additions live in `ext`).
+  undeclared top-level keys rejected (per-scope additions live in `ext`).
 
 ## Commands
 
@@ -42,13 +43,18 @@ validator are authoritative**. Spec section references in schema descriptions
 python3 scripts/validate_nvdm.py --selftest     # schema + rule self-checks
 python3 scripts/build_dataset_catalogue.py      # regenerate the catalogue
 python3 scripts/validate_nvdm.py                # regenerate the conformance report
-python3 scripts/validate_nvdm.py --check FILE…  # gate: exit 1 unless FILE reaches L2
+python3 scripts/validate_nvdm.py --check FILE…  # exit 1 unless FILE reaches L2
+bash scripts/nvdm-gate.sh origin/main           # the gate, as CI runs it on a PR
 ```
 
-CI (`.github/workflows/nvdm-conformance.yml`) runs the selftest, the freshness
-checks, and the L2 gate on newly added data artifacts - all **blocking**
-(v1 accepted 2026-07-30). New artifacts carry the envelope from their first
-commit; legacy files remain report-only until their city migrates.
+`scripts/nvdm-gate.sh` judges every added, renamed, modified or untracked file
+under `public/data` and `public/geojson` against the base: a new file must
+reach L2, a file at L2 or L3 must keep its level, a file below L2 is skipped
+until it migrates. Both sides are assessed under the current rules, so only the
+data change can move a level. CI (`.github/workflows/nvdm-conformance.yml`)
+runs the selftest, the freshness checks and the gate on every PR, and every
+workflow that pushes data runs the gate against `HEAD` before committing - all
+**blocking** (v1 accepted 2026-07-30).
 
 ## Semantic core candidate
 
