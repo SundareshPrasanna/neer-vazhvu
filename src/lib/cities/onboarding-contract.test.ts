@@ -82,10 +82,13 @@ test("a days-left hero has the city's own demand figure", () => {
 test("the scope registry, the city configs and the seeded cities table agree", () => {
   const scoped = scopeIds("city", "region");
   const dir = join(process.cwd(), "supabase", "migrations");
-  const sql = readdirSync(dir).map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
-  const seeded = new Set([...sql.matchAll(/INSERT INTO cities \([^)]*\)\s*VALUES\s*\(\s*'([^']+)'/g)].map((m) => m[1]));
-  // Reported, not fixed: migration 018 seeds the Kaveri Delta water clock as a region no config or scope names.
-  const SEEDED_UNREGISTERED = new Set(["kaveri"]);
+  const sql = readdirSync(dir).sort().map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
+  // Seeded = inserted and not since deleted, in migration order (051 retires the Kaveri Delta row 018 seeded).
+  const seeded = new Set<string>();
+  for (const [, added, removed] of sql.matchAll(/INSERT INTO cities \([^)]*\)\s*VALUES\s*\(\s*'([^']+)'|DELETE FROM cities WHERE city_id = '([^']+)'/g)) {
+    if (added) seeded.add(added);
+    else seeded.delete(removed);
+  }
   assert.deepEqual([...CITY_IDS].sort(), [...scoped].sort(), "CITY_IDS and the city/region scopes differ");
   for (const p of places) {
     assert.equal(scopeKind(p.cityId), p.placeKind ?? "city", `${p.cityId}: placeKind disagrees with schemas/nvdm/scopes.json`);
@@ -93,6 +96,6 @@ test("the scope registry, the city configs and the seeded cities table agree", (
     assert.ok(seeded.has(p.cityId), `${p.cityId}: no cities row seeded in supabase/migrations`);
   }
   for (const id of seeded) {
-    assert.ok(scoped.includes(id) || SEEDED_UNREGISTERED.has(id), `${id}: seeded in supabase/migrations but not a city or region scope`);
+    assert.ok(scoped.includes(id), `${id}: seeded in supabase/migrations but not a city or region scope`);
   }
 });
