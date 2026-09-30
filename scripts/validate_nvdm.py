@@ -224,6 +224,8 @@ LEGACY_UNDERSCORE = {
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import nvdm_scopes  # noqa: E402
+from nvdm_scopes import load as load_scopes  # noqa: E402
 from registry_license import registry_licenses  # noqa: E402
 
 REG_LICENSES = registry_licenses()
@@ -238,20 +240,54 @@ def registry_source_ids() -> set[str]:
     return ids
 
 
-def load_scopes() -> dict[str, str]:
-    return json.loads((SCHEMA_DIR / "scopes.json").read_text())["scopes"]
-
-
-def scope_registry_errors(doc: dict, scopes: dict[str, str]) -> list[str]:
+def scope_registry_errors(doc: dict, scopes: dict[str, dict]) -> list[str]:
     """scope.id must be registered and scope.kind must match the registry -
     {kind: basin, id: hyderabad} is a lie the enum alone cannot catch."""
     sc = doc.get("scope", {})
-    registered = scopes.get(sc.get("id"))
+    registered = nvdm_scopes.kind(sc.get("id"), scopes)
     if registered is None:
         return [f"scope.id '{sc.get('id')}' is not in the scope registry (schemas/nvdm/scopes.json)"]
     if registered != sc.get("kind"):
         return [f"scope.kind '{sc.get('kind')}' contradicts the registry ('{sc.get('id')}' is a {registered})"]
     return []
+
+
+def scope_graph_errors(scopes: dict[str, dict], schemas: dict[str, dict]) -> list[str]:
+    """Registry rules (1.1): closed vocabularies, registered targets of the right
+    axis, method and evidence on every intersects, an acyclic administrative-parent
+    graph, exactly one country per place and at least one per water system, and
+    no external identity claimed twice."""
+    errs: list[str] = []
+    claimed: dict[tuple, str] = {}
+    ns = nvdm_scopes
+    for sid, e in scopes.items():
+        errs += [f"{sid}: {x}" for x in validate(e, {"$ref": "scopes.schema.json#/$defs/entry"}, schemas, "scopes.schema.json")]
+        if not isinstance(e, dict):
+            continue
+        if not re.fullmatch(r"[a-z][a-z0-9-]*", sid):
+            errs.append(f"{sid}: id is not a lowercase slug")
+        for r in e.get("relations", []):
+            t, water_target = r.get("target"), r.get("type") == "projection-of"
+            if t not in scopes or t == sid:
+                errs.append(f"{sid}: {r.get('type')} target {t!r} is not another registered scope")
+            elif (ns.kind(t, scopes) in ns.WATER_KINDS) != water_target:
+                errs.append(f"{sid}: {r.get('type')} must point at a {'water system' if water_target else 'place'}, not {t}")
+            ev = str(r.get("evidence") or "")
+            if r.get("type") == "intersects" and not (r.get("method") and (ev.startswith(("https://", "http://")) or (ROOT / ev).is_file())):
+                errs.append(f"{sid}: intersects {t} needs a method and evidence that is a repo file or a URL")
+        water, parents = e.get("kind") in ns.WATER_KINDS, ns.related(sid, ns.PARENT, scopes)
+        n = len(ns.countries(sid, scopes))
+        if sid in ns.ancestors(sid, scopes=scopes):
+            errs.append(f"{sid}: administrative-parent cycle")
+        elif parents and (water or e.get("kind") == "country"):
+            errs.append(f"{sid}: a {e.get('kind')} has no administrative parent")
+        elif n < 1 or (n > 1 and not water):
+            errs.append(f"{sid}: reaches {n} countries (a place needs exactly one, a water system at least one)")
+        for r in e.get("refs", []):
+            key = (r.get("system"), r.get("code"))
+            if claimed.setdefault(key, sid) != sid:
+                errs.append(f"{sid}: {key[0]} {key[1]} is already {claimed[key]}'s identity")
+    return errs
 
 
 def source_accountability_errors(
@@ -1043,6 +1079,38 @@ def selftest(schemas: dict[str, dict]) -> int:
     check("dangling source_ids rejected", bool(claim_provenance_errors(d, "data-root/facts")))
     d = dup(facts); d["scope"] = {"kind": "basin", "id": "hyderabad"}
     check("scope.kind contradicting registry rejected", bool(scope_registry_errors(d, scopes)))
+
+    # 1.1 registry: the real registry passes, and each graph rule rejects its own probe.
+    graph = scope_graph_errors(scopes, schemas)
+    check("scope registry passes its graph rules", not graph)
+    for e in graph[:6]:
+        print(f"  {e}")
+    tn, land = {"type": "administrative-parent", "target": "tamil-nadu"}, {"kind": "country", "name": "Y"}
+
+    def crosses(target: str, **over) -> dict:
+        return {"type": "intersects", "target": target, "method": "geometry", "evidence": "schemas/nvdm/scopes.json", **over}
+
+    for name, extra in (
+        ("unknown relation type", {"x": {"kind": "city", "name": "X", "relations": [{"type": "related-to", "target": "tamil-nadu"}]}}),
+        ("unknown ref system", {"x": {"kind": "city", "name": "X", "refs": [{"system": "pincode", "level": "district", "code": "1"}], "relations": [tn]}}),
+        ("dangling relation target", {"x": {"kind": "city", "name": "X", "relations": [{"type": "administrative-parent", "target": "atlantis"}]}}),
+        ("place with no country", {"x": {"kind": "city", "name": "X"}}),
+        ("place under two countries", {"y": land, "x": {"kind": "city", "name": "X", "relations": [tn, {"type": "administrative-parent", "target": "y"}]}}),
+        ("water system with an administrative parent", {"x": {"kind": "basin", "name": "X", "relations": [tn]}}),
+        ("projection of a place", {"x": {"kind": "basin", "name": "X", "relations": [{"type": "projection-of", "target": "chennai"}, crosses("chennai")]}}),
+        ("intersects with no method and evidence", {"x": {"kind": "basin", "name": "X", "relations": [{"type": "intersects", "target": "chennai"}]}}),
+        ("intersects with an unknown method", {"x": {"kind": "basin", "name": "X", "relations": [crosses("chennai", method="hunch")]}}),
+        ("intersects whose evidence is not in the repo", {"x": {"kind": "basin", "name": "X", "relations": [crosses("chennai", evidence="public/data/no-such-file.geojson")]}}),
+        ("external identity claimed twice", {"x": {"kind": "city", "name": "X", "refs": [{"system": "iso3166-2", "level": "state", "code": "IN-TN"}], "relations": [tn]}}),
+        ("administrative-parent cycle", {"tamil-nadu": {**scopes["tamil-nadu"], "relations": [{"type": "administrative-parent", "target": "chennai"}]}}),
+    ):
+        check(f"scope registry rejects {name}", bool(scope_graph_errors({**scopes, **extra}, schemas)))
+    border = {**scopes, "y": land, "yy": {"kind": "state", "name": "YY", "relations": [{"type": "administrative-parent", "target": "y"}]},
+              "x": {"kind": "basin", "name": "X", "relations": [crosses("tamil-nadu"), crosses("yy")]}}
+    check("a transboundary water system is legal and has no single country",
+          not scope_graph_errors(border, schemas) and nvdm_scopes.country("x", border) is None)
+    check("country is derived through relations, never from the id",
+          {nvdm_scopes.country(s) for s in ("tn-thanjavur", "ka-kolar", "delhi", "cauvery-ka", "kabini", "cooum")} == {"india"})
     d = dup(facts); d["provenance"]["method"] = "derived"
     check("derived w/o input-role sources rejected", bool(provenance_rule_errors(d)))
     d = dup(facts); d["provenance"]["sources"][0].pop("id")

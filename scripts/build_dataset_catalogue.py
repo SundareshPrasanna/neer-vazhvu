@@ -31,13 +31,19 @@ CODE_DIRS = ["src", "scripts", "neer-vazhvu-api", "supabase"]
 OUT_JSON = ROOT / "docs/architecture/dataset-catalogue.json"
 OUT_MD = ROOT / "docs/architecture/dataset-catalogue.md"
 
-CITY_TOKENS = [
-    "chennai", "bangalore", "madurai", "mumbai", "delhi", "hyderabad", "kolkata", "gurugram",
-    "pune",
-    "surat",
-]
-# Basin scopes are read from the scope registry, so a new district basin needs no edit here.
-BASIN_SCOPES = {sid for sid, kind in json.loads((ROOT / "schemas/nvdm/scopes.json").read_text())["scopes"].items() if kind == "basin"}
+sys.path.insert(0, str(ROOT / "scripts"))
+import nvdm_scopes as scopes  # noqa: E402
+
+# Place tokens and basin scopes come from the scope registry, so a new city or basin needs no edit here.
+CITY_TOKENS = scopes.ids("city", "region")
+BASIN_SCOPES = set(scopes.ids("basin"))
+# atlas/<state>/ segments are the lowercased ISO 3166-2 subdivision of a registered state; the Atlas tree is India's.
+ATLAS_STATES = {
+    r["code"].split("-")[1].lower(): sid
+    for sid in scopes.ids("state")
+    if scopes.country(sid) == "india"
+    for r in scopes.refs(sid, "iso3166-2")
+}
 
 # Chennai-era unprefixed filenames (see src/lib/cities/data-paths.ts).
 CHENNAI_LEGACY = {
@@ -153,21 +159,18 @@ def detect_scope_and_stem(rel: Path, rich_slugs: dict[str, str]) -> tuple[str, s
         sub = parts[i + 2 : -1]
         return parts[i + 1], ("/".join(sub) if sub else stem_full)
     if "atlas" in parts:
-        # atlas/<state>/<district>/<family>[/<shard>]: the scope is the
-        # state-prefixed district id registered in schemas/nvdm/scopes.json
-        # (tn-thanjavur); per-block shards belong to the FAMILY dataset, the
+        # atlas/<state>/<district>/<family>[/<shard>]: the scope is the legacy
+        # district id spelled <state>-<district> (tn-thanjavur), built here and
+        # never parsed back; per-block shards belong to the FAMILY dataset, the
         # shard filename is a block code, not identity.
         i = parts.index("atlas")
         if len(parts) > i + 3:
             sub = parts[i + 3 : -1]
             return f"{parts[i + 1]}-{parts[i + 2]}", ("/".join(sub) if sub else stem_full)
-        if len(parts) == i + 3:
-            # atlas/<state>/<artifact>.json: the state tier's own artifacts
-            # (the first is the Maharashtra scarcity register). The scope is
-            # the registered STATE scope, not a district.
-            state = {"tn": "tamil-nadu", "mh": "maharashtra"}.get(parts[i + 1])
-            if state:
-                return state, stem_full
+        if len(parts) == i + 3 and parts[i + 1] in ATLAS_STATES:
+            # atlas/<state>/<artifact>.json: the state tier's own artifacts,
+            # scoped to the registered STATE, resolved through its ISO 3166-2 ref.
+            return ATLAS_STATES[parts[i + 1]], stem_full
         return "unknown", stem_full
     if "rich-bodies" in parts:
         for slug, city in sorted(rich_slugs.items(), key=lambda kv: -len(kv[0])):

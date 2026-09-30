@@ -6,7 +6,10 @@
  * A failure names the city and what it is missing.
  */
 import { strict as assert } from "node:assert";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "node:test";
+import { scopeCountry, scopeIds, scopeKind } from "../scopes";
 import { CITY_IDS, tryGetPlaceConfig, type PlaceConfig } from "./index";
 import { riversVariant } from "./data-paths";
 import { RIVERS_CONTENT } from "../../content/rivers";
@@ -72,5 +75,24 @@ test("an Origins route has a tagline", () => {
 test("a days-left hero has the city's own demand figure", () => {
   for (const p of places.filter((p) => p.heroMode === "days-left")) {
     assert.ok(p.defaultConsumptionMld != null, `${p.cityId}: days-left hero without defaultConsumptionMld`);
+  }
+});
+
+// One place registry: schemas/nvdm/scopes.json names every place; configs and the seeded cities table must agree with it.
+test("the scope registry, the city configs and the seeded cities table agree", () => {
+  const scoped = scopeIds("city", "region");
+  const dir = join(process.cwd(), "supabase", "migrations");
+  const sql = readdirSync(dir).map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
+  const seeded = new Set([...sql.matchAll(/INSERT INTO cities \([^)]*\)\s*VALUES\s*\(\s*'([^']+)'/g)].map((m) => m[1]));
+  // Reported, not fixed: migration 018 seeds the Kaveri Delta water clock as a region no config or scope names.
+  const SEEDED_UNREGISTERED = new Set(["kaveri"]);
+  assert.deepEqual([...CITY_IDS].sort(), [...scoped].sort(), "CITY_IDS and the city/region scopes differ");
+  for (const p of places) {
+    assert.equal(scopeKind(p.cityId), p.placeKind ?? "city", `${p.cityId}: placeKind disagrees with schemas/nvdm/scopes.json`);
+    assert.ok(scopeCountry(p.cityId), `${p.cityId}: no single country through administrative-parent`);
+    assert.ok(seeded.has(p.cityId), `${p.cityId}: no cities row seeded in supabase/migrations`);
+  }
+  for (const id of seeded) {
+    assert.ok(scoped.includes(id) || SEEDED_UNREGISTERED.has(id), `${id}: seeded in supabase/migrations but not a city or region scope`);
   }
 });

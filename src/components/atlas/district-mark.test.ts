@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { listAtlasDistricts } from "@/lib/atlas/registry";
+import { scopeRelated } from "@/lib/scopes";
 import { DISTRICT_ACCENT, districtAccent, hasDistrictMark } from "./district-mark";
 
 // Every registered district is drawn: a new district cannot ship on the
@@ -16,7 +17,7 @@ test("every Atlas district has its own mark and accent", () => {
 test("no two districts share an accent within a state", () => {
   const byState = new Map<string, string[]>();
   for (const [scopeId, accent] of Object.entries(DISTRICT_ACCENT)) {
-    const state = scopeId.split("-")[0];
+    const state = scopeRelated(scopeId, "administrative-parent")[0] ?? scopeId;
     byState.set(state, [...(byState.get(state) ?? []), accent]);
   }
   for (const [state, accents] of byState) {
