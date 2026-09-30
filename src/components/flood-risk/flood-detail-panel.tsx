@@ -31,23 +31,17 @@ interface FloodDetailPanelProps {
 export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
   const { t } = useLanguage();
   const wardLookup = useWardLookup();
-  const [resolvedWard, setResolvedWard] = useState<number | null>(null);
+  const [resolved, setResolved] = useState<{ of: SelectedFloodFeature; ward: number | null } | null>(null);
 
-  // Resolve ward from latlng, or use direct ward property for hotspot2015
+  // Every feature resolves to the ward it sits in on the served map, never to a ward number its source carries
   useEffect(() => {
     let cancelled = false;
-    if (selected.kind === "hotspot2015") {
-      const ward = (selected.props as { ward: number }).ward;
-      if (ward > 0) Promise.resolve().then(() => { if (!cancelled) setResolvedWard(ward); });
-    } else if (selected.latlng) {
-      wardLookup(selected.latlng[0], selected.latlng[1]).then((w) => {
-        if (!cancelled) setResolvedWard(w);
-      });
-    } else {
-      Promise.resolve().then(() => { if (!cancelled) setResolvedWard(null); });
-    }
+    wardLookup(selected.latlng[0], selected.latlng[1]).then((ward) => {
+      if (!cancelled) setResolved({ of: selected, ward });
+    });
     return () => { cancelled = true; };
   }, [selected, wardLookup]);
+  const resolvedWard = resolved?.of === selected ? resolved.ward : null;
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
@@ -77,7 +71,7 @@ export function FloodDetailPanel({ selected, onClose }: FloodDetailPanelProps) {
       <div className="px-4 py-3 space-y-4 flex-1">
         {selected.kind === "hazard" && <HazardContent props={selected.props as HazardZoneProperties} />}
         {selected.kind === "depth" && <DepthContent props={selected.props as DepthPointProperties} />}
-        {selected.kind === "hotspot2015" && <Hotspot2015Content props={selected.props as Hotspot2015Properties} />}
+        {selected.kind === "hotspot2015" && <Hotspot2015Content props={selected.props as Hotspot2015Properties} ward={resolvedWard} />}
         {selected.kind === "hotspot2020" && <Hotspot2020Content props={selected.props as Hotspot2020Properties} />}
         {selected.kind === "drainage" && <DrainageContent props={selected.props as DrainageProperties} />}
         {selected.kind === "return_period" && <ReturnPeriodContent props={selected.props as ReturnPeriodProperties} />}
@@ -164,7 +158,7 @@ function DepthContent({ props }: { props: { DEPTH: number; F_REMARKS: string; F_
   );
 }
 
-function Hotspot2015Content({ props }: { props: { location: string; vulnerability: string; inundation_ft: string; ward: number; zone: number } }) {
+function Hotspot2015Content({ props, ward }: { props: Hotspot2015Properties; ward: number | null }) {
   const { t } = useLanguage();
   const color = VULNERABILITY_COLORS[props.vulnerability] ?? "#64748b";
 
@@ -184,18 +178,18 @@ function Hotspot2015Content({ props }: { props: { location: string; vulnerabilit
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.inundation_ft}</div>
         </div>
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t("ward.ward")} / {t("flood.zone_label")}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.source_ward_zone")}</div>
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">W{props.ward} / Z{props.zone}</div>
         </div>
       </div>
       <p className="text-xs text-slate-400 dark:text-slate-500">
         {t("flood.event_2015")}
       </p>
-      {props.ward > 0 && (
+      {ward != null && (
         <ConnectedInsight
           messageKey="connected.flood_hotspot_gw"
-          params={{ ward: props.ward }}
-          linkHref={`/groundwater?ward=${props.ward}`}
+          params={{ ward }}
+          linkHref={`/groundwater?ward=${ward}`}
           linkKey="connected.flood_hotspot_gw_link"
         />
       )}
@@ -246,7 +240,7 @@ function DrainageContent({ props }: { props: DrainageProperties }) {
       )}
       {(props.ward || props.zone) && (
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t("ward.ward")} / {t("flood.zone_label")}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t("flood.source_ward_zone")}</div>
           <div className="text-sm font-mono text-slate-900 dark:text-slate-100">{props.ward} / {props.zone}</div>
         </div>
       )}

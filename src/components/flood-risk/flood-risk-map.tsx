@@ -350,6 +350,8 @@ export function FloodRiskMap({
           {/* 2015 hotspot points – filtered by vulnerability level */}
           {hotspot2015Geo?.features.map((f, i) => {
             const p = f.properties as unknown as Hotspot2015Properties;
+            // The geometry, as the ward profiles read it: the rounded latitude/longitude props put 3 points in a neighbouring ward
+            const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
             const vulnId = p.vulnerability === "Very High Vulnerability" ? "vuln_very_high"
               : p.vulnerability === "High Vulnerability" ? "vuln_high"
               : p.vulnerability === "Low Vulnerability" ? "vuln_low"
@@ -359,7 +361,7 @@ export function FloodRiskMap({
             return (
               <CircleMarker
                 key={`h15-${i}`}
-                center={[p.latitude, p.longitude]}
+                center={[lat, lng]}
                 radius={4}
                 pathOptions={{ fillColor: color, fillOpacity: 0.8, color: "#fff", weight: 1 }}
                 eventHandlers={{
@@ -367,7 +369,7 @@ export function FloodRiskMap({
                     onSelect({
                       kind: "hotspot2015",
                       props: p,
-                      latlng: [p.latitude, p.longitude],
+                      latlng: [lat, lng],
                     }),
                 }}
               >

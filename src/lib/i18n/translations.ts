@@ -1203,7 +1203,7 @@ export const translations: Record<string, TranslationEntry> = {
   "flood.depth_ft": { en: "Depth (ft)",                     ta: "ஆழம் (அடி)", kn: "ಆಳ (ಅಡಿ)" },
   "flood.depth_m": { en: "Depth (m)",                      ta: "ஆழம் (மீ)", kn: "ಆಳ (ಮೀ)" },
   "flood.remarks": { en: "Remarks",                        ta: "குறிப்புகள்", kn: "ಟಿಪ್ಪಣಿಗಳು" },
-  "flood.zone_label": { en: "Zone",                           ta: "மண்டலம்", kn: "ವಲಯ" },
+  "flood.source_ward_zone": { en: "Ward / zone in source",   ta: "ஆதாரத்தில் உள்ள வார்டு / மண்டலம்", kn: "ಮೂಲದಲ್ಲಿರುವ ವಾರ್ಡ್ / ವಲಯ" },
   "flood.neighborhood": { en: "Neighborhood",                   ta: "பகுதி", kn: "ನೆರೆಹೊರೆ" },
   "flood.event_2015": { en: "2015 Chennai Floods",            ta: "2015 சென்னை வெள்ளம்", kn: "2015 ಚೆನ್ನೈ ಪ್ರವಾಹ" },
   "flood.event_2020": { en: "2020 Cyclone Nivar",             ta: "2020 நிவர் புயல்", kn: "2020 ಚಂಡಮಾರುತ ನಿವಾರ್" },
