@@ -1,99 +1,111 @@
-# NVDM - Neer Vazhvu Data Model (machine-readable contracts)
+# NVDM: the Neer Vazhvu Data Model
 
-This directory is the authoritative machine-readable form of the NVDM data-model
-standard: the envelope every data artifact carries (identity + scope +
-provenance + conventions), per-dataset payload contracts, the scope registry,
-and worked examples.
+NVDM is the standard every data file in this repository follows. Each file
+carries an **envelope** that states what the file is, which place or water
+system it is about, and where its values came from, and the content of the most
+used datasets is fixed by a schema. A validator measures every file against the
+standard, and a gate in CI stops a change that adds a non-conforming file or
+weakens a conforming one.
 
-**Status: NVDM v1 ACCEPTED 2026-07-30** after four adversarial review rounds.
-The gate on changed data artifacts (`scripts/nvdm-gate.sh`) is ENFORCING. **1.1** (additive,
-no artifact changes) gives places their hierarchy and external identities in
-the scope registry; see below.
+This directory holds the standard: the rules, the schemas, the register of
+places, worked examples, and the documents below.
 
-The full normative prose specification is maintained privately while its
-publication is decided; for validation purposes **these schemas and the
-validator are authoritative**. Spec section references in schema descriptions
-(e.g. "spec 5.1") refer to that document.
+## Status
 
-## Layout
+| What | Status | Date |
+|---|---|---|
+| NVDM 1.0: the envelope, the four conformance levels, the first payload contracts | Accepted, in force | 2026-07-30 |
+| NVDM 1.1: place identity (external identities, typed relations and the `country` kind in the scope registry) | In force; no artifact had to change | 2026-09-30 |
+| The gate on changed data files | Enforcing on every pull request and every scheduled data refresh | 2026-07-30 |
+| Semantic core 0.1 (`semantic-core.schema.json`, `semantic-records.schema.json`) | Candidate, not in force; no artifact uses it | 2026-08-04 |
 
-- `envelope.schema.json` - the identity/provenance envelope (all artifacts).
-  `$defs`: `scope`, `source` (with `role` and `closed`), `provenance`,
-  `projection`, `envelope`.
-- `<dataset>.schema.json` - Tier-A payload contracts, keyed by full dataset id
-  in `scripts/validate_nvdm.py` (`CONTRACTS`).
-- `scopes.json` - the scope registry (append-only), one place registry for
-  the platform; `scopes.schema.json` closes its vocabularies. Read it through
-  `scripts/nvdm_scopes.py` or `src/lib/scopes.ts`, never directly.
-- `examples/` - conformant artifacts, one per major shape; exercised by the
-  validator selftest.
+## Conformance levels
 
-## 1.1: places carry their hierarchy in the registry
+Every data file is at one of four levels. They are cumulative: a file reaches a
+level only when it has reached every level below it.
 
-- **Ids are opaque.** A scope id is a name, never parsed. The `tn-` of
-  `tn-thanjavur` is part of a legacy name; hierarchy is a relation, not a spelling.
-- **Entry shape.** `{kind, name, refs[], relations[]}`. `refs` are namespaced
-  external identities in the PlaceRef grammar (`system`, `level`, `code`,
-  `as_of` = source vintage): `iso3166-1`, `iso3166-2`, `lgd`, `census-2011`.
-  `relations` are typed: `administrative-parent` (place to parent place),
-  `intersects` (water system to a place it crosses, geometry only) and
-  `projection-of` (an administrative view to its canonical water system:
-  `cauvery-ka` and `cauvery-tn` are views of `cauvery`).
-- **An `intersects` is auditable.** Each carries `method` (`geometry`,
-  `published`, `crosswalk`, `manual`) and `evidence`, a repo path or URL: for
-  `geometry`, the boundary or centerline that was tested against the place.
-- **Country is derived, never stored.** A place walks `administrative-parent`
-  to a `country` scope (`country` is a new scope kind); a water system goes
-  through the places it intersects and may legitimately reach two.
-- **Validator rules.** Closed vocabularies, registered targets on the right
-  axis, method and evidence on every `intersects`, an acyclic parent graph,
-  exactly one country per place, and no external code claimed by two scopes. A TypeScript test holds `CITY_IDS`,
-  the city configs and the seeded `cities` table to the registry.
+| Level | Name | What it takes |
+|---|---|---|
+| L0 | Catalogued | The file is listed in the dataset catalogue, `docs/architecture/dataset-catalogue.json`. |
+| L1 | Accounted | The file is tied to its upstream: a source registry entry names it in `dependsOn`, or the coverage allowlist names it with a reason. |
+| L2 | Enveloped | The file carries a valid envelope; its dataset and scope agree with its path and with the scope registry; every source is either registered with this file in its `dependsOn`, or declared closed and dated; dates are real and not in the future; derived files name their generator and an input; on claim datasets every record cites its source. |
+| L3 | Contracted | The file's dataset has a payload contract and the file satisfies it: the payload validates, no undeclared top-level key, every data source records its licence, a derived file declares its internal inputs, and none of those inputs is below L2. |
 
-## Conformance levels (assessed by `scripts/validate_nvdm.py`)
+The gate requires a new file to reach L2, and a file that is at L2 or L3 to
+keep its level. RULES.md Part 10 has the full statement.
 
-- **L0 Catalogued** - inventoried in `docs/architecture/dataset-catalogue.json`.
-- **L1 Registered** - upstream sources joined to the Headwaters registry
-  (`scripts/source-registry/`) via `dependsOn`.
-- **L2 Enveloped** - valid envelope; identity agrees with path and scope
-  registry; every source registered or explicitly `closed` + dated; dates
-  real, none in the future, production dates from 2000 on; derived artifacts
-  name their generator and input sources; per-record source references on
-  claim datasets, contracted or not.
-- **L3 Contracted** - payload validates against the dataset's schema;
-  undeclared top-level keys rejected (per-scope additions live in `ext`).
+## The documents
+
+| Document | Read it when |
+|---|---|
+| [RULES.md](RULES.md) | You need to know exactly what is required. It states each rule as the validator enforces it, and marks the conventions nothing checks. |
+| [GUIDE.md](GUIDE.md) | You have a job to do: add a file, cite a source, register a place, add a contract, or fix a failed gate. Copyable steps, and a table of every error message with its fix. |
+| [REFERENCE.md](REFERENCE.md) | You need a list: envelope fields and types, allowed values, registered scopes, contracts, legacy keys. Generated; do not edit. |
+| [CHANGELOG.md](CHANGELOG.md) | You want to know what changed and when. |
+
+Schema descriptions and validator messages cite the rules as "spec 5.1": that
+is section 5.1 of RULES.md.
+
+## What is in this directory
+
+- `envelope.schema.json`: the envelope. Its definitions are `date`, `scope`,
+  `projection`, `source`, `provenance`, `rights_determination` and `envelope`.
+- `<dataset>.schema.json`: one payload contract per dataset. A contract is in
+  force when `CONTRACTS` in `scripts/validate_nvdm.py` lists it.
+- `scopes.json`: the scope registry, the list of every place and water system
+  a file may be about. `scopes.schema.json` fixes the shape of an entry.
+- `examples/`: small conforming files that the validator's selftest runs
+  through the full check: `example-facts.json`,
+  `example-water-bodies-current.geojson`, `example-atlas-briefs.json`,
+  `example-atlas-assessments.json`, and `example-semantic-records.json` for the
+  candidate semantic core.
+- `semantic-core.schema.json`, `semantic-records.schema.json`: the candidate
+  semantic core (RULES.md 11.5).
+- `LICENSE`: the licence notice for the specification (see Licence below).
+
+The tools live in `scripts/`:
+
+| Tool | What it does |
+|---|---|
+| `scripts/build_dataset_catalogue.py` | Lists every data file with its family, scope, dataset and source joins. |
+| `scripts/validate_nvdm.py` | Assesses every catalogued file and writes the conformance report; `--check` judges named files; `--selftest` tests the schemas, the scope registry and the rules themselves. |
+| `scripts/build_nvdm_reference.py` | Generates REFERENCE.md. |
+| `scripts/nvdm-gate.sh` | The gate: judges every changed data file against a base revision. |
+| `scripts/nvdm_write.py`, `scripts/lib/nvdm-write.ts` | The writers: rewrite a data file without losing its envelope. |
+| `scripts/nvdm_scopes.py`, `src/lib/scopes.ts` | The readers of the scope registry. |
+| `scripts/source-registry/` | The Headwaters registry: one entry per upstream source, with its licence and the files that depend on it. |
 
 ## Commands
 
 ```sh
-python3 scripts/validate_nvdm.py --selftest     # schema + rule self-checks
-python3 scripts/build_dataset_catalogue.py      # regenerate the catalogue
-python3 scripts/validate_nvdm.py                # regenerate the conformance report
-python3 scripts/validate_nvdm.py --check FILE…  # exit 1 unless FILE reaches L2
-bash scripts/nvdm-gate.sh origin/main           # the gate, as CI runs it on a PR
+python3 scripts/build_dataset_catalogue.py      # 1. regenerate the catalogue
+python3 scripts/validate_nvdm.py                # 2. regenerate the conformance report
+python3 scripts/build_nvdm_reference.py         # 3. regenerate REFERENCE.md
+python3 scripts/validate_nvdm.py --selftest     # test the schemas, the registry and the rules
+python3 scripts/validate_nvdm.py --check FILE   # does FILE reach L2?
+bash scripts/nvdm-gate.sh origin/main           # the gate, as CI runs it on a pull request
 ```
 
-`scripts/nvdm-gate.sh` judges every added, renamed, modified or untracked file
-under `public/data` and `public/geojson` against the base: a new file must
-reach L2, a file at L2 or L3 must keep its level, a file below L2 is skipped
-until it migrates. Both sides are assessed under the current rules, so only the
-data change can move a level. CI (`.github/workflows/nvdm-conformance.yml`)
-runs the selftest, the freshness checks and the gate on every PR, and every
-workflow that pushes data runs the gate against `HEAD` before committing - all
-**blocking** (v1 accepted 2026-07-30).
+Run the catalogue before the conformance report: the report is assessed from
+the catalogue. The report,
+[docs/architecture/nvdm-conformance.md](../../docs/architecture/nvdm-conformance.md),
+gives the current level of every file. CI
+(`.github/workflows/nvdm-conformance.yml`) runs the selftest, checks that all
+three generated outputs are fresh, and runs the gate.
 
-## Semantic core candidate
+## Licence
 
-`semantic-core.schema.json` and `semantic-records.schema.json` are a
-**0.1 candidate**, pressure-tested with the synthetic
-`examples/example-semantic-records.json` bundle. They define the interoperable
-shape for canonical subjects, explicit subject sets, immutable evidence and
-typed claims. The validator selftest exercises both schema conformance and
-cross-record graph integrity.
+The NVDM specification in this directory (these documents, the schemas, the
+scope registry and the examples) is licensed under CC BY 4.0, with attribution
+to "Neer Vazhvu"; the full notice is [LICENSE](LICENSE). The validator and the
+other tools in `scripts/` stay under the repository's MIT licence. The data
+files that follow the standard are not covered by either grant and keep the
+terms of their own sources, as [DATA-LICENSE.md](../../DATA-LICENSE.md) sets
+out.
 
-This candidate does **not** change accepted NVDM v1. `semantic-core/records` is
-intentionally absent from `CONTRACTS`, no production artifact uses it, and no
-concept vocabulary has been accepted by implication. Registration is a later
-decision after the public/private ontology boundary, projector compatibility
-and persistence implications have been reviewed. See
-`docs/architecture/nvdm-semantic-core.md`.
+## What is not here
+
+This directory states the rules and how to follow them. The reasoning behind
+individual design choices and the project's planning notes are kept outside the
+repository. Nothing a contributor or an implementer needs in order to conform
+is held back: if the validator enforces it, RULES.md states it.
