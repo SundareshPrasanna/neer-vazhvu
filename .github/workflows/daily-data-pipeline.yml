@@ -95,18 +95,22 @@ jobs:
         # upsert targets reservoir_daily_v2 keyed on those source codes.
         run: python scripts/scrape_hmwssb_reservoirs.py --supabase
 
-      # India-WRIS CGWB station readings for Madurai district (last 90 days).
-      # Chennai's WRIS is fetched from the monthly orchestrator's run-monthly
-      # endpoint; Madurai runs daily here so the live-station overlay on
-      # /madurai/groundwater stays fresh. Tolerates failures - upstream
-      # India-WRIS API has periodic outages.
-      # NOTE 2026-07-26: this step has been failing from GitHub runners with
-      # ConnectTimeout since ~17 Jun 2026 - silently, because continue-on-error
-      # keeps the workflow green. India-WRIS refuses the runner IPs; the same
-      # scraper succeeds from a residential India IP. Now also run from the
-      # launchd job (refresh-blocked-feeds.sh), which is what actually keeps
-      # groundwater_wris current. Left here in case runner access returns.
-      # Surfaced by the P5-1 supabase-table freshness check.
+      # Groundwater station readings (last 90 days) for Chennai, Madurai and
+      # Bangalore Urban -> groundwater_wris. India-WRIS first; it refuses the
+      # runner IPs (ConnectTimeout since ~17 Jun 2026) and its series froze at
+      # 2026-06-04, so the script fills from the NWIC National Water Data
+      # Portal, the same WIMS telemetry. The launchd job
+      # (refresh-blocked-feeds.sh) runs Madurai and Bengaluru too.
+      # continue-on-error: the freshness check alarms on the data, not the job.
+      - name: Scrape groundwater stations (Chennai) -> Supabase
+        id: scrape_wris_chennai
+        continue-on-error: true
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/scrape_wris_groundwater.py --city chennai
+
       - name: Scrape WRIS groundwater (Madurai) -> Supabase
         id: scrape_wris_madurai
         continue-on-error: true
@@ -117,22 +121,9 @@ jobs:
           MADURAI_WRIS_DAYS: '90'
         run: python scripts/scrape_wris_groundwater.py --city madurai
 
-      # India-WRIS CGWB station readings for Bangalore Urban district
-      # (last 90 days). 13-14 active telemetric stations (Cubbon Park,
-      # Lalbagh, NIMHANS, IISc, Hebbal, Jayanagar, Yelahanka, Anekal, etc.).
-      # No Karnataka State GW board records in WRIS - CGWB only.
-      # Bangalore is disabled in the city registry as of this commit, so
-      # nothing on the frontend reads these rows yet; we accumulate
-      # history here so the IISc Outlook stress-ward map has live
-      # verification data on day-one when /bangalore launches.
-      # Tolerates failures - upstream India-WRIS API has periodic outages.
-      # NOTE 2026-07-26: this step has been failing from GitHub runners with
-      # ConnectTimeout since ~17 Jun 2026 - silently, because continue-on-error
-      # keeps the workflow green. India-WRIS refuses the runner IPs; the same
-      # scraper succeeds from a residential India IP. Now also run from the
-      # launchd job (refresh-blocked-feeds.sh), which is what actually keeps
-      # groundwater_wris current. Left here in case runner access returns.
-      # Surfaced by the P5-1 supabase-table freshness check.
+      # CGWB only: no Karnataka state board records in WRIS. Bengaluru's CGWB
+      # telemetry stops at 2026-06-19 on both portals, so this finds nothing
+      # new until the network reports again.
       - name: Scrape WRIS groundwater (Bangalore) -> Supabase
         id: scrape_wris_bangalore
         continue-on-error: true

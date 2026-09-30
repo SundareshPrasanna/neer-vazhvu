@@ -70,6 +70,7 @@ Surfaces:
 
 Same India WRIS Ground Water Level API as Chennai's CGWB station scrape, but scoped to Madurai district. Live scrape via:
 - `neer-vazhvu-api/scripts/scrape_wris_groundwater.py --city madurai` (initial discovery)
+- India-WRIS stopped serving readings after 2026-06-04. The same script now fills from the NWIC National Water Data Portal (`nwdp.nwic.gov.in`, the same WIMS telemetry, no key) whenever WRIS fails or its newest reading is over a week old. NWDP rows carry no station code, so they join to the known telemetric stations by name and agency. 67 of Madurai's 68 NWDP stations join; 37 state-board stations WRIS listed are not on NWDP and stay at their June readings.
 - River-level and rainfall ingest across Madurai + Theni + Dindigul + Virudhunagar (the full Vaigai system) and its historical backfill ran as one-time scripts, since retired; nothing on the site reads those tables.
 
 ## River Quality - CPCB NWMP (Vaigai)
