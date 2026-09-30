@@ -8,6 +8,9 @@ legal advice and it does not assert a position on what you may do with it.
 
 **The code is MIT.** Application source, scripts, schemas, configuration and the
 documentation of the code are covered by [`LICENSE`](LICENSE), unchanged.
+The exception is the NVDM specification in `schemas/nvdm/` (its documents,
+schemas, scope registry and examples), which is licensed under CC BY 4.0 as
+set out in [`schemas/nvdm/LICENSE`](schemas/nvdm/LICENSE).
 
 **The data is not.** The corpus under `public/data/` and `public/geojson/`, the
 inputs under `pipeline-inputs/`, the mirrored source documents under
