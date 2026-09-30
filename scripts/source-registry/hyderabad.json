@@ -24,24 +24,30 @@
       "notes": "The gazetted lake register for the Hyderabad Metropolitan Region. The ENTIRE register renders in a single 4.2 MB ASP.NET GridView on the landing page - no paging - so the grid's own text hash is the edition signal. Baseline 2026-07-26: 2,978 lake rows; preliminary notification on 100%; FINAL notification on only 1,352 (45.4%), leaving 1,626 lakes with no legally settled boundary. Final notifications by year: 2016:152, 2017:10, 2019:60, 2020:2, 2021:3, 2023:2, 2024:533, 2025:533, 2026:57 - the 2024-25 surge coincides with HYDRAA's creation, so this hash firing usually means a new batch of lakes became legally defensible. Per-lake FTL/cadastral/buffer sheets behind the grid are SCANNED RASTER PDFs (pdftotext yields zero characters); the tractable extraction is OCR of the fixed-position LAKE DETAILS title block, not polygon digitisation."
     },
     {
-      "id": "opencity-hyderabad-tankers",
+      "id": "tg-opendata-hmwssb-tankers",
       "scope": "hyderabad",
-      "publisher": "HMWSSB via OpenCity Urban Data Portal",
-      "url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
-      "license": "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity",
+      "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
+      "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/7f408a3a-7cdb-4d33-bfa3-1869f88c0e25",
+      "ciBlocked": "data.telangana.gov.in refuses GitHub runner IPs: every weekly check of the billing entry from CI failed (TypeError: fetch failed) from 2026-08-24 to 2026-09-28, while Node fetch, curl and Python all reach it from a residential India IP (2026-09-30).",
+      "license": "Telangana government publication (portal label: Open Government License, India), cited with attribution",
       "type": "page",
-      "cadence": "monthly (series currently stalled)",
+      "cadence": "monthly",
       "tier": 1,
       "detection": {
-        "method": "link-set",
-        "linkPattern": "/download/.*\\.csv"
+        "method": "api-date",
+        "datePath": "modified"
       },
       "dependsOn": [
         "public/data/hyderabad-tankers.json",
         "public/data/facts-hyderabad.json"
       ],
-      "refreshMethod": "manual (new monthly CSV -> tanker fulfilment series)",
-      "notes": "Monthly tanker BOOKINGS and DELIVERIES per HMWSSB division and section - schema year,month,division,section,noofbookings,delivered. This is the feedstock for a booking-to-delivery fulfilment rate by locality, a metric no other city on the platform can produce: Bengaluru's tanker page rests on household surveys because that market is private and RTI-gated, whereas HMWSSB runs the fleet itself. Baseline 2026-07-26: 26 CSVs, Jan 2022 to Feb 2024. THE SERIES HAS STALLED - a new link firing here is exactly the event we want, since it means the gap after Feb 2024 is being filled. Pattern scoped to /download/*.csv (bare .csv would catch CKAN nav junk)."
+      "refreshMethod": "neer-vazhvu-api/scripts/build_hyderabad_tankers.py --if-changed, run by the local scheduled job (the portal refuses runners); the facts register is hand-curated and is reviewed when the series moves",
+      "notes": "HMWSSB's own monthly tanker CSVs (year,month,division,section,noofbookings,delivered), one per month from Jan 2022, read from the dataset's metastore distribution list. REPLACES the OpenCity mirror (opencity-hyderabad-tankers, https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data), which stalled at Feb 2024: the two are identical month for month on the 25 months both hold (checked 2026-09-30), so the mirror is now only a cross-check. Dec 2022 is an 11-byte empty file at source. HMWSSB re-cut divisions and sections in Feb 2026 (GHMC trifurcation): no section name carries from Jan to Feb 2026 and from March the list has (OLD) and (NEW) rows, so rankings are per era. The delivered share is above 98% in every month to May 2026 and 92.1%, 89.2%, 92.4% for Jun-Aug 2026; the portal does not say what happened to the rest.",
+      "lastSeen": {
+        "apiDate": "2026-09-06T05:48:29+00:00",
+        "edition": "2026-09-06 (Aug 2026 added)",
+        "acceptedOn": "2026-09-30"
+      }
     },
     {
       "id": "tgdps-annual-weather-reports",
@@ -245,6 +251,7 @@
       "scope": "hyderabad",
       "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
       "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/3485ce9d-4a9c-4293-b7e9-02e6697b9a75",
+      "ciBlocked": "data.telangana.gov.in refuses GitHub runner IPs: every weekly CI check failed (TypeError: fetch failed) from 2026-08-24 to 2026-09-28, while the host answers from a residential India IP (2026-09-30).",
       "license": "Government Open Data License - India (GODL-India)",
       "type": "page",
       "cadence": "monthly",
@@ -265,6 +272,7 @@
       "scope": "hyderabad",
       "publisher": "TGPCB via data.telangana.gov.in (Telangana Open Data Portal)",
       "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/58a8181b-301f-4216-a2d6-96eb725ea048",
+      "ciBlocked": "data.telangana.gov.in refuses GitHub runner IPs: every weekly CI check failed (TypeError: fetch failed) from 2026-08-24 to 2026-09-28, while the host answers from a residential India IP (2026-09-30).",
       "license": "Government Open Data License - India (GODL-India)",
       "type": "page",
       "cadence": "monthly",
@@ -285,6 +293,7 @@
       "scope": "hyderabad",
       "publisher": "Telangana Irrigation & CAD Department via data.telangana.gov.in",
       "url": "https://data.telangana.gov.in/api/1/metastore/schemas/dataset/items/9df04c5f-6558-4c4f-a802-d8b71faaa917",
+      "ciBlocked": "data.telangana.gov.in refuses GitHub runner IPs: every weekly CI check failed (TypeError: fetch failed) from 2026-08-24 to 2026-09-28, while the host answers from a residential India IP (2026-09-30).",
       "license": "Government Open Data License - India (GODL-India)",
       "type": "page",
       "cadence": "monthly",

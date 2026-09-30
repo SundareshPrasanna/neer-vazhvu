@@ -30,10 +30,10 @@ export default function HyderabadAbout({ slot, cityId, fallback = null }: CityAb
                 frequency="daily"
               />
               <DataSource
-                name="HMWSSB tanker bookings (via OpenCity)"
-                url="https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data"
-                description="1.32 million tanker bookings across 201 HMWSSB sections, January 2022 to February 2024. Powers the tanker surfaces and the tanker-geography fact: demand concentrates in Madhapur, Kondapur and Hafeezpet, not the old city. A fixed archival window rather than a live feed, and dated as such wherever it appears."
-                frequency="archival window (Jan 2022 to Feb 2024)"
+                name="HMWSSB tanker bookings (data.telangana.gov.in)"
+                url="https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data"
+                description="HMWSSB's own monthly tanker bookings and deliveries by division and section, from January 2022, read from the Telangana Open Data Portal. Powers the tanker surfaces and the tanker facts: demand concentrates in Kondapur, Madhapur and Manikonda, not the old city. HMWSSB re-cut its sections in February 2026, so section rankings are given before and after that month."
+                frequency="monthly"
               />
               <DataSource
                 name="HMWSSB billing and collection ledger (data.telangana.gov.in)"

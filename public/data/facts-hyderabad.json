@@ -20,10 +20,10 @@
         "license": "Telangana government publication, cited with attribution"
       },
       {
-        "id": "opencity-hyderabad-tankers",
-        "title": "HMWSSB tanker bookings and deliveries per division and section, via OpenCity",
-        "publisher": "HMWSSB via OpenCity Urban Data Portal",
-        "license": "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity"
+        "id": "tg-opendata-hmwssb-tankers",
+        "title": "HMWSSB tanker bookings and deliveries per division and section, monthly from January 2022",
+        "publisher": "HMWSSB via data.telangana.gov.in (Telangana Open Data Portal)",
+        "license": "Telangana government publication (portal label: Open Government License, India), cited with attribution"
       },
       {
         "id": "cgwb-dynamic-gwr-telangana",
@@ -69,7 +69,7 @@
     "note": "Envelope lists the upstreams the facts draw on; every fact additionally carries its own citation (source_label / source_url / data_date). The TGRAC entry is a closed one-time report: its published figures are used, its spatial layer is not in this repo and must not be - see docs/cities/hyderabad/data-sources.md."
   },
   "place_id": "hyderabad",
-  "generated_at": "2026-07-26",
+  "generated_at": "2026-09-30",
   "note": "Hand-curated quotable facts for /hyderabad/facts (static pipeline). Every fact carries its own source. STRICT SOURCING RULE applied throughout: figures computed by us from HMWSSB's daily reservoir statement or parsed from the HMDA/OpenCity layers are marked as such and are reproducible from the scripts named in docs/cities/hyderabad/data-sources.md. Hyderabad's widely-quoted service statistics (~1,954 MLD supplied, 1,480 sq km service area, 1.68 crore population, and every published STP count from 25 to 45 plants) are NEWS-SOURCED ONLY and mutually inconsistent, so NONE of them appears here. They land when HMWSSB's RTI 4(1)(b) disclosure or an annual report is obtained. Telugu renderings land with the translation pass.",
   "facts": [
     {
@@ -145,40 +145,52 @@
       "source_label": "HMDA gazetted lake register, final-notification dates"
     },
     {
+      "id": "hyd-tanker-growth",
+      "tier": 2,
+      "category": "Equity",
+      "title": "Tanker bookings more than doubled in two years",
+      "value": "2.1x",
+      "unit": "tanker bookings in 2025 against 2023",
+      "interpretation": "HMWSSB recorded 668,648 tanker bookings in 2023, 1,109,835 in 2024 and 1,436,768 in 2025. The first eight months of 2026 total 1,623,162.",
+      "data_date": "2026-08",
+      "source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data",
+      "source_label": "HMWSSB tanker bookings, Telangana Open Data Portal (computed)"
+    },
+    {
       "id": "hyd-tanker-geography",
       "tier": 2,
       "category": "Equity",
       "title": "Hyderabad's tanker dependence is concentrated in its richest, newest neighbourhoods",
-      "value": "340,037",
-      "unit": "tanker bookings in Madhapur, Kondapur and Hafeezpet alone, Jan 2022 to Feb 2024",
-      "interpretation": "Across 1.32 million bookings and 201 HMWSSB sections, the heaviest tanker demand is not in the old city. It is Madhapur (135,332), Kondapur (125,555) and Hafeezpet (79,150), then Gachibowli, Manikonda, Nizampet and KPHB - the western IT corridor - alongside Banjara Hills and Jubilee Hills. Being built faster than the piped network is part of it, but the data cannot carry that explanation alone: HMWSSB tankers are paid for and need storage to receive, so this also measures where households can afford and accommodate a tanker. A section with almost no bookings is not demonstrably well served - it may simply not be buying. It is also the same geography as the lake register's weakest legal coverage.",
-      "data_date": "2024-02",
-      "source_url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
-      "source_label": "HMWSSB tanker bookings via OpenCity (computed)"
+      "value": "754,762",
+      "unit": "tanker bookings in Kondapur, Madhapur and Manikonda alone, Jan 2022 to Jan 2026",
+      "interpretation": "Across 3.81 million bookings and 221 HMWSSB sections, the heaviest tanker demand is not in the old city. It is Kondapur (339,508), Madhapur (209,335) and Manikonda (205,919), then KPHB, Nizampet and Pragathinagar - the western IT corridor and growth belt - alongside Banjara Hills and Jubilee Hills. Being built faster than the piped network is part of it, but the data cannot carry that explanation alone: HMWSSB tankers are paid for and need storage to receive, so this also measures where households can afford and accommodate a tanker. A section with almost no bookings is not demonstrably well served - it may simply not be buying. It is also the same geography as the lake register's weakest legal coverage. The window ends in January 2026 because HMWSSB re-cut its sections the next month.",
+      "data_date": "2026-01",
+      "source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data",
+      "source_label": "HMWSSB tanker bookings, Telangana Open Data Portal (computed)"
     },
     {
       "id": "hyd-tanker-seasonality",
       "tier": 2,
       "category": "Equity",
-      "title": "Tanker demand triples between the monsoon and the summer",
-      "value": "3.0x",
-      "unit": "June average against October average, across Jan 2022 to Feb 2024",
-      "interpretation": "HMWSSB tanker bookings average 90,946 a month in June against 30,421 in October. Tanker demand in Hyderabad is a drought signal rather than a baseline service level - it is what the piped network's shortfall looks like when the reservoirs are low.",
-      "data_date": "2024-02",
-      "source_url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
-      "source_label": "HMWSSB tanker bookings via OpenCity (computed)"
+      "title": "Tanker demand is four times higher in April than in September",
+      "value": "4.1x",
+      "unit": "April average against September average, 2023 to 2025",
+      "interpretation": "HMWSSB tanker bookings average 160,290 a month in April against 38,956 in September, across the three complete years on record. Tanker demand in Hyderabad follows the season rather than holding at a steady level: it rises from February and falls by August.",
+      "data_date": "2025-12",
+      "source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data",
+      "source_label": "HMWSSB tanker bookings, Telangana Open Data Portal (computed)"
     },
     {
       "id": "hyd-tanker-fulfilment",
       "tier": 2,
       "category": "Equity",
-      "title": "The utility delivers essentially every tanker it is asked for",
-      "value": "99.95%",
-      "unit": "of 1,316,215 bookings delivered, Jan 2022 to Feb 2024",
-      "interpretation": "HMWSSB delivered 1,315,622 of 1,316,215 bookings over 25 months, and the worst-performing of 201 sections still ran at 98.4%. The tanker system is not rationed and is not where the failure sits - which is why the meaningful question is how much tanker water a neighbourhood needs, not whether it arrives.",
-      "data_date": "2024-02",
-      "source_url": "https://data.opencity.in/dataset/hyderabad-water-supply-through-tankers-data",
-      "source_label": "HMWSSB tanker bookings via OpenCity (computed)"
+      "title": "HMWSSB records 98.6% of tanker bookings as delivered",
+      "value": "98.6%",
+      "unit": "of 5,356,766 bookings recorded as delivered, Jan 2022 to Aug 2026",
+      "interpretation": "From January 2022 to May 2026 HMWSSB's files record 4,632,148 of 4,643,835 bookings as delivered (99.75%), and the monthly share was 98% or higher throughout. For June to August 2026 they record 649,503 of 712,931 (91.1%). Bookings in those three months were the highest for June, July and August in the series. The portal does not say whether the other bookings were cancelled, were still pending or were delivered in a later month.",
+      "data_date": "2026-08",
+      "source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data",
+      "source_label": "HMWSSB tanker bookings, Telangana Open Data Portal (computed)"
     },
     {
       "id": "hyd-draw-growth",

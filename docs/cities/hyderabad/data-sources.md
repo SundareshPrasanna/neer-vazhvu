@@ -215,7 +215,7 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
 |---|---|---|---|
 | OSM water bodies | `public/geojson/hyderabad-water-bodies-current.geojson` | `scripts/fetch-water-bodies-osm-hyderabad.ts` | 669 polygons, ~10,599 ha |
 | HMDA gazetted lake register | `public/data/hyderabad-lake-register.json` | `neer-vazhvu-api/scripts/fetch_hmda_lake_register.py` | 2,978 lakes; 1,352 finally notified |
-| HMWSSB tankers | `public/data/hyderabad-tankers.json` | `neer-vazhvu-api/scripts/build_hyderabad_tankers.py` | 1,316,215 bookings, 201 sections |
+| HMWSSB tankers | `public/data/hyderabad-tankers.json` | `neer-vazhvu-api/scripts/build_hyderabad_tankers.py` | 5,356,766 bookings, Jan 2022 to Aug 2026; 221 sections before the Feb 2026 re-cut |
 | CGWB groundwater wells | `public/data/hyderabad-cgwb-stations.json` | `neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py` | 481 wells, 10,724 monthly readings |
 | TGDPS weather stations | `public/data/hyderabad-aws-stations.json` | `neer-vazhvu-api/scripts/fetch_tgdps_stations.py` | 161 in-city AWS with coordinates |
 | Rivers (Musi, Esi, Manjira, Haldi) | `public/geojson/hyderabad-rivers.geojson` | `scripts/fetch-osm-layers.ts --city hyderabad --layer rivers` | Musi ~244 km, Esi ~10 km |
@@ -236,13 +236,14 @@ All landed 2026-07-26. Each names its script; provenance and licence are in the 
   Final notifications by year: 2016: 152, 2017: 10, 2019: 60, 2020: 2, 2021: 3, 2023: 2,
   **2024: 533, 2025: 533**, 2026: 57 - two-thirds of all final notifications ever issued arrived
   in the two years after HYDRAA was created.
-- **Tankers: the fulfilment metric is a dead end, and that is the finding.** HMWSSB delivered
-  1,315,622 of 1,316,215 bookings (99.95%); the worst of 201 sections is 98.4%. The signal is
-  demand instead - a **3.0x** seasonal swing (Jun 90,946/month vs Oct 30,421) and a geography that
-  cuts against expectation: Madhapur (135,332), Kondapur (125,555), Hafeezpet (79,150),
-  Gachibowli, Manikonda, Nizampet, KPHB, plus Banjara Hills and Jubilee Hills. The western IT
-  corridor, not the old city. Two upstream gaps: the series stops Feb 2024, and **Dec 2022 is an
-  11-byte empty file at source**.
+- **Tankers: demand is the signal.** Bookings rose from 668,648 (2023) to 1,436,768 (2025), a
+  **4.1x** seasonal swing (Apr 160,290/month vs Sep 38,956, 2023-2025) and a geography that cuts
+  against expectation: Kondapur (339,508), Madhapur (209,335), Manikonda (205,919), then KPHB,
+  Nizampet, Pragathinagar, plus Banjara Hills and Jubilee Hills (Jan 2022 to Jan 2026). The western
+  IT corridor, not the old city. The share recorded as delivered was 98% or higher in every month
+  to May 2026 (99.75% overall) and 92.1%, 89.2%, 92.4% for Jun-Aug 2026; the portal gives no
+  reason, so none is asserted. HMWSSB re-cut its sections in Feb 2026, so rankings are per era.
+  **Dec 2022 is an 11-byte empty file at source**.
 - **Nala encroachment columns are published EMPTY.** GHMC's drain layer defines `Govt_Encr`,
   `Pvt_Encr`, `Rel_Encr`, `Total_Encr` and `Court_Case`, and all five hold "0" for all 96 nalas -
   one distinct value, zero non-zero entries, while `Length_m` carries 94 distinct values. **This
@@ -306,10 +307,13 @@ file when its data actually lands in the repo.
   PDFs** with no extractable text, so the tractable route is OCR of the fixed-position "LAKE DETAILS"
   title block (area at FTL, FTL elevation, perimeter, bund length, survey date), not polygon
   digitisation.
-- **HMWSSB tanker data** via OpenCity (`hyderabad-water-supply-through-tankers-data`) - 26 monthly
-  CSVs, Jan 2022 to Feb 2024, schema `year,month,division,section,noofbookings,delivered`. Bookings
-  **and** deliveries per HMWSSB division and section, which yields a booking-to-delivery fulfilment
-  rate no other city can produce. Series stops Feb 2024 - named gap.
+- **HMWSSB tanker data** on the Telangana Open Data Portal (dataset
+  `7f408a3a-7cdb-4d33-bfa3-1869f88c0e25`) - one CSV a month from Jan 2022, schema
+  `year,month,division,section,noofbookings,delivered`. Bookings **and** deliveries per HMWSSB
+  division and section. The OpenCity mirror (`hyderabad-water-supply-through-tankers-data`) stops at
+  Feb 2024 and is identical on the 25 months both hold. The portal refuses GitHub runners, so
+  `build_hyderabad_tankers.py --if-changed` runs from the local scheduled job and rebuilds only when
+  the portal's `modified` date moves.
 - **OpenCity Hyderabad holdings** (71 datasets) - `hyderabad-sewage-lines-map` (sewer network GIS),
   `hyderabad-canals-drains-and-tanks-lakes`, `hyderabad-and-telangana-water-bodies-census-data`
   (the Jal Dharohar leg), `hyderabad-hmwssb-water-connections-data`,

@@ -66328,7 +66328,7 @@
    "family": "data-root",
    "scope": "hyderabad",
    "dataset": "facts",
-   "bytes": 33424,
+   "bytes": 34532,
    "schema": {
     "kind": "object",
     "keys": [
@@ -66353,16 +66353,16 @@
     "hmda-lakes-register",
     "hmwssb-daily-reservoir-statement",
     "opencity-ghmc-drainage-layers",
-    "opencity-hyderabad-tankers",
     "tg-opendata-hmwssb-billing",
+    "tg-opendata-hmwssb-tankers",
     "tg-opendata-tgpcb-stp"
    ],
    "licenses": [
     "Government Open Data License - India (GODL-India)",
     "Government of India publication, cited with attribution",
+    "Telangana government publication (portal label: Open Government License, India), cited with attribution",
     "Telangana government publication, cited with attribution",
     "open (per OpenCity dataset page); underlying assessment is CGWB + state GW departments",
-    "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity",
     "open (per OpenCity dataset page); underlying layers are GHMC's"
    ],
    "accountability": "watched",
@@ -67530,25 +67530,25 @@
    "family": "data-root",
    "scope": "hyderabad",
    "dataset": "tankers",
-   "bytes": 50643,
+   "bytes": 181132,
    "schema": {
     "kind": "object",
     "keys": [
-     "_coverage_gap",
+     "_coverage",
      "_empty_upstream_months",
      "_fetched",
      "_licence",
      "_note",
      "_source",
      "_source_url",
+     "_upstream_modified",
      "dataset",
-     "divisions",
+     "eras",
      "monthly",
      "nvdm",
      "provenance",
      "scope",
      "seasonality",
-     "sections",
      "totals"
     ]
    },
@@ -67557,13 +67557,14 @@
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_hyderabad_tankers.py"
+    "neer-vazhvu-api/scripts/build_hyderabad_tankers.py",
+    "scripts/check-data-freshness.ts"
    ],
    "headwaters_sources": [
-    "opencity-hyderabad-tankers"
+    "tg-opendata-hmwssb-tankers"
    ],
    "licenses": [
-    "open (per OpenCity dataset page); underlying data is HMWSSB's, digitised by OpenCity"
+    "Telangana government publication (portal label: Open Government License, India), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -92099,7 +92100,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 212719,
+   "bytes": 213827,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -92527,7 +92528,7 @@
     "hyderabad",
     "pune"
    ],
-   "bytes": 63274,
+   "bytes": 193763,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true

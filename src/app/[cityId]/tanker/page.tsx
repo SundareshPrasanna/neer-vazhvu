@@ -173,7 +173,7 @@ export default async function CityTankerPage({ params }: PageProps) {
           <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
             <BillingLedgerPanel
               billing={billing}
-              tankerSections={ledger.sections}
+              tankerEra={ledger.eras[0]}
               cityDisplayName={config.displayName}
             />
           </div>

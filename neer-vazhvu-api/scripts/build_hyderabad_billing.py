@@ -135,8 +135,8 @@ def main() -> int:
     #    that boundary would silently mix two different geographies, so every
     #    division/section aggregate below is computed PER ERA.
     #
-    # The old-scheme era is also the one that joins to the tanker ledger, whose
-    # series ends Feb 2024.
+    # The old-scheme era is also the one that joins to the tanker ledger's
+    # pre-recut era.
     ERA_BREAK = "2026-02"
 
     def era_of(key: str) -> str:
