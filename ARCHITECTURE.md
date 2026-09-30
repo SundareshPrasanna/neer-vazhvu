@@ -123,7 +123,7 @@ Every page that the user sees is keyed on a `cityId`. Chennai's pages live at th
 - **`placeKind` + `corporations[]`** — `'region'` models a metropolitan region rather than one corporation (Mumbai: the 9-corporation MMR). Region places render the `RegionalWaterSystem` dashboard section, and `dashboardScopes` supplies the scope badges ("Greater Mumbai · BMC's 7 lakes" vs "Mumbai Metropolitan Region · 9 corporations") so two geographies never blur on one dashboard.
 - **`routes`** - the /[cityId] routes a city ships, declared on its config with the reason for each. Nav, sitemap, direct-URL 404s and the exemptions register all derive from it (`FEATURE_AVAILABILITY` in `src/lib/cities/routing.ts` is built from the registry). Capability flags such as `hasCatchments` gate views inside a route.
 
-Per-city data files use a `-<cityId>` suffix in `public/data/` and `public/geojson/` (e.g. `madurai-supply-overview.json`, `bangalore-iisc-stress-wards-2025.json`, `imd-rainfall-monthly-bangalore.json`). Chennai keeps legacy unsuffixed paths for back-compat.
+Per-city data files in `public/data/` and `public/geojson/` carry the city id in the file name, either as a prefix (`madurai-supply-overview.json`, `<cityId>-water-bodies-current.geojson`) or as a suffix (`imd-rainfall-monthly-bangalore.json`, `restoration-priority-<cityId>.json`); the dataset catalogue reads either. A few older Chennai files carry no city id (`ward-profiles.json`, `river-quality.json`); `src/lib/cities/data-paths.ts` is where application code resolves them. New files put the city id first.
 
 To add a new city, see the "Adding a new city" walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md). The Kolkata onboarding is the most recent worked example and the best reference for a city that does NOT fit the existing shape - it added a hero mode, made `FloodConfig`'s dam fields optional in favour of a generic `primary_trigger`, generalised `RiverInfo`'s native-name field beyond Hindi, and added a `regionIntro` after Mumbai's nine-corporation copy leaked verbatim onto a three-unit region. Mumbai (PR #147) covers the region pattern; Bangalore (`bangalore_onboarding`) covers `cauvery-pumping` + localization; the Madurai onboarding (PR #97) is the canonical reference. Gurugram is the most recent, and the best reference for the opposite situation - a city that fits the existing shape almost entirely (it added one `tankerDataKind` and nothing else) and still shipped seven defects, all of them shared-component defaults inherited from earlier cities. Read "Parity verdicts, and the defect class behind them" above before onboarding city ten, and run `scripts/check-city-surfaces.py` before cutover rather than after.
 
@@ -271,6 +271,8 @@ Runs on IST days 1-3 via GitHub Actions (`--monthly` flag).
 | AI City Narrative | Claude Sonnet API | `daily_briefing` (AI columns) | Monthly |
 
 ## Data Model
+
+Two things are modelled. **File artifacts** (every `.json` and `.geojson` under `public/data/` and `public/geojson/`) follow NVDM, the Neer Vazhvu Data Model: each file carries an envelope stating its dataset, its place and its sources, the most used datasets have a schema, and a CI gate holds every changed file to the standard. The rules, a how-to guide and a generated reference are in [schemas/nvdm/README.md](schemas/nvdm/README.md). **Database tables** are shown in the diagram below.
 
 ```mermaid
 erDiagram

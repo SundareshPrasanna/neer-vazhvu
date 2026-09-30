@@ -68,7 +68,7 @@ neer-vazhvu/
 │   ├── app/intelligence/          # ARIMAX forecaster, risk scorer, briefing
 │   └── app/routers/               # API endpoints
 ├── public/
-│   ├── data/                      # Static JSON: per-city files use a -<cityId> suffix (e.g. madurai-supply-overview.json, bangalore-iisc-stress-wards-2025.json, imd-rainfall-monthly-bangalore.json) except Chennai which keeps legacy unsuffixed paths for back-compat
+│   ├── data/                      # Static JSON: per-city files carry the city id in the name, as a prefix (madurai-supply-overview.json) or a suffix (imd-rainfall-monthly-bangalore.json); a few older Chennai files carry none. Every file follows NVDM (schemas/nvdm/)
 │   └── geojson/                   # Static spatial: same per-city naming convention
 ├── scripts/                       # One-time + build-time scripts
 │   ├── compute-ward-profiles.ts             # Chennai 200-ward profile compute
@@ -111,7 +111,9 @@ guards, landing card, footer, exemptions - derives from the registry, and most o
 
 1. **Register the id.** Add `"coimbatore"` to `CITY_IDS` in `src/lib/cities/ids.ts`. `tsc` now
    fails everywhere the city is still missing (the registry, the Origins taglines, the About
-   modules) - work through those errors.
+   modules) - work through those errors. Add the same id to the scope registry,
+   `schemas/nvdm/scopes.json`, with its state as `administrative-parent`; `npm run test` holds the
+   two lists equal.
 2. **Write the config.** Create `src/lib/cities/coimbatore.ts` exporting a `PlaceConfig` and add it
    to `REGISTRY` in `src/lib/cities/index.ts`. The required fields are the decisions:
    - `routes` - only routes with content behind them. Give every route you leave out a reason in
@@ -151,6 +153,22 @@ guards, landing card, footer, exemptions - derives from the registry, and most o
    `neer-vazhvu-api/scripts/generate_imd_rainfall.py` - the quarterly refresh picks it up from there.
    Production serves the corpus pinned in `corpus.lock`, so new data ships through
    `scripts/release_corpus.py` and a pin bump, not by merging the files alone.
+
+   Every data file follows NVDM, the data standard in [`schemas/nvdm/`](schemas/nvdm/README.md),
+   and CI rejects a new file that does not reach level L2:
+   - **Write through the writers.** Producers write with `write_artifact` (`scripts/nvdm_write.py`)
+     or `writeArtifact` (`scripts/lib/nvdm-write.ts`), with the envelope in the payload on the
+     first write. The writers keep the envelope on every later rewrite.
+   - **Account for every source.** Register each upstream that can publish again in
+     `scripts/source-registry/coimbatore.json`, with the data file in its `dependsOn`, and cite it
+     by `id`. Mark a one-time document `closed` with an `as_of` date.
+   - **Run the generators** and commit what they change: `python3 scripts/build_dataset_catalogue.py`,
+     `python3 scripts/validate_nvdm.py`, then `python3 scripts/build_nvdm_reference.py`.
+   - **Aim for L3** on the datasets that have a payload contract (facts, commitments, allocations,
+     ward profiles, groundwater stations, restoration priority, current water bodies, rivers).
+
+   [`schemas/nvdm/GUIDE.md`](schemas/nvdm/GUIDE.md) walks through each of these with a worked
+   example, and lists every message the check can print with its fix.
 6. **Database.** Add a `<nnn>_coimbatore_seed_disabled.sql` migration (and `_water_sources.sql` if
    it has reservoirs), following 046-048 for Surat.
 7. **Check before cutover.** `npm test` runs the onboarding contract
@@ -164,6 +182,18 @@ scope badges (`dashboardScopes`) and per-corporation data file hang off that str
 
 Worked examples: Madurai (PR #97) for the `allocation` pattern; Bengaluru for `cauvery-pumping` plus
 Kannada localization; Mumbai (PR #147) for the region pattern; Surat (PR #274) for `flood-headroom`.
+
+### Adding or changing a data file
+
+Any `.json` or `.geojson` file under `public/data/` or `public/geojson/` follows NVDM (the Neer
+Vazhvu Data Model). In short: the file carries an envelope naming its dataset, its place and its
+sources; scripts rewrite it through the writers so the envelope survives; and a CI gate requires a
+new file to reach level L2 and an existing conforming file to keep its level.
+
+- What is required: [`schemas/nvdm/RULES.md`](schemas/nvdm/RULES.md).
+- How to do it, step by step: [`schemas/nvdm/GUIDE.md`](schemas/nvdm/GUIDE.md).
+- Before you push: `bash scripts/nvdm-gate.sh origin/main`
+  ([the full list](schemas/nvdm/GUIDE.md#8-before-you-open-a-pull-request)).
 
 ## Earth Engine Phase 1
 
@@ -259,6 +289,7 @@ Before opening a PR, please check:
 - [ ] `npm run test` passes
 - [ ] `npm run i18n:check` passes (if UI text changed)
 - [ ] For Python changes: `ruff check .` and `pytest` pass
+- [ ] For data changes: the NVDM generators are re-run and `bash scripts/nvdm-gate.sh origin/main` passes ([steps](schemas/nvdm/GUIDE.md#8-before-you-open-a-pull-request))
 - [ ] PR description explains **what** changed and **why**
 
 We aim to review PRs within a few days. Thank you for contributing!
