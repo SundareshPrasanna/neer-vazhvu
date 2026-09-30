@@ -38,11 +38,10 @@
         "target": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
         "method": {
           "enum": ["geometry", "published", "crosswalk", "manual"],
-          "description": "How the relation was established (place model 6). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping."
+          "description": "How the relation was established (place model 6). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping."
         },
         "evidence": { "type": "string", "minLength": 1, "description": "A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested." }
-      },
-      "allOf": [{ "if": { "properties": { "type": { "const": "intersects" } } }, "then": { "required": ["method", "evidence"] } }]
+      }
     }
   }
 }
