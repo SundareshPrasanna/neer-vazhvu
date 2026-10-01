@@ -101,6 +101,10 @@ We integrate 50+ distinct sources across the cities we cover - from utility-publ
 - [docs/cities/surat/data-sources.md](docs/cities/surat/data-sources.md)
 - [DATA_SOURCES.md](DATA_SOURCES.md) - top-level index with a cross-city parity matrix (the contributor cheat-sheet for what each city has covered)
 
+## Data standard
+
+Every data file under `public/data/` and `public/geojson/` follows NVDM, the Neer Vazhvu Data Model: a small envelope that states what the file is, which place or water system it is about and where its values came from, plus schemas for the most used datasets. A validator measures every file and CI holds each changed file to the standard. The rules, a step-by-step guide and a generated reference are in [`schemas/nvdm/`](schemas/nvdm/README.md).
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -362,7 +366,7 @@ neer-vazhvu/
 │   └── lib/utils/      # Shared utilities incl. river-classification.ts (CPCB Best-Use)
 ├── neer-vazhvu-api/    # Python FastAPI service: scrapers, ETL, intelligence, GEE
 ├── public/
-│   ├── data/           # Per-city JSON, -<cityId> suffix (Chennai is unsuffixed for back-compat)
+│   ├── data/           # Per-city JSON, city id in the file name (a few older Chennai files carry none)
 │   └── geojson/        # Per-city spatial files, same naming convention
 ├── scripts/            # Build-time spatial joins, OSM fetchers, validation, narrative generation
 ├── docs/
@@ -419,6 +423,8 @@ Next.js compiler runs.
 ## License
 
 [MIT](LICENSE) - for the **code**.
+
+The **NVDM specification** in `schemas/nvdm/` (its documents, schemas, scope registry and examples) is licensed under [CC BY 4.0](schemas/nvdm/LICENSE), with attribution to "Neer Vazhvu".
 
 The **data corpus** under `public/data/` and `public/geojson/` is not
 MIT-licensed. It aggregates many upstream publishers, and each publisher's own

@@ -1,7 +1,7 @@
 {
   "$id": "ward-profiles.schema.json",
   "title": "data-root/ward-profiles contract (Tier A)",
-  "description": "Per-ward water profile. NVDM form is WRAPPED (envelope + wards[]); the legacy bare-array files are grandfathered until migrated (spec 6.1, 9.3). City-specific ward attributes (electoral rolls, populations) live in ext or as optional keys, never as core.",
+  "description": "Per-ward water profile. NVDM form is WRAPPED (envelope + wards[]); the legacy bare-array files stay below L2 until migrated (spec 6.1, 9.4). City-specific ward attributes (electoral rolls, populations) live in ext or as optional keys, never as core.",
   "allOf": [{ "$ref": "envelope.schema.json#/$defs/envelope" }],
   "type": "object",
   "required": ["wards"],
