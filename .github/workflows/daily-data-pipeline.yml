@@ -96,12 +96,11 @@ jobs:
         run: python scripts/scrape_hmwssb_reservoirs.py --supabase
 
       # Groundwater station readings (last 90 days) for Chennai, Madurai and
-      # Bangalore Urban -> groundwater_wris. India-WRIS first; it refuses the
-      # runner IPs (ConnectTimeout since ~17 Jun 2026) and its series froze at
-      # 2026-06-04, so the script fills from the NWIC National Water Data
-      # Portal, the same WIMS telemetry. The launchd job
-      # (refresh-blocked-feeds.sh) runs Madurai and Bengaluru too.
-      # continue-on-error: the freshness check alarms on the data, not the job.
+      # Bangalore Urban -> groundwater_wris, from the NWIC National Water Data
+      # Portal, which answers runners (checked 2026-10-01). India-WRIS is no
+      # longer asked: it refuses runner IPs and has served nothing after
+      # 2026-06-04. The launchd job (refresh-blocked-feeds.sh) runs Madurai and
+      # Bengaluru too. continue-on-error: the freshness check alarms on the data.
       - name: Scrape groundwater stations (Chennai) -> Supabase
         id: scrape_wris_chennai
         continue-on-error: true
@@ -111,7 +110,7 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: python scripts/scrape_wris_groundwater.py --city chennai
 
-      - name: Scrape WRIS groundwater (Madurai) -> Supabase
+      - name: Scrape groundwater stations (Madurai) -> Supabase
         id: scrape_wris_madurai
         continue-on-error: true
         working-directory: neer-vazhvu-api
@@ -121,10 +120,9 @@ jobs:
           MADURAI_WRIS_DAYS: '90'
         run: python scripts/scrape_wris_groundwater.py --city madurai
 
-      # CGWB only: no Karnataka state board records in WRIS. Bengaluru's CGWB
-      # telemetry stops at 2026-06-19 on both portals, so this finds nothing
-      # new until the network reports again.
-      - name: Scrape WRIS groundwater (Bangalore) -> Supabase
+      # CGWB only. Bengaluru's CGWB telemetry stops at 2026-06-19, so this finds
+      # nothing new until the network reports again.
+      - name: Scrape groundwater stations (Bangalore) -> Supabase
         id: scrape_wris_bangalore
         continue-on-error: true
         working-directory: neer-vazhvu-api
