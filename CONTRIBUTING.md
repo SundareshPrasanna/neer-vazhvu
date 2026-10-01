@@ -55,7 +55,6 @@ neer-vazhvu/
 │   │   │   ├── bangalore.ts       # CityConfig: GBA 369 wards, 4 upstream Cauvery reservoirs (all isPrimaryDrinkingSource=false), cauvery-pumping hero, KN locale
 │   │   │   ├── mumbai.ts          # CityConfig: first region place — 9 MMR corporations, 7 BMC lakes, days-left hero with upper-bound heroNote
 │   │   │   ├── delhi.ts           # CityConfig: MCD 250 wards, 6 sources ALL hasPublicFeed=false (no authority publishes daily), cauvery-pumping hero w/ hero_copy overrides, HI upcoming
-│   │   │   ├── kaveri.ts          # RegionConfig (region, not city) — work-in-progress
 │   │   │   └── types.ts           # PlaceConfig union + GroundwaterViewsConfig + UrbanSupplyConfig + heroMode discriminator
 │   │   ├── hooks/                 # Per-city promise caches: use-ward-profile, use-my-ward-data, use-ward-representatives
 │   │   ├── i18n/                  # ~1,500 EN/TA/KN translation keys (one file)

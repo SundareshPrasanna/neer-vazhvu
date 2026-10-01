@@ -65,6 +65,22 @@ intended - 19,861 rows, three live consumers.
   dropped; they are harmless and their absence was the only thing making 018
   look half-applied.
 
+## Since then: the Kaveri Delta place is retired (2026-09-30)
+
+018 also seeded a place: a `cities` row `kaveri` (Kaveri Delta, a region,
+enabled), six `water_sources`, ten `water_source_name_aliases` and ten delta
+timeline rows. Its config went with the /cauvery feature in #114, and no
+config, scope or reader names it today. On 30 September 2026 `cities` held 11
+rows, the ten cities plus `kaveri`.
+
+`051_retire_kaveri_delta.sql` deletes that seed and nothing else. It refuses to
+run if any table holds rows under `kaveri` beyond the seed, and it drops no
+table: `flow_station_daily`, `basin_rainfall_daily`, `mettur_release_signal`,
+`delta_infrastructure_assets` and `delta_capex_projects` stay, unused, for a
+later return to the delta. Nothing in the repo reads or writes them.
+`reservoir_daily_v2` is the shared multi-city reservoir table and is untouched.
+Once 051 is applied, `cities` holds the ten city rows.
+
 ## A related divergence, investigated and deliberately left alone
 
 `public/data/basins/arkavathi/mpr-reviewed.json` exists in the corpus and has

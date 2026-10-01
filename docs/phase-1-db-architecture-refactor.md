@@ -87,7 +87,7 @@ Core Supabase objects on `main`:
 - Intelligence/narratives: `daily_briefing`, `ward_risk_score`, `ward_narrative`, `news_articles`
 - GEE/satellite: `reservoir_catchment_context`, `water_body_satellite_summary`
 - Water bodies census: `water_bodies_census`
-- Kaveri-specific region tables: `flow_station_daily`, `basin_rainfall_daily`, `mettur_release_signal`, `delta_infrastructure_assets`, `delta_capex_projects`
+- Kaveri-specific region tables: `flow_station_daily`, `basin_rainfall_daily`, `mettur_release_signal`, `delta_infrastructure_assets`, `delta_capex_projects`. Unused since 2026-09-30: migration `051_retire_kaveri_delta.sql` retired the Kaveri Delta place (its `cities` row, water sources, aliases and timeline seed) and kept these tables for a later return. Nothing reads or writes them.
 
 ### Static JSON / GeoJSON Surface
 
@@ -301,7 +301,7 @@ Mumbai scrapers write to `reservoir_daily_v2` using the correct conflict key `(c
 
 That means:
 
-- `reservoir_daily_v2` is no longer just Madurai/Bangalore/Kaveri; it will be the active home for Mumbai too.
+- `reservoir_daily_v2` is no longer just Madurai/Bangalore/Kaveri; it will be the active home for Mumbai too. (The Kaveri Delta place never wrote a row to it and was retired by migration 051.)
 - The old Chennai `reservoir_daily` stack becomes even more isolated as the only major v1 holdout.
 - "Disabled city" does not mean "no production data writes." Refactor sequencing must account for disabled-but-ingesting places.
 
@@ -517,11 +517,11 @@ Then migrate the small structured files into domain tables selectively.
 | `water_bodies_census` | Keep as source table, city-scope key | Source-specific census rows should link to canonical `water_bodies`; `census_code` is not safe as a global upsert key across states. |
 | `water_body_satellite_summary` | Keep, add city/body identity | Good derived observation table, but source target IDs are not enough for multi-city. |
 | `reservoir_catchment_context` | Keep, add city/source identity | GEE-derived evidence; should reference `water_sources`. |
-| `flow_station_daily` | Keep | Kaveri-specific observation table; already city/source/date keyed. |
-| `basin_rainfall_daily` | Keep | Region/basin observation; already city/basin/date/season keyed. |
-| `mettur_release_signal` | Keep, consider city/scope key | Computed Kaveri signal. If more regions use it, key by `city_id` or `place_id`. |
-| `delta_infrastructure_assets` | Keep as region/domain seed | Useful but should eventually share provenance/source tables. |
-| `delta_capex_projects` | Keep as region/domain seed | Same as above. |
+| `flow_station_daily` | Keep, unused | Kaveri-specific observation table; already city/source/date keyed. No reader or writer; the place was retired by migration 051. |
+| `basin_rainfall_daily` | Keep, unused | Region/basin observation; already city/basin/date/season keyed. No writer today. |
+| `mettur_release_signal` | Keep, unused; consider city/scope key | Computed Kaveri signal. If more regions use it, key by `city_id` or `place_id`. |
+| `delta_infrastructure_assets` | Keep, unused | Migration 051 removed the 018 seed rows. Should eventually share provenance/source tables. |
+| `delta_capex_projects` | Keep, unused | Same as above. |
 | `pipeline_log` | Replace gradually | Too generic for lineage. Add `ingestion_runs` and `dataset_versions`. |
 
 ## JSON And GeoJSON Disposition Matrix
@@ -695,7 +695,7 @@ edit_policy:
 
 Access control should be dataset-scoped, not folder-wide by default:
 
-- city/place scope: `chennai`, `madurai`, `bangalore`, `mumbai`, `kaveri`
+- city/place scope: `chennai`, `madurai`, `bangalore`, `mumbai` (`kaveri` was on this list until migration 051 retired the place)
 - domain scope: `rivers`, `groundwater`, `restoration`, `supply`, `wards`, `facts`
 - lifecycle scope: most experts edit only `curated`; pipeline maintainers can regenerate `generated`
 - action scope: propose, edit draft, approve, publish
