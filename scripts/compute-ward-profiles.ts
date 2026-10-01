@@ -11,7 +11,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { registryLicense } from "./lib/registry-contract";
-import { buildGridIndex, distributeLineLengthByWard, featureCentroid, findWard, haversine, roundTo, type Coord } from "./lib/ward-geo";
+import { buildGridIndex, countPointsByWard, distributeLineLengthByWard, featureCentroid, findWard, haversine, roundTo, type Coord } from "./lib/ward-geo";
 import centroid from "@turf/centroid";
 import bbox from "@turf/bbox";
 import turfArea from "@turf/area";
@@ -258,38 +258,16 @@ function main() {
   }
   console.log(`  ${hazardAssigned}/${hazardGeo.features.length} hazard zones assigned`);
 
-  // 6. Flood hotspots 2015 - direct ward property
-  console.log("Processing 2015 flood hotspots...");
-  const hotspot2015Geo = JSON.parse(
-    readFileSync(resolve(root, "public/geojson/chennai-flood-2015-hotspots.geojson"), "utf8")
-  ) as GeoJSON.FeatureCollection;
-
-  for (const feat of hotspot2015Geo.features) {
-    const props = feat.properties as Record<string, unknown>;
-    const ward = props.ward as number;
-    if (ward != null && profiles.has(ward)) {
-      profiles.get(ward)!.hotspot2015Count++;
-    }
+  // 6-7. Flood hotspots 2015 and 2020 - PIP on the point, never the source's own ward attribute
+  for (const year of ["2015", "2020"] as const) {
+    console.log(`Processing ${year} flood hotspots...`);
+    const geo = JSON.parse(
+      readFileSync(resolve(root, `public/geojson/chennai-flood-${year}-hotspots.geojson`), "utf8")
+    ) as GeoJSON.FeatureCollection;
+    const counts = countPointsByWard(geo.features, wards, grid);
+    for (const [ward, n] of counts) profiles.get(ward)![`hotspot${year}Count`] = n;
+    console.log(`  ${[...counts.values()].reduce((s, n) => s + n, 0)}/${geo.features.length} hotspots assigned`);
   }
-  console.log(`  ${hotspot2015Geo.features.length} hotspots processed`);
-
-  // 7. Flood hotspots 2020 - PIP
-  console.log("Processing 2020 flood hotspots...");
-  const hotspot2020Geo = JSON.parse(
-    readFileSync(resolve(root, "public/geojson/chennai-flood-2020-hotspots.geojson"), "utf8")
-  ) as GeoJSON.FeatureCollection;
-
-  let hotspot2020Assigned = 0;
-  for (const feat of hotspot2020Geo.features) {
-    const geom = feat.geometry as GeoJSON.Point;
-    const [lng, lat] = geom.coordinates;
-    const ward = findWard(lng, lat, wards, grid);
-    if (ward != null) {
-      profiles.get(ward)!.hotspot2020Count++;
-      hotspot2020Assigned++;
-    }
-  }
-  console.log(`  ${hotspot2020Assigned}/${hotspot2020Geo.features.length} hotspots assigned`);
 
   // 8. Drainage lines - true midpoint via @turf/along at half length
   console.log("Processing drainage lines...");
@@ -514,7 +492,7 @@ function main() {
   // manual constant, bumped on regeneration, so identical inputs still
   // produce byte-identical output (no wall-clock in the artifact - the CI
   // determinism gate reruns this script and diffs the file).
-  const PRODUCED_AT = "2026-07-30";
+  const PRODUCED_AT = "2026-09-30";
   const wrapped = {
     nvdm: "1.0",
     dataset: "data-root/ward-profiles",
