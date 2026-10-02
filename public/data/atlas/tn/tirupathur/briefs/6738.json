@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-10-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-01"
+        "retrieved": "2026-10-02"
       },
       {
         "id": "cpcb-prs-report",
@@ -92,7 +92,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-06",
+    "produced_at": "2026-10-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/tirupathur/directory.json",
@@ -116,7 +116,7 @@
   "planId": "tn-tirupathur-v1",
   "blockCode": "6738",
   "blockName": "ALANGAYAM",
-  "assessedAt": "2026-09-06",
+  "assessedAt": "2026-10-02",
   "recordCount": 27,
   "briefs": [
     {
@@ -138,26 +138,27 @@
           "note": "1,055 of 1,055 households, across 11 habitations."
         },
         {
+          "value": "25",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "116.4 mm",
+          "value": "109.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "27d ago",
+          "value": "52d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-10. 54 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 288 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -179,10 +180,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -197,10 +194,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -267,7 +260,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -338,30 +331,50 @@
             "connections": 85
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 22
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 2
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 54,
+          "total": 288,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 234,
           "atHousehold": 54,
           "earliest": "2022-11-03",
-          "latest": "2026-08-10",
+          "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 5
+              "count": 28
             },
             {
               "year": "2023",
-              "count": 40
+              "count": 67
             },
             {
               "year": "2024",
-              "count": 7
+              "count": 49
+            },
+            {
+              "year": "2025",
+              "count": 75
             },
             {
               "year": "2026",
-              "count": 2
+              "count": 69
             }
           ]
         },
@@ -387,10 +400,10 @@
           "longitude": 78.81325
         },
         "rainfall": {
-          "windowMm": 116.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 11.7
+          "windowMm": 109.1,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 10.8
         },
         "waterBodies": {
           "count": 14,
@@ -429,9 +442,9 @@
           "note": "1,246 of 1,246 households, across 8 habitations."
         },
         {
-          "value": "13",
+          "value": "33",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell, Open Well"
+          "note": "Deep Tubewell, Infiltration well, Non Conventional Methods (Tribal/Others), Open Well"
         },
         {
           "value": "131.5%",
@@ -439,14 +452,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "32d ago",
+          "value": "58d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-05. 217 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-05. 345 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -614,43 +627,53 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 23
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 7
           },
           {
-            "type": "Deep Tubewell",
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 2
+          },
+          {
+            "type": "Infiltration well",
             "category": "Ground Water",
-            "count": 6
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 217,
+          "total": 345,
           "unsafe": 0,
-          "atSource": 158,
+          "atSource": 286,
           "atHousehold": 59,
-          "earliest": "2022-12-21",
+          "earliest": "2022-09-06",
           "latest": "2026-08-05",
           "byYear": [
             {
               "year": "2022",
-              "count": 35
+              "count": 55
             },
             {
               "year": "2023",
-              "count": 18
+              "count": 34
             },
             {
               "year": "2024",
-              "count": 39
+              "count": 55
             },
             {
               "year": "2025",
-              "count": 86
+              "count": 125
             },
             {
               "year": "2026",
-              "count": 39
+              "count": 76
             }
           ]
         },
@@ -662,10 +685,10 @@
           "longitude": 78.60305
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": {
           "count": 2,
@@ -704,7 +727,7 @@
           "note": "191 of 191 households, across 1 habitations."
         },
         {
-          "value": "4",
+          "value": "9",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell"
         },
@@ -714,14 +737,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "26d ago",
+          "value": "52d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-11. 81 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 116 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -845,36 +868,36 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 4
+            "count": 9
           }
         ],
         "sampling": {
-          "total": 81,
+          "total": 116,
           "unsafe": 0,
-          "atSource": 65,
+          "atSource": 100,
           "atHousehold": 16,
-          "earliest": "2022-12-28",
+          "earliest": "2022-12-09",
           "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 9
             },
             {
               "year": "2023",
-              "count": 6
+              "count": 13
             },
             {
               "year": "2024",
-              "count": 16
+              "count": 24
             },
             {
               "year": "2025",
-              "count": 30
+              "count": 40
             },
             {
               "year": "2026",
-              "count": 25
+              "count": 30
             }
           ]
         },
@@ -900,10 +923,10 @@
           "longitude": 78.5894
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": null
       }
@@ -927,26 +950,27 @@
           "note": "876 of 876 households, across 19 habitations."
         },
         {
+          "value": "32",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "114d ago",
+          "value": "58d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-05-15. 58 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-05. 241 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -968,10 +992,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -986,10 +1006,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -1056,7 +1072,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -1175,30 +1191,40 @@
             "connections": 66
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 32
+          }
+        ],
         "sampling": {
-          "total": 58,
+          "total": 241,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 183,
           "atHousehold": 58,
           "earliest": "2022-10-14",
-          "latest": "2026-05-15",
+          "latest": "2026-08-05",
           "byYear": [
             {
               "year": "2022",
-              "count": 31
+              "count": 50
             },
             {
               "year": "2023",
-              "count": 18
+              "count": 52
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 43
+            },
+            {
+              "year": "2025",
+              "count": 41
             },
             {
               "year": "2026",
-              "count": 3
+              "count": 55
             }
           ]
         },
@@ -1224,10 +1250,10 @@
           "longitude": 78.60115
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": {
           "count": 2,
@@ -1266,9 +1292,9 @@
           "note": "1,314 of 1,314 households, across 6 habitations."
         },
         {
-          "value": "1",
+          "value": "25",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well"
         },
         {
           "value": "131.5%",
@@ -1276,14 +1302,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "31d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-06. 42 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-06. 243 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1439,38 +1465,48 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 21
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 2
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 42,
+          "total": 243,
           "unsafe": 0,
-          "atSource": 9,
+          "atSource": 210,
           "atHousehold": 33,
-          "earliest": "2022-12-24",
+          "earliest": "2022-09-06",
           "latest": "2026-08-06",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 12
             },
             {
               "year": "2023",
-              "count": 25
+              "count": 52
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 34
             },
             {
               "year": "2025",
-              "count": 6
+              "count": 91
             },
             {
               "year": "2026",
-              "count": 1
+              "count": 54
             }
           ]
         },
@@ -1482,10 +1518,10 @@
           "longitude": 78.64415
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 1,
@@ -1520,9 +1556,9 @@
           "note": "915 of 915 households, across 12 habitations."
         },
         {
-          "value": "5",
+          "value": "24",
           "label": "Drinking-water sources",
-          "note": "Spring"
+          "note": "Deep Tubewell, Spring"
         },
         {
           "value": "131.5%",
@@ -1530,14 +1566,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "75d ago",
+          "value": "56d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-06-23. 51 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-07. 193 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1721,34 +1757,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 19
+          },
+          {
             "type": "Spring",
             "category": "Rain Water",
             "count": 5
           }
         ],
         "sampling": {
-          "total": 51,
+          "total": 193,
           "unsafe": 0,
-          "atSource": 28,
+          "atSource": 170,
           "atHousehold": 23,
-          "earliest": "2023-01-27",
-          "latest": "2026-06-23",
+          "earliest": "2022-12-17",
+          "latest": "2026-08-07",
           "byYear": [
             {
+              "year": "2022",
+              "count": 8
+            },
+            {
               "year": "2023",
-              "count": 15
+              "count": 33
             },
             {
               "year": "2024",
-              "count": 22
+              "count": 52
             },
             {
               "year": "2025",
-              "count": 12
+              "count": 60
             },
             {
               "year": "2026",
-              "count": 2
+              "count": 40
             }
           ]
         },
@@ -1774,10 +1819,10 @@
           "longitude": 78.62415
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": {
           "count": 3,
@@ -1820,9 +1865,9 @@
           "note": "1,842 of 1,842 households, across 3 habitations."
         },
         {
-          "value": "2",
+          "value": "18",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Infiltration well, Non Conventional Methods (Tribal/Others)"
         },
         {
           "value": "131.5%",
@@ -1830,14 +1875,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "377d ago",
+          "value": "56d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2025-08-25. 24 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-07. 196 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1981,28 +2026,46 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
+            "count": 14
+          },
+          {
+            "type": "Infiltration well",
+            "category": "Ground Water",
+            "count": 2
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 24,
+          "total": 196,
           "unsafe": 0,
-          "atSource": 13,
+          "atSource": 185,
           "atHousehold": 11,
-          "earliest": "2023-05-12",
-          "latest": "2025-08-25",
+          "earliest": "2022-08-19",
+          "latest": "2026-08-07",
           "byYear": [
             {
-              "year": "2023",
+              "year": "2022",
               "count": 4
             },
             {
+              "year": "2023",
+              "count": 20
+            },
+            {
               "year": "2024",
-              "count": 11
+              "count": 32
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 88
+            },
+            {
+              "year": "2026",
+              "count": 52
             }
           ]
         },
@@ -2014,10 +2077,10 @@
           "longitude": 78.6191
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": null
       }
@@ -2041,9 +2104,9 @@
           "note": "2,387 of 2,387 households, across 31 habitations."
         },
         {
-          "value": "14",
+          "value": "83",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell, Open Well, Spring"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well, Spring"
         },
         {
           "value": "131.5%",
@@ -2051,14 +2114,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "27d ago",
+          "value": "53d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-10. 299 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-10. 923 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2358,12 +2421,17 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 12
+            "count": 74
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 4
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 4
           },
           {
             "type": "Spring",
@@ -2372,32 +2440,32 @@
           }
         ],
         "sampling": {
-          "total": 299,
+          "total": 923,
           "unsafe": 0,
-          "atSource": 155,
+          "atSource": 779,
           "atHousehold": 144,
           "earliest": "2022-09-24",
           "latest": "2026-08-10",
           "byYear": [
             {
               "year": "2022",
-              "count": 24
+              "count": 80
             },
             {
               "year": "2023",
-              "count": 68
+              "count": 117
             },
             {
               "year": "2024",
-              "count": 37
+              "count": 129
             },
             {
               "year": "2025",
-              "count": 88
+              "count": 349
             },
             {
               "year": "2026",
-              "count": 82
+              "count": 248
             }
           ]
         },
@@ -2423,10 +2491,10 @@
           "longitude": 78.66405
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": {
           "count": 8,
@@ -2469,9 +2537,9 @@
           "note": "1,983 of 1,983 households, across 25 habitations."
         },
         {
-          "value": "2",
+          "value": "38",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others)"
         },
         {
           "value": "131.5%",
@@ -2479,14 +2547,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "26d ago",
+          "value": "52d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-11. 112 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 307 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2750,36 +2818,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
+            "count": 36
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 112,
+          "total": 307,
           "unsafe": 0,
-          "atSource": 20,
+          "atSource": 215,
           "atHousehold": 92,
-          "earliest": "2022-09-22",
+          "earliest": "2022-08-30",
           "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 10
+              "count": 14
             },
             {
               "year": "2023",
-              "count": 52
+              "count": 69
             },
             {
               "year": "2024",
-              "count": 15
+              "count": 44
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 86
             },
             {
               "year": "2026",
-              "count": 26
+              "count": 94
             }
           ]
         },
@@ -2805,10 +2878,10 @@
           "longitude": 78.5981
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": {
           "count": 5,
@@ -2851,26 +2924,27 @@
           "note": "956 of 956 households, across 9 habitations."
         },
         {
+          "value": "18",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "116.4 mm",
+          "value": "109.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "771d ago",
+          "value": "70d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2024-07-27. 49 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-24. 185 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -2896,10 +2970,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -2914,10 +2984,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -2988,7 +3054,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3047,26 +3113,50 @@
             "connections": 69
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 16
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 1
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 49,
+          "total": 185,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 136,
           "atHousehold": 49,
           "earliest": "2022-10-15",
-          "latest": "2024-07-27",
+          "latest": "2026-07-24",
           "byYear": [
             {
               "year": "2022",
-              "count": 8
+              "count": 10
             },
             {
               "year": "2023",
-              "count": 35
+              "count": 60
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 25
+            },
+            {
+              "year": "2025",
+              "count": 48
+            },
+            {
+              "year": "2026",
+              "count": 42
             }
           ]
         },
@@ -3078,10 +3168,10 @@
           "longitude": 78.7943
         },
         "rainfall": {
-          "windowMm": 116.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 11.7
+          "windowMm": 109.1,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 10.8
         },
         "waterBodies": {
           "count": 6,
@@ -3120,26 +3210,27 @@
           "note": "1,365 of 1,365 households, across 21 habitations."
         },
         {
+          "value": "29",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "116.4 mm",
+          "value": "109.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "771d ago",
+          "value": "25d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2024-07-27. 18 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-07. 227 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -3161,10 +3252,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -3179,10 +3266,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -3249,7 +3332,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3380,26 +3463,40 @@
             "connections": 111
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 29
+          }
+        ],
         "sampling": {
-          "total": 18,
+          "total": 227,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 209,
           "atHousehold": 18,
           "earliest": "2022-09-26",
-          "latest": "2024-07-27",
+          "latest": "2026-09-07",
           "byYear": [
             {
               "year": "2022",
-              "count": 7
+              "count": 12
             },
             {
               "year": "2023",
-              "count": 5
+              "count": 20
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 44
+            },
+            {
+              "year": "2025",
+              "count": 78
+            },
+            {
+              "year": "2026",
+              "count": 73
             }
           ]
         },
@@ -3425,10 +3522,10 @@
           "longitude": 78.749
         },
         "rainfall": {
-          "windowMm": 116.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 11.7
+          "windowMm": 109.1,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 10.8
         },
         "waterBodies": {
           "count": 9,
@@ -3471,9 +3568,9 @@
           "note": "476 of 476 households, across 2 habitations."
         },
         {
-          "value": "1",
+          "value": "9",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Open Well"
         },
         {
           "value": "131.5%",
@@ -3481,14 +3578,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "307d ago",
+          "value": "27d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2025-11-03. 56 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-05. 129 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3620,34 +3717,43 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 8
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
             "count": 1
           }
         ],
         "sampling": {
-          "total": 56,
+          "total": 129,
           "unsafe": 0,
-          "atSource": 7,
+          "atSource": 80,
           "atHousehold": 49,
           "earliest": "2022-09-27",
-          "latest": "2025-11-03",
+          "latest": "2026-09-05",
           "byYear": [
             {
               "year": "2022",
-              "count": 5
+              "count": 7
             },
             {
               "year": "2023",
-              "count": 38
+              "count": 42
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 17
             },
             {
               "year": "2025",
-              "count": 5
+              "count": 28
+            },
+            {
+              "year": "2026",
+              "count": 35
             }
           ]
         },
@@ -3659,10 +3765,10 @@
           "longitude": 78.66825
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 2,
@@ -3701,7 +3807,7 @@
           "note": "1,919 of 1,919 households, across 22 habitations."
         },
         {
-          "value": "2",
+          "value": "42",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -3711,14 +3817,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "6d ago",
+          "value": "30d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-31. 85 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-02. 467 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3964,7 +4070,7 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 1
+            "count": 41
           },
           {
             "type": "Open Well",
@@ -3973,32 +4079,32 @@
           }
         ],
         "sampling": {
-          "total": 85,
+          "total": 467,
           "unsafe": 0,
-          "atSource": 22,
-          "atHousehold": 63,
-          "earliest": "2022-10-01",
-          "latest": "2026-08-31",
+          "atSource": 394,
+          "atHousehold": 73,
+          "earliest": "2022-09-30",
+          "latest": "2026-09-02",
           "byYear": [
             {
               "year": "2022",
-              "count": 19
+              "count": 59
             },
             {
               "year": "2023",
-              "count": 34
+              "count": 78
             },
             {
               "year": "2024",
-              "count": 11
+              "count": 69
             },
             {
               "year": "2025",
-              "count": 10
+              "count": 131
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 130
             }
           ]
         },
@@ -4024,10 +4130,10 @@
           "longitude": 78.7026
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": {
           "count": 6,
@@ -4074,9 +4180,9 @@
           "note": "1,983 of 1,983 households, across 25 habitations."
         },
         {
-          "value": "2",
+          "value": "38",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others)"
         },
         {
           "value": "131.5%",
@@ -4084,14 +4190,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "26d ago",
+          "value": "52d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-11. 112 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-11. 307 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4355,36 +4461,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
+            "count": 36
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
             "count": 2
           }
         ],
         "sampling": {
-          "total": 112,
+          "total": 307,
           "unsafe": 0,
-          "atSource": 20,
+          "atSource": 215,
           "atHousehold": 92,
-          "earliest": "2022-09-22",
+          "earliest": "2022-08-30",
           "latest": "2026-08-11",
           "byYear": [
             {
               "year": "2022",
-              "count": 10
+              "count": 14
             },
             {
               "year": "2023",
-              "count": 52
+              "count": 69
             },
             {
               "year": "2024",
-              "count": 15
+              "count": 44
             },
             {
               "year": "2025",
-              "count": 9
+              "count": 86
             },
             {
               "year": "2026",
-              "count": 26
+              "count": 94
             }
           ]
         },
@@ -4410,10 +4521,10 @@
           "longitude": 78.6316
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 1,
@@ -4448,9 +4559,9 @@
           "note": "2,387 of 2,387 households, across 31 habitations."
         },
         {
-          "value": "14",
+          "value": "83",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell, Open Well, Spring"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well, Spring"
         },
         {
           "value": "131.5%",
@@ -4458,14 +4569,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "27d ago",
+          "value": "53d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-10. 299 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-10. 923 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4777,46 +4888,51 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 12
+            "count": 74
+          },
+          {
+            "type": "Open Well",
+            "category": "Ground Water",
+            "count": 4
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 4
           },
           {
             "type": "Spring",
             "category": "Rain Water",
             "count": 1
-          },
-          {
-            "type": "Open Well",
-            "category": "Ground Water",
-            "count": 1
           }
         ],
         "sampling": {
-          "total": 299,
+          "total": 923,
           "unsafe": 0,
-          "atSource": 155,
+          "atSource": 779,
           "atHousehold": 144,
           "earliest": "2022-09-24",
           "latest": "2026-08-10",
           "byYear": [
             {
               "year": "2022",
-              "count": 24
+              "count": 80
             },
             {
               "year": "2023",
-              "count": 68
+              "count": 117
             },
             {
               "year": "2024",
-              "count": 37
+              "count": 129
             },
             {
               "year": "2025",
-              "count": 88
+              "count": 349
             },
             {
               "year": "2026",
-              "count": 82
+              "count": 248
             }
           ]
         },
@@ -4828,10 +4944,10 @@
           "longitude": 78.66855
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": null
       }
@@ -4855,7 +4971,7 @@
           "note": "2,389 of 2,389 households, across 42 habitations."
         },
         {
-          "value": "4",
+          "value": "58",
           "label": "Drinking-water sources",
           "note": "Deep Tubewell, Open Well"
         },
@@ -4865,14 +4981,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "167d ago",
+          "value": "118d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-03-23. 108 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-06-06. 472 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5250,41 +5366,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 3
+            "count": 55
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 3
           }
         ],
         "sampling": {
-          "total": 108,
+          "total": 472,
           "unsafe": 0,
-          "atSource": 14,
+          "atSource": 378,
           "atHousehold": 94,
           "earliest": "2022-11-05",
-          "latest": "2026-03-23",
+          "latest": "2026-06-06",
           "byYear": [
             {
               "year": "2022",
-              "count": 13
+              "count": 45
             },
             {
               "year": "2023",
-              "count": 42
+              "count": 129
             },
             {
               "year": "2024",
-              "count": 30
+              "count": 140
             },
             {
               "year": "2025",
-              "count": 12
+              "count": 79
             },
             {
               "year": "2026",
-              "count": 11
+              "count": 79
             }
           ]
         },
@@ -5296,10 +5412,10 @@
           "longitude": 78.64195
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": null
       }
@@ -5323,26 +5439,27 @@
           "note": "1,127 of 1,127 households, across 13 habitations."
         },
         {
+          "value": "26",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others)"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "31d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-06. 54 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-06. 281 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -5364,10 +5481,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -5382,10 +5495,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -5452,7 +5561,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 12,
+      "adequateCapabilities": 15,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -5535,30 +5644,45 @@
             "connections": 34
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 25
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 54,
+          "total": 281,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 227,
           "atHousehold": 54,
-          "earliest": "2022-09-26",
+          "earliest": "2022-08-26",
           "latest": "2026-08-06",
           "byYear": [
             {
               "year": "2022",
-              "count": 1
+              "count": 11
             },
             {
               "year": "2023",
-              "count": 45
+              "count": 75
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 42
+            },
+            {
+              "year": "2025",
+              "count": 78
             },
             {
               "year": "2026",
-              "count": 2
+              "count": 75
             }
           ]
         },
@@ -5584,10 +5708,10 @@
           "longitude": 78.69255
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": {
           "count": 2,
@@ -5626,9 +5750,9 @@
           "note": "1,314 of 1,314 households, across 6 habitations."
         },
         {
-          "value": "1",
+          "value": "25",
           "label": "Drinking-water sources",
-          "note": "Open Well"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well"
         },
         {
           "value": "131.5%",
@@ -5636,14 +5760,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "31d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-06. 42 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-06. 243 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -5791,38 +5915,48 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 21
+          },
+          {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 2
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 2
           }
         ],
         "sampling": {
-          "total": 42,
+          "total": 243,
           "unsafe": 0,
-          "atSource": 9,
+          "atSource": 210,
           "atHousehold": 33,
-          "earliest": "2022-12-24",
+          "earliest": "2022-09-06",
           "latest": "2026-08-06",
           "byYear": [
             {
               "year": "2022",
-              "count": 2
+              "count": 12
             },
             {
               "year": "2023",
-              "count": 25
+              "count": 52
             },
             {
               "year": "2024",
-              "count": 8
+              "count": 34
             },
             {
               "year": "2025",
-              "count": 6
+              "count": 91
             },
             {
               "year": "2026",
-              "count": 1
+              "count": 54
             }
           ]
         },
@@ -5848,10 +5982,10 @@
           "longitude": 78.64115
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 1,
@@ -5886,26 +6020,27 @@
           "note": "1,792 of 1,792 households, across 15 habitations."
         },
         {
+          "value": "35",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others)"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "18d ago",
+          "value": "44d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-19. 45 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-19. 242 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -5931,10 +6066,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -5949,10 +6080,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -6023,7 +6150,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -6118,11 +6245,22 @@
             "connections": 95
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 34
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 45,
+          "total": 242,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 197,
           "atHousehold": 45,
           "earliest": "2022-10-03",
           "latest": "2026-08-19",
@@ -6133,15 +6271,19 @@
             },
             {
               "year": "2023",
-              "count": 25
+              "count": 56
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 44
+            },
+            {
+              "year": "2025",
+              "count": 55
             },
             {
               "year": "2026",
-              "count": 10
+              "count": 83
             }
           ]
         },
@@ -6153,10 +6295,10 @@
           "longitude": 78.64135
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 5,
@@ -6199,26 +6341,27 @@
           "note": "2,023 of 2,023 households, across 17 habitations."
         },
         {
+          "value": "30",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others)"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "767d ago",
+          "value": "62d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2024-07-31. 19 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-01. 168 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -6244,10 +6387,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -6262,10 +6401,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -6336,7 +6471,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -6443,26 +6578,45 @@
             "connections": 385
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 29
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 1
+          }
+        ],
         "sampling": {
-          "total": 19,
+          "total": 168,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 149,
           "atHousehold": 19,
           "earliest": "2022-10-04",
-          "latest": "2024-07-31",
+          "latest": "2026-08-01",
           "byYear": [
             {
               "year": "2022",
-              "count": 7
+              "count": 15
             },
             {
               "year": "2023",
-              "count": 6
+              "count": 19
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 39
+            },
+            {
+              "year": "2025",
+              "count": 52
+            },
+            {
+              "year": "2026",
+              "count": 43
             }
           ]
         },
@@ -6474,10 +6628,10 @@
           "longitude": 78.7009
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 7,
@@ -6520,9 +6674,9 @@
           "note": "692 of 692 households, across 6 habitations."
         },
         {
-          "value": "9",
+          "value": "27",
           "label": "Drinking-water sources",
-          "note": "Open Well, Spring"
+          "note": "Deep Tubewell, Open Well, Spring"
         },
         {
           "value": "131.5%",
@@ -6530,14 +6684,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "147.1 mm",
+          "value": "95.5 mm",
           "label": "Rainfall, last 30 days",
-          "note": "30 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "29 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "24d ago",
+          "value": "50d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-13. 102 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-13. 194 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -6685,6 +6839,11 @@
         ],
         "sources": [
           {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 18
+          },
+          {
             "type": "Spring",
             "category": "Rain Water",
             "count": 8
@@ -6696,32 +6855,32 @@
           }
         ],
         "sampling": {
-          "total": 102,
+          "total": 194,
           "unsafe": 0,
-          "atSource": 60,
+          "atSource": 152,
           "atHousehold": 42,
           "earliest": "2022-09-28",
           "latest": "2026-08-13",
           "byYear": [
             {
               "year": "2022",
-              "count": 29
+              "count": 41
             },
             {
               "year": "2023",
-              "count": 5
+              "count": 13
             },
             {
               "year": "2024",
-              "count": 30
+              "count": 35
             },
             {
               "year": "2025",
-              "count": 31
+              "count": 58
             },
             {
               "year": "2026",
-              "count": 7
+              "count": 47
             }
           ]
         },
@@ -6747,10 +6906,10 @@
           "longitude": 78.64265
         },
         "rainfall": {
-          "windowMm": 147.1,
-          "daysWithRain": 30,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 17.6
+          "windowMm": 95.5,
+          "daysWithRain": 29,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 11.1
         },
         "waterBodies": {
           "count": 1,
@@ -6785,26 +6944,27 @@
           "note": "565 of 565 households, across 5 habitations."
         },
         {
+          "value": "16",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "152d ago",
+          "value": "55d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-04-07. 19 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-08. 140 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -6830,10 +6990,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -6848,10 +7004,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -6922,7 +7074,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -6957,30 +7109,40 @@
             "connections": 195
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 16
+          }
+        ],
         "sampling": {
-          "total": 19,
+          "total": 140,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 121,
           "atHousehold": 19,
           "earliest": "2022-09-30",
-          "latest": "2026-04-07",
+          "latest": "2026-08-08",
           "byYear": [
             {
               "year": "2022",
-              "count": 9
+              "count": 11
             },
             {
               "year": "2023",
-              "count": 3
+              "count": 23
             },
             {
               "year": "2024",
-              "count": 5
+              "count": 34
+            },
+            {
+              "year": "2025",
+              "count": 42
             },
             {
               "year": "2026",
-              "count": 2
+              "count": 30
             }
           ]
         },
@@ -6992,10 +7154,10 @@
           "longitude": 78.5637
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": {
           "count": 1,
@@ -7030,9 +7192,9 @@
           "note": "2,387 of 2,387 households, across 31 habitations."
         },
         {
-          "value": "14",
+          "value": "83",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell, Open Well, Spring"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others), Open Well, Spring"
         },
         {
           "value": "131.5%",
@@ -7040,14 +7202,14 @@
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "27d ago",
+          "value": "53d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-10. 299 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-10. 923 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -7355,12 +7517,17 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 12
+            "count": 74
           },
           {
             "type": "Open Well",
             "category": "Ground Water",
-            "count": 1
+            "count": 4
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 4
           },
           {
             "type": "Spring",
@@ -7369,32 +7536,32 @@
           }
         ],
         "sampling": {
-          "total": 299,
+          "total": 923,
           "unsafe": 0,
-          "atSource": 155,
+          "atSource": 779,
           "atHousehold": 144,
           "earliest": "2022-09-24",
           "latest": "2026-08-10",
           "byYear": [
             {
               "year": "2022",
-              "count": 24
+              "count": 80
             },
             {
               "year": "2023",
-              "count": 68
+              "count": 117
             },
             {
               "year": "2024",
-              "count": 37
+              "count": 129
             },
             {
               "year": "2025",
-              "count": 88
+              "count": 349
             },
             {
               "year": "2026",
-              "count": 82
+              "count": 248
             }
           ]
         },
@@ -7406,10 +7573,10 @@
           "longitude": 78.65785
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": {
           "count": 1,
@@ -7444,26 +7611,27 @@
           "note": "587 of 587 households, across 3 habitations."
         },
         {
+          "value": "8",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "131.5%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Vaniyambadi is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "125.4 mm",
+          "value": "104.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "771d ago",
+          "value": "57d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2024-07-27. 30 samples over 3 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-06. 102 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -7489,10 +7657,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-inventory",
           "reason": "unavailable"
         },
@@ -7511,10 +7675,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -7585,7 +7745,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 9,
+      "adequateCapabilities": 12,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -7608,26 +7768,40 @@
             "connections": 118
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 8
+          }
+        ],
         "sampling": {
-          "total": 30,
+          "total": 102,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 72,
           "atHousehold": 30,
           "earliest": "2022-09-22",
-          "latest": "2024-07-27",
+          "latest": "2026-08-06",
           "byYear": [
             {
               "year": "2022",
-              "count": 9
+              "count": 13
             },
             {
               "year": "2023",
-              "count": 15
+              "count": 22
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 19
+            },
+            {
+              "year": "2025",
+              "count": 28
+            },
+            {
+              "year": "2026",
+              "count": 20
             }
           ]
         },
@@ -7639,10 +7813,10 @@
           "longitude": 78.62295
         },
         "rainfall": {
-          "windowMm": 125.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-19",
-          "wettestDayMm": 16.6
+          "windowMm": 104.2,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 12.8
         },
         "waterBodies": null
       }
@@ -7666,26 +7840,27 @@
           "note": "1,875 of 1,875 households, across 16 habitations."
         },
         {
+          "value": "19",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "141.3%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Tiruppattur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "44d ago",
+          "value": "22d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-24. 102 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-10. 293 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -7711,10 +7886,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -7729,10 +7900,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -7803,7 +7970,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -7904,30 +8071,40 @@
             "connections": 48
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 19
+          }
+        ],
         "sampling": {
-          "total": 102,
+          "total": 293,
           "unsafe": 0,
-          "atSource": 0,
-          "atHousehold": 102,
+          "atSource": 186,
+          "atHousehold": 107,
           "earliest": "2022-09-07",
-          "latest": "2026-07-24",
+          "latest": "2026-09-10",
           "byYear": [
             {
               "year": "2022",
-              "count": 55
+              "count": 77
             },
             {
               "year": "2023",
-              "count": 39
+              "count": 71
             },
             {
               "year": "2024",
-              "count": 7
+              "count": 39
+            },
+            {
+              "year": "2025",
+              "count": 46
             },
             {
               "year": "2026",
-              "count": 1
+              "count": 60
             }
           ]
         },
@@ -7939,10 +8116,10 @@
           "longitude": 78.7174
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": {
           "count": 12,
@@ -7989,9 +8166,9 @@
           "note": "1,502 of 1,502 households, across 19 habitations."
         },
         {
-          "value": "2",
+          "value": "37",
           "label": "Drinking-water sources",
-          "note": "Deep Tubewell"
+          "note": "Deep Tubewell, Non Conventional Methods (Tribal/Others)"
         },
         {
           "value": "141.3%",
@@ -7999,14 +8176,14 @@
           "note": "Tiruppattur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "144.3 mm",
+          "value": "90.3 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "64d ago",
+          "value": "69d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-04. 63 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-07-25. 398 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -8242,36 +8419,41 @@
           {
             "type": "Deep Tubewell",
             "category": "Ground Water",
-            "count": 2
+            "count": 36
+          },
+          {
+            "type": "Non Conventional Methods (Tribal/Others)",
+            "category": "Others",
+            "count": 1
           }
         ],
         "sampling": {
-          "total": 63,
+          "total": 398,
           "unsafe": 0,
-          "atSource": 27,
+          "atSource": 362,
           "atHousehold": 36,
           "earliest": "2022-09-10",
-          "latest": "2026-07-04",
+          "latest": "2026-07-25",
           "byYear": [
             {
               "year": "2022",
-              "count": 4
+              "count": 30
             },
             {
               "year": "2023",
-              "count": 25
+              "count": 60
             },
             {
               "year": "2024",
-              "count": 12
+              "count": 66
             },
             {
               "year": "2025",
-              "count": 13
+              "count": 128
             },
             {
               "year": "2026",
-              "count": 9
+              "count": 114
             }
           ]
         },
@@ -8283,10 +8465,10 @@
           "longitude": 78.71255
         },
         "rainfall": {
-          "windowMm": 144.3,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 17.2
+          "windowMm": 90.3,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-15",
+          "wettestDayMm": 14.7
         },
         "waterBodies": {
           "count": 7,
@@ -8325,26 +8507,27 @@
           "note": "2,339 of 2,339 households, across 32 habitations."
         },
         {
+          "value": "36",
+          "label": "Drinking-water sources",
+          "note": "Deep Tubewell"
+        },
+        {
           "value": "141.3%",
           "label": "Groundwater extraction, containing taluk",
           "note": "Tiruppattur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "116.4 mm",
+          "value": "109.1 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-02 and 2026-09-01, modelled rather than gauged."
+          "note": "28 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "11d ago",
+          "value": "37d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-26. 41 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-08-26. 434 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
-        {
-          "capabilityId": "drinking-water-source",
-          "reason": "unavailable"
-        },
         {
           "capabilityId": "drinking-water-reliability",
           "reason": "unavailable"
@@ -8370,10 +8553,6 @@
           "reason": "unavailable"
         },
         {
-          "capabilityId": "connected-supply-system",
-          "reason": "not-assessed"
-        },
-        {
           "capabilityId": "water-body-condition",
           "reason": "unavailable"
         },
@@ -8388,10 +8567,6 @@
         {
           "capabilityId": "river-water-quality",
           "reason": "not-assessed"
-        },
-        {
-          "capabilityId": "public-water-works",
-          "reason": "unavailable"
         },
         {
           "capabilityId": "flood-hazard",
@@ -8462,7 +8637,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 10,
+      "adequateCapabilities": 13,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -8659,30 +8834,40 @@
             "connections": 51
           }
         ],
-        "sources": [],
+        "sources": [
+          {
+            "type": "Deep Tubewell",
+            "category": "Ground Water",
+            "count": 36
+          }
+        ],
         "sampling": {
-          "total": 41,
+          "total": 434,
           "unsafe": 0,
-          "atSource": 0,
+          "atSource": 393,
           "atHousehold": 41,
           "earliest": "2022-09-27",
           "latest": "2026-08-26",
           "byYear": [
             {
               "year": "2022",
-              "count": 10
+              "count": 13
             },
             {
               "year": "2023",
-              "count": 6
+              "count": 69
             },
             {
               "year": "2024",
-              "count": 6
+              "count": 82
+            },
+            {
+              "year": "2025",
+              "count": 120
             },
             {
               "year": "2026",
-              "count": 19
+              "count": 150
             }
           ]
         },
@@ -8694,10 +8879,10 @@
           "longitude": 78.7433
         },
         "rainfall": {
-          "windowMm": 116.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-23",
-          "wettestDayMm": 11.7
+          "windowMm": 109.1,
+          "daysWithRain": 28,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 10.8
         },
         "waterBodies": {
           "count": 8,
