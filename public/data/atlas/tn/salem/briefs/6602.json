@@ -52,7 +52,7 @@
         "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
         "role": "input",
         "url": "https://ingres.iith.ac.in/",
-        "retrieved": "2026-09-02"
+        "retrieved": "2026-10-02"
       },
       {
         "id": "open-meteo-archive",
@@ -61,7 +61,7 @@
         "license": "CC BY 4.0",
         "role": "input",
         "url": "https://open-meteo.com/",
-        "retrieved": "2026-09-02"
+        "retrieved": "2026-10-02"
       },
       {
         "id": "cpcb-prs-report",
@@ -92,7 +92,7 @@
       }
     ],
     "method": "derived",
-    "produced_at": "2026-09-06",
+    "produced_at": "2026-10-02",
     "produced_by": "scripts/atlas-generate-assessments.ts",
     "internal_inputs": [
       "public/data/atlas/tn/salem/directory.json",
@@ -116,7 +116,7 @@
   "planId": "tn-salem-v1",
   "blockCode": "6602",
   "blockName": "NANGAVALLI",
-  "assessedAt": "2026-09-06",
+  "assessedAt": "2026-10-02",
   "recordCount": 9,
   "briefs": [
     {
@@ -148,18 +148,19 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "119.4 mm",
+          "value": "133.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
+        },
+        {
+          "value": "13d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-09-19. 777 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
         {
           "capabilityId": "drinking-water-reliability",
-          "reason": "unavailable"
-        },
-        {
-          "capabilityId": "drinking-water-quality",
           "reason": "unavailable"
         },
         {
@@ -263,7 +264,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -524,7 +525,32 @@
             "count": 3
           }
         ],
-        "sampling": null,
+        "sampling": {
+          "total": 777,
+          "unsafe": 0,
+          "atSource": 740,
+          "atHousehold": 37,
+          "earliest": "2023-01-06",
+          "latest": "2026-09-19",
+          "byYear": [
+            {
+              "year": "2023",
+              "count": 174
+            },
+            {
+              "year": "2024",
+              "count": 149
+            },
+            {
+              "year": "2025",
+              "count": 201
+            },
+            {
+              "year": "2026",
+              "count": 253
+            }
+          ]
+        },
         "land": null,
         "seasonal": null,
         "boundary": {
@@ -533,10 +559,10 @@
           "longitude": 77.861
         },
         "rainfall": {
-          "windowMm": 119.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-03",
-          "wettestDayMm": 15.7
+          "windowMm": 133.7,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 27
         },
         "waterBodies": {
           "count": 3,
@@ -585,12 +611,12 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "116.6 mm",
+          "value": "125.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "37d ago",
+          "value": "63d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-07-31. 387 samples over 5 years, none of them recorded unsafe."
         }
@@ -883,10 +909,10 @@
           "longitude": 77.93325
         },
         "rainfall": {
-          "windowMm": 116.6,
-          "daysWithRain": 29,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 13.7
+          "windowMm": 125.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 28
         },
         "waterBodies": {
           "count": 1,
@@ -931,12 +957,12 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "99.9 mm",
+          "value": "121.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "25 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "29d ago",
+          "value": "55d ago",
           "label": "Last water-quality sample",
           "note": "Safe on 2026-08-08. 596 samples over 4 years, none of them recorded unsafe."
         }
@@ -1593,10 +1619,10 @@
           "longitude": 77.86825
         },
         "rainfall": {
-          "windowMm": 99.9,
-          "daysWithRain": 29,
-          "wettestDate": "2026-08-24",
-          "wettestDayMm": 13.7
+          "windowMm": 121.2,
+          "daysWithRain": 25,
+          "wettestDate": "2026-09-20",
+          "wettestDayMm": 21.1
         },
         "waterBodies": {
           "count": 3,
@@ -1645,14 +1671,14 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "119.4 mm",
+          "value": "133.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "37d ago",
+          "value": "11d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 213 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-21. 235 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -1893,12 +1919,12 @@
           }
         ],
         "sampling": {
-          "total": 213,
+          "total": 235,
           "unsafe": 0,
-          "atSource": 173,
+          "atSource": 195,
           "atHousehold": 40,
           "earliest": "2022-09-13",
-          "latest": "2026-07-31",
+          "latest": "2026-09-21",
           "byYear": [
             {
               "year": "2022",
@@ -1918,7 +1944,7 @@
             },
             {
               "year": "2026",
-              "count": 40
+              "count": 62
             }
           ]
         },
@@ -1944,10 +1970,10 @@
           "longitude": 77.88975
         },
         "rainfall": {
-          "windowMm": 119.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-03",
-          "wettestDayMm": 15.7
+          "windowMm": 133.7,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 27
         },
         "waterBodies": null
       }
@@ -1981,18 +2007,19 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "119.4 mm",
+          "value": "133.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
+        },
+        {
+          "value": "2d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-09-30. 907 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
         {
           "capabilityId": "drinking-water-reliability",
-          "reason": "unavailable"
-        },
-        {
-          "capabilityId": "drinking-water-quality",
           "reason": "unavailable"
         },
         {
@@ -2088,7 +2115,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 15,
+      "adequateCapabilities": 16,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -2428,7 +2455,36 @@
             "count": 25
           }
         ],
-        "sampling": null,
+        "sampling": {
+          "total": 907,
+          "unsafe": 0,
+          "atSource": 871,
+          "atHousehold": 36,
+          "earliest": "2022-11-26",
+          "latest": "2026-09-30",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 90
+            },
+            {
+              "year": "2023",
+              "count": 92
+            },
+            {
+              "year": "2024",
+              "count": 220
+            },
+            {
+              "year": "2025",
+              "count": 234
+            },
+            {
+              "year": "2026",
+              "count": 271
+            }
+          ]
+        },
         "land": {
           "totalAreaHectares": 1276.92,
           "netSownHectares": 926,
@@ -2453,10 +2509,10 @@
           "longitude": 77.91605
         },
         "rainfall": {
-          "windowMm": 119.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-03",
-          "wettestDayMm": 15.7
+          "windowMm": 133.7,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 27
         },
         "waterBodies": {
           "count": 1,
@@ -2501,14 +2557,14 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "99.9 mm",
+          "value": "121.2 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "25 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "36d ago",
+          "value": "2d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-08-01. 589 samples over 4 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-30. 592 samples over 4 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -2841,12 +2897,12 @@
           }
         ],
         "sampling": {
-          "total": 589,
+          "total": 592,
           "unsafe": 0,
-          "atSource": 559,
-          "atHousehold": 30,
+          "atSource": 560,
+          "atHousehold": 32,
           "earliest": "2023-01-11",
-          "latest": "2026-08-01",
+          "latest": "2026-09-30",
           "byYear": [
             {
               "year": "2023",
@@ -2862,7 +2918,7 @@
             },
             {
               "year": "2026",
-              "count": 176
+              "count": 179
             }
           ]
         },
@@ -2888,10 +2944,10 @@
           "longitude": 77.85685
         },
         "rainfall": {
-          "windowMm": 99.9,
-          "daysWithRain": 29,
-          "wettestDate": "2026-08-24",
-          "wettestDayMm": 13.7
+          "windowMm": 121.2,
+          "daysWithRain": 25,
+          "wettestDate": "2026-09-20",
+          "wettestDayMm": 21.1
         },
         "waterBodies": {
           "count": 2,
@@ -2940,18 +2996,19 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "119.4 mm",
+          "value": "133.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
+        },
+        {
+          "value": "11d ago",
+          "label": "Last water-quality sample",
+          "note": "Safe on 2026-09-21. 801 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
         {
           "capabilityId": "drinking-water-reliability",
-          "reason": "unavailable"
-        },
-        {
-          "capabilityId": "drinking-water-quality",
           "reason": "unavailable"
         },
         {
@@ -3055,7 +3112,7 @@
           "reason": "not-assessed"
         }
       ],
-      "adequateCapabilities": 13,
+      "adequateCapabilities": 14,
       "assessedCapabilities": 40,
       "detail": {
         "habitations": [
@@ -3442,7 +3499,36 @@
             "count": 1
           }
         ],
-        "sampling": null,
+        "sampling": {
+          "total": 801,
+          "unsafe": 0,
+          "atSource": 766,
+          "atHousehold": 35,
+          "earliest": "2022-10-04",
+          "latest": "2026-09-21",
+          "byYear": [
+            {
+              "year": "2022",
+              "count": 1
+            },
+            {
+              "year": "2023",
+              "count": 172
+            },
+            {
+              "year": "2024",
+              "count": 193
+            },
+            {
+              "year": "2025",
+              "count": 243
+            },
+            {
+              "year": "2026",
+              "count": 192
+            }
+          ]
+        },
         "land": null,
         "seasonal": null,
         "boundary": {
@@ -3451,10 +3537,10 @@
           "longitude": 77.87935
         },
         "rainfall": {
-          "windowMm": 119.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-03",
-          "wettestDayMm": 15.7
+          "windowMm": 133.7,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 27
         },
         "waterBodies": {
           "count": 5,
@@ -3503,14 +3589,14 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "119.4 mm",
+          "value": "133.7 mm",
           "label": "Rainfall, last 30 days",
-          "note": "31 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "37d ago",
+          "value": "13d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-31. 502 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-19. 504 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -3821,12 +3907,12 @@
           }
         ],
         "sampling": {
-          "total": 502,
+          "total": 504,
           "unsafe": 0,
-          "atSource": 463,
+          "atSource": 465,
           "atHousehold": 39,
           "earliest": "2022-08-16",
-          "latest": "2026-07-31",
+          "latest": "2026-09-19",
           "byYear": [
             {
               "year": "2022",
@@ -3846,7 +3932,7 @@
             },
             {
               "year": "2026",
-              "count": 180
+              "count": 182
             }
           ]
         },
@@ -3858,10 +3944,10 @@
           "longitude": 77.89165
         },
         "rainfall": {
-          "windowMm": 119.4,
-          "daysWithRain": 31,
-          "wettestDate": "2026-08-03",
-          "wettestDayMm": 15.7
+          "windowMm": 133.7,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 27
         },
         "waterBodies": {
           "count": 1,
@@ -3906,14 +3992,14 @@
           "note": "Mettur is assessed over exploited. This describes the taluk, not this Panchayat."
         },
         {
-          "value": "116.6 mm",
+          "value": "125.9 mm",
           "label": "Rainfall, last 30 days",
-          "note": "29 rain days between 2026-08-03 and 2026-09-02, modelled rather than gauged."
+          "note": "27 rain days between 2026-09-02 and 2026-10-02, modelled rather than gauged."
         },
         {
-          "value": "58d ago",
+          "value": "9d ago",
           "label": "Last water-quality sample",
-          "note": "Safe on 2026-07-10. 537 samples over 5 years, none of them recorded unsafe."
+          "note": "Safe on 2026-09-23. 598 samples over 5 years, none of them recorded unsafe."
         }
       ],
       "gaps": [
@@ -4247,12 +4333,12 @@
           }
         ],
         "sampling": {
-          "total": 537,
+          "total": 598,
           "unsafe": 0,
-          "atSource": 502,
+          "atSource": 563,
           "atHousehold": 35,
           "earliest": "2022-10-14",
-          "latest": "2026-07-10",
+          "latest": "2026-09-23",
           "byYear": [
             {
               "year": "2022",
@@ -4272,7 +4358,7 @@
             },
             {
               "year": "2026",
-              "count": 170
+              "count": 231
             }
           ]
         },
@@ -4298,10 +4384,10 @@
           "longitude": 77.8742
         },
         "rainfall": {
-          "windowMm": 116.6,
-          "daysWithRain": 29,
-          "wettestDate": "2026-08-04",
-          "wettestDayMm": 13.7
+          "windowMm": 125.9,
+          "daysWithRain": 27,
+          "wettestDate": "2026-09-21",
+          "wettestDayMm": 28
         },
         "waterBodies": {
           "count": 2,
