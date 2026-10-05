@@ -1,9 +1,10 @@
-"""The Chennai service's reads and writes name their city rather than leaning
-on the tables' DEFAULT 'chennai' (migration 035)."""
+"""Reads and writes name their city rather than leaning on the tables' old
+DEFAULT 'chennai' (migration 035), which migration 050 dropped."""
 
 import asyncio
 from types import SimpleNamespace
 
+from app.gee import reservoir_context, water_bodies
 from app.intelligence import briefing, risk_scorer
 
 
@@ -84,3 +85,56 @@ def test_briefing_reads_and_writes_chennai(monkeypatch):
     ] == ["chennai"]
     assert "city_id" not in out
     assert db.conflicts == ["city_id,briefing_date"]
+
+
+def test_gee_writers_send_their_city(monkeypatch):
+    db = FakeSupabase({})
+    monkeypatch.setattr("app.db.get_supabase", lambda: db)
+    reservoir_context.upsert_reservoir_context(
+        [
+            reservoir_context.ReservoirCatchmentContextRow(
+                city_id="chennai",
+                reservoir="poondi",
+                context_date="2026-08-31",
+                window_days=7,
+                rain_total_mm=11.28,
+                baseline_mm=32.99,
+                anomaly_pct=-65.81,
+                context_level="well_below",
+            )
+        ]
+    )
+    water_bodies.upsert_water_body_summaries(
+        [
+            water_bodies.WaterBodySatelliteSummaryRow(
+                city_id="madurai", gee_target_id="osm:1", summary_date="2026-10-05"
+            )
+        ]
+    )
+    assert [(t, r["city_id"]) for t, rs in db.upserts for r in rs] == [
+        ("reservoir_catchment_context", "chennai"),
+        ("water_body_satellite_summary", "madurai"),
+    ]
+    assert db.conflicts == [
+        "city_id,reservoir,context_date,window_days",
+        "city_id,gee_target_id,summary_date",
+    ]
+
+
+def test_water_body_backfill_keeps_the_requested_city(monkeypatch):
+    seen: list[str | None] = []
+
+    def compute(**kwargs):
+        seen.append(kwargs.get("city_id"))
+        raise RuntimeError("no imagery")
+
+    fc = SimpleNamespace(geometry=lambda: SimpleNamespace(bounds=lambda: None))
+    monkeypatch.setattr(water_bodies, "load_phase1_target_features", lambda **_: [])
+    monkeypatch.setattr(water_bodies, "initialize_earth_engine", lambda: None)
+    monkeypatch.setattr(water_bodies, "_build_target_feature_collection", lambda *_: fc)
+    monkeypatch.setattr(
+        water_bodies, "compute_jrc_monthly_baselines", lambda *_, **__: {}
+    )
+    monkeypatch.setattr(water_bodies, "compute_water_body_summary_rows", compute)
+    water_bodies.backfill_water_body_summaries(city_id="madurai", months_back=1)
+    assert seen and set(seen) == {"madurai"}

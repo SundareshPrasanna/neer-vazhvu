@@ -46,6 +46,7 @@ class Phase1WaterBodyTargetFeature:
 
 @dataclass(slots=True)
 class WaterBodySatelliteSummaryRow:
+    city_id: str
     gee_target_id: str
     summary_date: str
     osm_id: int | None = None
@@ -620,6 +621,7 @@ def compute_water_body_summary_rows(
 
         rows.append(
             WaterBodySatelliteSummaryRow(
+                city_id=city.city_id,
                 gee_target_id=target.gee_target_id,
                 summary_date=summary_date,
                 osm_id=target.osm_id,
@@ -726,6 +728,7 @@ def backfill_water_body_summaries(
         snapshot_start = time.monotonic()
         try:
             result = compute_water_body_summary_rows(
+                city_id=city.city_id,
                 reference_date=snapshot_date,
                 lookback_days=lookback_days,
                 precomputed_targets=targets,
