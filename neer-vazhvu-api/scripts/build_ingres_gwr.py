@@ -318,6 +318,9 @@ CITIES = {
         "state_label": "Tamil Nadu",
         "source_id": "ingres-gw-assessment-tn",
         "blocks_file": "gwr-blocks.json",
+        # The WRIS years before it are labelled by end year (2020, 2022), so
+        # the IN-GRES editions are too; a mixed "2022, 2022-23" reads as a repeat.
+        "end_year_labels": True,
         "extend": {
             "state": "TAMILNADU",
             "district": "CHENNAI",
@@ -700,6 +703,8 @@ def build_extended(city: str, cfg: dict) -> int:
                 "availability_ham": _r1(avail),
                 "draft_total_ham": _r1(draft),
             }
+            if cfg.get("end_year_labels"):
+                del entry["year_label"]
             hist = blocks[name]["history"]
             old = next((h for h in hist if h["year"] == end), None)
             if old and any(old.get(k) != entry[k] for k in entry if k != "year_label"):
