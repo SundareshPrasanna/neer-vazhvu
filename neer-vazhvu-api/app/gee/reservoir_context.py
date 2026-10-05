@@ -39,6 +39,7 @@ class ReservoirCatchmentFeature:
 
 @dataclass(slots=True)
 class ReservoirCatchmentContextRow:
+    city_id: str
     reservoir: str
     context_date: str
     window_days: int
@@ -411,6 +412,7 @@ def compute_reservoir_context_rows(
 
             rows.append(
                 ReservoirCatchmentContextRow(
+                    city_id=city.city_id,
                     reservoir=reservoir,
                     context_date=context_date.isoformat(),
                     window_days=window,
