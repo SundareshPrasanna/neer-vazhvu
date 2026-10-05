@@ -14,18 +14,13 @@ from datetime import date, datetime
 import httpx
 
 from app.models.groundwater import WrisGroundwaterRecord
+from app.scrapers.well_levels import keep_mask
 
 logger = logging.getLogger(__name__)
 
 WRIS_API_BASE = "https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
 PAGE_SIZE = 1000
 MAX_PAGES = 50  # safety cap
-MAX_ABS_LEVEL_M = 50  # readings beyond this are sensor errors
-PLACEHOLDERS = {0.0, 1.0}  # WIMS writes these for a missing six-hourly reading
-
-
-def is_reading(value: float) -> bool:
-    return value not in PLACEHOLDERS and abs(value) <= MAX_ABS_LEVEL_M
 
 
 async def fetch_wris_groundwater(
@@ -120,32 +115,33 @@ async def fetch_wris_groundwater(
 def _deduplicate_daily(raw: list[dict]) -> list[WrisGroundwaterRecord]:
     """
     Group by (station_code, date) and average the values.
-    Filters out placeholders and obvious outliers (beyond 50 m, sensor errors).
+    Drops placeholders and readings outside the station's physical envelope.
     """
     from collections import defaultdict
+
+    by_station: dict[str, list[dict]] = defaultdict(list)
+    for r in raw:
+        if (
+            r.get("stationCode")
+            and r.get("dataTime")
+            and r.get("dataValue") is not None
+        ):
+            by_station[r["stationCode"]].append(r)
 
     # Group: (station_code, date_str) -> list of values + metadata
     groups: dict[tuple[str, str], dict] = defaultdict(
         lambda: {"values": [], "meta": None}
     )
 
-    for r in raw:
-        station_code = r.get("stationCode", "")
-        data_time = r.get("dataTime", "")
-        value = r.get("dataValue")
-
-        if not station_code or not data_time or value is None:
-            continue
-
-        if not is_reading(value):
-            continue
-
-        date_str = data_time[:10]  # YYYY-MM-DD
-        key = (station_code, date_str)
-        groups[key]["values"].append(value)
-
-        if groups[key]["meta"] is None:
-            groups[key]["meta"] = r
+    for station_code, records in by_station.items():
+        mask = keep_mask([r["dataValue"] for r in records])
+        for r, keep in zip(records, mask):
+            if not keep:
+                continue
+            key = (station_code, r["dataTime"][:10])  # YYYY-MM-DD
+            groups[key]["values"].append(r["dataValue"])
+            if groups[key]["meta"] is None:
+                groups[key]["meta"] = r
 
     results: list[WrisGroundwaterRecord] = []
     for (station_code, date_str), group in groups.items():

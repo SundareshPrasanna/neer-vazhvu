@@ -15,16 +15,16 @@
       }
     ],
     "method": "api",
-    "produced_at": "2026-03-27",
-    "produced_by": "scripts/fetch-wris-groundwater.ts",
-    "note": "Block-level dynamic groundwater assessment (GEC classes and stage-of-extraction), acquired via the WRIS NWIC GWR{year}_CGWB ArcGIS services.",
+    "produced_at": "2026-10-05",
+    "produced_by": "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "note": "Block-level dynamic groundwater assessment (category and stage of extraction) for Chennai district's 16 taluk assessment units. 2011 to 2020 come from the WRIS NWIC GWR{year}_CGWB ArcGIS services (scripts/fetch-wris-groundwater.ts); 2022-23 onward from the IN-GRES API, upserted in place by build_ingres_gwr.py --city chennai, which reproduces the WRIS 2023 and 2024 vintages to 0.1 ham. IN-GRES units are matched by assessed area, not by name: in the 2022-23, 2023-24 and 2024-25 editions IN-GRES prints Chennai's taluk names one place out of step with their areas from Madhavaram on (the 7,068 ha Sholinganallur unit is labelled Purasaivakkam), and 2025-26 prints the same areas under their true names. The 2025-26 edition is not included: it assesses 17 units, and these 16 polygons are the earlier set.",
     "conventions": {
-      "comparability": "CGWB assessment units can change between GEC editions (block/firka/village granularity shifts); year-on-year comparisons must check assessment-unit continuity before differencing."
+      "comparability": "CGWB assessment units can change between GEC editions (block/firka/village granularity shifts); year-on-year comparisons must check assessment-unit continuity before differencing. Chennai's units were redrawn for 2025-26: Kolathur (700 ha) is carved out of Ayanavaram (1,529 to 829 ha) and Thiruvottiyur is 285 ha smaller."
     }
   },
-  "source": "India WRIS / CGWB",
-  "source_url": "https://indiawris.gov.in/wris/",
-  "fetched_at": "2026-03-27T05:37:09.704Z",
+  "source": "IN-GRES (CGWB + Tamil Nadu) from 2022-23; India WRIS / CGWB for 2011-2020",
+  "source_url": "https://ingres.iith.ac.in/",
+  "fetched_at": "2026-10-05",
   "years": [
     2011,
     2013,
@@ -32,7 +32,8 @@
     2020,
     2022,
     2023,
-    2024
+    2024,
+    2025
   ],
   "blocks": [
     {
@@ -54,24 +55,34 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
-          "development_pct": 188,
+          "development_pct": 188.0,
           "availability_ham": 1560.2,
           "draft_total_ham": 2932.7
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
-          "development_pct": 204,
+          "development_pct": 204.0,
           "availability_ham": 1437.7,
           "draft_total_ham": 2933.4
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 197.9,
+          "availability_ham": 981.9,
+          "draft_total_ham": 1943.4
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 204,
-        "availability_ham": 1437.7,
-        "draft_total_ham": 2933.4
+        "development_pct": 197.9,
+        "availability_ham": 981.9,
+        "draft_total_ham": 1943.4
       }
     },
     {
@@ -114,24 +125,34 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 158.8,
-          "availability_ham": 300,
+          "availability_ham": 300.0,
           "draft_total_ham": 476.4
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 157.9,
           "availability_ham": 267.6,
           "draft_total_ham": 422.7
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 158.6,
+          "availability_ham": 266.8,
+          "draft_total_ham": 423.2
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 157.9,
-        "availability_ham": 267.6,
-        "draft_total_ham": 422.7
+        "development_pct": 158.6,
+        "availability_ham": 266.8,
+        "draft_total_ham": 423.2
       }
     },
     {
@@ -174,24 +195,34 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
-          "development_pct": 152,
-          "availability_ham": 127.6,
+          "development_pct": 152.0,
+          "availability_ham": 127.5,
           "draft_total_ham": 193.8
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 154.9,
           "availability_ham": 94.3,
           "draft_total_ham": 146.1
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 153.7,
+          "availability_ham": 95.1,
+          "draft_total_ham": 146.2
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 154.9,
-        "availability_ham": 94.3,
-        "draft_total_ham": 146.1
+        "development_pct": 153.7,
+        "availability_ham": 95.1,
+        "draft_total_ham": 146.2
       }
     },
     {
@@ -234,24 +265,34 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 155.1,
-          "availability_ham": 73.9,
+          "availability_ham": 73.8,
           "draft_total_ham": 114.6
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
-          "development_pct": 154,
+          "development_pct": 154.0,
           "availability_ham": 88.3,
           "draft_total_ham": 135.9
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 151.9,
+          "availability_ham": 99.2,
+          "draft_total_ham": 150.8
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 154,
-        "availability_ham": 88.3,
-        "draft_total_ham": 135.9
+        "development_pct": 151.9,
+        "availability_ham": 99.2,
+        "draft_total_ham": 150.8
       }
     },
     {
@@ -273,6 +314,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 147.2,
           "availability_ham": 1207.5,
@@ -280,42 +322,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 146.9,
           "availability_ham": 1064.3,
-          "draft_total_ham": 1564
-        }
-      ],
-      "latest": {
-        "class": "Over Exploited",
-        "development_pct": 146.9,
-        "availability_ham": 1064.3,
-        "draft_total_ham": 1564
-      }
-    },
-    {
-      "name": "Velacheri",
-      "history": [
-        {
-          "year": 2023,
-          "class": "Over Exploited",
-          "development_pct": 154.4,
-          "availability_ham": 215.5,
-          "draft_total_ham": 332.7
+          "draft_total_ham": 1563.9
         },
         {
-          "year": 2024,
+          "year": 2025,
+          "year_label": "2024-25",
           "class": "Over Exploited",
-          "development_pct": 141.2,
-          "availability_ham": 235.8,
-          "draft_total_ham": 333
+          "development_pct": 147.9,
+          "availability_ham": 1108.7,
+          "draft_total_ham": 1639.7
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 141.2,
-        "availability_ham": 235.8,
-        "draft_total_ham": 333
+        "development_pct": 147.9,
+        "availability_ham": 1108.7,
+        "draft_total_ham": 1639.7
       }
     },
     {
@@ -358,6 +384,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 155.7,
           "availability_ham": 312.7,
@@ -365,17 +392,61 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 140.4,
           "availability_ham": 347.1,
           "draft_total_ham": 487.4
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 143.2,
+          "availability_ham": 340.8,
+          "draft_total_ham": 487.9
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 140.4,
-        "availability_ham": 347.1,
-        "draft_total_ham": 487.4
+        "development_pct": 143.2,
+        "availability_ham": 340.8,
+        "draft_total_ham": 487.9
+      }
+    },
+    {
+      "name": "Velacheri",
+      "history": [
+        {
+          "year": 2023,
+          "year_label": "2022-23",
+          "class": "Over Exploited",
+          "development_pct": 154.4,
+          "availability_ham": 215.5,
+          "draft_total_ham": 332.7
+        },
+        {
+          "year": 2024,
+          "year_label": "2023-24",
+          "class": "Over Exploited",
+          "development_pct": 141.2,
+          "availability_ham": 235.8,
+          "draft_total_ham": 333.0
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 142.6,
+          "availability_ham": 233.7,
+          "draft_total_ham": 333.3
+        }
+      ],
+      "latest": {
+        "class": "Over Exploited",
+        "development_pct": 142.6,
+        "availability_ham": 233.7,
+        "draft_total_ham": 333.3
       }
     },
     {
@@ -418,6 +489,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 152.7,
           "availability_ham": 281.6,
@@ -425,17 +497,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 133.3,
           "availability_ham": 340.6,
           "draft_total_ham": 453.9
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 138.5,
+          "availability_ham": 328.0,
+          "draft_total_ham": 454.3
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 133.3,
-        "availability_ham": 340.6,
-        "draft_total_ham": 453.9
+        "development_pct": 138.5,
+        "availability_ham": 328.0,
+        "draft_total_ham": 454.3
       }
     },
     {
@@ -443,6 +524,7 @@
       "history": [
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 126.6,
           "availability_ham": 344.9,
@@ -450,17 +532,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 130.4,
-          "availability_ham": 373.2,
-          "draft_total_ham": 486.5
+          "availability_ham": 373.1,
+          "draft_total_ham": 486.4
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 131.4,
+          "availability_ham": 371.1,
+          "draft_total_ham": 487.5
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 130.4,
-        "availability_ham": 373.2,
-        "draft_total_ham": 486.5
+        "development_pct": 131.4,
+        "availability_ham": 371.1,
+        "draft_total_ham": 487.5
       }
     },
     {
@@ -482,24 +573,34 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
-          "development_pct": 135,
+          "development_pct": 135.0,
           "availability_ham": 991.6,
           "draft_total_ham": 1338.3
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 126.4,
           "availability_ham": 1021.9,
           "draft_total_ham": 1291.8
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 126.7,
+          "availability_ham": 1078.1,
+          "draft_total_ham": 1365.9
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 126.4,
-        "availability_ham": 1021.9,
-        "draft_total_ham": 1291.8
+        "development_pct": 126.7,
+        "availability_ham": 1078.1,
+        "draft_total_ham": 1365.9
       }
     },
     {
@@ -507,6 +608,7 @@
       "history": [
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 137.3,
           "availability_ham": 267.7,
@@ -514,17 +616,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 122.5,
           "availability_ham": 300.4,
           "draft_total_ham": 367.8
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 123.7,
+          "availability_ham": 305.6,
+          "draft_total_ham": 378.0
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 122.5,
-        "availability_ham": 300.4,
-        "draft_total_ham": 367.8
+        "development_pct": 123.7,
+        "availability_ham": 305.6,
+        "draft_total_ham": 378.0
       }
     },
     {
@@ -532,24 +643,34 @@
       "history": [
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 136.1,
           "availability_ham": 340.1,
-          "draft_total_ham": 463
+          "draft_total_ham": 463.0
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
-          "development_pct": 122,
-          "availability_ham": 383,
+          "development_pct": 122.0,
+          "availability_ham": 383.0,
           "draft_total_ham": 467.1
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 120.5,
+          "availability_ham": 387.9,
+          "draft_total_ham": 467.5
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 122,
-        "availability_ham": 383,
-        "draft_total_ham": 467.1
+        "development_pct": 120.5,
+        "availability_ham": 387.9,
+        "draft_total_ham": 467.5
       }
     },
     {
@@ -557,6 +678,7 @@
       "history": [
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Over Exploited",
           "development_pct": 127.6,
           "availability_ham": 336.7,
@@ -564,17 +686,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Over Exploited",
           "development_pct": 109.2,
           "availability_ham": 394.2,
           "draft_total_ham": 430.3
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Over Exploited",
+          "development_pct": 114.6,
+          "availability_ham": 376.1,
+          "draft_total_ham": 431.0
         }
       ],
       "latest": {
         "class": "Over Exploited",
-        "development_pct": 109.2,
-        "availability_ham": 394.2,
-        "draft_total_ham": 430.3
+        "development_pct": 114.6,
+        "availability_ham": 376.1,
+        "draft_total_ham": 431.0
       }
     },
     {
@@ -596,24 +727,34 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Semi Critical",
           "development_pct": 80.2,
           "availability_ham": 848.7,
-          "draft_total_ham": 681
+          "draft_total_ham": 681.0
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Semi Critical",
           "development_pct": 85.6,
           "availability_ham": 857.2,
-          "draft_total_ham": 734
+          "draft_total_ham": 734.0
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Semi Critical",
+          "development_pct": 87.2,
+          "availability_ham": 845.9,
+          "draft_total_ham": 737.9
         }
       ],
       "latest": {
         "class": "Semi Critical",
-        "development_pct": 85.6,
-        "availability_ham": 857.2,
-        "draft_total_ham": 734
+        "development_pct": 87.2,
+        "availability_ham": 845.9,
+        "draft_total_ham": 737.9
       }
     },
     {
@@ -635,6 +776,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Safe",
           "development_pct": 66.2,
           "availability_ham": 1014.5,
@@ -642,17 +784,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Safe",
           "development_pct": 69.2,
           "availability_ham": 1093.9,
           "draft_total_ham": 757.4
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Semi Critical",
+          "development_pct": 78.7,
+          "availability_ham": 998.1,
+          "draft_total_ham": 785.3
         }
       ],
       "latest": {
-        "class": "Safe",
-        "development_pct": 69.2,
-        "availability_ham": 1093.9,
-        "draft_total_ham": 757.4
+        "class": "Semi Critical",
+        "development_pct": 78.7,
+        "availability_ham": 998.1,
+        "draft_total_ham": 785.3
       }
     },
     {
@@ -674,6 +825,7 @@
         },
         {
           "year": 2023,
+          "year_label": "2022-23",
           "class": "Safe",
           "development_pct": 62.2,
           "availability_ham": 997.4,
@@ -681,17 +833,26 @@
         },
         {
           "year": 2024,
+          "year_label": "2023-24",
           "class": "Safe",
-          "development_pct": 60,
+          "development_pct": 60.0,
           "availability_ham": 997.2,
           "draft_total_ham": 598.7
+        },
+        {
+          "year": 2025,
+          "year_label": "2024-25",
+          "class": "Safe",
+          "development_pct": 56.6,
+          "availability_ham": 1100.2,
+          "draft_total_ham": 622.6
         }
       ],
       "latest": {
         "class": "Safe",
-        "development_pct": 60,
-        "availability_ham": 997.2,
-        "draft_total_ham": 598.7
+        "development_pct": 56.6,
+        "availability_ham": 1100.2,
+        "draft_total_ham": 622.6
       }
     }
   ]

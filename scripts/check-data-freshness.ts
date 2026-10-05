@@ -220,6 +220,15 @@ const EXTRA_TABLE_FEEDS: ExtraTableFeed[] = [
     maxAgeDays: 21,
     note: "CGWB and state station series (scrape_wris_groundwater.py)",
   })),
+  {
+    id: "chennai:cmwssb-ward-loggers",
+    cityId: "chennai",
+    table: "groundwater_dwlr_daily",
+    dateColumn: "reading_date",
+    cityColumn: "city_id",
+    maxAgeDays: 7, // daily, from the local scheduled job; a few loggers lag a week
+    note: "CMWSSB ward water-level loggers (scrape_cmwssb_dwlr.py)",
+  },
 ];
 
 // Edition-watches (did UPSTREAM publish something new?) do not belong here -

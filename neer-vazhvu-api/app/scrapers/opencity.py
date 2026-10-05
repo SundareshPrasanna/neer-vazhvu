@@ -82,6 +82,8 @@ def _parse_depth(value: Any) -> float | None:
     """Parse a depth measurement."""
     if value is None or value == "" or value == "NA" or value == "N/A":
         return None
+    if str(value).strip().upper() == "GL":  # water at ground level
+        return 0.0
     try:
         return float(str(value))
     except (ValueError, TypeError):
@@ -129,6 +131,10 @@ async def fetch_groundwater(year: int) -> list[GroundwaterRecord]:
                     "S. No.",
                     "S. No",
                     "Sl.No.",
+                    # The depot number is the ward number. Wards 168 and 169
+                    # carry no S.No. in any year; S.No. stays first because
+                    # 2021 prints ward 81's depot as 86.
+                    "Dept No.",
                 ],
             )
         )
