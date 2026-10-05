@@ -69,6 +69,13 @@ number when the serial is blank. Cells reading `GL` (water at ground level, 21
 in 2021, most in November after the floods) are now read as 0 m rather than
 dropped.
 
+OpenCity's monthly value is the loggers' month-end reading. On the 1,537
+ward-months both cover (January to August 2021, loggers with at least 15
+measured days that month), OpenCity differs from the last day's logger value
+by a median of 0.07 m, with 80% within 0.25 m; against the monthly mean the
+median difference is 0.20 m. A month-end history pulled from the portal
+therefore continues OpenCity's series like for like.
+
 ### IN-GRES taluk names for Chennai
 
 Chennai's assessment units are matched by area, not by name. In the 2022-23,
