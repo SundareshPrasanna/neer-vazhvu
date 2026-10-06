@@ -469,6 +469,7 @@ export const translations: Record<string, TranslationEntry> = {
   "gw_page.depth_toggle": { en: "Depth",                          ta: "ஆழம்", kn: "ಆಳ" },
   "gw_page.exploit_toggle": { en: "Exploitation",                  ta: "சுரண்டல்", kn: "ಶೋಷಣೆ" },
   "gw_page.source_cgwb": { en: "Source: CGWB via India WRIS",    ta: "ஆதாரம்: CGWB, India WRIS வழி", kn: "ಮೂಲ: CGWB, India WRIS ಮೂಲಕ" },
+  "gw_page.source_prefix": { en: "Source:", ta: "ஆதாரம்:", kn: "ಮೂಲ:" },
 
   // ── GW Block Exploitation ──────────────────────────────────────────────────
   "gw_block.safe": { en: "Safe",                         ta: "பாதுகாப்பான", kn: "ಸುರಕ್ಷಿತ" },

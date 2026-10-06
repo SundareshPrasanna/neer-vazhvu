@@ -85,4 +85,33 @@ def test_wris_daily_mean_drops_placeholders():
         {"stationCode": "K1", "dataTime": f"2026-04-27T{h}:00:00", "dataValue": v}
         for h, v in [("00", 1.0), ("06", 49.16), ("12", 1.0), ("18", 51.87)]
     ]
-    assert [r.depth_to_water_m for r in _deduplicate_daily(raw)] == [49.16]
+    # 51.87 m is the same deep well, not a sensor error; the old 50 m cut dropped it.
+    assert [r.depth_to_water_m for r in _deduplicate_daily(raw)] == [50.515]
+
+
+def test_deep_borewell_reading_survives():
+    rows = [
+        _row("Kadugodi_1", "24-09-2026 00:00", "-118.6"),
+        _row("Kadugodi_1", "25-09-2026 00:00", "-120.0"),
+        _row("Kadugodi_1", "26-09-2026 00:00", "-121.4"),
+    ]
+    assert (
+        daily_means(rows, *WINDOW)[(("kadugodi1", "CGWB"), date(2026, 9, 25))] == -120.0
+    )
+
+
+def test_envelope_reads_each_station_in_its_own_sign():
+    # One station publishes depth positive, the other negative; 230 m is outside
+    # the envelope in either convention, and +3.1 in a 9 m-deep negative-sign
+    # station is a sign-flipped record.
+    rows = [
+        _row("Pos", "25-09-2026 00:00", "9.2"),
+        _row("Pos", "25-09-2026 06:00", "230.0"),
+        _row("Neg", "25-09-2026 00:00", "-9.0"),
+        _row("Neg", "25-09-2026 06:00", "-9.4"),
+        _row("Neg", "25-09-2026 12:00", "3.1"),
+    ]
+    assert daily_means(rows, *WINDOW) == {
+        (("pos", "CGWB"), date(2026, 9, 25)): 9.2,
+        (("neg", "CGWB"), date(2026, 9, 25)): -9.2,
+    }

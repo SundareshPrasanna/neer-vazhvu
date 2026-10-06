@@ -181,16 +181,16 @@ async def _step_fetch_weather() -> dict:
     return {"rows_affected": len(rows)}
 
 
-async def _step_fetch_opencity() -> dict:
-    """Step 3: Fetch OpenCity groundwater (only runs days 1-3 of month)."""
-    today = ist_today()
-    if today.day > 3:
-        return {"rows_affected": 0}
+async def _step_fetch_opencity(years: list[int] | None = None) -> dict:
+    """Step 3: Fetch OpenCity groundwater: the most recent year on days 1-3 of
+    the month, or the years named."""
+    if years is None:
+        if ist_today().day > 3:
+            return {"rows_affected": 0}
+        years = [max(GROUNDWATER_RESOURCES.keys())]
 
     supabase = get_supabase()
-    # Fetch the most recent year available
-    latest_year = max(GROUNDWATER_RESOURCES.keys())
-    records = await fetch_groundwater(latest_year)
+    records = [r for year in years for r in await fetch_groundwater(year)]
 
     rows = [
         {

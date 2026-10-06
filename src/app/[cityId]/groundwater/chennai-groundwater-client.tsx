@@ -81,6 +81,7 @@ function GroundwaterPageContent() {
   const [data, setData] = useState<GroundwaterApiResponse | null>(null);
   const [riskApiData, setRiskApiData] = useState<RiskApiResponse | null>(null);
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
+  const [blocksSource, setBlocksSource] = useState<string | null>(null);
   const [wrisStations, setWrisStations] = useState<WrisStation[]>([]);
   const [selectedWard, setSelectedWard] = useState<GroundwaterWard | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<GWBlock | null>(null);
@@ -98,7 +99,7 @@ function GroundwaterPageContent() {
     Promise.all([
       fetchJson<GroundwaterApiResponse>("/api/groundwater"),
       fetchJson<RiskApiResponse>("/api/groundwater/risk"),
-      fetchJson<{ blocks: GWBlock[] }>(gwrBlocksUrl(cityId)),
+      fetchJson<{ blocks: GWBlock[]; source?: string }>(gwrBlocksUrl(cityId)),
       fetchJson<WrisStationsResponse>(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
         .catch(() => ({ stations: [], totalStations: 0 }) as WrisStationsResponse),
     ])
@@ -106,6 +107,7 @@ function GroundwaterPageContent() {
         setData(gw);
         setRiskApiData(risk);
         setBlocks(gwrBlocks.blocks ?? []);
+        setBlocksSource(gwrBlocks.source ?? null);
         setWrisStations(wris.stations ?? []);
         setLoading(false);
 
@@ -169,6 +171,9 @@ function GroundwaterPageContent() {
   const isStale = monthsStale > 6;
 
   const stressedCount = data.summary.stressed + data.summary.critical + data.summary.crisis;
+  const blocksSourceLabel = blocksSource
+    ? `${t("gw_page.source_prefix")} ${blocksSource}`
+    : t("gw_page.source_cgwb");
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -176,7 +181,7 @@ function GroundwaterPageContent() {
       <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-2 flex flex-wrap gap-x-6 gap-y-1 items-center text-sm shrink-0">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
           {viewMode === "exploitation"
-            ? t("gw_page.source_cgwb")
+            ? blocksSourceLabel
             : t("context.gw_stress")
                 .replace("{stressedCount}", String(stressedCount))
                 .replace("{avg}", String(data.cityAverage ?? "-"))
@@ -228,7 +233,7 @@ function GroundwaterPageContent() {
         <MapInfoButton className="absolute top-20 left-2.5 z-[1000]">
           {viewMode === "exploitation" ? (
             <div className="text-xs text-slate-500 dark:text-slate-400">
-              {t("gw_page.source_cgwb")}
+              {blocksSourceLabel}
             </div>
           ) : (
             <>
@@ -361,6 +366,7 @@ function GroundwaterPageContent() {
           <BlockDetailPanel
             block={selectedBlock}
             onClose={() => setSelectedBlock(null)}
+            source={blocksSource}
           />
         </BottomSheet>
       )}

@@ -8,9 +8,11 @@ import { useLanguage } from "@/lib/i18n/context";
 interface BlockDetailPanelProps {
   block: GWBlock;
   onClose: () => void;
+  /** The blocks file's own `source`; the generic CGWB line when absent. */
+  source?: string | null;
 }
 
-export function BlockDetailPanel({ block, onClose }: BlockDetailPanelProps) {
+export function BlockDetailPanel({ block, onClose, source }: BlockDetailPanelProps) {
   const { t } = useLanguage();
   const { latest, history } = block;
 
@@ -126,7 +128,7 @@ export function BlockDetailPanel({ block, onClose }: BlockDetailPanelProps) {
           </p>
         )}
         <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
-          {t("gw_page.source_cgwb")}
+          {source ? `${t("gw_page.source_prefix")} ${source}` : t("gw_page.source_cgwb")}
         </p>
       </div>
     </div>

@@ -15,7 +15,7 @@ from datetime import date, datetime
 
 import httpx
 
-from app.scrapers.wris import is_reading
+from app.scrapers.well_levels import keep_mask
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ def daily_means(
     rows: list[dict], start_date: date, end_date: date
 ) -> dict[tuple[tuple[str, str], date], float]:
     """(station_key, day) -> mean level, in the sign the portal publishes."""
-    groups: dict[tuple[tuple[str, str], date], list[float]] = defaultdict(list)
+    by_station: dict[tuple[str, str], list[tuple[date, float]]] = defaultdict(list)
     for r in rows:
         level_field = next((k for k in reversed(list(r)) if "Level" in k), None)
         try:
@@ -46,8 +46,13 @@ def daily_means(
             day = datetime.strptime(r["Data Acquisition Time"], "%d-%m-%Y %H:%M").date()
         except (KeyError, TypeError, ValueError):
             continue
-        if is_reading(value) and start_date <= day <= end_date:
-            groups[station_key(r["Station"], r["Agency"]), day].append(value)
+        if start_date <= day <= end_date:
+            by_station[station_key(r["Station"], r["Agency"])].append((day, value))
+    groups: dict[tuple[tuple[str, str], date], list[float]] = defaultdict(list)
+    for key, readings in by_station.items():
+        for (day, value), keep in zip(readings, keep_mask([v for _, v in readings])):
+            if keep:
+                groups[key, day].append(value)
     return {k: round(sum(v) / len(v), 3) for k, v in groups.items()}
 
 

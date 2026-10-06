@@ -32,7 +32,7 @@ graph TB
     end
 
     subgraph Database ["Supabase (PostgreSQL)"]
-        Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>groundwater_wris<br/>water_bodies_census"]
+        Core["Core Tables<br/>reservoir_daily<br/>weather_daily<br/>groundwater_monthly<br/>groundwater_wris<br/>groundwater_dwlr_daily<br/>water_bodies_census"]
         Computed["Computed Tables<br/>water_estimate_daily<br/>reservoir_forecast<br/>ward_risk_score<br/>daily_briefing<br/>ward_narrative"]
         GEE["GEE Tables<br/>water_body_satellite_summary<br/>reservoir_catchment_context"]
         RichStatic["Rich-Body Static Files<br/>(public/data/rich-bodies/...)<br/>per-body manifests, JRC + DW trends,<br/>Open Buildings + Overture counts,<br/>yearly chips, cumulative tints"]
@@ -249,6 +249,7 @@ flowchart LR
 | Fetch Weather | open-meteo.com (primary) / power.larc.nasa.gov (fallback) | `weather_daily` | Daily (zero lag) |
 | Fetch OpenCity | data.opencity.in | `groundwater_monthly` | Monthly (days 1-3) |
 | Fetch WRIS Stations | indiawris.gov.in Ground Water Level API | `groundwater_wris` (and `groundwater_wris_latest` view with stuck/stale sensor quality flag) | Daily |
+| CMWSSB ward loggers | CMWSSB online monitoring system (local scheduled job, `scrape_cmwssb_dwlr.py`; raw answers archived before parsing) | `groundwater_dwlr_daily` (service-role only) | Daily |
 | Compute Estimate | Aggregated storage + inflow | `water_estimate_daily` | Daily |
 | Forecast | StatsForecast ARIMAX | `reservoir_forecast` | Daily |
 | Risk Scores | Groundwater + reservoir stress | `ward_risk_score` | Monthly |
@@ -305,6 +306,17 @@ erDiagram
         text ward_name
         text zone_name
         float depth_to_water_m
+    }
+
+    groundwater_dwlr_daily {
+        text city_id PK
+        text station_id PK "CMWSSB-001 .. CMWSSB-200"
+        date reading_date PK
+        int ward
+        int zone
+        float depth_m_bgl "null when not_measured or dry"
+        text status "measured / stuck / not_measured / dry"
+        text raw_ref "archived answer the value came from"
     }
 
     groundwater_wris {

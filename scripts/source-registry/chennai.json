@@ -139,6 +139,25 @@
       }
     },
     {
+      "id": "cmwssb-ward-loggers",
+      "scope": "chennai",
+      "publisher": "CMWSSB (Chennai Metropolitan Water Supply and Sewerage Board)",
+      "url": "http://111.93.109.166/CMWSSB-web/onlineMonitoringSystem/waterLevel",
+      "license": "no open licence stated: the portal footer reads 'Copyright 2020. Chennai Metropolitan Water Supply and Sewerage Board. All rights reserved.' The readings are held service-role only (migration 053, no public policy) until a publishing decision is recorded",
+      "type": "api",
+      "cadence": "daily (two readings a day per logger)",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "neer-vazhvu-api/scripts/scrape_cmwssb_dwlr.py",
+        "supabase:groundwater_dwlr_daily"
+      ],
+      "refreshMethod": "local scheduled job: scrape_cmwssb_dwlr.py daily (each logger's latest reading, saved raw, then the last 30 days loaded); --history for month-end backfill",
+      "notes": "CMWSSB's 200 ward water-level loggers, one per GCC ward, read twice a day since 2020-08-18 (depot number = ward number in the 2011-era numbering; CMWSSB's Area N is Zone N, with wards 22, 168, 169, 181 and 182 still on the zones GCC corrected in 2022). Linked from cmwssb.tn.gov.in. The only dependable call is getWaterlevel, which returns the latest reading BEFORE the date asked (about 7 s a call; a logger with no recent reading can hold it past a minute). The report pages list every reading but on this host the all-depot day report never returns and the one-depot range report answers 'No record found' for most requests (tested 2026-10-05). 122.183.188.248:8080, the address in older write-ups, is a test copy with identical values frozen at 2021-09-06; its 386 day reports (2020-08-17 to 2021-09-06, all depots, twice daily) were saved on 2026-10-05 and are the only full-resolution record of the first year. History after 2021-09 can only be had as month-end readings through getWaterlevel (--history); a run on 2026-10-05 was stopped when calls began to time out at 60 s, so that history is better requested from CMWSSB as an export. Loggers write 0.000 for a missed reading, and several read positive while being commissioned in 2020; both are dropped in QC. OpenCity's ward-wise monthly series (opencity-chennai-groundwater) credits cmwssb.tn.gov.in and stops at 2024-03; this portal continues it."
+    },
+    {
       "id": "datagovin-waterbodies-census-tn",
       "scope": "chennai",
       "publisher": "Ministry of Jal Shakti (data.gov.in)",

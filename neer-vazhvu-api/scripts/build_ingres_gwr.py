@@ -87,6 +87,7 @@ STATE_UUIDS = {
     # not from either bundle table.
     "GUJARAT": "8fd29251-6e20-4f33-9a96-f47cab45eb13",
     "KARNATAKA": "eaec6bbb-a219-415f-bdba-991c42586352",
+    "TAMILNADU": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b",
 }
 
 # Scope kinds must agree with schemas/nvdm/scopes.json or the artifact fails
@@ -300,6 +301,50 @@ CITIES = {
             "south": "Bangalore-South",
             "east": "Bangalore-East",
             "city": "Bangalore-City",
+        },
+    },
+    # Chennai extends the WRIS series in public/data/gwr-blocks.json. Its units
+    # are matched by AREA, never by name: in the 2022-23, 2023-24 and 2024-25
+    # editions IN-GRES labels Chennai's taluks one place down the alphabet from
+    # Madhavaram on (the 7,068 ha unit, Chennai's largest, is labelled
+    # PURASAIVAKKAM; 'KOLATHUR' stands in for Velachery), while 2025-26 labels
+    # the same areas by their true names. The WRIS series already carries the
+    # true names, so those editions re-run here with no change.
+    # 2025-26 is left out: it assesses 17 units (Kolathur, 700 ha, carved out of
+    # Ayanavaram; Thiruvottiyur 285 ha smaller) and the 16 polygons here are the
+    # old set.
+    "chennai": {
+        "state": "TAMILNADU",
+        "state_label": "Tamil Nadu",
+        "source_id": "ingres-gw-assessment-tn",
+        "blocks_file": "gwr-blocks.json",
+        # The WRIS years before it are labelled by end year (2020, 2022), so
+        # the IN-GRES editions are too; a mixed "2022, 2022-23" reads as a repeat.
+        "end_year_labels": True,
+        "extend": {
+            "state": "TAMILNADU",
+            "district": "CHENNAI",
+            "district_uuid": "8801b0c2-0a9b-4189-875a-de0be55f3c52",
+        },
+        "years": ["2022-2023", "2023-2024", "2024-2025"],
+        # area.total.totalArea (ha, rounded) -> the block name the series uses.
+        "unit_areas": {
+            1771: "Alandur",
+            5705: "Ambattur",
+            1555: "Aminjikarai",
+            1529: "Ayanavaram",
+            1767: "Egmore",
+            2138: "Guindy",
+            3613: "Madhavaram",
+            3268: "Maduravoyal",
+            1437: "Mambalam",
+            2228: "Mylapore",
+            1857: "Perambur",
+            1728: "Purasaivakkam",
+            7068: "Sholinganallur",
+            5588: "Thiruvottiyur",
+            1302: "Tondiarpet",
+            2077: "Velacheri",
         },
     },
 }
@@ -608,7 +653,7 @@ def build_extended(city: str, cfg: dict) -> int:
     vintages, then move the block polygons' attributes to the latest edition
     (the ward profiles read them). Any change to an already-published value is
     printed, never applied silently."""
-    path = DATA_DIR / f"gwr-blocks-{city}.json"
+    path = DATA_DIR / cfg.get("blocks_file", f"gwr-blocks-{city}.json")
     geo_path = REPO_ROOT / "public" / "geojson" / f"{city}-gwr-blocks.geojson"
     doc = json.loads(path.read_text())
     geo = json.loads(geo_path.read_text())
@@ -627,9 +672,13 @@ def build_extended(city: str, cfg: dict) -> int:
         end = int(year.split("-")[1])
         for r in rows:
             raw = r.get("locationName") or ""
-            name = next(
-                (v for k, v in cfg["unit_names"].items() if k in raw.lower()), None
-            )
+            if "unit_areas" in cfg:
+                area = ((r.get("area") or {}).get("total") or {}).get("totalArea")
+                name = cfg["unit_areas"].get(round(area or 0))
+            else:
+                name = next(
+                    (v for k, v in cfg["unit_names"].items() if k in raw.lower()), None
+                )
             if name not in blocks:
                 print(
                     f"  ! {year}: unknown unit {raw!r}, no polygon for it",
@@ -654,6 +703,8 @@ def build_extended(city: str, cfg: dict) -> int:
                 "availability_ham": _r1(avail),
                 "draft_total_ham": _r1(draft),
             }
+            if cfg.get("end_year_labels"):
+                del entry["year_label"]
             hist = blocks[name]["history"]
             old = next((h for h in hist if h["year"] == end), None)
             if old and any(old.get(k) != entry[k] for k in entry if k != "year_label"):
