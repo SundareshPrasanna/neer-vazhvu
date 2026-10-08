@@ -3,5 +3,5 @@
   "regions": [
     "bom1"
   ],
-  "ignoreCommand": "[ \"$VERCEL_ENV\" = \"production\" ] || { printf '%s\\n' \"$VERCEL_GIT_COMMIT_MESSAGE\" | head -n 1 | grep -qF '[preview]' && exit 1; exit 0; }; [ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] || exit 1; git fetch -q --depth=1 \"https://github.com/$VERCEL_GIT_REPO_OWNER/$VERCEL_GIT_REPO_SLUG.git\" \"$VERCEL_GIT_PREVIOUS_SHA\" || exit 1; git diff --quiet FETCH_HEAD HEAD -- . ':(exclude)public/data' ':(exclude)public/geojson' ':(exclude)docs' || exit 1"
+  "ignoreCommand": "bash scripts/vercel-ignore-build.sh"
 }
