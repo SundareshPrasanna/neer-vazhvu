@@ -152,6 +152,17 @@ INLINE_LICENCE_ALLOWLIST = {
     # document with no registry id of its own (the board publishes it as a
     # standalone per-office PDF, not through a feed we track).
     "government register, cited with attribution",
+    # Urban local bodies' own web pages and SIPCOT's projects page (Krishnagiri
+    # map): closed, dated reads of a page with no feed to register; the figures
+    # are cited as the page prints them.
+    "government page, cited with attribution",
+    # Filings before the National Green Tribunal (joint committee reports, a
+    # board's report of analysis, CPCB's reply): public judicial records served
+    # from greentribunal.gov.in, each a closed, dated document with no feed.
+    "public judicial record, cited with attribution",
+    # Trade press named only as a secondary source (Hosur UGSS plant sites and
+    # funding); the primary figures come from the corporation's own sheet.
+    "trade press report, cited with attribution",
     "portal label only (OpenCity dataset page); no upstream grant established",
     "public policy document, cited with attribution",
     # Closed partner deliveries (Paani Earth GeoPackages, Kabini build): the
