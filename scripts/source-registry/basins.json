@@ -776,7 +776,9 @@
         "public/data/basins/krishnagiri-rivers/canals.geojson",
         "public/data/basins/krishnagiri-rivers/command-areas.geojson",
         "public/data/basins/krishnagiri-rivers/gauging-stations.geojson",
-        "public/data/basins/krishnagiri-rivers/realtime-stations.geojson"
+        "public/data/basins/krishnagiri-rivers/realtime-stations.geojson",
+        "public/data/basins/krishnagiri-rivers/monitoring-points.geojson",
+        "public/data/basins/krishnagiri-rivers/water-supply.geojson"
       ],
       "refreshMethod": "scripts/build_erode_rivers_basin.py or scripts/build_krishnagiri_rivers_basin.py (delete .cache/<basin>/ to re-fetch), then the basin's nvdm_envelope_*.py only if the source list changed",
       "notes": "Same portal as atlas.json's tngis-generic-viewer-water-bodies, whose note quotes the portal's terms; publication is with TNGIS's permission (the date and form of the permission are to be recorded here). Layers read: admin_master district + taluk boundaries, generic_viewer block_boundary, tnrd panchayat_boundary, sub_basin, microwatersheds, all_water_bodies, reservoir, mines and industry_cad_matched; named tanks arrive through the cauvery-tn ingest. The industry register states no publisher or date: its unit ids follow TNPCB's consent-register format (category letter, registration year 2015 to 2024, office code PND or EDL), and it holds only units matched to a land parcel, so counts are lower bounds. The tngis:, TNGIS_V2: and hilaris: workspaces error (their database does not exist): use generic_viewer:. generic_viewer:raingauge is NOT used - it misplaces stations by tens of km."
