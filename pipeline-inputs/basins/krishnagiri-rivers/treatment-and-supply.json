@@ -1,0 +1,184 @@
+{
+ "_doc": [
+  "Treatment and urban water-supply facts for the Krishnagiri map, from the urban local bodies' own progress sheets, the industry register and SIPCOT's projects page. Every figure is as the cited page prints it on the date read; nothing is reconciled across sources.",
+  "Positions: the Santhapuram STP site is the Santhapuram revenue village (TNGIS generic_viewer:revenue_villages, Hosur taluk, LGD 933511) centroid; the 20.13 MLD STP's site village is printed only as 'Ramanaikken' (trade press) and matches no revenue village in the TNGIS register, so it is carried on the Hosur Corporation record rather than as a point. ULB records sit on the OSM place node of the town.",
+  "The register's 'Sewage treatment plant of Krishnagiri Municipality' (consent 2017) keeps its register position; its operating status is unverified: the municipality's sewerage page says the town has no underground drainage, while an NHAI permission request shows a sewer line being laid along NH-48."
+ ],
+ "schemaVersion": 1,
+ "id": "krishnagiri-rivers-treatment-and-supply",
+ "review": {
+  "status": "proposed",
+  "extractedBy": "read from the cited pages, 2026-10-08 and 2026-10-09",
+  "verifiedBy": null,
+  "verifiedAt": null
+ },
+ "sources": {
+  "hosur-ugss": {
+   "title": "Hosur City Municipal Corporation, 'UGSS to Hosur Corporation in Krishnagiri District', progress as on 17.06.2026 (sewerage page)",
+   "publisher": "Hosur City Municipal Corporation, Commissionerate of Municipal Administration, Government of Tamil Nadu",
+   "url": "https://www.tnurbantree.tn.gov.in/hosur/sewerage/",
+   "as_of": "2026-06-17",
+   "retrieved": "2026-10-08"
+  },
+  "hosur-ws": {
+   "title": "Hosur City Municipal Corporation, 'Water Supply Details', dated 17.06.2026 (PDF ws_170626.pdf)",
+   "publisher": "Hosur City Municipal Corporation, Commissionerate of Municipal Administration, Government of Tamil Nadu",
+   "url": "https://www.tnurbantree.tn.gov.in/hosur/wp-content/uploads/sites/146/2026/06/ws_170626.pdf",
+   "as_of": "2026-06-17",
+   "retrieved": "2026-10-08"
+  },
+  "krishnagiri-sewerage": {
+   "title": "Krishnagiri Municipality, sewerage page",
+   "publisher": "Krishnagiri Municipality, Commissionerate of Municipal Administration, Government of Tamil Nadu",
+   "url": "https://www.tnurbantree.tn.gov.in/krishnagiri/sewerage/",
+   "as_of": "2026-10-08",
+   "retrieved": "2026-10-08"
+  },
+  "sipcot-projects": {
+   "title": "SIPCOT, Projects page: TTRO plant at Hosur",
+   "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
+   "url": "https://sipcotweb.tn.gov.in/Projects",
+   "as_of": "2026-10-08",
+   "retrieved": "2026-10-08"
+  },
+  "indian-infrastructure-2024-12": {
+   "title": "Indian Infrastructure, 'Tamil Nadu government lays foundation stone for underground sewerage scheme in Hosur', 26 December 2024 (trade press, names the two STP sites and the funding)",
+   "publisher": "Indian Infrastructure (India Infrastructure Publishing)",
+   "url": "https://indianinfrastructure.com/2024/12/26/tamil-nadu-government-lays-foundation-stone-for-underground-sewerage-scheme-in-hosur/",
+   "as_of": "2024-12-26",
+   "retrieved": "2026-10-08",
+   "role": "secondary"
+  }
+ },
+ "hosurUgss": {
+  "scheme": "Underground sewerage scheme to Hosur City Municipal Corporation",
+  "progressAsOn": "2026-06-17",
+  "sanctions": [
+   "AS G.O.Ms.No. 1 / MA&WS (MA2) / dt: 02.01.2015 for Rs.283.94 crore",
+   "RAS G.O.Ms.No. 7 / MA&WS (MA2) / dt: 20.01.2023 for Rs.574.96 crore",
+   "RAS G.O.Ms.No. 143 / MA&WS (MA2) / dt: 08.11.2023 for Rs.582.54 crore",
+   "Lr.No.0611/F.UGSS to Hosur-STP-Pkg-III/DO2/CE/VLR/2024/dt.06.11.2024 for Rs.107.03 crore (STP package)"
+  ],
+  "costCrore": 582.54,
+  "expenditureCrore": 135.81,
+  "expenditureShare": "23.31%",
+  "populationBenefitedLakh": {
+   "present": 2.25,
+   "2039": 2.97,
+   "2054": 3.92
+  },
+  "sewageMld": {
+   "present": 24.727,
+   "2054": 43.117
+  },
+  "packages": [
+   {
+    "name": "Package I (zones 1 to 5), collection network",
+    "physicalProgress": "35%"
+   },
+   {
+    "name": "Package II (zones 6 to 11), collection network",
+    "physicalProgress": "35%"
+   },
+   {
+    "name": "Package III, the two treatment plants",
+    "physicalProgress": "63%"
+   }
+  ],
+  "plants": [
+   {
+    "key": "hosur-stp-santhapuram",
+    "name": "Hosur Corporation STP, Santhapuram (12.51 MLD, under construction)",
+    "capacityMld": 12.51,
+    "technology": "Sequencing batch reactor",
+    "siteAsPrinted": "Santhapuram (trade press); the corporation's sheet prints only the capacity",
+    "progressAsPrinted": "Civil works completed. Decanter erection work completed. Fine and medium screen erection completed.",
+    "position": {
+     "basis": "tngis-village",
+     "ref": "Santhapuram revenue village, Hosur taluk (TNGIS, LGD 933511), centroid",
+     "lat": 12.76401,
+     "lon": 77.82179
+    }
+   },
+   {
+    "key": "hosur-stp-20mld",
+    "name": "Hosur Corporation STP, 20.13 MLD (under construction)",
+    "capacityMld": 20.13,
+    "technology": "Sequencing batch reactor",
+    "siteAsPrinted": "'Ramanaikken' (trade press, as printed); no revenue village of that name in the TNGIS register, so no point is drawn",
+    "progressAsPrinted": "SBR basin 1 and 2: walkway concrete under progress. CCT: second-lift wall concrete completed."
+   }
+  ],
+  "fundingAsReported": "AMRUT 2.0 with KfW Development Bank finance, on a design, build, operate and transfer basis with ten years' operation (trade press, December 2024 and April 2025)",
+  "coverageAsReported": "35 of the corporation's 45 wards, wholly or partly, in this phase; the rest in a second phase (trade press, December 2024)"
+ },
+ "hosurWaterSupply": {
+  "dated": "2026-06-17",
+  "areaSqKm": 72.41,
+  "population": 379720,
+  "wards": 45,
+  "sourcesMld": {
+   "Hogenakkal scheme": 10.09,
+   "Local borewells": 20.25,
+   "Total": 30.34
+  },
+  "presentSupplyMld": 30.34,
+  "presentLpcd": 80,
+  "requirementMldForUgss": 51.26,
+  "requirementLpcd": 135,
+  "houseServiceConnections": {
+   "domestic": 42556,
+   "nonDomestic": 202,
+   "total": 42758,
+   "propertyTaxAssessments": 95792,
+   "shareOfAssessments": "43%"
+  },
+  "overheadTanks": 103,
+  "sumps": 20,
+  "publicFountains": 161,
+  "miniPowerPumps": 12,
+  "powerPumps": 594,
+  "boreWells2025_26": "26 of 27 bore wells erected under the 15th Finance Commission grant (Rs.6.49 crore) and 16 under the general fund (Rs.1.60 crore); 2.25 MLD sourced through them",
+  "position": {
+   "basis": "osm-place",
+   "ref": "Hosur city (OSM node 983364958)",
+   "lat": 12.73288,
+   "lon": 77.83095
+  }
+ },
+ "krishnagiriMunicipality": {
+  "sewerageAsPrinted": "There is no under ground drainage system in Krishnagiri Municipality.",
+  "septicTanks": 20125,
+  "lowCostSanitationUnits": 498,
+  "dryLatrines": 220,
+  "publicConveniences": "21 (84 seats)",
+  "populationWithoutSafeDisposal": "about 25%; 75% on septic tanks",
+  "registerStp": {
+   "registerUnitId": "R17HSR9987855",
+   "statusNote": "On the TNPCB register as 'Sewage treatment plant of Krishnagiri Municipality' (Red, Large, consent year 2017, Agasipalli); the municipality's sewerage page says the town has no underground drainage, and a sewer line along NH-48 is being laid (NHAI permission request). Whether the plant operates is not stated by any page read."
+  },
+  "position": {
+   "basis": "osm-place",
+   "ref": "Krishnagiri town (OSM place node)",
+   "lat": 12.51888,
+   "lon": 78.22065
+  }
+ },
+ "sipcotTtro": {
+  "name": "SIPCOT TTRO plant, Hosur (20 MLD)",
+  "asPrinted": "TTRO Plant, Hosur, Krishnagiri: capacity 20 MLD, investment Rs.182 crore, inaugurated by the Chief Minister on 13/06/2023; 'With a planned capacity of 20 MLD, this facility aims to provide treated water sourced from Kelavarapalli Dam to cater to the water needs of the Hosur SIPCOT Industrial Estate'; serves Hosur SIPCOT (2,092 acres), Shoolagiri SIPCOT (989 acres) and a forthcoming 1,800-acre park, about 800 units",
+  "attachTo": [
+   "hosur_phase1",
+   "hosur_phase2",
+   "Shoolagiri_Future_Mobility_Park",
+   "Shoolagiri_General_Engineering"
+  ],
+  "note": "SIPCOT's page gives no site for the plant, so the fact is carried on the estates it serves rather than drawn as a point."
+ },
+ "tsdf": {
+  "registerUnitId": "R19HSR28989958",
+  "typeCode": "1072",
+  "kind": "tsdf",
+  "label": "Common hazardous-waste treatment, storage and disposal facility (TSDF)"
+ }
+}

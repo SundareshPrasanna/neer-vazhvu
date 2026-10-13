@@ -53037,7 +53037,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'erode-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_krishnagiri_rivers_basin.py"
+   ],
    "headwaters_sources": [
     "sipcot-gis-geoserver",
     "tngis-open-geoserver"
@@ -54295,7 +54297,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'erode-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_krishnagiri_rivers_basin.py"
+   ],
    "headwaters_sources": [
     "nmcg-ngt-mpr-listing",
     "tngis-open-geoserver"
@@ -57522,7 +57526,7 @@
    "family": "basins",
    "scope": "krishnagiri-rivers",
    "dataset": "industrial-estates",
-   "bytes": 14744,
+   "bytes": 17635,
    "schema": {
     "kind": "FeatureCollection",
     "features": 8,
@@ -57533,6 +57537,7 @@
     "property_keys": [
      "agency",
      "areaAcres",
+     "industrialWaterSupply",
      "kind",
      "name",
      "shedId"
@@ -57541,7 +57546,9 @@
    "consumers": [
     "(convention: registry-driven loader for 'krishnagiri-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_krishnagiri_rivers_basin.py"
+   ],
    "headwaters_sources": [
     "sipcot-gis-geoserver",
     "tngis-open-geoserver"
@@ -57559,10 +57566,10 @@
    "family": "basins",
    "scope": "krishnagiri-rivers",
    "dataset": "industries",
-   "bytes": 985874,
+   "bytes": 985272,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 1694,
+    "features": 1693,
     "geometries": [
      "Point"
     ],
@@ -57604,7 +57611,7 @@
    "family": "basins",
    "scope": "krishnagiri-rivers",
    "dataset": "inventory",
-   "bytes": 24469,
+   "bytes": 30505,
    "schema": {
     "kind": "object",
     "keys": [
@@ -58131,6 +58138,59 @@
    "flags": []
   },
   {
+   "path": "public/data/basins/krishnagiri-rivers/monitoring-points.geojson",
+   "family": "basins",
+   "scope": "krishnagiri-rivers",
+   "dataset": "monitoring-points",
+   "bytes": 41744,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 19,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "agency",
+     "dataUrl",
+     "hasReadings",
+     "kind",
+     "latestBod",
+     "latestDissolvedOxygen",
+     "latestFecalColiform",
+     "name",
+     "positionNote",
+     "purpose",
+     "river",
+     "samplesFiled",
+     "samplingBy",
+     "shedId",
+     "stationKey"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'krishnagiri-rivers')"
+   ],
+   "producer_refs": [
+    "scripts/build_basin_wq_param_packs.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass",
+    "tngis-open-geoserver"
+   ],
+   "licenses": [
+    "ODbL 1.0",
+    "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/basins/krishnagiri-rivers/quarries.geojson",
    "family": "basins",
    "scope": "krishnagiri-rivers",
@@ -58207,11 +58267,48 @@
    "family": "basins",
    "scope": "krishnagiri-rivers",
    "dataset": "readings",
-   "bytes": 4162,
+   "bytes": 4007,
    "schema": {
     "kind": "object",
     "keys": [
      "dataset",
+     "nvdm",
+     "period",
+     "provenance",
+     "schemaVersion",
+     "scope",
+     "series",
+     "source",
+     "station"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'krishnagiri-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "nwic-nwdp-cwc-river-data",
+    "tnpcb-realtime-wq-dashboard"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "LICENCE UNVERIFIED - see notes. Public Tamil Nadu government dashboard with no reuse terms stated; its own page switches the download buttons off. Monthly means published with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/krishnagiri-rivers/readings/tnpcb-chokkarasanapalli.json",
+   "family": "basins",
+   "scope": "krishnagiri-rivers",
+   "dataset": "readings",
+   "bytes": 19767,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "insights",
      "nvdm",
      "period",
      "provenance",
@@ -58503,10 +58600,10 @@
    "family": "basins",
    "scope": "krishnagiri-rivers",
    "dataset": "treatment-plants",
-   "bytes": 1990,
+   "bytes": 5838,
    "schema": {
     "kind": "FeatureCollection",
-    "features": 1,
+    "features": 3,
     "geometries": [
      "Point"
     ],
@@ -58521,6 +58618,7 @@
      "sector",
      "shedId",
      "size",
+     "status",
      "taluk",
      "typeCode",
      "typeDescription",
@@ -58531,11 +58629,59 @@
    "consumers": [
     "(convention: registry-driven loader for 'krishnagiri-rivers')"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "scripts/build_krishnagiri_rivers_basin.py"
+   ],
    "headwaters_sources": [
     "tngis-open-geoserver"
    ],
    "licenses": [
+    "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution."
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/basins/krishnagiri-rivers/water-supply.geojson",
+   "family": "basins",
+   "scope": "krishnagiri-rivers",
+   "dataset": "water-supply",
+   "bytes": 4477,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 2,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "areaSqKm",
+     "asOn",
+     "boreWells2025_26",
+     "dataUrl",
+     "houseServiceConnections",
+     "kind",
+     "locationNote",
+     "name",
+     "overheadTanks",
+     "population",
+     "sewageTreatment",
+     "shedId",
+     "supplyLpcd",
+     "supplyMld",
+     "wards"
+    ]
+   },
+   "consumers": [
+    "(convention: registry-driven loader for 'krishnagiri-rivers')"
+   ],
+   "producer_refs": [],
+   "headwaters_sources": [
+    "osm-overpass",
+    "tngis-open-geoserver"
+   ],
+   "licenses": [
+    "ODbL 1.0",
     "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution."
    ],
    "accountability": "watched",
@@ -91165,7 +91311,7 @@
     "erode-rivers",
     "krishnagiri-rivers"
    ],
-   "bytes": 20032,
+   "bytes": 22923,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -91180,7 +91326,7 @@
     "krishnagiri-rivers",
     "mumbai-rivers"
    ],
-   "bytes": 2129082,
+   "bytes": 2128480,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -91214,7 +91360,7 @@
     "mumbai-rivers",
     "palakkad-rivers"
    ],
-   "bytes": 124324,
+   "bytes": 130360,
    "schema_variants": 5,
    "registered": true,
    "has_consumer": true
@@ -91248,17 +91394,18 @@
   {
    "family": "basins",
    "dataset": "monitoring-points",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "arkavathi",
     "chennai-rivers",
     "erode-rivers",
     "kabini",
+    "krishnagiri-rivers",
     "mumbai-rivers",
     "palakkad-rivers"
    ],
-   "bytes": 79982,
-   "schema_variants": 6,
+   "bytes": 121726,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
@@ -91383,7 +91530,7 @@
   {
    "family": "basins",
    "dataset": "readings",
-   "files": 51,
+   "files": 52,
    "scopes": [
     "arkavathi",
     "erode-rivers",
@@ -91392,8 +91539,8 @@
     "mumbai-rivers",
     "palakkad-rivers"
    ],
-   "bytes": 331475,
-   "schema_variants": 1,
+   "bytes": 351087,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -91564,8 +91711,8 @@
     "erode-rivers",
     "krishnagiri-rivers"
    ],
-   "bytes": 15682,
-   "schema_variants": 1,
+   "bytes": 19530,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -91579,6 +91726,18 @@
    "bytes": 7012,
    "schema_variants": 1,
    "registered": false,
+   "has_consumer": true
+  },
+  {
+   "family": "basins",
+   "dataset": "water-supply",
+   "files": 1,
+   "scopes": [
+    "krishnagiri-rivers"
+   ],
+   "bytes": 4477,
+   "schema_variants": 1,
+   "registered": true,
    "has_consumer": true
   },
   {
