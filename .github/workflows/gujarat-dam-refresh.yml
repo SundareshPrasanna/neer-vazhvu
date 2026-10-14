@@ -1,0 +1,110 @@
+# Daily refresh of the three dams behind Ahmedabad's supply (Sardar Sarovar,
+# Kadana, Dharoi) from the Gujarat water department's daily PDF report.
+# reservoir_daily_v2 is what the dashboard reads; public/data/ahmedabad-dam-storage.json
+# is the committed snapshot of the latest report.
+#
+# Unlike Pravah and BBMB, the department keeps every day's report at a dated
+# URL back to 2019-06-07, so a missed run loses nothing: each run re-reads the
+# last 7 days into Supabase, which fills any gap a failed or early run left.
+# A date with no report yet returns zero bytes and is skipped.
+#
+# The pull_request job parses today's report and writes nothing, so a change
+# to the scraper or this workflow proves on a runner that the host is reachable
+# and the layout still parses.
+name: Gujarat Dam Storage Refresh
+
+on:
+  schedule:
+    - cron: '30 5 * * *'   # 05:30 UTC = 11:00 IST, before the 12:00 IST freshness check
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/gujarat-dam-refresh.yml
+      - neer-vazhvu-api/scripts/scrape_gujarat_wrd_dams.py
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gujarat-dam-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install poppler (pdftotext) + supabase client
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+          pip install -q supabase
+
+      # Today's report if it is out, else yesterday's.
+      - name: Scrape the latest report
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          for attempt in 1 2 3; do
+            if python scripts/scrape_gujarat_wrd_dams.py --city ahmedabad \
+                --out ../public/data/ahmedabad-dam-storage.json --supabase; then
+              exit 0
+            fi
+            echo "attempt $attempt failed; retrying in 60s"
+            sleep 60
+          done
+          exit 1
+
+      - name: Re-read the last 7 days
+        working-directory: neer-vazhvu-api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python scripts/scrape_gujarat_wrd_dams.py --city ahmedabad \
+            --backfill-from "$(date -u -d '7 days ago' +%F)" --supabase
+
+      - name: Commit refreshed snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Direct pushes skip the PR gate, so the NVDM gate runs here against HEAD, after
+          # the catalogue so a new file is assessed; any failure aborts before commit.
+          python3 scripts/build_dataset_catalogue.py
+          bash scripts/nvdm-gate.sh HEAD public/data/ahmedabad-dam-storage.json
+          python3 scripts/validate_nvdm.py
+          python3 scripts/validate_nvdm.py --selftest
+          git add public/data/ahmedabad-dam-storage.json docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
+          if git diff --staged --quiet; then
+            echo "No storage change to commit"
+            exit 0
+          fi
+          git commit -m "Gujarat dam storage refresh ($(date -u +%Y-%m-%d))"
+          git pull --rebase origin main
+          git push
+
+  parse-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install poppler (pdftotext)
+        run: sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+
+      - name: Parse the latest report from a runner (no writes)
+        working-directory: neer-vazhvu-api
+        run: python scripts/scrape_gujarat_wrd_dams.py --city ahmedabad
