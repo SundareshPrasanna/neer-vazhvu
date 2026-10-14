@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 90 |
-| Routes a city deliberately does not ship | 40 |
-| Absences the product states on the page | 26 |
-| **Total** | **156** |
+| Routes a city deliberately does not ship | 44 |
+| Absences the product states on the page | 28 |
+| **Total** | **162** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -128,6 +128,10 @@ Derived by diffing each city against the union of every route any city ships, so
 
 | Scope | Subject | Reason |
 |---|---|---|
+| ahmedabad | allocations | No public document states how much Narmada or Mahi water Ahmedabad is entitled to. The mechanism exists - Gujarat sanctions municipal raw water each year with a 25% band either side, under a 3 Feb 2007 resolution and its 9 Sep 2008 clarification - but AMC's sanctioned quantity is not published, and an entitled-versus-received ledger cannot be drawn without the entitled half. AMC's draw by source is on the dashboard instead. |
+| ahmedabad | climate-risk | Buildable but not built. The sub-basin risk surface Chennai uses rests on HydroBASINS, a global product that also covers the Sabarmati, so this is a backlog item rather than a refusal. |
+| ahmedabad | shoreline | Ahmedabad is about 100 km inland from the Gulf of Khambhat; it has no coastline. |
+| ahmedabad | tanker | AMC publishes no tanker delivery register, booking ledger or price survey. The tanker documents in the research drop are AMC's own vehicle purchases (20 garden tankers of about 8,000 litres, and stainless-steel drinking-water bowsers), which say nothing about who receives water by tanker or at what price. |
 | bangalore | climate-risk | Not built for this city. |
 | bangalore | shoreline | Landlocked. |
 | chennai | tanker | Not built for this city. |
@@ -175,6 +179,8 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 
 | Scope | Subject | Reason |
 |---|---|---|
+| ahmedabad | UI language: gu | Advertised as coming soon and rendered as a disabled chip. The gu dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| ahmedabad | water-bodies catchment atlas | Ahmedabad has no cascade view. The cascade layer reconstructs chained tank systems, the Tamil and Bengaluru networks where each tank's overflow was built to feed the next. Ahmedabad's lakes were not built as a chain: the two the historical record describes, Kankaria and Chandola, were filled by a stream turned at a dam near Kamod and, from 1881, by the Kharicut canal. AMC's current lake interlinking is storm-water storage, a different system from an inherited cascade. |
 | delhi | storage history chart | Delhi owns no reservoir storage of its own, so no authority publishes a daily storage series for it. BBMB publishes Bhakra's level, inflow and outflow but not Delhi's share as a volume, and Delhi's share of the dam is set per season in BBMB Technical Committee minutes that are not public. Each source card below names who would have to publish the number. |
 | delhi | UI language: hi | Advertised as coming soon and rendered as a disabled chip. The hi dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | delhi | water source: DJB tube-wells & Ranney wells | No public tube-well register exists - the CAG's audit records its absence as a finding. |

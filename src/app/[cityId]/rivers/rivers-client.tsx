@@ -253,7 +253,7 @@ export default function RiversClient({
         // atlas, and an auto-opened panel would compete with it.
         if (!basin) {
           const mainstem = out.find((r) =>
-            ["vaigai", "cooum", "adyar", "vrishabhavathi", "yamuna"].includes(r.river_id)
+            ["vaigai", "cooum", "adyar", "vrishabhavathi", "yamuna", "sabarmati"].includes(r.river_id)
           );
           if (mainstem) setSelectedRiverId(mainstem.river_id);
           else if (out.length > 0) setSelectedRiverId(out[0].river_id);

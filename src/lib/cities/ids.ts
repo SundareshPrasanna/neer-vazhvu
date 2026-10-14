@@ -11,6 +11,7 @@ export const CITY_IDS = [
   "gurugram",
   "pune",
   "surat",
+  "ahmedabad",
 ] as const;
 
 export type CityId = (typeof CITY_IDS)[number];
