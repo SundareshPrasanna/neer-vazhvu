@@ -33,7 +33,8 @@ from the same canal. Below the barrage the river is a CPCB Priority I stretch.
 
 ## Launch state
 
-`enabled: false`. Before cutover: data-repo release and `corpus.lock` pin; migrations 054 and 055;
-the dam backfill from 2019-06-07 into `reservoir_daily_v2` and its daily refresh proven on the
-machine that will run it; a browser sweep against a control city; every review-gated label surfaced
-for a verify-or-hold decision.
+`enabled: false`. Done: the data-repo release and `corpus.lock` pin; migrations 054 and 055 (applied
+2026-10-15); the dam backfill from 2019-06-07 into `reservoir_daily_v2`; the daily refresh, on the
+local scheduled job because the department's host does not answer GitHub runners (each run re-reads
+the last 7 days, so a missed day is filled). Before cutover: every review-gated label surfaced for a
+verify-or-hold decision, and a browser sweep against a control city.
