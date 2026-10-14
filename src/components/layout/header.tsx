@@ -252,6 +252,16 @@ function SiteHeader() {
                 gets the switcher, which lists districts as well as cities. */}
             <div className="flex items-center gap-1 sm:gap-2">
               {isAtlas && <CitySwitcher />}
+              {/* The way in for organisations; hidden on that page itself, where it would only point back. */}
+              {pathname !== "/for-organisations" && (
+                <Link
+                  href="/for-organisations"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors bg-cyan-700 text-white hover:bg-cyan-800 dark:hover:bg-cyan-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+                >
+                  {t("nav.for_organisations")}
+                  <span aria-hidden="true" className="hidden sm:inline">→</span>
+                </Link>
+              )}
               <ThemeToggle />
             </div>
           </div>

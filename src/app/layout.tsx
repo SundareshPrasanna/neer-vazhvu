@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
@@ -6,6 +7,16 @@ import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
 import { cityKeywords, liveCityPhrase, liveCityPhraseWithOnboarding } from "@/lib/cities/roster";
+
+// globals.css maps font-sans / font-mono to these variables; without loading the faces here the
+// whole site fell back to the browser's default font.
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+
+// Applies the stored or system theme before first paint, so a dark-mode reader never sees a light
+// flash while ThemeProvider hydrates. Same storage key and rules as ThemeProvider. /embed pages are
+// skipped: they take their theme from the host page (ForcedTheme).
+const THEME_INIT = `(function(){try{if(location.pathname.indexOf("/embed")===0)return;var t=localStorage.getItem("theme");if(t==="dark"||((!t||t==="system")&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`;
 
 const CITIES = liveCityPhrase();
 const CITIES_WITH_ONBOARDING = liveCityPhraseWithOnboarding();
@@ -63,7 +74,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         {/* JSON-LD for SEO. Plain <script> in a server component
             ends up in initial HTML for crawlers; React 19 doesn't warn

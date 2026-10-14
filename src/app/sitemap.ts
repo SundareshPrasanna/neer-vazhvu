@@ -37,6 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // The project landing page.
   entries.push({ url: BASE, lastModified: now, changeFrequency: "weekly", priority: 1.0 });
+  entries.push({ url: `${BASE}/for-organisations`, lastModified: now, changeFrequency: "weekly", priority: 0.7 });
 
   for (const place of listEnabledPlaces()) {
     const features = FEATURE_AVAILABILITY[place.cityId];

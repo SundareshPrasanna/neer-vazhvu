@@ -20,10 +20,10 @@ import {
  *   const { theme, setTheme, resolvedTheme } = useTheme();
  *
  * Differences vs next-themes:
- *   - Theme is applied in a useEffect, so on the first paint the page
- *     uses whatever class is on <html> from SSR (none, i.e. light).
- *     For users who picked dark, this flashes light briefly. We accept
- *     that trade rather than ship a no-op inline script.
+ *   - Theme is applied in a useEffect. The first paint is covered by a
+ *     small inline script in the root layout's <head> (THEME_INIT), which
+ *     sets the same class from the same storage key before hydration, so
+ *     dark-mode readers do not see a light flash.
  *   - `attribute` is hard-coded to "class" (matches our Tailwind setup).
  *   - System preference is followed when theme is "system".
  */
