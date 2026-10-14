@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { Newsreader } from "next/font/google";
 
 import {
   chembarambakkamImage,
@@ -23,17 +23,16 @@ export const metadata: Metadata = {
 };
 
 const display = Newsreader({ subsets: ["latin"], weight: ["300", "500"], variable: "--font-display", display: "swap" });
-const body = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "600"], style: ["normal", "italic"], variable: "--font-body", display: "swap" });
-const data = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-data", display: "swap" });
 
 const CONTACT = "contact@neervazhvu.org";
 const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 const word = (n: number) => WORDS[n] ?? String(n);
 
 const utc = (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00Z`);
-const fmt = (iso: string, opts: Intl.DateTimeFormatOptions) => utc(iso).toLocaleDateString("en-GB", { ...opts, timeZone: "UTC" });
-const day = (iso: string) => fmt(iso, { day: "numeric", month: "short", year: "numeric" });
-const month = (iso: string) => fmt(iso, { month: "short", year: "numeric" });
+// Fixed month names: en-GB in current ICU prints "Sept", which the rest of the site never uses.
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const month = (iso: string) => `${MON[utc(iso).getUTCMonth()]} ${utc(iso).getUTCFullYear()}`;
+const day = (iso: string) => `${utc(iso).getUTCDate()} ${month(iso)}`;
 const frac = (d: Date, d0: Date, d1: Date) => (d.getTime() - d0.getTime()) / (d1.getTime() - d0.getTime());
 
 function Gauge({ pct }: { pct: number }) {
@@ -214,7 +213,7 @@ export default function ForOrganisationsPage() {
 
 
   return (
-    <div className={`${s.root} ${display.variable} ${body.variable} ${data.variable}`}>
+    <div className={`${s.root} ${display.variable}`}>
       <div className={s.page}>
         <section className={`${s.split} ${s.hero}`} aria-labelledby="h-hero">
           <div className={s.splitText}>
@@ -229,7 +228,7 @@ export default function ForOrganisationsPage() {
             </p>
             <div className={s.actions}>
               <a className={s.chip} href="#brief">Get a water reading <span aria-hidden="true">→</span></a>
-              <Link className={s.linkArrow} href="/">Open the public record →</Link>
+              <Link className={s.secondary} href="/">Open the public record</Link>
             </div>
           </div>
           {pune && (
@@ -290,8 +289,8 @@ export default function ForOrganisationsPage() {
             </p>
             <p>
               The registry holds {n(reg.files)} files today. {n(reg.enveloped)} carry their source, licence, date and method, and{" "}
-              {n(reg.contracted)} are checked field by field against a published dataset contract. They cover {reg.cities} cities and{" "}
-              {reg.districts} districts across {reg.places} registered places, and we watch {reg.sources} upstream sources for a new edition.
+              {n(reg.contracted)} are checked field by field against a published dataset contract. They cover the {reg.cities} cities and{" "}
+              {reg.districts} districts live on the site, across {reg.places} registered places, and we watch {reg.sources} upstream sources for a new edition.
             </p>
             <h3>The registry as a service</h3>
             <ul className={s.ruleList}>
@@ -431,9 +430,14 @@ export default function ForOrganisationsPage() {
               <li>When you need it.</li>
             </ol>
             <p className={s.muted}>We reply with what the record already holds for that place, and what a reading would add.</p>
-            <div className={s.address}>
-              <a className={s.addressText} id="contact-address" href={`mailto:${CONTACT}?subject=${encodeURIComponent("Water reading")}`}>{CONTACT}</a>
-              <CopyAddress address={CONTACT} className={s.copy} targetId="contact-address" />
+            <div className={s.contactBox}>
+              <span className={s.contactLabel}>Write to us</span>
+              <div className={s.contactActions}>
+                <a className={s.emailButton} href={`mailto:${CONTACT}?subject=${encodeURIComponent("Water reading")}`}>
+                  <span id="contact-address">{CONTACT}</span> <span aria-hidden="true">→</span>
+                </a>
+                <CopyAddress address={CONTACT} className={s.copy} targetId="contact-address" />
+              </div>
             </div>
           </div>
         </section>

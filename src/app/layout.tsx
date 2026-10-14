@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
@@ -6,6 +7,11 @@ import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/i18n/context";
 import { cityKeywords, liveCityPhrase, liveCityPhraseWithOnboarding } from "@/lib/cities/roster";
+
+// globals.css maps font-sans / font-mono to these variables; without loading the faces here the
+// whole site fell back to the browser's default font.
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 
 const CITIES = liveCityPhrase();
 const CITIES_WITH_ONBOARDING = liveCityPhraseWithOnboarding();
@@ -63,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
         {/* JSON-LD for SEO. Plain <script> in a server component
             ends up in initial HTML for crawlers; React 19 doesn't warn
