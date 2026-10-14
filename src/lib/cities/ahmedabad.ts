@@ -182,7 +182,7 @@ export const AHMEDABAD: PlaceConfig = {
 
   hasCatchments: false,
   catchmentsGapNote:
-    "Ahmedabad has no cascade view. The cascade layer reconstructs chained tank systems, the Tamil and Bengaluru networks where each tank's overflow was built to feed the next. Ahmedabad's lakes were not built as a chain: the two the historical record describes, Kankaria and Chandola, were filled by a stream turned at a dam near Kamod and, from 1881, by the Kharicut canal. AMC's current lake interlinking is storm-water storage, a different system from an inherited cascade.",
+    "Ahmedabad has no cascade view. The cascade layer reconstructs chained tank systems, where each tank's overflow was built to feed the next. Ahmedabad's lakes were not built as a chain: the two the historical record describes, Kankaria and Chandola, were filled by a stream turned at a dam near Kamod and, from 1881, by the Kharicut canal. AMC's current lake interlinking is storm-water storage, a different system from an inherited cascade.",
 
   enabled: false,
 };

@@ -666,18 +666,18 @@ def main() -> int:
                     "Ministry of Jal Shakti",
                 ),
                 closed(
-                    "Gazetteer of the Bombay Presidency, Vol. IV: Ahmedabad, pp.17-18 and 50",
+                    "Gazetteer of the Bombay Presidency, Vol. IV: Ahmedabad (1879), pp.17-18 and 50, read via the Internet Archive",
                     "Government Central Press, Bombay",
                     "1879",
                     GAZ,
-                    "Public domain (published 1879); read via the Internet Archive",
+                    "Public domain",
                 ),
                 closed(
-                    "T.C. Hope and J. Fergusson, Architecture at Ahmedabad, pp.50-51",
+                    "T.C. Hope and J. Fergusson, Architecture at Ahmedabad (1866), pp.50-51, read via the Internet Archive",
                     "John Murray, London",
                     "1866",
                     HOPE,
-                    "Public domain (published 1866); read via the Internet Archive",
+                    "Public domain",
                 ),
                 HUDCO_SRC,
                 closed(

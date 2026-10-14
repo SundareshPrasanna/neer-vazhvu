@@ -31,6 +31,7 @@ Run:  python3 neer-vazhvu-api/scripts/build_ahmedabad_river_quality.py
 """
 
 import csv
+import json
 import sys
 from datetime import date
 from pathlib import Path
@@ -130,6 +131,14 @@ def main() -> int:
         for r in csv.DictReader(open(INPUTS / "sabarmati-wq-stations.csv"))
         if r["lat"] and r["lon"]
     }
+    # Reach length as drawn on the map, so the panel and the map agree.
+    geo = json.loads(
+        (REPO_ROOT / "public" / "geojson" / "ahmedabad-rivers.geojson").read_text()
+    )
+    length = {
+        f["properties"]["river_id"]: f["properties"].get("length_km")
+        for f in geo["features"]
+    }
     sab = stations(SABARMATI, rows, coords)
     khari = stations(KHARI, rows, coords)
 
@@ -169,11 +178,7 @@ def main() -> int:
             "method": "pdf-extract",
             "produced_at": date.today().isoformat(),
             "produced_by": "neer-vazhvu-api/scripts/build_ahmedabad_river_quality.py",
-            "internal_inputs": [
-                "pipeline-inputs/ahmedabad/cpcb-nwmp-sabarmati-2018-2024.csv",
-                "pipeline-inputs/ahmedabad/sabarmati-wq-stations.csv",
-            ],
-            "note": "Per-station yearly min and max as CPCB prints them; nothing averaged or interpolated.",
+            "note": "Per-station yearly min and max as CPCB prints them; nothing averaged or interpolated. Read from the reviewed transcription in pipeline-inputs/ahmedabad/ (see its INVENTORY entry).",
         },
         "place_id": "ahmedabad",
         "last_updated": "2024",
@@ -189,6 +194,7 @@ def main() -> int:
                 "id": "sabarmati",
                 "name": "Sabarmati",
                 "name_ta": "",
+                "length_km": length.get("sabarmati"),
                 "cpcb_class": "Priority I in the 2018, 2022 and 2025 editions (BOD above 30 mg/L)",
                 "description": (
                     "Clean where it enters Ahmedabad and among India's most polluted stretches where it "
@@ -208,6 +214,7 @@ def main() -> int:
                 "id": "khari",
                 "name": "Khari",
                 "name_ta": "",
+                "length_km": length.get("khari"),
                 "cpcb_class": "Priority I in the 2018, 2022 and 2025 editions",
                 "description": (
                     "A tributary that runs past the industrial estates on the city's eastern edge and joins "

@@ -173,16 +173,16 @@ def build() -> dict:
             ),
         },
         "supply_chain": [
-            "Sardar Sarovar dam on the Narmada",
-            "Narmada Main Canal: head regulators 1 and 2 to Kotarpur, the Dholka branch to Jaspur",
-            "Kadana dam and the Wanakbori weir on the Mahi, through the Shedhi branch canal to Raska",
-            f"Three treatment plants, {F['wtp_total']:,} MLD; {F['distribution_stations']} distribution stations",
+            "Sardar Sarovar on the Narmada, and Kadana with the Wanakbori weir on the Mahi",
+            "The Narmada Main Canal and its Dholka branch, and the Mahi's Shedhi branch canal",
+            f"Kotarpur, Jaspur and Raska treatment plants, {F['wtp_total']:,} MLD",
+            f"{F['distribution_stations']} distribution stations",
             f"{F['supply_lines_km']:,} km of supply lines and {F['trunk_mains_km']} km of trunk mains",
         ],
         "_view_overrides": {
             "subtitle": (
-                f"Every raw-water source AMC lists in its {budget}, with capacity and "
-                "current use. Refreshed when AMC publishes its next budget."
+                "Every raw-water source in AMC's Budget 2026-27 (pp.63-64), with capacity "
+                "and current use. Refreshed when AMC publishes its next budget."
             ),
             "wtp_label": "AMC treatment capacity",
         },

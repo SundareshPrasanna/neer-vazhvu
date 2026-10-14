@@ -159,13 +159,13 @@ export const FLOOD: CityFloodContent = {
         en: "The list of waterlogging spots. AMC counted 107 places prone to waterlogging in its 2023-24 budget and 148 previously identified spots in July 2026, but we have not found either list published with names or locations. With the list, each spot could be mapped and its record followed from one monsoon to the next.",
       },
       {
-        en: "A flood map. We have not found a public map of where Ahmedabad floods, either modelled (like Chennai's return-period zones) or drawn from past events, so this page carries no map.",
+        en: "A flood map. We have not found a public map of where Ahmedabad floods, either modelled for return periods or drawn from past events, so this page carries no map.",
       },
       {
         en: "A live rain-gauge page. AMC reads rain at more than 40 named locations across the city (its 23 July 2026 release lists them), but we have not found a page where those readings are posted as they come in. In July 2026 they reached the public through state press releases.",
       },
       {
-        en: "The rainfall the drains are built for. We have not found, in any AMC document, the rainfall intensity its storm-water drains are designed to carry. Kolkata publishes 6 mm an hour for its old sewers, which lets a storm be read against the network; without an Ahmedabad figure, the rain of 23 July 2026 cannot be set against what the drains were built for.",
+        en: "The rainfall the drains are built for. We have not found, in any AMC document, the rainfall intensity its storm-water drains are designed to carry. Without that figure, the rain of 23 July 2026 cannot be set against what the drains were built for.",
       },
       {
         en: "The drainage network itself. AMC's 2026-27 budget puts the storm-water network at 1,010 km with 35 storm-water pumping stations, but we have not found a map or geometry file of it. The state's July 2026 releases count 42 storm-water pumping stations; both counts are given here with their dates, and a dated list of stations would show what each includes.",
