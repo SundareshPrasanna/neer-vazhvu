@@ -2,18 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Newsreader } from "next/font/google";
 
+import { loadCitySnapshot, loadCityWaterEstimate } from "@/app/[cityId]/data";
+import { getPlaceConfig } from "@/lib/cities";
 import {
   chembarambakkamImage,
   chokkarasanapalliRecord,
   kelavarapalliRecord,
-  puneChainStorage,
   registryFacts,
   vandiyurSeries,
 } from "@/lib/for-organisations/data";
+import { formatNumber, formatPct } from "@/lib/utils/format";
+import useCases from "@/lib/for-organisations/use-cases.json";
 import { CopyAddress } from "./copy-address";
 import s from "./page.module.css";
 
-export const dynamic = "force-static";
+// The hero is Chennai's live reservoir reading, from the same loader and on the same cadence as the
+// Chennai dashboard (/[cityId]/(home) revalidates every 900 s), so the two never disagree.
+export const revalidate = 900;
 
 export const metadata: Metadata = {
   title: "For organisations | Neer Vazhvu",
@@ -193,17 +198,18 @@ const COMPARE: [string, string, string][] = [
   ["Checks", "Every source cited", "Every number re-derived by an independent check before it reaches you"],
 ];
 
-const WORK: [string, string, string][] = [
-  ["Company sites", "A site water reading for a food factory in Karnataka and a first screen of the same company’s other sites, scoping for a warehouse portfolio across India, and a feasibility read for sites in Bangladesh.", "For companies and their consultants"],
-  ["Rivers and canals", "A baseline of the Buckingham Canal from Ennore to Mahabalipuram: its course, widths, banks and how they have changed. The Cooum and the Thenpennai at Hosur are on the open site.", "For a state water project developer"],
-  ["Lakes and tanks", "Records for Bengaluru lakes showing which restorations held water, record sheets for lakes funded by CSR, Chennai’s temple tanks read on high-resolution imagery, a dossier on Chembarambakkam, and a screen of tanks across three cities to find which to restore first.", "For funders and restoration partners"],
-  ["Groundwater", "Groundwater stress block by block across the district atlases, a groundwater screen of an industrial area in Alwar, a parcel-level groundwater ledger in development, and evidence of seawater moving inland north of Chennai.", "For companies, funders and research partners"],
-  ["Districts, basins and countries", "District atlases that open down to each gram panchayat, river-basin maps for Erode, Krishnagiri, Mumbai and the Vrishabhavathi built with local partners, and a water profile of Abu Dhabi and Dubai.", "On the open site, and for partners"],
-  ["Flood risk", "A street-scale flood pilot for HSR Layout, Bengaluru: which streets go under in a design storm and in a downpour like September 2022, with drains working, half-blocked or blocked. We map where water spreads, never how deep it stands.", "With a Bengaluru water research group"],
-];
 
-export default function ForOrganisationsPage() {
-  const pune = puneChainStorage();
+/** Chennai's combined storage as the Chennai dashboard computes it; null when the reading is unavailable. */
+async function chennaiStorage() {
+  const config = getPlaceConfig("chennai");
+  const [est, snap] = await Promise.all([loadCityWaterEstimate(config), loadCitySnapshot(config)]);
+  if (!est.lastUpdated || est.totalCapacityMcft <= 0) return null;
+  const reservoirs = Object.values(snap.readingsBySource).filter(Boolean).length;
+  return { pct: (est.totalStorageMcft / est.totalCapacityMcft) * 100, storage: est.totalStorageMcft, capacity: est.totalCapacityMcft, date: est.lastUpdated, reservoirs };
+}
+
+export default async function ForOrganisationsPage() {
+  const hero = await chennaiStorage();
   const kel = kelavarapalliRecord();
   const hosur = chokkarasanapalliRecord();
   const reg = registryFacts();
@@ -231,18 +237,19 @@ export default function ForOrganisationsPage() {
               <Link className={s.secondary} href="/">Open the public record</Link>
             </div>
           </div>
-          {pune && (
+          {hero && (
           <div className={s.splitProof}>
             <figure className={s.gauge} aria-labelledby="gauge-cap">
-              <Gauge pct={pune.pct} />
+              <Gauge pct={hero.pct} />
               <div className={s.gaugeRead}>
-                <span className={s.gaugeValue}>{pune.pct.toFixed(1)}%</span>
+                <span className={s.gaugeValue}>{formatPct(hero.pct)}</span>
                 <span className={s.gaugeWhat} id="gauge-cap">
-                  <strong>Live storage in the {word(pune.dams)} Khadakwasla-chain dams, Pune’s main city source</strong>
+                  <strong>Combined storage in Chennai’s {word(hero.reservoirs)} reservoirs</strong>
                   <br />
-                  {day(pune.date)} · {pune.storage.toFixed(1)} of {pune.capacity.toFixed(1)} million m³
+                  {day(hero.date)} · {formatNumber(hero.storage)} of {formatNumber(hero.capacity)} Mcft
                   <br />
-                  Maharashtra WRD daily dam bulletin
+                  CMWSSB daily lake levels ·{" "}
+                  <Link href="/chennai">Chennai dashboard</Link>
                 </span>
               </div>
             </figure>
@@ -340,14 +347,49 @@ export default function ForOrganisationsPage() {
 
         <section className={s.stack} aria-labelledby="h-work">
           <div className={s.stackHead}>
-            <h2 id="h-work">Work we have done.</h2>
-            <p className={s.muted}>For companies, funders, research groups and public agencies. Names appear here only with each client’s agreement.</p>
+            <h2 id="h-work">Use cases.</h2>
+            <p className={s.muted}>
+              Questions people brought us, what we did, and what came out. Published work opens on this site. For commissioned
+              work, here is what we found. We do not name the people we work for.
+            </p>
           </div>
-          <ul className={s.workList}>
-            {WORK.map(([title, text, who]) => (
-              <li key={title}><h3>{title}</h3><p>{text}</p><span className={s.forWhom}>{who}</span></li>
+          <div className={s.caseGroup}>
+          <h3 className={s.groupHead}>Published</h3>
+          <ul className={s.caseGrid}>
+            {useCases.public.map((c) => (
+              <li key={c.id} className={s.caseCard}>
+                <Link href={c.href} className={s.caseImage} aria-label={c.linkLabel}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- fixed, pre-sized screenshots of our own pages */}
+                  <img src={`/images/for-organisations/${c.image}`} alt={c.imageAlt} width={960} height={600} loading="lazy" />
+                </Link>
+                <span className={s.place}>{c.where}</span>
+                <h4>{c.question}</h4>
+                <p>{c.did}</p>
+                {"finding" in c && c.finding && <p className={s.caseFinding}>{c.finding}</p>}
+                <Link className={s.linkArrow} href={c.href}>{c.linkLabel} →</Link>
+              </li>
             ))}
           </ul>
+          </div>
+          <div className={s.caseGroup}>
+          <h3 className={s.groupHead}>Commissioned</h3>
+          <ul className={s.caseGrid}>
+            {useCases.private.map((c) => (
+              <li key={c.id} className={`${s.caseCard} ${s.casePrivate}`}>
+                {"figure" in c && c.figure ? (
+                  <div className={s.caseFigure}>
+                    <span className={s.caseFigureValue}>{c.figure}</span>
+                    <span className={s.caseFigureLabel}>{c.figureLabel}</span>
+                  </div>
+                ) : null}
+                <span className={s.place}>{c.where}</span>
+                <h4>{c.question}</h4>
+                <p>{c.finding}</p>
+                <span className={s.caseSource}>{c.findingSources}</span>
+              </li>
+            ))}
+          </ul>
+          </div>
         </section>
 
         {hosur && (
@@ -444,7 +486,7 @@ export default function ForOrganisationsPage() {
 
         <section className={s.sources} aria-label="Sources on this page">
           <p>
-            Readings on this page: Maharashtra WRD Pravah daily dam bulletin (Pune); Tamil Nadu reservoir dashboard (TN-SMART, RIMES)
+            Readings on this page: CMWSSB daily lake levels (Chennai); Tamil Nadu reservoir dashboard (TN-SMART, RIMES)
             and TNGIS (Kelavarapalli); TNPCB reports of analysis filed before the NGT Southern Zone in O.A. 111 of 2020 and O.A. 14 of
             2025 (Chokkarasanapalli); EC JRC Global Surface Water and Copernicus Sentinel-1 (Vandiyur); {img.credit.replace(", processed by Neer Vazhvu.", "")} (Chembarambakkam image).
             Registry figures from the NVDM conformance report. The code is on{" "}

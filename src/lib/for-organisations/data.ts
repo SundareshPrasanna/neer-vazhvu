@@ -20,22 +20,6 @@ const DOCS_DIR = join(process.cwd(), "docs", "architecture");
 const readJson = <T>(file: string): T | null =>
   existsSync(join(DATA_DIR, file)) ? (JSON.parse(readFileSync(join(DATA_DIR, file), "utf-8")) as T) : null;
 
-// The Khadakwasla chain is PMC's main source; the file's own _note names these four.
-const PUNE_CHAIN = ["khadakwasla", "panshet", "warasgaon", "temghar"];
-
-interface PuneDam { source_code: string; date: string; storage_mcum: number; live_capacity_mcum: number }
-
-export function puneChainStorage() {
-  const file = readJson<{ dams: PuneDam[] }>("pune-dam-storage.json");
-  if (!file) return null;
-  const dams = file.dams.filter((d) => PUNE_CHAIN.includes(d.source_code));
-  const dates = new Set(dams.map((d) => d.date));
-  if (dams.length !== PUNE_CHAIN.length || dates.size !== 1) throw new Error("pune-dam-storage: chain incomplete or mixed dates");
-  const storage = dams.reduce((s, d) => s + d.storage_mcum, 0);
-  const capacity = dams.reduce((s, d) => s + d.live_capacity_mcum, 0);
-  return { dams: dams.length, storage, capacity, pct: (storage / capacity) * 100, date: dams[0].date };
-}
-
 interface Source { id: string; title: string; publisher: string; license: string }
 interface Envelope { dataset: string; scope: { kind: string; id: string }; provenance: { sources: Source[]; method: string; produced_at: string } }
 
@@ -102,6 +86,7 @@ export function vandiyurSeries() {
 }
 
 export function chembarambakkamImage() {
-  const img = imageManifest.images[0];
-  return { src: `/images/for-organisations/${img.file}`, ...img };
+  const img = imageManifest.images.find((i) => i.file.startsWith("chembarambakkam"));
+  if (!img?.px || !img.window || img.scenes === undefined) throw new Error("MANIFEST.json: Chembarambakkam entry incomplete");
+  return { src: `/images/for-organisations/${img.file}`, credit: img.credit, px: img.px, window: img.window, scenes: img.scenes };
 }
