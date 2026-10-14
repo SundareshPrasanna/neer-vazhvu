@@ -2,18 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Newsreader } from "next/font/google";
 
+import { loadCitySnapshot, loadCityWaterEstimate } from "@/app/[cityId]/data";
+import { getPlaceConfig } from "@/lib/cities";
 import {
   chembarambakkamImage,
   chokkarasanapalliRecord,
   kelavarapalliRecord,
-  puneChainStorage,
   registryFacts,
   vandiyurSeries,
 } from "@/lib/for-organisations/data";
+import { formatNumber, formatPct } from "@/lib/utils/format";
 import { CopyAddress } from "./copy-address";
 import s from "./page.module.css";
 
-export const dynamic = "force-static";
+// The hero is Chennai's live reservoir reading, from the same loader and on the same cadence as the
+// Chennai dashboard (/[cityId]/(home) revalidates every 900 s), so the two never disagree.
+export const revalidate = 900;
 
 export const metadata: Metadata = {
   title: "For organisations | Neer Vazhvu",
@@ -202,8 +206,17 @@ const WORK: [string, string, string][] = [
   ["Flood risk", "A street-scale flood pilot for HSR Layout, Bengaluru: which streets go under in a design storm and in a downpour like September 2022, with drains working, half-blocked or blocked. We map where water spreads, never how deep it stands.", "With a Bengaluru water research group"],
 ];
 
-export default function ForOrganisationsPage() {
-  const pune = puneChainStorage();
+/** Chennai's combined storage as the Chennai dashboard computes it; null when the reading is unavailable. */
+async function chennaiStorage() {
+  const config = getPlaceConfig("chennai");
+  const [est, snap] = await Promise.all([loadCityWaterEstimate(config), loadCitySnapshot(config)]);
+  if (!est.lastUpdated || est.totalCapacityMcft <= 0) return null;
+  const reservoirs = Object.values(snap.readingsBySource).filter(Boolean).length;
+  return { pct: (est.totalStorageMcft / est.totalCapacityMcft) * 100, storage: est.totalStorageMcft, capacity: est.totalCapacityMcft, date: est.lastUpdated, reservoirs };
+}
+
+export default async function ForOrganisationsPage() {
+  const hero = await chennaiStorage();
   const kel = kelavarapalliRecord();
   const hosur = chokkarasanapalliRecord();
   const reg = registryFacts();
@@ -231,18 +244,19 @@ export default function ForOrganisationsPage() {
               <Link className={s.secondary} href="/">Open the public record</Link>
             </div>
           </div>
-          {pune && (
+          {hero && (
           <div className={s.splitProof}>
             <figure className={s.gauge} aria-labelledby="gauge-cap">
-              <Gauge pct={pune.pct} />
+              <Gauge pct={hero.pct} />
               <div className={s.gaugeRead}>
-                <span className={s.gaugeValue}>{pune.pct.toFixed(1)}%</span>
+                <span className={s.gaugeValue}>{formatPct(hero.pct)}</span>
                 <span className={s.gaugeWhat} id="gauge-cap">
-                  <strong>Live storage in the {word(pune.dams)} Khadakwasla-chain dams, Pune’s main city source</strong>
+                  <strong>Combined storage in Chennai’s {word(hero.reservoirs)} reservoirs</strong>
                   <br />
-                  {day(pune.date)} · {pune.storage.toFixed(1)} of {pune.capacity.toFixed(1)} million m³
+                  {day(hero.date)} · {formatNumber(hero.storage)} of {formatNumber(hero.capacity)} Mcft
                   <br />
-                  Maharashtra WRD daily dam bulletin
+                  CMWSSB daily lake levels ·{" "}
+                  <Link href="/chennai">Chennai dashboard</Link>
                 </span>
               </div>
             </figure>
@@ -444,7 +458,7 @@ export default function ForOrganisationsPage() {
 
         <section className={s.sources} aria-label="Sources on this page">
           <p>
-            Readings on this page: Maharashtra WRD Pravah daily dam bulletin (Pune); Tamil Nadu reservoir dashboard (TN-SMART, RIMES)
+            Readings on this page: CMWSSB daily lake levels (Chennai); Tamil Nadu reservoir dashboard (TN-SMART, RIMES)
             and TNGIS (Kelavarapalli); TNPCB reports of analysis filed before the NGT Southern Zone in O.A. 111 of 2020 and O.A. 14 of
             2025 (Chokkarasanapalli); EC JRC Global Surface Water and Copernicus Sentinel-1 (Vandiyur); {img.credit.replace(", processed by Neer Vazhvu.", "")} (Chembarambakkam image).
             Registry figures from the NVDM conformance report. The code is on{" "}
