@@ -79,6 +79,10 @@ export interface CourtOrder {
 }
 
 export interface ProjectsFile {
+  /** How this city's record was compiled. Shown as the page's methodology
+   *  line; without it the shared default (written for the Tamil Nadu cities)
+   *  is used, which is why every non-legacy city must carry one. */
+  note?: string;
   projects: ProjectEntry[];
   court_orders: CourtOrder[];
 }
@@ -433,7 +437,7 @@ export function LakeRestorationContent({
       <div className="text-xs text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700">
         <p>
           <span className="font-semibold">{t("lake.methodology")}</span>{" "}
-          {t("lake.methodology_text")}
+          {projectsFile.note ?? t("lake.methodology_text")}
         </p>
       </div>
     </div>

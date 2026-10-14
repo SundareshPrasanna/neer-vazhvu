@@ -1,0 +1,145 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "ahmedabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "amc-budget",
+        "title": "AMC Budget 2026-27 (Gujarati): raw-water sources and treatment plants, printed pp.63-64",
+        "publisher": "Ahmedabad Municipal Corporation",
+        "license": "Ahmedabad Municipal Corporation publication, cited with attribution"
+      },
+      {
+        "id": "srfdcl-riverfront",
+        "title": "Sabarmati Riverfront: environmental improvement (Vasna barrage, Narmada canal replenishment)",
+        "publisher": "Sabarmati River Front Development Corporation Ltd",
+        "license": "Ahmedabad Municipal Corporation company publication (SRFDCL, wholly owned by AMC), cited with attribution"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-10-14",
+    "produced_by": "neer-vazhvu-api/scripts/build_ahmedabad_supply.py",
+    "note": "Transcribed from AMC's budget table; every figure re-checkable against the PDF with --verify."
+  },
+  "hero_copy": {
+    "headline": "84% of Ahmedabad's water comes down one canal",
+    "body": "Ahmedabad draws 1,850 MLD a day. 1,550 of it comes from three offtakes on the Narmada Main Canal, which carries water from Sardar Sarovar dam; 200 MLD comes from the Mahi through the Shedhi branch canal, and 100 MLD from 555 borewells. The Sabarmati, the river {city} was founded on, supplies none of it, and the water held in the river through the riverfront is topped up from the same Narmada canal. AMC's 2023-24 budget said the tap runs two hours a day, from 6 to 8 in the morning, through unmetered connections.",
+    "wtp_label": "AMC treatment capacity",
+    "wtp_sub": "1,750 MLD at Kotarpur (1,150), Jaspur (400) and Raska (200); 1,700 MLD treated a day. Work under way or planned would take it to 2,700.",
+    "footer": "Figures from AMC Budget 2026-27, pp.63-64 (Gujarati, February 2026). AMC publishes no measured non-revenue water and no entitlement from the Narmada; both are named gaps on the About page."
+  },
+  "supply_chain": [
+    "Sardar Sarovar on the Narmada, and Kadana with the Wanakbori weir on the Mahi",
+    "The Narmada Main Canal and its Dholka branch, and the Mahi's Shedhi branch canal",
+    "Kotarpur, Jaspur and Raska treatment plants, 1,750 MLD",
+    "240 distribution stations",
+    "5,575 km of supply lines and 555 km of trunk mains"
+  ],
+  "_view_overrides": {
+    "subtitle": "Every raw-water source in AMC's Budget 2026-27 (pp.63-64), with capacity and current use. Refreshed when AMC publishes its next budget.",
+    "wtp_label": "AMC treatment capacity"
+  },
+  "current_supply_mix_mld": [
+    {
+      "source": "Narmada Main Canal, head regulator 1",
+      "scheme": "Kotarpur WTP",
+      "mld": 330,
+      "capacity_mld": 330,
+      "annual_mcft": null,
+      "note": "Gravity line from the canal. Used at full capacity."
+    },
+    {
+      "source": "Narmada Main Canal, head regulator 2",
+      "scheme": "Kotarpur WTP",
+      "mld": 800,
+      "capacity_mld": 900,
+      "annual_mcft": null,
+      "note": "900 MLD capacity, 800 used."
+    },
+    {
+      "source": "Dholka branch canal (Narmada)",
+      "scheme": "Jaspur WTP",
+      "mld": 420,
+      "capacity_mld": 600,
+      "annual_mcft": null,
+      "note": "600 MLD capacity, 420 used."
+    },
+    {
+      "source": "Shedhi branch canal (Mahi)",
+      "scheme": "Raska WTP",
+      "mld": 200,
+      "capacity_mld": 300,
+      "annual_mcft": null,
+      "note": "Mahi water from Kadana, diverted at the Wanakbori weir into the Mahi canal and its Shedhi branch."
+    },
+    {
+      "source": "Borewells (555)",
+      "scheme": "Pumped into distribution stations and isolated networks",
+      "mld": 100,
+      "capacity_mld": 315,
+      "annual_mcft": null,
+      "note": "315 MLD capacity, 100 used. The table's own sub-count (322 isolated + 238 station-connected) sums to 560, not 555."
+    }
+  ],
+  "current_supply_total_mld": 1850,
+  "_supply_total_note": "Source-side use. AMC's treatment-side figure for the same day is 1,700 MLD; the two are different measures in one table.",
+  "wtps_summary": {
+    "fresh_water_wtps_count": 3,
+    "fresh_water_capacity_mld": 1750,
+    "total_installed_capacity_mld": 1750,
+    "average_supply_mld": 1700,
+    "planned_additions_mld": 950,
+    "plants": [
+      {
+        "name": "Kotarpur",
+        "capacity_mld": 1150,
+        "note": "650 + 200 + 300"
+      },
+      {
+        "name": "Jaspur",
+        "capacity_mld": 400,
+        "note": "275 + 125"
+      },
+      {
+        "name": "Raska",
+        "capacity_mld": 200
+      }
+    ]
+  },
+  "distribution": {
+    "population_served": null,
+    "total_wdss": 240,
+    "transmission_mains_km": 555,
+    "distribution_network_km": 5575,
+    "note": "Population left out: the same budget says about 90 lakh on p.63 and 80 lakh on p.9."
+  },
+  "groundwater": {
+    "official_mld": 100,
+    "estimate_mld": null,
+    "_note": "AMC's own borewell draw. Private borewells are not in any AMC figure. For the aquifer under the city, see the groundwater page: IN-GRES assesses the Ahmedabad Urban unit as over-exploited."
+  },
+  "_sources": [
+    {
+      "name": "AMC Budget 2026-27 (Gujarati), pp.63-64",
+      "url": "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+      "date": "2026-02",
+      "extracted": "2026-10-14"
+    },
+    {
+      "name": "AMC Budget 2023-24 (English): two hours a day, unmetered connections",
+      "url": "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2203",
+      "date": "2023-02",
+      "extracted": "2026-10-14"
+    },
+    {
+      "name": "SRFDCL, Environmental improvement",
+      "url": "https://sabarmatiriverfront.com/environmental-improvement.html",
+      "date": null,
+      "extracted": "2026-10-14"
+    }
+  ]
+}

@@ -77,7 +77,7 @@ export function KeyFindings({
           href={`/${cityId}/facts`}
           className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
         >
-          All {facts.length} findings, with sources &rarr;
+          {`All ${facts.length} findings, with sources`} &rarr;
         </Link>
       </div>
 

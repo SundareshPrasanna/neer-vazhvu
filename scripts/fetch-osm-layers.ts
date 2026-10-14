@@ -48,6 +48,8 @@ interface Layer {
   wards?: string;
   profiles?: string;
   wikidata?: { parents: string };
+  /** Write an array payload as { [wrapAs]: rows } so the file can carry an NVDM envelope. */
+  wrapAs?: string;
 }
 
 interface CityConfig {
@@ -677,7 +679,8 @@ async function run(args: string[]) {
     const build = METHODS[l.method as keyof typeof METHODS];
     if (!build) throw new Error(`Unknown method '${l.method}' (known: ${Object.keys(METHODS).join(", ")})`);
     const { data, count, compact } = await build(city, l, cfg.lang);
-    writeArtifact(join(process.cwd(), OUTPUT[name].replace("{city}", city)), data, { compact });
+    const payload = l.wrapAs && Array.isArray(data) ? { [l.wrapAs]: data } : data;
+    writeArtifact(join(process.cwd(), OUTPUT[name].replace("{city}", city)), payload, { compact });
     console.error(`${city} ${name}: ${count} features`);
   }
 }

@@ -76,6 +76,10 @@ CITIES = {
     # a nearest-intersection default rather than a validated one, and for the
     # ~40% spread against its neighbours.
     "gurugram": (28.5000, 77.0000),
+    # Matches generate_imd_rainfall.py's grid point (23.0, 72.5), the cell
+    # validated against IMD's Ahmedabad observatory normal; the provisional
+    # months must continue that series, not start one at the city centre.
+    "ahmedabad": (23.0000, 72.5000),
 }
 
 API = (

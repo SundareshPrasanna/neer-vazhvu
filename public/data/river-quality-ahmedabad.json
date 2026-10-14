@@ -1,0 +1,2222 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/river-quality",
+  "scope": {
+    "kind": "city",
+    "id": "ahmedabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-nwmp",
+        "title": "CPCB NWMP annual river water quality, Table 7 (Sabarmati), 2018-2024, and the NWMP station list",
+        "publisher": "Central Pollution Control Board",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB Polluted River Stretches, 2018, 2022 and October 2025 editions (priority classes)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-14",
+    "produced_by": "neer-vazhvu-api/scripts/build_ahmedabad_river_quality.py",
+    "note": "Per-station yearly min and max as CPCB prints them; nothing averaged or interpolated."
+  },
+  "place_id": "ahmedabad",
+  "last_updated": "2024",
+  "source_label": "CPCB NWMP annual river data, 2018-2024",
+  "source_url": "https://cpcb.gov.in/water-quality-data/",
+  "_headline": "Highest BOD at Hansol, where the Sabarmati enters the city: 1.2 to 5 mg/L across 2018-2024. At V.N. Bridge, below the city's outfalls: 82 to 358 mg/L.",
+  "rivers": [
+    {
+      "id": "sabarmati",
+      "name": "Sabarmati",
+      "name_ta": "",
+      "length_km": 274.6,
+      "cpcb_class": "Priority I in the 2018, 2022 and 2025 editions (BOD above 30 mg/L)",
+      "description": "Clean where it enters Ahmedabad and among India's most polluted stretches where it leaves. Through the city the river is a 15 km reach held by the Vasna barrage and topped up from the Narmada canal; below the barrage it carries the city's treated and untreated sewage and the industrial effluent of the Mega pipeline and the Narol CETP.",
+      "notes": "CPCB's polluted-stretch definition has narrowed in each edition: Kheroj to Vautha (2018, BOD 4 to 147 mg/L), Raysan to Vautha (2022, maximum 292 mg/L at V.N. Bridge), V.N. Bridge to the confluence at Vautha (October 2025, maximum 105 mg/L). Readings at 0.3 mg/L dissolved oxygen are CPCB's detection floor, i.e. effectively none.",
+      "stations": [
+        {
+          "id": "nwmp-1221",
+          "nwmp_code": "1221",
+          "name": "Kheroj Bridge (state entry)",
+          "name_ta": "",
+          "lat": 24.22986,
+          "lng": 73.005317,
+          "stretch": "upstream, Gujarat entry",
+          "readings": [
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 6.6,
+                "max": 7.9
+              },
+              "bod_mgl": {
+                "min": 1.2,
+                "max": 2.1
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 253.0,
+                "max": 606.0
+              },
+              "nitrate_mgl": {
+                "min": 0.2,
+                "max": 1.1
+              },
+              "fecal_coliform_mpn": {
+                "min": 33.0,
+                "max": 63.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 4.2,
+                "max": 8.7
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 1.9
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.1
+              },
+              "conductivity_us": {
+                "min": 420.0,
+                "max": 1248.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 1.76
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 70.0
+              },
+              "below_detection": [
+                "bod_min_mgl",
+                "nitrate_min_mgl"
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 5.7,
+                "max": 7.6
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.6
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 436.0,
+                "max": 718.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 1.26
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 49.0
+              }
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 5.3,
+                "max": 7.6
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 1.8
+              },
+              "ph": {
+                "min": 7.06,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 430.0,
+                "max": 1089.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 0.6
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 33.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 5.0,
+                "max": 7.6
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.3
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 380.0,
+                "max": 765.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 1.03
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 12.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 6.4,
+                "max": 7.8
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 7.7
+              },
+              "conductivity_us": {
+                "min": 369.0,
+                "max": 969.0
+              },
+              "nitrate_mgl": {
+                "min": 0.39,
+                "max": 1.46
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 7.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.92",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        },
+        {
+          "id": "nwmp-1",
+          "nwmp_code": "1",
+          "name": "Dharoi dam",
+          "name_ta": "",
+          "lat": 24.004528,
+          "lng": 72.853278,
+          "stretch": "upstream reservoir",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 5.5,
+                "max": 9.6
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 2.0
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.6
+              },
+              "conductivity_us": {
+                "min": 344.0,
+                "max": 588.0
+              },
+              "nitrate_mgl": {
+                "min": 0.03,
+                "max": 0.76
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 4.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 6.8,
+                "max": 8.4
+              },
+              "bod_mgl": {
+                "min": 0.6,
+                "max": 1.1
+              },
+              "ph": {
+                "min": 6.1,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 328.0,
+                "max": 576.0
+              },
+              "nitrate_mgl": {
+                "min": 0.2,
+                "max": 0.2
+              },
+              "fecal_coliform_mpn": {
+                "min": 1.8,
+                "max": 2.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 5.3,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 0.8
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 340.0,
+                "max": 512.0
+              },
+              "nitrate_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 4.0
+              },
+              "below_detection": [
+                "bod_min_mgl",
+                "nitrate_min_mgl",
+                "nitrate_max_mgl"
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 5.2,
+                "max": 7.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.0
+              },
+              "ph": {
+                "min": 8.2,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 382.0,
+                "max": 430.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 0.32
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 6.0
+              }
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 5.7,
+                "max": 8.7
+              },
+              "bod_mgl": null,
+              "ph": {
+                "min": 7.45,
+                "max": 7.77
+              },
+              "conductivity_us": {
+                "min": 422.0,
+                "max": 558.0
+              },
+              "nitrate_mgl": {
+                "min": 0.39,
+                "max": 0.62
+              },
+              "fecal_coliform_mpn": {
+                "min": 17.0,
+                "max": 17.0
+              },
+              "below_detection": [
+                "bod_min_mgl",
+                "bod_max_mgl"
+              ]
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 2.8,
+                "max": 2.8
+              },
+              "bod_mgl": {
+                "min": 5.0,
+                "max": 5.0
+              },
+              "ph": {
+                "min": 7.9,
+                "max": 7.9
+              },
+              "conductivity_us": {
+                "min": 560.0,
+                "max": 560.0
+              },
+              "nitrate_mgl": {
+                "min": 2.4,
+                "max": 2.4
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 7.1,
+                "max": 7.1
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.2
+              },
+              "conductivity_us": {
+                "min": 418.0,
+                "max": 418.0
+              },
+              "nitrate_mgl": {
+                "min": 0.36,
+                "max": 0.36
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 2.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.93",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        },
+        {
+          "id": "nwmp-1482",
+          "nwmp_code": "1482",
+          "name": "Mahudi",
+          "name_ta": "",
+          "lat": 23.496903,
+          "lng": 72.796265,
+          "stretch": "upstream of Gandhinagar",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 5.4,
+                "max": 7.3
+              },
+              "bod_mgl": {
+                "min": 1.3,
+                "max": 5.0
+              },
+              "ph": {
+                "min": 8.1,
+                "max": 9.3
+              },
+              "conductivity_us": {
+                "min": 261.0,
+                "max": 492.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 0.73
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 23.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 6.7,
+                "max": 7.3
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.8
+              },
+              "ph": {
+                "min": 8.3,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 22.0,
+                "max": 468.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 7.0,
+                "max": 14.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 7.0,
+                "max": 7.3
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.0
+              },
+              "ph": {
+                "min": 7.9,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 415.0,
+                "max": 452.0
+              },
+              "nitrate_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 12.0
+              },
+              "below_detection": [
+                "nitrate_min_mgl",
+                "nitrate_max_mgl"
+              ]
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 4.9,
+                "max": 7.0
+              },
+              "bod_mgl": {
+                "min": 1.5,
+                "max": 2.2
+              },
+              "ph": {
+                "min": 7.29,
+                "max": 8.01
+              },
+              "conductivity_us": {
+                "min": 410.0,
+                "max": 595.0
+              },
+              "nitrate_mgl": {
+                "min": 0.33,
+                "max": 0.58
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 170.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 4.1,
+                "max": 7.2
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.0
+              },
+              "ph": {
+                "min": 7.5,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 346.0,
+                "max": 590.0
+              },
+              "nitrate_mgl": {
+                "min": 0.46,
+                "max": 1.21
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 12.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 5.8,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.0
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 426.0,
+                "max": 497.0
+              },
+              "nitrate_mgl": {
+                "min": 0.41,
+                "max": 0.88
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 2.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2022 p.94",
+            "2023 p.48",
+            "2024 p.47"
+          ]
+        },
+        {
+          "id": "nwmp-1407",
+          "nwmp_code": "1407",
+          "name": "Chiloda bridge, Gandhinagar",
+          "name_ta": "",
+          "lat": 23.245906,
+          "lng": 72.68218,
+          "stretch": "upstream of Ahmedabad",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 4.9,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.4,
+                "max": 7.4
+              },
+              "ph": {
+                "min": 8.1,
+                "max": 9.3
+              },
+              "conductivity_us": {
+                "min": 5.0,
+                "max": 437.0
+              },
+              "nitrate_mgl": {
+                "min": 0.1,
+                "max": 0.12
+              },
+              "fecal_coliform_mpn": {
+                "min": 23.0,
+                "max": 68.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 7.0,
+                "max": 7.6
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 2.7
+              },
+              "ph": {
+                "min": 7.6,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 259.0,
+                "max": 397.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 1.0
+              },
+              "fecal_coliform_mpn": {
+                "min": 59.0,
+                "max": 83.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 7.0,
+                "max": 7.9
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 1.9
+              },
+              "ph": {
+                "min": 7.7,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 322.0,
+                "max": 362.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 0.31
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 47.0
+              },
+              "below_detection": [
+                "nitrate_min_mgl"
+              ]
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 5.9,
+                "max": 6.5
+              },
+              "bod_mgl": {
+                "min": 2.3,
+                "max": 2.3
+              },
+              "ph": {
+                "min": 7.64,
+                "max": 8.25
+              },
+              "conductivity_us": {
+                "min": 400.0,
+                "max": 480.0
+              },
+              "nitrate_mgl": {
+                "min": 0.41,
+                "max": 0.48
+              },
+              "fecal_coliform_mpn": {
+                "min": 12.0,
+                "max": 70.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 5.1,
+                "max": 7.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.8
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 363.0,
+                "max": 560.0
+              },
+              "nitrate_mgl": {
+                "min": 0.39,
+                "max": 1.66
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 4.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 5.0,
+                "max": 6.9
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.6
+              },
+              "conductivity_us": {
+                "min": 395.0,
+                "max": 412.0
+              },
+              "nitrate_mgl": {
+                "min": 0.57,
+                "max": 0.77
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 6.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.50",
+            "2019 p.38",
+            "2020 p.34",
+            "2022 p.93",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        },
+        {
+          "id": "nwmp-1866",
+          "nwmp_code": "1866",
+          "name": "Hansol bridge",
+          "name_ta": "",
+          "lat": 23.090926,
+          "lng": 72.629239,
+          "stretch": "Ahmedabad entry",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 4.8,
+                "max": 8.2
+              },
+              "bod_mgl": {
+                "min": 3.0,
+                "max": 5.0
+              },
+              "ph": {
+                "min": 7.7,
+                "max": 8.6
+              },
+              "conductivity_us": {
+                "min": 320.0,
+                "max": 656.0
+              },
+              "nitrate_mgl": {
+                "min": 0.1,
+                "max": 0.15
+              },
+              "fecal_coliform_mpn": {
+                "min": 13.0,
+                "max": 24.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 5.0,
+                "max": 8.4
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 4.0
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 253.0,
+                "max": 1132.0
+              },
+              "nitrate_mgl": {
+                "min": 0.2,
+                "max": 2.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 9.0,
+                "max": 120.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 6.2,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 2.6
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.1
+              },
+              "conductivity_us": {
+                "min": 223.0,
+                "max": 403.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 1.02
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 63.0
+              },
+              "below_detection": [
+                "bod_min_mgl",
+                "nitrate_min_mgl"
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 4.9,
+                "max": 7.2
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.6
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.7
+              },
+              "conductivity_us": {
+                "min": 256.0,
+                "max": 520.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 1.38
+              },
+              "fecal_coliform_mpn": {
+                "min": 6.0,
+                "max": 17.0
+              }
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 5.5,
+                "max": 8.2
+              },
+              "bod_mgl": {
+                "min": 1.4,
+                "max": 1.8
+              },
+              "ph": {
+                "min": 7.15,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 283.0,
+                "max": 452.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 0.8
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 21.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 4.2,
+                "max": 7.6
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.8
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 278.0,
+                "max": 402.0
+              },
+              "nitrate_mgl": {
+                "min": 0.41,
+                "max": 1.61
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 33.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 5.4,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.2
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 284.0,
+                "max": 436.0
+              },
+              "nitrate_mgl": {
+                "min": 0.34,
+                "max": 1.13
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 14.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.92",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        },
+        {
+          "id": "nwmp-1409",
+          "nwmp_code": "1409",
+          "name": "Railway bridge, Ahmedabad",
+          "name_ta": "",
+          "lat": 23.06353,
+          "lng": 72.589064,
+          "stretch": "riverfront reach",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 4.5,
+                "max": 8.9
+              },
+              "bod_mgl": {
+                "min": 1.4,
+                "max": 47.0
+              },
+              "ph": {
+                "min": 7.8,
+                "max": 8.7
+              },
+              "conductivity_us": {
+                "min": 15.0,
+                "max": 1558.0
+              },
+              "nitrate_mgl": {
+                "min": 0.09,
+                "max": 0.22
+              },
+              "fecal_coliform_mpn": {
+                "min": 13.0,
+                "max": 84.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 5.5,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 14.0
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 259.0,
+                "max": 1078.0
+              },
+              "nitrate_mgl": {
+                "min": 0.2,
+                "max": 1.5
+              },
+              "fecal_coliform_mpn": {
+                "min": 13.0,
+                "max": 110.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 6.0,
+                "max": 8.2
+              },
+              "bod_mgl": {
+                "min": null,
+                "max": 2.5
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 220.0,
+                "max": 340.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 0.68
+              },
+              "fecal_coliform_mpn": {
+                "min": 17.0,
+                "max": 220.0
+              },
+              "below_detection": [
+                "bod_min_mgl",
+                "nitrate_min_mgl"
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 3.0,
+                "max": 7.1
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 14.0
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.6
+              },
+              "conductivity_us": {
+                "min": 264.0,
+                "max": 541.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 0.44
+              },
+              "fecal_coliform_mpn": {
+                "min": 21.0,
+                "max": 70.0
+              }
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 1.7,
+                "max": 6.5
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 28.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.36
+              },
+              "conductivity_us": {
+                "min": 347.0,
+                "max": 1033.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 0.95
+              },
+              "fecal_coliform_mpn": {
+                "min": 12.0,
+                "max": 220.0
+              }
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 2.7,
+                "max": 6.8
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 4.1
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.3
+              },
+              "conductivity_us": {
+                "min": 302.0,
+                "max": 590.0
+              },
+              "nitrate_mgl": {
+                "min": 0.4,
+                "max": 1.36
+              },
+              "fecal_coliform_mpn": {
+                "min": 21.0,
+                "max": 170.0
+              }
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 3.4,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.0,
+                "max": 1.8
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 306.0,
+                "max": 501.0
+              },
+              "nitrate_mgl": {
+                "min": 0.37,
+                "max": 1.1
+              },
+              "fecal_coliform_mpn": {
+                "min": 4.0,
+                "max": 120.0
+              }
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.92",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        },
+        {
+          "id": "nwmp-2",
+          "nwmp_code": "2",
+          "name": "V.N. Bridge, Ahmedabad",
+          "name_ta": "",
+          "lat": 22.982611,
+          "lng": 72.543139,
+          "stretch": "below the city's outfalls",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 1.5,
+                "max": 1.5
+              },
+              "bod_mgl": {
+                "min": 51.0,
+                "max": 358.0
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 27.0,
+                "max": 2474.0
+              },
+              "nitrate_mgl": {
+                "min": 0.13,
+                "max": 0.25
+              },
+              "fecal_coliform_mpn": {
+                "min": 140.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": null,
+                "max": 1.6
+              },
+              "bod_mgl": {
+                "min": 44.0,
+                "max": 203.0
+              },
+              "ph": {
+                "min": 6.9,
+                "max": 9.0
+              },
+              "conductivity_us": {
+                "min": 1249.0,
+                "max": 3308.0
+              },
+              "nitrate_mgl": {
+                "min": 0.1,
+                "max": 0.68
+              },
+              "fecal_coliform_mpn": {
+                "min": 33.0,
+                "max": 700.0
+              },
+              "below_detection": [
+                "do_min_mgl"
+              ]
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 7.5
+              },
+              "bod_mgl": {
+                "min": 1.9,
+                "max": 168.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 247.0,
+                "max": 3047.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 0.78
+              },
+              "fecal_coliform_mpn": {
+                "min": 45.0,
+                "max": 1600.0
+              },
+              "below_detection": [
+                "nitrate_min_mgl"
+              ],
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 0.3
+              },
+              "bod_mgl": {
+                "min": 14.0,
+                "max": 292.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.8
+              },
+              "conductivity_us": {
+                "min": 1140.0,
+                "max": 3710.0
+              },
+              "nitrate_mgl": {
+                "min": 0.34,
+                "max": 1.65
+              },
+              "fecal_coliform_mpn": {
+                "min": 540.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 6.0
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 96.0
+              },
+              "ph": {
+                "min": 6.56,
+                "max": 7.8
+              },
+              "conductivity_us": {
+                "min": 408.0,
+                "max": 2084.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 0.92
+              },
+              "fecal_coliform_mpn": {
+                "min": 12.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 1.2
+              },
+              "bod_mgl": {
+                "min": 12.0,
+                "max": 105.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 697.0,
+                "max": 2741.0
+              },
+              "nitrate_mgl": {
+                "min": 0.4,
+                "max": 24.85
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 7.0
+              },
+              "bod_mgl": {
+                "min": 4.0,
+                "max": 82.0
+              },
+              "ph": {
+                "min": 6.5,
+                "max": 7.4
+              },
+              "conductivity_us": {
+                "min": 306.0,
+                "max": 1767.0
+              },
+              "nitrate_mgl": {
+                "min": 0.45,
+                "max": 1.16
+              },
+              "fecal_coliform_mpn": {
+                "min": 920.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.93",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        },
+        {
+          "id": "nwmp-1408",
+          "nwmp_code": "1408",
+          "name": "Miroli, Daskroi",
+          "name_ta": "",
+          "lat": null,
+          "lng": null,
+          "stretch": "downstream of Ahmedabad",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": null,
+              "bod_mgl": {
+                "min": 23.0,
+                "max": 98.0
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 2285.0,
+                "max": 3320.0
+              },
+              "nitrate_mgl": {
+                "min": 0.1,
+                "max": 0.24
+              },
+              "fecal_coliform_mpn": {
+                "min": 230.0,
+                "max": 940.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": null,
+              "bod_mgl": {
+                "min": 10.0,
+                "max": 55.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.8
+              },
+              "conductivity_us": {
+                "min": 795.0,
+                "max": 3124.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 0.4
+              },
+              "fecal_coliform_mpn": {
+                "min": 140.0,
+                "max": 680.0
+              }
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 4.2
+              },
+              "bod_mgl": {
+                "min": 9.0,
+                "max": 76.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.2
+              },
+              "conductivity_us": {
+                "min": 664.0,
+                "max": 2630.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 0.61
+              },
+              "fecal_coliform_mpn": {
+                "min": 170.0,
+                "max": 1600.0
+              },
+              "below_detection": [
+                "nitrate_min_mgl"
+              ],
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 4.7
+              },
+              "bod_mgl": {
+                "min": 13.0,
+                "max": 47.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.1
+              },
+              "conductivity_us": {
+                "min": 1371.0,
+                "max": 2716.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 1.45
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 0.8,
+                "max": 6.5
+              },
+              "bod_mgl": {
+                "min": 1.3,
+                "max": 66.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.96
+              },
+              "conductivity_us": {
+                "min": 784.0,
+                "max": 2702.0
+              },
+              "nitrate_mgl": {
+                "min": 0.34,
+                "max": 0.6
+              },
+              "fecal_coliform_mpn": {
+                "min": 920.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 4.8
+              },
+              "bod_mgl": {
+                "min": 8.0,
+                "max": 31.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 889.0,
+                "max": 6274.0
+              },
+              "nitrate_mgl": {
+                "min": 0.0,
+                "max": 1.06
+              },
+              "fecal_coliform_mpn": {
+                "min": 160.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 5.3
+              },
+              "bod_mgl": {
+                "min": 3.6,
+                "max": 29.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.7
+              },
+              "conductivity_us": {
+                "min": 736.0,
+                "max": 8042.0
+              },
+              "nitrate_mgl": {
+                "min": 0.3,
+                "max": 1.19
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.93",
+            "2023 p.48",
+            "2024 p.47"
+          ]
+        },
+        {
+          "id": "nwmp-10015",
+          "nwmp_code": "10015",
+          "name": "Downstream of Miroli",
+          "name_ta": "",
+          "lat": 22.915326,
+          "lng": 72.515828,
+          "stretch": "downstream of Ahmedabad",
+          "readings": [
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 4.7
+              },
+              "bod_mgl": {
+                "min": 13.0,
+                "max": 47.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.1
+              },
+              "conductivity_us": {
+                "min": 1940.0,
+                "max": 2716.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 1.45
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 0.8,
+                "max": 6.5
+              },
+              "bod_mgl": {
+                "min": 1.3,
+                "max": 76.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.96
+              },
+              "conductivity_us": {
+                "min": 784.0,
+                "max": 2708.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 0.8
+              },
+              "fecal_coliform_mpn": {
+                "min": 920.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 4.8
+              },
+              "bod_mgl": {
+                "min": 8.0,
+                "max": 31.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 889.0,
+                "max": 3060.0
+              },
+              "nitrate_mgl": {
+                "min": 0.33,
+                "max": 1.08
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 5.3
+              },
+              "bod_mgl": {
+                "min": 3.6,
+                "max": 29.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.7
+              },
+              "conductivity_us": {
+                "min": 736.0,
+                "max": 2542.0
+              },
+              "nitrate_mgl": {
+                "min": 0.44,
+                "max": 1.18
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            }
+          ],
+          "pdf_pages": [
+            "2021 p.74",
+            "2022 p.94",
+            "2023 p.48",
+            "2024 p.47"
+          ]
+        },
+        {
+          "id": "nwmp-1223",
+          "nwmp_code": "1223",
+          "name": "Vautha, after the Meshwo confluence",
+          "name_ta": "",
+          "lat": 22.721547,
+          "lng": 72.530103,
+          "stretch": "far downstream",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": null,
+              "bod_mgl": {
+                "min": 11.0,
+                "max": 63.0
+              },
+              "ph": {
+                "min": 7.6,
+                "max": 8.5
+              },
+              "conductivity_us": {
+                "min": 2499.0,
+                "max": 3334.0
+              },
+              "nitrate_mgl": {
+                "min": 0.11,
+                "max": 0.28
+              },
+              "fecal_coliform_mpn": {
+                "min": 83.0,
+                "max": 430.0
+              }
+            },
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": null,
+                "max": 3.4
+              },
+              "bod_mgl": {
+                "min": 4.0,
+                "max": 50.0
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.1
+              },
+              "conductivity_us": {
+                "min": 762.0,
+                "max": 3430.0
+              },
+              "nitrate_mgl": {
+                "min": 0.2,
+                "max": 0.3
+              },
+              "fecal_coliform_mpn": {
+                "min": 21.0,
+                "max": 330.0
+              },
+              "below_detection": [
+                "do_min_mgl"
+              ]
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 6.5
+              },
+              "bod_mgl": {
+                "min": 5.0,
+                "max": 48.0
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 510.0,
+                "max": 2661.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 0.52
+              },
+              "fecal_coliform_mpn": {
+                "min": 2.0,
+                "max": 540.0
+              },
+              "below_detection": [
+                "nitrate_min_mgl"
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 3.8
+              },
+              "bod_mgl": {
+                "min": 7.0,
+                "max": 42.0
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 1600.0,
+                "max": 2662.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 0.78
+              },
+              "fecal_coliform_mpn": {
+                "min": 170.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 0.7,
+                "max": 5.2
+              },
+              "bod_mgl": {
+                "min": 5.9,
+                "max": 77.0
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.17
+              },
+              "conductivity_us": {
+                "min": 638.0,
+                "max": 2788.0
+              },
+              "nitrate_mgl": {
+                "min": 0.33,
+                "max": 0.82
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 5.1
+              },
+              "bod_mgl": {
+                "min": 7.0,
+                "max": 27.0
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 680.0,
+                "max": 2513.0
+              },
+              "nitrate_mgl": {
+                "min": 0.33,
+                "max": 2.27
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 6.1
+              },
+              "bod_mgl": {
+                "min": 1.2,
+                "max": 23.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.1
+              },
+              "conductivity_us": {
+                "min": 968.0,
+                "max": 3101.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 1.12
+              },
+              "fecal_coliform_mpn": {
+                "min": 350.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.51",
+            "2019 p.38",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.92",
+            "2023 p.48",
+            "2024 p.46"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "khari",
+      "name": "Khari",
+      "name_ta": "",
+      "length_km": 171.1,
+      "cpcb_class": "Priority I in the 2018, 2022 and 2025 editions",
+      "description": "A tributary that runs past the industrial estates on the city's eastern edge and joins the Sabarmati downstream. CPCB monitors it at one point, Lali village.",
+      "notes": "Maximum BOD in CPCB's polluted-stretch editions: 235 mg/L (2018), 195 (2022), 68 (2025).",
+      "stations": [
+        {
+          "id": "nwmp-1437",
+          "nwmp_code": "1437",
+          "name": "Lali village",
+          "name_ta": "",
+          "lat": 22.868749,
+          "lng": 72.627351,
+          "stretch": "industrial east of the city",
+          "readings": [
+            {
+              "year": 2018,
+              "do_mgl": {
+                "min": 0.6,
+                "max": 0.6
+              },
+              "bod_mgl": {
+                "min": 53.0,
+                "max": 145.0
+              },
+              "ph": {
+                "min": 6.4,
+                "max": 8.4
+              },
+              "conductivity_us": {
+                "min": 2160.0,
+                "max": 3970.0
+              },
+              "nitrate_mgl": {
+                "min": 0.15,
+                "max": 1.81
+              },
+              "fecal_coliform_mpn": {
+                "min": 2300.0,
+                "max": 5800.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": null,
+                "max": 0.3
+              },
+              "bod_mgl": {
+                "min": 42.0,
+                "max": 189.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 230.0,
+                "max": 3422.0
+              },
+              "nitrate_mgl": {
+                "min": null,
+                "max": 1.463
+              },
+              "fecal_coliform_mpn": {
+                "min": 540.0,
+                "max": 4300.0
+              },
+              "below_detection": [
+                "do_min_mgl",
+                "nitrate_min_mgl"
+              ],
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 1.9
+              },
+              "bod_mgl": {
+                "min": 17.0,
+                "max": 118.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.0
+              },
+              "conductivity_us": {
+                "min": 1240.0,
+                "max": 2495.0
+              },
+              "nitrate_mgl": {
+                "min": 0.32,
+                "max": 1.52
+              },
+              "fecal_coliform_mpn": {
+                "min": 540.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 0.6,
+                "max": 2.9
+              },
+              "bod_mgl": {
+                "min": 9.0,
+                "max": 56.0
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 7.95
+              },
+              "conductivity_us": {
+                "min": 1188.0,
+                "max": 2390.0
+              },
+              "nitrate_mgl": {
+                "min": 0.42,
+                "max": 1.18
+              },
+              "fecal_coliform_mpn": {
+                "min": 920.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 1.5
+              },
+              "bod_mgl": {
+                "min": 11.0,
+                "max": 68.0
+              },
+              "ph": {
+                "min": 7.2,
+                "max": 7.5
+              },
+              "conductivity_us": {
+                "min": 1112.0,
+                "max": 2558.0
+              },
+              "nitrate_mgl": {
+                "min": 0.33,
+                "max": 1.05
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 0.3,
+                "max": 2.0
+              },
+              "bod_mgl": {
+                "min": 7.0,
+                "max": 46.0
+              },
+              "ph": {
+                "min": 6.8,
+                "max": 7.6
+              },
+              "conductivity_us": {
+                "min": 1043.0,
+                "max": 2350.0
+              },
+              "nitrate_mgl": {
+                "min": 0.38,
+                "max": 1.48
+              },
+              "fecal_coliform_mpn": {
+                "min": 1600.0,
+                "max": 1600.0
+              },
+              "fecal_coliform_note": "1600 is the top of CPCB's scale: read as 1600 or more."
+            }
+          ],
+          "pdf_pages": [
+            "2018 p.52",
+            "2020 p.34",
+            "2021 p.74",
+            "2022 p.94",
+            "2023 p.48",
+            "2024 p.47"
+          ]
+        }
+      ]
+    }
+  ],
+  "_excluded": [
+    "10014 Ahmedabad U/S (Hansol): duplicates 1866 in every shared year.",
+    "2075 River at Dharoi dam: a second Dharoi point; code 1 has the longer series.",
+    "1224 Meshwo at Samlaji and 1222 Shedhi at Kheda: outside the city's reach.",
+    "1408 Miroli: readings kept, coordinate withheld (CPCB's list places it 18.9 km north-north-east of the Miroli outfall GPCB located by drone survey, inside the city)."
+  ]
+}

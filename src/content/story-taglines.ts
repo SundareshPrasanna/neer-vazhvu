@@ -23,4 +23,6 @@ export const STORY_TAGLINES: Record<CityId, string> = {
     "The city that dammed one river four times and still counts four hours",
   surat:
     "The city the river made, unmade, and made again",
+  ahmedabad:
+    "The city founded beside a thin stream in a bed of sand - and the canal that now keeps it full",
 };

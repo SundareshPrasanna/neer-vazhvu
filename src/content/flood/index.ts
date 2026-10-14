@@ -9,6 +9,7 @@ import { FLOOD as HYDERABAD } from "./hyderabad";
 import { FLOOD as KOLKATA } from "./kolkata";
 import { FLOOD as PUNE } from "./pune";
 import { FLOOD as SURAT } from "./surat";
+import { FLOOD as AHMEDABAD } from "./ahmedabad";
 
 /** Per-city content for /[cityId]/flood-risk. */
 export const FLOOD_CONTENT: Partial<Record<CityId, CityFloodContent>> = {
@@ -21,4 +22,5 @@ export const FLOOD_CONTENT: Partial<Record<CityId, CityFloodContent>> = {
   kolkata: KOLKATA,
   pune: PUNE,
   surat: SURAT,
+  ahmedabad: AHMEDABAD,
 };

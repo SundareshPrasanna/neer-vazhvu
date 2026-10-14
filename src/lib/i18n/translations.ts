@@ -1338,6 +1338,7 @@ export const translations: Record<string, TranslationEntry> = {
   "my_ward.hl_water_complaint": { en: "Water supply complaint",                        ta: "நீர் வழங்கல் புகார்", kn: "ನೀರು ಪೂರೈಕೆ ದೂರು" },
   "my_ward.hl_tanker_booking": { en: "Tanker booking",                                ta: "டேங்கர் முன்பதிவு", kn: "ಟ್ಯಾಂಕರ್ ಬುಕಿಂಗ್" },
   "my_ward.hl_cmwssb_whatsapp": { en: "CMWSSB WhatsApp",                               ta: "CMWSSB வாட்ஸ்அப்", kn: "CMWSSB WhatsApp" },
+  "my_ward.hl_whatsapp_complaint": { en: "Complaint on WhatsApp" },
   "my_ward.hl_flood_emergency": { en: "Flood emergency", ta: "வெள்ள அவசரம்", kn: "ಪ್ರವಾಹ ತುರ್ತು" },
   "my_ward.hl_rwh_info": { en: "Rainwater harvesting info",                     ta: "மழைநீர் சேகரிப்பு தகவல்", kn: "ಮಳೆನೀರು ಕೊಯ್ಲು ಮಾಹಿತಿ" },
   "my_ward.hl_mmc_helpline": { en: "Madurai Corporation helpline",                  ta: "மதுரை மாநகராட்சி உதவி எண்", kn: "ಮಧುರೈ ಮಹಾನಗರಪಾಲಿಕೆ ಸಹಾಯವಾಣಿ" },

@@ -227,6 +227,36 @@ const ACTIONS_BY_CITY: Record<string, CityActionsConfig> = {
       { labelKey: "my_ward.hl_flood_emergency", value: "1913", href: "tel:1913" },
     ],
   },
+  ahmedabad: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "AMC Central Complaint Redressal System (CCRS)",
+        href: "https://www.amccrs.com/AMCPortal/Complaint/Register",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "Ahmedabad Municipal Corporation",
+        href: "https://ahmedabadcity.gov.in/",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      {
+        // AMC's call centre, as published on its homepage under "Citizen
+        // Complaint" (checked 2026-10-14); water complaints go through it.
+        labelKey: "my_ward.hl_water_complaint",
+        value: "155303",
+        href: "tel:155303",
+      },
+      {
+        labelKey: "my_ward.hl_whatsapp_complaint",
+        value: "+91 75678 55303",
+        href: "https://wa.me/917567855303",
+      },
+    ],
+  },
 };
 
 interface Props {

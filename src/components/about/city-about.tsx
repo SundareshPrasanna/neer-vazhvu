@@ -24,6 +24,7 @@ const CITY_ABOUT: Record<CityId, ComponentType<CityAboutSlotProps>> = {
   gurugram: dynamic(() => import("@/content/about/gurugram")),
   pune: dynamic(() => import("@/content/about/pune")),
   surat: dynamic(() => import("@/content/about/surat")),
+  ahmedabad: dynamic(() => import("@/content/about/ahmedabad")),
 };
 
 /** One named slot of the About page, filled from the city's own module. */

@@ -8,6 +8,7 @@ import { MADURAI } from './madurai';
 import { MUMBAI } from './mumbai';
 import { PUNE } from './pune';
 import { SURAT } from './surat';
+import { AHMEDABAD } from './ahmedabad';
 import { isCityId, type CityId } from './ids';
 import type { PlaceConfig } from './types';
 import { previewIds } from '../utils/preview-ids';
@@ -31,6 +32,7 @@ const REGISTRY: Record<CityId, PlaceConfig> = {
   gurugram: GURUGRAM,
   pune: PUNE,
   surat: SURAT,
+  ahmedabad: AHMEDABAD,
 };
 
 export function getPlaceConfig(placeId: string): PlaceConfig {

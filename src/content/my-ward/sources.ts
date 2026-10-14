@@ -50,6 +50,11 @@ export const MY_WARD_SOURCES: Partial<Record<CityId, WardSourceCopy>> = {
     flood: { en: "Source: BMC Disaster Management chronic-flooding register + 26 July 2005 record (Concerned Citizens' Commission).", mr: "स्रोत: BMC आपत्ती व्यवस्थापन दीर्घकालीन पूर नोंदवही + 26 जुलै 2005 नोंद." },
     infra: { en: "Source: OSM-traced drainage (community-mapped; BMC's BRIMSTOWAD as-builts are not public); MCGM sewage treatment facilities.", mr: "स्रोत: OSM-आधारित नाले (समुदाय-नकाशित); MCGM सांडपाणी प्रक्रिया केंद्रे." },
   },
+  ahmedabad: {
+    gwYearbook: { en: "Source: IN-GRES 2025-26 assessment (the Ahmedabad Urban unit holds every AMC ward) + Gujarat Surface Water and Ground Water Department and CGWB telemetry on the National Water Data Portal; latest monthly mean shown." },
+    gwNoWell: { en: "No telemetry well within 5 km of this ward's centre; all stations are on /ahmedabad/groundwater." },
+    river: { en: "Distance is straight-line from the ward centre to the nearest CPCB monitoring station on the Sabarmati. Water quality from CPCB's annual NWMP river tables, 2018-2024." },
+  },
 };
 
 /** A city's My Ward source lines (none recorded -> empty). */

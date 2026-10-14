@@ -55,3 +55,12 @@ Consumer: the builder above and `.github/workflows/district-basins-refresh.yml` 
 Log:
 - 2026-09-18: directory created with the Hosur deep dive (Krishnagiri district map).
 - 2026-10-09: the Thenpennai monitoring record (TNPCB's filed monthly samples, the 2020 and 2024 surveys) and the treatment and supply record added; the sector lookup gained the TSDF kind.
+
+## ahmedabad/
+
+Inputs of `neer-vazhvu-api/scripts/build_ahmedabad_river_quality.py` (`public/data/river-quality-ahmedabad.json`).
+
+| File | Purpose | SHA-256 (first 16) | Provenance | Licence status |
+|---|---|---|---|---|
+| cpcb-nwmp-sabarmati-2018-2024.csv | CPCB's yearly min and max per station for the Sabarmati, Khari, Meshwo and Shedhi, 2018-2024 (92 station-years), every value as printed with the PDF page on each row | `867fdc43bb980ac5` | Transcribed 2026-10-14 from CPCB NWMP annual river PDFs (`cpcb.gov.in/wqm/<year>/WQuality_River-Data-<year>.pdf`, Table 7 / 7.1) with `pdftotext -layout`; ten rows with blank cells assigned by column position and flagged in `parse_note`; 2024 V.N. Bridge and Hansol rows re-checked against the PDF by hand | As `cpcb-nwmp` in `scripts/source-registry/surat.json` (Government of India publication, cited with attribution) |
+| sabarmati-wq-stations.csv | Official coordinates of the 22 river, STP and canal monitoring stations, with a flag on the one that cannot be right (1408 Miroli) | `516fd8fd10633d72` | CPCB `WQMN_list.pdf` (October 2020) and NWDP's CWC water-quality station metadata, retrieved 2026-10-14 | As above |

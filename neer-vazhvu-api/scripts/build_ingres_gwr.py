@@ -43,6 +43,7 @@ Run:  python3 neer-vazhvu-api/scripts/build_ingres_gwr.py --city kolkata
 import argparse
 import json
 import sys
+import urllib.parse
 import urllib.request
 from datetime import date
 from pathlib import Path
@@ -95,6 +96,72 @@ STATE_UUIDS = {
 SCOPE_KIND = {"kolkata": "region"}
 
 CITIES = {
+    # Ahmedabad drills like Pune, and for the same reason: the district reads
+    # semi-critical while the unit under the city is over-exploited. Editions
+    # start at 2021-2022 because that is when IN-GRES carved AHMEDABAD URBAN out
+    # of CITY & DASKROI (95,627 ha became 47,359 + 49,642); a series reaching
+    # back past the redraw would show a jump that is a boundary, not a change.
+    "ahmedabad": {
+        "state": "GUJARAT",
+        "state_label": "Gujarat",
+        "source_id": "ingres-groundwater-gujarat",
+        "drill": {
+            "state": "GUJARAT",
+            "district": "AHMEDABAD",
+            "district_uuid": "630e391c-ba99-4599-b73c-003992dfdf7a",
+            "unit_label": "taluka",
+            "keep_district_total": True,
+            # IN-GRES truncates Daskroi to "DAS"; spelled out so the map does
+            # not label a taluka "Ahmedabad City & Das".
+            "names": {
+                "AHMEDABAD CITY & DAS": "Ahmedabad City & Daskroi",
+                "AHMEDABAD URBAN": "Ahmedabad Urban",
+            },
+            "wfs": {"layer": "gec:indgec_vers_gujarat", "year": 2021},
+        },
+        "years": [
+            "2021-2022",
+            "2022-2023",
+            "2023-2024",
+            "2024-2025",
+            "2025-2026",
+        ],
+        "notes": [
+            "THE DISTRICT HIDES THE CITY. Ahmedabad district reads 79.14% and "
+            "SEMI CRITICAL in 2025-2026, while the unit under the city, Ahmedabad "
+            "Urban, is OVER EXPLOITED at 128.85% and the rural ring around it, "
+            "Ahmedabad City & Daskroi, at 143.16%. The district figure is pulled "
+            "down by six safe talukas to the west and south.",
+            "AHMEDABAD URBAN IS THE CITY'S UNIT, not a revenue taluka. IN-GRES "
+            "carved it out of CITY & DASKROI in 2021-2022 (95,627 ha became "
+            "47,359 + 49,642). Its own polygon on the IN-GRES GeoServer holds "
+            "almost all of the AMC wards, which is why it is the one to quote for "
+            "the city; City & Daskroi is the peri-urban and rural belt around it, "
+            "and 82% of its 2025-2026 extraction is irrigation.",
+            "THE URBAN UNIT'S JUMP IS A RELABELLING, NOT A MEASUREMENT. Its "
+            "extractable resource is 1,919.4 ham in each of the last three "
+            "editions. Its extraction was filed entirely as industrial (1,784.4 "
+            "ham) in 2021-2022 and 2022-2023, as 1,055 ham irrigation plus 304 ham "
+            "industrial in 2023-2024 (70.80%, semi critical), and from 2024-2025 "
+            "with 1,606 ham of domestic draft added (127.18%, then 128.85%). "
+            "Quote the category in the latest edition; do not render the series "
+            "as a trend.",
+            "TWO TALUKAS ARE NOT ASSESSED ON EXTRACTION AT ALL. Dholera and "
+            "Dhandhuka are categorised 'salinity' in all five editions: CGWB does "
+            "not assess saline aquifers on extraction, so they carry no stage "
+            "percentage. They are listed under not_assessed_on_extraction and "
+            "drawn grey on the map rather than left out.",
+            "VOLUMES EXCLUDE THE SALINE TRACT, as CGWB publishes (see fresh_of). "
+            "The API's `total` key includes it and would more than double the "
+            "district's extraction figure.",
+            "EDITIONS START AT 2021-2022, the first in which the current units "
+            "exist. In 2019-2020 the city and Daskroi were one 95,627 ha unit at "
+            "82.58%, and joining that to either successor would show a jump that "
+            "is a boundary change. Rainfall and some draft inputs also repeat "
+            "across editions (City & Daskroi's 725.1 mm in three), so movement "
+            "between editions is partly the inputs being carried forward.",
+        ],
+    },
     "surat": {
         "state": "GUJARAT",
         "state_label": "Gujarat",
@@ -480,6 +547,8 @@ def build_drilled(city: str, cfg: dict) -> int:
     """
     drill = cfg["drill"]
     units: dict[str, dict] = {}
+    unassessed: dict[str, dict] = {}
+    district_total: list[dict] = []
     years_seen: list[str] = []
     for year in cfg.get("years", YEARS):
         rows = fetch_units(drill, year)
@@ -494,6 +563,45 @@ def build_drilled(city: str, cfg: dict) -> int:
             print(f"  {year}: no edition published", file=sys.stderr)
             continue
         years_seen.append(year)
+        if drill.get("keep_district_total"):
+            # The drill's own `total` row carries no category, so the district
+            # is read as a row of the STATE call, where IN-GRES classifies it.
+            row = next(
+                (
+                    r
+                    for r in fetch(drill["state"], year)
+                    if (r.get("locationName") or "").upper() == drill["district"]
+                ),
+                None,
+            )
+            if row:
+                district_total.append(
+                    {
+                        "year_label": year,
+                        "class": CLASS_LABEL.get(
+                            (row.get("category") or {}).get("total")
+                        ),
+                        "development_pct": round(
+                            total_of(row.get("stageOfExtraction")), 2
+                        ),
+                        "availability_ham": _r1(
+                            fresh_of(row.get("totalGWAvailability"))
+                        ),
+                        "draft_total_ham": _r1(
+                            fresh_of((row.get("draftData") or {}).get("total"))
+                        ),
+                        "poor_quality_area_ha": _r1(
+                            ((row.get("area") or {}).get("recharge_worthy") or {}).get(
+                                "poorQualityArea"
+                            )
+                        ),
+                        "recharge_worthy_area_ha": _r1(
+                            ((row.get("area") or {}).get("recharge_worthy") or {}).get(
+                                "totalArea"
+                            )
+                        ),
+                    }
+                )
         for r in real:
             raw = r.get("locationName") or ""
             # The portal upper-cases unit names before 2023-2024 and
@@ -501,6 +609,7 @@ def build_drilled(city: str, cfg: dict) -> int:
             # Keyed on a normalised name, a single taluka would otherwise
             # split into two or three separate blocks with short histories.
             key = raw.strip().upper().replace("MAWAL", "MAVAL")
+            display = drill.get("names", {}).get(key, raw.strip().title())
             cat = (r.get("category") or {}).get("total")
             # Served pre-computed on the fresh area - use as-is.
             stage = total_of(r.get("stageOfExtraction"))
@@ -515,10 +624,13 @@ def build_drilled(city: str, cfg: dict) -> int:
                     f"  ! {raw} {year}: category={cat!r} stage={stage!r}, skipped",
                     file=sys.stderr,
                 )
+                unassessed.setdefault(
+                    key, {"name": display, "category": cat, "editions": []}
+                )["editions"].append(year)
                 continue
             entry = units.setdefault(
                 key,
-                {"name": raw.strip().title(), "history": [], "_detail": []},
+                {"name": display, "history": [], "_detail": []},
             )
             entry["history"].append(
                 {
@@ -598,6 +710,16 @@ def build_drilled(city: str, cfg: dict) -> int:
         "blocks": blocks,
         "notes": cfg["notes"],
     }
+    if unassessed:
+        # Only where a unit was ever off the extraction axis, so the drilled
+        # artifacts that have none (Pune) stay byte-identical.
+        out["not_assessed_on_extraction"] = sorted(
+            unassessed.values(), key=lambda u: u["name"]
+        )
+    if district_total:
+        # The aggregate the drill exists to look past, kept so a reader (and
+        # the facts producer) can set the two side by side from one file.
+        out["district_total"] = district_total
     envelope = {
         "nvdm": "1.0",
         "dataset": "data-root/gwr-blocks",
@@ -645,7 +767,110 @@ def build_drilled(city: str, cfg: dict) -> int:
             f"{len(b['history'])} editions",
             file=sys.stderr,
         )
+    if "wfs" in drill:
+        return build_unit_geometry(city, cfg, out)
     return 0
+
+
+def build_unit_geometry(city: str, cfg: dict, assessment: dict) -> int:
+    """The assessment units' own polygons, from IN-GRES's GeoServer, joined to
+    the drilled assessment for the block choropleth.
+
+    Same publisher as the numbers, so the boundaries are the ones the stage
+    percentages were computed over - revenue-taluka layers from elsewhere do
+    not carry units such as Ahmedabad's URBAN, which IN-GRES carved out of
+    CITY & DASKROI in 2021-2022. Two traps, both learned on Pune: the layer
+    holds every vintage, so `year` must pin the one matching the editions
+    used; and the WFS `uuid` is a different namespace from the API's, so the
+    join is on the normalised name.
+
+    Units not assessed on extraction (saline) are drawn without a class, which
+    the map renders as no-data grey rather than leaving a hole.
+    """
+    drill = cfg["drill"]
+    wfs = drill["wfs"]
+    cql = f"parent_name='{drill['district']}' AND year={wfs['year']}"
+    url = (
+        "https://ingres.iith.ac.in/geoserver/gec/ows?service=WFS&version=1.0.0"
+        f"&request=GetFeature&typeName={wfs['layer']}&outputFormat=application/json"
+        "&CQL_FILTER=" + urllib.parse.quote(cql)
+    )
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        fc = json.loads(r.read().decode())
+    names = drill.get("names", {})
+    by_name = {b["name"]: b for b in assessment["blocks"]}
+    off_axis = {u["name"]: u for u in assessment.get("not_assessed_on_extraction", [])}
+
+    feats, unmatched = [], []
+    for f in fc.get("features", []):
+        raw = ((f.get("properties") or {}).get("name") or "").strip()
+        name = names.get(raw.upper(), raw.title())
+        blk, off = by_name.get(name), off_axis.get(name)
+        if blk is None and off is None:
+            unmatched.append(raw)
+            continue
+        props = {"block": name, "ext_id": f["properties"].get("ext_id")}
+        if blk:
+            latest = blk["latest"]
+            props.update(
+                {
+                    "class": latest["class"],
+                    "sgw_dev_pe": latest["development_pct"],
+                    "na_gwa": latest["availability_ham"],
+                    "agwd_tot": latest["draft_total_ham"],
+                    "editions": len(blk["history"]),
+                }
+            )
+        else:
+            props["not_assessed_on_extraction"] = off["category"]
+        feats.append(
+            {"type": "Feature", "properties": props, "geometry": f["geometry"]}
+        )
+    feats.sort(key=lambda f: f["properties"]["block"])
+    drawn = {f["properties"]["block"] for f in feats}
+    missing = sorted(set(by_name) - drawn)
+    if unmatched or missing:
+        print(
+            f"  ! geometry with no assessment: {unmatched}; "
+            f"assessment with no geometry: {missing}",
+            file=sys.stderr,
+        )
+
+    district = drill["district"].title()
+    out = {
+        "nvdm": "1.0",
+        "dataset": "geojson-layers/gwr-blocks",
+        "scope": {"kind": SCOPE_KIND.get(city, "city"), "id": city},
+        "provenance": {
+            "sources": [
+                {
+                    "id": cfg["source_id"],
+                    "title": (
+                        f"IN-GRES {drill['unit_label']} boundaries for {district} "
+                        "district, joined to the dynamic groundwater assessment"
+                    ),
+                    "publisher": "IN-GRES (CGWB + State groundwater departments), IIT Hyderabad",
+                    "license": registry_license(cfg["source_id"]),
+                }
+            ],
+            "method": "api",
+            "produced_at": date.today().isoformat(),
+            "produced_by": "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+            "note": (
+                f"Geometry from IN-GRES's own GeoServer ({wfs['layer']}, year="
+                f"{wfs['year']}); attributes are the latest edition in "
+                f"gwr-blocks-{city}.json. Joined on normalised name - the WFS uuid "
+                "is a different namespace from the assessment API's."
+            ),
+        },
+        "type": "FeatureCollection",
+        "features": feats,
+    }
+    path = REPO_ROOT / "public" / "geojson" / f"{city}-gwr-blocks.geojson"
+    write_artifact(path, out, indent=None)
+    print(f"  {len(feats)} unit polygons -> {path.name}", file=sys.stderr)
+    return 1 if (unmatched or missing) else 0
 
 
 def build_extended(city: str, cfg: dict) -> int:
