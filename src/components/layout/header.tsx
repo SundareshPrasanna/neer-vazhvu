@@ -252,6 +252,17 @@ function SiteHeader() {
                 gets the switcher, which lists districts as well as cities. */}
             <div className="flex items-center gap-1 sm:gap-2">
               {isAtlas && <CitySwitcher />}
+              <Link
+                href="/for-organisations"
+                className={cn(
+                  "px-3 py-2.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors",
+                  pathname === "/for-organisations"
+                    ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800",
+                )}
+              >
+                {t("nav.for_organisations")}
+              </Link>
               <ThemeToggle />
             </div>
           </div>

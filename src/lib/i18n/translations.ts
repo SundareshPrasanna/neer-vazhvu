@@ -255,6 +255,7 @@ export const translations: Record<string, TranslationEntry> = {
   "nav.coastal":        { en: "Shoreline",         ta: "கடற்கரை",                 kn: "ಕರಾವಳಿ" },
   "nav.climate_risk":   { en: "Climate Risk",      ta: "காலநிலை ஆபத்து" },
   "nav.about":          { en: "About",             ta: "எங்களைப் பற்றி",           kn: "ನಮ್ಮ ಬಗ್ಗೆ" },
+  "nav.for_organisations": { en: "For organisations", ta: "நிறுவனங்களுக்கு", kn: "ಸಂಸ್ಥೆಗಳಿಗೆ" },
   "header.title":       { en: "Neer Vazhvu",                ta: "நீர் வாழ்வு",      kn: "ನೀರ್ ವಾೞ್ವು" },
   "header.subtitle":    { en: "India's Water Intelligence", ta: "இந்தியாவின் நீர் அறிவுத்தளம்", kn: "ಭಾರತದ ಜಲ ಗುಪ್ತಚರ" },
   "theme.switch_to_light": { en: "Switch to light mode", ta: "ஒளிர் நிலையில் மாற்று", kn: "ತಿಳಿ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ" },
