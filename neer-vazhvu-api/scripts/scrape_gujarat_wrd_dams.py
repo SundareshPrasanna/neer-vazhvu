@@ -217,6 +217,11 @@ def parse_report(text: str, cfg: dict) -> dict[str, dict]:
     return out
 
 
+def _cusecs(x: float | None) -> int | None:
+    # reservoir_daily_v2's flow columns are integer; the report prints decimals.
+    return None if x is None else round(x)
+
+
 def db_rows(city: str, day: date, dams: dict[str, dict]) -> list[dict]:
     return [
         {
@@ -226,10 +231,10 @@ def db_rows(city: str, day: date, dams: dict[str, dict]) -> list[dict]:
             "storage_tmc": round(d["live_mcm"] / MCUM_PER_TMC, 3),
             "storage_pct_frl": d["live_pct"],
             "level_ft": round(d["level_m"] * FT_PER_M, 2),
-            "inflow_cusecs": d["inflow_cusecs"],
+            "inflow_cusecs": _cusecs(d["inflow_cusecs"]),
             "outflow_cusecs": None
             if d["outflow_river_cusecs"] is None
-            else round(d["outflow_river_cusecs"] + (d["outflow_canal_cusecs"] or 0), 2),
+            else _cusecs(d["outflow_river_cusecs"] + (d["outflow_canal_cusecs"] or 0)),
             "source": "Gujarat NWRWS&K daily dam report",
             "scraped_from": report_url(day),
         }
