@@ -1,0 +1,283 @@
+{
+  "_doc": [
+    "Ahmedabad (AMC) upstream sources for Headwaters. Every artifact Ahmedabad ships names its upstreams here by id, with the artifact in dependsOn.",
+    "Gujarat-wide upstreams shared with Surat (IN-GRES, CPCB NWMP) stay under their existing ids in surat.json; Ahmedabad's paths are added to their dependsOn rather than duplicating an id."
+  ],
+  "sources": [
+    {
+      "id": "nwic-nwdp-groundwater-gujarat",
+      "scope": "ahmedabad",
+      "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+      "url": "https://nwdp.nwic.gov.in/",
+      "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+      "type": "api",
+      "cadence": "continuous (six-hourly telemetry)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/data/ahmedabad-cgwb-stations.json",
+        "public/data/ahmedabad-ward-profiles.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py --city ahmedabad",
+      "notes": "Gujarat groundwater-level telemetry on the CKAN portal: Gujarat Surface Water and Ground Water Department six-hourly resources 8e630b14-b563-40c8-905f-b0ce28975a90 (2021-2025) and 9f8ca997-e764-4503-9253-872a2d692aec (2026-2030), and CGWB telemetry 6ea9ef6b-8a90-47d0-bd12-ac90272a2650 and b496e769-a678-4948-bd91-de3894fb9471. The 2021-2025 state resource is row-for-row the 1.1 GB export in the research drop. TRAPS: District tags follow old lines (stations tagged Ahmedabad stand in Botad; stations tagged Gandhinagar, Surendranagar and Sabarkantha stand in Ahmedabad's talukas), so stations are placed by coordinates; names repeat across districts; -1.0 is a placeholder alongside 0.0 and 1.0; telemetry is negative below ground and some stations flip sign mid-series. The portal opens a new resource for each five-year block, so the 2031 resource will need adding."
+    },
+    {
+      "id": "imd-gridded-rainfall-ahmedabad",
+      "scope": "ahmedabad",
+      "publisher": "India Meteorological Department",
+      "url": "https://imdlib.readthedocs.io/en/latest/",
+      "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+      "type": "api",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/data/imd-rainfall-monthly-ahmedabad.json",
+        "public/data/rainfall-recent-ahmedabad.json"
+      ],
+      "refreshMethod": "cron .github/workflows/imd-rainfall-refresh.yml (neer-vazhvu-api/scripts/generate_imd_rainfall.py --city ahmedabad)",
+      "notes": "Grid cell 23.0 N / 72.5 E, the 0.25-degree intersection nearest the city centre and inside the AMC ward extent. Checked against IMD's own Ahmedabad observatory normal of 783.6 mm (Climatological Table 1991-2020, station index 42647, city.imd.gov.in/citywx/extreme/climate.php?id=42647): this cell returns 800.4 mm over 1991-2020 (+2.1%). The cell east of it, 23.0/72.75, returns 868.3 mm (+10.8%). rainfall-recent-ahmedabad.json must use the same grid point."
+    },
+    {
+      "id": "gujarat-wrd-dam-daily-report",
+      "scope": "ahmedabad",
+      "publisher": "Narmada, Water Resources, Water Supply and Kalpsar Department, Government of Gujarat",
+      "url": "https://wrd-dam.gujarat.gov.in/index.php",
+      "license": "Gujarat government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/data/ahmedabad-dam-storage.json",
+        "supabase:reservoir_daily_v2"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_gujarat_wrd_dams.py --city ahmedabad --out public/data/ahmedabad-dam-storage.json --supabase (daily); --backfill-from 2019-06-07 once for history",
+      "notes": "Reservoir Data Management System (NIC). One PDF per day at downloads/home_pdf.php?dt=<base64 YYYY-MM-DD>; the index page lists every date from 2019-06-01 and the first non-empty report is 2019-06-07. Reports are frozen as generated (a re-fetch is byte-identical), so the archive is the history. TRAPS: a missing date returns HTTP 200 with ZERO bytes, not an error; row order changes between years (key on dam name); 2019-20 reports lack the SchemeId, LocId and Taluka columns and print the region as a word; the major-schemes table on page 3 is in FEET while the dam statement is in metres; words wrap across lines (WARNI / NG); design capacities are revised over time (Hathmati 145.90 to 152.83 MCM), so the design value is stored per report; Mazum is printed Mazam. Sardar Sarovar is printed in its own block with the Narmada Main Canal discharge at the head regulator (Flow @ HR). Reachable from a non-India datacenter on 2026-10-14. The SSNNL homepage shows today's Sardar Sarovar level in HTML spans but keeps no archive; the CWC weekly bulletin listing has been frozen at 08-05-2025 and uses different live capacities (Kadana 1.472 BCM vs the state's 1,191.7 MCM), so the two must never be mixed."
+    },
+    {
+      "id": "amc-citymap-wards",
+      "scope": "ahmedabad",
+      "publisher": "Ahmedabad Municipal Corporation",
+      "url": "https://inhouse-amcmodules.ahmedabadcity.gov.in:8023/",
+      "license": "Ahmedabad Municipal Corporation publication, cited with attribution",
+      "type": "page",
+      "cadence": "per delimitation",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash"
+      },
+      "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/geojson/ahmedabad-wards-2020.geojson",
+        "public/data/ahmedabad-ward-profiles.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ahmedabad_wards.py",
+      "notes": "AMC's City Map app, linked from 'Know Your Ward' on ahmedabadcity.gov.in. The ward layer is a GeoJSON literal (name Ward_Boundary) inside the app's minified JS bundle; there is no WMS, WFS or REST ward service. 48 wards in 7 zones, matching the SEC final delimitation of 03-10-2020 including the areas added on 18-06-2020 (Bopal, Ghuma, Kathwada). The page hash moves whenever the app is rebuilt, which is also when the bundle filename changes. TWO ATTRIBUTE FAULTS: area_ha holds the km2 value, and Navrangpura's area_sq_km is copied from Jodhpur; the producer recomputes areas from geometry. The same app serves lake points only through an encrypted API; those are not read. The OpenCity 'Amdavad Municipal Corporation Wards Map 2024' KML predates the 2020 extension and is not used."
+    },
+    {
+      "id": "sec-gujarat-amc-delimitation-2020",
+      "scope": "ahmedabad",
+      "publisher": "State Election Commission, Gujarat",
+      "url": "https://sec.gujarat.gov.in/images/pdf/Ahmedabad-MNP-2020.pdf",
+      "license": "Gujarat government publication, cited with attribution",
+      "type": "file",
+      "cadence": "per delimitation",
+      "tier": 0,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/geojson/ahmedabad-wards-2020.geojson"
+      ],
+      "refreshMethod": "manual transcription into neer-vazhvu-api/scripts/build_ahmedabad_wards.py POPULATION, checked against the order's printed total",
+      "notes": "Final delimitation order of 03-10-2020: 48 wards, 192 councillors; scanned Gujarati, 34 pages. Schedule 2 (pp.33-34) gives each ward's Census 2011 population, total 56,64,062, average 1,18,001, allowed band 1,06,201 to 1,29,801. The SEC's 2026 polls table (corparation-2026.pdf) uses the same 48 wards and 192 seats; no later delimitation found. Ward 33 is Sarkhej in the order where LGD names it Vejalpur."
+    },
+    {
+      "id": "amc-budget",
+      "scope": "ahmedabad",
+      "publisher": "Ahmedabad Municipal Corporation",
+      "url": "https://ahmedabadcity.gov.in/SP/Budget",
+      "license": "Ahmedabad Municipal Corporation publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly (February)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "FileRepository,\\d+"
+      },
+      "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/data/ahmedabad-supply-overview.json",
+        "public/data/commitments-ahmedabad.json",
+        "public/data/water-bodies-flagship-ahmedabad.json",
+        "public/data/restoration-projects-ahmedabad.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ahmedabad_supply.py --verify <new budget PDF> after updating FIGURES and their pages",
+      "notes": "The annual budget is AMC's only current statement of its water sources, treatment plants, STPs and lake programme. 2026-27 is FileRepository,2583 (Gujarati Unicode, raw-water table on printed pp.63-64 = PDF pp.113-114); 2023-24 English is FileRepository,2203. FOUR editions (2020-21 and 2021-22 Gujarati, 2024-25, 2025-26) use a legacy non-Unicode Gujarati font that pdftotext cannot read as digits. The AMC Water Project web page (StaticPage/water_project) has carried the same 2,100 / 1,535 MLD table since early 2022 and is NOT current. Tables carry derived columns: use equals capacity on several rows, and sewage generation is 80% of supply."
+    },
+    {
+      "id": "srfdcl-riverfront",
+      "scope": "ahmedabad",
+      "publisher": "Sabarmati River Front Development Corporation Ltd",
+      "url": "https://sabarmatiriverfront.com/environmental-improvement.html",
+      "license": "Ahmedabad Municipal Corporation company publication (SRFDCL, wholly owned by AMC), cited with attribution",
+      "type": "page",
+      "cadence": "episodic",
+      "tier": 2,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/data/ahmedabad-supply-overview.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Undated pages. Environmental improvement: the Vasna barrage retains water for 15 km upstream, and the Narmada canal, which crosses the river a few kilometres upstream of the city, 'makes it possible to replenish the barrage-retained water'; interceptor sewers on both banks take sewage from 38 discharge points. FAQ: the retained water is 'almost continuously discharged for irrigation into the Fatehwadi irrigation canal' and 'periodically recharged from the Narmada Canal'."
+    },
+    {
+      "id": "gujarat-hc-sabarmati-pil",
+      "scope": "ahmedabad",
+      "publisher": "High Court of Gujarat",
+      "url": "https://gujarathighcourt.nic.in/",
+      "license": "Gujarat High Court judicial record (Government of India judiciary), cited with attribution",
+      "type": "page",
+      "cadence": "per hearing",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/commitments-ahmedabad.json"
+      ],
+      "refreshMethod": "manual: read new orders in R/WP(PIL) 98/2021 (as annexed to NGT filings or mirrored on Indian Kanoon) and add dated status entries",
+      "notes": "Suo Motu v. Ahmedabad Municipal Corporation and others, R/WP(PIL) 98/2021, on pollution of the Sabarmati; taken up 06-08-2021; Joint Task Force formed 14-09-2021 under CPCB. The court's case-status site sits behind a captcha and is not machine-watchable, so this is a review cadence, not a detector. Orders reach the public record annexed to later NGT filings (OA 91/2023 WZ) and on Indian Kanoon."
+    },
+    {
+      "id": "ngt-gujarat-filings",
+      "scope": "ahmedabad",
+      "publisher": "National Green Tribunal (filings by the Government of Gujarat, GPCB and AMC)",
+      "url": "https://www.greentribunal.gov.in/news-update?title=GUJARAT",
+      "license": "Government of India tribunal record, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "every 5-8 months",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "news_updates/[^\"']*(Gujarat|GUJARAT|OA%20No\\.91-2023|606%20of%202018)"
+      },
+      "dependsOn": [
+        "public/data/commitments-ahmedabad.json",
+        "public/data/restoration-projects-ahmedabad.json"
+      ],
+      "refreshMethod": "manual: read new affidavits in OA 606/2018 (state compliance) and OA 91/2023 WZ (Sabarmati textile units) and update dated statuses",
+      "notes": "OA 606/2018 carries the state's periodic sewage and STP compliance affidavits; its March 2026 Part-II Annex I gives Ahmedabad's generation as 'Calculated as per 80% of Water Supply' and treated equal to it (a zero gap by method) and reuse at 26%. OA 91/2023 (WZ) carries AMC's reply annexing Gujarat High Court orders of 07-02-2025, 02-05-2025 and 08-08-2025 with STP completion dates. Also OA 79/2025 (WZ), taken up by the Tribunal on a 9 June 2025 news report on Ahmedabad's vanished water bodies (order of 12-11-2025 added UD&UHD and AMC as respondents; next date 22-01-2026)."
+    },
+    {
+      "id": "mohua-amrut-status",
+      "scope": "ahmedabad",
+      "publisher": "Ministry of Housing and Urban Affairs (AMRUT 2.0)",
+      "url": "https://amrut.mohua.gov.in/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "irregular (as-on status lists)",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "assets/Status-of[^\"']*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/commitments-ahmedabad.json",
+        "public/data/restoration-projects-ahmedabad.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "As-on status PDFs for AMRUT 2.0 water-supply projects; row 182 of the 02.03.2026 list is AMC's 400 MLD Kotarpur WTP (contract awarded, Rs 138.00 crore, 16-10-2026). The portal's own AMC project list (live HTML) disagrees with AMC's budget on several items (Bhadaj and Okaf lakes, the Expressway-Kamod trunk main)."
+    },
+    {
+      "id": "cmo-gujarat-press",
+      "scope": "ahmedabad",
+      "publisher": "Chief Minister's Office, Government of Gujarat",
+      "url": "https://cmogujarat.gov.in/en/latest-news",
+      "license": "Gujarat government publication, cited with attribution",
+      "type": "page",
+      "cadence": "daily",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/commitments-ahmedabad.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Government press releases used for dated status: Kharicut phase 1 at 80% (11-03-2025) and the riverfront's three phases by end-2027 (06-06-2026). A release with no figures (the 29-04-2025 Chandola review) is not used for any number."
+    },
+    {
+      "id": "gujarat-reuse-policy-2018",
+      "scope": "ahmedabad",
+      "publisher": "Urban Development and Urban Housing Department, Government of Gujarat",
+      "url": "http://faolex.fao.org/docs/pdf/ind200786.pdf",
+      "license": "Gujarat government publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed (2018 policy)",
+      "tier": 0,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/commitments-ahmedabad.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Policy for Reuse of Treated Waste Water, 28 May 2018, signed by the Principal Secretary. Not found on any gujarat.gov.in host; the FAOLEX mirror is a scan of the signed policy. Objectives (p.7): 25% of freshwater use from treated wastewater, 70% of treated wastewater reused by 2025, 100% by 2030; thermal plants within 50 km must use it (p.11)."
+    },
+    {
+      "id": "gujarat-hc-lake-orders",
+      "scope": "ahmedabad",
+      "publisher": "High Court of Gujarat",
+      "url": "https://indiankanoon.org/search/?formInput=Chandola%20lake%20ahmedabad",
+      "license": "Gujarat High Court judicial record (Government of India judiciary), cited with attribution",
+      "type": "page",
+      "cadence": "per order",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/water-bodies-flagship-ahmedabad.json",
+        "public/data/restoration-projects-ahmedabad.json"
+      ],
+      "refreshMethod": "manual: new lake-encroachment orders via Indian Kanoon (the court's own case status is captcha-gated)",
+      "notes": "Orders on Ahmedabad's lakes: Shailesh R. Shah (2002) 3 GLR 447 (Chandola tank 121 ha, command 525 ha; ordered water bodies to be gazette-notified); R/SCA 6119/2025 (29-04-2025, stay refused: 'Chandola Lake is a water body and on a water body, no construction can be permitted'; disposed 24-07-2025) and R/SCA 6716/2025 (06-05-2025, stay rejected); Kamal Talav (SCA 15965/2025) and Isanpur (SCA 14892/2025, LPA 1280/2025) dismissed. Indian Kanoon is a mirror; cite the court and case number."
+    },
+    {
+      "id": "mojs-water-bodies-census-2023",
+      "scope": "ahmedabad",
+      "publisher": "Ministry of Jal Shakti (first Water Bodies Census, reference year 2017-18)",
+      "url": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed (first census; second census pending)",
+      "tier": 0,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/water-bodies-flagship-ahmedabad.json"
+      ],
+      "refreshMethod": "manual; watch for the second census's Gujarat tables",
+      "notes": "District tables GJ_6MIC_WBS<N>.xls. Ahmedabad district: 1,964 water bodies (ponds 417, tanks 1,369, reservoirs 40, water conservation schemes 138); 176 urban across 10 towns and 67 wards; 63 not in use (all urban); 19 encroached (all urban). Gujarat: 54,069, of which 22 encroached - 19 of them in Ahmedabad. The urban count of 176 equals AMC's own 2026-27 lake count; whether they are the same set is not shown by either source."
+    }
+  ]
+}

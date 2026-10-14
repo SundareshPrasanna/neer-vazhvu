@@ -142,6 +142,9 @@
         "linkPattern": "nwmp-data-\\d{4}"
       },
       "dependsOn": [
+        "public/data/facts-ahmedabad.json",
+        "public/data/ahmedabad-ward-profiles.json",
+        "public/data/river-quality-ahmedabad.json",
         "public/data/facts-surat.json",
         "public/data/industrial-sources-surat.json",
         "public/data/river-quality-surat.json"
@@ -238,10 +241,14 @@
         "reviewEveryDays": 120
       },
       "dependsOn": [
-        "public/data/gwr-blocks-surat.json"
+        "public/data/facts-ahmedabad.json",
+        "public/data/ahmedabad-ward-profiles.json",
+        "public/data/gwr-blocks-surat.json",
+        "public/data/gwr-blocks-ahmedabad.json",
+        "public/geojson/ahmedabad-gwr-blocks.geojson"
       ],
-      "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city surat",
-      "notes": "Dynamic Ground Water Resources for Surat, Tapi, Navsari and Bharuch districts across four assessment years. IN-GRES is ONE upstream serving every state; this entry is the Gujarat cut. Gujarat's state UUID was taken from the COUNTRY-level API call rather than the Angular bundle's GIS-layer table, which is incomplete and carries a second same-shaped table in a different namespace that returns well-formed empty results. Tapi district is in scope because Ukai - the control on Surat's supply and its flood risk - sits there. Watch for units returned as 'salinity': that is a poor-quality category, not a stage-of-extraction band, and such units carry no extraction figures at all."
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city surat; --city ahmedabad (also writes the unit polygons from the IN-GRES GeoServer)",
+      "notes": "Dynamic Ground Water Resources for Surat, Tapi, Navsari and Bharuch districts across four assessment years, and Ahmedabad district drilled to its ten talukas (five editions from 2021-2022). IN-GRES is ONE upstream serving every state; this entry is the Gujarat cut. Gujarat's state UUID was taken from the COUNTRY-level API call rather than the Angular bundle's GIS-layer table, which is incomplete and carries a second same-shaped table in a different namespace that returns well-formed empty results. Tapi district is in scope because Ukai - the control on Surat's supply and its flood risk - sits there. Watch for units returned as 'salinity': that is a poor-quality category, not a stage-of-extraction band, and such units carry no extraction figures at all."
     }
   ]
 }

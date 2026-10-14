@@ -1,0 +1,306 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "ahmedabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "amc-budget",
+        "title": "AMC Budget 2026-27 and 2023-24",
+        "publisher": "Ahmedabad Municipal Corporation",
+        "license": "Ahmedabad Municipal Corporation publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "ingres-groundwater-gujarat",
+        "title": "IN-GRES assessment, Ahmedabad district",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input"
+      },
+      {
+        "id": "cpcb-nwmp",
+        "title": "CPCB NWMP river tables",
+        "publisher": "Central Pollution Control Board",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "gujarat-wrd-dam-daily-report",
+        "title": "Gujarat daily dam report",
+        "publisher": "Government of Gujarat",
+        "license": "Gujarat government publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-gujarat",
+        "title": "NWDP groundwater telemetry",
+        "publisher": "National Water Informatics Centre",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "amc-citymap-wards",
+        "title": "AMC ward layer",
+        "publisher": "Ahmedabad Municipal Corporation",
+        "license": "Ahmedabad Municipal Corporation publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "sec-gujarat-amc-delimitation-2020",
+        "title": "SEC delimitation order",
+        "publisher": "State Election Commission, Gujarat",
+        "license": "Gujarat government publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap water bodies",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "imd-gridded-rainfall-ahmedabad",
+        "title": "IMD gridded rainfall",
+        "publisher": "India Meteorological Department",
+        "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-14",
+    "produced_by": "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "internal_inputs": [
+      "public/data/ahmedabad-supply-overview.json",
+      "public/data/gwr-blocks-ahmedabad.json",
+      "public/data/river-quality-ahmedabad.json",
+      "public/data/ahmedabad-dam-storage.json",
+      "public/data/ahmedabad-cgwb-stations.json",
+      "public/data/commitments-ahmedabad.json",
+      "public/data/imd-rainfall-monthly-ahmedabad.json",
+      "public/geojson/ahmedabad-wards-2020.geojson",
+      "public/geojson/ahmedabad-water-bodies-current.geojson"
+    ],
+    "note": "Every figure is read from a shipped artifact; nothing is transcribed a second time."
+  },
+  "place_id": "ahmedabad",
+  "generated_at": "2026-10-14",
+  "note": "Each card's number comes from the artifact behind the page it summarises.",
+  "facts": [
+    {
+      "id": "narmada-share-of-supply",
+      "tier": 1,
+      "category": "Supply",
+      "title": "Most of the city's water comes down one canal",
+      "value": "84",
+      "unit": "% of AMC's 1,850 MLD from the Narmada Main Canal",
+      "interpretation": "AMC's own source table puts 1,550 of the 1,850 MLD it draws a day on three offtakes of the Narmada Main Canal, which carries water from Sardar Sarovar. The Mahi supplies 200 MLD and borewells 100. The Sabarmati, the river the city was founded on, is not in the table at all.",
+      "data_date": "2026-02",
+      "source_url": "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+      "source_label": "AMC Budget 2026-27, pp.63-64"
+    },
+    {
+      "id": "city-aquifer-over-exploited",
+      "tier": 1,
+      "category": "Groundwater",
+      "title": "The district reads semi-critical; the aquifer under the city is over-exploited",
+      "value": "128.85",
+      "unit": "% of extractable groundwater drawn in the Ahmedabad Urban unit (2025-2026)",
+      "interpretation": "IN-GRES assesses Ahmedabad district at 79.14%, semi critical. Its Ahmedabad Urban unit, which holds every AMC ward, is over exploited at 128.85%, and the rural ring around it, City and Daskroi, at 143.16%. Read the category, not a trend: the urban unit's extraction was filed under different uses in each edition.",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES dynamic groundwater assessment, 2025-2026"
+    },
+    {
+      "id": "sabarmati-enters-clean-leaves-dead",
+      "tier": 1,
+      "category": "Rivers",
+      "title": "The Sabarmati enters the city clean and leaves it without oxygen",
+      "value": "82",
+      "unit": "mg/L peak BOD at V.N. Bridge in 2024, against 1.2 at Hansol upstream",
+      "interpretation": "CPCB measures the river where it enters the city at Hansol and again below the outfalls at V.N. Bridge. In 2024 the peak BOD was 1.2 mg/L upstream and 82 downstream; CPCB's bathing-water criterion is 3 or less. Dissolved oxygen at V.N. Bridge was at or below 0.3 mg/L, CPCB's detection floor, in every one of the 6 years from 2019 to 2024.",
+      "data_date": "2024",
+      "source_url": "https://cpcb.gov.in/water-quality-data/",
+      "source_label": "CPCB NWMP annual river data, 2024"
+    },
+    {
+      "id": "commitments-overdue",
+      "tier": 1,
+      "category": "Governance",
+      "title": "Dated water promises past their date",
+      "value": "5 of 10",
+      "unit": "dated commitments past due with the work still under way",
+      "interpretation": "Two sewage treatment plants AMC told the High Court would be ready by September 2025 and February 2026, the Kharicut canal's two-year rebuild, the 2050 drainage master plan due in March 2023, and the state's target of reusing 70% of treated wastewater by 2025. Each status cites a dated document on the commitments page.",
+      "data_date": "2026-10",
+      "source_url": "https://ahmedabadcity.gov.in/",
+      "source_label": "AMC budgets, High Court orders and state filings (see /ahmedabad/commitments)"
+    },
+    {
+      "id": "do-at-detection-floor",
+      "tier": 2,
+      "category": "Rivers",
+      "title": "No measurable oxygen below the city",
+      "value": "6",
+      "unit": "of 6 years (2019-2024) with dissolved oxygen at or below CPCB's 0.3 mg/L detection floor at V.N. Bridge",
+      "interpretation": "0.3 mg/L is the lowest value CPCB reports; anything at it is below detection. It recurs at the station below the city's outfalls, while at Hansol upstream the lowest reading in the same years was 4.2 mg/L.",
+      "data_date": "2024",
+      "source_url": "https://cpcb.gov.in/water-quality-data/",
+      "source_label": "CPCB NWMP annual river data, 2019-2024"
+    },
+    {
+      "id": "sabarmati-priority-one",
+      "tier": 2,
+      "category": "Rivers",
+      "title": "A Priority I polluted stretch in every CPCB edition",
+      "value": "Priority I",
+      "unit": "in CPCB's 2018, 2022 and 2025 polluted-stretch reports",
+      "interpretation": "Priority I is CPCB's worst class, for stretches whose BOD exceeds 30 mg/L. The Sabarmati below Ahmedabad has been in it in all three editions, and so has the Khari at Lali village.",
+      "data_date": "2025-10",
+      "source_url": "https://cpcb.gov.in/polluted-river-stretches/",
+      "source_label": "CPCB Polluted River Stretches, 2018, 2022 and October 2025"
+    },
+    {
+      "id": "khari-at-lali",
+      "tier": 3,
+      "category": "Rivers",
+      "title": "The Khari at Lali village",
+      "value": "46",
+      "unit": "mg/L peak BOD in 2024",
+      "interpretation": "The tributary that passes the city's eastern industrial estates. CPCB's polluted-stretch editions put its maximum at 235 mg/L (2018), 195 (2022) and 68 (2025).",
+      "data_date": "2024",
+      "source_url": "https://cpcb.gov.in/water-quality-data/",
+      "source_label": "CPCB NWMP annual river data, 2024"
+    },
+    {
+      "id": "city-daskroi-irrigation",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "The ring around the city draws the most, mostly for farms",
+      "value": "143.16",
+      "unit": "% stage of extraction, Ahmedabad City and Daskroi (2025-2026)",
+      "interpretation": "82% of this unit's extraction is irrigation (14,233 of 17,308.3 hectare-metres). IN-GRES carved the city's own unit out of it in 2021-2022.",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES dynamic groundwater assessment, 2025-2026"
+    },
+    {
+      "id": "saline-talukas",
+      "tier": 3,
+      "category": "Groundwater",
+      "title": "Two talukas cannot be assessed on extraction at all",
+      "value": "2",
+      "unit": "talukas categorised 'salinity' in every edition (Dhandhuka, Dholera)",
+      "interpretation": "CGWB does not assess saline aquifers on extraction. 74% of Ahmedabad district's assessed area is poor-quality groundwater (523,588 of 707,726 ha).",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES dynamic groundwater assessment, 2025-2026"
+    },
+    {
+      "id": "telemetry-wells-in-city",
+      "tier": 3,
+      "category": "Groundwater",
+      "title": "Groundwater telemetry under the city",
+      "value": "24",
+      "unit": "of 139 telemetry wells in the district stand in the Ahmedabad Urban unit",
+      "interpretation": "Six-hourly piezometers run by Gujarat's groundwater department and CGWB, published on the National Water Data Portal. Shallow and deep wells stand side by side in the same neighbourhoods, so no single city water-table depth is computed.",
+      "data_date": "2026-10",
+      "source_url": "https://nwdp.nwic.gov.in/",
+      "source_label": "National Water Data Portal, groundwater telemetry"
+    },
+    {
+      "id": "treatment-capacity",
+      "tier": 2,
+      "category": "Supply",
+      "title": "Three treatment plants carry the city",
+      "value": "1,750",
+      "unit": "MLD treatment capacity; 2,700 with the works under way or planned",
+      "interpretation": "Kotarpur, Jaspur and Raska. A 400 MLD plant at Kotarpur under AMRUT 2.0 is scheduled for 16 October 2026 in MoHUA's status list; a 200 MLD addition at Jaspur has been described as in progress in five budgets without a date.",
+      "data_date": "2026-02",
+      "source_url": "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+      "source_label": "AMC Budget 2026-27, p.64"
+    },
+    {
+      "id": "borewells",
+      "tier": 3,
+      "category": "Supply",
+      "title": "AMC's own borewells",
+      "value": "100",
+      "unit": "MLD from 555 borewells, of 315 MLD capacity",
+      "interpretation": "The city's own groundwater draw, as AMC states it. Private borewells are not in any AMC figure.",
+      "data_date": "2026-02",
+      "source_url": "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+      "source_label": "AMC Budget 2026-27, p.63"
+    },
+    {
+      "id": "sardar-sarovar-storage",
+      "tier": 3,
+      "category": "Reservoirs",
+      "title": "Sardar Sarovar on the day of this snapshot",
+      "value": "99.61",
+      "unit": "% of live capacity on 2026-10-14; 16,945 cusecs into the Narmada Main Canal",
+      "interpretation": "The dam that supplies most of the city's water, from the state water department's daily report. It is a four-state project; Ahmedabad's share of its storage is not published. The dashboard's reservoir cards carry the daily series.",
+      "data_date": "2026-10",
+      "source_url": "https://wrd-dam.gujarat.gov.in/index.php",
+      "source_label": "Gujarat NWRWS&K daily dam report"
+    },
+    {
+      "id": "wards-and-people",
+      "tier": 4,
+      "category": "Governance",
+      "title": "48 wards in 7 zones",
+      "value": "5,664,062",
+      "unit": "people in 48 wards and 7 zones (Census 2011, as used for the 2020 delimitation)",
+      "interpretation": "The State Election Commission drew the wards in October 2020 around Census 2011 populations of 1.05 to 1.30 lakh each. AMC's 2026-27 budget puts today's population at about 90 lakh.",
+      "data_date": "2011",
+      "source_url": "https://sec.gujarat.gov.in/images/pdf/Ahmedabad-MNP-2020.pdf",
+      "source_label": "State Election Commission, Gujarat, AMC delimitation order (3 Oct 2020)"
+    },
+    {
+      "id": "mapped-water-bodies",
+      "tier": 3,
+      "category": "Water bodies",
+      "title": "Water bodies on the map",
+      "value": "232",
+      "unit": "lakes, ponds, reservoirs and river polygons, from OpenStreetMap",
+      "interpretation": "AMC counts 176 lakes in its 2026-27 budget but publishes no lake register and no lake layer, so the map is OpenStreetMap's.",
+      "source_url": "https://www.openstreetmap.org/copyright",
+      "source_label": "OpenStreetMap contributors (ODbL 1.0)"
+    },
+    {
+      "id": "normal-rainfall",
+      "tier": 4,
+      "category": "Rainfall",
+      "title": "A normal year's rain",
+      "value": "805.1",
+      "unit": "mm a year, IMD gridded data at 23.0 N 72.5 E (1970-2020 mean)",
+      "interpretation": "IMD's own Ahmedabad observatory normal is 783.6 mm (1991-2020). On this grid cell, July and August bring 68% of a normal year's rain.",
+      "source_url": "https://city.imd.gov.in/citywx/extreme/climate.php?id=42647",
+      "source_label": "India Meteorological Department"
+    },
+    {
+      "id": "gap-nrw",
+      "tier": 3,
+      "category": "Gap",
+      "title": "How much water is lost in the pipes",
+      "value": "Not measured",
+      "unit": "no measured non-revenue water has been published",
+      "interpretation": "AMC's 2023-24 budget says connections are unmetered; its 2024-25 and 2025-26 budgets promise a 5% cut in losses without stating a baseline.",
+      "data_date": "2023-02",
+      "source_url": "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2203",
+      "source_label": "AMC Budget 2023-24"
+    },
+    {
+      "id": "gap-entitlement",
+      "tier": 3,
+      "category": "Gap",
+      "title": "How much Narmada water the city is entitled to",
+      "value": "Not published",
+      "unit": "no public order states AMC's base allocation",
+      "interpretation": "Gujarat sanctions municipal raw water each year with a 25% band either side, under a 2007 resolution and its 2008 clarification, but the sanctioned quantity for Ahmedabad does not appear in any public document found.",
+      "data_date": "2008-09",
+      "source_url": "https://guj-nwrws.gujarat.gov.in/downloads/circular_clarification_of_watercharges.pdf",
+      "source_label": "Gujarat NWRWS&K Department, circular of 9 Sept 2008 on the 3 Feb 2007 water-charges resolution"
+    }
+  ]
+}

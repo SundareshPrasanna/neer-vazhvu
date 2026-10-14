@@ -1,0 +1,3203 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-profiles",
+  "scope": {
+    "kind": "city",
+    "id": "ahmedabad"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "amc-citymap-wards",
+        "title": "AMC City Map ward layer (48 wards)",
+        "publisher": "Ahmedabad Municipal Corporation",
+        "license": "Ahmedabad Municipal Corporation publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap water bodies",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "cpcb-nwmp",
+        "title": "CPCB NWMP river stations",
+        "publisher": "Central Pollution Control Board",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "ingres-groundwater-gujarat",
+        "title": "IN-GRES assessment units",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-gujarat",
+        "title": "NWDP groundwater telemetry",
+        "publisher": "National Water Informatics Centre",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-14",
+    "produced_by": "neer-vazhvu-api/scripts/build_ward_profiles.py",
+    "internal_inputs": [
+      "public/data/ahmedabad-cgwb-stations.json",
+      "public/data/gwr-blocks-ahmedabad.json",
+      "public/data/river-quality-ahmedabad.json",
+      "public/geojson/ahmedabad-gwr-blocks.geojson",
+      "public/geojson/ahmedabad-wards-2020.geojson",
+      "public/geojson/ahmedabad-water-bodies-current.geojson"
+    ],
+    "note": "Point-in-polygon joins of the city's shipped layers onto its ward geometry; sections without a source are marked not_available."
+  },
+  "wards": [
+    {
+      "ward_number": 1,
+      "ward_name": "Gota",
+      "zone_no": "6",
+      "zone_name": "North West",
+      "centroid": [
+        72.518895,
+        23.100298
+      ],
+      "area_sq_km": 34.311,
+      "population_2011": 104676,
+      "water_bodies": {
+        "current_count": 8,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Ghatlodiya Lake",
+          "Gota Lake",
+          "Ognaj Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 8.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Sola(HC)_Pz_I_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.2,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 69.41
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 2,
+      "ward_name": "Chandlodiya",
+      "zone_no": "6",
+      "zone_name": "North West",
+      "centroid": [
+        72.550841,
+        23.109075
+      ],
+      "area_sq_km": 13.864,
+      "population_2011": 109411,
+      "water_bodies": {
+        "current_count": 5,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Chandlodia Lake",
+          "Chharodi Lake",
+          "Jagatpur Lake",
+          "Tragad Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 6.4
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_008",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.9,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 0.67
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 3,
+      "ward_name": "Chandkheda Motera",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.588783,
+        23.115685
+      ],
+      "area_sq_km": 11.518,
+      "population_2011": 116324,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 5.0
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 4,
+      "ward_name": "Sabarmati",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.595719,
+        23.092259
+      ],
+      "area_sq_km": 9.491,
+      "population_2011": 111227,
+      "water_bodies": {
+        "current_count": 3,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "HPII_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.1,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 5,
+      "ward_name": "Ranip",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.570454,
+        23.087413
+      ],
+      "area_sq_km": 8.126,
+      "population_2011": 114655,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Auda Lake",
+          "Chenpur Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 6,
+      "ward_name": "Nava Vadaj",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.564107,
+        23.070353
+      ],
+      "area_sq_km": 3.096,
+      "population_2011": 119798,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 2.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 7,
+      "ward_name": "Ghatlodiya",
+      "zone_no": "6",
+      "zone_name": "North West",
+      "centroid": [
+        72.544757,
+        23.069473
+      ],
+      "area_sq_km": 2.949,
+      "population_2011": 104697,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Sola(HC)_Pz_I_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.4,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 69.41
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 8,
+      "ward_name": "Thaltej",
+      "zone_no": "6",
+      "zone_name": "North West",
+      "centroid": [
+        72.48609,
+        23.059318
+      ],
+      "area_sq_km": 32.362,
+      "population_2011": 130044,
+      "water_bodies": {
+        "current_count": 14,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Bopal Lake",
+          "Ghuma Lake",
+          "Shilaj Lake",
+          "Thaltej Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 10.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Bopal_Pz_III_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.7,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 6.88
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 9,
+      "ward_name": "Naranpura",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.551456,
+        23.057308
+      ],
+      "area_sq_km": 4.951,
+      "population_2011": 122616,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Sola(HC)_Pz_I_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.7,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 69.41
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 10,
+      "ward_name": "Sp Stadium",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.573949,
+        23.057701
+      ],
+      "area_sq_km": 5.254,
+      "population_2011": 121853,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 1.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.9,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 11,
+      "ward_name": "Sardar Nagar",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.649236,
+        23.096583
+      ],
+      "area_sq_km": 12.782,
+      "population_2011": 120485,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 2.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "HPII_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.9,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 12,
+      "ward_name": "Naroda",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.670253,
+        23.080018
+      ],
+      "area_sq_km": 14.898,
+      "population_2011": 122117,
+      "water_bodies": {
+        "current_count": 3,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Naroda Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.4
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "HPII_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.0,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 13,
+      "ward_name": "Saijpur Bogha",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.637814,
+        23.056918
+      ],
+      "area_sq_km": 2.894,
+      "population_2011": 129616,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Saijpur Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "HPII_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.2,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 14,
+      "ward_name": "Kuber Nagar",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.634167,
+        23.068951
+      ],
+      "area_sq_km": 2.141,
+      "population_2011": 118156,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 2.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "HPII_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.8,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 15,
+      "ward_name": "Asarwa",
+      "zone_no": "1",
+      "zone_name": "Central",
+      "centroid": [
+        72.613142,
+        23.050015
+      ],
+      "area_sq_km": 2.419,
+      "population_2011": 122464,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Asarva Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 2.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_002",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.3,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 29.0
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 16,
+      "ward_name": "Shahibag",
+      "zone_no": "1",
+      "zone_name": "Central",
+      "centroid": [
+        72.598562,
+        23.05011
+      ],
+      "area_sq_km": 4.449,
+      "population_2011": 105102,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 1.8
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_002",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.2,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 29.0
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 17,
+      "ward_name": "Shahpur",
+      "zone_no": "1",
+      "zone_name": "Central",
+      "centroid": [
+        72.582859,
+        23.047404
+      ],
+      "area_sq_km": 3.711,
+      "population_2011": 115078,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Lotus Pond"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 1.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.0,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 18,
+      "ward_name": "Navrangpura",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.551957,
+        23.030304
+      ],
+      "area_sq_km": 11.957,
+      "population_2011": 111256,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 5.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.4,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 19,
+      "ward_name": "Bodakdev",
+      "zone_no": "6",
+      "zone_name": "North West",
+      "centroid": [
+        72.504522,
+        23.035484
+      ],
+      "area_sq_km": 13.533,
+      "population_2011": 128201,
+      "water_bodies": {
+        "current_count": 13,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Ambli Lake",
+          "Memnagar Lake",
+          "Vastrapur Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 7.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Bopal_Pz_III_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.8,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 6.88
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 20,
+      "ward_name": "Jodhpur",
+      "zone_no": "7",
+      "zone_name": "South West",
+      "centroid": [
+        72.499775,
+        23.019285
+      ],
+      "area_sq_km": 12.751,
+      "population_2011": 121359,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Mumatpura Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 6.0
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Sarkhej_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.6,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 23.15
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 21,
+      "ward_name": "Dariyapur",
+      "zone_no": "1",
+      "zone_name": "Central",
+      "centroid": [
+        72.589155,
+        23.034028
+      ],
+      "area_sq_km": 1.629,
+      "population_2011": 117314,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.1,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 22,
+      "ward_name": "India Colony",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.624117,
+        23.04385
+      ],
+      "area_sq_km": 4.378,
+      "population_2011": 109205,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_002",
+          "block": "Ahmedabad Urban",
+          "distance_km": 1.4,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 29.0
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 23,
+      "ward_name": "Thakkarbapa Nagar",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.652375,
+        23.050173
+      ],
+      "area_sq_km": 3.527,
+      "population_2011": 124349,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 5.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "HPII_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.6,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 24,
+      "ward_name": "Nikol",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.690781,
+        23.051996
+      ],
+      "area_sq_km": 29.178,
+      "population_2011": 118119,
+      "water_bodies": {
+        "current_count": 5,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 7.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_005",
+          "block": "Ahmedabad Urban",
+          "distance_km": 1.6,
+          "latest": {
+            "year": 2026,
+            "month": 2,
+            "depth_m_bgl": 62.75
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 25,
+      "ward_name": "Virat Nagar",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.645053,
+        23.029253
+      ],
+      "area_sq_km": 3.945,
+      "population_2011": 127525,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 6.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.2,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 26,
+      "ward_name": "Bapu Nagar",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.63092,
+        23.031935
+      ],
+      "area_sq_km": 2.497,
+      "population_2011": 121562,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 5.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_002",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.8,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 29.0
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 27,
+      "ward_name": "Saraspur Rakhiyal",
+      "zone_no": "2",
+      "zone_name": "North",
+      "centroid": [
+        72.614396,
+        23.030392
+      ],
+      "area_sq_km": 3.385,
+      "population_2011": 127630,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_002",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.9,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 29.0
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 28,
+      "ward_name": "Khadiya",
+      "zone_no": "1",
+      "zone_name": "Central",
+      "centroid": [
+        72.594202,
+        23.021772
+      ],
+      "area_sq_km": 3.222,
+      "population_2011": 120690,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.8,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 29,
+      "ward_name": "Jamalpur",
+      "zone_no": "1",
+      "zone_name": "Central",
+      "centroid": [
+        72.580428,
+        23.021603
+      ],
+      "area_sq_km": 2.914,
+      "population_2011": 125923,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 1.6,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 30,
+      "ward_name": "Paldi",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.56199,
+        23.011195
+      ],
+      "area_sq_km": 5.579,
+      "population_2011": 107774,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Kocharab",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.7,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 28.84
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 31,
+      "ward_name": "Vasna",
+      "zone_no": "5",
+      "zone_name": "West",
+      "centroid": [
+        72.546593,
+        22.997413
+      ],
+      "area_sq_km": 5.386,
+      "population_2011": 106520,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 1.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-24",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.4,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 86.67
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 32,
+      "ward_name": "Vejalpur",
+      "zone_no": "7",
+      "zone_name": "South West",
+      "centroid": [
+        72.524486,
+        23.005405
+      ],
+      "area_sq_km": 2.811,
+      "population_2011": 105159,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 3.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_004",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.2,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 1.85
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 33,
+      "ward_name": "Sarkhej",
+      "zone_no": "7",
+      "zone_name": "South West",
+      "centroid": [
+        72.48407,
+        22.993876
+      ],
+      "area_sq_km": 29.317,
+      "population_2011": 122548,
+      "water_bodies": {
+        "current_count": 7,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Ratna Lake",
+          "Sarkej Roza"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 6.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Sarkhej_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.2,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 23.15
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 34,
+      "ward_name": "Maktampura",
+      "zone_no": "7",
+      "zone_name": "South West",
+      "centroid": [
+        72.515744,
+        22.954101
+      ],
+      "area_sq_km": 26.627,
+      "population_2011": 120281,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-39",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.3,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 2.57
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 35,
+      "ward_name": "Behrampura",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.569339,
+        22.987748
+      ],
+      "area_sq_km": 10.468,
+      "population_2011": 126978,
+      "water_bodies": {
+        "current_count": 3,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 2.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-25",
+          "block": "Ahmedabad Urban",
+          "distance_km": 1.4,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 69.89
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 36,
+      "ward_name": "Danilimda",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.587978,
+        22.997166
+      ],
+      "area_sq_km": 3.542,
+      "population_2011": 120944,
+      "water_bodies": {
+        "current_count": 3,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Chandola Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-25",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.3,
+          "latest": {
+            "year": 2026,
+            "month": 10,
+            "depth_m_bgl": 69.89
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 37,
+      "ward_name": "Maninagar",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.602061,
+        22.999558
+      ],
+      "area_sq_km": 4.541,
+      "population_2011": 123027,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Kankaria Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 6.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.5,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 25.43
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 38,
+      "ward_name": "Gomtipur",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.617039,
+        23.019008
+      ],
+      "area_sq_km": 3.28,
+      "population_2011": 127578,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 5.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 1.0,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 39,
+      "ward_name": "Amraiwadi",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.623977,
+        23.009868
+      ],
+      "area_sq_km": 3.137,
+      "population_2011": 105671,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 6.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 1.0,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 40,
+      "ward_name": "Odhav",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.662044,
+        23.023007
+      ],
+      "area_sq_km": 5.787,
+      "population_2011": 116372,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Odhav Talav"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1866",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 8.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.6,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 41,
+      "ward_name": "Vastral",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.668723,
+        23.001909
+      ],
+      "area_sq_km": 13.444,
+      "population_2011": 116202,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Ratanpura lake",
+          "Vastral Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 10.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 4.6,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 42,
+      "ward_name": "Indrapuri",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.638735,
+        23.000521
+      ],
+      "area_sq_km": 3.268,
+      "population_2011": 110451,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 8.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.3,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 43,
+      "ward_name": "Bhaipura Hatkeshwar",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.627671,
+        22.994356
+      ],
+      "area_sq_km": 1.948,
+      "population_2011": 110818,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1409",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 8.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-23",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.6,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 100.2
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 44,
+      "ward_name": "Khokhra",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.615726,
+        22.99574
+      ],
+      "area_sq_km": 3.639,
+      "population_2011": 110880,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Mini Kankaria Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 7.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.6,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 25.43
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 45,
+      "ward_name": "Isanpur",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.600001,
+        22.979668
+      ],
+      "area_sq_km": 4.079,
+      "population_2011": 121171,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Isanpur Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 5.8
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "G_1_ABD_001",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.4,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 25.43
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 46,
+      "ward_name": "Lambha",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.561826,
+        22.950983
+      ],
+      "area_sq_km": 44.536,
+      "population_2011": 120641,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Narol Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 4.0
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "SABDPZ-35",
+          "block": "Ahmedabad Urban",
+          "distance_km": 2.3,
+          "latest": {
+            "year": 2026,
+            "month": 9,
+            "depth_m_bgl": 8.0
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 47,
+      "ward_name": "Vatva",
+      "zone_no": "3",
+      "zone_name": "South",
+      "centroid": [
+        72.613042,
+        22.946787
+      ],
+      "area_sq_km": 15.299,
+      "population_2011": 121894,
+      "water_bodies": {
+        "current_count": 3,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-2",
+        "nearest_river_id": "sabarmati",
+        "nearest_km": 8.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Vatwa Pz-II_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 0.8,
+          "latest": {
+            "year": 2024,
+            "month": 6,
+            "depth_m_bgl": 30.95
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 48,
+      "ward_name": "Ramol Hathijan",
+      "zone_no": "4",
+      "zone_name": "East",
+      "centroid": [
+        72.648201,
+        22.957836
+      ],
+      "area_sq_km": 31.002,
+      "population_2011": 127701,
+      "water_bodies": {
+        "current_count": 7,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Ahmedabad's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC identifies 148 waterlogging spots (July 2026) but has not published the list or their locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC reports 1,010 km of storm-water drains (Budget 2026-27) but publishes no drain geometry."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "AMC's sewage treatment plants are named in its budget and in GPCB filings, but no plant or pumping-station locations are published."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "GPCB publishes no coordinates for the common effluent treatment plants or the industrial units that discharge to the Sabarmati."
+      },
+      "rivers": {
+        "nearest_station_id": "nwmp-1437",
+        "nearest_river_id": "khari",
+        "nearest_km": 10.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Ahmedabad Urban",
+          "class": "Over Exploited",
+          "development_pct": 128.85
+        },
+        "nearest_well": {
+          "name": "Vatwa Pz-II_1",
+          "block": "Ahmedabad Urban",
+          "distance_km": 3.3,
+          "latest": {
+            "year": 2024,
+            "month": 6,
+            "depth_m_bgl": 30.95
+          }
+        }
+      }
+    }
+  ]
+}
