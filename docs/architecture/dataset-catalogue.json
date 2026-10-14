@@ -1,6 +1,223 @@
 {
  "files": [
   {
+   "path": "public/data/ahmedabad-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "cgwb-stations",
+   "bytes": 365708,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "aquifer",
+     "cadence_note",
+     "dataset",
+     "depth_unit",
+     "district",
+     "ext",
+     "nvdm",
+     "provenance",
+     "reading_kind",
+     "scope",
+     "series_label",
+     "source_label",
+     "source_url",
+     "unit_label",
+     "well_type",
+     "wells"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/types.ts",
+    "src/types/groundwater.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py"
+   ],
+   "headwaters_sources": [
+    "nwic-nwdp-groundwater-gujarat"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/ahmedabad-dam-storage.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "dam-storage",
+   "bytes": 2205,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dams",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "report_date",
+     "report_url",
+     "scope",
+     "storage_note"
+    ]
+   },
+   "consumers": [
+    "src/content/story-ahmedabad-en.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/scrape_gujarat_wrd_dams.py"
+   ],
+   "headwaters_sources": [
+    "gujarat-wrd-dam-daily-report"
+   ],
+   "licenses": [
+    "Gujarat government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/ahmedabad-localities.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "localities",
+   "bytes": 23060,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "localities",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/api/localities/route.ts",
+    "src/lib/ward-rankings/load-rankings.ts"
+   ],
+   "producer_refs": [
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/ahmedabad-supply-overview.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "supply-overview",
+   "bytes": 5892,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_sources",
+     "_supply_total_note",
+     "_view_overrides",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
+     "dataset",
+     "distribution",
+     "groundwater",
+     "hero_copy",
+     "nvdm",
+     "provenance",
+     "scope",
+     "supply_chain",
+     "wtps_summary"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/content/story-ahmedabad-en.tsx",
+    "src/lib/cities/ahmedabad.ts",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_ahmedabad_supply.py"
+   ],
+   "headwaters_sources": [
+    "amc-budget",
+    "srfdcl-riverfront"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation company publication (SRFDCL, wholly owned by AMC), cited with attribution",
+    "Ahmedabad Municipal Corporation publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/ahmedabad-ward-profiles.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "ward-profiles",
+   "bytes": 107773,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
+    ]
+   },
+   "consumers": [
+    "src/lib/cities/data-paths.ts",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/hyderabad.ts",
+    "src/lib/cities/types.ts",
+    "src/lib/utils/ward-uplift.test.ts",
+    "src/lib/ward-rankings/load-rankings.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
+    "scripts/compute-ward-profiles.ts",
+    "scripts/fetch-localities-osm.ts",
+    "scripts/generate-narratives.ts",
+    "scripts/lib/exemptions.ts"
+   ],
+   "headwaters_sources": [
+    "amc-citymap-wards",
+    "cpcb-nwmp",
+    "ingres-groundwater-gujarat",
+    "nwic-nwdp-groundwater-gujarat",
+    "osm-overpass"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation publication, cited with attribution",
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "Government of India publication, cited with attribution",
+    "ODbL 1.0",
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/allocations-bangalore.json",
    "family": "data-root",
    "scope": "bangalore",
@@ -48463,6 +48680,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "scripts/compute-bangalore-ward-profiles.ts"
    ],
    "headwaters_sources": [
@@ -48780,6 +48998,7 @@
     "src/lib/ward-rankings/load-rankings.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/compute-bangalore-ward-risk.py",
     "scripts/compute-ward-profiles.ts",
@@ -49889,7 +50108,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'arkavathi')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -50978,7 +51197,8 @@
    },
    "consumers": [
     "src/app/api/reservoir/basin/route.ts",
-    "src/components/basin/basin-overview.tsx"
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/ingest_basin_overview.py",
@@ -51482,7 +51702,8 @@
    },
    "consumers": [
     "src/app/api/reservoir/basin/route.ts",
-    "src/components/basin/basin-overview.tsx"
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/ingest_basin_overview.py",
@@ -52110,7 +52331,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'chennai-rivers')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -53480,7 +53701,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'erode-rivers')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -54083,7 +54304,8 @@
    },
    "consumers": [
     "src/app/api/reservoir/basin/route.ts",
-    "src/components/basin/basin-overview.tsx"
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/ingest_basin_overview.py",
@@ -55654,7 +55876,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'kabini')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -58168,7 +58390,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'krishnagiri-rivers')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -58320,7 +58542,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'krishnagiri-rivers')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [],
    "headwaters_sources": [
@@ -58406,7 +58628,8 @@
    },
    "consumers": [
     "src/app/api/reservoir/basin/route.ts",
-    "src/components/basin/basin-overview.tsx"
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/ingest_basin_overview.py",
@@ -59773,7 +59996,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'mumbai-rivers')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -60080,7 +60303,8 @@
    },
    "consumers": [
     "src/app/api/reservoir/basin/route.ts",
-    "src/components/basin/basin-overview.tsx"
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/ingest_basin_overview.py",
@@ -61077,7 +61301,7 @@
     ]
    },
    "consumers": [
-    "(convention: registry-driven loader for 'palakkad-rivers')"
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/build_basin_wq_param_packs.py",
@@ -62159,7 +62383,8 @@
    },
    "consumers": [
     "src/app/api/reservoir/basin/route.ts",
-    "src/components/basin/basin-overview.tsx"
+    "src/components/basin/basin-overview.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "scripts/ingest_basin_overview.py",
@@ -65320,6 +65545,55 @@
    "flags": []
   },
   {
+   "path": "public/data/commitments-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "commitments",
+   "bytes": 21273,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources_note",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_commitments.py",
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py"
+   ],
+   "headwaters_sources": [
+    "amc-budget",
+    "cmo-gujarat-press",
+    "gujarat-hc-sabarmati-pil",
+    "gujarat-reuse-policy-2018",
+    "mohua-amrut-status",
+    "ngt-gujarat-filings"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Gujarat High Court judicial record (Government of India judiciary), cited with attribution",
+    "Gujarat government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/commitments-bangalore.json",
    "family": "data-root",
    "scope": "bangalore",
@@ -65852,6 +66126,7 @@
     "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_delhi_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "neer-vazhvu-api/scripts/scrape_bbmb_dams.py",
     "scripts/compute-delhi-ward-risk.py"
    ],
@@ -66076,6 +66351,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
     "scripts/compute-delhi-ward-risk.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
@@ -66391,6 +66667,56 @@
    "flags": [
     "big"
    ]
+  },
+  {
+   "path": "public/data/facts-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "facts",
+   "bytes": 15425,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py"
+   ],
+   "headwaters_sources": [
+    "amc-budget",
+    "amc-citymap-wards",
+    "cpcb-nwmp",
+    "gujarat-wrd-dam-daily-report",
+    "imd-gridded-rainfall-ahmedabad",
+    "ingres-groundwater-gujarat",
+    "nwic-nwdp-groundwater-gujarat",
+    "osm-overpass",
+    "sec-gujarat-amc-delimitation-2020"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation publication, cited with attribution",
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Gujarat government publication, cited with attribution",
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+    "ODbL 1.0",
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
   },
   {
    "path": "public/data/facts-bangalore.json",
@@ -67036,6 +67362,55 @@
    "flags": []
   },
   {
+   "path": "public/data/gwr-blocks-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "gwr-blocks",
+   "bytes": 24575,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_unit",
+     "assessment_years",
+     "blocks",
+     "dataset",
+     "district",
+     "district_total",
+     "generated_at",
+     "not_assessed_on_extraction",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/content/story-ahmedabad-en.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-gujarat"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/gwr-blocks-bangalore.json",
    "family": "data-root",
    "scope": "bangalore",
@@ -67537,7 +67912,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_cgwb_stations.py",
-    "neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py"
+    "neer-vazhvu-api/scripts/build_hyderabad_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
    ],
    "headwaters_sources": [
     "wris-gwl-hyderabad"
@@ -67713,6 +68089,48 @@
    ],
    "licenses": [
     "Telangana government publication (portal label: Open Government License, India), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/imd-rainfall-monthly-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 31884,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rainfall-ahmedabad"
+   ],
+   "licenses": [
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -68425,7 +68843,8 @@
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_cgwb_stations.py"
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
    ],
    "headwaters_sources": [
     "indiawris-gwl-kolkata"
@@ -68591,6 +69010,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "scripts/compute-madurai-ward-profiles.ts"
    ],
    "headwaters_sources": [
@@ -68713,6 +69133,7 @@
     "src/lib/ward-rankings/load-rankings.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/compute-ward-profiles.ts",
@@ -68847,6 +69268,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_cgwb_stations.py",
     "neer-vazhvu-api/scripts/build_mumbai_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "scripts/build_mumbai_rivers_basin.py",
     "scripts/nvdm_envelope_mumbai_rivers.py"
    ],
@@ -68998,7 +69420,8 @@
     ]
    },
    "consumers": [
-    "src/content/story-pune-en.tsx"
+    "src/content/story-pune-en.tsx",
+    "src/lib/for-organisations/data.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
@@ -69156,6 +69579,51 @@
    ],
    "licenses": [
     "CC BY 4.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/rainfall-recent-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "rainfall-recent",
+   "bytes": 18794,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "imd-gridded-rainfall-ahmedabad",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution",
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -69873,6 +70341,50 @@
    "flags": [
     "chennai-legacy-name"
    ]
+  },
+  {
+   "path": "public/data/restoration-projects-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "restoration-projects",
+   "bytes": 16524,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "compiled_at",
+     "court_orders",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "projects",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/components/rivers/river-panel.tsx",
+    "src/lib/data/restoration-projects.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py"
+   ],
+   "headwaters_sources": [
+    "amc-budget",
+    "gujarat-hc-lake-orders",
+    "mohua-amrut-status",
+    "ngt-gujarat-filings"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Gujarat High Court judicial record (Government of India judiciary), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
   },
   {
    "path": "public/data/restoration-projects-delhi.json",
@@ -81953,6 +82465,51 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "river-quality",
+   "bytes": 59668,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_excluded",
+     "_headline",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "rivers",
+     "scope",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_ahmedabad_river_quality.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp",
+    "cpcb-prs-report"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality-bangalore.json",
    "family": "data-root",
    "scope": "bangalore",
@@ -82382,6 +82939,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "neer-vazhvu-api/scripts/build_surat_artifacts.py"
    ],
    "headwaters_sources": [
@@ -82835,6 +83393,46 @@
    "licenses": [
     "CC BY-SA 2.5 IN (Mumbai folder Readme; the repo default is CC BY 4.0 'unless explicitly stated' and the Mumbai Readme states BY-SA 2.5 India explicitly - verified 2026-07-30). SHARE-ALIKE encumbered.",
     "report (c) Praja, RTI-sourced tables; OpenCity mirror"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/water-bodies-flagship-ahmedabad.json",
+   "family": "data-root",
+   "scope": "ahmedabad",
+   "dataset": "water-bodies-flagship",
+   "bytes": 14543,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "bodies",
+     "compiled_at",
+     "context",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py"
+   ],
+   "headwaters_sources": [
+    "amc-budget",
+    "gujarat-hc-lake-orders",
+    "mojs-water-bodies-census-2023"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Gujarat High Court judicial record (Government of India judiciary), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -83727,6 +84325,178 @@
    "flags": []
   },
   {
+   "path": "public/geojson/ahmedabad-gwr-blocks.geojson",
+   "family": "geojson-layers",
+   "scope": "ahmedabad",
+   "dataset": "gwr-blocks",
+   "bytes": 632183,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 10,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "agwd_tot",
+     "block",
+     "class",
+     "editions",
+     "ext_id",
+     "na_gwa",
+     "sgw_dev_pe"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/groundwater/districts-as-blocks.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-gujarat"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/ahmedabad-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "ahmedabad",
+   "dataset": "rivers",
+   "bytes": 293040,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 4,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "length_km",
+     "name",
+     "name_gu",
+     "osm_ids",
+     "river_id",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/basin/basin-overview.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/ahmedabad-wards-2020.geojson",
+   "family": "geojson-layers",
+   "scope": "ahmedabad",
+   "dataset": "wards-2020",
+   "bytes": 567948,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 48,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "area_sq_km",
+     "population_2011",
+     "ward_name",
+     "ward_number",
+     "zone_name",
+     "zone_no"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_ahmedabad_wards.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py"
+   ],
+   "headwaters_sources": [
+    "amc-citymap-wards",
+    "sec-gujarat-amc-delimitation-2020"
+   ],
+   "licenses": [
+    "Ahmedabad Municipal Corporation publication, cited with attribution",
+    "Gujarat government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/ahmedabad-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "ahmedabad",
+   "dataset": "water-bodies-current",
+   "bytes": 270976,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 232,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "name",
+     "name_gu",
+     "osm_id",
+     "osm_type",
+     "water_type"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/geojson/bangalore-corporations-2025.geojson",
    "family": "geojson-layers",
    "scope": "bangalore",
@@ -83787,6 +84557,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "scripts/compute-bangalore-ward-profiles.ts",
     "scripts/fetch-wris-groundwater-bangalore.ts"
    ],
@@ -84513,6 +85284,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "scripts/fetch-wris-groundwater.ts"
    ],
    "headwaters_sources": [
@@ -84934,7 +85706,8 @@
     "neer-vazhvu-api/scripts/build_delhi_gwr_blocks.py",
     "neer-vazhvu-api/scripts/build_delhi_ward_profiles.py",
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
-    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-delhi"
@@ -85217,7 +85990,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
-    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
    ],
    "headwaters_sources": [
     "gmda-onemap-arcgis",
@@ -85377,7 +86151,8 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_hyderabad_gwr_blocks.py",
-    "neer-vazhvu-api/scripts/build_ingres_gwr.py"
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-telangana"
@@ -85915,6 +86690,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "scripts/compute-madurai-ward-profiles.ts",
     "scripts/fetch-wris-groundwater-madurai.ts"
    ],
@@ -86545,6 +87321,7 @@
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
     "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
     "neer-vazhvu-api/scripts/build_pune_geography.py"
    ],
    "headwaters_sources": [
@@ -92137,8 +92914,9 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 7,
+   "files": 8,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "delhi",
     "hyderabad",
@@ -92147,16 +92925,17 @@
     "mumbai",
     "surat"
    ],
-   "bytes": 4112391,
-   "schema_variants": 7,
+   "bytes": 4478099,
+   "schema_variants": 8,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 8,
+   "files": 9,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -92166,7 +92945,7 @@
     "mumbai",
     "surat"
    ],
-   "bytes": 187839,
+   "bytes": 209112,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -92186,12 +92965,13 @@
   {
    "family": "data-root",
    "dataset": "dam-storage",
-   "files": 1,
+   "files": 2,
    "scopes": [
+    "ahmedabad",
     "pune"
    ],
-   "bytes": 4295,
-   "schema_variants": 1,
+   "bytes": 6500,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -92250,8 +93030,9 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 8,
+   "files": 9,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "delhi",
     "hyderabad",
@@ -92261,7 +93042,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 213827,
+   "bytes": 229252,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -92346,8 +93127,9 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 9,
+   "files": 10,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -92358,8 +93140,8 @@
     "pune",
     "surat"
    ],
-   "bytes": 231902,
-   "schema_variants": 6,
+   "bytes": 256477,
+   "schema_variants": 7,
    "registered": true,
    "has_consumer": true
   },
@@ -92378,8 +93160,9 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 10,
+   "files": 11,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -92391,7 +93174,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 312209,
+   "bytes": 344093,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -92452,15 +93235,16 @@
   {
    "family": "data-root",
    "dataset": "localities",
-   "files": 5,
+   "files": 6,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
     "kolkata",
     "madurai"
    ],
-   "bytes": 459947,
+   "bytes": 483007,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -92504,8 +93288,9 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 10,
+   "files": 11,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -92517,7 +93302,7 @@
     "pune",
     "surat"
    ],
-   "bytes": 188008,
+   "bytes": 206802,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -92554,8 +93339,9 @@
   {
    "family": "data-root",
    "dataset": "restoration-projects",
-   "files": 6,
+   "files": 7,
    "scopes": [
+    "ahmedabad",
     "chennai",
     "delhi",
     "hyderabad",
@@ -92563,7 +93349,7 @@
     "madurai",
     "mumbai"
    ],
-   "bytes": 48036,
+   "bytes": 64560,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -92585,8 +93371,9 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 9,
+   "files": 10,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -92597,8 +93384,8 @@
     "pune",
     "surat"
    ],
-   "bytes": 1454678,
-   "schema_variants": 8,
+   "bytes": 1514346,
+   "schema_variants": 9,
    "registered": true,
    "has_consumer": true
   },
@@ -92629,8 +93416,9 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 8,
+   "files": 9,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -92640,8 +93428,8 @@
     "pune",
     "surat"
    ],
-   "bytes": 133850,
-   "schema_variants": 8,
+   "bytes": 139742,
+   "schema_variants": 9,
    "registered": true,
    "has_consumer": true
   },
@@ -92721,14 +93509,15 @@
   {
    "family": "data-root",
    "dataset": "ward-profiles",
-   "files": 4,
+   "files": 5,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
     "madurai"
    ],
-   "bytes": 1700838,
+   "bytes": 1808611,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -92776,16 +93565,17 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-flagship",
-   "files": 5,
+   "files": 6,
    "scopes": [
+    "ahmedabad",
     "delhi",
     "hyderabad",
     "kolkata",
     "madurai",
     "mumbai"
    ],
-   "bytes": 57187,
-   "schema_variants": 2,
+   "bytes": 71730,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -93015,8 +93805,9 @@
   {
    "family": "geojson-layers",
    "dataset": "gwr-blocks",
-   "files": 7,
+   "files": 8,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -93025,7 +93816,7 @@
     "madurai",
     "pune"
    ],
-   "bytes": 9519461,
+   "bytes": 10151644,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -93088,8 +93879,9 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 9,
+   "files": 10,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -93100,8 +93892,8 @@
     "pune",
     "surat"
    ],
-   "bytes": 2817419,
-   "schema_variants": 8,
+   "bytes": 3110459,
+   "schema_variants": 9,
    "registered": true,
    "has_consumer": true
   },
@@ -93216,6 +94008,18 @@
   },
   {
    "family": "geojson-layers",
+   "dataset": "wards-2020",
+   "files": 1,
+   "scopes": [
+    "ahmedabad"
+   ],
+   "bytes": 567948,
+   "schema_variants": 1,
+   "registered": true,
+   "has_consumer": false
+  },
+  {
+   "family": "geojson-layers",
    "dataset": "wards-2022",
    "files": 4,
    "scopes": [
@@ -93283,8 +94087,9 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 10,
+   "files": 11,
    "scopes": [
+    "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
@@ -93296,8 +94101,8 @@
     "pune",
     "surat"
    ],
-   "bytes": 35792462,
-   "schema_variants": 10,
+   "bytes": 36063438,
+   "schema_variants": 11,
    "registered": true,
    "has_consumer": true
   },

@@ -269,11 +269,13 @@ def main() -> int:
         ),
         "source_label": "National Water Data Portal (NWIC)",
         "source_url": "https://nwdp.nwic.gov.in/",
-        "coverage": {
-            "from": cfg["start"],
-            "stations": len(wells),
-            "raw_rows_fetched": fetched,
-            "stations_outside_district": outside,
+        "ext": {
+            "coverage": {
+                "from": cfg["start"],
+                "stations": len(wells),
+                "raw_rows_fetched": fetched,
+                "stations_outside_district": outside,
+            }
         },
         "wells": wells,
     }

@@ -119,7 +119,7 @@ An audited, artifact-level judgement that a NAMED restricted input does not encu
 | `method` | no | one of `geometry`, `published`, `crosswalk`, `manual` | How the relation was established (spec 4.5). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping. |
 | `evidence` | no | string, min length 1 | A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested. |
 
-## Registered scopes (52)
+## Registered scopes (53)
 
 Country is derived from the relations, never stored.
 
@@ -135,6 +135,7 @@ Country is derived from the relations, never stored.
 | `krishnagiri-rivers` | basin | Krishnagiri district rivers | - | `india` | - | intersects tn-krishnagiri (geometry) |
 | `mumbai-rivers` | basin | Mumbai rivers and lakes | - | `india` | - | intersects mumbai (geometry) |
 | `palakkad-rivers` | basin | Palakkad district rivers | - | `india` | - | intersects kl-palakkad (geometry) |
+| `ahmedabad` | city | Ahmedabad | `gujarat` | `india` | - | - |
 | `bangalore` | city | Bengaluru | `karnataka` | `india` | - | - |
 | `chennai` | city | Chennai | `tamil-nadu` | `india` | - | - |
 | `delhi` | city | Delhi | `india` | `india` | iso3166-2 union-territory `IN-DL` | - |
