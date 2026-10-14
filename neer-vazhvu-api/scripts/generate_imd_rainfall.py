@@ -43,6 +43,7 @@ import numpy as np
 ENVELOPE_SOURCE_ID = {
     "pune": "imd-gridded-rainfall-pune",
     "gurugram": "imd-gridded-rainfall-gurugram",
+    "ahmedabad": "imd-gridded-rainfall-ahmedabad",
 }
 
 START_YEAR = 1970
@@ -133,6 +134,15 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "land: Surat is 20 km from the Arabian Sea and the westward "
         "intersections at 72.50 fall over water, which is the same coastal "
         "ocean-cell trap Chennai and Mumbai had to avoid",
+    ),
+    "ahmedabad": (
+        23.0,
+        72.5,
+        "Ahmedabad grid point: the 0.25-deg intersection nearest the city centre "
+        "(23.02 N, 72.57 E), inside the AMC ward extent. Checked against IMD's "
+        "Ahmedabad observatory normal of 783.6 mm (Climatological Table 1991-2020, "
+        "station index 42647): this cell returns 800.4 mm over 1991-2020 (+2.1%), "
+        "while 23.0/72.75 returns 868.3 mm (+10.8%).",
     ),
 }
 
@@ -230,11 +240,13 @@ def main() -> None:
 
     monthly_records: list[dict] = []
     annual_records: list[dict] = []
+    failed_years: list[int] = []
 
     for year in range(start_year, end_year + 1):
         sys.stdout.write(f"\r  {year}... ")
         sys.stdout.flush()
 
+        months = None
         for attempt in range(3):
             try:
                 months = fetch_year(year, grid_lat, grid_lng)
@@ -242,12 +254,13 @@ def main() -> None:
             except Exception as e:
                 if attempt == 2:
                     print(f"\n  FAILED {year} after 3 attempts: {e}")
-                    months = [
-                        {"year": year, "month": m, "rainfall_mm": 0.0}
-                        for m in range(1, 13)
-                    ]
                 else:
                     time.sleep(2**attempt)
+        if months is None:
+            # A failed download is not a dry year. Zero-filling it is how the
+            # 2026-10-05 run published 0 mm for every month of every city.
+            failed_years.append(year)
+            continue
 
         monthly_records.extend(months)
         year_total = round(sum(m["rainfall_mm"] for m in months), 1)
@@ -258,6 +271,19 @@ def main() -> None:
         time.sleep(0.5)  # be polite to IMD servers
 
     print()
+
+    # Write nothing rather than a partial or empty series: the old file stays
+    # served, and the non-zero exit fails the refresh workflow before it commits.
+    if failed_years:
+        sys.exit(
+            f"ABORTED, {output_path.name} not written: IMD download failed for "
+            f"{len(failed_years)} year(s): {failed_years[0]}..{failed_years[-1]}"
+        )
+    if not any(m["rainfall_mm"] > 0 for m in monthly_records):
+        sys.exit(
+            f"ABORTED, {output_path.name} not written: every month is 0 mm at "
+            f"({grid_lat}, {grid_lng}) - an ocean cell or an empty download"
+        )
 
     # Compute long-term normals (start_year to NORMAL_END)
     normal_years = [r for r in annual_records if r["year"] <= NORMAL_END]
