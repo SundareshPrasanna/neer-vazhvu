@@ -86,6 +86,7 @@ export function vandiyurSeries() {
 }
 
 export function chembarambakkamImage() {
-  const img = imageManifest.images[0];
-  return { src: `/images/for-organisations/${img.file}`, ...img };
+  const img = imageManifest.images.find((i) => i.file.startsWith("chembarambakkam"));
+  if (!img?.px || !img.window || img.scenes === undefined) throw new Error("MANIFEST.json: Chembarambakkam entry incomplete");
+  return { src: `/images/for-organisations/${img.file}`, credit: img.credit, px: img.px, window: img.window, scenes: img.scenes };
 }
