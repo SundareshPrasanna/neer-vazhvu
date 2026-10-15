@@ -56,7 +56,7 @@ export function KolkataStoryEn() {
         That is the founding fact, and it is worth holding onto, because Kolkata
         went on to fill roughly <strong>44%</strong> of its ponds within two
         decades. The names survive where the water does not: Beniapukur,
-        Manoharpukur, Jhamapukur, Shyampukur - <em>pukur</em> (পুকুর) means pond,
+        Manoharpukur, Jhamapukur, Shyampukur - <em>pukur</em>{" "}(পুকুর) means pond,
         and KMC&apos;s own road directory lists sixty-one streets named after
         water bodies. Meanwhile the city&apos;s single largest piece of water
         infrastructure is not a plant or a reservoir but a wetland it does not
@@ -87,7 +87,7 @@ export function KolkataStoryEn() {
         <p>
           The result was a city so dense with ponds that you could, as the
           environmentalist Mohit Ray has put it, swim across Kolkata from one{" "}
-          <em>pukur</em> to the next. The toponymy is the proof: Monoharpukur,
+          <em>pukur</em>{" "}to the next. The toponymy is the proof: Monoharpukur,
           Ahiripukur, Bosepukur, Thakurpukur, Paddapukur, Talpukur, Keorapukur,
           Hanspukur, Shyampukur, Muraripukur, Jorapukur, Jhamapukur, Beniapukur,
           Fariapukur, Chunapukur, Tanupukur. Sixty-one roads in KMC&apos;s own
@@ -98,7 +98,7 @@ export function KolkataStoryEn() {
           plain. First, the city never impounded anything: there is no dam
           anywhere in Kolkata&apos;s water system, then or now. Second, the
           drainage had to be engineered from scratch - and in the nineteenth
-          century it was, as a <strong>combined</strong> system, carrying sewage
+          century it was, as a <strong>combined</strong>{" "}system, carrying sewage
           and stormwater in the same conduit. That decision is still the single
           most consequential fact about Kolkata&apos;s water, and we will come
           back to it twice.
@@ -169,7 +169,7 @@ export function KolkataStoryEn() {
         />
         <p>
           The Adi Ganga is not a minor drain with a grand name. It is the{" "}
-          <em>adi</em> - the original - course of the Ganga, the channel the
+          <em>adi</em>{" "}- the original - course of the Ganga, the channel the
           river ran down before it shifted west, and it passes Kalighat, the
           temple the city takes its name from. In 1777 Major William Tolly had
           it dredged as a navigation cut, which is why it is also called Tolly&apos;s
@@ -292,7 +292,7 @@ export function KolkataStoryEn() {
         <p>
           Even the groundwater refuses the usual framing. The national
           assessment does not classify Kolkata district as safe, or critical, or
-          over-exploited. It classifies it as <strong>saline</strong> - a
+          over-exploited. It classifies it as <strong>saline</strong>{" "}- a
           water-quality category, not an extraction one - so the district has no
           extraction stage at all. Around it, the arsenic belt: 42.4% of North
           24 Parganas habitations affected, in the district that holds both
@@ -335,14 +335,14 @@ export function KolkataStoryEn() {
           corporation&apos;s capital budget commensurate with what it does.
         </p>
         <p>
-          <strong>Publish the drainage network.</strong> KMC has 80 per-ward
+          <strong>Publish the drainage network.</strong>{" "}KMC has 80 per-ward
           drainage maps. They are PDFs. Chennai publishes 10,308 surveyed drain
           segments as data; Kolkata&apos;s equivalent exists on paper only,
           which means nobody outside the department can analyse where the system
           fails.
         </p>
         <p>
-          <strong>Restore the early-warning system.</strong> The programme that
+          <strong>Restore the early-warning system.</strong>{" "}The programme that
           built Kolkata&apos;s flood early-warning system still links to it. As
           of July 2026 the domain no longer resolves. A city that floods as a
           weekly operating condition has no public warning surface at all.

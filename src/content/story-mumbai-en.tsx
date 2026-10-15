@@ -75,7 +75,7 @@ export function MumbaiStoryEn() {
           creek for the boats and the tank for the pot, and for centuries the two
           were kept rigorously apart. The most storied of those tanks is the
           Banganga (बाणगंगा) at Walkeshwar, on the southern tip - a rectangular
-          stone <em>talao</em> fed by a freshwater spring that wells up within a
+          stone <em>talao</em>{" "}fed by a freshwater spring that wells up within a
           few hundred metres of the Arabian Sea. Tradition ties it to the
           Silhara dynasty and a temple complex of the twelfth century; whatever
           its exact age, it is the proof of the islands&apos; founding fact, that

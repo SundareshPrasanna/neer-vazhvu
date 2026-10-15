@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 90 |
-| Routes a city deliberately does not ship | 44 |
-| Absences the product states on the page | 28 |
-| **Total** | **162** |
+| Routes a city deliberately does not ship | 47 |
+| Absences the product states on the page | 31 |
+| **Total** | **168** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -172,6 +172,9 @@ Derived by diffing each city against the union of every route any city ships, so
 | surat | my-ward | Ward surfaces are off because "ward" in Surat means three incompatible things and none of them has usable geometry. There are 30 electoral wards (120 corporators), about 134 census/administrative wards in SMC's own 1961-2011 area table, and a third scheme inside SMC's GIS ward_boundary layer. That GIS layer is the authoritative one and it serves WMS only - WFS is disabled, so its geometry cannot be downloaded, only rendered. The analytical unit is instead the zone, which does carry live data, an official 2024 population and the city's own supply breakdown. This closes when SMC enables WFS or publishes ward boundaries, not by a better join. |
 | surat | shoreline | Surat is genuinely coastal - Dumas, Hazira, the Tapi estuary - so this is a backlog item rather than a refusal. The shoreline surface currently reads Chennai coastal data and has not been parametrised, and shipping a map of another city's coast would be worse than shipping none. |
 | surat | tanker | No tanker economy established. SMC reports 95% piped coverage and the national open-data release records tanker-served properties as NA in every year. There is nothing to chart that would not be invented. |
+| visakhapatnam | climate-risk | Buildable but not built. The sub-basin risk layer comes from HydroBASINS, which covers the north Andhra coast, so this is a backlog item rather than a refusal. |
+| visakhapatnam | my-ward | No ward geometry that can be published. The 98-ward boundaries in circulation are an Esri India tracing of a GVMC CAD drawing. We have not found a licence anywhere in the chain, and their zone field disagrees with GVMC's own ward list for 94 of 98 wards. The 98 wards are also superseded: GVMC notified 120 wards in 2026, and we have not found a published map of them. This closes when GVMC publishes official ward boundaries. |
+| visakhapatnam | tanker | The only tanker figures from GVMC that we have found are for a single day (615 trips on 11 March 2021, in an NGT filing). GVMC runs a Dial-a-Tanker booking line, but we have not found a series by day, zone or ward. One day is not a tanker record. |
 
 ## Absences the product states on the page
 
@@ -207,4 +210,7 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | surat | water source: Ukai dam (upstream, not SMC-operated) | Ukai is the Gujarat Water Resources Department’s to publish, not SMC’s. SMC republishes its level, inflow and outflow hourly; no storage volume or Surat share is published anywhere. |
 | surat | water source: Weir-cum-causeway (Singanpor) | The weir pond is the city’s actual intake. Level and outflow are published hourly; the impounded volume is not, and the pond is a river reach rather than a reservoir, so no capacity is carried. |
 | surat | water-bodies catchment atlas | Surat has no cascade view, and that is a judgement about the city rather than a missing dataset. The cascade layer reconstructs chained tank systems - the Tamil kanmoi networks and the Bengaluru kere chains, where each tank's surplus was engineered to feed the next over centuries. Surat's water bodies are coastal wetlands, tidal creeks and urban talavs on a flat estuarine plain. The algorithm would find downhill neighbours here because it always does, and drawing them as a cascade would assert an inheritance the city does not have. |
+| visakhapatnam | UI language: te | Advertised as coming soon and rendered as a disabled chip. The te dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| visakhapatnam | water source: Gambheeram (Gambhiramgedda) | Gambhiramgedda is a state Water Resources Department reservoir that GVMC draws on from March to June. It is not in the state's daily reservoir feed (APWRIMS), and we have not found a published daily level for it. |
+| visakhapatnam | water source: Mudasarlova | Mudasarlova is GVMC's own reservoir inside the city. It is not in the state's daily reservoir feed (APWRIMS), and we have not found a published daily level for it. |
 

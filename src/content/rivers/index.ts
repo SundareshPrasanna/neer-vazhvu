@@ -10,6 +10,7 @@ import { RIVERS as KOLKATA } from "./kolkata";
 import { RIVERS as PUNE } from "./pune";
 import { RIVERS as SURAT } from "./surat";
 import { RIVERS as AHMEDABAD } from "./ahmedabad";
+import { RIVERS as VISAKHAPATNAM } from "./visakhapatnam";
 
 /** Per-city content for /[cityId]/rivers. A city with "rivers" in its routes
  *  and no entry here renders the not-yet-available state. */
@@ -24,4 +25,5 @@ export const RIVERS_CONTENT: Partial<Record<CityId, CityRiversContent>> = {
   pune: PUNE,
   surat: SURAT,
   ahmedabad: AHMEDABAD,
+  visakhapatnam: VISAKHAPATNAM,
 };

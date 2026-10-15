@@ -108,6 +108,8 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
+  // Until the fetch settles the Restoration mode stays offered, as before.
+  const [restorationLoaded, setRestorationLoaded] = useState(false);
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
   const [censusSummary, setCensusSummary] = useState<CensusSummary | null>(null);
@@ -134,7 +136,11 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
     fetchJsonOrNull<RestorationPriorityData>(restorationPriorityUrl(cityId))
       .then(async (d) => {
         setRestorationData(d);
-        if (!d) return;
+        setRestorationLoaded(true);
+        if (!d) {
+          if (searchParams.get("mode") === "restoration") setViewMode("water-bodies");
+          return;
+        }
         const wardParam = searchParams.get("ward");
         if (hasWardSearch && wardParam) {
           const wardNum = parseInt(wardParam, 10);
@@ -168,7 +174,10 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
               : undefined;
         if (first) setSelected(toSelected(first));
       })
-      .catch(() => setRestorationData(null));
+      .catch(() => {
+        setRestorationData(null);
+        setRestorationLoaded(true);
+      });
   // First-load anchor only: toggling modes must not re-open a body.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cityId]);
@@ -256,6 +265,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
       onChange={changeMode}
       catchmentsAvailable={hasCatchments}
       catchmentsGapNote={config.catchmentsGapNote}
+      restorationAvailable={!restorationLoaded || restorationData != null}
     />
   );
 

@@ -127,8 +127,12 @@ guards, landing card, footer, exemptions - derives from the registry, and most o
      - `"cauvery-pumping"` if the city's water is carried from a distant source and the constraint
        is capacity against design (Bengaluru, Delhi, Gurugram, Pune). The narrative comes from the
        city's own `hero_copy` in `<cityId>-supply-overview.json`; nothing falls back to another
-       city. Track upstream reservoirs in `waterSources` with `isPrimaryDrinkingSource: false` if
-       they are shared with irrigation or other cities.
+       city. Track upstream reservoirs in `waterSources`. `isPrimaryDrinkingSource` marks a
+       reservoir the city draws from: it drives the About badge and the missed-ingestion check, and
+       this hero computes no runway from it. A shared reservoir the city draws from directly sets it
+       `true` (Pune's Khadakwasla chain, Visakhapatnam's reservoirs); upstream basin storage that
+       only governs releases to a river the city pumps from sets it `false` (Bengaluru's four Cauvery
+       dams above T.K. Halli).
      - `"drainage-capacity"` if the city impounds nothing and its emergency is water it cannot get
        rid of (Kolkata-pattern). Provide `drainageCapacity` and build
        `rainfall-intensity-<cityId>.json` with `neer-vazhvu-api/scripts/fetch_rainfall_intensity.py`.

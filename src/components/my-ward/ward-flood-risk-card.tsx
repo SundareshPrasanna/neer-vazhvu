@@ -112,7 +112,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
             href={`${cityPrefix}/flood-risk`}
             className="inline-block mt-3 text-xs text-blue-600 dark:text-blue-400 hover:underline"
           >
-            {t("my_ward.view_on_map")} &rarr;
+            {t("my_ward.view_on_map")}{" "}&rarr;
           </Link>
         </CardContent>
       </Card>
@@ -158,7 +158,7 @@ export function WardFloodRiskCard({ wardNumber, profile }: Props) {
             href={`${cityPrefix}/flood-risk?ward=${wardNumber}`}
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
-            {t("my_ward.view_on_map")} &rarr;
+            {t("my_ward.view_on_map")}{" "}&rarr;
           </Link>
         </div>
       </CardHeader>

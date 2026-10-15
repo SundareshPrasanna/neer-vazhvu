@@ -6,7 +6,7 @@ import { BaseMap } from "@/components/map/base-map";
 import L from "leaflet";
 import type { Layer, LeafletMouseEvent } from "leaflet";
 import type { Feature } from "geojson";
-import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor } from "@/types/groundwater";
+import { getGroundwaterColor, getGroundwaterStatus, getRiskColor, getBlockClassColor, distinctIngresUnit } from "@/types/groundwater";
 import type { GroundwaterWard, WardRiskData, ViewMode, GWBlock, GWStation, WrisStation, CgwbStation } from "@/types/groundwater";
 import { useLanguage } from "@/lib/i18n/context";
 import { getWardGeoJSON } from "@/lib/data/ward-geo";
@@ -19,6 +19,7 @@ import { FitToBounds, geoJsonBounds } from "@/components/map/fit-to-bounds";
 import "leaflet/dist/leaflet.css";
 import { fetchJsonOrNull } from "@/lib/data/fetch-json";
 import { wardNumberOf } from "@/lib/utils/ward-number";
+import { MONTH_LABELS } from "@/components/groundwater/cgwb-station-panel";
 
 /** Flies the map to a given center when it changes */
 function FlyToWard({ wardNumber, wardGeoJsonUrl }: { wardNumber: number; wardGeoJsonUrl: string | null }) {
@@ -56,6 +57,11 @@ interface WardMapProps {
    *  parallel point overlay alongside (or instead of) the WRIS live
    *  station network. Used today by Madurai. */
   cgwbStations?: CgwbStation[];
+  /** The station file's own series_label and reading_kind. Absent, the
+   *  tooltip describes a CGWB Year Book's quarterly block wells. unit_label is
+   *  deliberately not used here: some files carry a measurement unit in it
+   *  ("m below ground level"), which cannot follow a block name. */
+  cgwbLabels?: { series?: string; readingKind?: string };
   selectedCgwbStationName?: string | null;
   onCgwbStationSelect?: (station: CgwbStation | null) => void;
   hiddenCategories?: Set<string>;
@@ -83,6 +89,7 @@ export function WardMap({
   wrisStations,
   selectedWrisStationCode,
   cgwbStations,
+  cgwbLabels,
   selectedCgwbStationName,
   onCgwbStationSelect,
   hiddenCategories,
@@ -136,6 +143,12 @@ export function WardMap({
       .then((d) => setStations(d?.stations ?? []))
       .catch(() => setStations([]));
   }, [wardGeoJsonUrl, blockGeoJsonUrl, blocksJsonUrl, stationsJsonUrl]);
+
+  // Names of the series a well's same_site_as points to, for its tooltip.
+  const cgwbNameByCode = useMemo(
+    () => new Map((cgwbStations ?? []).map((s) => [s.station_code, s.name] as const)),
+    [cgwbStations],
+  );
 
   const blockLookup = useMemo(() => {
     const map = new Map<string, GWBlock>();
@@ -433,6 +446,12 @@ export function WardMap({
             if (typeof depth !== "number" || Number.isNaN(depth)) return null;
             const isSelected = selectedCgwbStationName === s.name;
             const fillColor = getGroundwaterColor(depth);
+            // Set only by files that carry them; every other city's tooltip
+            // is the three lines above.
+            const ingresUnit = distinctIngresUnit(s);
+            const sameSite = (s.same_site_as ?? [])
+              .map((p) => cgwbNameByCode.get(p.station_code))
+              .filter(Boolean);
             return (
               <CircleMarker
                 // name+lat+lng is NOT unique: WRIS issues separate station
@@ -457,14 +476,31 @@ export function WardMap({
               >
                 <Tooltip pane="tooltipPane">
                   <strong>{s.name}</strong>
+                  {s.name_conflict && (
+                    <span style={{ fontSize: "10px", color: "#b45309" }}> (identity unresolved)</span>
+                  )}
                   <br />
                   <span style={{ fontSize: "11px" }}>
-                    {depth.toFixed(2)}m below ground
+                    {depth.toFixed(2)}m below ground ({MONTH_LABELS[latest.month]} {latest.year})
                   </span>
                   <br />
                   <span style={{ fontSize: "10px", color: "#64748b" }}>
-                    CGWB Year Book - {s.block} block - {sorted.length} quarterly readings
+                    {cgwbLabels?.series
+                      ? `${cgwbLabels.series} - ${s.block} - ${sorted.length} ${cgwbLabels.readingKind ?? "readings"}`
+                      : `CGWB Year Book - ${s.block} block - ${sorted.length} quarterly readings`}
                   </span>
+                  {ingresUnit && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#64748b" }}>IN-GRES unit: {ingresUnit}</span>
+                    </>
+                  )}
+                  {sameSite.length > 0 && (
+                    <>
+                      <br />
+                      <span style={{ fontSize: "10px", color: "#64748b" }}>Same site as {sameSite.join(", ")}</span>
+                    </>
+                  )}
                 </Tooltip>
               </CircleMarker>
             );

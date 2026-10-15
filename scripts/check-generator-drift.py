@@ -148,6 +148,9 @@ INLINE_LICENCE_ALLOWLIST = {
     "academic working paper, cited with attribution",
     "government handbook, cited with attribution",
     "government plan document, cited with attribution",
+    # Colonial district gazetteers (e.g. Francis, Vizagapatam Vol I, 1907):
+    # closed historical works with no publisher to register, out of copyright.
+    "Public domain (published 1907)",
     # KSPCB's published F-register of consented industries: a government
     # document with no registry id of its own (the board publishes it as a
     # standalone per-office PDF, not through a feed we track).

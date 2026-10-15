@@ -44,8 +44,8 @@ export default function GurugramAbout({ slot, cityId, fallback = null }: CityAbo
               <DataSource
                 name="India-WRIS Ground Water Level API"
                 url="https://indiawris.gov.in/wris/"
-                description="CGWB observation-well depth readings for the point map."
-                frequency="as published"
+                description="CGWB observation-well depth readings. For this district the series is 37 wells whose readings stop in June 2020, too few and too old to map, so the groundwater page draws no points from it."
+                frequency="as published (ends June 2020)"
               />
             </>
           

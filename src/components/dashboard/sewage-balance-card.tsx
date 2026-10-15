@@ -164,7 +164,7 @@ export function SewageBalanceCard({ cityId }: { cityId: string }) {
             {data.upcoming_stps.length} more plants are planned, adding{" "}
             {data.upcoming_total_mld} MLD ({mappable} with published coordinates). Even if
             every one is built, that still leaves{" "}
-            <strong>{data.residual_gap_mld} MLD untreated</strong> &mdash; and it assumes
+            <strong>{data.residual_gap_mld} MLD untreated</strong>{" "}&mdash; and it assumes
             the wetlands keep absorbing {b.treated_ekw_fisheries_mld} MLD.
           </p>
         </div>

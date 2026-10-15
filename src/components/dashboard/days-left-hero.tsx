@@ -255,7 +255,7 @@ export function DaysLeftHero({
                   rel="noopener noreferrer"
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  {heroNoteSource.label} &rarr;
+                  {heroNoteSource.label}{" "}&rarr;
                 </a>
               </>
             )}
@@ -301,7 +301,7 @@ export function DaysLeftHero({
               rel="noopener noreferrer"
               className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
             >
-              {t("hero.view_live")} &rarr;
+              {t("hero.view_live")}{" "}&rarr;
             </a>
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
               {t("hero.source_published").replace("{publisher}", runwaySource.publisher)}

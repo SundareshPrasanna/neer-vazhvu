@@ -69,6 +69,12 @@ export default function DelhiAbout({ slot, cityId, fallback = null }: CityAboutS
           
         </>
       );
+    case "river-status-footnote":
+      return (
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+          Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from DPCC&apos;s monthly Yamuna reports (8 stations, sampled each month).
+        </p>
+      );
     default:
       return <>{fallback}</>;
   }

@@ -73,7 +73,7 @@ async function loadFacts(cityId: string): Promise<Fact[]> {
 function groundwaterBlurb(config: PlaceConfig): string {
   const gw = config.groundwaterViews;
   const parts: string[] = [];
-  if (gw?.exploitation !== false) parts.push("CGWB block exploitation");
+  if (gw?.exploitation !== false) parts.push(gw?.exploitationLabel ?? "CGWB block exploitation");
   if (gw?.depth) parts.push("ward depth (interpolated)");
   if (gw?.risk) parts.push("ward risk composite");
   // NOT every city surfaces observation points, and this used to assume they
@@ -84,7 +84,7 @@ function groundwaterBlurb(config: PlaceConfig): string {
   // city running the exploitation choropleth ALONE has no point network to
   // advertise.
   if (gw?.cgwbStations) {
-    parts.push("CGWB Year Book station overlay");
+    parts.push(gw.stationOverlayLabel ?? "CGWB Year Book station overlay");
   } else if (gw?.depth || gw?.risk) {
     parts.push("live WRIS station overlay");
   }
@@ -683,7 +683,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
           {config.waterSources.some((s) => s.type === "reservoir")
             ? "Reservoir levels"
             : "Source levels"}{" "}
-          for {config.displayName} from {config.primaryAuthority.acronym}.
+          for {config.displayName} from {config.reservoirPublisher ?? config.primaryAuthority.acronym}.
           {config.defaultConsumptionMld != null && (
             <>
               {" "}Daily consumption assumptions (~{config.defaultConsumptionMld} MLD

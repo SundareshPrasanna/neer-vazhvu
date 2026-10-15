@@ -25,4 +25,6 @@ export const STORY_TAGLINES: Record<CityId, string> = {
     "The city the river made, unmade, and made again",
   ahmedabad:
     "The city founded beside a thin stream in a bed of sand - and the canal that now keeps it full",
+  visakhapatnam:
+    "A harbour with no large river - drawing on the Godavari and Yeleru from up to 190 kilometres away",
 };

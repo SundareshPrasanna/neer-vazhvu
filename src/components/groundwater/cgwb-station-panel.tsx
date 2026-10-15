@@ -15,9 +15,9 @@
  */
 
 import { useMemo } from "react";
-import type { CgwbStation, CgwbStationQuality } from "@/types/groundwater";
+import { distinctIngresUnit, type CgwbStation, type CgwbStationQuality } from "@/types/groundwater";
 
-const MONTH_LABELS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+export const MONTH_LABELS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 // Major-ion rows we surface, with BIS 10500 acceptable limits where one
 // exists. A value over its limit is flagged amber. EC has no BIS limit but
@@ -47,6 +47,9 @@ export function CgwbStationPanel({
   sourceNote,
   seriesLabel = "CGWB Year Book",
   unitLabel = "block",
+  readingKind,
+  sameSite = [],
+  onSelectStation,
 }: {
   station: CgwbStation;
   onClose: () => void;
@@ -60,7 +63,17 @@ export function CgwbStationPanel({
   /* CGWB's assessment unit differs by state: blocks in Tamil Nadu and
      Karnataka, districts in Delhi. */
   unitLabel?: string;
+  /* The file's own description of its cadence ("monthly means"). Absent, the
+     panel describes a CGWB Year Book's quarterly dug-well readings; present,
+     it says what the file says instead, since telemetry and monthly manual
+     series are neither quarterly nor necessarily phreatic. */
+  readingKind?: string;
+  /* The other series named in station.same_site_as, resolved by the page, so
+     a series drawn under its pair's marker can still be opened. */
+  sameSite?: CgwbStation[];
+  onSelectStation?: (station: CgwbStation) => void;
 }) {
+  const ingresUnit = distinctIngresUnit(station);
   const sorted = useMemo(
     () => [...station.readings].sort((a, b) => readingDateKey(a.year, a.month) - readingDateKey(b.year, b.month)),
     [station.readings],
@@ -99,16 +112,25 @@ export function CgwbStationPanel({
           </h3>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             {seriesLabel} - {station.block} {unitLabel}
+            {ingresUnit && <> (IN-GRES unit: {ingresUnit})</>}
             {station.block_inferred && (
               <span className="ml-1 text-amber-600 dark:text-amber-400" title="Block assignment inferred from geographic proximity to other CGWB wells in this block; not directly stated in the source PDF.">
                 (inferred)
               </span>
             )}
-            {" - "}phreatic / unconfined
+            {!readingKind && <>{" - "}phreatic / unconfined</>}
           </div>
+          {station.network && (
+            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{station.network}</div>
+          )}
           <div className="text-[11px] font-mono text-slate-400 mt-0.5">
             {station.lat.toFixed(4)}°N, {station.lng.toFixed(4)}°E
           </div>
+          {station.position_note && (
+            <div className="text-[10px] text-slate-400 mt-0.5">
+              {station.position_note.charAt(0).toUpperCase() + station.position_note.slice(1)}.
+            </div>
+          )}
         </div>
         <button
           onClick={onClose}
@@ -120,6 +142,31 @@ export function CgwbStationPanel({
           </svg>
         </button>
       </div>
+
+      {station.identity_note && (
+        <p className="text-xs text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 rounded-md p-2 mb-3 leading-relaxed">
+          {station.identity_note}
+        </p>
+      )}
+
+      {sameSite.length > 0 && (
+        <div className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+          Also read at this site, as a separate series:{" "}
+          {sameSite.map((s, i) => (
+            <span key={s.station_code ?? s.name}>
+              {i > 0 && ", "}
+              <button
+                type="button"
+                onClick={() => onSelectStation?.(s)}
+                className="text-blue-600 dark:text-blue-400 underline underline-offset-2"
+              >
+                {s.name}
+              </button>
+              {s.lat === station.lat && s.lng === station.lng && " (drawn at the same point)"}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Headline stats */}
       <div className="grid grid-cols-2 gap-2 text-xs mb-3">
@@ -149,7 +196,7 @@ export function CgwbStationPanel({
       {sparkPoints.length > 1 && (
         <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-2 mb-3">
           <div className="flex items-baseline justify-between mb-1">
-            <div className="text-[10px] uppercase text-slate-500">Quarterly readings</div>
+            <div className="text-[10px] uppercase text-slate-500">{readingKind ?? "Quarterly readings"}</div>
             <div className="text-[10px] text-slate-400">
               {earliest && `${MONTH_LABELS[earliest.month]} ${earliest.year}`}
               {" → "}
@@ -168,7 +215,7 @@ export function CgwbStationPanel({
             ))}
           </svg>
           <div className="text-[10px] text-slate-400 italic mt-0.5">
-            Higher line = water deeper below ground (worse). 4 readings per CGWB year (May / Aug / Nov / Jan).
+            Lower line = water deeper below ground (worse).{!readingKind && " 4 readings per CGWB year (May / Aug / Nov / Jan)."}
           </div>
         </div>
       )}
@@ -183,7 +230,7 @@ export function CgwbStationPanel({
             <tr>
               <th className="text-left px-2 py-1.5 font-medium">When</th>
               <th className="text-right px-2 py-1.5 font-medium">Depth (m)</th>
-              <th className="text-left px-2 py-1.5 font-medium">Year Book</th>
+              <th className="text-left px-2 py-1.5 font-medium">{readingKind ? "Basis" : "Year Book"}</th>
             </tr>
           </thead>
           <tbody>

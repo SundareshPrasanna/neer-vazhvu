@@ -21,7 +21,7 @@ export function WeapBalanceTile({ cityId }: { cityId: string }) {
           href={`/${cityId}/climate-risk`}
           className="text-xs font-medium text-sky-600 dark:text-sky-400 hover:underline whitespace-nowrap"
         >
-          {t("climate.weap.explore")} &rarr;
+          {t("climate.weap.explore")}{" "}&rarr;
         </Link>
       </div>
 

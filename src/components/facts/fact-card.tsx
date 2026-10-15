@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
+import { useCityId } from "@/lib/hooks/use-city-id";
 import { TIER_BADGE_STYLE } from "@/types/facts";
 import type { Fact } from "@/types/facts";
 
@@ -13,6 +14,7 @@ interface FactCardProps {
 
 export function FactCard({ fact }: FactCardProps) {
   const { t, language } = useLanguage();
+  const cityId = useCityId();
   const [copied, setCopied] = useState(false);
   const badge = TIER_BADGE_STYLE[fact.tier];
 
@@ -46,9 +48,11 @@ export function FactCard({ fact }: FactCardProps) {
   );
 
   const anchorHref = `#${fact.id}`;
+  // The city's own facts page: a bare /facts redirects to Chennai's.
+  const factsPath = cityId ? `/${cityId}/facts` : "/facts";
   const canonicalUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/facts${anchorHref}`
-    : `https://neervazhvu.org/facts${anchorHref}`;
+    ? `${window.location.origin}${factsPath}${anchorHref}`
+    : `https://neervazhvu.org${factsPath}${anchorHref}`;
   const fullQuote = `${quote} Reference: ${canonicalUrl}`;
 
   const dateLabel = formatDate(fact.data_date ?? fact.retrieved_at, language);

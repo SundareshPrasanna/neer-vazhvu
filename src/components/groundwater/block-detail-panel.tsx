@@ -10,9 +10,12 @@ interface BlockDetailPanelProps {
   onClose: () => void;
   /** The blocks file's own `source`; the generic CGWB line when absent. */
   source?: string | null;
+  /** The blocks file's own `availability_label`; the generic "Net Annual
+   *  Availability" when absent. */
+  availabilityLabel?: string | null;
 }
 
-export function BlockDetailPanel({ block, onClose, source }: BlockDetailPanelProps) {
+export function BlockDetailPanel({ block, onClose, source, availabilityLabel }: BlockDetailPanelProps) {
   const { t } = useLanguage();
   const { latest, history } = block;
 
@@ -61,7 +64,7 @@ export function BlockDetailPanel({ block, onClose, source }: BlockDetailPanelPro
         </div>
         {latest.availability_ham != null && (
           <div>
-            <div className="text-xs text-slate-500 dark:text-slate-400">{t("gw_block.availability")}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">{availabilityLabel || t("gw_block.availability")}</div>
             <div className="text-lg font-bold font-mono text-slate-900 dark:text-slate-100">
               {latest.availability_ham.toLocaleString()} <span className="text-xs font-normal text-slate-400">{t("gw_block.ham")}</span>
             </div>

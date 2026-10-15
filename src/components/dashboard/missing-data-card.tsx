@@ -116,7 +116,7 @@ export function MissingDataCard({
             className="inline-block mt-2 text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 hover:underline"
             onClick={(e) => e.stopPropagation()}
           >
-            {cta.label} &rarr;
+            {cta.label}{" "}&rarr;
           </a>
         )}
       </CardContent>

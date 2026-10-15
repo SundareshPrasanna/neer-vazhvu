@@ -30,7 +30,7 @@ export function GurugramPageDescriptions({ cityId, cityName }: CityPagesProps) {
     <>
       <SubSection id="page-dashboard" title="Home / dashboard">
         <p className={P}>
-          {cityName} owns no water. It impounds nothing, it has no river, and it treats no source
+          {cityName}{" "}owns no water. It impounds nothing, it has no river, and it treats no source
           of its own. What it has is a canal from the Yamuna, an aquifer it draws down faster than
           any district around it, and a tanker market. So the &quot;days of water left&quot;
           question every other city on this platform answers has no answer here - there is no
@@ -46,7 +46,7 @@ export function GurugramPageDescriptions({ cityId, cityName }: CityPagesProps) {
         <Gap title="The number we deliberately do not publish">
           <p>
             <strong>No demand figure, and therefore no deficit.</strong> Peak demand for
-            {" "}{cityName} is widely quoted at 675-700 MLD, which against 572 MLD of capacity
+            {" "}{cityName}{" "}is widely quoted at 675-700 MLD, which against 572 MLD of capacity
             would make a headline. Every one of those figures traces to press reporting rather
             than to a published document. GMDA&apos;s Final Development Plan and its Social
             Infrastructure Development Plan would settle it, and both are scanned PDFs with no
@@ -63,7 +63,7 @@ export function GurugramPageDescriptions({ cityId, cityName }: CityPagesProps) {
       <SubSection id="page-groundwater" title="Groundwater">
         <p className={P}>
           This is {cityName}&apos;s signature issue and the page draws it at
-          {" "}<strong>district</strong> resolution: six districts, four assessment years
+          {" "}<strong>district</strong>{" "}resolution: six districts, four assessment years
           (2021-22 through 2024-25), from the Central Ground Water Board&apos;s IN-GRES
           assessment. Gurugram district sits at <strong>194.6% stage of extraction</strong> - it
           withdraws close to twice what recharges - alongside Faridabad at 175.4% and Rewari at
@@ -122,7 +122,7 @@ export function GurugramPageDescriptions({ cityId, cityName }: CityPagesProps) {
             in it at all. The real loss is larger and this layer cannot size it.
           </p>
           <p>
-            <strong>Absence from imagery is not proof of destruction.</strong> A seasonal johad
+            <strong>Absence from imagery is not proof of destruction.</strong>{" "}A seasonal johad
             photographed dry, or one under tree cover, is missing from a satellite pass for
             reasons that have nothing to do with being filled. Every entry reads &quot;not seen in
             2012 imagery&quot;, never &quot;lost&quot;.
@@ -215,7 +215,7 @@ export function GurugramPageDescriptions({ cityId, cityName }: CityPagesProps) {
           natural flow direction and ten watersheds. Only the drain legs are harvested so far.
         </p>
         <p>
-          <strong>My Ward is blocked on data, not geometry.</strong> All 36 municipal ward
+          <strong>My Ward is blocked on data, not geometry.</strong>{" "}All 36 municipal ward
           polygons are harvested, but nothing is joined to them yet - and GMDA&apos;s ward layer
           publishes a number and a zone code with no ward name, so any ward surface here will
           label by number.

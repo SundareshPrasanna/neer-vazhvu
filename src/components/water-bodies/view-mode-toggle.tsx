@@ -13,9 +13,12 @@ interface ViewModeToggleProps {
    *  toggle renders a disclosure in place of the button rather than hiding it
    *  silently - a missing view mode should say why it is missing. */
   catchmentsGapNote?: string;
+  /** Show the Restoration mode. False once the city's restoration-priority
+   *  file is known to be absent, so the toggle never opens an empty view. */
+  restorationAvailable?: boolean;
 }
 
-export function ViewModeToggle({ value, onChange, catchmentsAvailable = false, catchmentsGapNote }: ViewModeToggleProps) {
+export function ViewModeToggle({ value, onChange, catchmentsAvailable = false, catchmentsGapNote, restorationAvailable = true }: ViewModeToggleProps) {
   const { t } = useLanguage();
 
   const btn = (mode: ViewMode, label: string) => (
@@ -35,7 +38,7 @@ export function ViewModeToggle({ value, onChange, catchmentsAvailable = false, c
     <div className="flex flex-wrap items-center gap-2">
       <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5">
         {btn("water-bodies", t("nav.water_bodies"))}
-        {btn("restoration", t("wb.view_restoration"))}
+        {restorationAvailable && btn("restoration", t("wb.view_restoration"))}
         {catchmentsAvailable && btn("catchments", t("wb.view_catchments"))}
       </div>
       {/* Explained absence. A <details> rather than a tooltip so it works on

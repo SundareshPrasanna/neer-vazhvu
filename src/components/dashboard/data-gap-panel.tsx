@@ -89,7 +89,7 @@ export function DataGapPanel({ titleKey, bodyKey, gaps, cta }: DataGapPanelProps
             target={cta.href.startsWith("http") ? "_blank" : undefined}
             rel={cta.href.startsWith("http") ? "noopener noreferrer" : undefined}
           >
-            {t(cta.labelKey)} &rarr;
+            {t(cta.labelKey)}{" "}&rarr;
           </a>
         )}
       </CardContent>

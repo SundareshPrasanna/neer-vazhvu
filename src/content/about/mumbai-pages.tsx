@@ -16,7 +16,7 @@ export function MumbaiPageDescriptions({ cityId, cityName }: CityPagesProps) {
     <>
       <SubSection id="page-dashboard" title="Home / dashboard">
         <p className="text-slate-600 dark:text-slate-400">
-          {cityName} is reservoir-impounded like Chennai - the seven BMC lakes (Bhatsa, Upper and
+          {cityName}{" "}is reservoir-impounded like Chennai - the seven BMC lakes (Bhatsa, Upper and
           Middle Vaitarna, Modak Sagar, Tansa, Vihar, Tulsi) are the city&apos;s tap, so the
           headline is an honest days-of-supply-left figure rather than an allocation. Bhatsa alone
           supplies about 48% of the water. Praja Foundation&apos;s 2024 audit puts BMC supply at
@@ -54,7 +54,7 @@ export function MumbaiPageDescriptions({ cityId, cityName }: CityPagesProps) {
 
       <SubSection id="page-groundwater" title="Groundwater">
         <p className="text-slate-600 dark:text-slate-400">
-          {cityName} City and {cityName} Suburban are the only two of Maharashtra&apos;s 35 districts
+          {cityName} City and {cityName}{" "}Suburban are the only two of Maharashtra&apos;s 35 districts
           left out of the CGWB Dynamic Ground Water Resources Assessment - they are treated as fully
           urban and never classified Safe / Critical / Over-Exploited. So there is no block
           exploitation choropleth to show; the absence is itself the finding.
@@ -192,7 +192,7 @@ export function MumbaiPageDescriptions({ cityId, cityName }: CityPagesProps) {
       <SubSection id="page-facts" title="Water facts">
         <p className="text-slate-600 dark:text-slate-400">
           Journalist-ready, sourced facts grouped by category - supply, water equity, groundwater,
-          rivers, floods, and coast &amp; wetlands. Today {cityName} ships 21 hand-curated facts,
+          rivers, floods, and coast &amp; wetlands. Today {cityName}{" "}ships 21 hand-curated facts,
           each with a source URL: the supply-demand gap, 34% non-revenue water (BMC audit, 2024),
           the building-level connections denominator, the slum/non-slum LPCD gap and the one ward
           in 24 with 24x7 supply, the groundwater-assessment exclusion, the Mithi as India&apos;s

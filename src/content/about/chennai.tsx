@@ -390,6 +390,25 @@ export default function ChennaiAbout({ slot, cityId, fallback = null }: CityAbou
       );
     case "river-status-consequence":
       return null;
+    case "limitations":
+      return (
+        <SubSection title={t("about.limitations")}>
+          <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2 text-sm">
+            <li>{t("about.limit1")}</li>
+            <li>{t("about.limit2")}</li>
+            <li>{t("about.limit3")}</li>
+            <li>{t("about.limit4")}</li>
+            <li>{t("about.limit5")}</li>
+            <li>{t("about.limit6")}</li>
+            <li>{t("about.limit7")}</li>
+            <li>{t("about.limit8")}</li>
+          </ul>
+        </SubSection>
+      );
+    case "consumption":
+      return (
+        <> Estimated daily city demand: ~{config.defaultConsumptionMld} MLD (of which ~{config.defaultDesalinationMld} MLD is desalinated).</>
+      );
     default:
       return <>{fallback}</>;
   }

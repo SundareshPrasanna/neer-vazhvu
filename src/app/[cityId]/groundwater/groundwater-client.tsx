@@ -24,7 +24,9 @@ import type {
   ViewMode,
   CgwbStation,
   CgwbStationsFile,
+  GWRData,
 } from "@/types/groundwater";
+import { distinctIngresUnit } from "@/types/groundwater";
 import {
   districtsAsBlocks,
   type DistrictEntry,
@@ -130,6 +132,10 @@ export default function CityGroundwaterClient({
   const config = useMemo(() => tryGetPlaceConfig(cityId), [cityId]);
 
   const [blocks, setBlocks] = useState<GWBlock[]>([]);
+  // The blocks file's own wording, shown only where it sets availability_label.
+  const [blocksMeta, setBlocksMeta] = useState<Partial<
+    Pick<GWRData, "source" | "assessment_unit" | "availability_label">
+  > | null>(null);
   // How many polygons the block layer actually carries. The gate below needs
   // DATA AND GEOMETRY, not either alone.
   const [blockGeoCount, setBlockGeoCount] = useState(0);
@@ -168,7 +174,11 @@ export default function CityGroundwaterClient({
       // an empty-blocks fallback instead of letting the .json() parse on
       // the 404 HTML body reject the whole Promise.all and leave the map
       // stuck in a loading state.
-      fetchJsonOrNull<{ blocks?: GWBlock[]; districts?: DistrictEntry[] }>(assets.blocksJsonUrl)
+      fetchJsonOrNull<
+        { blocks?: GWBlock[]; districts?: DistrictEntry[] } & Partial<
+          Pick<GWRData, "source" | "assessment_unit" | "availability_label">
+        >
+      >(assets.blocksJsonUrl)
         .then((d) => d ?? { blocks: [] })
         .catch(() => ({ blocks: [] })),
       fetchJson<WrisStationsResponse>(`/api/groundwater/stations?city=${encodeURIComponent(cityId)}`)
@@ -198,7 +208,9 @@ export default function CityGroundwaterClient({
         : Promise.resolve(null),
     ])
       .then(([blocksRes, wrisRes, geoRes, interpolatedRes, riskRes, cgwbRes]: [
-        { blocks?: GWBlock[]; districts?: DistrictEntry[] },
+        { blocks?: GWBlock[]; districts?: DistrictEntry[] } & Partial<
+          Pick<GWRData, "source" | "assessment_unit" | "availability_label">
+        >,
         WrisStationsResponse,
         GeoJSON.FeatureCollection | null,
         InterpolatedWardsResponse | null,
@@ -207,6 +219,11 @@ export default function CityGroundwaterClient({
       ]) => {
         const resolvedBlocks = districtsAsBlocks(blocksRes);
         setBlocks(resolvedBlocks);
+        setBlocksMeta({
+          source: blocksRes.source,
+          assessment_unit: blocksRes.assessment_unit,
+          availability_label: blocksRes.availability_label,
+        });
         setBlockGeoCount(geoRes?.features?.length ?? 0);
         // Pre-select most-exploited block to anchor the user - but only
         // among blocks whose polygon is on the rendered map. Otherwise
@@ -315,6 +332,20 @@ export default function CityGroundwaterClient({
   const critical = sortedBlocks.find((b) => b.latest.class === "Critical");
   const semiCount = sortedBlocks.filter((b) => b.latest.class === "Semi Critical").length;
 
+  // A blocks file that names its own availability label has had its display
+  // wording checked, so its unit word and source are shown as written. Other
+  // files keep "block" and the generic CGWB source line: Pune's and
+  // Ahmedabad's IN-GRES files also carry assessment_unit and source.
+  const ownBlockWording = Boolean(blocksMeta?.availability_label);
+  const unitWord = (ownBlockWording && blocksMeta?.assessment_unit) || "block";
+  const unitTitle = unitWord.charAt(0).toUpperCase() + unitWord.slice(1);
+  // Set only where the station overlay is not CGWB's Year Book; the info pill
+  // then names the files' own sources instead of the generic CGWB line.
+  const stationOverlayLabel = config.groundwaterViews?.stationOverlayLabel;
+  // Files that pair series at one site (same_site_as) count series, not
+  // stations: a recorder and a manual well at one site are two series.
+  const stationWord = cgwbFile?.wells.some((w) => w.same_site_as?.length) ? "series" : "stations";
+
   // Actual reading span across the CGWB wells, so the banner label is honest
   // per city (Mumbai runs May 2022 -> Jan 2025; Madurai differs).
   const MONTH_ABBR = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -339,7 +370,7 @@ export default function CityGroundwaterClient({
   }
   if (semiCount > 0)
     headlinePhrases.push(
-      `${semiCount} ${semiCount === 1 ? "block" : "blocks"} semi-critical`,
+      `${semiCount} ${semiCount === 1 ? unitWord : `${unitWord}s`} semi-critical`,
     );
 
   // The exploitation view needs BLOCKS, not just a config flag. The depth and
@@ -368,8 +399,8 @@ export default function CityGroundwaterClient({
           {config.displayName} - {
             viewMode === "depth" ? "Ward depth (interpolated)" :
             viewMode === "risk" ? "Ward risk composite (3-factor)" :
-            hasExploitation ? "CGWB block exploitation (GWR)" :
-            usesCgwbYearbook ? "CGWB Year Book stations" :
+            hasExploitation ? `CGWB ${unitWord} exploitation (GWR)` :
+            usesCgwbYearbook ? (stationOverlayLabel ?? "CGWB Year Book stations") :
             "Groundwater"
           }
         </span>
@@ -380,7 +411,7 @@ export default function CityGroundwaterClient({
         )}
         {usesCgwbYearbook && cgwbFile && (
           <span className="text-slate-500 dark:text-slate-400 text-xs">
-            {cgwbFile.wells.length} {cgwbFile.series_label ?? "CGWB Year Book"} stations ·{" "}
+            {cgwbFile.wells.length} {cgwbFile.series_label ?? "CGWB Year Book"} {stationWord} ·{" "}
             {cgwbFile.reading_kind ?? "seasonal readings"}
             {cgwbSpan ? ` ${cgwbSpan}` : ""}
           </span>
@@ -442,7 +473,7 @@ export default function CityGroundwaterClient({
                     : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600"
                 }`}
               >
-                Exploitation (block)
+                Exploitation ({unitWord})
               </button>
             )}
             {gwViews.iisc && (
@@ -483,6 +514,7 @@ export default function CityGroundwaterClient({
               viewMode={viewMode}
               wrisStations={wrisStations}
               cgwbStations={cgwbFile?.wells ?? []}
+              cgwbLabels={{ series: cgwbFile?.series_label, readingKind: cgwbFile?.reading_kind }}
               selectedWrisStationCode={selectedWrisStation?.stationCode ?? null}
               selectedCgwbStationName={selectedCgwbStation?.name ?? null}
               hiddenCategories={hiddenCategories}
@@ -548,10 +580,22 @@ export default function CityGroundwaterClient({
                 <span className="font-semibold text-slate-700 dark:text-slate-300">{config.displayName}</span>{" "}
                 ({config.stateCode})
               </div>
-              <div>{t("gw_page.source_cgwb")}</div>
+              {(() => {
+                const own = [
+                  stationOverlayLabel && usesCgwbYearbook && cgwbFile?.source_label
+                    ? `Wells: ${cgwbFile.source_label}`
+                    : null,
+                  ownBlockWording && hasExploitation && blocksMeta?.source
+                    ? `${unitTitle} assessment: ${blocksMeta.source}`
+                    : null,
+                ].filter((line): line is string => Boolean(line));
+                return own.length > 0
+                  ? own.map((line) => <div key={line}>{line}</div>)
+                  : <div>{t("gw_page.source_cgwb")}</div>;
+              })()}
               {usesCgwbYearbook && cgwbFile ? (
                 <div className="text-emerald-600 dark:text-emerald-400">
-                  {cgwbFile.wells.length} {cgwbFile.series_label ?? "CGWB Year Book"} stations -{" "}
+                  {cgwbFile.wells.length} {cgwbFile.series_label ?? "CGWB Year Book"} {stationWord} -{" "}
                   {cgwbFile.reading_kind ?? "quarterly readings"}, click for hydrograph
                 </div>
               ) : wrisStations.length > 0 ? (
@@ -577,6 +621,8 @@ export default function CityGroundwaterClient({
             <BlockDetailPanel
               block={selectedBlock}
               onClose={() => setSelectedBlock(null)}
+              source={ownBlockWording ? blocksMeta?.source : undefined}
+              availabilityLabel={blocksMeta?.availability_label}
             />
           </BottomSheet>
         )}
@@ -595,6 +641,11 @@ export default function CityGroundwaterClient({
               onClose={() => setSelectedCgwbStation(null)}
               seriesLabel={cgwbFile?.series_label}
               unitLabel={cgwbFile?.unit_label}
+              readingKind={cgwbFile?.reading_kind}
+              sameSite={(selectedCgwbStation.same_site_as ?? [])
+                .map((p) => cgwbFile?.wells.find((w) => w.station_code === p.station_code))
+                .filter((w): w is CgwbStation => Boolean(w))}
+              onSelectStation={setSelectedCgwbStation}
               sourceNote={
                 cgwbFile?.source_label
                   ? // The measurement description is per-file: Madurai and
@@ -763,6 +814,7 @@ function WardDepthPanel({
                 </div>
                 <div className="text-[10px] text-slate-500">
                   {well.block}
+                  {distinctIngresUnit(well) ? ` (IN-GRES unit: ${distinctIngresUnit(well)})` : ""}
                   {latest ? ` · ${latest.depth_m_bgl} m bgl (${latest.year}-${String(latest.month).padStart(2, "0")})` : ""}
                 </div>
               </button>

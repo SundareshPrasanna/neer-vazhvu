@@ -119,7 +119,7 @@ An audited, artifact-level judgement that a NAMED restricted input does not encu
 | `method` | no | one of `geometry`, `published`, `crosswalk`, `manual` | How the relation was established (spec 4.5). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping. |
 | `evidence` | no | string, min length 1 | A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested. |
 
-## Registered scopes (53)
+## Registered scopes (55)
 
 Country is derived from the relations, never stored.
 
@@ -144,6 +144,7 @@ Country is derived from the relations, never stored.
 | `madurai` | city | Madurai | `tamil-nadu` | `india` | - | - |
 | `pune` | city | Pune | `maharashtra` | `india` | - | - |
 | `surat` | city | Surat | `gujarat` | `india` | - | - |
+| `visakhapatnam` | city | Visakhapatnam | `andhra-pradesh` | `india` | - | - |
 | `sriperumbudur` | corridor | Sriperumbudur | `tamil-nadu` | `india` | - | - |
 | `india` | country | India | - | `india` | iso3166-1 country `IN` | - |
 | `ka-kolar` | district | Kolar | `karnataka` | `india` | lgd district `542`, census-2011 district `581` | - |
@@ -167,6 +168,7 @@ Country is derived from the relations, never stored.
 | `tn-vellore` | district | Vellore | `tamil-nadu` | `india` | lgd district `595` | - |
 | `kolkata` | region | Kolkata | `west-bengal` | `india` | - | - |
 | `mumbai` | region | Mumbai | `maharashtra` | `india` | - | - |
+| `andhra-pradesh` | state | Andhra Pradesh | `india` | `india` | iso3166-2 state `IN-AP` | - |
 | `gujarat` | state | Gujarat | `india` | `india` | iso3166-2 state `IN-GJ` | - |
 | `haryana` | state | Haryana | `india` | `india` | iso3166-2 state `IN-HR` | - |
 | `karnataka` | state | Karnataka | `india` | `india` | iso3166-2 state `IN-KA`, lgd state `29`, census-2011 state `29` | - |

@@ -361,7 +361,7 @@ export function DrainageCapacityHero({
                 href={config.registerLink.href}
                 className="text-sky-600 dark:text-sky-400 hover:underline"
               >
-                {config.registerLink.label} &rarr;
+                {config.registerLink.label}{" "}&rarr;
               </a>
             </p>
           )}

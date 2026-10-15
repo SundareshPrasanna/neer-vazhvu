@@ -80,6 +80,10 @@ CITIES = {
     # validated against IMD's Ahmedabad observatory normal; the provisional
     # months must continue that series, not start one at the city centre.
     "ahmedabad": (23.0000, 72.5000),
+    # Matches generate_imd_rainfall.py's grid point, not the city centre, for
+    # the Kolkata/Pune reason. Also the coastal one: the nearer seaward cells
+    # are ocean in IMD's grid.
+    "visakhapatnam": (17.7500, 83.2500),
 }
 
 API = (

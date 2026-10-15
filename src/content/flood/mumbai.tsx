@@ -89,7 +89,7 @@ export const FLOOD: CityFloodContent = {
         heading: "Data we don't have",
         items: [
           <Fragment key="iflows">
-            <strong>iFLOWS-Mumbai is not public.</strong> The city&apos;s integrated flood-warning system (built with
+            <strong>iFLOWS-Mumbai is not public.</strong>{" "}The city&apos;s integrated flood-warning system (built with
             public money) briefs officials only - no public dashboard or API.
           </Fragment>,
           "No official BRIMSTOWAD as-built drain survey. The drainage layer here is OSM-mapped drains and nallas - real geometry, but community-traced coverage, not BMC's network with capacities and condition.",
@@ -101,7 +101,7 @@ export const FLOOD: CityFloodContent = {
           </Fragment>,
           "26/7/2005 point coordinates are estimated locality centroids - no reviewed source publishes coordinates, and no official GIS inundation extent for the event is public.",
           <Fragment key="region">
-            <strong>No regional flood-spot inventory beyond BMC.</strong> The eastern Ulhas/ Waldhuni corridor
+            <strong>No regional flood-spot inventory beyond BMC.</strong>{" "}The eastern Ulhas/ Waldhuni corridor
             (Ulhasnagar, Kalyan-Dombivli, Ambernath, Badlapur) and Vasai-Virar flood chronically, but the other
             corporations publish no equivalent list of observed waterlogging spots, so only Greater Mumbai&apos;s points
             are mapped here. The state flood-line sheets below are a different kind of record: legal river-floodplain

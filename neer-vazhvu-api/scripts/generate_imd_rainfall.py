@@ -44,6 +44,7 @@ ENVELOPE_SOURCE_ID = {
     "pune": "imd-gridded-rainfall-pune",
     "gurugram": "imd-gridded-rainfall-gurugram",
     "ahmedabad": "imd-gridded-rainfall-ahmedabad",
+    "visakhapatnam": "imd-gridded-rainfall-visakhapatnam",
 }
 
 START_YEAR = 1970
@@ -143,6 +144,21 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "Ahmedabad observatory normal of 783.6 mm (Climatological Table 1991-2020, "
         "station index 42647): this cell returns 800.4 mm over 1991-2020 (+2.1%), "
         "while 23.0/72.75 returns 868.3 mm (+10.8%).",
+    ),
+    "visakhapatnam": (
+        17.75,
+        83.25,
+        "Visakhapatnam grid point inside GVMC on the Gopalapatnam/Simhachalam "
+        "side (city centre 17.69 N, 83.22 E). The coastal ocean-cell trap is "
+        "real here: 17.5/83.0, 17.5/83.25 and 17.75/83.5 are NaN in every IMD "
+        "year 1991-2025, so a seaward point would write zeros. This cell has "
+        "values in every year 1970-2025. Checked against IMD's Visakhapatnam "
+        "airport observatory normal, 'Visakhapatnam(AP)', of 1,054.5 mm "
+        "(Climatological Table 1991-2020, station index 43149): this cell "
+        "returns 1,053.4 mm over 1991-2020 (-0.1%). IMD's Visakhapatnam "
+        "observatory (station index 43150) has a 1991-2020 normal of 1,113.1 mm "
+        "(this cell -5.4%), and the AP planning department's district normal "
+        "is 1,117.7 mm (cited in CGWB's 2025 aquifer plan; this cell -5.8%).",
     ),
 }
 

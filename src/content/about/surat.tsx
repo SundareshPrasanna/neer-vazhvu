@@ -63,6 +63,15 @@ export default function SuratAbout({ slot, cityId, fallback = null }: CityAboutS
           
         </>
       );
+    case "source-wris-gwr":
+      return (
+        <DataSource
+          name="IN-GRES - Dynamic Ground Water Resources (Gujarat, by district)"
+          url="https://ingres.iith.ac.in/"
+          description="The annual national groundwater assessment, read here by district: Surat, Bharuch, Navsari and Tapi, 2021-22 to 2024-25. Tapi is included because Ukai dam, which controls the city's supply, sits there."
+          frequency="annual"
+        />
+      );
     default:
       return <>{fallback}</>;
   }

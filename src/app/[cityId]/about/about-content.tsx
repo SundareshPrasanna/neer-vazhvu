@@ -5,6 +5,7 @@ import type { PlaceConfig } from "@/lib/cities";
 import { CatchmentMethodologySection } from "@/components/catchments/catchment-methodology-section";
 import { CityAbout } from "@/components/about/city-about";
 import { Section, SubSection, DataSourceGroupHeader, DataSource } from "@/components/about/primitives";
+import { CityLimitations, showsDaysLeftFigure } from "@/components/about/limitations";
 
 /**
  * City-aware About page. Mirrors the section structure of Chennai's
@@ -19,11 +20,19 @@ import { Section, SubSection, DataSourceGroupHeader, DataSource } from "@/compon
 
 /* ── helpers ────────────────────────────────────────────────────── */
 
+const SOURCE_TYPE_LABEL: Record<PlaceConfig["waterSources"][number]["type"], string> = {
+  reservoir: "reservoir",
+  river: "river intake",
+  flow_station: "flow point",
+  borewell_field: "groundwater wells",
+};
+
 /* ── main content ───────────────────────────────────────────────── */
 
 export function CityAboutContent({ config }: { config: PlaceConfig }) {
   const { t } = useLanguage();
   const cityName = config.displayName;
+  const daysFigure = showsDaysLeftFigure(config);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -50,39 +59,68 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
               <> with civic services under {config.localGovernment.name}{" "}
                 ({config.localGovernment.wardCount} wards)</>
             )}.
-            {config.defaultConsumptionMld !== null && (
-              <> Estimated daily city demand: ~{config.defaultConsumptionMld} MLD
-              {config.defaultDesalinationMld !== null && config.defaultDesalinationMld > 0 && (
-                <> (of which ~{config.defaultDesalinationMld} MLD is desalinated)</>
-              )}.</>
+            {/* The config figure is a demand in some cities and a draw or plant
+                output in others, so it shows only where the dashboard divides
+                by it; Chennai's slot names its figure a demand. */}
+            {daysFigure && config.defaultConsumptionMld != null && (
+              <CityAbout
+                slot="consumption"
+                cityId={config.cityId}
+                fallback={
+                  <> Daily draw used for days of water left: ~{Math.round(config.defaultConsumptionMld).toLocaleString("en-IN")} MLD
+                  {config.defaultDesalinationMld !== null && config.defaultDesalinationMld > 0 && (
+                    <> (of which ~{config.defaultDesalinationMld} MLD is desalinated)</>
+                  )}.</>
+                }
+              />
             )}
           </p>
 
-          {config.waterSources.length > 0 && (
+          <CityAbout
+            slot="water-sources"
+            cityId={config.cityId}
+            fallback={
+          config.waterSources.length > 0 && (
             <div className="mt-3">
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-                {t("about.water_sources_daily")}
+                {config.waterSources.some((s) => s.hasPublicFeed === false)
+                  ? t("about.water_sources")
+                  : t("about.water_sources_daily")}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {config.waterSources.map((s) => (
                   <div key={s.sourceCode} className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm">
                     <div className="font-medium text-slate-900 dark:text-slate-100">{s.displayName}</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      {s.type}
+                      {SOURCE_TYPE_LABEL[s.type]}
                       {s.fullCapacityMcft !== null && (<> - {s.fullCapacityMcft.toLocaleString()} Mcft full capacity</>)}
                       {s.fullTankLevelFt !== null && (<> - FRL {s.fullTankLevelFt} ft</>)}
                       {s.isPrimaryDrinkingSource && (
                         <span className="ml-1 inline-block px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">{t("about.primary_drinking")}</span>
                       )}
                     </div>
+                    {s.hasPublicFeed === false && (
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        {s.noFeedNote ?? t("about.no_daily_reading")}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-          )}
+          )
+            }
+          />
         </Section>
 
-        <Section title={t("about.group_reading")}>
+        {/* The days-of-water-left method shows only where the dashboard
+            shows the figure; a city with neither it nor a reading slot of
+            its own has nothing here, so the section hides. */}
+        <Section title={t("about.group_reading")} hideWhenEmpty={!daysFigure}>
+          <CityAbout
+            slot="reading-days"
+            cityId={config.cityId}
+            fallback={daysFigure && (
           <SubSection title={t("about.days_heading")}>
             <p className="text-slate-600 dark:text-slate-400">{t("about.days_intro")}</p>
             <div className="space-y-3">
@@ -109,6 +147,8 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
               </div>
             </div>
           </SubSection>
+            )}
+          />
 
           <CityAbout slot="reading-1" cityId={config.cityId} />
         </Section>
@@ -132,16 +172,22 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
 
             <>
               <p className="text-slate-600 dark:text-slate-400">
-                Daily AI briefings, longer-form weekly narratives, and per-ward AI profiles are pending for {cityName} - the underlying summary stores aren&apos;t yet multi-city. Until those land, the page surfaces raw data without an AI commentary layer.
+                Daily AI briefings, longer-form weekly narratives, and per-ward AI profiles are pending for {cityName}{" "}- the underlying summary stores aren&apos;t yet multi-city. Until those land, the page surfaces raw data without an AI commentary layer.
               </p>
               <div className="space-y-3">
+                <CityAbout
+                  slot="intelligence-daily-briefing"
+                  cityId={config.cityId}
+                  fallback={
                 <div className="flex gap-3">
                   <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
                   <div>
                     <span className="font-semibold text-slate-800 dark:text-slate-200">Daily briefing</span>
-                    <span className="text-slate-600 dark:text-slate-400"> Template-based briefing (no LLM) summarising current storage, 7-day delta, days-of-water-left, and high-risk ward count. Pending for {cityName}.</span>
+                    <span className="text-slate-600 dark:text-slate-400"> Template-based briefing (no LLM) summarising the day&apos;s readings. Pending for {cityName}.</span>
                   </div>
                 </div>
+                  }
+                />
                 <div className="flex gap-3">
                   <span className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
                   <div>
@@ -195,7 +241,9 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           <DataSource
             name="Open-Meteo"
             url="https://open-meteo.com/"
-            description="Free, no-auth daily weather data: precipitation, temperature, humidity, ET0, wind. ECMWF / ERA5-Land base. For cities with the provisional-rainfall layer, its archive API also fills the months IMD's gridded series hasn't published yet - rendered as asterisked provisional months that IMD supersedes automatically."
+            description={`Free, no-auth weather data, ECMWF / ERA5-Land base. Used here for rainfall: its archive API fills the months IMD's gridded series hasn't published yet - rendered as asterisked provisional months that IMD supersedes automatically.${
+              config.heroMode === "drainage-capacity" ? " Its hourly rainfall also drives the dashboard's drainage-capacity headline." : ""
+            }`}
             frequency="daily"
           />
           <CityAbout
@@ -212,21 +260,18 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           />
           <CityAbout slot="data-sources-3" cityId={config.cityId} />
 
+          {/* Well readings come from different publishers and cadences city
+              to city (India-WRIS, CGWB Year Books, the National Water Data
+              Portal), so each city names its own; the frame has no default. */}
           <DataSourceGroupHeader title="Groundwater" />
-          <DataSource
-            name="India WRIS - groundwater level (CGWB stations)"
-            url="https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
-            description="Daily and seasonal manual + telemetric (DWLR) groundwater readings from the Central Ground Water Board's National Hydrograph Network."
-            frequency="daily / seasonal"
-          />
           <CityAbout
             slot="source-wris-gwr"
             cityId={config.cityId}
             fallback={
               <DataSource
-            name="India WRIS / CGWB - block-level Dynamic GWR"
-            url="https://indiawris.gov.in/"
-            description="Annual block-level Dynamic Groundwater Resource Assessment (Safe / Semi Critical / Critical / Over Exploited)."
+            name="IN-GRES - Dynamic Ground Water Resources Assessment"
+            url="https://ingres.iith.ac.in/"
+            description="The annual national groundwater assessment by the Central Ground Water Board and the state groundwater departments: how much of each area's yearly recharge is drawn out. Each state picks the area it assesses by, from a block or taluka up to a whole district."
             frequency="annual"
           />
             }
@@ -260,7 +305,7 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
           <DataSource
             name="Anthropic Claude API"
             url="https://docs.anthropic.com/"
-            description={`AI city narratives and per-ward profiles. Live for Chennai; pending for ${cityName}.`}
+            description={`AI city narratives and per-ward profiles. Pending for ${cityName}.`}
             frequency="daily / monthly"
           />
           </>
@@ -272,26 +317,28 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
             5. Data quality & limitations
             ───────────────────────────────────────────────────────── */}
         <Section id="data-quality" title={t("about.section_data_quality")}>
+          {/* River badges exist only where the city has a rivers page. */}
+          {config.routes.includes("rivers") && (
           <SubSection title="How we classify river health">
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              CPCB publishes <span className="font-semibold">two parallel</span> river-water-quality classification systems, and they don&apos;t always agree. Knowing which one we use - and why - matters for reading our river status badges honestly.
+              CPCB publishes <span className="font-semibold">two parallel</span>{" "}river-water-quality classification systems, and they don&apos;t always agree. Knowing which one we use - and why - matters for reading our river status badges honestly.
             </p>
             <div className="space-y-3 mt-3">
               <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                 <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Designated Best-Use classes (A-E)</h4>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Computed from <span className="font-semibold">current</span> dissolved-oxygen, BOD and coliform thresholds at each NWMP station. Updates every reading. Class A = drinking with disinfection only; Class B = outdoor bathing; Class C = drinking with conventional treatment; Class D = fisheries/wildlife; Class E = irrigation only. <span className="font-semibold">Below E = practically dead.</span>
+                  Computed from <span className="font-semibold">current</span> dissolved-oxygen, BOD and coliform thresholds at each monitoring station. Updates every reading. Class A = drinking with disinfection only; Class B = outdoor bathing; Class C = drinking with conventional treatment; Class D = fisheries/wildlife; Class E = irrigation only. <span className="font-semibold">Below E = practically dead.</span>
                 </p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                 <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">Polluted River Stretch (PRS) Priority I-V</h4>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  A <span className="font-semibold">historical, multi-year</span> stretch-level designation reflecting cumulative pollution. Slow to update; once a river stretch is on the Priority list it tends to stay there even if recent readings improve. Priority I = worst (BOD &gt; 30 mg/L sustained); Priority V = least bad of the polluted stretches.
+                  A <span className="font-semibold">historical, multi-year</span>{" "}stretch-level designation reflecting cumulative pollution. Slow to update; once a river stretch is on the Priority list it tends to stay there even if recent readings improve. Priority I = worst (BOD &gt; 30 mg/L sustained); Priority V = least bad of the polluted stretches.
                 </p>
               </div>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-              <span className="font-semibold">Our status badges (&quot;dead&quot;, &quot;severely degraded&quot;, &quot;degraded&quot;, &quot;stressed&quot;, &quot;healthy&quot;) are computed from current readings via the Designated Best-Use thresholds</span> - not from the PRS Priority list. We take the worst classification across a river&apos;s monitored stations and surface that as the river-level status.
+              <span className="font-semibold">Our status badges (&quot;dead&quot;, &quot;severely degraded&quot;, &quot;degraded&quot;, &quot;stressed&quot;, &quot;healthy&quot;) are computed from current readings via the Designated Best-Use thresholds</span>{" "}- not from the PRS Priority list. We take the worst classification across a river&apos;s monitored stations and surface that as the river-level status.
               <CityAbout slot="data-quality-1" cityId={config.cityId} />
             </p>
             <CityAbout
@@ -300,29 +347,29 @@ export function CityAboutContent({ config }: { config: PlaceConfig }) {
               fallback={
 
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                Practical consequence: a river on CPCB&apos;s PRS Priority list (e.g. the Madurai-Manamadurai stretch of the Vaigai is Priority III) won&apos;t automatically render as &quot;severely degraded&quot; here. If the underlying NWMP readings show only Class C/D conditions, the badge reflects that. The PRS designation belongs in the river description as historical context, not as the live status.
+                Practical consequence: a river on CPCB&apos;s PRS Priority list won&apos;t automatically render as &quot;severely degraded&quot; here. If the underlying readings show only Class C/D conditions, the badge reflects that. The PRS designation belongs in the river description as historical context, not as the live status.
               </p>
               }
             />
+            <CityAbout
+              slot="river-status-footnote"
+              cityId={config.cityId}
+              fallback={
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
               Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from CPCB NWMP annual River Water Quality reports.
             </p>
+              }
+            />
           </SubSection>
+          )}
 
           <CityAbout slot="data-quality-2" cityId={config.cityId} />
 
-          <SubSection title={t("about.limitations")}>
-            <ul className="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2 text-sm">
-              <li>{t("about.limit1")}</li>
-              <li>{t("about.limit2")}</li>
-              <li>{t("about.limit3")}</li>
-              <li>{t("about.limit4")}</li>
-              <li>{t("about.limit5")}</li>
-              <li>{t("about.limit6")}</li>
-              <li>{t("about.limit7")}</li>
-              <li>{t("about.limit8")}</li>
-            </ul>
-          </SubSection>
+          <CityAbout
+            slot="limitations"
+            cityId={config.cityId}
+            fallback={<CityLimitations config={config} />}
+          />
 
           <CityAbout slot="data-quality-3" cityId={config.cityId} />
         </Section>

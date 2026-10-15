@@ -145,6 +145,13 @@ export interface GWRData {
   fetched_at: string;
   years: number[];
   blocks: GWBlock[];
+  /** The unit the file assesses ("taluka", "mandal"). Shown only alongside
+   *  availability_label; files without it keep the generic "block". */
+  assessment_unit?: string;
+  /** The block panel's label for availability_ham, in the file's own words.
+   *  A file that sets it has had its display wording checked, so the page
+   *  also shows its `source` and `assessment_unit` (Visakhapatnam today). */
+  availability_label?: string;
 }
 
 export interface GWStation {
@@ -280,6 +287,38 @@ export interface CgwbStation {
   block_inferred?: boolean;
   readings: CgwbStationReading[];
   quality?: CgwbStationQuality;
+  /* The fields below are set only by files that carry them (the Andhra
+     Pradesh feeds today); panels and labels change only where they exist. */
+  /** The well's own network ("APWRIMS piezometer recorder"). */
+  network?: string;
+  /** The IN-GRES unit polygon the well sits in, where `block` is the state's
+   *  own mandal map; the two do not follow the same lines. */
+  ingres_unit?: string;
+  /** The feed's own mandal tag, kept beside block and ingres_unit. */
+  feed_mandal?: string;
+  /** How precisely the position is known and where it comes from. */
+  position_note?: string;
+  /** The published position, where the well is shown elsewhere. */
+  published_position?: [number, number];
+  /** The published station lists give this well different names. */
+  name_conflict?: boolean;
+  /** Shown on the panel when the site a series is drawn at is not certain. */
+  identity_note?: string;
+  /** Other series at the same site, kept separate rather than spliced. */
+  same_site_as?: Array<{
+    station_code: string;
+    months_compared: number;
+    median_difference_m: number | null;
+    mean_abs_difference_m: number | null;
+  }>;
+}
+
+/** The well's IN-GRES unit where it names a different place from its
+ *  mandal ("Visakhapatnam (Rural)" and "Visakhapatnam Rural" are one). */
+export function distinctIngresUnit(s: Pick<CgwbStation, "block" | "ingres_unit">): string | null {
+  if (!s.ingres_unit) return null;
+  const key = (x: string) => x.toLowerCase().replace(/[^a-z]/g, "");
+  return key(s.ingres_unit) === key(s.block) ? null : s.ingres_unit;
 }
 
 export interface CgwbStationsFile {

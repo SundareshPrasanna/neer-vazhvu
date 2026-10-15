@@ -44,7 +44,7 @@ export function DelhiStoryEn() {
         Two minutes from Connaught Place, behind the glass of Delhi&apos;s
         business district, a flight of a hundred and eight steps drops through
         arched stone galleries to a dry floor. Agrasen ki Baoli is a{" "}
-        <em>baoli</em> (बावली) - a stepwell - and the steps exist because the
+        <em>baoli</em>{" "}(बावली) - a stepwell - and the steps exist because the
         people who built it expected the water to move: to stand high in a good
         year and sink in a hard one, always reachable, never gone. For roughly a
         thousand years that was Delhi&apos;s founding skill. Every dynasty that
@@ -154,7 +154,7 @@ export function DelhiStoryEn() {
           Delhi&apos;s standards, and a malaria-and-flood problem by the
           administration&apos;s. From the 1860s the engineers cut it a channel
           to the Yamuna and kept cutting until the lake was gone. The channel
-          survives. It is the Najafgarh <em>nala</em> (नाला) - today the single
+          survives. It is the Najafgarh <em>nala</em>{" "}(नाला) - today the single
           largest carrier of Delhi&apos;s sewage into the river, a drain that is
           also, if you trace its water back far enough, a buried river.
         </p>

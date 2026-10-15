@@ -23,12 +23,14 @@ export interface CityPagesProps {
   cityName: string;
 }
 
-export function Section({ id, title, children, defaultOpen = false }: { id?: string; title: string; children: ReactNode; defaultOpen?: boolean }) {
+/** `hideWhenEmpty`: hide the whole section when its body renders no element,
+ *  i.e. every slot inside it came back empty for this city. */
+export function Section({ id, title, children, defaultOpen = false, hideWhenEmpty = false }: { id?: string; title: string; children: ReactNode; defaultOpen?: boolean; hideWhenEmpty?: boolean }) {
   return (
     <details
       id={id}
       open={defaultOpen}
-      className="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/30 open:shadow-sm"
+      className={`group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/30 open:shadow-sm${hideWhenEmpty ? " [&:not(:has(>div>*))]:hidden" : ""}`}
     >
       <summary className="flex items-center justify-between gap-3 cursor-pointer list-none select-none p-4 sm:p-5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40 [&::-webkit-details-marker]:hidden">
         <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100">

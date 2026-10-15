@@ -7,7 +7,7 @@ name: Coastal shoreline refresh
 # active_epoch_config(), so no code edit is needed - the cron just picks up
 # the latest complete dry season. Mumbai joined the matrix 2026-07-31 (#220
 # review: the Mumbai layer claimed this refresh but the workflow only ran
-# Chennai).
+# Chennai). Visakhapatnam joined at onboarding (2026-10).
 #
 # Cadence is YEARLY by design: the epochs are annual dry-season composites, so
 # re-running quarterly/half-yearly would recompute identical data. Mid-June is
@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        city: [chennai, mumbai]
+        city: [chennai, mumbai, visakhapatnam]
     permissions:
       contents: write
       pull-requests: write

@@ -97,17 +97,20 @@ const CONFIDENCE_STYLE: Record<Arrangement["confidence"], string> = {
 };
 
 /** The row verdict. "over" (drawing more than entitled - Ulhasnagar) is a
- *  finding, not an error. "unreported" = a quota exists on paper but no
- *  delivery figure is public - the ledger's central accountability finding.
- *  "own source" = the recipient owns the source outright, so there is no
- *  external quota to compare against. "no figure" = both sides carry
- *  numbers but in units we refuse to silently convert. */
-type GapVerdict = "shortfall" | "over quota" | "unreported" | "own source" | "no figure" | "met";
+ *  finding, not an error. "unreported" = a quota exists on paper but we have
+ *  not found a published delivery figure - the ledger's central
+ *  accountability finding. "entitlement not found" = supplied through an
+ *  intermediary, but we have not found its entitlement. "own source" = the
+ *  recipient owns the source outright, so there is no external quota to
+ *  compare against. "no figure" = both sides carry numbers but in units we
+ *  refuse to silently convert. */
+type GapVerdict = "shortfall" | "over quota" | "unreported" | "entitlement not found" | "own source" | "no figure" | "met";
 
 const VERDICT_STYLE: Record<GapVerdict, string> = {
   shortfall: "bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300",
   "over quota": "bg-sky-100 text-sky-800 dark:bg-sky-950/50 dark:text-sky-300",
   unreported: "bg-violet-100 text-violet-800 dark:bg-violet-950/50 dark:text-violet-300",
+  "entitlement not found": "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   "own source": "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   "no figure": "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   met: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300",
@@ -118,7 +121,8 @@ const VERDICT_STYLE: Record<GapVerdict, string> = {
 const VERDICT_LEGEND: [GapVerdict, string][] = [
   ["shortfall", "receives less than the paper entitles it to"],
   ["over quota", "draws more than its entitlement - a finding, not an error"],
-  ["unreported", "a quota exists on paper, but no delivery figure is published"],
+  ["unreported", "a quota exists on paper, but we have not found a published delivery figure"],
+  ["entitlement not found", "supplied through an intermediary, but we have not found its entitlement"],
   ["own source", "owns the source outright - no external quota to compare"],
   ["met", "what flows matches the entitlement"],
   ["no figure", "the two sides carry numbers in units we refuse to silently convert"],
@@ -130,8 +134,9 @@ const VERDICT_ORDER: Record<GapVerdict, number> = {
   "over quota": 1,
   unreported: 2,
   "no figure": 3,
-  "own source": 4,
-  met: 5,
+  "entitlement not found": 4,
+  "own source": 5,
+  met: 6,
 };
 
 function fmtQty(q: Quantity): string {
@@ -142,7 +147,7 @@ function fmtQty(q: Quantity): string {
 function verdictOf(a: Arrangement): GapVerdict {
   const e = a.entitled;
   const r = a.received;
-  if (e.value === null) return "own source";
+  if (e.value === null) return isDirect(a) ? "own source" : "entitlement not found";
   if (r.value === null) return "unreported";
   if (e.unit !== r.unit) return "no figure";
   if (e.value === r.value) return "met";
@@ -164,7 +169,10 @@ function gapLabel(a: Arrangement): string | null {
 function pairLabel(a: Arrangement): string {
   const e = a.entitled;
   const r = a.received;
-  if (e.value === null) return `${fmtQty(r)} from own source`;
+  if (e.value === null) {
+    if (isDirect(a)) return `${fmtQty(r)} from own source`;
+    return r.value === null ? "entitlement not found · delivery unreported" : `${fmtQty(r)} received · entitlement not found`;
+  }
   if (r.value === null) return `${fmtQty(e)} entitled · delivery unreported`;
   if (e.unit === r.unit) {
     return `${e.value.toLocaleString("en-IN")} → ${r.value.toLocaleString("en-IN")} ${e.unit}`;
@@ -220,7 +228,14 @@ function ArrangementRow({ a, highlight }: { a: Arrangement; highlight?: boolean 
             <div>
               <div className="text-[10px] uppercase text-slate-500">Gap</div>
               <div className={`font-mono font-semibold ${verdict === "shortfall" ? "text-amber-600 dark:text-amber-400" : verdict === "over quota" ? "text-sky-600 dark:text-sky-400" : ""}`}>
-                {gap ?? (verdict === "unreported" ? "delivery unreported" : verdict === "own source" ? "no quota applies" : "no common figure")}
+                {gap ??
+                  (verdict === "unreported"
+                    ? "delivery unreported"
+                    : verdict === "entitlement not found"
+                      ? "entitlement not found"
+                      : verdict === "own source"
+                        ? "no quota applies"
+                        : "no common figure")}
               </div>
             </div>
           </div>
@@ -373,7 +388,7 @@ export default function AllocationsClient({ cityId }: { cityId: string }) {
     const v = verdictOf(a);
     counts[v] = (counts[v] ?? 0) + 1;
   }
-  const scoreboard: GapVerdict[] = ["shortfall", "over quota", "unreported", "no figure", "own source", "met"];
+  const scoreboard: GapVerdict[] = ["shortfall", "over quota", "unreported", "no figure", "entitlement not found", "own source", "met"];
   const lowConfidence = data.arrangements.filter((a) => a.confidence === "low").length;
 
   return (

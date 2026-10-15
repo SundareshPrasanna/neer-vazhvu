@@ -53,7 +53,7 @@ export function WardWaterBodiesCard({ wardNumber, profile }: Props) {
             href={`${cityPrefix}/water-bodies?mode=restoration&ward=${wardNumber}`}
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
-            {t("my_ward.view_on_map")} &rarr;
+            {t("my_ward.view_on_map")}{" "}&rarr;
           </Link>
         </div>
       </CardHeader>

@@ -64,7 +64,7 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
         </p>
         <Gap title="What AMC does not publish: measured losses and an entitlement">
           <p>
-            <strong>No measured loss figure.</strong> AMC&apos;s 2023-24 budget
+            <strong>No measured loss figure.</strong>{" "}AMC&apos;s 2023-24 budget
             says connections are unmetered and the tap runs two hours a day,
             from 6 to 8 in the morning. Its 2024-25 and 2025-26 budgets promise
             a 5% cut in losses without stating what the losses are. So the
@@ -114,7 +114,7 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
         <p className={P}>
           The dashboard carries three dams: Sardar Sarovar on the Narmada,
           Kadana on the Mahi and Dharoi on the Sabarmati.{" "}
-          <strong>None of them is the city&apos;s own storage.</strong> Sardar
+          <strong>None of them is the city&apos;s own storage.</strong>{" "}Sardar
           Sarovar is a four-state project and Kadana an irrigation dam, and
           AMC&apos;s share of either is not published. Dharoi is the
           Sabarmati&apos;s own dam, upstream of the city, but the city has not
@@ -165,7 +165,7 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
         </p>
         <p className={P}>
           Ahmedabad district reads <strong>79.14%, semi critical</strong>, in
-          2025-2026. Inside it, the <strong>Ahmedabad Urban</strong> unit,
+          2025-2026. Inside it, the <strong>Ahmedabad Urban</strong>{" "}unit,
           which holds the city&apos;s wards, is{" "}
           <strong>over exploited at 128.85%</strong>: it draws more each year
           than the assessment counts as extractable. The ring around it,
@@ -430,7 +430,7 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
         <Gap title="Five sections read 'not available', each for a stated reason">
           <ul className="list-disc list-inside space-y-1">
             <li>
-              <strong>Lost lakes:</strong> no public register of the city&apos;s
+              <strong>Lost lakes:</strong>{" "}no public register of the city&apos;s
               lost lakes has been found.
             </li>
             <li>
@@ -463,7 +463,7 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
           tracks ten promises about {cityName}&apos;s water, from AMC&apos;s
           budgets, its affidavits to the Gujarat High Court, the state&apos;s
           2018 reuse policy and the Chief Minister&apos;s Office.{" "}
-          <strong>Five have passed their dates</strong> with the work still
+          <strong>Five have passed their dates</strong>{" "}with the work still
           described as under way: the Sola (30 MLD) and Jagatpur (15 MLD) sewage
           plants, due by September 2025; the Vinzol 75 MLD plant, due 15
           February 2026; the Kharicut canal rebuild, which AMC said in February

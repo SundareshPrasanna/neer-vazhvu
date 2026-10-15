@@ -81,6 +81,12 @@ export default function PuneAbout({ slot, cityId, fallback = null }: CityAboutSl
           
         </>
       );
+    case "river-status-footnote":
+      return (
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+          Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from CPCB&apos;s Polluted River Stretches report of October 2025 (2022-23 monitoring, with 2024 BOD from its annexure).
+        </p>
+      );
     default:
       return <>{fallback}</>;
   }
