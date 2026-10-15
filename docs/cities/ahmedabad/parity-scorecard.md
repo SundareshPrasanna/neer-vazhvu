@@ -11,7 +11,7 @@
 | **Low** | Minimal or absent; reason stated |
 | **N/A** | Structurally inapplicable; a difference in the city, not the build |
 
-**11 of 15 routes built** (preview-gated): dashboard, about, groundwater, water-bodies, rivers,
+**11 of 15 routes built** (live since 15 October 2026): dashboard, about, groundwater, water-bodies, rivers,
 flood-risk, lake-restoration, my-ward, facts, origins, commitments.
 
 ## Measured

@@ -1,9 +1,6 @@
 import type { PlaceConfig } from './types';
 
-// Ahmedabad is registered DISABLED through the onboarding window (the Surat
-// and Pune pattern): flipped to enabled: true on a cutover commit once data
-// and UI land and the corpus release is pinned. Until then /ahmedabad is
-// reachable only via NEXT_PUBLIC_PREVIEW_CITIES=ahmedabad.
+// Ahmedabad went LIVE on 2026-10-15 (see `enabled` at the foot of this file).
 //
 // SUPPLY MODEL - A CITY THAT DRINKS A CANAL. AMC's Budget 2026-27 (pp.63-64)
 // puts 1,550 of the 1,850 MLD it draws a day on three offtakes of the Narmada
@@ -184,5 +181,12 @@ export const AHMEDABAD: PlaceConfig = {
   catchmentsGapNote:
     "Ahmedabad has no cascade view. The cascade layer reconstructs chained tank systems, where each tank's overflow was built to feed the next. Ahmedabad's lakes were not built as a chain: the two the historical record describes, Kankaria and Chandola, were filled by a stream turned at a dam near Kamod and, from 1881, by the Kharicut canal. AMC's current lake interlinking is storm-water storage, a different system from an inherited cascade.",
 
-  enabled: false,
+  // LIVE since 2026-10-15. This flag is the ONLY functional gate on the city:
+  // [cityId]/layout.tsx reads it, and the `enabled` column on the cities row is
+  // read by no code (056_ahmedabad_enable.sql flips it anyway, for consistency).
+  // At cutover: the dam history from 2019-06-07 is in reservoir_daily_v2 and
+  // refreshes daily from the local job; the browser sweep against Bengaluru
+  // was clean; every review-gated label was verified or, where no current
+  // status could be cited, ships labelled unverified by decision.
+  enabled: true,
 };

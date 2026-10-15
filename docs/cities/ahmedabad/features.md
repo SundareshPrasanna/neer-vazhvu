@@ -1,6 +1,6 @@
 # Ahmedabad - Features
 
-City eleven, preview-gated. Sources behind each surface: `data-sources.md`. Measured depth:
+City eleven, live since 15 October 2026. Sources behind each surface: `data-sources.md`. Measured depth:
 `parity-scorecard.md`.
 
 ## What kind of city this is
@@ -33,8 +33,9 @@ from the same canal. Below the barrage the river is a CPCB Priority I stretch.
 
 ## Launch state
 
-`enabled: false`. Done: the data-repo release and `corpus.lock` pin; migrations 054 and 055 (applied
-2026-10-15); the dam backfill from 2019-06-07 into `reservoir_daily_v2`; the daily refresh, on the
-local scheduled job because the department's host does not answer GitHub runners (each run re-reads
-the last 7 days, so a missed day is filled). Before cutover: every review-gated label surfaced for a
-verify-or-hold decision, and a browser sweep against a control city.
+Live since 15 October 2026 (`enabled: true`, `056_ahmedabad_enable.sql`). At cutover: the data-repo
+release and `corpus.lock` pin; migrations 054 to 056; the dam history from 2019-06-07 in
+`reservoir_daily_v2`, refreshed daily from the local scheduled job (the department's host does not
+answer GitHub runners; each run re-reads the last 7 days, so a missed day is filled); a browser sweep
+against Bengaluru; and every review-gated label verified, or labelled unverified where no current
+status could be cited.
