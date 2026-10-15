@@ -197,7 +197,9 @@ def dump(merged: dict, raw: str) -> str:
 def produced_at(doc: dict, label: str) -> str:
     """The envelope's own date on a refresh, else the payload's; never a made-up one."""
     prior = doc.get("provenance", {}).get("produced_at") if "nvdm" in doc else None
-    for v in (prior, *(doc.get(k) for k in ("computed_at", "generated_at", "fetched_at", "updated"))):
+    # A freshly fetched polygon or buffer carries its date on the feature, not the collection.
+    feature_date = ((doc.get("features") or [{}])[0].get("properties") or {}).get("fetched_at")
+    for v in (prior, *(doc.get(k) for k in ("computed_at", "generated_at", "fetched_at", "updated")), feature_date):
         if isinstance(v, str) and v[:4].isdigit():
             return v[:10]
     raise SystemExit(f"{label}: no produced_at, computed_at, generated_at, fetched_at or updated to date the envelope")

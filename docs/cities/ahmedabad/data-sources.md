@@ -112,6 +112,36 @@ and spreads its lake works across budgets, the AMRUT 2.0 portal and the NDMA gra
 restoration and commitments artifacts cite each record's page; where AMC's budget and MoHUA's portal
 disagree on a status or cost, both are stated.
 
+## Rich-data deep-zoom panel (2 Ahmedabad lakes)
+
+| | |
+|---|---|
+| **Bodies** | Kankaria (way 29340465, ~26 ha) and Chandola (ways 84639248 and 84639247, ~72 ha) |
+| **Pipeline** | Body-agnostic scripts under `scripts/`; per-body entry in [rich-bodies.json](../../../src/lib/water-bodies/rich-bodies.json) |
+
+The other six flagship lakes are too small for the satellite series (Isanpur ~2.9 ha and Vastrapur
+~1.8 ha are a few dozen 30 m pixels) or are not matched by name in OpenStreetMap. Chandola has no
+OSM relation: its two traces are drawn as one body (`fetch-rich-body-polygon.ts --osm-way` takes a
+comma list).
+
+**Chandola became a lake that fills every year in 2002, and the satellite record dates it.** JRC
+detects no water in 4 of the 13 years from 1989 to 2001 (1990, 1993, 1996, 1999), with full coverage
+in each, and water in every year since 2002. That matches the 1879 Gazetteer's tank that "seldom
+retains any depth of water long after the close of the rains", and the Irrigation Department's 2000
+affidavit that urban growth had ended its irrigation use; what changed in 2002 is not in any source
+we hold, so the panel does not say.
+
+**But it is open water for only part of the year.** Dynamic World labels each pixel by its most common
+class across the year; from 2022 to 2026 that is "crops" on 62% to 67% of the bed, "built" on 18% to
+23% and water on only 8% to 21%. "Crops" may be cultivation of the dry bed or vegetation on the
+water, and the classifier cannot tell which; "built" is any hard surface, and Overture maps 9
+buildings inside the outline. Kankaria, a walled lake, reads water on 99% to 100% every year.
+
+Traps: OSM's 72 ha for Chandola is the traced water surface, not the 121 ha of the 2000 affidavit;
+JRC classes Kankaria's water as permanent to 2008 and seasonal from 2009, which says it is not full in
+every month, not that it dries; both 1 km halos were already 95% to 97% built in 2016, so their
+built-up series move within classifier noise.
+
 ## Rainfall
 
 IMD gridded cell 23.0 N, 72.5 E: 800.4 mm over 1991-2020 against IMD's own Ahmedabad observatory
