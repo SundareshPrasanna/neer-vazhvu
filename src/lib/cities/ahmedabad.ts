@@ -1,9 +1,6 @@
 import type { PlaceConfig } from './types';
 
-// Ahmedabad is registered DISABLED through the onboarding window (the Surat
-// and Pune pattern): flipped to enabled: true on a cutover commit once data
-// and UI land and the corpus release is pinned. Until then /ahmedabad is
-// reachable only via NEXT_PUBLIC_PREVIEW_CITIES=ahmedabad.
+// Ahmedabad went LIVE on 2026-10-15 (see `enabled` at the foot of this file).
 //
 // SUPPLY MODEL - A CITY THAT DRINKS A CANAL. AMC's Budget 2026-27 (pp.63-64)
 // puts 1,550 of the 1,850 MLD it draws a day on three offtakes of the Narmada
