@@ -78,6 +78,22 @@ CITIES = {
 
 _N = r"-?\d+(?:\.\d+)?"
 
+# Days the department printed a figure that its own neighbouring reports
+# contradict, found in the 2019-06-07 to 2026-10-14 backfill. "level": the level
+# jumps while storage moves smoothly, so only the level is withheld. "row": level
+# and storage jump together with no outflow and fall back the next day, so the
+# day is withheld. Nothing is corrected; the printed value is just not stored.
+# Each comment: the printed figure, then the days either side.
+MISPRINTS = {
+    ("sardar_sarovar", "2019-11-15"): "level",  # 193.45 m; 138.50, 138.35
+    ("sardar_sarovar", "2020-05-16"): "level",  # 124.34 m; 121.43, 121.31
+    ("sardar_sarovar", "2021-12-20"): "level",  # 179.79 m; 128.01, 127.56
+    ("sardar_sarovar", "2022-02-06"): "level",  # 126.66 m; 122.67, 122.59
+    ("sardar_sarovar", "2023-05-04"): "level",  # 11849.00 m; 118.58, 118.33
+    ("sardar_sarovar", "2023-08-29"): "level",  # 131.61 m; 132.59, 132.65
+    ("dharoi", "2024-07-03"): "row",  # 14.62 TMC live; 7.99, 7.93, outflow 0
+}
+
 
 def report_url(day: date) -> str:
     return REPORT_URL.format(base64.b64encode(day.isoformat().encode()).decode())
@@ -214,6 +230,11 @@ def parse_report(text: str, cfg: dict) -> dict[str, dict]:
         row = parse_dam(text, name)
         if row:
             out[code] = row
+    for d in out.values():
+        # A level above FRL + 2 m is a misprint (11849.00 for about 118.5 on
+        # 2023-05-04). Storage passed its own arithmetic, so it is kept.
+        if d["level_m"] > d["frl_m"] + 2:
+            d["level_m"] = None
     return out
 
 
@@ -223,23 +244,31 @@ def _cusecs(x: float | None) -> int | None:
 
 
 def db_rows(city: str, day: date, dams: dict[str, dict]) -> list[dict]:
-    return [
-        {
-            "city_id": city,
-            "source_code": code,
-            "date": day.isoformat(),
-            "storage_tmc": round(d["live_mcm"] / MCUM_PER_TMC, 3),
-            "storage_pct_frl": d["live_pct"],
-            "level_ft": round(d["level_m"] * FT_PER_M, 2),
-            "inflow_cusecs": _cusecs(d["inflow_cusecs"]),
-            "outflow_cusecs": None
-            if d["outflow_river_cusecs"] is None
-            else _cusecs(d["outflow_river_cusecs"] + (d["outflow_canal_cusecs"] or 0)),
-            "source": "Gujarat NWRWS&K daily dam report",
-            "scraped_from": report_url(day),
-        }
-        for code, d in sorted(dams.items())
-    ]
+    rows = []
+    for code, d in sorted(dams.items()):
+        misprint = MISPRINTS.get((code, day.isoformat()))
+        if misprint == "row":
+            continue
+        level = None if misprint == "level" else d["level_m"]
+        rows.append(_db_row(city, day, code, d, level))
+    return rows
+
+
+def _db_row(city: str, day: date, code: str, d: dict, level: float | None) -> dict:
+    return {
+        "city_id": city,
+        "source_code": code,
+        "date": day.isoformat(),
+        "storage_tmc": round(d["live_mcm"] / MCUM_PER_TMC, 3),
+        "storage_pct_frl": d["live_pct"],
+        "level_ft": None if level is None else round(level * FT_PER_M, 2),
+        "inflow_cusecs": _cusecs(d["inflow_cusecs"]),
+        "outflow_cusecs": None
+        if d["outflow_river_cusecs"] is None
+        else _cusecs(d["outflow_river_cusecs"] + (d["outflow_canal_cusecs"] or 0)),
+        "source": "Gujarat NWRWS&K daily dam report",
+        "scraped_from": report_url(day),
+    }
 
 
 def upsert(rows: list[dict]) -> None:
@@ -305,7 +334,7 @@ def main() -> int:
     missing = expected - set(dams)
     for code, d in sorted(dams.items()):
         print(
-            f"  {code:15} level {d['level_m']:8.2f} m  live {d['live_mcm']:8.2f} MCM "
+            f"  {code:15} level {d['level_m'] or float('nan'):8.2f} m  live {d['live_mcm']:8.2f} MCM "
             f"({d['live_pct']}% of live)  gross {d['gross_pct']}%",
             file=sys.stderr,
         )

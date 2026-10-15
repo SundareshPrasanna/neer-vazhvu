@@ -40,7 +40,10 @@ present, and the printed percentage). It parses every sampled report from June 2
 
 Traps: a missing date returns HTTP 200 with zero bytes; row order changes between years; 2019-20
 reports lack the SchemeId and Taluka columns; page 3 is in feet and the statement in metres; words
-wrap across lines; design capacities are revised over time; Mazum is printed Mazam. The host
+wrap across lines; design capacities are revised over time; Mazum is printed Mazam. The
+department misprints a figure a few times a year: in 2,680 reports, Sardar Sarovar's level six
+times (11849.00 m on 4 May 2023) and Dharoi's whole row once (3 July 2024). These are withheld, not
+corrected (`MISPRINTS` in the scraper), and any level above FRL + 2 m is dropped. The host
 answered from a non-India datacenter on 2026-10-14 but not from GitHub's runners on 2026-10-15
 (the IPv4 connect hangs past 60 s), so the daily refresh runs from the local scheduled job; each
 run re-reads the last 7 days, which fills any day the job missed. The CWC weekly bulletin (frozen at 08-05-2025)
