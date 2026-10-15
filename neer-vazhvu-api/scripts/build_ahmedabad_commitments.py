@@ -26,15 +26,19 @@ from registry_license import registry_license  # noqa: E402
 
 FR = "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,{}"
 B2223, B2324, B2627 = FR.format(2204), FR.format(2203), FR.format(2583)
+B2526 = FR.format(2359)
 MOHUA = "https://amrut.mohua.gov.in/assets/Status-of-Water-Supply-projects-with-Water-Treatement-Plant-as-on-02-03-2026.pdf"
 CMO_KHARICUT = "https://cmogujarat.gov.in/en/latest-news/phase-2-kharicut-canal-redevelopment-project"
 CMO_RIVERFRONT = "https://cmogujarat.gov.in/en/latest-news/gujarat-cm-sabarmati-riverfront-development-project-review"
+# Renders by script; the text comes from POST /PressReleaseDetailsDataL (id=49644, LangId=2).
+GI_GIFT = "https://gujaratinformation.gujarat.gov.in/PressReleaseDetailsL/?id=49644&DepId=36&DistrictId=0&LanguageId=2"
 NGT91 = "https://www.greentribunal.gov.in/sites/default/files/news_updates/Affidavit%20in%20Reply%20by%20R-4%20in%20OA%20No.91-2023%20%28page%20nos.818-966%29.pdf"
 NGT606 = "https://www.greentribunal.gov.in/sites/default/files/news_updates/PART-II%20REVISED%20SUBMISSIONS%20CUM%20AFFIDAVIT%20BY%20GOVT.%20OF%20GUJARAT%20IN%20OA%20NO.%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
 REUSE = "http://faolex.fao.org/docs/pdf/ind200786.pdf"
 
 L2223 = "AMC Budget 2022-23 (English)"
 L2324 = "AMC Budget 2023-24 (English)"
+L2526 = "AMC Budget 2025-26 (Gujarati)"
 L2627 = "AMC Budget 2026-27 (Gujarati)"
 LHC = "Gujarat High Court, Suo Motu PIL 98/2021, order of 2 May 2025 (annexed to AMC's reply in NGT OA 91/2023 WZ)"
 
@@ -85,8 +89,15 @@ COMMITMENTS = [
                 "MoHUA AMRUT 2.0 status list as on 02.03.2026",
                 MOHUA,
             ),
+            h(
+                "2026-10-15",
+                "unverified",
+                "Re-checked the day before the scheduled date: MoHUA's portal still carries the list as on 02.03.2026, and no commissioning record or revised date has been published.",
+                "MoHUA AMRUT 2.0 status list as on 02.03.2026, re-checked 15 October 2026",
+                MOHUA,
+            ),
         ],
-        "next_check": "2026-11-01",
+        "next_check": "2026-10-17",
         "revised_due": None,
     },
     {
@@ -150,6 +161,13 @@ COMMITMENTS = [
                 B2324,
             ),
             h(
+                "2025-02",
+                "unverified",
+                "Repeated word for word from the 2024-25 budget, still as a plan: 'વોટર મીટર મુકી ૨૪ x ૭ વોટર સપ્લાય સ્કીમનો અમલ કરવાનું આયોજન હાથ ધરેલ છે' (planning has been taken up to run the 24x7 scheme with water meters), with the first 20,000 litres a month per unit covered by the fixed water charge.",
+                f"{L2526}, printed p.63",
+                B2526,
+            ),
+            h(
                 "2026-02",
                 "unverified",
                 "The 2026-27 budget does not mention 24x7 supply. Whether it runs in any of the named areas: no public source found.",
@@ -172,7 +190,7 @@ COMMITMENTS = [
             "url": B2324,
             "date": "2023-02",
         },
-        "status": "unverified",
+        "status": "slipped",
         "status_history": [
             h(
                 "2023-02",
@@ -182,15 +200,22 @@ COMMITMENTS = [
                 B2324,
             ),
             h(
+                "2025-02",
+                "slipped",
+                "The aim is restated with a new three-year window, in the same words as the 2024-25 budget: 'બોરવેલ આધારિત વોટર સપ્લાયને આગામી ત્રણ વર્ષમાં સરફેસ વોટર આધારિત કરવા' (to move borewell-based supply onto surface water in the next three years). Read the same way as the 2023-24 promise, the window now runs to 2028.",
+                f"{L2526}, printed p.85",
+                B2526,
+            ),
+            h(
                 "2026-02",
-                "unverified",
-                "555 borewells, 315 MLD capacity, 100 MLD in use, city-wide.",
+                "slipped",
+                "No window is restated. 555 borewells, 315 MLD capacity, 100 MLD in use, city-wide.",
                 f"{L2627}, printed p.63",
                 B2627,
             ),
         ],
         "next_check": "2027-03-01",
-        "revised_due": None,
+        "revised_due": "2028",
     },
     {
         "id": "ahm-drainage-master-plan-2050",
@@ -354,16 +379,16 @@ COMMITMENTS = [
     {
         "id": "ahm-riverfront-all-phases-2027",
         "category": "River",
-        "title": "Finish all three phases of the Sabarmati riverfront by the end of 2027",
-        "committed_by": "Government of Gujarat and Sabarmati River Front Development Corporation Ltd (AMC)",
-        "what": "'The works under all three phases of the project are expected to be completed by the end of 2027.' Phase 2 runs from Dafnala to Indira Bridge and phase 3 on to the Narmada canal.",
+        "title": "Finish the riverfront's three Gandhinagar phases by the end of 2027",
+        "committed_by": "Government of Gujarat; the Water Resources Department builds the stretch",
+        "what": "'The works under all three phases of the project are expected to be completed by the end of 2027.' The three phases are 4 to 6: 17.20 km in Gandhinagar, from the Narmada Canal at Karai via PDEU and Shahpur Bridge to Chiloda Bridge. Phases 2 and 3 in Ahmedabad (Dafnala to Indira Bridge, and on to the Narmada canal) are separate projects with their own dates.",
         "due": "2027-12",
         "commitment_source": {
             "label": "Chief Minister's Office, Gujarat, press release, 6 June 2026",
             "url": CMO_RIVERFRONT,
             "date": "2026-06-06",
         },
-        "status": "unverified",
+        "status": "on-track",
         "status_history": [
             h(
                 "2026-06-06",
@@ -371,6 +396,13 @@ COMMITMENTS = [
                 "Completion date stated at a site review.",
                 "Chief Minister's Office, Gujarat, press release, 6 June 2026",
                 CMO_RIVERFRONT,
+            ),
+            h(
+                "2026-08-11",
+                "on-track",
+                "The Chief Minister said at GIFT City: 'અમદાવાદના સાબરમતી રિવરફ્રન્ટને ગિફ્ટ સિટી સુધી લંબાવવાનું કામ પૂરજોશમાં પ્રગતિ હેઠળ છે' (the work to extend the Sabarmati Riverfront up to GIFT City is progressing in full swing). No revised date has been given.",
+                "Chief Minister's Office, Gujarat, release via the Information Department (Gujarati), 11 August 2026",
+                GI_GIFT,
             ),
         ],
         "next_check": "2027-06-01",
@@ -381,7 +413,7 @@ COMMITMENTS = [
 SOURCE_IDS = [
     (
         "amc-budget",
-        "AMC budgets 2022-23, 2023-24 and 2026-27",
+        "AMC budgets 2022-23, 2023-24, 2025-26 and 2026-27",
         "Ahmedabad Municipal Corporation",
     ),
     (
@@ -437,10 +469,11 @@ def main() -> int:
         "updated": today,
         "headline": "What has been promised about Ahmedabad's water, and by when",
         "intro": (
-            "Ten dated commitments on supply, sewage, the Kharicut canal, reuse and the riverfront, "
-            "from AMC's budgets, its affidavits to the Gujarat High Court, the state's reuse policy "
-            "and the Chief Minister's Office. Five dates have passed with the work still described "
-            "as under way; the others are either still ahead or were never given a date."
+            "Ten commitments on supply, sewage, the Kharicut canal, reuse and the riverfront, eight "
+            "of them dated, from AMC's budgets, its affidavits to the Gujarat High Court, the state's "
+            "reuse policy and the Chief Minister's Office. Five dates have passed with no delivery we "
+            "can cite; one has been moved by AMC itself; the others are still ahead or were never "
+            "given a date."
         ),
         "status_legend": {
             "delivered": "The promised thing verifiably happened, even if late. The dates show how late.",
@@ -457,8 +490,9 @@ def main() -> int:
             "flagged, never silently updated."
         ),
         "sources_note": (
-            "Budget quotes are from AMC's English budget for 2022-23 and 2023-24 and its Gujarati budget "
-            "for 2026-27, whose figures were read from the document's own printed digits. Where two "
+            "Budget quotes are from AMC's English budgets for 2022-23 and 2023-24 and its Gujarati "
+            "budgets for 2025-26 and 2026-27, whose figures were read from the documents' own printed "
+            "digits. Where two "
             "official documents give different costs for the same work, both are stated."
         ),
         "commitments": COMMITMENTS,

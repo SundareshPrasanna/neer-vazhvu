@@ -111,7 +111,7 @@ export default function AhmedabadAbout({ slot, cityId, fallback = null }: CityAb
           <DataSource
             name="Chief Minister's Office, Gujarat: press releases"
             url="https://cmogujarat.gov.in/en/latest-news"
-            description="Dated status for two commitments: the Kharicut canal's phase 1 at 80% (11 March 2025) and the riverfront's three phases by the end of 2027 (6 June 2026)."
+            description="Dated status for two commitments: the Kharicut canal's phase 1 at 80% (11 March 2025), and the riverfront's three Gandhinagar phases (4 to 6) by the end of 2027 (6 June 2026), with progress restated on 11 August 2026 through the Information Department."
             frequency="as issued"
           />
           <DataSource

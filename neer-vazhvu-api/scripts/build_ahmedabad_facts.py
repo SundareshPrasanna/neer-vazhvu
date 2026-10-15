@@ -104,7 +104,20 @@ def main() -> int:
     in_urban = sum(
         1 for w in require(wells, "wells") if w["block"] == "Ahmedabad Urban"
     )
-    overdue = [c for c in require(commits, "commitments") if c["status"] == "overdue"]
+    dated = [c for c in require(commits, "commitments") if c["due"]]
+    overdue = [c for c in dated if c["status"] == "overdue"]
+    # The interpretation names these five by hand; a status change must rewrite it.
+    named = {
+        "ahm-stp-sola-jagatpur",
+        "ahm-stp-vinzol-75",
+        "ahm-kharicut-phase-1",
+        "ahm-drainage-master-plan-2050",
+        "guj-reuse-70-percent-by-2025",
+    }
+    if {c["id"] for c in overdue} != named:
+        sys.exit(
+            "commitments-overdue: the overdue set changed; rewrite its interpretation"
+        )
     feats = require(wards, "features")
     pop = sum(f["properties"]["population_2011"] for f in feats)
     zones = {f["properties"]["zone_name"] for f in feats}
@@ -155,8 +168,8 @@ def main() -> int:
             "tier": 1,
             "category": "Governance",
             "title": "Dated water promises past their date",
-            "value": f"{len(overdue)} of {len(commits['commitments'])}",
-            "unit": "dated commitments past due with the work still under way",
+            "value": f"{len(overdue)} of {len(dated)}",
+            "unit": "dated commitments are past their stated date",
             "interpretation": "Two sewage treatment plants AMC told the High Court would be ready by September 2025 and February 2026, the Kharicut canal's two-year rebuild, the 2050 drainage master plan due in March 2023, and the state's target of reusing 70% of treated wastewater by 2025. Each status cites a dated document on the commitments page.",
             "data_date": "2026-10",
             "source_url": "https://ahmedabadcity.gov.in/",
