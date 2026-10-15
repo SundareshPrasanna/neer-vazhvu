@@ -59,6 +59,14 @@ const BODY_ZONE = "Body (primary)";
  *  (Iblur, 12 pixels) is drawing a percentage from a patch of ground the
  *  size of a football pitch. */
 const SMALL_BODY_PIXELS = 400;
+/** JRC counts a pixel as water if it held water at any time in the year;
+ *  Dynamic World labels it by its most common class. For permanent water the
+ *  two agree at the 2021/22 join, but for seasonal water they can differ by
+ *  tens of points (Chandola 87% to 21%), and a Dynamic World year set against
+ *  the 1988-92 JRC average then reports a loss that is only the change of
+ *  method. Above this step the comparison is withheld. Measured across the 45
+ *  bodies, no step falls between 14.8 and 35.8 points. */
+const SPLICE_STEP_MAX = 25;
 const HALO_ZONE = "Halo: 1km buffer - body";
 
 interface RichBodyStatsStripProps {
@@ -115,6 +123,10 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
     ? avgPct(jrc.by_zone[BODY_ZONE], [1988, 1989, 1990, 1991, 1992])
     : null;
   const builtBaseline = dw?.by_zone[HALO_ZONE]?.["2016"]?.built_fraction_pct ?? null;
+  const jrc2021 = jrc?.by_zone[BODY_ZONE]?.["2021"]?.any_water_pct ?? null;
+  const dw2022 = dwWater?.by_zone[BODY_ZONE]?.["2022"]?.any_water_pct ?? null;
+  const spliceStep = jrc2021 != null && dw2022 != null ? Math.abs(dw2022 - jrc2021) : null;
+  const methodsDisagree = year > 2021 && spliceStep != null && spliceStep > SPLICE_STEP_MAX;
 
   // How many JRC pixels the body actually covers, at its best-covered year.
   // Fourteen of the bodies in this cohort sit under SMALL_BODY_PIXELS, and
@@ -135,18 +147,24 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
         <Stat
           label="Water surface in body"
           help={
-            "The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A small step at the splice is methodology-driven (per-pixel annual classifier vs MODE-aggregated per-image), not a real water-level jump." +
+            "The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A step at the splice is methodology-driven, not a real change in water: JRC counts a pixel as water if it held water at any time in the year, Dynamic World by its most common class. For permanent water the two agree; for seasonal water they can differ by tens of points, and where they differ by more than 25 no 1988-92 comparison is shown for Dynamic World years." +
             (isSmallBody
               ? ` This body covers only about ${bodyPixels} pixels at JRC's 30 m resolution, so a handful of edge pixels changing class moves the figure by several points. Read the direction over decades, not the year-to-year steps, and treat any single year as approximate.`
               : "")
           }
           value={waterPct != null ? `${waterPct.toFixed(1)}%` : "n/a"}
-          delta={waterPct != null && waterBaseline != null ? waterPct - waterBaseline : null}
+          delta={
+            waterPct != null && waterBaseline != null && !methodsDisagree
+              ? waterPct - waterBaseline
+              : null
+          }
           deltaUnit=" pts"
           deltaContext="1988-92 avg"
           deltaInvert
           caveat={
-            isSmallBody
+            methodsDisagree
+              ? `JRC and Dynamic World differ by ${Math.round(spliceStep!)} pts at 2021/22`
+              : isSmallBody
               ? `small body, ~${bodyPixels}px`
               : year > 2021 && dwWater?.by_zone[BODY_ZONE]?.[String(year)]
                 ? "Dynamic World"

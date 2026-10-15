@@ -30,6 +30,7 @@ flood-risk, lake-restoration, my-ward, facts, origins, commitments.
 | Facts | dynamic pipeline | 32 | 18, 4 tier-1, every figure read from an artifact | Medium |
 | Commitments | 16 | 15 | 10, each status dated and cited | High |
 | Lake restoration | priority scoring | register | 8 flagship lakes, 10 projects, 6 court orders | Medium |
+| Satellite deep-zoom lakes | 7 | 14 | 2 (the others are too small for 30 m series) | Medium |
 | Origins | yes | yes | 10 chapters, 11 licence-checked images | High |
 
 ## Notes on the grades

@@ -18,7 +18,7 @@ from the same canal. Below the barrage the river is a CPCB Priority I stretch.
 | `/ahmedabad/groundwater` | shared taluka choropleth + station overlay | 10 IN-GRES units on IN-GRES's own polygons, 5 editions; 139 telemetry stations |
 | `/ahmedabad/rivers` | shared `RiversClient` | Sabarmati (10 stations, Kheroj to Vautha) and Khari; the Kharicut and Narmada Main Canal drawn for context |
 | `/ahmedabad/flood-risk` | shared narrative stack | CWC thresholds at Subhash Bridge, the 1875 flood, July 2026, AMC's 148 spots, the gaps |
-| `/ahmedabad/water-bodies` | shared map | 232 OSM polygons; ward search |
+| `/ahmedabad/water-bodies` | shared map | 232 OSM polygons; ward search; satellite deep zoom for Kankaria and Chandola (yearly imagery from 1984, water and built-up trends, building counts) |
 | `/ahmedabad/lake-restoration` | shared | 8 flagship lakes, 10 projects, 6 court orders |
 | `/ahmedabad/my-ward` | shared | 48 wards from AMC's own map; water bodies, nearest river station, groundwater unit and nearest well; AMC's call centre and WhatsApp line |
 | `/ahmedabad/commitments` | shared register | 10 dated commitments, 5 past their date |

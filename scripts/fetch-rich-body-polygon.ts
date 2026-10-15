@@ -10,6 +10,10 @@
  *   npx tsx scripts/fetch-rich-body-polygon.ts \
  *     --osm-rel 15046539 --body-id pallikaranai \
  *     --name "Pallikaranai Marsh" --buffer-m 1000
+ *
+ * --osm-way also takes a comma list for a body OSM maps as separate ways with
+ * no relation (Chandola); each way becomes an outer ring and the first id,
+ * whose tags are used, is the body's osm_id.
  */
 
 import { mkdirSync } from "fs";
@@ -203,12 +207,13 @@ async function main() {
   }
 
   const osmType = osmRel ? "relation" : "way";
-  const osmId = (osmRel ?? osmWay) as string;
-  console.log(`Fetching OSM ${osmType} ${osmId} (${displayName || bodyId})…`);
+  const osmIds = ((osmRel ?? osmWay) as string).split(",");
+  const osmId = osmIds[0];
+  console.log(`Fetching OSM ${osmType} ${osmIds.join(", ")} (${displayName || bodyId})…`);
 
   const query = osmRel
     ? `[out:json][timeout:60];rel(${osmRel});out geom;`
-    : `[out:json][timeout:60];way(${osmWay});out geom;`;
+    : `[out:json][timeout:60];way(id:${osmWay});out geom;`;
   const res = await fetch(OVERPASS_URL, {
     method: "POST",
     headers: {
@@ -223,9 +228,15 @@ async function main() {
   }
 
   const osm: OsmResponse = await res.json();
-  const element = osm.elements.find((e) => e.type === osmType);
+  const element = osm.elements.find((e) => e.type === osmType && String(e.id) === osmId);
   if (!element) {
     throw new Error(`OSM ${osmType} ${osmId} not found in Overpass response`);
+  }
+  const extraWays = osm.elements.filter(
+    (e): e is OsmWay => e.type === "way" && osmIds.slice(1).includes(String(e.id)),
+  );
+  if (extraWays.length !== osmIds.length - 1) {
+    throw new Error(`Overpass returned ${extraWays.length + 1} of ${osmIds.length} ways`);
   }
 
   const tags = element.tags || {};
@@ -247,6 +258,10 @@ async function main() {
   } else if (element.type === "way" && element.geometry) {
     // Simple way: one ring, no holes
     const ring: Position[] = element.geometry.map((g) => [g.lon, g.lat]);
+    if (ring.length >= 2) outerWays.push(ring);
+  }
+  for (const w of extraWays) {
+    const ring: Position[] = (w.geometry ?? []).map((g) => [g.lon, g.lat]);
     if (ring.length >= 2) outerWays.push(ring);
   }
 
@@ -282,7 +297,7 @@ async function main() {
       wikidata: tags["wikidata"] || null,
       wikipedia: tags["wikipedia"] || null,
       area_ha: Math.round((area(geometry) / 10000) * 100) / 100,
-      source: `OSM ${osmType} ${osmId}`,
+      source: `OSM ${osmType} ${osmIds.join(", ")}`,
       license: registryLicense("osm-overpass"),
       fetched_at: new Date().toISOString(),
     },

@@ -223,7 +223,7 @@ def refresh(body_id: str, release: str, anomaly_pct: float) -> bool:
         "headline_for_v0": _build_headline(summaries),
         "comparison_note": (
             "Compare side-by-side with the Google Open Buildings v3 numbers in "
-            "pallikaranai-open-buildings-verification.json (2023 release). "
+            f"{body_id}-open-buildings-verification.json (2023 release). "
             "Delta indicates construction since 2023."
         ),
     }
