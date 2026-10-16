@@ -315,6 +315,15 @@ export function PuneStoryEn() {
           PMC&apos;s actual use: 15.90 TMC in 2011-12, rising to{" "}
           <strong>18.71 TMC in 2017-18</strong>, a seven-year average of 17.3.
         </p>
+        <Figure
+          src="/images/story/pune/parvati-from-khadakwasla-canal-c1875.jpg"
+          alt="An oval albumen photograph, about 1875 to 1900, of Parvati hill seen across the still water of the Khadakwasla canal, with trees and a few buildings on the bank and the temple on the summit. The mount is lettered 'Parvati Hill from North side of Kharakwasla Canal'."
+          caption="Parvati from the Khadakwasla canal, sometime between 1875 and 1900. The canal carried Khadakwasla's water to Poona; PMC's entitlement is drawn from the same dams today."
+          source="Rijksmuseum, Amsterdam (RP-F-00-6484), via Wikimedia Commons"
+          credit="Anonymous photographer (CC0)"
+          aspect="8/7"
+          fit="contain"
+        />
         <p>
           PMC&apos;s own affidavit for that same year said 14.56 TMC. The
           utility and its regulator disagree by 4.15 TMC about how much water
@@ -351,6 +360,13 @@ export function PuneStoryEn() {
           <strong>50.2</strong>. The river does not arrive polluted. Pune
           pollutes it, and does so over roughly fifteen kilometres.
         </p>
+        <Figure
+          src="/images/story/pune/mutha-below-khadakwasla-2023.jpg"
+          alt="The Mutha just below Khadakwasla dam at dawn on 28 May 2023: a bed of dark exposed rock with a thin stream and pools, trees on the bank and the low sun in a hazy sky."
+          caption="The Mutha below Khadakwasla at dawn on 28 May 2023, before the monsoon: the riverbed below the dam is mostly bare rock."
+          source="Wikimedia Commons"
+          credit="Bhilare Ashwini, CC BY-SA 4.0"
+        />
         <p>
           The reason is not mysterious and PMC states it. The city generates{" "}
           <strong>980 MLD of sewage</strong> and has{" "}
@@ -394,6 +410,16 @@ export function PuneStoryEn() {
           of the wet west and the pumped east, and it conceals the thing worth
           knowing.
         </p>
+        <Figure
+          src="/images/story/pune/poona-1884-map.jpg"
+          alt="An 1884 district map titled 'Poona', with taluka boundaries in pink and the headquarters towns marked: Junnar, Khed, Sirur, Poona, Sasvad, Supa, Indapur and others, with neighbouring districts named around the edge."
+          caption="Poona district in 1884, from the Bombay Presidency gazetteer. The groundwater assessment still reads the city through the district and its talukas."
+          source="Gazetteer of the Bombay Presidency (Government Photozinco Office, Poona, 1884); British Library, via Wikimedia Commons"
+          credit="No known copyright restrictions"
+          size="wide"
+          aspect="16/10"
+          fit="contain"
+        />
         <p>
           For the city itself, the honest answer is that almost nobody is
           measuring. Maharashtra runs{" "}
@@ -524,6 +550,13 @@ export function PuneStoryEn() {
           arrives where it is billed, and an agreed number for how much of the
           river system is its to take.
         </p>
+        <Figure
+          src="/images/story/pune/khadakwasla-discharge-2025.jpg"
+          alt="Water rushing over a weir below Khadakwasla dam in August 2025, with the dam's gated wall and trees behind under heavy monsoon clouds."
+          caption="Khadakwasla releasing water on 22 August 2025, after a heavy monsoon. In a wet year the dams spill."
+          source="Wikimedia Commons"
+          credit="DesiBoy101, CC BY 4.0"
+        />
         <p>
           The first is measurable and PMC measures it: 6.73 TMC a year, 32% of
           everything it lifts, lost between plant and tap. Closing that gap

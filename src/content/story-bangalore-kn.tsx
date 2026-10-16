@@ -171,6 +171,16 @@ export function BangaloreStoryKn() {
           ಅರ್ಧ-ಶತಮಾನಕ್ಕೆ, ಹಲ್ಸೂರ್ ಕೆರೆಯಿಂದ, ತೆರೆದ ಬಾವಿಗಳಿಂದ, ಮತ್ತು
           ಋತುಮಾನದ ವೃಷಭಾವತಿ ಹರಿವಿನಿಂದ ತನ್ನ ನೀರನ್ನು ಎಳೆಯಿತು.
         </p>
+        <Figure
+          src="/images/story/bangalore/cantonment-plan-1843.jpg"
+          alt="1843ರ ಬೆಂಗಳೂರು ಕ್ಯಾಂಟೋನ್‌ಮೆಂಟ್‌ನ ಕೈಬಣ್ಣದ ನಕ್ಷೆ: ಸೈನಿಕ ಬ್ಯಾರಕ್‌ಗಳು ಮತ್ತು ಕವಾಯತು ಮೈದಾನಗಳು, ಎಲ್ಲ ದಿಕ್ಕಿಗೆ ಹರಡಿರುವ ರಸ್ತೆಗಳು, ಬಲಭಾಗದಲ್ಲಿ ನೀಲಿ ಬಣ್ಣದಲ್ಲಿ ಹಲ್ಸೂರ್ ಕೆರೆ."
+          caption="1843ರಲ್ಲಿ ಹಲ್ಸೂರ್ ಕೆರೆಯ ಸುತ್ತ ಹರಡಿದ್ದ ಕ್ಯಾಂಟೋನ್‌ಮೆಂಟ್."
+          source="Medical Topography and Statistics of the Presidency of Madras (1843), via Wikimedia Commons"
+          credit="B. C. Regel, 1843 (public domain)"
+          size="wide"
+          aspect="1/1"
+          fit="contain"
+        />
         <p>
           ವಿರಾಮ ಕಾಲರಾದೊಂದಿಗೆ ಬಂದಿತು. ಜೇಮ್ಸ್ ಹೈಟ್ಜ್‌ಮ್ಯಾನ್ ಮತ್ತು ಇತರರು
           ಬರೆದ ಕೇಂಬ್ರಿಡ್ಜ್ ಅರ್ಬನ್ ಹಿಸ್ಟರಿ ಲೇಖನ{" "}
@@ -308,6 +318,16 @@ export function BangaloreStoryKn() {
           ಒಂದು ಕೆರೆಯನ್ನು ಮುಂದಿನದಕ್ಕೆ ಸಂಪರ್ಕಿಸಿದ ಚರಂಡಿಗಳು (<em>ರಾಜಕಲುವೆ</em>)
           ಸಂಕುಚಿತಗೊಂಡಿದ್ದವು, ಸಿಮೆಂಟ್ ಮಾಡಲಾಗಿತ್ತು, ಅಥವಾ ಮೇಲೆ ಕಟ್ಟಲಾಗಿತ್ತು.
         </p>
+        <Figure
+          src="/images/story/bangalore/bangalore-guide-map-1938.jpg"
+          alt="1938ರ ಸರ್ವೇ ಆಫ್ ಇಂಡಿಯಾ ಬೆಂಗಳೂರು ನಕ್ಷೆಯ ಒಂದು ಭಾಗ: ಕೆಂಪು ಬಣ್ಣದಲ್ಲಿ ಹಳೆಯ ನಗರದ ದಟ್ಟ ಬೀದಿಗಳು, ರೈಲು ಮಾರ್ಗಗಳು ಮತ್ತು ನೀಲಿ ಬಣ್ಣದಲ್ಲಿ ಕೆರೆಗಳು."
+          caption="1938ರ ಸರ್ವೇ ಆಫ್ ಇಂಡಿಯಾ ನಕ್ಷೆಯಲ್ಲಿ ಮಧ್ಯ ಬೆಂಗಳೂರು (ಸಮೀಕ್ಷೆ 1935-36). ಆಗ ಇಲ್ಲಿ ಹೆಸರಿಸಿರುವ ಹಲವು ಕೆರೆಗಳಲ್ಲಿ ಇನ್ನೂ ನೀರಿತ್ತು."
+          source="Survey of India, Bangalore Guide Map, 2nd revised edition 1938; University of Minnesota scan, via Wikimedia Commons"
+          credit="Survey of India (public domain)"
+          size="wide"
+          aspect="16/10"
+          fit="contain"
+        />
         <p>
           ಅತ್ಯಂತ-ಅಧ್ಯಯನ ಮಾಡಿದ ಏಕೈಕ ಪ್ರಕರಣ ಆಗರ. R. ಡಿಸೋಜ ಮತ್ತು ಹರಿಣಿ
           ನಾಗೇಂದ್ರ ಅವರ 2011 ರ <em>Environmental Management</em> ಪತ್ರಿಕೆಯಲ್ಲಿನ

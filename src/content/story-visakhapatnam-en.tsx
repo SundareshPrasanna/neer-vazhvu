@@ -209,7 +209,7 @@
  */
 
 import { StoryPage } from "@/components/story/story-page";
-import { Chapter, CTA, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
+import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
 import { STORY_TAGLINES } from "./story-taglines";
 
 export function VisakhapatnamStoryEn() {
@@ -220,6 +220,12 @@ export function VisakhapatnamStoryEn() {
       tagline={STORY_TAGLINES.visakhapatnam}
       lastRevised="October 2026"
     >
+      <Hero
+        src="/images/story/visakhapatnam/vizagapatam-french-plan-1757.jpg"
+        alt="A hand-drawn French plan of Vizagapatam in 1757. The English settlement's fort and town, coloured red, sit on a long strip of land between the sea and a broad river mouth, with hills drawn on both sides and a ship's anchorage marked offshore."
+        source="Bibliothèque nationale de France (GE B-630), via Wikimedia Commons"
+        credit="French manuscript plan of the settlement taken by Bussy on 26 June 1757 (public domain)"
+      />
       <Lede>
         Visakhapatnam&apos;s harbour sits at the mouth of a gedda, one of the
         hill streams that cross the city on their way to the sea. The Bengal
@@ -264,6 +270,16 @@ export function VisakhapatnamStoryEn() {
           trading post became the capital of a district. These were contests
           over a factory on the shore. Water enters the record later.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/visigapatam-1770.jpg"
+          alt="An engraved French map from 1770 titled 'Visigapatam, aux Anglois, a la Coste d'Orixa': the walled settlement on a spit beside a winding river mouth, with batteries marked and a note that country ships with two masts enter the river."
+          caption="The settlement in 1770, thirteen years after Bussy took it: a town on a spit of sand, with the river mouth that later became the harbour curling behind it."
+          source="Bibliothèque nationale de France, via Wikimedia Commons"
+          credit="Bourcet (cartographer) and Croisey (engraver), 1770 (public domain)"
+          size="wide"
+          aspect="5/3"
+          fit="contain"
+        />
         <p>
           The 1907 district gazetteer describes the ground the town was built
           on. West of it lay the Upputeru, the &ldquo;salt river&rdquo;, which
@@ -287,6 +303,16 @@ export function VisakhapatnamStoryEn() {
           Between 1872 and 1875 convict labour reclaimed part of the backwater
           swamp, land that later became the municipal sewage farm.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/mud-docks-1884.jpg"
+          alt="An 1884 engraving of sailing ships lying beached on mud flats at Vizagapatam, with a rounded hill rising behind the water."
+          caption="Ships laid up on the mud at Vizagapatam in 1884. Without a protected harbour, vessels were run onto the soft banks of the backwater for repair."
+          source="Proceedings of the United States Naval Institute, vol. X (1884), via Wikimedia Commons"
+          credit="Commander P. F. Harrington, US Navy, 1884 (public domain)"
+          size="wide"
+          aspect="16/9"
+          fit="contain"
+        />
         <p>
           Water appears early in the civic record and stays unbuilt for a long
           time. Vizagapatam started a voluntary municipal association in 1858,
@@ -334,6 +360,13 @@ export function VisakhapatnamStoryEn() {
           course of the stream. In 1901 the town held 40,892 people in 7,741
           houses.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/mudasarlova-reservoir-2012.jpg"
+          alt="Mudasarlova reservoir in Visakhapatnam: a calm sheet of water edged by palms, with a forested hill on the left under a pale sky."
+          caption="Mudasarlova in 2012. The reservoir the 1903 scheme built still sits inside the city, below the Kambalakonda hills."
+          source="Wikimedia Commons"
+          credit="Adityamadhav83, CC BY-SA 3.0"
+        />
         <PullQuote attribution="Madras District Gazetteers, Vizagapatam, 1907">
           The scheme does not command Waltair, which gets its water from wells.
         </PullQuote>
@@ -367,6 +400,13 @@ export function VisakhapatnamStoryEn() {
           at 4.5 million litres a day. In August 2026, press reports said
           Mudasarlova had run dry.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/polavaram-2019.jpg"
+          alt="The Polavaram dam under construction on the Godavari in February 2019: a long line of concrete piers across a dry, excavated riverbed, with hills behind."
+          caption="Polavaram under construction on the Godavari in February 2019. A share of its water is allocated to Visakhapatnam, to reach it through the Left Main Canal."
+          source="Wikimedia Commons"
+          credit="Chaduvari, CC BY-SA 4.0"
+        />
       </Chapter>
 
       <Chapter
@@ -415,6 +455,13 @@ export function VisakhapatnamStoryEn() {
           first census to count Visakhapatnam as a city, it had 108,042 people,
           and the census handbook recorded five water works serving the town.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/meghadri-gedda-airport-2009.jpg"
+          alt="The Meghadri Gedda near Visakhapatnam airport in 2009: a wide, flat valley floor of green marsh and shallow pools, with hills and the city's buildings in the haze behind."
+          caption="The Meghadri Gedda beside the airport in 2009, on its way to the harbour mouth."
+          source="Wikimedia Commons"
+          credit="Adityamadhav83, CC BY-SA 4.0"
+        />
       </Chapter>
 
       <Chapter
@@ -491,6 +538,13 @@ export function VisakhapatnamStoryEn() {
           plant was dedicated to the nation in August 1992, at a project cost
           of Rs 8,594 crore.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/yeleru-dam-2011.jpg"
+          alt="The spillway of the Yeleru dam at Yeleswaram in 2011, with water pouring through its gates below a wooded hill."
+          caption="Yeleru dam at Yeleswaram, in East Godavari district, in 2011. Its water reaches the city through the Yeleru canal."
+          source="Wikimedia Commons"
+          credit="Adityamadhav83, CC BY-SA 3.0"
+        />
         <p>
           In May 1995 the Rajya Sabha was told what the state had promised the
           plant: an assured <strong>73 million gallons a day</strong>{" "}from the
@@ -526,6 +580,16 @@ export function VisakhapatnamStoryEn() {
           pipeline from a pump house on the Godavari at Kateru to the Yeleru
           canal on 24 December 2004, and began operating it the next day.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/godavari-from-space-1989.jpg"
+          alt="A 1989 photograph from the Space Shuttle of the Godavari and Krishna deltas: two pale river channels cross green land to a curving coast, where sediment clouds the blue Bay of Bengal."
+          caption="The Godavari (top) and Krishna deltas from the Space Shuttle in October 1989. The water the city now borrows is lifted from the Godavari in this landscape."
+          source="NASA Johnson Space Center (STS-34), via Wikimedia Commons"
+          credit="NASA (public domain)"
+          size="wide"
+          aspect="1/1"
+          fit="contain"
+        />
         <p>
           The city itself was redrawn. On 21 November 2005 the state formed the
           Greater Visakhapatnam Municipal Corporation, merging the old
@@ -590,6 +654,15 @@ export function VisakhapatnamStoryEn() {
           storm surge of 1.4 metres. IMD noted that it was the first cyclone to
           cross the Visakhapatnam coast in October since 1985.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/hudhud-2014-10-12-nasa.jpg"
+          alt="A satellite image of Cyclone Hudhud on 12 October 2014: a tight white spiral of cloud with a clear eye, centred on the north Andhra coast, with the Bay of Bengal below it."
+          caption="Hudhud at 10.40 am India time on 12 October 2014, seen by NASA's MODIS imager as it neared the coast at Visakhapatnam."
+          source="NASA LANCE/EOSDIS (MODIS), via Wikimedia Commons"
+          credit="NASA (public domain)"
+          aspect="4/5"
+          fit="contain"
+        />
         <p>
           The Andhra Pradesh government&apos;s damage table, which IMD reproduced
           in its report, covers four districts rather than the city alone. It
@@ -608,6 +681,13 @@ export function VisakhapatnamStoryEn() {
           October water was still arriving by tanker. NDMA records how supply
           was kept going.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/kailasagiri-after-hudhud-2014.jpg"
+          alt="Fallen trees and a toppled pole beside a road on Kailasagiri hill, two weeks after Cyclone Hudhud, with bare, broken branches against a grey sky."
+          caption="Kailasagiri on 26 October 2014, two weeks after Hudhud: felled trees and a pole still lying by the road."
+          source="Wikimedia Commons"
+          credit="Drashokk, CC BY-SA 4.0"
+        />
         <PullQuote attribution="National Disaster Management Authority, Hudhud lessons report, August 2015">
           Generators were put in place for lifting water in absence of power
           supply. These were also utilized at head water works.
@@ -707,6 +787,13 @@ export function VisakhapatnamStoryEn() {
             the other way.
           </li>
         </ul>
+        <Figure
+          src="/images/story/visakhapatnam/coastline-red-lighthouse-2017.jpg"
+          alt="The Visakhapatnam coastline from the old Red Lighthouse in 2017: waves breaking on a rocky shore, a strip of red earth and lawns along the beach road, and a headland in the distance."
+          caption="The city's coast from the old Red Lighthouse in 2017. The shoreline page measures how this edge has moved since 1990."
+          source="Wikimedia Commons"
+          credit="Drashokk, CC BY-SA 4.0"
+        />
         <p>
           In May 2020 the question under the city was not salt. At about 3 am
           on 7 May, styrene vapour escaped from the LG Polymers plant at R.R.
@@ -761,6 +848,13 @@ export function VisakhapatnamStoryEn() {
           affidavit in the same case in February 2026 again put sewer
           connections at 60 per cent of the city&apos;s population.
         </p>
+        <Figure
+          src="/images/story/visakhapatnam/beach-and-sewage-plant-2019.jpg"
+          alt="The view down from Kailasagiri in 2019: a long sandy bay curving north, the beach road lined with buildings, and a treatment plant's tanks near the shore, framed by dry branches."
+          caption="The beach below Kailasagiri in 2019, with VMRDA's sewage treatment plant beside the shore."
+          source="Wikimedia Commons"
+          credit="IM3847, CC BY-SA 4.0"
+        />
         <p>
           The Central Ground Water Board&apos;s 2022 and 2025 reports put demand
           at <strong>490 million litres a day against 391 supplied</strong>, a
