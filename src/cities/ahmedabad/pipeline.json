@@ -1,0 +1,55 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 23.0,
+      "lng": 72.5,
+      "note": "Ahmedabad grid point: the 0.25-deg intersection nearest the city centre (23.02 N, 72.57 E), inside the AMC ward extent. Checked against IMD's Ahmedabad observatory normal of 783.6 mm (Climatological Table 1991-2020, station index 42647): this cell returns 800.4 mm over 1991-2020 (+2.1%), while 23.0/72.75 returns 868.3 mm (+10.8%).",
+      "sourceId": "imd-gridded-rainfall-ahmedabad"
+    },
+    "recent": {
+      "_note": "Matches generate_imd_rainfall.py's grid point (23.0, 72.5), the cell validated against IMD's Ahmedabad observatory normal; the provisional months must continue that series, not start one at the city centre.",
+      "lat": 23.0,
+      "lng": 72.5
+    }
+  },
+  "ingres": {
+    "_note": "Ahmedabad drills like Pune, and for the same reason: the district reads semi-critical while the unit under the city is over-exploited. Editions start at 2021-2022 because that is when IN-GRES carved AHMEDABAD URBAN out of CITY & DASKROI (95,627 ha became 47,359 + 49,642); a series reaching back past the redraw would show a jump that is a boundary, not a change.",
+    "_notes": {
+      "drill.names": "IN-GRES truncates Daskroi to \"DAS\"; spelled out so the map does not label a taluka \"Ahmedabad City & Das\"."
+    },
+    "state": "GUJARAT",
+    "state_label": "Gujarat",
+    "source_id": "ingres-groundwater-gujarat",
+    "drill": {
+      "state": "GUJARAT",
+      "district": "AHMEDABAD",
+      "district_uuid": "630e391c-ba99-4599-b73c-003992dfdf7a",
+      "unit_label": "taluka",
+      "keep_district_total": true,
+      "names": {
+        "AHMEDABAD CITY & DAS": "Ahmedabad City & Daskroi",
+        "AHMEDABAD URBAN": "Ahmedabad Urban"
+      },
+      "wfs": {
+        "layer": "gec:indgec_vers_gujarat",
+        "year": 2021
+      }
+    },
+    "years": [
+      "2021-2022",
+      "2022-2023",
+      "2023-2024",
+      "2024-2025",
+      "2025-2026"
+    ],
+    "notes": [
+      "THE DISTRICT HIDES THE CITY. Ahmedabad district reads 79.14% and SEMI CRITICAL in 2025-2026, while the unit under the city, Ahmedabad Urban, is OVER EXPLOITED at 128.85% and the rural ring around it, Ahmedabad City & Daskroi, at 143.16%. The district figure is pulled down by six safe talukas to the west and south.",
+      "AHMEDABAD URBAN IS THE CITY'S UNIT, not a revenue taluka. IN-GRES carved it out of CITY & DASKROI in 2021-2022 (95,627 ha became 47,359 + 49,642). Its own polygon on the IN-GRES GeoServer holds almost all of the AMC wards, which is why it is the one to quote for the city; City & Daskroi is the peri-urban and rural belt around it, and 82% of its 2025-2026 extraction is irrigation.",
+      "THE URBAN UNIT'S JUMP IS A RELABELLING, NOT A MEASUREMENT. Its extractable resource is 1,919.4 ham in each of the last three editions. Its extraction was filed entirely as industrial (1,784.4 ham) in 2021-2022 and 2022-2023, as 1,055 ham irrigation plus 304 ham industrial in 2023-2024 (70.80%, semi critical), and from 2024-2025 with 1,606 ham of domestic draft added (127.18%, then 128.85%). Quote the category in the latest edition; do not render the series as a trend.",
+      "TWO TALUKAS ARE NOT ASSESSED ON EXTRACTION AT ALL. Dholera and Dhandhuka are categorised 'salinity' in all five editions: CGWB does not assess saline aquifers on extraction, so they carry no stage percentage. They are listed under not_assessed_on_extraction and drawn grey on the map rather than left out.",
+      "VOLUMES EXCLUDE THE SALINE TRACT, as CGWB publishes (see fresh_of). The API's `total` key includes it and would more than double the district's extraction figure.",
+      "EDITIONS START AT 2021-2022, the first in which the current units exist. In 2019-2020 the city and Daskroi were one 95,627 ha unit at 82.58%, and joining that to either successor would show a jump that is a boundary change. Rainfall and some draft inputs also repeat across editions (City & Daskroi's 725.1 mm in three), so movement between editions is partly the inputs being carried forward."
+    ]
+  }
+}

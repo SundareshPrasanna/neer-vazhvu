@@ -1,0 +1,65 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 13.0,
+      "lng": 77.5,
+      "note": "Bangalore-region grid point on the Deccan plateau (city centre 12.97 N, 77.59 E)"
+    },
+    "recent": {
+      "lat": 12.9716,
+      "lng": 77.5946
+    }
+  },
+  "ingres": {
+    "_note": "Bengaluru EXTENDS a series rather than owning it: IN-GRES does not serve 2011-2017 per unit, WRIS does (scripts/fetch-wris-groundwater-bangalore.ts), so IN-GRES editions are upserted into the blocks already there. See build_extended().",
+    "_notes": {
+      "years": "2020-2021 is not published. The five editions 2019-20 to 2023-24 equal the WRIS extract they replace, to the rounding.",
+      "unit_names": "Substring -> the block name the WRIS series and polygons already use. IN-GRES spells them BENGALURU EAST / Bangalore City / Bangalore-City across editions."
+    },
+    "state": "KARNATAKA",
+    "state_label": "Karnataka",
+    "source_id": "ingres-gw-assessment-ka",
+    "extend": {
+      "state": "KARNATAKA",
+      "district": "BENGALURU(URBAN)",
+      "district_uuid": "fc194628-dfa2-4026-b410-5535a5ceea8c"
+    },
+    "years": [
+      "2019-2020",
+      "2021-2022",
+      "2022-2023",
+      "2023-2024",
+      "2024-2025",
+      "2025-2026"
+    ],
+    "unit_names": {
+      "yelahanka": "Yelahanka",
+      "anekal": "Anekal",
+      "north": "Bangalore (North)",
+      "south": "Bangalore-South",
+      "east": "Bangalore-East",
+      "city": "Bangalore-City"
+    }
+  },
+  "elevationBands": {
+    "_notes": {
+      "bbox": "BBMP + GBA fringe"
+    },
+    "bbox": [
+      77.4,
+      12.8,
+      77.85,
+      13.2
+    ],
+    "bands": [
+      700,
+      840,
+      870,
+      900,
+      930,
+      960,
+      1000
+    ]
+  }
+}

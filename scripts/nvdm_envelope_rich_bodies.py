@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from registry_license import registry_license  # noqa: E402
+from city_manifest import configs  # noqa: E402
 
 # Overture publishes quarterly and the release id IS the evidence vintage, so
 # it is read from the artifact rather than pinned here.
@@ -157,8 +158,7 @@ def scope_kinds() -> dict[str, str]:
     {"mumbai": "region"} on the first pass, which is exactly the kind of
     guess-from-memory the gate exists to catch: Kolkata is a region too and
     twelve artifacts failed. Derive it instead."""
-    configs = json.loads((ROOT / "src/cities/generated/cities.json").read_text())
-    return {cid: c.get("placeKind", "city") for cid, c in configs.items()}
+    return {cid: c.get("placeKind", "city") for cid, c in configs().items()}
 
 
 def registry_cities() -> dict[str, str]:
