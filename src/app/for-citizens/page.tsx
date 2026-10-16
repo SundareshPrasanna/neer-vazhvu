@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CitizenApp } from "@/components/sightings/citizen-app";
+import { ShareGuide } from "@/components/sightings/share-guide";
 import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 
 export const metadata: Metadata = {
@@ -135,7 +136,7 @@ export default function ForCitizensPage() {
         <CitizenApp />
       </div>
 
-      <section className="mt-10">
+      <section id="how-it-works" className="mt-10 scroll-mt-20">
         <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">How it works, step by step</h2>
         <div className="divide-y divide-slate-200 rounded-lg border border-slate-200 text-sm text-slate-700 dark:divide-slate-700 dark:border-slate-700 dark:text-slate-300">
           {GUIDE.map(([title, body]) => (
@@ -145,6 +146,7 @@ export default function ForCitizensPage() {
             </details>
           ))}
         </div>
+        <ShareGuide />
       </section>
 
       <section className="mt-10 grid gap-6 text-sm text-slate-600 sm:grid-cols-2 dark:text-slate-400">
