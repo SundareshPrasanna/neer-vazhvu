@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
-import { adminClient, requireReviewer } from "@/lib/sightings/auth";
+import { adminClient, reporterKey, requireReviewer } from "@/lib/sightings/auth";
 import { INTAKE_BUCKET, deletePhotos, publicPhotoUrl, publishPhotos } from "@/lib/sightings/photos";
 import { byId, toOwn } from "@/lib/sightings/serialize";
 import { OTHER_KEY, isValidReport, roleFor } from "@/lib/sightings/taxonomy";
@@ -24,13 +24,13 @@ export async function GET(request: NextRequest) {
     const fixedRows = fixedIds.length ? ((await admin.from("sightings").select("*").in("id", fixedIds)).data ?? []) : [];
     const rows = [...(received.data ?? []), ...fixedRows] as SightingRow[];
     const ids = rows.map((r) => r.id);
-    const reporters = [...new Set(rows.map((r) => r.reporter_id))];
+    const reporters = [...new Set(rows.map((r) => r.reporter_key))];
     const [photos, events, reps, counts] = ids.length
       ? await Promise.all([
           admin.from("sighting_photos").select("*").in("sighting_id", ids),
           admin.from("sighting_events").select("*").in("sighting_id", ids).order("created_at"),
-          admin.from("sighting_reporters").select("*").in("user_id", reporters),
-          admin.from("sightings").select("reporter_id, review_status").in("reporter_id", reporters),
+          admin.from("sighting_reporters").select("*").in("reporter_key", reporters),
+          admin.from("sightings").select("reporter_key, review_status").in("reporter_key", reporters),
         ])
       : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }];
     const photoRows = (photos.data ?? []) as PhotoRow[];
@@ -45,16 +45,17 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       data: rows.map((r) => {
-        const mine = (counts.data ?? []).filter((c) => c.reporter_id === r.reporter_id);
-        const rep = (reps.data ?? []).find((x) => x.user_id === r.reporter_id);
+        const mine = (counts.data ?? []).filter((c) => c.reporter_key === r.reporter_key);
+        const rep = (reps.data ?? []).find((x) => x.reporter_key === r.reporter_key);
         return {
           ...toOwn(r, photoMap.get(r.id) ?? [], eventMap.get(r.id) ?? []),
           note: r.note,
+
           candidateLabel: r.candidate_label,
           exif: { capturedAt: r.exif_captured_at, lat: r.exif_lat, lng: r.exif_lng },
           photos: photoRows.flatMap((p) => (p.sighting_id === r.id ? [{ kind: p.kind, published: !!p.public_path, url: urlOf(p) }] : [])),
           reporter: {
-            id: r.reporter_id,
+            key: r.reporter_key,
             trusted: !!rep?.trusted,
             suspended: !!rep?.suspended_at,
             total: mine.length,
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
 interface Action {
   action: "approve" | "reject" | "publish_fixed" | "discard_fixed" | "suspend";
   id?: string;
-  userId?: string;
+  reporterKey?: string;
   category?: string;
   subcategory?: string | null;
   candidateLabel?: string | null;
@@ -88,8 +89,11 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as Action;
     const admin = adminClient();
     const reason = clip(body.reason, 280);
+    const actorKey = reporterKey(user.id);
     const event = (sightingId: string, ev: string, extra: Record<string, unknown> = {}) =>
-      admin.from("sighting_events").insert({ sighting_id: sightingId, actor_id: user.id, actor_role: "reviewer", event: ev, reason, ...extra });
+      admin.from("sighting_events").insert({ sighting_id: sightingId, actor_key: actorKey, actor_role: "reviewer", event: ev, reason, ...extra });
+    // Reviewed: the photo's own date and GPS are no longer kept.
+    const reviewed = { reviewed_at: new Date().toISOString(), updated_at: new Date().toISOString(), exif_captured_at: null, exif_lat: null, exif_lng: null };
     const photosOf = async (id: string, kind?: "report" | "fixed") => {
       let q = admin.from("sighting_photos").select("id, storage_path, public_path").eq("sighting_id", id);
       if (kind) q = q.eq("kind", kind);
@@ -97,12 +101,12 @@ export async function POST(request: NextRequest) {
     };
 
     if (body.action === "suspend") {
-      if (!body.userId || !/^[0-9a-f-]{36}$/.test(body.userId)) return NextResponse.json({ error: "Bad user" }, { status: 400 });
-      await admin.from("sighting_reporters").upsert({ user_id: body.userId, suspended_at: new Date().toISOString(), suspended_reason: reason });
-      const { data } = await admin.from("sightings").select("id").eq("reporter_id", body.userId).eq("review_status", "received");
+      if (!body.reporterKey || !/^[0-9a-f]{64}$/.test(body.reporterKey)) return NextResponse.json({ error: "Bad reporter" }, { status: 400 });
+      await admin.from("sighting_reporters").upsert({ reporter_key: body.reporterKey, suspended_at: new Date().toISOString(), suspended_reason: reason });
+      const { data } = await admin.from("sightings").select("id").eq("reporter_key", body.reporterKey).eq("review_status", "received");
       for (const { id } of data ?? []) {
         await deletePhotos(await photosOf(id));
-        await admin.from("sightings").update({ review_status: "rejected", reviewed_at: new Date().toISOString() }).eq("id", id);
+        await admin.from("sightings").update({ review_status: "rejected", note: null, ...reviewed }).eq("id", id);
         await event(id, "rejected", { reason: "Account suspended" });
       }
       return NextResponse.json({ data: { rejected: (data ?? []).length } });
@@ -112,7 +116,6 @@ export async function POST(request: NextRequest) {
     if (!id || !/^[0-9a-f-]{36}$/.test(id)) return NextResponse.json({ error: "Bad id" }, { status: 400 });
     const row = (await admin.from("sightings").select("*").eq("id", id).maybeSingle()).data as SightingRow | null;
     if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    const now = new Date().toISOString();
 
     switch (body.action) {
       case "approve": {
@@ -122,28 +125,29 @@ export async function POST(request: NextRequest) {
         if (!isValidReport(category, subcategory)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
         if (category !== row.category || subcategory !== row.subcategory) await event(id, "reclassified", { category, subcategory });
         await publishPhotos(await photosOf(id, "report"));
+        const role = roleFor(category, subcategory);
         const up = await admin
           .from("sightings")
           .update({
             category,
             subcategory,
-            authority_role: roleFor(category, subcategory),
+            authority_role: role,
             candidate_label: category === OTHER_KEY ? clip(body.candidateLabel, 80) : null,
             review_status: "approved",
-            case_status: "open",
-            reviewed_at: now,
-            updated_at: now,
+            // Only reports a body handles have a status to follow.
+            case_status: role ? "open" : null,
+            ...reviewed,
           })
           .eq("id", id);
         if (up.error) throw up.error;
         await event(id, "approved");
-        await admin.from("sighting_reporters").update({ trusted: true }).eq("user_id", row.reporter_id);
+        await admin.from("sighting_reporters").update({ trusted: true }).eq("reporter_key", row.reporter_key);
         break;
       }
       case "reject": {
         if (row.review_status !== "received") return NextResponse.json({ error: "Already reviewed" }, { status: 409 });
         await deletePhotos(await photosOf(id));
-        await admin.from("sightings").update({ review_status: "rejected", reviewed_at: now, updated_at: now }).eq("id", id);
+        await admin.from("sightings").update({ review_status: "rejected", note: null, ...reviewed }).eq("id", id);
         await event(id, "rejected");
         break;
       }

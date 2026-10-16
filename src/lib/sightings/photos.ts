@@ -68,7 +68,7 @@ type Stored = { exif: ProcessedPhoto["exif"] | null } | { error: string; status:
 /** Re-encode, upload to the private bucket and record each photo; all or nothing. */
 export async function storePhotos(
   sightingId: string,
-  reporterId: string,
+  reporterKey: string,
   placeId: string,
   kind: "report" | "fixed",
   files: File[],
@@ -83,7 +83,7 @@ export async function storePhotos(
   const stamp = Date.now().toString(36);
   const rows = processed.map((p, i) => ({
     sighting_id: sightingId,
-    reporter_id: reporterId,
+    reporter_key: reporterKey,
     kind,
     storage_path: `${placeId}/${sightingId}/${kind}-${stamp}-${i}.webp`,
     sha256: p.sha256,

@@ -41,7 +41,7 @@ export function CitizenApp() {
       <div className="rounded-lg border border-slate-200 p-5 dark:border-slate-700">
         <p className="font-medium text-slate-900 dark:text-slate-100">Sign in once to send reports</p>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Signing in keeps reports accountable and lets you follow each one. Your name and email are never shown.
+          Signing in stops fake and repeated reports and lets you follow each one. Your name and email are never shown or shared; see what we promise below.
         </p>
         <button type="button" onClick={signIn} className="mt-4 rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800">
           Continue with Google
@@ -70,7 +70,7 @@ export function CitizenApp() {
           Sign out
         </button>
       </div>
-      {tab === "report" ? <ReportFlow authFetch={authFetch} onSent={load} /> : <MyReports reports={mine ?? []} authFetch={authFetch} onChange={load} />}
+      {tab === "report" ? <ReportFlow authFetch={authFetch} onSent={load} /> : <MyReports reports={mine ?? []} authFetch={authFetch} onChange={load} onDeleted={signOut} />}
     </div>
   );
 }

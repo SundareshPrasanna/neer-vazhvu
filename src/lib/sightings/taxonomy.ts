@@ -25,7 +25,19 @@ export interface ReportType {
   label: string;
   /** Overrides the group's role; null = recorded only, no body to send it to. */
   role?: AuthorityRole | null;
+  /** Takes water-test values (src/lib/sightings/parameters.ts), checked against a photo of the meter or kit. */
+  readings?: true;
 }
+
+/** Where tap and drinking water comes from; asked for every report in that group. */
+export const WATER_SOURCES = [
+  { key: "piped", label: "Piped tap" },
+  { key: "borewell", label: "Borewell" },
+  { key: "open_well", label: "Open well" },
+  { key: "handpump", label: "Handpump or public tap" },
+] as const;
+
+export type WaterSource = (typeof WATER_SOURCES)[number]["key"];
 
 export interface ReportGroup {
   key: string;
@@ -113,6 +125,7 @@ export const REPORT_GROUPS: readonly ReportGroup[] = [
       t("illness_suspected", "People falling ill, water suspected"),
       t("public_source_unsafe", "Public tap or handpump water unsafe"),
       t("borewell_quality", "Borewell water salty or coloured", null),
+      { key: "water_test", label: "Water test results (TDS, fluoride and more)", role: null, readings: true },
     ],
   },
   {
@@ -204,6 +217,10 @@ export function roleFor(category: string, subcategory: string | null): Authority
 export function labelFor(category: string, subcategory: string | null): string {
   if (category === OTHER_KEY) return "Other";
   return getType(category, subcategory)?.label ?? GROUPS.get(category)?.label ?? category;
+}
+
+export function takesReadings(category: string, subcategory: string | null): boolean {
+  return getType(category, subcategory)?.readings === true;
 }
 
 export function isPrivateCategory(category: string): boolean {

@@ -1,7 +1,8 @@
 /** Hand-written form parsing (the repo's no-zod convention). */
 import { LIMITS } from "./limits";
 import { CASE_EVENTS, type CaseEvent } from "./status";
-import { OTHER_KEY, isValidReport } from "./taxonomy";
+import { PARAMETERS } from "./parameters";
+import { OTHER_KEY, WATER_SOURCES, isValidReport, takesReadings, type WaterSource } from "./taxonomy";
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -27,6 +28,8 @@ export interface SubmitInput {
   category: string;
   subcategory: string | null;
   note: string | null;
+  readings: Record<string, number> | null;
+  waterSource: WaterSource | null;
   photos: File[];
   /** Read by the phone from the original photo; unverified. */
   photoMeta: { capturedAt: string | null; lat: number | null; lng: number | null };
@@ -43,6 +46,20 @@ export function parseSubmit(form: FormData): Parsed<SubmitInput> {
   if (!category || !isValidReport(category, subcategory)) return { ok: false, error: "Choose what you saw." };
   const note = str(form.get("note"), LIMITS.noteChars);
   if (category === OTHER_KEY && !note) return { ok: false, error: "Describe what you saw." };
+  let readings: Record<string, number> | null = null;
+  if (takesReadings(category, subcategory)) {
+    readings = {};
+    for (const p of PARAMETERS) {
+      const v = num(form.get(`reading.${p.key}`));
+      if (v == null) continue;
+      if (v < 0 || v > p.max) return { ok: false, error: `${p.name} looks out of range.` };
+      readings[p.key] = v;
+    }
+    if (Object.keys(readings).length === 0) return { ok: false, error: "Enter at least one test result." };
+  }
+  const source = str(form.get("waterSource"), 20) as WaterSource | null;
+  if (source && !WATER_SOURCES.some((w) => w.key === source)) return { ok: false, error: "Unknown water source." };
+  if (readings && !source) return { ok: false, error: "Choose where the water came from." };
   const files = photos(form);
   if (files.length < 1) return { ok: false, error: "Add at least one photo." };
   if (files.length > LIMITS.photosPerReport) return { ok: false, error: `Add at most ${LIMITS.photosPerReport} photos.` };
@@ -55,6 +72,8 @@ export function parseSubmit(form: FormData): Parsed<SubmitInput> {
     ok: true,
     value: {
       lat, lng, accuracy: num(form.get("accuracy")), category, subcategory, note, photos: files,
+      readings,
+      waterSource: category === "drinking" ? source : null,
       photoMeta: { capturedAt, lat: gps ? pLat : null, lng: gps ? pLng : null },
     },
   };

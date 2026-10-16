@@ -12,7 +12,7 @@ interface QueueItem extends OwnReport {
   candidateLabel: string | null;
   exif: { capturedAt: string | null; lat: number | null; lng: number | null };
   photos: { kind: "report" | "fixed"; published: boolean; url: string | null }[];
-  reporter: { id: string; trusted: boolean; suspended: boolean; total: number; rejected: number };
+  reporter: { key: string; trusted: boolean; suspended: boolean; total: number; rejected: number };
 }
 
 const small = "rounded-md border px-3 py-1.5 text-xs font-medium";
@@ -48,7 +48,7 @@ function Item({ item, act }: { item: QueueItem; act: (body: object) => Promise<v
         <dd>{exifGap != null ? `${exifGap.toFixed(1)} km from the pin` : "none"}</dd>
         <dt>Reporter</dt>
         <dd>
-          {item.reporter.total} reports, {item.reporter.rejected} rejected{item.reporter.trusted ? ", trusted" : ", new"}
+          #{item.reporter.key.slice(0, 8)}: {item.reporter.total} reports, {item.reporter.rejected} rejected{item.reporter.trusted ? ", trusted" : ", new"}
           {item.reporter.suspended && ", SUSPENDED"}
         </dd>
       </dl>
@@ -91,7 +91,7 @@ function Item({ item, act }: { item: QueueItem; act: (body: object) => Promise<v
             <button
               type="button"
               className={`${small} border-red-700 text-red-700`}
-              onClick={() => confirm("Suspend this account and reject everything it has waiting?") && act({ action: "suspend", userId: item.reporter.id, reason })}
+              onClick={() => confirm("Suspend this account and reject everything it has waiting?") && act({ action: "suspend", reporterKey: item.reporter.key, reason })}
             >
               Suspend account
             </button>
@@ -152,6 +152,10 @@ export function ReviewApp() {
         <>
           {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{items ? `${items.length} waiting` : "Loading"}</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Reject a photo that shows a face, a vehicle number plate, or a house name or number, and any note or reading that names a
+            person. For a water test, check the values against the meter or kit in the photo.
+          </p>
           <div className="mt-4 space-y-4">
             {items?.map((item) => (
               <Item key={item.id} item={item} act={act} />

@@ -1,10 +1,13 @@
+import { BIS_SOURCE } from "@/lib/sightings/parameters";
 import { CASE_LABELS, EVENT_LABELS } from "@/lib/sightings/status";
 import type { PublicReport } from "@/lib/sightings/types";
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** "12 Oct 2026" in India time, from a YYYY-MM-DD date or a full timestamp. */
 export const day = (iso: string) => {
-  const d = new Date(iso);
-  return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`;
+  const ymd = iso.length === 10 ? iso : new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  const [y, m, d] = ymd.split("-").map(Number);
+  return `${d} ${MON[m - 1]} ${y}`;
 };
 
 const TONE: Record<string, string> = {
@@ -20,6 +23,29 @@ export function StatusChip({ status, label }: { status: string; label?: string }
     <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${TONE[status] ?? TONE.closed}`}>
       {label ?? CASE_LABELS[status as keyof typeof CASE_LABELS] ?? status}
     </span>
+  );
+}
+
+/** A resident's own test results against BIS IS 10500. */
+export function Readings({ readings, source }: { readings: PublicReport["readings"]; source?: string | null }) {
+  return (
+    <div className="mt-2 text-sm">
+      <ul className="space-y-0.5 text-slate-800 dark:text-slate-200">
+        {readings.map((r) => (
+          <li key={r.text}>
+            {r.text}
+            {r.assessment && <span className="text-amber-800 dark:text-amber-300">: {r.assessment}</span>}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Tested by the resident{source ? ` (${source.toLowerCase()})` : ""} with their own meter or kit, not a lab. Limits:{" "}
+        <a href={BIS_SOURCE} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+          BIS IS 10500
+        </a>
+        .
+      </p>
+    </div>
   );
 }
 
@@ -43,6 +69,7 @@ export function ReportCard({ report, children }: { report: PublicReport; childre
           {report.handler && <p className="text-xs text-slate-500 dark:text-slate-400">Handled by {report.handler.acronym ?? report.handler.body}</p>}
         </div>
       </div>
+      {report.readings.length > 0 && <Readings readings={report.readings} source={report.waterSource} />}
       {report.events.length > 0 && (
         <ol className="mt-2 space-y-0.5 border-l border-slate-200 pl-3 text-xs text-slate-600 dark:border-slate-700 dark:text-slate-400">
           {report.events.map((e, i) => (

@@ -4,7 +4,8 @@ import { tryGetPlaceConfig } from "@/lib/cities";
 import { listAtlasDistricts } from "@/lib/atlas/registry";
 import { publicPhotoUrl } from "./photos";
 import { resolveAuthority } from "./routing";
-import { isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
+import { assess, getParameter, valueText } from "./parameters";
+import { WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
 import type { EventRow, OwnReport, PhotoRow, PublicReport, SightingRow } from "./types";
 
 export const PUBLIC_EVENTS = new Set(["approved", "reported", "authority_done", "fixed", "still_there", "closed", "reopened"]);
@@ -14,9 +15,10 @@ function placeName(row: SightingRow): string {
   return listAtlasDistricts().find((d) => d.scopeId === row.place_id)?.name ?? row.place_id;
 }
 
+const unit = (row: SightingRow) => row.ward_name ?? (row.ward_id ? `Ward ${row.ward_id}` : null) ?? row.panchayat_name;
+
 function where(row: SightingRow): string | null {
-  const unit = row.ward_name ?? (row.ward_id ? `Ward ${row.ward_id}` : null) ?? row.panchayat_name;
-  return [row.water_body_name, unit].filter(Boolean).join(", ") || null;
+  return [row.water_body_name, unit(row)].filter(Boolean).join(", ") || null;
 }
 
 function resolved(row: SightingRow) {
@@ -30,21 +32,31 @@ function resolved(row: SightingRow) {
     : null;
 }
 
+/** YYYY-MM-DD in India time: public dates carry no time of day. */
+const istDate = (iso: string) => new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+function readings(row: SightingRow): PublicReport["readings"] {
+  return Object.entries(row.readings ?? {}).flatMap(([key, v]) => {
+    const p = getParameter(key);
+    return p ? [{ text: valueText(p, Number(v)), assessment: assess(p, Number(v)) }] : [];
+  });
+}
+
 export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[]): PublicReport {
   const hidePoint = isPrivateCategory(row.category);
   return {
     id: row.id,
-    createdAt: row.created_at,
+    createdAt: istDate(row.created_at),
     placeKind: row.place_kind,
     placeId: row.place_id,
     placeName: placeName(row),
-    where: hidePoint ? (row.ward_name ?? row.panchayat_name) : where(row),
+    where: hidePoint ? unit(row) : where(row),
     category: row.category,
     subcategory: row.subcategory,
     label: labelFor(row.category, row.subcategory),
     caseStatus: row.case_status,
-    lat: hidePoint ? null : Number(row.lat),
-    lng: hidePoint ? null : Number(row.lng),
+    readings: readings(row),
+    waterSource: WATER_SOURCES.find((w) => w.key === row.water_source)?.label ?? null,
     photoUrls: photos
       .filter((p) => p.public_path)
       .sort((a, b) => (a.kind === b.kind ? a.ordinal - b.ordinal : a.kind === "report" ? -1 : 1))
@@ -52,7 +64,7 @@ export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[
     events: events
       .filter((e) => PUBLIC_EVENTS.has(e.event))
       // authority_body is reporter-typed: shown to the reporter only.
-      .map((e) => ({ event: e.event, at: e.created_at, authorityBody: null })),
+      .map((e) => ({ event: e.event, at: istDate(e.created_at), authorityBody: null })),
     handler: resolved(row)?.authority ?? null,
   };
 }
@@ -61,6 +73,7 @@ export function toOwn(row: SightingRow, photos: PhotoRow[], events: EventRow[]):
   const rejected = events.findLast((e) => e.event === "rejected");
   return {
     ...toPublic(row, photos, events),
+    createdAt: row.created_at,
     lat: Number(row.lat),
     lng: Number(row.lng),
     where: where(row),

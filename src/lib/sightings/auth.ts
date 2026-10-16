@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createHmac } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient, type SupabaseClient, type User } from "@supabase/supabase-js";
 
@@ -8,8 +9,18 @@ export function reportsEnabled(): boolean {
   return (
     process.env.NEXT_PUBLIC_CITIZEN_REPORTS === "on" &&
     !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    !!process.env.SUPABASE_SERVICE_ROLE_KEY &&
+    (process.env.SIGHTINGS_REPORTER_KEY_SECRET ?? "").length >= 32
   );
+}
+
+/**
+ * What the reports database stores instead of the account id: an HMAC under
+ * a key kept outside the database, so a copy of the database alone cannot
+ * link a report to a person.
+ */
+export function reporterKey(userId: string): string {
+  return createHmac("sha256", process.env.SIGHTINGS_REPORTER_KEY_SECRET!).update(userId).digest("hex");
 }
 
 /** Service-role client: every sightings read and write goes through it. */

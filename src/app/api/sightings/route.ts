@@ -1,10 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
-import { adminClient, reportsEnabled, requireUser } from "@/lib/sightings/auth";
+import { adminClient, reporterKey, reportsEnabled, requireUser } from "@/lib/sightings/auth";
 import { CAP_MESSAGES, LIMITS, type CapReason } from "@/lib/sightings/limits";
 import { placePoint } from "@/lib/sightings/locate-server";
 import { storePhotos } from "@/lib/sightings/photos";
+import { assess, getParameter, valueText } from "@/lib/sightings/parameters";
 import { resolveAuthority } from "@/lib/sightings/routing";
 import { byId, toPublic } from "@/lib/sightings/serialize";
 import { roleFor } from "@/lib/sightings/taxonomy";
@@ -28,9 +29,10 @@ export async function POST(request: NextRequest) {
 
     // Caps first, so a capped or suspended account costs no image processing.
     const admin = adminClient();
+    const key = reporterKey(user.id);
     const { data: created, error } = await admin.rpc("create_sighting", {
       p_row: {
-        reporter_id: user.id,
+        reporter_key: key,
         place_kind: place.placeKind,
         place_id: place.placeId,
         state_code: place.stateCode,
@@ -48,19 +50,22 @@ export async function POST(request: NextRequest) {
         category: v.category,
         subcategory: v.subcategory,
         note: v.note,
+        readings: v.readings,
+        water_source: v.waterSource,
         authority_role: roleFor(v.category, v.subcategory),
       },
       p_daily_new: LIMITS.dailyNew,
       p_daily_trusted: LIMITS.dailyTrusted,
       p_pending_new: LIMITS.pendingNew,
       p_pending_trusted: LIMITS.pendingTrusted,
-      p_site_daily: LIMITS.siteDaily,
+      p_new_site_daily: LIMITS.newSiteDaily,
+      p_all_site_daily: LIMITS.allSiteDaily,
     });
     if (error) throw error;
     if (!created.ok) return NextResponse.json({ error: CAP_MESSAGES[created.reason as CapReason] }, { status: 429 });
     const id = created.id as string;
 
-    const stored = await storePhotos(id, user.id, place.placeId, "report", v.photos).catch(async (err) => {
+    const stored = await storePhotos(id, key, place.placeId, "report", v.photos).catch(async (err) => {
       await admin.from("sightings").delete().eq("id", id);
       throw err;
     });
@@ -71,9 +76,14 @@ export async function POST(request: NextRequest) {
     const exif = stored.exif ?? (v.photoMeta.capturedAt || v.photoMeta.lat != null ? v.photoMeta : null);
     if (exif) await admin.from("sightings").update({ exif_captured_at: exif.capturedAt, exif_lat: exif.lat, exif_lng: exif.lng }).eq("id", id);
 
-    const role = roleFor(v.category, v.subcategory);
+    const readings = Object.entries(v.readings ?? {}).flatMap(([k, val]) => {
+      const p = getParameter(k);
+      return p ? [{ text: valueText(p, val), assessment: assess(p, val) }] : [];
+    });
+    // A piped-supply test outside a limit is the water board's to hear about.
+    const role = roleFor(v.category, v.subcategory) ?? (v.waterSource === "piped" && readings.some((r) => r.assessment) ? "water_supply" : null);
     const routed = role ? resolveAuthority(role, { stateCode: place.stateCode, placeId: place.placeId, placeKind: place.placeKind, corporationId: place.corporationId }) : null;
-    return NextResponse.json({ data: { id, placeName: place.placeName, handler: routed?.authority ?? null, national: routed?.national ?? [] } });
+    return NextResponse.json({ data: { id, placeName: place.placeName, handler: routed?.authority ?? null, national: routed?.national ?? [], readings } });
   } catch (err) {
     logRouteError("sightings/POST", err);
     return internalServerError();

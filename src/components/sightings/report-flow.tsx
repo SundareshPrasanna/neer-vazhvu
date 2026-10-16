@@ -8,10 +8,12 @@ import {
 } from "lucide-react";
 
 import { LIMITS } from "@/lib/sightings/limits";
-import { OTHER_KEY, REPORT_GROUPS } from "@/lib/sightings/taxonomy";
-import type { Handler } from "@/lib/sightings/types";
+import { PARAMETERS } from "@/lib/sightings/parameters";
+import { OTHER_KEY, REPORT_GROUPS, WATER_SOURCES, takesReadings } from "@/lib/sightings/taxonomy";
+import type { Handler, PublicReport } from "@/lib/sightings/types";
 import type { Channel } from "@/lib/sightings/routing/types";
 import { HandlerCard } from "./handler-card";
+import { Readings } from "./report-card";
 import { readPhotoMeta, shrinkPhoto } from "./use-citizen";
 
 const LocationMap = dynamic(() => import("./location-map"), {
@@ -26,6 +28,7 @@ interface Sent {
   placeName: string;
   handler: Handler | null;
   national: Channel[];
+  readings: PublicReport["readings"];
 }
 
 const button = "w-full rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-40";
@@ -34,6 +37,9 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
   const [group, setGroup] = useState<string | null>(null);
   const [type, setType] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [source, setSource] = useState<string | null>(null);
+  // Water-test results by parameter key, as typed; TDS is offered first.
+  const [values, setValues] = useState<Record<string, string>>({ tds: "" });
   const [photos, setPhotos] = useState<File[]>([]);
   const [meta, setMeta] = useState<Awaited<ReturnType<typeof readPhotoMeta>> | null>(null);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -66,7 +72,10 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
   };
 
   const isOther = group === OTHER_KEY;
-  const ready = photos.length > 0 && coords && group && (isOther ? note.trim() : type) && !busy;
+  const testing = !!group && takesReadings(group, type);
+  const entered = Object.entries(values).filter(([, v]) => v.trim() !== "");
+  const ready =
+    photos.length > 0 && coords && group && (isOther ? note.trim() : type) && (!testing || (entered.length > 0 && source)) && !busy;
 
   const submit = async () => {
     if (!coords || !group) return;
@@ -81,6 +90,8 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
       fd.append("category", group);
       if (type && !isOther) fd.append("subcategory", type);
       if (note.trim()) fd.append("note", note.trim());
+      if (group === "drinking" && source) fd.append("waterSource", source);
+      if (testing) entered.forEach(([k, v]) => fd.append(`reading.${k}`, v.trim()));
       if (meta?.takenAt) fd.append("takenAt", meta.takenAt);
       if (meta?.lat != null && meta.lng != null) {
         fd.append("photoLat", String(meta.lat));
@@ -102,6 +113,8 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
     setGroup(null);
     setType(null);
     setNote("");
+    setSource(null);
+    setValues({ tds: "" });
     setPhotos([]);
     setPreviews([]);
     setSent(null);
@@ -114,10 +127,11 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
         <p className="text-sm text-slate-600 dark:text-slate-400">
           We check every report before it appears on the {sent.placeName} pages. Follow it under My reports.
         </p>
+        {sent.readings.length > 0 && <Readings readings={sent.readings} />}
         {sent.handler ? (
           <HandlerCard handler={sent.handler} national={sent.national} />
         ) : (
-          <p className="text-sm text-slate-600 dark:text-slate-400">This is recorded for the public record; no body takes complaints for it.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">This goes on the public record for the place. No public body takes complaints for it.</p>
         )}
         <button type="button" onClick={reset} className={button}>
           Report something else
@@ -174,6 +188,71 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
             ))}
           </div>
         )}
+        {group === "drinking" && (
+          <div className="mt-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400">Where is the water from?{testing ? " (needed)" : ""}</p>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {WATER_SOURCES.map((w) => {
+                const on = source === w.key;
+                return (
+                  <button key={w.key} type="button" aria-pressed={on} onClick={() => setSource(on ? null : w.key)} className={`rounded-full border px-3 py-1.5 text-sm ${
+                  on
+                    ? "border-cyan-700 bg-cyan-700 text-white"
+                    : "border-slate-300 text-slate-700 hover:border-slate-500 dark:border-slate-600 dark:text-slate-300"
+                }`}>
+                    {w.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        {testing && (
+          <div className="mt-4 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+            <p className="text-xs text-slate-500 dark:text-slate-400">Your test results: fill in what your meter or kit measured</p>
+            <div className="mt-2 space-y-2">
+              {PARAMETERS.filter((p) => p.key in values).map((p) => (
+                <label key={p.key} className="flex items-center gap-2 text-sm">
+                  <span className="w-40 shrink-0 text-slate-700 dark:text-slate-300">{p.name}</span>
+                  {p.limit.kind === "absent" ? (
+                    <select
+                      value={values[p.key]}
+                      onChange={(e) => setValues((v) => ({ ...v, [p.key]: e.target.value }))}
+                      className="min-w-0 flex-1 rounded-md border border-slate-300 bg-white p-1.5 dark:border-slate-600 dark:bg-slate-900"
+                    >
+                      <option value="">Choose</option>
+                      <option value="1">Detected</option>
+                      <option value="0">Not detected</option>
+                    </select>
+                  ) : (
+                    <input
+                      inputMode="decimal"
+                      value={values[p.key]}
+                      onChange={(e) => setValues((v) => ({ ...v, [p.key]: e.target.value.replace(/[^0-9.]/g, "") }))}
+                      className="w-24 min-w-0 rounded-md border border-slate-300 bg-white p-1.5 dark:border-slate-600 dark:bg-slate-900"
+                    />
+                  )}
+                  <span className="text-xs text-slate-500 dark:text-slate-400">{p.unit}</span>
+                </label>
+              ))}
+            </div>
+            {PARAMETERS.some((p) => !(p.key in values)) && (
+              <select
+                value=""
+                onChange={(e) => e.target.value && setValues((v) => ({ ...v, [e.target.value]: "" }))}
+                className="mt-3 rounded-md border border-slate-300 bg-white p-1.5 text-sm dark:border-slate-600 dark:bg-slate-900"
+                aria-label="Add a measurement"
+              >
+                <option value="">+ Add a measurement</option>
+                {PARAMETERS.filter((p) => !(p.key in values)).map((p) => (
+                  <option key={p.key} value={p.key}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
         {group && (
           <label className="mt-3 block">
             <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -196,6 +275,10 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
           {photos.length ? "Change photos" : `Take or choose up to ${LIMITS.photosPerReport} photos`}
           <input type="file" accept="image/*" capture="environment" multiple className="sr-only" onChange={(e) => pick(e.target.files)} />
         </label>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          {testing ? "Photograph the meter or test kit showing the result. " : ""}Keep people&rsquo;s faces, vehicle number plates and house
+          names or numbers out of the photo.
+        </p>
         {previews.length > 0 && (
           <div className="mt-2 flex gap-2">
             {previews.map((src) => (

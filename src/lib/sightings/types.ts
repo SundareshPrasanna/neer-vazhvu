@@ -6,7 +6,8 @@ export interface SightingRow {
   id: string;
   created_at: string;
   updated_at: string;
-  reporter_id: string;
+  /** HMAC of the account id (src/lib/sightings/auth.ts), or "deleted". */
+  reporter_key: string;
   place_kind: "city" | "district";
   place_id: string;
   state_code: string;
@@ -24,6 +25,8 @@ export interface SightingRow {
   category: string;
   subcategory: string | null;
   note: string | null;
+  readings: Record<string, number> | null;
+  water_source: string | null;
   candidate_label: string | null;
   authority_role: string | null;
   review_status: ReviewStatus;
@@ -60,9 +63,10 @@ export interface Handler {
   source: string;
 }
 
-/** Safe for anyone: no reporter, no note, no exact point for private types. */
+/** Safe for anyone: no reporter, no note, no exact point, no time of day. */
 export interface PublicReport {
   id: string;
+  /** YYYY-MM-DD only. */
   createdAt: string;
   placeKind: "city" | "district";
   placeId: string;
@@ -72,8 +76,9 @@ export interface PublicReport {
   subcategory: string | null;
   label: string;
   caseStatus: CaseStatus | null;
-  lat: number | null;
-  lng: number | null;
+  /** Resident's own test results, each with how it sits against BIS limits. */
+  readings: { text: string; assessment: string | null }[];
+  waterSource: string | null;
   photoUrls: string[];
   events: { event: string; at: string; authorityBody: string | null }[];
   handler: Handler | null;
@@ -81,6 +86,8 @@ export interface PublicReport {
 
 /** What the reporter sees of their own report. */
 export interface OwnReport extends PublicReport {
+  lat: number;
+  lng: number;
   reviewStatus: ReviewStatus;
   rejectReason: string | null;
   references: { authorityBody: string | null; reference: string; at: string }[];
