@@ -2,10 +2,8 @@
  * Visakhapatnam water story. The tagline is originsTagline in config.ts. Composed
  * from the Lede / Chapter / PullQuote / ThenNow / CTA shortcodes.
  *
- * NO IMAGES. No archival image of the town, the harbour or the reservoirs has
- * had its licence checked at source yet, so this story ships without a Hero or
- * Figure rather than with an unattributed one. Add them in a follow-up once a
- * licence is verified.
+ * Images: each Hero and Figure is listed, with its licence checked at source,
+ * in public/images/story/visakhapatnam/MANIFEST.json.
  *
  * SOURCE SPINE (PDF page unless "pr." = printed page):
  *   - W. Francis, Madras District Gazetteers: Vizagapatam Vol. I (1907),

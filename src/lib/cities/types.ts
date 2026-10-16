@@ -568,8 +568,7 @@ interface PlaceConfigBase {
    * `src/lib/i18n/context.tsx`. Translating `src/lib/i18n/translations.ts`
    * to a new language is independent content work.
    *
-   * Defaults to ['en', 'ta'] when omitted (preserves current behaviour
-   * for any in-flight city configs that haven't been updated yet).
+   * Omitted -> English only (src/lib/i18n/available-languages.ts).
    */
   availableLanguages?: readonly LanguageCode[];
 

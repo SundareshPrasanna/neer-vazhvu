@@ -66988,8 +66988,8 @@
     ]
    },
    "consumers": [
-    "src/components/map/elevation-bands.ts",
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts",
+    "src/components/map/elevation-bands.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_elevation_bands.py"
@@ -67356,7 +67356,7 @@
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx",
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -67614,9 +67614,9 @@
     ]
    },
    "consumers": [
-    "src/components/flood/flood-lines-section.tsx",
-    "src/content/flood/nagpur.ts",
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts",
+    "src/cities/nagpur/flood.ts",
+    "src/components/flood/flood-lines-section.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -69959,7 +69959,7 @@
    "family": "data-root",
    "scope": "mumbai",
    "dataset": "mmr-dam-storage",
-   "bytes": 5099,
+   "bytes": 5102,
    "schema": {
     "kind": "object",
     "keys": [
@@ -70313,10 +70313,10 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
+    "src/cities/nagpur/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/nagpur.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -70354,10 +70354,10 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
+    "src/cities/nagpur/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
-    "src/lib/cities/nagpur.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -70368,8 +70368,7 @@
     "neer-vazhvu-api/tests/test_nagpur_facts.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "ingres-groundwater-maharashtra",
@@ -86460,8 +86459,8 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/nagpur/rivers.ts",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/content/rivers/nagpur.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -86719,7 +86718,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain-history",
-   "bytes": 487654,
+   "bytes": 497304,
    "schema": {
     "kind": "object",
     "keys": [
@@ -86753,7 +86752,7 @@
    "family": "data-root",
    "scope": "surat",
    "dataset": "flood-chain",
-   "bytes": 13630,
+   "bytes": 13629,
    "schema": {
     "kind": "object",
     "keys": [
@@ -86936,7 +86935,7 @@
    "family": "data-root",
    "scope": "visakhapatnam",
    "dataset": "dam-storage",
-   "bytes": 37641,
+   "bytes": 37646,
    "schema": {
     "kind": "object",
     "keys": [
@@ -91372,9 +91371,9 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/nagpur/rivers.ts",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/rivers/nagpur.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -91431,7 +91430,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -91474,7 +91473,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -98300,7 +98299,7 @@
     "pune",
     "visakhapatnam"
    ],
-   "bytes": 47602,
+   "bytes": 47607,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -98388,7 +98387,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 13630,
+   "bytes": 13629,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -98400,7 +98399,7 @@
    "scopes": [
     "surat"
    ],
-   "bytes": 487654,
+   "bytes": 497304,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": false
@@ -98609,7 +98608,7 @@
    "scopes": [
     "mumbai"
    ],
-   "bytes": 5099,
+   "bytes": 5102,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
