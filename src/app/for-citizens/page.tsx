@@ -51,6 +51,12 @@ const PROMISES: [string, string][] = [
   ],
 ];
 
+const STEPS: [string, string][] = [
+  ["Photo and location.", "Sign in with Google once; report as often as you need."],
+  ["We check every report", "before it appears on the page for that ward, water body or village."],
+  ["You see who handles it", "and where to file it. Add the reference number and mark it done or fixed, so the record shows what happened."],
+];
+
 const GUIDE: [string, React.ReactNode][] = [
   [
     "Making a good report",
@@ -115,75 +121,79 @@ const GUIDE: [string, React.ReactNode][] = [
 export default function ForCitizensPage() {
   if (process.env.NEXT_PUBLIC_CITIZEN_REPORTS !== "on") notFound();
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
-      <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl dark:text-slate-100">Report what you see on your water</h1>
-      <p className="mt-3 text-slate-700 dark:text-slate-300">
-        Trash in a lake, sewage in a river, muddy tap water: send a photo and its location. We check it, add it to the public
-        record for that place and tell you which public body handles it.
-      </p>
-
-      <ol className="mt-6 space-y-2 text-sm text-slate-700 dark:text-slate-300">
-        <li>
-          <span className="font-semibold">1. Photo and location.</span> Sign in with Google once; report as often as you need.
-        </li>
-        <li>
-          <span className="font-semibold">2. We check every report</span> before it appears on the page for that ward, water body or
-          village.
-        </li>
-        <li>
-          <span className="font-semibold">3. You see who handles it</span> and where to file it. Add the reference number and mark it
-          done or fixed, so the record shows what happened.
-        </li>
-      </ol>
-
-      <div className="mt-8">
-        <CitizenApp />
-      </div>
-
-      <section id="how-it-works" className="mt-10 scroll-mt-20">
-        <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">How it works, step by step</h2>
-        <div className="divide-y divide-slate-200 rounded-lg border border-slate-200 text-sm text-slate-700 dark:divide-slate-700 dark:border-slate-700 dark:text-slate-300">
-          {GUIDE.map(([title, body]) => (
-            <details key={title} className="group p-4">
-              <summary className="cursor-pointer font-semibold text-slate-900 dark:text-slate-100">{title}</summary>
-              <div className="mt-2 space-y-2">{body}</div>
-            </details>
-          ))}
-        </div>
-        <ShareGuide />
-      </section>
-
-      <section className="mt-10 grid gap-6 text-sm text-slate-600 sm:grid-cols-2 dark:text-slate-400">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-12">
         <div>
-          <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">What you can report</h2>
-          <p>
-            {REPORT_GROUPS.map((g) => g.label).join(", ")}, or anything else about water at a place, anywhere in the cities, districts and
-            river basins we cover.
+          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl dark:text-slate-100">Report what you see on your water</h1>
+          <p className="mt-3 max-w-3xl text-slate-700 dark:text-slate-300">
+            Trash in a lake, sewage in a river, muddy tap water: send a photo and its location. We check it, add it to the public
+            record for that place and tell you which public body handles it.
           </p>
-          <p className="mt-2">Have a TDS meter or a water test kit? Add your results under Tap &amp; drinking water.</p>
-          <p className="mt-2">Water bills, tanker prices and supply timings belong with your water board.</p>
-        </div>
-        <div>
-          <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">Why we ask you to sign in</h2>
-          <p>
-            So one person cannot flood the record with fake or repeated reports: each account has a daily limit, and an account that
-            misuses it can be stopped. And so you can follow your own reports and keep their status up to date. Google confirms you are
-            a real person; we never ask for your phone number or address.
-          </p>
-        </div>
-      </section>
 
-      <section id="privacy" className="mt-10 scroll-mt-20 text-sm text-slate-700 dark:text-slate-300">
-        <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">Your privacy: what we promise</h2>
-        <dl className="space-y-3">
-          {PROMISES.map(([title, text]) => (
-            <div key={title}>
-              <dt className="font-semibold text-slate-900 dark:text-slate-100">{title}</dt>
-              <dd className="mt-0.5">{text}</dd>
+          <ol className="mt-6 grid gap-3 text-sm text-slate-700 sm:grid-cols-3 dark:text-slate-300">
+            {STEPS.map(([title, text], i) => (
+              <li key={title} className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60">
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {i + 1}. {title}
+                </span>{" "}
+                {text}
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-8">
+            <CitizenApp />
+          </div>
+
+          <section id="privacy" className="mt-12 scroll-mt-20 text-sm text-slate-700 dark:text-slate-300">
+            <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">Your privacy: what we promise</h2>
+            <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              {PROMISES.map(([title, text]) => (
+                <div key={title}>
+                  <dt className="font-semibold text-slate-900 dark:text-slate-100">{title}</dt>
+                  <dd className="mt-0.5">{text}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        </div>
+
+        <aside className="mt-12 space-y-10 text-sm lg:mt-0">
+          <section id="how-it-works" className="scroll-mt-20">
+            <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">How it works, step by step</h2>
+            <div className="divide-y divide-slate-200 rounded-lg border border-slate-200 text-slate-700 dark:divide-slate-700 dark:border-slate-700 dark:text-slate-300">
+              {GUIDE.map(([title, body]) => (
+                <details key={title} className="p-4">
+                  <summary className="cursor-pointer font-semibold text-slate-900 dark:text-slate-100">{title}</summary>
+                  <div className="mt-2 space-y-2">{body}</div>
+                </details>
+              ))}
             </div>
-          ))}
-        </dl>
-      </section>
+            <ShareGuide />
+          </section>
+
+          <section className="space-y-6 text-slate-600 dark:text-slate-400">
+            <div>
+              <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">What you can report</h2>
+              <p>
+                {REPORT_GROUPS.map((g) => g.label).join(", ")}, or anything else about water at a place, anywhere in the cities,
+                districts and river basins we cover.
+              </p>
+              <p className="mt-2">Have a TDS meter or a water test kit? Add your results under Tap &amp; drinking water.</p>
+              <p className="mt-2">Water bills, tanker prices and supply timings belong with your water board.</p>
+            </div>
+            <div>
+              <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">Why we ask you to sign in</h2>
+              <p>
+                So one person cannot flood the record with fake or repeated reports: each account has a daily limit, and an account
+                that misuses it can be stopped. And so you can follow your own reports and keep their status up to date. Google
+                confirms you are a real person; we never ask for your phone number or address.
+              </p>
+            </div>
+          </section>
+
+        </aside>
+      </div>
     </main>
   );
 }
