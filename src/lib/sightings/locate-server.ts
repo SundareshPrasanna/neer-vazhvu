@@ -117,6 +117,18 @@ function cityPlacement(c: PlaceConfig, geo: CityGeo, ward: GeoJsonProperties | n
  * then a city without ward geometry by its bounding box. Null = not covered.
  */
 export async function placePoint(origin: string, lng: number, lat: number): Promise<Placement | null> {
+  const placed = await placeByRecord(origin, lng, lat);
+  if (!placed || placed.placeKind === "city" || placed.waterBodyId) return placed;
+  // A lake a city maps beyond its wards (Chennai's Red Hills, Chembarambakkam) keeps the
+  // district or basin for routing, and its id, so the city's lake panel shows the report too.
+  for (const c of listEnabledPlaces().filter((x) => inBBox(lng, lat, box(x.bbox)))) {
+    const body = containing((await geoFor(origin, c.cityId)).bodies, lng, lat)?.properties;
+    if (body?.osm_id != null) return { ...placed, waterBodyId: String(body.osm_id), waterBodyName: (body.name as string) || null };
+  }
+  return placed;
+}
+
+async function placeByRecord(origin: string, lng: number, lat: number): Promise<Placement | null> {
   const cities = listEnabledPlaces().filter((c) => inBBox(lng, lat, box(c.bbox)));
   const geos = await Promise.all(cities.map((c) => geoFor(origin, c.cityId)));
   for (const [i, c] of cities.entries()) {

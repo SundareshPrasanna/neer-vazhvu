@@ -100,14 +100,17 @@ export async function GET(request: NextRequest) {
 
   try {
     const admin = adminClient();
+    // A water body is one record wherever it sits: a city's lake panel also shows reports filed under the district around it.
+    const bodyId = q.get("body");
+    const byBody = !!bodyId && /^[A-Za-z0-9:_-]{1,40}$/.test(bodyId);
     let query = admin
       .from("sightings")
       .select("*")
-      .eq("place_id", placeId)
+      .eq(byBody ? "water_body_id" : "place_id", byBody ? bodyId : placeId)
       .eq("review_status", "approved")
       .order("created_at", { ascending: false })
       .limit(50);
-    for (const [param, column] of [["ward", "ward_id"], ["body", "water_body_id"], ["panchayat", "panchayat_code"]] as const) {
+    for (const [param, column] of [["ward", "ward_id"], ["panchayat", "panchayat_code"]] as const) {
       const value = q.get(param);
       if (value && /^[A-Za-z0-9:_-]{1,40}$/.test(value)) query = query.eq(column, value);
     }
