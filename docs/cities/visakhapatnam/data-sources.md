@@ -249,22 +249,62 @@ Traps:
   at 14.234 m, 0.204 on 16 September at 14.204 m) and checked on every run that fetches them; a
   restated archive stops the run. The artifact's `storage_note` says so.
 - **Storage that does not fit its level is rejected (`level_storage_mismatch`).** Two tests on
-  gross storage: storage below the dead storage while the level is more than 0.1 m above the
-  dead-storage level (Raiwada, August 2012 and March 2019, 2 to 3 m above it); and storage more
+  gross storage: storage at or below the dead storage while the level is more than 0.1 m above the
+  dead-storage level (Raiwada, August 2012 and March 2019, 2 to 3 m above it; Thatipudi on 19 August
+  2022 and 26 August 2024, at 90.07 m with no live storage); and storage more
   than 5% of live capacity above the straight line from dead storage at the dead-storage level to
   design gross at full level, because a reservoir widens as it fills and its storage curve sits
   below that line (the scraper names "Meghadrigedda, four days in May-Jun 2017, Apr-Jul 2024 and
   6-10 Sep 2026" and Thatipudi on 31 December 2014 and 1 January 2015). Rejected days are counted
-  in the artifact's `quality.rejected`. `visakhapatnam-dam-storage.json` (window 8 October 2025
-  to 15 October 2026) counts 5 such rejections: Meghadrigedda's readings of 6 to 10 September
+  in the artifact's `quality.rejected`. `visakhapatnam-dam-storage.json` covers the last year
+  (9 October 2025 to 16 October 2026 in the 16 October file) and counts 5 such rejections:
+  Meghadrigedda's readings of 6 to 10 September
   2026, 0.84 to 0.98 TMC at 14.27 to 14.39 m, where the days either side read 0.08 to 0.10 TMC at
   much the same level (checked against the API on 15 October 2026). They fall before the 30 days
   of `rejected_last_30_days`, which is empty.
+- **Two level records for Thatipudi and Raiwada, late 2021 to 7 March 2024.** Each daily reading
+  carries a `levelSource`. For Thatipudi and Raiwada it is mostly 4 from 2017 (mostly blank before) until
+  readings tagged 42 appear beside it, from September 2021 for Thatipudi and December 2021 for
+  Raiwada (two days in 2019 aside). The published reading then moves between the two from day to
+  day, and from 8 March 2024 every reading is 42 (Yeleru's from 10 February 2024, Meghadrigedda's
+  from 1 January 2024). Where days tagged 4 and 42 sit side by side, Yeleru's and Meghadrigedda's
+  levels agree to within half a metre. Thatipudi's 42 record sits about 4.4 m above its 4 record on
+  most such days (median 4.38 m in 2022, 4.43 m in 2023), and it is the 42 record that comes within
+  0.3 m of full level (90.526 m) in 2022, 2024 and 2025; the 4 record has not gone above 86.2 m since
+  2019. Raiwada's two mostly agree, but in 2023 they part by more than 1 m on 33 of the 91 day pairs
+  where they meet (up to 3.47 m, 21 November 2023); its 4 record holds near 110.0 m from January to
+  7 March 2024, and the 42 record that follows starts at 106.95 m and falls. Each reading passes the
+  level and storage checks. Checked against the API on 16 October 2026 (Thatipudi on 9 December
+  2023: 88.636 m and 2.63 TMC gross, tagged 42, between 84.41 m on the 8th and 84.66 m on the 10th,
+  both tagged 4).
+
+  From each dam's first 42 reading only 42 is kept (`level_source_since` in the scraper: Thatipudi
+  from 7 September 2021, Raiwada from 13 December 2021); the other record's readings after those
+  dates are rejected as `superseded_level_source` (725 Thatipudi days, 463 Raiwada). Yeleru and
+  Meghadrigedda are left as published. `reservoir_daily_v2` holds 16,098 Visakhapatnam rows, the
+  count a full re-read with these rules produces. What the history chart shows:
+  - From those dates to 7 March 2024 Thatipudi has a reading on 169 of 913 days and Raiwada on 304
+    of 816, so both lines, and the summed total, have gaps (the longest, Thatipudi's, runs 138 days,
+    25 October 2021 to 11 March 2022).
+  - No overnight change on 8 March 2024 (Thatipudi 2.57 TMC live on 28 January 2024 and 2.50 on
+    8 March; Raiwada 1.324 and 0.85).
+  - Thatipudi steps where its record changes, from 0.77 TMC live (270.34 ft, tagged 4) on
+    6 September 2021 to 1.65 TMC (284.0 ft, tagged 42) on the 7th, so its years before September
+    2021 are not on the same footing as the years after. Raiwada does not step at its change
+    (2.93 TMC on 12 and 13 December 2021).
+  - Single readings inside the kept record still dip (Thatipudi on 11 September and 15 November
+    2022, 26 June and 31 July 2023) or rise (Raiwada on 26 June 2023) by more than 0.5 TMC against
+    the readings either side. They pass the checks and are left as published.
+
+  Keeping 42 follows the feed, which has carried only 42 since 8 March 2024; I have not found the
+  department's word on which record is right. The chart note and the About page's Data quality say
+  so.
 - **Names.** Meghadrigedda is "MEHADRIGADD RESERVOIR" in APWRIMS, "Mehadrigedda" in the National
   Register of Large Dams and "Meghadrigadda" in CGWB's 2022 and 2025 tables.
 - **Certificates.** When checked on 2026-10-14, the certificate for `apwrims.ap.gov.in` ran to
   13 December 2026 and the one for the sensor host `apwrims2.0.vassarlabs.com` to 17 October 2026.
-  Whether GitHub's runners can reach either host has not been tested.
+  The daily reservoir refresh runs as step 7 of the local scheduled job; whether GitHub's runners
+  can reach either host has not been tested.
 
 Two reservoirs are not in the feed and carry a stated reason instead: Mudasarlova, GVMC's own
 reservoir inside the city, and Gambhiramgedda, a Water Resources Department irrigation reservoir that

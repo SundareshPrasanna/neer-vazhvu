@@ -1,7 +1,7 @@
 # Visakhapatnam vs Chennai and Bengaluru: graded parity scorecard
 
 > Measured 2026-10-15 from the shipped files with a script, while the onboarding branch was being
-> corrected. Grades follow `docs/cities/kolkata/parity-scorecard.md`. Sources and traps:
+> corrected; the launch state updated on 2026-10-16, at cutover. Grades follow `docs/cities/kolkata/parity-scorecard.md`. Sources and traps:
 > `data-sources.md`. What each route shows: `features.md`.
 
 | Grade | Meaning |
@@ -12,7 +12,7 @@
 | **Low** | Minimal or absent; reason stated |
 | **N/A** | Structurally inapplicable; a difference in the city, not the build |
 
-**12 of 15 routes built** (preview-gated): dashboard, about, groundwater, water-bodies, rivers,
+**12 of 15 routes built** (live since 16 October 2026): dashboard, about, groundwater, water-bodies, rivers,
 flood-risk, shoreline, lake-restoration, facts, origins, allocations, commitments. Chennai ships 14
 (no tanker) and Bengaluru 13 (no shoreline, no climate-risk).
 
@@ -27,7 +27,7 @@ list no river station in it.
 | Route | Feature | Chennai | Bengaluru | Visakhapatnam | Grade |
 |---|---|---|---|---|---|
 | Dashboard | Hero | days-left (the reservoirs are the supply) | Cauvery pumping against design | supply overview on CGWB's GVMC table (dated June 2022) and GVMC's 2021 canal split | High, different by design |
-| Dashboard | Reservoir sources | 6, daily | 4 upstream dams, daily | 6, of which 4 on APWRIMS daily with an archive from 2012 (Yeleru) | High |
+| Dashboard | Reservoir sources | 6, daily | 4 upstream dams, daily | 6, of which 4 on APWRIMS daily with an archive from 2012 (Yeleru); 16,098 readings at cutover | High |
 | Dashboard | Rainfall | 672 monthly records, 56 years | 672 / 56 | 672 / 56 (1970-2025), one land cell checked against official normals | High |
 | Groundwater | Assessment units | 16 blocks | 6 | 11 mandals on IN-GRES's own polygons | High |
 | Groundwater | Assessment editions | 8 | 9 | 3 (today's units exist from 2023-24); the map colours the 2025-26 IN-GRES edition, newer than CGWB's December 2025 report | Medium |
@@ -59,8 +59,13 @@ list no river station in it.
 - **The reservoir feed is the strongest layer.** APWRIMS gives daily level and storage for four dams
   with no login and an archive from 2012 for Yeleru, and the live-storage arithmetic reproduces
   CWC's weekly bulletin for Yeleru to within 0.04 percentage points. The scraper checks every dam's
-  design values on every run. It is graded High, not XHigh, because the database backfill has not
-  run yet; until it does, the cards and the history chart have nothing to read.
+  design values on every run. The archive from 2012 is in the database (16,098 readings at
+  cutover) and refreshes daily from the local scheduled job. It is graded High, not XHigh, because
+  Thatipudi and Raiwada carry two level records from late 2021 to 7 March 2024 (Thatipudi's about
+  4.4 m apart on most days). I keep only the record APWRIMS has carried alone since 8 March 2024,
+  from 7 September 2021 for Thatipudi and 13 December 2021 for Raiwada, so both lines have gaps
+  until March 2024 and Thatipudi's steps where the kept record begins. I have not found which
+  record the department treats as correct.
 - **The wells are many series at fewer sites.** Most recorders stand at a manual well's site
   (every recorder installed in 2025-26 and most of the older piezometers), and the two are kept
   apart rather than spliced. The older recorders that carry different names in different station
@@ -120,8 +125,8 @@ Every Low row above is an upstream publishing gap, a property of the data, or ba
 
 In rough order of value per unit of work:
 
-1. **The APWRIMS backfill and the daily schedule.** Turns the dashboard cards and the history chart
-   on, with a record back to 2012 for Yeleru.
+1. **Settling Thatipudi's and Raiwada's two level records (late 2021 to March 2024)** with the
+   Water Resources Department, so the days now left out can be restored on the right datum.
 2. **Archival images with licences checked at source,** for Origins.
 3. **The HydroBASINS climate-risk layer,** already built for Chennai.
 4. **A Telugu translation by a native speaker.**

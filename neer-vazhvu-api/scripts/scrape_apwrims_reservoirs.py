@@ -35,6 +35,13 @@ the same levels read 0.13 TMC higher (14.417 m: 0.102 on 4 Sep, 0.228 on
 Two readings either side of the switch are checked on every run that fetches
 them (basis_pins); a restated archive stops the run.
 
+ONE LEVEL RECORD PER DAM. Each reading names its levelSource. Raiwada and
+Thatipudi switch between sources 4 and 42 from late 2021 until 7 Mar 2024,
+and the two disagree (Thatipudi's 42 reads about 4.4 m above its 4, so storage
+jumps with the source); since 8 Mar 2024 every reading is 42. From the first
+42 reading (level_source_since) only 42 is kept, so the series follows the
+record APWRIMS publishes today; earlier history is source 4.
+
 DATES. Each reading is dated by the IST date of its own
 levelStorageEventGenTS, not by the YYYYMMDD key it sits under. In range
 requests the two agree (every reading 2012-2026, checked), but single-day
@@ -133,6 +140,7 @@ VISAKHAPATNAM_DAMS = {
         "mddl_m": 98.935,
         "gross_tmc": 3.60,
         "dead_tmc": 0.33,
+        "level_source_since": ("42", "2021-12-13"),
     },
     "thatipudi": {
         "uuid": "eeb82fe7-e68a-4c75-9eb7-456b2581083c",
@@ -143,6 +151,7 @@ VISAKHAPATNAM_DAMS = {
         "mddl_m": 76.511,
         "gross_tmc": 3.325,
         "dead_tmc": 0.15,
+        "level_source_since": ("42", "2021-09-07"),
     },
     # APWRIMS spells it MEHADRIGADD. GVMC writes Meghadrigedda (its 2021 NGT
     # filings also write Mehadrigedda), NRLD 2019 Mehadrigedda and CGWB
@@ -289,7 +298,7 @@ def reject_reason(level: float | None, storage: float, dam: dict) -> str | None:
     if level is not None and level >= dam["mddl_m"]:
         live_cap = dam["gross_tmc"] - dam["dead_tmc"]
         up = (level - dam["mddl_m"]) / (dam["frl_m"] - dam["mddl_m"])
-        if storage < dam["dead_tmc"] and level > dam["mddl_m"] + 0.1:
+        if storage <= dam["dead_tmc"] and level > dam["mddl_m"] + 0.1:
             return "level_storage_mismatch"
         if storage > dam["dead_tmc"] + live_cap * (up + 0.05):
             return "level_storage_mismatch"
@@ -351,6 +360,14 @@ def parse_timeseries(
                 storage = round(storage + dam["dead_tmc"], 4)
             level = v.get("level")
             reason = reject_reason(level, storage, dam)
+            keep = dam.get("level_source_since")
+            if (
+                not reason
+                and keep
+                and iso >= keep[1]
+                and str(v.get("levelSource")) != keep[0]
+            ):
+                reason = "superseded_level_source"
             if reason:
                 counts[f"rejected_{reason}"] += 1
                 rejected.append(

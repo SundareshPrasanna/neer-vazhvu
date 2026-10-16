@@ -6,9 +6,8 @@ const APWRIMS_FEED_NOTE =
 /**
  * Visakhapatnam - city twelve.
  *
- * Registered DISABLED through the onboarding window (the Surat and Pune
- * pattern): reachable only via NEXT_PUBLIC_PREVIEW_CITIES=visakhapatnam until a
- * cutover commit flips `enabled`. Seeded by 057_visakhapatnam_seed_disabled.sql.
+ * LIVE since 2026-10-16 (see `enabled` at the foot of this file). Seeded by
+ * 057_visakhapatnam_seed_disabled.sql, switched on by 059_visakhapatnam_enable.sql.
  *
  * WHAT KIND OF CITY THIS IS. A port with no large river (CGWB: "No major
  * river/perennial rivers"). The harbour was dug out of the swamp at the mouth
@@ -48,10 +47,13 @@ const APWRIMS_FEED_NOTE =
  * portal) serves daily reservoir level and storage for Yeleru, Raiwada,
  * Thatipudi and Meghadrigedda through a public JSON API (no login), with a
  * daily archive from 2012 for Yeleru (and most of 2012 for Raiwada) and from
- * late 2014 or 2015 for the others, so the reservoir cards and history chart
- * can be live from day one once ingestion runs. GVMC's own Mudasarlova
- * reservoir and the Water Resources Department's Gambhiramgedda reservoir are
- * not in APWRIMS and carry no feed.
+ * late 2014 or 2015 for the others. The archive is in reservoir_daily_v2
+ * (loaded before cutover) and the local job refreshes it daily. Thatipudi and
+ * Raiwada carry two level records (APWRIMS levelSource 4 and 42) from late
+ * 2021 to 7 March 2024; only 42 is kept from its first reading (the scraper's
+ * level_source_since), see reservoirHistoryNote and data-sources.md. GVMC's
+ * own Mudasarlova reservoir and the Water Resources Department's Gambhiramgedda
+ * reservoir are not in APWRIMS and carry no feed.
  *
  * NO WARD SURFACES, and the reason is two-sided. The 98-ward boundaries in
  * circulation are an Esri India tracing of a GVMC CAD plot; we have not found
@@ -213,12 +215,17 @@ export const VISAKHAPATNAM: PlaceConfig = {
   // A daily archive since 2012; one year would show a single monsoon.
   reservoirHistoryDefaultRange: '3yr',
   reservoirHistoryNote:
-    "Daily storage from the Andhra Pradesh Water Resources Department's APWRIMS feed, shown as live storage: the water above each dam's lowest outlet. Yeleru's record runs from 2012, Thatipudi's from October 2014 and Meghadrigedda's from November 2015. Raiwada has most of 2012, then runs from October 2014 with a break from November 2015 to June 2016. Days whose published level or storage fails a basic check are left out. Yeleru reads zero in dry spells, when its water falls below the lowest outlet. Mudasarlova and Gambheeram are not in the feed.",
+    "Daily storage from the Andhra Pradesh Water Resources Department's APWRIMS feed, shown as live storage: the water above each dam's lowest outlet. Yeleru's record runs from 2012, Thatipudi's from October 2014 and Meghadrigedda's from November 2015. Raiwada has most of 2012, then runs from October 2014 with a break from November 2015 to June 2016. Days whose published level or storage fails a basic check are left out. From late 2021 to 7 March 2024 the feed carries two level records for Thatipudi and Raiwada, which can differ by metres. We keep only the one it has carried alone since 8 March 2024, from that record's first reading (7 September 2021 for Thatipudi, 13 December 2021 for Raiwada), so days with only the other record have no reading and both lines, and the summed total, have gaps until March 2024. Thatipudi's kept record reads about 4.4 m above the other, which most of its earlier readings come from, so its storage steps up on 7 September 2021, from 0.77 to 1.65 TMC, and its earlier years are not directly comparable with later ones. Yeleru reads zero in dry spells, when its water falls below the lowest outlet. Mudasarlova and Gambheeram are not in the feed.",
 
   // No cascade/catchment layer: the cascade pipeline has not been run for
   // Visakhapatnam. This is "not built yet", not a reasoned absence, so
   // catchmentsGapNote is deliberately omitted (the Pune/Gurugram pattern).
   hasCatchments: false,
 
-  enabled: false,
+  // LIVE since 2026-10-16. This flag is the ONLY functional gate on the city:
+  // [cityId]/layout.tsx reads it, and the `enabled` column on the cities row is
+  // read by no code (059_visakhapatnam_enable.sql flips it anyway, for
+  // consistency). At cutover: reservoir history from 2012 is in
+  // reservoir_daily_v2 and refreshes daily from the local job (step 7).
+  enabled: true,
 };
