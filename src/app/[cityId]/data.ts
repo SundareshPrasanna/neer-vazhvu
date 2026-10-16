@@ -761,7 +761,9 @@ export async function loadCityForecast(config: PlaceConfig): Promise<CityForecas
   }
   if (latestPerSource.size === 0) return EMPTY_FORECAST;
 
-  // 2. Fetch all rows for the latest forecast per source.
+  // 2. Fetch the rows of those latest forecasts only. Without the
+  //    forecast_date filter this read every stored forecast, oldest target
+  //    first, and PostgREST's 1000-row cap cut the newest off.
   const { data: rows, error } = await supabase
     .from("reservoir_forecast_v2")
     .select(
@@ -769,6 +771,7 @@ export async function loadCityForecast(config: PlaceConfig): Promise<CityForecas
     )
     .eq("city_id", config.cityId)
     .in("source_code", Array.from(latestPerSource.keys()))
+    .in("forecast_date", Array.from(new Set(latestPerSource.values())))
     .order("target_date", { ascending: true });
 
   if (error || !rows) return EMPTY_FORECAST;
