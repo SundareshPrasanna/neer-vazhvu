@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import type { PublicReport } from "@/lib/sightings/types";
 import { ReportCard } from "./report-card";
+import { link, muted, rule } from "./ui";
 
 /**
  * Citizen reports that landed on this place (and ward, water body or
@@ -33,18 +34,20 @@ export function PlaceReports({ place, ward, body, panchayat }: { place: string; 
   if (reports.length === 0) return null;
   return (
     <section className="mt-6">
-      <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">Citizen reports ({reports.length})</h3>
-      <div className="space-y-2">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+          Reported by residents <span className={`font-normal tabular-nums ${muted}`}>{reports.length}</span>
+        </h3>
+        <Link href="/for-citizens" className={`text-sm ${link}`}>
+          Report something
+        </Link>
+      </div>
+      <div className={`mt-2 divide-y border-y ${rule}`}>
         {reports.map((r) => (
           <ReportCard key={r.id} report={r} />
         ))}
       </div>
-      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-        Photographed by residents and checked before publishing.{" "}
-        <Link href="/for-citizens" className="underline underline-offset-2">
-          Report something
-        </Link>
-      </p>
+      <p className={`mt-2 text-xs ${muted}`}>Photographed by residents and checked before publishing.</p>
     </section>
   );
 }

@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { LogOut, Trash2 } from "lucide-react";
 
 import { ActionButton } from "./action-feedback";
+import { btn } from "./ui";
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 /**
- * Sign out and Delete account, kept apart at the top right: a neutral button and a red one with a divider
- * between, and deleting always asks first.
+ * Sign out and Delete account, always at the top right and kept apart: a neutral button, a divider, then a red one;
+ * deleting always asks first. On phones they take the first row, above the view switch.
  */
 export function AccountActions({ authFetch, signOut }: { authFetch: Fetch; signOut: () => void }) {
   const [confirming, setConfirming] = useState(false);
@@ -27,46 +29,46 @@ export function AccountActions({ authFetch, signOut }: { authFetch: Fetch; signO
 
   return (
     <>
-      <div className="ml-auto flex items-center gap-3">
-        <button
-          type="button"
-          onClick={signOut}
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
-        >
+      <div className="order-first -mr-3 flex w-full items-center justify-end sm:order-last sm:ml-auto sm:w-auto">
+        <button type="button" onClick={signOut} className={btn("quiet", "sm")}>
+          <LogOut className="h-4 w-4" aria-hidden="true" />
           Sign out
         </button>
-        <span className="h-5 border-l border-slate-300 dark:border-slate-600" aria-hidden="true" />
-        <button
-          type="button"
-          onClick={() => setConfirming(true)}
-          className="rounded-md border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
-        >
+        <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
+        <button type="button" onClick={() => setConfirming(true)} aria-expanded={confirming} className={btn("dangerQuiet", "sm")}>
+          <Trash2 className="h-4 w-4" aria-hidden="true" />
           Delete account
         </button>
       </div>
       {confirming && (
-        <div role="alertdialog" aria-label="Delete your account" className="mt-3 w-full rounded-lg border border-red-200 bg-red-50/50 p-3 text-sm dark:border-red-900 dark:bg-red-950/30">
-          <p className="text-slate-800 dark:text-slate-200">
-            This deletes your account and every report not yet published, with its photos. Published reports stay on the public
-            record with nothing linking them to you.
+        <div
+          role="alertdialog"
+          aria-labelledby="delete-account-title"
+          aria-describedby="delete-account-text"
+          className="order-last w-full rounded-xl border border-red-200 bg-red-50/70 p-4 transition duration-300 ease-out starting:opacity-0 sm:p-5 dark:border-red-900/60 dark:bg-red-950/30"
+        >
+          <p id="delete-account-title" className="font-semibold text-slate-900 dark:text-slate-100">
+            Delete your account?
           </p>
-          <label className="mt-2 flex items-center gap-2 text-slate-700 dark:text-slate-300">
-            <input type="checkbox" checked={removeAll} onChange={(e) => setRemoveAll(e.target.checked)} />
+          <p id="delete-account-text" className="mt-1 max-w-[62ch] text-sm text-slate-700 dark:text-slate-300">
+            This deletes your account and every report not yet published, with its photos. Published reports stay on the public record
+            with nothing linking them to you.
+          </p>
+          <label className="mt-3 flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
+            <input type="checkbox" checked={removeAll} onChange={(e) => setRemoveAll(e.target.checked)} className="h-4 w-4 accent-red-700" />
             Remove my published reports too
           </label>
-          <div className="mt-3 flex gap-2">
-            <ActionButton
-              label="Yes, delete my account"
-              busyLabel="Deleting…"
-              busy={busy}
-              onClick={remove}
-              className="rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
-            />
-            <button type="button" onClick={() => setConfirming(false)} className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs dark:border-slate-600">
-              Cancel
+          <div className="mt-4 flex flex-wrap gap-2">
+            <ActionButton label="Delete my account" busyLabel="Deleting…" busy={busy} onClick={remove} className={btn("danger", "md")} />
+            <button type="button" onClick={() => setConfirming(false)} className={btn("secondary", "md")}>
+              Keep my account
             </button>
           </div>
-          {error && <p className="mt-2 text-xs text-red-700 dark:text-red-400">{error}</p>}
+          {error && (
+            <p role="alert" className="mt-3 text-sm font-medium text-red-700 dark:text-red-400">
+              {error}
+            </p>
+          )}
         </div>
       )}
     </>

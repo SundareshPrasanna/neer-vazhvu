@@ -17,9 +17,11 @@ function placeName(row: SightingRow): string {
   return listAtlasDistricts().find((d) => d.scopeId === row.place_id)?.name ?? row.place_id;
 }
 
-const unit = (row: SightingRow) => row.ward_name ?? (row.ward_id ? `Ward ${row.ward_id}` : null) ?? row.panchayat_name ?? row.locality;
+type WhereParts = Pick<SightingRow, "water_body_name" | "ward_name" | "ward_id" | "panchayat_name" | "locality">;
 
-function where(row: SightingRow): string | null {
+const unit = (row: WhereParts) => row.ward_name ?? (row.ward_id ? `Ward ${row.ward_id}` : null) ?? row.panchayat_name ?? row.locality;
+
+export function where(row: WhereParts): string | null {
   return [row.water_body_name, unit(row)].filter(Boolean).join(", ") || null;
 }
 

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AlertTriangle, Check, CheckCircle2, RotateCw, XCircle } from "lucide-react";
 
-import { ActionButton, NoticeBar, useNotice } from "./action-feedback";
-import { ReportCard, day } from "./report-card";
+import { ActionButton } from "./action-feedback";
+import { Readings, day } from "./report-card";
+import { btn, enter, field, muted, rule, serif } from "./ui";
 import { useCitizen } from "./use-citizen";
 import { OTHER_KEY, REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 import type { OwnReport } from "@/lib/sightings/types";
@@ -16,167 +18,230 @@ interface QueueItem extends OwnReport {
   reporter: { key: string; trusted: boolean; suspended: boolean; total: number; rejected: number };
 }
 
-const small = "rounded-md border px-3 py-1.5 text-xs font-medium";
 /** Flags for the reviewer; nothing is rejected automatically. */
 const OLD_PHOTO_DAYS = 30;
 const FAR_KM = 1;
 
 type Result = { ok: boolean; rejected?: number; error?: string };
+/** What became of a report in this session: shown in its place until the queue is refreshed. */
+type Outcome = { text: string; ok: boolean };
 
-function Item({ item, act, notify }: { item: QueueItem; act: (body: object) => Promise<Result>; notify: (text: string, ok?: boolean) => void }) {
+function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => Promise<Result>; onDone: (key: string, o: Outcome, r: Result) => void }) {
   const [pending, setPending] = useState<string | null>(null);
-  const run = async (key: string, body: object, done: (r: Result) => string) => {
-    setPending(key);
-    const r = await act(body);
-    setPending(null);
-    notify(r.ok ? done(r) : (r.error ?? "That did not work. Please try again."), r.ok);
-  };
+  const [confirm, setConfirm] = useState<"reject" | "suspend" | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [type, setType] = useState(item.subcategory ? `${item.category}:${item.subcategory}` : item.category);
   const [candidate, setCandidate] = useState(item.candidateLabel ?? "");
   const [reason, setReason] = useState("");
   const pendingFixed = item.photos.some((p) => p.kind === "fixed" && !p.published);
   const [category, subcategory] = type.split(":");
+
+  const run = async (key: string, body: object, outcome: (r: Result) => Outcome) => {
+    setPending(key);
+    setError(null);
+    const r = await act(body);
+    setPending(null);
+    if (!r.ok) return setError(r.error ?? "That did not work. Please try again.");
+    onDone(key, outcome(r), r);
+  };
+
   const exifGap =
     item.exif.lat != null && item.lat != null ? Math.hypot((item.exif.lat - item.lat) * 111, (item.exif.lng! - item.lng!) * 111 * Math.cos((item.lat * Math.PI) / 180)) : null;
-
   const ageDays = item.exif.capturedAt ? (new Date(item.createdAt).getTime() - new Date(item.exif.capturedAt).getTime()) / 86_400_000 : null;
   const flags = [
-    ageDays != null && ageDays > OLD_PHOTO_DAYS && { text: `Old photo (${Math.round(ageDays)} days)`, tone: "bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-200" },
-    exifGap != null && exifGap > FAR_KM && { text: `Far from pin (${exifGap.toFixed(1)} km)`, tone: "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200" },
-    !item.exif.capturedAt && item.exif.lat == null && { text: "No photo data", tone: "bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200" },
+    ageDays != null && ageDays > OLD_PHOTO_DAYS && { text: `Old photo: taken ${Math.round(ageDays)} days before it was sent`, tone: "text-red-700 dark:text-red-400" },
+    exifGap != null && exifGap > FAR_KM && { text: `Photo taken ${exifGap.toFixed(1)} km from the pin`, tone: "text-amber-800 dark:text-amber-300" },
+    !item.exif.capturedAt && item.exif.lat == null && { text: "No date or location in the photo", tone: muted },
   ].filter((f): f is { text: string; tone: string } => !!f);
 
+  const [first, ...rest] = item.photos.filter((p) => p.url);
+  const facts: [string, React.ReactNode][] = [
+    ["Note", item.note ?? <span className="text-slate-400">None</span>],
+    ["Photo taken", item.exif.capturedAt ? day(item.exif.capturedAt) : <span className="text-slate-400">No date in photo</span>],
+    ["Photo GPS", exifGap != null ? `${exifGap.toFixed(1)} km from the pin` : <span className="text-slate-400">None</span>],
+    [
+      "Reporter",
+      <>
+        <span className="font-mono text-xs">#{item.reporter.key.slice(0, 8)}</span> · {item.reporter.total} sent, {item.reporter.rejected} rejected,{" "}
+        {item.reporter.trusted ? "trusted" : "new"}
+        {item.reporter.suspended && <span className="font-semibold text-red-700 dark:text-red-400"> · suspended</span>}
+      </>,
+    ],
+  ];
+
   return (
-    <ReportCard report={item}>
-      {flags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {flags.map((f) => (
-            <span key={f.text} className={`rounded-full px-2 py-0.5 text-xs font-medium ${f.tone}`}>
-              {f.text}
-            </span>
-          ))}
-        </div>
-      )}
-      <div className="mt-3 flex gap-2 overflow-x-auto">
-        {item.photos.map((p, i) =>
-          p.url ? (
-            <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.url} alt={p.kind} className="h-40 rounded object-cover" />
-              <span className="text-xs text-slate-500">{p.kind}{p.published ? ", published" : ""}</span>
-            </a>
-          ) : null,
+    <article className="grid gap-6 py-8 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:gap-10">
+      <div className="space-y-2">
+        {first?.url && (
+          <a href={first.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={first.url} alt={item.label} className="aspect-[4/3] w-full object-cover" />
+          </a>
+        )}
+        {rest.length > 0 && (
+          <div className="grid grid-cols-4 gap-2">
+            {rest.map((p, i) => (
+              <a key={i} href={p.url!} target="_blank" rel="noopener noreferrer" className="block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p.url!} alt={p.kind} className="aspect-square w-full rounded-lg object-cover" />
+                <span className={`text-xs ${muted}`}>{p.kind === "fixed" ? (p.published ? "Fixed, published" : "Fixed, waiting") : "Report"}</span>
+              </a>
+            ))}
+          </div>
         )}
       </div>
-      <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 text-xs text-slate-600 dark:text-slate-400">
-        <dt>Note</dt>
-        <dd>{item.note ?? "none"}</dd>
-        <dt>Photo taken</dt>
-        <dd>{item.exif.capturedAt ? day(item.exif.capturedAt) : "no date in photo"}</dd>
-        <dt>Photo GPS</dt>
-        <dd>{exifGap != null ? `${exifGap.toFixed(1)} km from the pin` : "none"}</dd>
-        <dt>Reporter</dt>
-        <dd>
-          #{item.reporter.key.slice(0, 8)}: {item.reporter.total} reports, {item.reporter.rejected} rejected{item.reporter.trusted ? ", trusted" : ", new"}
-          {item.reporter.suspended && ", SUSPENDED"}
-        </dd>
-      </dl>
 
-      {item.reviewStatus === "received" && (
-        <div className="mt-3 space-y-2">
-          <select value={type} onChange={(e) => setType(e.target.value)} className="w-full rounded-md border border-slate-300 bg-white p-1.5 text-sm dark:border-slate-600 dark:bg-slate-900">
-            {REPORT_GROUPS.map((g) => (
-              <optgroup key={g.key} label={g.label}>
-                {g.types.map((t) => (
-                  <option key={t.key} value={`${g.key}:${t.key}`}>
-                    {t.label}
-                  </option>
-                ))}
-              </optgroup>
+      <div className="min-w-0 space-y-5">
+        <div>
+          <p className={`text-sm ${muted}`}>
+            {[item.where, item.placeName].filter(Boolean).join(", ")} · sent {day(item.createdAt)}
+          </p>
+          <h2 className="mt-1 text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">{item.label}</h2>
+        </div>
+        {flags.length > 0 && (
+          <ul className="space-y-1.5">
+            {flags.map((f) => (
+              <li key={f.text} className={`flex items-start gap-2 text-sm font-medium ${f.tone}`}>
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                {f.text}
+              </li>
             ))}
-            <option value={OTHER_KEY}>Other</option>
-          </select>
-          {category === OTHER_KEY && (
-            <input
-              value={candidate}
-              onChange={(e) => setCandidate(e.target.value)}
-              placeholder="Candidate new type (optional)"
-              className="w-full rounded-md border border-slate-300 bg-white p-1.5 text-sm dark:border-slate-600 dark:bg-slate-900"
-            />
-          )}
-          <input
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder="Reason, shown to the reporter if rejected"
-            className="w-full rounded-md border border-slate-300 bg-white p-1.5 text-sm dark:border-slate-600 dark:bg-slate-900"
-          />
-          <div className="flex flex-wrap gap-2">
-            <ActionButton
-              label="Approve"
-              busyLabel="Approving…"
-              busy={pending === "approve"}
-              disabled={pending != null}
-              className={`${small} border-emerald-700 bg-emerald-700 text-white`}
-              onClick={() =>
-                run("approve", { action: "approve", id: item.id, category, subcategory: subcategory ?? null, candidateLabel: candidate }, () => `Approved. It is now on the ${item.placeName} page.`)
-              }
-            />
-            <ActionButton
-              label="Reject"
-              busyLabel="Rejecting…"
-              busy={pending === "reject"}
-              disabled={pending != null}
-              className={`${small} border-slate-400`}
-              onClick={() =>
-                confirm("Reject this report? Its photos and note will be deleted.") &&
-                run("reject", { action: "reject", id: item.id, reason }, () => "Rejected. Its photos and note are deleted.")
-              }
-            />
-            <ActionButton
-              label="Suspend account"
-              busyLabel="Suspending…"
-              busy={pending === "suspend"}
-              disabled={pending != null}
-              className={`${small} border-red-700 text-red-700`}
-              onClick={() =>
-                confirm("Suspend this account and reject everything it has waiting?") &&
-                run("suspend", { action: "suspend", reporterKey: item.reporter.key, reason }, (r) => `Account suspended. ${r.rejected ?? 0} waiting report${r.rejected === 1 ? "" : "s"} rejected.`)
-              }
-            />
+          </ul>
+        )}
+        <dl className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
+          {facts.map(([k, v]) => (
+            <div key={k} className="contents">
+              <dt className={muted}>{k}</dt>
+              <dd className="min-w-0 break-words text-slate-800 dark:text-slate-200">{v}</dd>
+            </div>
+          ))}
+        </dl>
+        {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} />}
+
+        {item.reviewStatus === "received" && (
+          <div className={`space-y-3 border-t pt-5 ${rule}`}>
+            <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
+              Type
+              <select value={type} onChange={(e) => setType(e.target.value)} className={`${field} mt-1.5`}>
+                {REPORT_GROUPS.map((g) => (
+                  <optgroup key={g.key} label={g.label}>
+                    {g.types.map((t) => (
+                      <option key={t.key} value={`${g.key}:${t.key}`}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+                <option value={OTHER_KEY}>Other</option>
+              </select>
+            </label>
+            {category === OTHER_KEY && (
+              <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
+                Candidate new type <span className={`font-normal ${muted}`}>Optional</span>
+                <input value={candidate} onChange={(e) => setCandidate(e.target.value)} className={`${field} mt-1.5`} />
+              </label>
+            )}
+            <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
+              Reason <span className={`font-normal ${muted}`}>Shown to the reporter if not published</span>
+              <input value={reason} onChange={(e) => setReason(e.target.value)} className={`${field} mt-1.5`} />
+            </label>
+            {confirm ? (
+              <div
+                role="alertdialog"
+                aria-label={confirm === "reject" ? "Reject this report" : "Suspend this account"}
+                className={`rounded-xl border p-4 ${confirm === "suspend" ? "border-red-200 bg-red-50/70 dark:border-red-900/60 dark:bg-red-950/30" : `bg-slate-50 dark:bg-slate-900 ${rule}`} ${enter}`}
+              >
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{confirm === "reject" ? "Reject this report?" : "Suspend this account?"}</p>
+                <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                  {confirm === "reject"
+                    ? "Its photos and note are deleted. The reason above is shown to the reporter."
+                    : "Every report it has waiting is rejected, and it cannot send more."}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <ActionButton
+                    label={confirm === "reject" ? "Reject" : "Suspend account"}
+                    busyLabel={confirm === "reject" ? "Rejecting…" : "Suspending…"}
+                    busy={pending === confirm}
+                    onClick={() =>
+                      confirm === "reject"
+                        ? run("reject", { action: "reject", id: item.id, reason }, () => ({ text: "Rejected. Its photos and note are deleted.", ok: false }))
+                        : run("suspend", { action: "suspend", reporterKey: item.reporter.key, reason }, () => ({ text: "Rejected, and the account is suspended.", ok: false }))
+                    }
+                    className={btn("danger", "md")}
+                  />
+                  <button type="button" onClick={() => setConfirm(null)} disabled={pending != null} className={btn("quiet", "md")}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2">
+                <ActionButton
+                  label="Approve"
+                  busyLabel="Approving…"
+                  busy={pending === "approve"}
+                  disabled={pending != null}
+                  icon={<Check className="h-4 w-4" aria-hidden="true" />}
+                  className={btn("approve", "md")}
+                  onClick={() =>
+                    run("approve", { action: "approve", id: item.id, category, subcategory: subcategory ?? null, candidateLabel: candidate }, () => ({
+                      text: `Approved. It is now on the ${item.placeName} pages.`,
+                      ok: true,
+                    }))
+                  }
+                />
+                <button type="button" onClick={() => setConfirm("reject")} disabled={pending != null} className={btn("secondary", "md")}>
+                  Reject
+                </button>
+                <button type="button" onClick={() => setConfirm("suspend")} disabled={pending != null} className={`${btn("dangerQuiet", "md")} ml-auto`}>
+                  Suspend account
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      )}
-      {pendingFixed && (
-        <div className="mt-3 flex gap-2">
-          <ActionButton
-            label="Publish fixed photo"
-            busyLabel="Publishing…"
-            busy={pending === "publish_fixed"}
-            disabled={pending != null}
-            className={`${small} border-emerald-700 bg-emerald-700 text-white`}
-            onClick={() => run("publish_fixed", { action: "publish_fixed", id: item.id }, () => "Fixed photo published.")}
-          />
-          <ActionButton
-            label="Discard fixed photo"
-            busyLabel="Discarding…"
-            busy={pending === "discard_fixed"}
-            disabled={pending != null}
-            className={`${small} border-slate-400`}
-            onClick={() => run("discard_fixed", { action: "discard_fixed", id: item.id }, () => "Fixed photo discarded.")}
-          />
-        </div>
-      )}
-    </ReportCard>
+        )}
+        {pendingFixed && (
+          <div className={`space-y-3 border-t pt-5 ${rule}`}>
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">The reporter says it is fixed. Publish their new photo?</p>
+            <div className="flex flex-wrap gap-2">
+              <ActionButton
+                label="Publish fixed photo"
+                busyLabel="Publishing…"
+                busy={pending === "publish_fixed"}
+                disabled={pending != null}
+                className={btn("approve", "md")}
+                onClick={() => run("publish_fixed", { action: "publish_fixed", id: item.id }, () => ({ text: "Fixed photo published.", ok: true }))}
+              />
+              <ActionButton
+                label="Discard it"
+                busyLabel="Discarding…"
+                busy={pending === "discard_fixed"}
+                disabled={pending != null}
+                className={btn("secondary", "md")}
+                onClick={() => run("discard_fixed", { action: "discard_fixed", id: item.id }, () => ({ text: "Fixed photo discarded.", ok: false }))}
+              />
+            </div>
+          </div>
+        )}
+        {error && (
+          <p role="alert" className="flex items-start gap-2 text-sm font-medium text-red-700 dark:text-red-400">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            {error}
+          </p>
+        )}
+      </div>
+    </article>
   );
 }
 
-/** Reviewer queue: oldest first. The API checks the reviewer allowlist. */
+/** Reviewer queue: oldest first. The API checks the reviewer allowlist. Decisions show in place until the next refresh. */
 export function ReviewApp() {
   const { session, ready, signIn, authFetch } = useCitizen();
   const [items, setItems] = useState<QueueItem[] | null>(null);
+  const [done, setDone] = useState<Record<string, Outcome>>({});
   const [error, setError] = useState<string | null>(null);
-
   const [tick, setTick] = useState(0);
+  const [loaded, setLoaded] = useState(-1);
 
   useEffect(() => {
     if (!session) return;
@@ -186,44 +251,91 @@ export function ReviewApp() {
         if (!live) return;
         if (!res.ok) return setError(res.status === 403 ? "This account is not a reviewer." : "Could not load the queue.");
         setItems((await res.json()).data);
+        setDone({});
+        setError(null);
       })
-      .catch(() => live && setError("Could not load the queue."));
+      .catch(() => live && setError("Could not load the queue."))
+      .finally(() => live && setLoaded(tick));
     return () => {
       live = false;
     };
   }, [session, authFetch, tick]);
 
-  const [notice, notify] = useNotice();
   const act = async (body: object): Promise<Result> => {
     const res = await authFetch("/api/sightings/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => null);
     const json = res ? await res.json().catch(() => ({})) : {};
-    setTick((t) => t + 1);
     return res?.ok ? { ok: true, rejected: json.data?.rejected } : { ok: false, error: json.error ?? (res ? undefined : "No connection. Please try again.") };
   };
 
+  const settle = (item: QueueItem, key: string, outcome: Outcome) =>
+    setDone((d) => {
+      const next = { ...d, [item.id]: outcome };
+      // Suspending rejects everything else that account has waiting.
+      if (key === "suspend")
+        for (const o of items ?? []) if (o.id !== item.id && o.reporter.key === item.reporter.key && o.reviewStatus === "received") next[o.id] = { text: "Rejected: the account is suspended.", ok: false };
+      return next;
+    });
+
+  const loading = !!session && loaded !== tick;
+  const waiting = (items ?? []).filter((i) => !done[i.id]).length;
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Citizen reports: review</h1>
+    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <header className={`flex flex-wrap items-end justify-between gap-4 border-b pb-6 ${rule}`}>
+        <div>
+          <h1 className={`${serif} text-4xl leading-tight sm:text-5xl`}>Review queue</h1>
+          <p className={`mt-2 ${muted}`}>{items ? `${waiting} waiting, oldest first` : session ? "Loading…" : "Citizen reports"}</p>
+        </div>
+        {session && (
+          <button type="button" onClick={() => setTick((t) => t + 1)} disabled={loading} className={btn("secondary", "md")}>
+            <RotateCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
+            Refresh
+          </button>
+        )}
+      </header>
       {!ready ? null : !session ? (
-        <button type="button" onClick={signIn} className="mt-4 rounded-lg bg-cyan-700 px-4 py-2 text-sm font-semibold text-white">
+        <button type="button" onClick={signIn} className={`${btn("primary")} mt-8`}>
           Sign in
         </button>
       ) : (
         <>
-          {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{items ? `${items.length} waiting` : "Loading"}</p>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className={`max-w-[75ch] border-b py-4 text-sm ${muted} ${rule}`}>
             Reject a photo that shows a face, a vehicle number plate, or a house name or number, and any note or reading that names a
             person. For a water test, check the values against the meter or kit in the photo.
           </p>
-          <div className="mt-4 space-y-4">
-            {items?.map((item) => (
-              <Item key={item.id} item={item} act={act} notify={notify} />
-            ))}
-          </div>
+          {error && (
+            <p role="alert" className="mt-6 text-sm font-medium text-red-700 dark:text-red-400">
+              {error}
+            </p>
+          )}
+          {items && waiting === 0 && Object.keys(done).length === 0 && <p className={`py-12 text-center ${muted}`}>Nothing waiting. New reports appear here, oldest first.</p>}
+          <ul className={`divide-y ${rule}`}>
+            {items?.map((item) => {
+              const o = done[item.id];
+              return (
+                <li key={item.id}>
+                  {o ? (
+                    <div className={`flex items-start gap-3 py-5 text-sm ${enter}`} role="status">
+                      {o.ok ? (
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                      ) : (
+                        <XCircle className="h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
+                      )}
+                      <div>
+                        <p className="font-medium text-slate-900 dark:text-slate-100">{o.text}</p>
+                        <p className={muted}>
+                          {item.label} · {[item.where, item.placeName].filter(Boolean).join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <Item item={item} act={act} onDone={(key, outcome) => settle(item, key, outcome)} />
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </>
       )}
-      <NoticeBar notice={notice} />
     </main>
   );
 }
