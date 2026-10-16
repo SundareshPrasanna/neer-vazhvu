@@ -1,0 +1,88 @@
+import type { Channel } from "./routing/types";
+import type { CaseStatus, ReviewStatus } from "./status";
+
+/** Mirrors supabase/migrations/062_citizen_reports.sql. */
+export interface SightingRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  reporter_id: string;
+  place_kind: "city" | "district";
+  place_id: string;
+  state_code: string;
+  corporation_id: string | null;
+  ward_id: string | null;
+  ward_name: string | null;
+  block_code: string | null;
+  panchayat_code: string | null;
+  panchayat_name: string | null;
+  water_body_id: string | null;
+  water_body_name: string | null;
+  lat: number;
+  lng: number;
+  location_accuracy_m: number | null;
+  category: string;
+  subcategory: string | null;
+  note: string | null;
+  candidate_label: string | null;
+  authority_role: string | null;
+  review_status: ReviewStatus;
+  case_status: CaseStatus | null;
+  reviewed_at: string | null;
+  exif_captured_at: string | null;
+  exif_lat: number | null;
+  exif_lng: number | null;
+}
+
+export interface PhotoRow {
+  id: string;
+  sighting_id: string;
+  kind: "report" | "fixed";
+  storage_path: string;
+  public_path: string | null;
+  ordinal: number;
+}
+
+export interface EventRow {
+  sighting_id: string;
+  created_at: string;
+  actor_role: "reporter" | "reviewer" | "system";
+  event: string;
+  authority_body: string | null;
+  reference: string | null;
+  reason: string | null;
+}
+
+export interface Handler {
+  body: string;
+  acronym?: string;
+  channels: Channel[];
+  source: string;
+}
+
+/** Safe for anyone: no reporter, no note, no exact point for private types. */
+export interface PublicReport {
+  id: string;
+  createdAt: string;
+  placeKind: "city" | "district";
+  placeId: string;
+  placeName: string;
+  where: string | null;
+  category: string;
+  subcategory: string | null;
+  label: string;
+  caseStatus: CaseStatus | null;
+  lat: number | null;
+  lng: number | null;
+  photoUrls: string[];
+  events: { event: string; at: string; authorityBody: string | null }[];
+  handler: Handler | null;
+}
+
+/** What the reporter sees of their own report. */
+export interface OwnReport extends PublicReport {
+  reviewStatus: ReviewStatus;
+  rejectReason: string | null;
+  references: { authorityBody: string | null; reference: string; at: string }[];
+  nationalChannels: Channel[];
+}

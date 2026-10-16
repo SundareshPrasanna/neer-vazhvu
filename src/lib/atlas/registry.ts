@@ -40,6 +40,10 @@ export interface AtlasDistrict {
   /** Preview gate, the Surat/Pune pattern: false hides the routes and the
    *  landing card link until a named consumer exists. */
   published: boolean;
+  /** [west, south, east, north] around every Gram Panchayat in the directory:
+   *  lets a citizen report find its district without loading every directory.
+   *  The registry test prints the right value when it is missing or wrong. */
+  bbox?: [number, number, number, number];
   /** Where a CURRENT irrigation-by-source reading comes from in this state,
    *  named on the page whether or not the artifact is served: the label of
    *  the report that carries it, and the sentence to print when it is not
@@ -108,6 +112,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     basin: { basinId: "cauvery-tn", subBasinKey: "116", subBasinName: "Cauvery Delta" },
     hasCuratedBriefs: true,
     published: true,
+    bbox: [78.771, 10.129, 79.578, 11.189],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -118,6 +123,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [78.157, 10.29, 79.018, 11.414],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -128,6 +134,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     basin: { basinId: "cauvery-tn", subBasinKey: "129", subBasinName: "Tirumanimuttar" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.641, 11.311, 78.847, 11.984],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -137,6 +144,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "The Palar tannery belt without a canal: every taluk is over-exploited and all irrigation is from wells.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [78.405, 12.307, 78.886, 12.889],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -148,6 +156,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     deepDive: { basinId: "erode-rivers", label: "Rivers, groundwater and industry on one map" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [76.869, 11.017, 77.937, 11.898],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -158,6 +167,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.678, 11.007, 78.477, 11.603],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -168,6 +178,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     basin: { basinId: "cauvery-tn", subBasinKey: "113", subBasinName: "Amaravathi" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.745, 10.558, 78.593, 11.102],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -178,6 +189,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     basin: { basinId: "cauvery-tn", subBasinKey: "126", subBasinName: "Noyyal" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.056, 10.411, 77.898, 11.357],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -187,6 +199,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "The Palar's fort town with no canal and no tank irrigation: 5 of 6 taluks are over-exploited, K.V. Kuppam at 151% of its recharge, and every hectare is watered from wells.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [78.643, 12.646, 79.3, 13.177],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -196,6 +209,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "The Palar below Vellore with no canal: 96% of irrigation is from wells and 4% from tanks, Arcot taluk is over-exploited at 113% of its recharge and Walajapet is critical.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [79.171, 12.624, 79.796, 13.215],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -205,6 +219,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "Under the Palani hills: 7 of 10 taluks are over-exploited, Gujiliamparai at 159% of its recharge, and 73% of irrigation is from open wells.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.281, 10.022, 78.344, 10.841],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -214,6 +229,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "The district north of Chennai has no canal irrigation: 80% of its irrigated land is on tube and bore wells and 11.5% on tanks, 6 of 9 taluks read safe and Avadi is the highest at 83% of its recharge.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [79.278, 12.94, 80.354, 13.572],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -224,6 +240,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     deepDive: { basinId: "krishnagiri-rivers", label: "Rivers, groundwater and industry on one map" },
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.482, 12.151, 78.677, 12.896],
     irrigationCurrentSource: TN_IRRIGATION_SOURCE,
   },
   {
@@ -233,6 +250,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "Koyna country with a dry eastern edge: the same district holds talukas at 20% and talukas at 76% of their groundwater.",
     hasCuratedBriefs: true,
     published: true,
+    bbox: [73.528, 17.085, 74.912, 18.188],
     irrigationCurrentSource: {
       label: "District Socio-Economic Review",
       nextStep:
@@ -248,6 +266,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "The tanker district: 97 tankers were running in monsoon August 2026 while the assessment still reads semi-critical - the scarcity register sees what the annual number cannot.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [73.61, 18.325, 75.561, 20.0],
     irrigationCurrentSource: MH_IRRIGATION_GAP,
   },
   {
@@ -257,6 +276,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "Every taluka is within its groundwater; the water story here is the flood - the Krishna-Panchganga backwater that submerged the district in 2019 and 2021.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [73.707, 15.736, 74.706, 17.138],
     irrigationCurrentSource: MH_IRRIGATION_GAP,
   },
   {
@@ -266,6 +286,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     hook: "Tank country east of Bengaluru: all 6 taluks draw more groundwater than recharges, Mulabagilu at 213%, and 79.8% of households are recorded with a tap.",
     hasCuratedBriefs: false,
     published: true,
+    bbox: [77.849, 12.77, 78.581, 13.593],
     irrigationCurrentSource: KA_IRRIGATION_GAP,
     waterBodiesGapNote:
       "The First Census of Water Bodies Karnataka return on data.gov.in lists 1,304 rows for Kolar, but each row's id carries a local serial rather than the Census 2011 village code the Panchayat join reads, and Mulbagal taluk has a single row, so nothing is counted here until a reviewed join exists.",

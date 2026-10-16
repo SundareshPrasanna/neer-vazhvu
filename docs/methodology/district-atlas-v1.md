@@ -13,6 +13,8 @@ This note is the as-built record of how a district is onboarded, what each artif
 
 `src/lib/atlas/registry.ts` is the list of Atlas districts. Each entry carries the slug, the NVDM scope id (`tn-salem`, `mh-satara`), an optional basin join (Thanjavur, Tiruchirappalli and Salem hang off `cauvery-tn` sub-basins), the one-line hook the landing card shows, and `published`. A district ships `published: false` first: its data can be released to the corpus and its pages reviewed on a dev server (`NEXT_PUBLIC_PREVIEW_DISTRICTS=<slug>`) while the routes 404 in production. Flipping `published: true` is what activates the landing card, the sitemap entries and the freshness checks - usually folded into the corpus pin PR once review is done.
 
+Publishing a district also opens it to citizen reports (`/for-citizens`): a report whose GPS point falls in the district binds to its nearest Gram Panchayat from the served directory. Before flipping `published: true`, add the district under its scope id to its state's file in `src/lib/sightings/routing/states/` with the rural bodies for each report role (village panchayat, block, the state's rural water agency, the tank custodian with its size rule, the pollution control board office, the Collector). The onboarding contract (`src/lib/cities/onboarding-contract.test.ts`) fails for a published district without them.
+
 ## 2. Adapters
 
 Two identity adapters exist. A district's `pipeline-inputs/atlas/<state>/<slug>/refresh-plan.json` names its adapter, its register ids, and `expectedCounts` for every register - a fetch that returns a different count fails loudly instead of shipping a shorter directory.

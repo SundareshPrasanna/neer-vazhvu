@@ -31,6 +31,7 @@ import {
   INDUSTRIAL_PROXIMITY_COMPONENT_THRESHOLD,
 } from "@/lib/insights/constants";
 import { assessCensusCapacity } from "@/lib/water-bodies/census-capacity";
+import { PlaceReports } from "@/components/sightings/place-reports";
 
 // recharts loads with the chart when a panel shows it, not with the page.
 const WaterBodyHistoryChart = dynamic(
@@ -58,6 +59,8 @@ interface UnifiedDetailPanelProps {
    *  Halsoor Cantonment context, Sankey-Col-Sankey-1882 etc.) inline
    *  when the clicked OSM body's name matches a lost-bodies entry. */
   lostNarrative?: LostNarrativeEntry | null;
+  /** For the citizen-reports section; absent on pages with no city. */
+  cityId?: string;
   onClose: () => void;
 }
 
@@ -640,7 +643,7 @@ function RestorationSection({ wb }: { wb: ScoredWaterBody }) {
   );
 }
 
-export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, cityHasRestorationCohort, onClose }: UnifiedDetailPanelProps) {
+export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, cityHasRestorationCohort, cityId, onClose }: UnifiedDetailPanelProps) {
   const { t, language } = useLanguage();
   const closeAria = t("common.close_panel");
   const wardLookup = useWardLookup();
@@ -854,6 +857,12 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
                 {lostNarrative.note}
               </p>
             )}
+          </div>
+        )}
+
+        {cityId && props.osm_id != null && (
+          <div className="px-4">
+            <PlaceReports place={cityId} body={props.osm_id} />
           </div>
         )}
 

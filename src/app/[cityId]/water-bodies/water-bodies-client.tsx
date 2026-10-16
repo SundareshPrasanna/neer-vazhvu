@@ -330,6 +330,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
         restorationData={selectedRestoration}
         cityHasRestorationCohort={curatedCohort}
         lostNarrative={selectedLostNarrative}
+        cityId={cityId}
         onClose={close}
       />
     </BottomSheet>

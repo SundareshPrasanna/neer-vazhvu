@@ -6,7 +6,7 @@
  * A failure names the city and what it is missing.
  */
 import { strict as assert } from "node:assert";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { scopeCountry, scopeIds, scopeKind } from "../scopes";
@@ -15,6 +15,10 @@ import { riversVariant } from "./data-paths";
 import { RIVERS_CONTENT } from "../../content/rivers";
 import { FLOOD_CONTENT } from "../../content/flood";
 import { STORY_TAGLINES } from "../../content/story-taglines";
+import { listPublishedAtlasDistricts } from "../atlas/registry";
+import { resolveAuthority } from "../sightings/routing";
+import { STATE_ROUTING } from "../sightings/routing/states";
+import { AUTHORITY_ROLES } from "../sightings/taxonomy";
 
 const places: PlaceConfig[] = CITY_IDS.map((id) => {
   const config = tryGetPlaceConfig(id);
@@ -97,5 +101,46 @@ test("the scope registry, the city configs and the seeded cities table agree", (
   }
   for (const id of seeded) {
     assert.ok(scoped.includes(id), `${id}: seeded in supabase/migrations but not a city or region scope`);
+  }
+});
+
+// Citizen reports tell the reporter who handles each kind of report: src/lib/sightings/routing/states.
+test("every enabled city and published district names a body for each kind of citizen report", () => {
+  const targets = [
+    ...places.filter((p) => p.enabled !== false).map((p) => ({
+      placeId: p.cityId,
+      stateCode: p.stateCode,
+      placeKind: "city" as const,
+      corps: (p.corporations ?? []).map((c) => c.corporationId),
+    })),
+    ...listPublishedAtlasDistricts().map((d) => ({ placeId: d.scopeId, stateCode: d.stateCode, placeKind: "district" as const, corps: [] })),
+  ];
+  for (const { corps, ...t } of targets) {
+    const routed = Object.keys(STATE_ROUTING[t.stateCode]?.places[t.placeId]?.corporations ?? {});
+    const all = [...new Set([...corps, ...routed])];
+    for (const corporationId of all.length ? all : [null]) {
+      for (const role of AUTHORITY_ROLES) {
+        assert.ok(
+          resolveAuthority(role, { ...t, corporationId }).authority,
+          `${t.placeId}${corporationId ? `/${corporationId}` : ""}: no body for ${role}`,
+        );
+      }
+    }
+  }
+});
+
+// A report's GPS point finds its district by this box before any directory is fetched.
+test("every published district has a bbox around all its Gram Panchayats", () => {
+  for (const d of listPublishedAtlasDistricts()) {
+    const file = join(process.cwd(), "public", "data", "atlas", d.stateSlug, d.slug, "directory.json");
+    if (!existsSync(file)) {
+      assert.ok(d.bbox, `${d.slug}: no bbox in src/lib/atlas/registry.ts`);
+      continue;
+    }
+    const boxes = (JSON.parse(readFileSync(file, "utf8")) as { panchayats: { boundary: { bbox: number[] } | null }[] }).panchayats.flatMap((p) => (p.boundary ? [p.boundary.bbox] : []));
+    const want = [Math.min(...boxes.map((b) => b[0])), Math.min(...boxes.map((b) => b[1])), Math.max(...boxes.map((b) => b[2])), Math.max(...boxes.map((b) => b[3]))];
+    const hint = `${d.slug}: set bbox: [${want.map((v, i) => (v + (i < 2 ? -0.005 : 0.005)).toFixed(3)).join(", ")}]`;
+    assert.ok(d.bbox, hint);
+    assert.ok(d.bbox[0] <= want[0] && d.bbox[1] <= want[1] && d.bbox[2] >= want[2] && d.bbox[3] >= want[3], hint);
   }
 });

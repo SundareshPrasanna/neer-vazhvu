@@ -38,6 +38,7 @@ import {
   panchayatHref,
   stateHref,
 } from "@/lib/atlas/registry";
+import { PlaceReports } from "@/components/sightings/place-reports";
 
 const GAP_REASONS = [
   {
@@ -788,6 +789,8 @@ export default async function AtlasPanchayatPage({ params }: RouteParams) {
                   </ul>
                 </Chapter>
               ) : null}
+
+              <PlaceReports place={entry.scopeId} panchayat={panchayat.lgdCode} />
 
               <div className="py-6 text-sm">
                 <Link href={basePath} className="font-medium text-cyan-700 dark:text-cyan-400 hover:underline">
