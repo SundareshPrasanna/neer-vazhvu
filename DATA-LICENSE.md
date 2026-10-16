@@ -93,6 +93,20 @@ If you are assessing reuse, read the determination's `reasoning` and decide for
 yourself whether you accept it. It is our judgement, recorded openly so it can
 be disagreed with, not a licence anyone granted us.
 
+## The commercial line
+
+Material built on a non-commercial input is published only in the free public
+view of this platform. It is never included in a paid product, report, data
+licence or service. Every input to a paid output must first pass:
+
+```sh
+python3 scripts/nvdm-encumbrance-report.py --paid-check <path>...
+```
+
+The check passes only `gov-attribution` and `clean-open` artefacts, so it is
+stricter than the non-commercial rule: restricted, ShareAlike, third-party and
+unproven inputs are held back too.
+
 ## Notable restricted inputs
 
 Not exhaustive. These are the inputs whose terms most change what a reuser must
@@ -102,7 +116,7 @@ date.
 | Source | Terms | What they require |
 |---|---|---|
 | `fabdem-dem` (FABDEM, Fathom / Univ. of Bristol) | CC BY-NC-SA 4.0 | Non-commercial use only, **and** ShareAlike: anything built on it must be redistributed under the same licence. Reaches the whole `public/data/cascade/` family and the elevation-band layers. Carries the Copernicus notice below. |
-| `hydrosheds-basins` (HydroBASINS, WWF) | Bespoke WWF licence, HydroSHEDS v1 Appendix A | Not an open licence. Free for non-commercial and commercial use (tech doc s.7.1), but no distribution "as a stand-alone product" (s.2.1.2), mandatory Exhibit B attribution (s.2.2, reproduced below), and WWF asserts ownership of modifications "however developed" (s.3). |
+| `hydrosheds-basins` (HydroBASINS, WWF) | Bespoke WWF licence, HydroSHEDS v1 Appendix A | Not an open licence. Free for non-commercial and commercial use (tech doc s.7.1), but no distribution "as a stand-alone product" (s.2.1.2), mandatory Exhibit B attribution (s.2.2, reproduced below), and WWF asserts ownership of modifications "however developed" (s.3). The report therefore buckets it restricted, not non-commercial. |
 | `merit-hydro` (MERIT Hydro, Univ. of Tokyo) | Dual: CC BY-NC 4.0 **or** ODbL 1.0 | Under ODbL, commercial use is permitted but derived data must be published under ODbL. Which arm this repo's trace used is unrecorded. |
 | `tngcc-ceew-basin-risk` (CEEW + TN Climate Change Mission) | CC BY-NC 4.0 | Non-commercial only. |
 | `iisc-groundwater-outlook` (IISc, via OpenCity) | CC BY-NC-SA 4.0 | Non-commercial **and** ShareAlike: anything built on it must be redistributed under the same licence. The OpenCity package metadata says CC BY-NC 2.0, but the PDF resource itself carries `CC-BY-NC-SA 4.0`, and the resource licence governs. Feeds the Bengaluru groundwater layer. |
