@@ -32,10 +32,12 @@ def ms(day: str, hour: int = 6) -> int:
 
 
 def reading(level, storage, ts, inflow=1400.0, outflow=625.0):
+    # Every reading since 8 Mar 2024 carries levelSource 42.
     return {
         "level": level,
         "storage": storage,
         "levelStorageEventGenTS": ts,
+        "levelSource": 42,
         "inflow": inflow,
         "outflow": outflow,
     }
@@ -168,3 +170,23 @@ def test_newest_partial_day_is_held_back_until_every_dam_reports():
     # inflow/outflow are INTEGER columns in reservoir_daily_v2.
     assert (raiwada["inflow_cusecs"], raiwada["outflow_cusecs"]) == (140, 140)
     assert raiwada["storage_tmc"] == 0.99
+
+
+def test_only_the_current_level_source_is_kept_after_its_start():
+    def src(level, storage, day, source):
+        return {**reading(level, storage, ms(day)), "levelSource": source}
+
+    p = payload(
+        {},
+        {
+            "20210601": src(105.0, 1.2, "2021-06-01", 4),  # before the switch: kept
+            "20230501": src(105.0, 1.2, "2023-05-01", 4),  # the other record: dropped
+            "20230502": src(105.1, 1.21, "2023-05-02", 42),  # the current record: kept
+        },
+    )
+    readings, counts, rejected = parse_timeseries(
+        p, VISAKHAPATNAM_DAMS, date(2021, 1, 1), date(2023, 12, 31)
+    )
+    assert sorted(readings["raiwada"]) == ["2021-06-01", "2023-05-02"]
+    assert counts["rejected_superseded_level_source"] == 1
+    assert rejected[0]["date"] == "2023-05-01"

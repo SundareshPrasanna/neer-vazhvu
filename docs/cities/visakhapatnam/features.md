@@ -1,7 +1,7 @@
 # Visakhapatnam - Features
 
-City twelve and the first in Andhra Pradesh, preview-gated. Sources behind each surface:
-`data-sources.md`. Measured depth against Chennai and Bengaluru: `parity-scorecard.md`.
+City twelve and the first in Andhra Pradesh, live since 16 October 2026. Sources behind each
+surface: `data-sources.md`. Measured depth against Chennai and Bengaluru: `parity-scorecard.md`.
 
 ## What kind of city this is
 
@@ -31,7 +31,7 @@ Low Erosion.
 
 | Route | Renderer | What it shows |
 |---|---|---|
-| `/visakhapatnam` | `heroMode: 'cauvery-pumping'` (the supply-overview hero) | Headline: "A port with no large river, drawing on the Godavari and Yeleru from up to 190 km away". GVMC's nine sources as CGWB prints them (about 380 MLD available; the same quantities since CGWB's June 2022 report, which said GVMC was able to draw 345.5 MLD; the artifact also records, in a note the page does not display, the 334.03 MLD present supply in the Chief Secretary's report of 10.07.2024 in NGT Principal Bench OA 606/2018, Annexure-VI, and lists that report in its sources); the canal's tail-end split from GVMC's 11 March 2021 sheet; treatment capacity and litres a person from the draft Green City Action Plan. Six reservoir cards: Yeleru, Raiwada, Thatipudi and Meghadrigedda on APWRIMS daily live storage, Mudasarlova and Gambheeram with no feed, each card saying why. Storage history (three years by default; the archive reaches 2012). IMD gridded rainfall, with Open-Meteo filling the months after IMD's last |
+| `/visakhapatnam` | `heroMode: 'cauvery-pumping'` (the supply-overview hero) | Headline: "A port with no large river, drawing on the Godavari and Yeleru from up to 190 km away". GVMC's nine sources as CGWB prints them (about 380 MLD available; the same quantities since CGWB's June 2022 report, which said GVMC was able to draw 345.5 MLD; the artifact also records, in a note the page does not display, the 334.03 MLD present supply in the Chief Secretary's report of 10.07.2024 in NGT Principal Bench OA 606/2018, Annexure-VI, and lists that report in its sources); the canal's tail-end split from GVMC's 11 March 2021 sheet; treatment capacity and litres a person from the draft Green City Action Plan. Six reservoir cards: Yeleru, Raiwada, Thatipudi and Meghadrigedda on APWRIMS daily live storage, Mudasarlova and Gambheeram with no feed, each card saying why. Storage history (three years by default; the archive reaches 2012; 16,098 readings at cutover). Thatipudi and Raiwada carry two level records from late 2021 to 7 March 2024, which show as one-day jumps and an overnight step on 8 March 2024; the chart note and the About page's Data quality say so. IMD gridded rainfall, with Open-Meteo filling the months after IMD's last |
 | `/visakhapatnam/groundwater` | shared mandal choropleth + well overlay | 11 IN-GRES mandals on IN-GRES's own polygons, editions 2023-24 to 2025-26 (the map colours the 2025-26 IN-GRES edition, newer than CGWB's December 2025 report; 2024-25 matches CGWB's Dynamic Ground Water Resources of Andhra Pradesh 2025 for these mandals); wells from APWRIMS recorders and the AP Ground Water Department's manual monthly record, as monthly mean depth below ground, recorders and manual wells kept as separate series |
 | `/visakhapatnam/water-bodies` | shared map | 1,088 OpenStreetMap polygons (212 named) over GVMC and about 5 km around it; ground-height bands from FABDEM with the sea removed |
 | `/visakhapatnam/rivers` | shared `RiversClient` | Three channels drawn from OpenStreetMap: the Meghadri Gedda, the Gosthani and the Yeleru Left Main Canal, whose panel calls it a supply canal, not a river. No river tally in the header. Four CPCB station markers on them (the Meghadrigedda and Thatipudi reservoirs, the Naval Dockyard creek and the canal near Pharma City). Clicking a channel opens its panel (the Meghadri Gedda's opens on load): a status badge worked out from the latest readings at its stations, a CPCB class tile reading "Not assessed", CPCB's annual minimum and maximum readings at its stations, 2019-2024; APPCB's COMAPS annual averages where the Meghadri Gedda and the Gosthani meet the sea, and its March 2025 samples on all three, quoted as text in the notes; and the dated official events on that channel, six in all (four on the Meghadri Gedda, one each on the Gosthani and the canal). Two more markers, the steel plant's recommended marine outfall point and the JN Pharma City CETP, show a name and type on hover and open no panel. CETP compliance counts from APPCB's consent orders, committee minutes and reports to the NGT are published as data (`cetp-compliance-visakhapatnam.json`) but not shown on the page, because the shared compliance card is written for Surat's per-sample record |
@@ -72,23 +72,23 @@ Low Erosion.
 
 ## Launch state
 
-`enabled: false`; the city is reachable only with `NEXT_PUBLIC_PREVIEW_CITIES=visakhapatnam`. In the
-branch: twelve routes, the enveloped artifacts and their producers, the APWRIMS reservoir scraper and
-its test, and migrations 057 (city seed, disabled) and 058 (the six water sources). Before cutover:
+Live since 16 October 2026 (`enabled: true`, `059_visakhapatnam_enable.sql`). At cutover:
 
-1. Apply migrations 057 and 058.
-2. Backfill `reservoir_daily_v2` from APWRIMS from 2012
-   (`scrape_apwrims_reservoirs.py --city visakhapatnam --backfill-from 2012-01-01 --supabase`).
-   The reservoir cards and the history chart read that table, so until the backfill runs they have
-   nothing to show.
-3. Schedule the daily run. Whether GitHub's runners can reach APWRIMS has not been tested; if they
-   cannot, it joins the local scheduled job, as Gujarat's dam report did.
-4. The data-repo release, branched off data `a2c331bf` (`corpus-2026-10-15-ahmedabad-rich-bodies`,
-   data#92). That is the release `corpus.lock` pins on main, and on this branch since its rebase
-   onto main `22799530`. It sits on `274ce6d9` (`corpus-2026-10-15-ahmedabad-commitments-review`,
-   data#91), so building on it keeps both Ahmedabad releases in production, the Kankaria and
-   Chandola deep-zoom files included; a release built on `274ce6d9` itself would drop those 16
-   files. If main's pin moves again before the release, build on the new pin. Then pin
-   `corpus.lock` to the new release. The city adds 16 files under `data` and 5 under `geojson`, so
-   `expected_files` moves from 2028/169 to 2044/174.
-5. A browser sweep of all twelve routes against a control city.
+- Twelve routes on main (#461), with the data-repo release `corpus-2026-10-16-visakhapatnam`
+  (data#93, `958244a0`) pinned in `corpus.lock` at 2044/174 files.
+- Migrations 057 (city seed, disabled) and 058 (the six water sources) applied to production on
+  16 October 2026. 059 flips the `enabled` column, which no code reads, and is applied after the
+  switch-on merges.
+- `reservoir_daily_v2` holds the APWRIMS archive from 1 January 2012: 16,098 readings at cutover
+  (Yeleru 5,255, Raiwada 3,768, Thatipudi 3,352, Meghadrigedda 3,723), with the readings that fail
+  the scraper's checks left out. For Thatipudi from 7 September 2021 and Raiwada from 13 December
+  2021, only the level record APWRIMS has carried alone since 8 March 2024 is kept, so both have
+  gaps until March 2024.
+- The daily refresh runs as step 7 of the local scheduled job (12:00 IST), the same shape as the
+  Gujarat dam report's step 6: it re-reads the last 7 days, so a late reading or a missed day fills
+  in on the next run, and it commits `visakhapatnam-dam-storage.json`. The provisional rainfall file
+  is refreshed with every other city's by the daily rainfall workflow.
+- A browser sweep of every route against Bengaluru, in live mode: the twelve routes render, `my-ward`
+  and `tanker` return 404 and `climate-risk` shows the shared not-available page, as on other live
+  cities without them. The freshness check reads all four reservoir feeds as fresh.
+- The 7 commitments that read UNVERIFIED ship labelled unverified, by decision, as Ahmedabad's did.

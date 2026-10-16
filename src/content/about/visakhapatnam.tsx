@@ -24,10 +24,6 @@ export default function VisakhapatnamAbout({ slot, cityId, fallback = null }: Ci
   const { t } = useLanguage();
   const config = getPlaceConfig(cityId);
   const cityName = config.displayName;
-  // Preview-only copy about the unloaded reservoir database. The About route
-  // has no reservoir data to gate on, and enabled flips at launch, so this
-  // copy never reaches a live page.
-  const inPreview = config.enabled === false;
   switch (slot) {
     case "water-sources": {
       const fed = config.waterSources.filter((s) => s.hasPublicFeed !== false).length;
@@ -118,13 +114,6 @@ export default function VisakhapatnamAbout({ slot, cityId, fallback = null }: Ci
               marked provisional.
             </li>
           </ul>
-          {inPreview && (
-            <p className={P}>
-              While {cityName} is in preview, the reservoir cards and the history chart read a database that has
-              not yet been loaded with the APWRIMS archive, so they show no reading and the page is marked as
-              waiting for its first daily ingestion.
-            </p>
-          )}
         </SubSection>
       );
     case "pages-1":
@@ -663,15 +652,22 @@ export default function VisakhapatnamAbout({ slot, cityId, fallback = null }: Ci
               land just outside GVMC included. They are bands, not spot heights.
             </p>
           </Gap>
-          {inPreview && (
-            <Gap title="Reservoir cards are blank while the city is in preview">
-              <p>
-                The dashboard&apos;s reservoir cards and history chart read the platform&apos;s database, which has
-                not yet been loaded with the APWRIMS archive. Until it is, they show no reading. The facts
-                page&apos;s reservoir card reads a file taken from the same feed; the card gives its date.
-              </p>
-            </Gap>
-          )}
+          <Gap title="Thatipudi and Raiwada: one of two level records kept, late 2021 to March 2024">
+            <p>
+              From late 2021 to 7 March 2024 the APWRIMS archive carries two level records for Thatipudi and
+              Raiwada, and the published reading moves between them from day to day. Thatipudi&apos;s two sit
+              about 4.4 m apart on most days; Raiwada&apos;s mostly agree but part by up to 3.5 m on some days in
+              2023. Since 8 March 2024 the feed has carried only one of them, and we keep that one from its first
+              reading: 7 September 2021 for Thatipudi and 13 December 2021 for Raiwada. Days that carry only the
+              other record are left out, so from those dates to 7 March 2024 Thatipudi has a reading on 169 of 913
+              days and Raiwada on 304 of 816, and the history chart has gaps there. Earlier readings are mostly
+              from the other record. At Thatipudi that shows as a step: its live storage goes from 0.77 TMC
+              on 6 September 2021 to 1.65 TMC the next day, where the record changes, so its years before then are
+              not directly comparable with the years after. We have not found which record the department treats
+              as correct; the one we keep is the one it publishes today. Yeleru&apos;s and Meghadrigedda&apos;s two
+              records agree to within half a metre, and their readings are shown as published.
+            </p>
+          </Gap>
         </SubSection>
       );
     case "limitations":
@@ -691,7 +687,6 @@ export default function VisakhapatnamAbout({ slot, cityId, fallback = null }: Ci
             <li>
               Reservoir readings are daily and published by the state for four of the six reservoirs; Mudasarlova
               and Gambheeram are not in the feed.
-              {inPreview && " While the city is in preview, the dashboard's cards stay blank until the database is loaded."}
             </li>
             <li>
               Groundwater is assessed by mandal, not by ward, and no trend crosses the 2022 district split or the

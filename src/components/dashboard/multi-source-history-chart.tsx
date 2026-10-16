@@ -81,6 +81,11 @@ const SOURCE_COLOR: Record<string, string> = {
   tansa:           "#d97706",
   vihar:           "#0891b2",
   tulsi:           "#dc2626",
+  // Visakhapatnam: the hash fallback gave Raiwada and Thatipudi one colour.
+  yeleru:          "#2563eb",
+  raiwada:         "#d97706",
+  thatipudi:       "#059669",
+  meghadrigedda:   "#7c3aed",
 };
 
 // Summed total line. Dark slate in light mode reads as a strong, near-black
