@@ -1,7 +1,7 @@
 import type { Channel } from "@/lib/sightings/routing/types";
 import type { Handler } from "@/lib/sightings/types";
 
-function ChannelLink({ c }: { c: Channel }) {
+function ChannelLink({ c, explain }: { c: Channel; explain: boolean }) {
   const address = c.url?.startsWith("mailto:") ? c.url.slice(7) : null;
   const text = c.phone ? `${c.label}: ${c.phone}` : address ? `${c.label}: ${address}` : c.label;
   const href = c.url ?? (c.phone ? `${c.kind === "whatsapp" ? "https://wa.me/91" : "tel:"}${c.phone.replace(/\D/g, "").slice(-10)}` : undefined);
@@ -15,7 +15,27 @@ function ChannelLink({ c }: { c: Channel }) {
         text
       )}
       {c.tracked && <span className="text-slate-500 dark:text-slate-400"> (gives a reference number)</span>}
+      {explain && c.expect && (
+        <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-400">
+          {c.expect}
+          {c.needsPhone && " Asks for your mobile number."}
+        </p>
+      )}
     </li>
+  );
+}
+
+/** Channels with each system's "what to expect" shown once, under its first channel. */
+function Channels({ channels }: { channels: Channel[] }) {
+  const seen = new Set<string>();
+  return (
+    <ul className="mt-1 space-y-1.5 text-slate-700 dark:text-slate-300">
+      {channels.map((c) => {
+        const explain = !c.system || !seen.has(c.system);
+        if (c.system) seen.add(c.system);
+        return <ChannelLink key={c.label + (c.phone ?? c.url ?? "")} c={c} explain={explain} />;
+      })}
+    </ul>
   );
 }
 
@@ -29,26 +49,20 @@ export function HandlerCard({ handler, national = [] }: { handler: Handler; nati
         {handler.acronym && ` (${handler.acronym})`}
       </p>
       {handler.channels.length > 0 ? (
-        <ul className="mt-2 space-y-1 text-slate-700 dark:text-slate-300">
-          {handler.channels.slice(0, 5).map((c) => (
-            <ChannelLink key={c.label + (c.phone ?? c.url ?? "")} c={c} />
-          ))}
-        </ul>
+        <Channels channels={handler.channels.slice(0, 5)} />
       ) : (
         <p className="mt-2 text-slate-600 dark:text-slate-400">This body publishes no complaint channel.</p>
       )}
       {national.length > 0 && (
         <>
           <p className="mt-3 text-slate-500 dark:text-slate-400">Also open to everyone</p>
-          <ul className="mt-1 space-y-1 text-slate-700 dark:text-slate-300">
-            {national.map((c) => (
-              <ChannelLink key={c.label} c={c} />
-            ))}
-          </ul>
+          <Channels channels={national} />
         </>
       )}
-      <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-        Filed it? Add the reference number under My reports so its progress stays on the record.{" "}
+      <p className="mt-3 text-xs text-slate-600 dark:text-slate-400">
+        Filing is your choice. A department you file with will know who you are, since most ask for your mobile number; your report on
+        Neer Vazhvu stays anonymous either way. If you file, add the reference number under My reports so its progress stays on the
+        record.{" "}
         <a href={handler.source} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
           Source
         </a>

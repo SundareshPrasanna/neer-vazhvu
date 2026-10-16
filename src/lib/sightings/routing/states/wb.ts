@@ -30,8 +30,6 @@ const BMC_POURA_BHAWAN_OFFICE: Channel = { kind: "helpline", label: "BMC Poura B
 
 const BMC_OFFICIAL_CONTACT_EMAIL: Channel = { kind: "email", label: "BMC official contact email", url: "mailto:bidhannagar.corporation@gmail.com" };
 
-const MUNICIPALITY_WEBSITE_FEEDBACK_FORM: Channel = { kind: "portal", label: "Municipality website feedback form", url: "https://www.budgebudgemunicipality.org/feedback.php" };
-
 const BUDGE_BUDGE_MUNICIPALITY_OFFICE: Channel = { kind: "helpline", label: "Budge Budge Municipality office", phone: "033-2470-1540" };
 
 const BUDGE_BUDGE_MUNICIPALITY_OFFICE_2: Channel = { kind: "helpline", label: "Budge Budge Municipality office", phone: "033-2470-1224" };
@@ -176,7 +174,6 @@ export const WB: StateRouting = {
             acronym: "BMC",
             channels: [
               WB_CHIEF_MINISTER_S,
-              { kind: "portal", label: "BMC online water tanker / ferrule services (not a complaint portal)", url: "https://ftb.bmcwbgov.in/" },
               BMC_GRIEVANCE_NUMBER,
               BMC_POURA_BHAWAN_OFFICE,
               BMC_OFFICIAL_CONTACT_EMAIL,
@@ -233,7 +230,6 @@ export const WB: StateRouting = {
             acronym: "BBM",
             channels: [
               WB_CHIEF_MINISTER_S,
-              MUNICIPALITY_WEBSITE_FEEDBACK_FORM,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_2,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_3,
@@ -245,7 +241,6 @@ export const WB: StateRouting = {
             acronym: "BBM",
             channels: [
               WB_CHIEF_MINISTER_S,
-              MUNICIPALITY_WEBSITE_FEEDBACK_FORM,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_2,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_3,
@@ -257,7 +252,6 @@ export const WB: StateRouting = {
             acronym: "BBM",
             channels: [
               WB_CHIEF_MINISTER_S,
-              MUNICIPALITY_WEBSITE_FEEDBACK_FORM,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_2,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_3,
@@ -269,7 +263,6 @@ export const WB: StateRouting = {
             acronym: "BBM",
             channels: [
               WB_CHIEF_MINISTER_S,
-              MUNICIPALITY_WEBSITE_FEEDBACK_FORM,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_2,
               BUDGE_BUDGE_MUNICIPALITY_OFFICE_3,

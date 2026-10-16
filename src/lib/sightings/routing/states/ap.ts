@@ -4,7 +4,7 @@ import type { Channel, StateRouting } from "../types";
 
 const PGRS_AP_STATE_GRIEVANCE: Channel = { kind: "portal", label: "PGRS - AP state grievance portal", tracked: true, url: "https://pgrs.ap.gov.in/" };
 
-const CM_HELPLINE_CALL_CENTRE: Channel = { kind: "helpline", label: "CM Helpline call centre", phone: "1100", tracked: true };
+const PGRS_CALL_CENTRE_AP: Channel = { kind: "helpline", label: "PGRS call centre - AP state grievance helpline", phone: "1100", tracked: true };
 
 const ONEVIZAG_ONEAPP_GVMC_COMPLAINTS: Channel = { kind: "app", label: "OneVizag OneApp - GVMC complaints (Android)", tracked: true, url: "https://play.google.com/store/apps/details?id=com.fluentgrid.onevizag" };
 
@@ -25,7 +25,7 @@ export const AP: StateRouting = {
       acronym: "APPCB",
       channels: [
         PGRS_AP_STATE_GRIEVANCE,
-        CM_HELPLINE_CALL_CENTRE,
+        PGRS_CALL_CENTRE_AP,
       ],
       source: "https://pcb.ap.gov.in/",
     },
@@ -33,7 +33,7 @@ export const AP: StateRouting = {
       body: "Revenue Department, Government of Andhra Pradesh (District Collector / Revenue Divisional Officer / Tahsildar-MRO of the mandal)",
       channels: [
         PGRS_AP_STATE_GRIEVANCE,
-        CM_HELPLINE_CALL_CENTRE,
+        PGRS_CALL_CENTRE_AP,
       ],
       source: "https://pgrs.ap.gov.in/Home/Faqs",
     },
@@ -110,7 +110,7 @@ export const AP: StateRouting = {
           acronym: "APPCB",
           channels: [
             PGRS_AP_STATE_GRIEVANCE,
-            CM_HELPLINE_CALL_CENTRE,
+            PGRS_CALL_CENTRE_AP,
             { kind: "helpline", label: "APPCB Regional Office Visakhapatnam (office landline)", phone: "0891-2755356" },
             { kind: "email", label: "APPCB Regional Office Visakhapatnam (office mailbox)", url: "mailto:rovsp-ee1@appcb.gov.in" },
           ],
@@ -120,7 +120,7 @@ export const AP: StateRouting = {
           body: "District Collector, Visakhapatnam (Revenue Department) - Revenue Divisional Officer (Visakhapatnam / Bheemunipatnam) and Tahsildar-MRO of the mandal",
           channels: [
             PGRS_AP_STATE_GRIEVANCE,
-            CM_HELPLINE_CALL_CENTRE,
+            PGRS_CALL_CENTRE_AP,
             { kind: "helpline", label: "Sand complaints toll-free", phone: "1800-425-6016" },
           ],
           source: "https://visakhapatnam.ap.gov.in/mandals/",

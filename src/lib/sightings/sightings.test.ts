@@ -5,6 +5,7 @@ import type { FeatureCollection } from "geojson";
 import { containing, indexPolygons, nearest } from "./locate";
 import { PARAMETERS, assess, getParameter } from "./parameters";
 import { resolveAuthority } from "./routing";
+import { EXPECTATIONS, channelKey } from "./routing/expectations";
 import { NATIONAL_CHANNELS } from "./routing/national";
 import { STATE_ROUTING } from "./routing/states";
 import type { Authority } from "./routing/types";
@@ -116,4 +117,22 @@ test("a water test needs at least one in-range result and its source", () => {
   assert.equal(parseSubmit(form({ "reading.tds": "99999", waterSource: "borewell" })).ok, false);
   const ok = parseSubmit(form({ "reading.tds": "640", "reading.fluoride": "1.2", waterSource: "borewell" }));
   assert.ok(ok.ok && ok.value.readings?.tds === 640 && ok.value.readings?.fluoride === 1.2 && ok.value.waterSource === "borewell");
+});
+
+test("every 'what to expect' line belongs to a real channel, cites an https source and stays short", () => {
+  const keys = new Set<string>(NATIONAL_CHANNELS.map(channelKey));
+  for (const s of Object.values(STATE_ROUTING)) {
+    const tables = [s.roles, ...Object.values(s.places).flatMap((p) => [p.roles, ...Object.values(p.corporations ?? {})])];
+    for (const t of tables) for (const a of Object.values(t)) a!.channels.forEach((c) => keys.add(channelKey(c)));
+  }
+  const seen = new Set<string>();
+  for (const e of EXPECTATIONS) {
+    assert.match(e.source, /^https:\/\//, e.system);
+    assert.ok(e.expect.length <= 240 && !/[\u2014\u2013]/.test(e.expect), `${e.system}: expect too long or has a dash`);
+    for (const k of e.keys) {
+      assert.ok(keys.has(k), `${e.system}: ${k} is not a routing channel`);
+      assert.ok(!seen.has(k), `${k} described twice`);
+      seen.add(k);
+    }
+  }
 });

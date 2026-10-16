@@ -5,6 +5,7 @@
  * src/lib/cities/onboarding-contract.test.ts.
  */
 import type { AuthorityRole } from "../taxonomy";
+import { withExpectations } from "./expectations";
 import { NATIONAL_CHANNELS } from "./national";
 import { STATE_ROUTING } from "./states";
 import type { Authority, Channel } from "./types";
@@ -37,5 +38,9 @@ export function resolveAuthority(role: AuthorityRole, where: RoutingTarget): Res
   const national = NATIONAL_CHANNELS.filter(
     (c) => c.roles.includes(role) && (!c.urbanOnly || where.placeKind === "city"),
   );
-  return { authority, layer, national };
+  return {
+    authority: authority && { ...authority, channels: withExpectations(authority.channels) },
+    layer,
+    national: withExpectations(national),
+  };
 }

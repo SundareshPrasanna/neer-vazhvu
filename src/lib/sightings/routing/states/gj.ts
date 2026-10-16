@@ -8,9 +8,9 @@ const CITIZEN_S_CONNECT_SMC: Channel = { kind: "app", label: "Citizen's Connect 
 
 const SMC_ONLINE_COMPLAINT: Channel = { kind: "portal", label: "SMC online complaint", tracked: true, url: "https://www.suratmunicipal.gov.in/OnlineServices/complaint/New" };
 
-const SMC_WHATSAPP_CHATBOT: Channel = { kind: "whatsapp", label: "SMC WhatsApp chatbot", phone: "+91 63599 30020", tracked: true };
-
 const SMC_COMPLAINT_REGISTRATION_TOLL: Channel = { kind: "helpline", label: "SMC complaint registration toll free", phone: "1800 123 8000", tracked: true };
+
+const SMC_WHATSAPP_CHATBOT_SEND: Channel = { kind: "whatsapp", label: "SMC WhatsApp chatbot (send 'Hi')", phone: "+91 63599 30020", tracked: true };
 
 const AMC_CCRS_ANDROID: Channel = { kind: "app", label: "AMC CCRS (Android)", tracked: true, url: "https://play.google.com/store/apps/details?id=com.amplvb.ccrs" };
 
@@ -29,7 +29,7 @@ export const GJ: StateRouting = {
       acronym: "GWSSB",
       channels: [
         { kind: "portal", label: "GWSSB online complaint form (Register Complaint)", url: "https://watersupply.gujarat.gov.in/support/ticket/submit" },
-        { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916" },
+        { kind: "helpline", label: "Drinking Water Supply Toll Free Helpline", phone: "1916" },
         { kind: "helpline", label: "GWSSB control room for water supply complaints", phone: "079 2322 0859" },
       ],
       source: "https://watersupply.gujarat.gov.in/contact",
@@ -60,7 +60,7 @@ export const GJ: StateRouting = {
             CITIZEN_S_CONNECT_SMC,
             { kind: "app", label: "Surat Municipal Corporation (iPhone)", url: "https://apps.apple.com/in/app/surat-municipal-corporation/id766167352", tracked: true },
             SMC_ONLINE_COMPLAINT,
-            SMC_WHATSAPP_CHATBOT,
+            { kind: "whatsapp", label: "SMC WhatsApp chatbot", phone: "+91 63599 30020", tracked: true },
             SMC_COMPLAINT_REGISTRATION_TOLL,
             { kind: "helpline", label: "SMC Construction & Demolition waste toll free", phone: "1800 212 2829" },
             { kind: "helpline", label: "SMC Plastic waste toll free", phone: "1800 233 3002" },
@@ -73,7 +73,7 @@ export const GJ: StateRouting = {
           channels: [
             CITIZEN_S_CONNECT_SMC,
             SMC_ONLINE_COMPLAINT,
-            SMC_WHATSAPP_CHATBOT,
+            SMC_WHATSAPP_CHATBOT_SEND,
             SMC_COMPLAINT_REGISTRATION_TOLL,
           ],
           source: "https://www.suratmunicipal.gov.in/",
@@ -84,7 +84,7 @@ export const GJ: StateRouting = {
           channels: [
             CITIZEN_S_CONNECT_SMC,
             SMC_ONLINE_COMPLAINT,
-            SMC_WHATSAPP_CHATBOT,
+            SMC_WHATSAPP_CHATBOT_SEND,
             SMC_COMPLAINT_REGISTRATION_TOLL,
           ],
           source: "https://www.suratmunicipal.gov.in/Departments/HydraulicHome",
@@ -95,7 +95,7 @@ export const GJ: StateRouting = {
           channels: [
             CITIZEN_S_CONNECT_SMC,
             SMC_ONLINE_COMPLAINT,
-            SMC_WHATSAPP_CHATBOT,
+            SMC_WHATSAPP_CHATBOT_SEND,
             SMC_COMPLAINT_REGISTRATION_TOLL,
           ],
           source: "https://www.suratmunicipal.gov.in/CleanSurat/Documents/WMRAndAP/StormWaterCoverageActionPlan2019.pdf",
@@ -105,9 +105,8 @@ export const GJ: StateRouting = {
           acronym: "SMC",
           channels: [
             CITIZEN_S_CONNECT_SMC,
-            SMC_WHATSAPP_CHATBOT,
+            SMC_WHATSAPP_CHATBOT_SEND,
             SMC_COMPLAINT_REGISTRATION_TOLL,
-            { kind: "portal", label: "Tapi Revival project Feedback/Suggestion form (SMC)", url: "https://tapirevival.suratmunicipal.org/Feedback" },
           ],
           source: "https://www.suratmunicipal.gov.in/Departments/ProjectsUnderPlanningTendering",
         },

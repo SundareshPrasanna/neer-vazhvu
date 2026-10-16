@@ -7,6 +7,10 @@ export interface Channel {
   phone?: string;
   /** The channel issues a reference number the citizen can track. */
   tracked?: boolean;
+  /** Attached from expectations.ts at resolve time: the system's name, what happens after filing, and whether it asks for a mobile number. */
+  system?: string;
+  expect?: string;
+  needsPhone?: boolean;
 }
 
 /** One public body for one role, with the official page that says so. */

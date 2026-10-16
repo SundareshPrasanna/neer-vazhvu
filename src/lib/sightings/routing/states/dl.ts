@@ -9,7 +9,7 @@ const DJB_BODY: Authority = {
   body: "Delhi Jal Board",
   channels: [
     CM_JAN_SUNWAI_PORTAL,
-    { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916", tracked: true },
+    { kind: "helpline", label: "DJB 24x7 Customer Care (toll free)", phone: "1916", tracked: true },
     { kind: "app", label: "DJB1916Seva app (Android)", url: "https://play.google.com/store/apps/details?id=in.gov.delhi.delhijalboard" },
     { kind: "whatsapp", label: "DJB WhatsApp complaints", phone: "9650291021" },
     { kind: "helpline", label: "DJB toll-free line (listed with 1916)", phone: "1800117118" },
@@ -26,7 +26,7 @@ export const DL: StateRouting = {
       body: "Wetland Authority of Delhi (Department of Environment, GNCTD; secretariat at Delhi Parks and Gardens Society)",
       channels: [
         CM_JAN_SUNWAI_PORTAL,
-        { kind: "app", label: "DDA 311 app 'DDA at Your Service' (Android)", url: "https://play.google.com/store/apps/details?id=com.everythingcivic.dda" },
+        { kind: "app", label: "DDA 311 app, for lakes on DDA land (Android)", url: "https://play.google.com/store/apps/details?id=com.everythingcivic.dda" },
         { kind: "helpline", label: "Wetland Authority of Delhi / DPGS office telephone", phone: "011-23392736" },
         { kind: "email", label: "Wetland Authority of Delhi / DPGS office email", url: "mailto:ceodpgsenv.delhi@nic.in" },
       ],
@@ -68,8 +68,8 @@ export const DL: StateRouting = {
         sewerage: DJB_BODY,
         water_supply: DJB_BODY,
         storm_drainage: {
-          body: "Municipal Corporation of Delhi (colony and local drains)",
-          acronym: "MCD",
+          body: "Municipal Corporation of Delhi for colony and local drains; PWD for drains along PWD roads; Irrigation & Flood Control for trunk drains",
+          acronym: "MCD / PWD / I&FC",
           channels: [
             { kind: "app", label: "MCD 311 app (Android)", url: "https://play.google.com/store/apps/details?id=com.everythingcivic.mcd", tracked: true },
             { kind: "portal", label: "MCD 311 web complaint form", url: "https://mcd.everythingcivic.com/citizen/createissue?app_id=U2FsdGVkX180J3mGnJmT5QpgtPjhfjtzyXAAccBUxGU%3D&api_key=e34ba86d3943bd6db9120313da011937189e6a9625170905750f649395bcd68312cf10d264c9305d57c23688cc2e5120", tracked: true },

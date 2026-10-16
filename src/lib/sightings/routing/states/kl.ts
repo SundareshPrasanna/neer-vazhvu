@@ -25,7 +25,7 @@ export const KL: StateRouting = {
       channels: [
         { kind: "portal", label: "Aqua Loom - KWA online consumer complaint registration and status", url: "https://aqualoomnew.kwa.kerala.gov.in/get-register-form", tracked: true },
         { kind: "whatsapp", label: "KWA WhatsApp", phone: "9495998258" },
-        { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916" },
+        { kind: "helpline", label: "KWA toll-free consumer complaints line (24x7)", phone: "1916" },
         { kind: "helpline", label: "KWA consumer helpline (toll-free)", phone: "18004255313" },
         { kind: "email", label: "KWA call centre email", url: "mailto:1916cckwa@gmail.com" },
       ],
@@ -92,7 +92,7 @@ export const KL: StateRouting = {
           channels: [
             { kind: "portal", label: "Aqua Loom - KWA online consumer complaint registration and status", url: "https://aqualoomnew.kwa.kerala.gov.in/get-register-form", tracked: true },
             { kind: "whatsapp", label: "KWA WhatsApp", phone: "9495998258" },
-            { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916" },
+            { kind: "helpline", label: "KWA toll-free consumer complaints line (24x7)", phone: "1916" },
             { kind: "helpline", label: "KWA consumer helpline (toll-free)", phone: "18004255313" },
             { kind: "helpline", label: "KWA Superintending Engineer, PH Circle Palakkad (office line)", phone: "0491-2544927" },
             { kind: "helpline", label: "KWA Executive Engineer, PH Division Palakkad (office line)", phone: "0491-2545027" },

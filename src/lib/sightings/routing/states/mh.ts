@@ -26,7 +26,7 @@ const MYBMC_MARG: Channel = { kind: "portal", label: "MyBMC MARG", tracked: true
 
 const MYBMC_ASSIST_WHATSAPP_CHATBOT: Channel = { kind: "whatsapp", label: "MyBMC Assist WhatsApp chatbot", phone: "+91 8999228999", url: "https://wa.me/918999228999" };
 
-const PUNAL_IVR_24X7: Channel = { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916" };
+const BMC_24X7_HELPLINE: Channel = { kind: "helpline", label: "BMC 24x7 helpline", phone: "1916" };
 
 const TMC_COMPLAINTS_HELPLINE: Channel = { kind: "helpline", label: "TMC complaints helpline", phone: "+91-22-25331590" };
 
@@ -47,8 +47,6 @@ const NMMC_TOLL_FREE_HELPLINE: Channel = { kind: "helpline", label: "NMMC toll-f
 const NMMC_TOLL_FREE_HELPLINE_2: Channel = { kind: "helpline", label: "NMMC toll-free helpline (second line)", phone: "1800 222 310" };
 
 const MBMC_COMPLAINT_REGISTRATION: Channel = { kind: "portal", label: "MBMC complaint registration", tracked: true, url: "https://crm.mymbmc.in/" };
-
-const MYMBMC_ANDROID: Channel = { kind: "app", label: "MyMBMC (Android)", url: "https://play.google.com/store/apps/details?id=com.mbmc.my_mbmc_app" };
 
 const VVCMC_COMPLAINT_REGISTRATION_PORTAL: Channel = { kind: "portal", label: "VVCMC complaint registration portal", tracked: true, url: "https://crm.onlinevvcmc.in/" };
 
@@ -102,7 +100,6 @@ const MBMC_BODY: Authority = {
   body: "Mira-Bhayandar Municipal Corporation - Water Supply and Sewerage Department",
   channels: [
     MBMC_COMPLAINT_REGISTRATION,
-    MYMBMC_ANDROID,
     { kind: "email", label: "MBMC Water Supply and Sewerage Department email", url: "mailto:watersupply@mbmc.gov.in" },
   ],
   source: "https://mbmc.gov.in/mbmc/water-supply-and-sewerage-",
@@ -285,7 +282,7 @@ export const MH: StateRouting = {
           acronym: "Collector Satara",
           channels: [
             AAPLE_SARKAR_GRIEVANCE_REDRESSAL,
-            { kind: "helpline", label: "District Collectorate Control Room", phone: "1077" },
+            { kind: "helpline", label: "Satara district helpline: Unauthorized Sand Excavation and Transportation (toll-free)", phone: "1077" },
           ],
           source: "https://www.satara.gov.in/en/helpline/",
         },
@@ -329,7 +326,7 @@ export const MH: StateRouting = {
           channels: [
             AAPLE_SARKAR_GRIEVANCE_REDRESSAL,
             { kind: "helpline", label: "Collector Office Ahilyanagar", phone: "0241-2345001" },
-            { kind: "helpline", label: "District Collectorate Control Room", phone: "1077" },
+            { kind: "helpline", label: "District Control Room (toll-free)", phone: "1077" },
             { kind: "email", label: "Collector Office Ahilyanagar", url: "mailto:collector.ahmednagar@maharashtra.gov.in" },
           ],
           source: "https://ahilyanagar.maharashtra.gov.in/en/service/how-to-lodge-a-grievance/",
@@ -442,7 +439,7 @@ export const MH: StateRouting = {
               MYBMC_MARG_IPHONE,
               MYBMC_MARG,
               MYBMC_ASSIST_WHATSAPP_CHATBOT,
-              PUNAL_IVR_24X7,
+              BMC_24X7_HELPLINE,
             ],
             source: "https://portal.mcgm.gov.in/irj/portal/anonymous",
           },
@@ -454,7 +451,7 @@ export const MH: StateRouting = {
               MYBMC_MARG_IPHONE,
               MYBMC_MARG,
               MYBMC_ASSIST_WHATSAPP_CHATBOT,
-              PUNAL_IVR_24X7,
+              BMC_24X7_HELPLINE,
               { kind: "helpline", label: "BMC Sewerage Operations helpline", phone: "+91 9324500600" },
             ],
             source: "https://portal.mcgm.gov.in/irj/portal/anonymous",
@@ -467,7 +464,7 @@ export const MH: StateRouting = {
               MYBMC_MARG_IPHONE,
               MYBMC_MARG,
               MYBMC_ASSIST_WHATSAPP_CHATBOT,
-              PUNAL_IVR_24X7,
+              BMC_24X7_HELPLINE,
             ],
             source: "https://portal.mcgm.gov.in/irj/portal/anonymous",
           },
@@ -479,7 +476,7 @@ export const MH: StateRouting = {
               MYBMC_MARG_IPHONE,
               MYBMC_MARG,
               MYBMC_ASSIST_WHATSAPP_CHATBOT,
-              PUNAL_IVR_24X7,
+              BMC_24X7_HELPLINE,
             ],
             source: "https://portal.mcgm.gov.in/irj/portal/anonymous",
           },
@@ -491,7 +488,7 @@ export const MH: StateRouting = {
               MYBMC_MARG_IPHONE,
               MYBMC_MARG,
               MYBMC_ASSIST_WHATSAPP_CHATBOT,
-              PUNAL_IVR_24X7,
+              BMC_24X7_HELPLINE,
             ],
             source: "https://mmrda.maharashtra.gov.in/en/divisions/town-country-planning/mithi-river-development-and-protection-authority/overview",
           },
@@ -532,7 +529,7 @@ export const MH: StateRouting = {
             channels: [
               TMC_COMPLAINTS_HELPLINE,
               TMC_COMPLAINTS_HELPLINE_SECOND,
-              { kind: "helpline", label: "TMC Regional Disaster Management Cell (logs pipeline bursts)", phone: "1800-222-108" },
+              { kind: "helpline", label: "TMC Regional Disaster Management Cell (24x7)", phone: "1800-222-108" },
             ],
             source: "https://thanecity.gov.in/tmc/CitizenHome.html",
           },
@@ -562,7 +559,7 @@ export const MH: StateRouting = {
             acronym: "KDMC",
             channels: [
               KDMC_ONLINE_COMPLAINT_REGISTRATION,
-              { kind: "helpline", label: "KDMC garbage", phone: "1800-233-0045" },
+              { kind: "helpline", label: "KDMC septic-tank cleaning / SWM helpline", phone: "1800-233-0045" },
               { kind: "helpline", label: "KDMC hotline", phone: "0251-2211866" },
             ],
             source: "https://kdmc.gov.in/kdmc/CitizenHome.html",
@@ -592,8 +589,8 @@ export const MH: StateRouting = {
             acronym: "KDMC",
             channels: [
               KDMC_ONLINE_COMPLAINT_REGISTRATION,
-              { kind: "helpline", label: "KDMC disaster management complaints (toll-free)", phone: "1800-233-7383" },
-              { kind: "helpline", label: "KDMC disaster management complaints", phone: "0251-2314219" },
+              { kind: "helpline", label: "KDMC 'Shenale lake and disaster management' complaints (toll-free)", phone: "1800-233-7383" },
+              { kind: "helpline", label: "KDMC 'Shenale lake and disaster management' complaints", phone: "0251-2314219" },
             ],
             source: "https://kdmc.gov.in/kdmc/CitizenHome.html",
           },
@@ -669,7 +666,6 @@ export const MH: StateRouting = {
             acronym: "MBMC",
             channels: [
               MBMC_COMPLAINT_REGISTRATION,
-              MYMBMC_ANDROID,
               { kind: "email", label: "MBMC SWM / health department email", url: "mailto:swmhealth@mbmc.gov.in" },
             ],
             source: "https://mbmc.gov.in/mbmc/solid-waste-management-department",
@@ -681,7 +677,6 @@ export const MH: StateRouting = {
             acronym: "MBMC",
             channels: [
               MBMC_COMPLAINT_REGISTRATION,
-              MYMBMC_ANDROID,
               { kind: "email", label: "MBMC Public Works Department email", url: "mailto:pwd@mbmc.gov.in" },
             ],
             source: "https://mbmc.gov.in/mbmc/public-works-electrical-",
@@ -691,7 +686,6 @@ export const MH: StateRouting = {
             acronym: "MBMC",
             channels: [
               MBMC_COMPLAINT_REGISTRATION,
-              MYMBMC_ANDROID,
               { kind: "email", label: "MBMC Environment Department email", url: "mailto:save.environs@mbmc.gov.in" },
             ],
             source: "https://mbmc.gov.in/mbmc/envirnment-dept",

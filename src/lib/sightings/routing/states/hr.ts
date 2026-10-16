@@ -56,7 +56,6 @@ export const HR: StateRouting = {
             { kind: "portal", label: "MCG 24 Hours Challenge", url: "https://mcg.gov.in/24hr-challenge", tracked: true },
             CM_WINDOW_GOVERNMENT_OF,
             MYGURUGRAM_ANDROID,
-            { kind: "app", label: "MCGurugram (Android)", url: "https://play.google.com/store/apps/details?id=com.mcg.sms.services" },
             GMDA_MCG_COMPLAINT_WHATSAPP,
             MCG_GMDA_TOLL_FREE,
           ],
@@ -124,8 +123,8 @@ export const HR: StateRouting = {
           source: "https://hspcb.org.in/page/regional-office",
         },
         land_revenue: {
-          body: "Deputy Commissioner (Collector), Gurugram, with SDMs and Tehsildars (Revenue & Disaster Management Department, Haryana)",
-          acronym: "DC Gurugram",
+          body: "Deputy Commissioner (Collector), Gurugram, with SDMs and Tehsildars, for revenue land; GMDA Enforcement Wing for encroachment in GMDA areas",
+          acronym: "DC Gurugram / GMDA",
           channels: [
             CM_WINDOW_GOVERNMENT_OF,
             { kind: "portal", label: "GMDA Anti-Encroachment Portal", url: "https://gmda.gov.in/anti-encroachment/", tracked: true },

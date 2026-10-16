@@ -1,8 +1,6 @@
 // Researched from official sources 2026-10-16; each entry links the page that states it.
 // Adding a place: add its entry here (see CONTRIBUTING, Adding a new city).
-import type { Authority, Channel, StateRouting } from "../types";
-
-const HYDRAA_TOLL_FREE_HELPLINE: Channel = { kind: "helpline", label: "HYDRAA toll-free helpline", phone: "1070" };
+import type { Authority, StateRouting } from "../types";
 
 const HMWSSB_BODY: Authority = {
   acronym: "HMWSSB",
@@ -62,7 +60,7 @@ export const TG: StateRouting = {
             { kind: "portal", label: "CURE Integrated Grievance System", url: "https://igs.ghmc.gov.in/operator/send_otp_mobile", tracked: true },
             { kind: "app", label: "My Cure app (Android)", url: "https://play.google.com/store/apps/details?id=cgg.gov.ghmc" },
             { kind: "helpline", label: "GHMC / CURE grievance call centre", phone: "040-21111111" },
-            HYDRAA_TOLL_FREE_HELPLINE,
+            { kind: "helpline", label: "HYDRAA toll-free helpline", phone: "1070" },
           ],
           source: "https://hydraa.telangana.gov.in/functions/disaster-management",
         },
@@ -70,7 +68,7 @@ export const TG: StateRouting = {
           body: "Hyderabad Disaster Response and Asset Protection Agency",
           acronym: "HYDRAA",
           channels: [
-            HYDRAA_TOLL_FREE_HELPLINE,
+            { kind: "helpline", label: "HYDRAA toll-free helpline (24x7)", phone: "1070" },
             { kind: "helpline", label: "HYDRAA control room", phone: "9000113667" },
             { kind: "helpline", label: "HYDRAA control room (second line)", phone: "8712406901" },
           ],
@@ -90,7 +88,7 @@ export const TG: StateRouting = {
           body: "Hyderabad Disaster Response and Asset Protection Agency",
           acronym: "HYDRAA",
           channels: [
-            HYDRAA_TOLL_FREE_HELPLINE,
+            { kind: "helpline", label: "HYDRAA toll-free helpline", phone: "1070" },
             { kind: "helpline", label: "HYDRAA control room", phone: "9000113667" },
             { kind: "helpline", label: "HYDRAA control room (second line)", phone: "8712406901" },
           ],

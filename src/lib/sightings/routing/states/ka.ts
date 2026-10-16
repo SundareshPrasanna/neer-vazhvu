@@ -68,7 +68,7 @@ export const KA: StateRouting = {
           body: "Bangalore Water Supply and Sewerage Board",
           acronym: "BWSSB",
           channels: [
-            { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916" },
+            { kind: "helpline", label: "BWSSB call centre", phone: "1916" },
             { kind: "helpline", label: "SafaiMitra helpline (sewer/septic cleaning)", phone: "14420" },
             { kind: "email", label: "BWSSB call centre email", url: "mailto:callcenter@bwssb.gov.in" },
           ],
@@ -78,7 +78,7 @@ export const KA: StateRouting = {
           body: "Bangalore Water Supply and Sewerage Board",
           acronym: "BWSSB",
           channels: [
-            { kind: "helpline", label: "PUNAL IVR (24x7)", phone: "1916" },
+            { kind: "helpline", label: "BWSSB call centre", phone: "1916" },
             { kind: "email", label: "BWSSB call centre email", url: "mailto:callcenter@bwssb.gov.in" },
           ],
           source: "https://bwssb.karnataka.gov.in/5/contact-info/en",
@@ -227,7 +227,7 @@ export const KA: StateRouting = {
           channels: [
             IPGRS_GRAM_PANCHAYAT_GRIEVANCES,
             PRAJA_SEVE_GRIEVANCE_HELPLINE,
-            PANCHAMITRA_RDPR_HELPLINE,
+            { kind: "helpline", label: "Panchamitra helpline", phone: "8277506000" },
           ],
           source: "https://panchamitra.karnataka.gov.in/Home/RDPR_Grievances_via_IPGRS_Portal",
         },

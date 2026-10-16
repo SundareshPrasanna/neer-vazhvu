@@ -46,6 +46,67 @@ const PROMISES: [string, string][] = [
   ],
 ];
 
+const GUIDE: [string, React.ReactNode][] = [
+  [
+    "Making a good report",
+    <ul key="good" className="list-disc space-y-1 pl-5">
+      <li>Stand at the spot, so the location is right. Drag the pin if it is off.</li>
+      <li>Take one clear photo of the problem itself. Keep faces, vehicle number plates and house names or numbers out of the frame.</li>
+      <li>Pick the closest type. If nothing fits, choose Something else and describe it in a line.</li>
+      <li>
+        For a water test, photograph the meter or kit showing the result, choose where the water came from and enter the values you have.
+        TDS alone is fine.
+      </li>
+      <li>One problem per report. Two problems at the same place make two reports.</li>
+    </ul>,
+  ],
+  [
+    "Why no one can trace a report to you",
+    <>
+      <p>
+        When you sign in, Google tells our sign-in system your email, and that is the only place it is kept. When you send a report, our
+        server turns your account into a code using a secret key stored somewhere else, and the report carries only that code. So the
+        reports database, and anyone who copies it, sees codes, never people.
+      </p>
+      <p>
+        Public pages show the photo, what it shows, the place and the date, and nothing else.{" "}
+        <a href="#privacy" className="text-cyan-800 underline underline-offset-2 dark:text-cyan-400">
+          Read every promise
+        </a>
+        .
+      </p>
+    </>,
+  ],
+  [
+    "What happens after you send it",
+    <>
+      <ol className="list-decimal space-y-1 pl-5">
+        <li>We check it. Reports that identify people, or are not about water at a place, are not published.</li>
+        <li>It goes on the public record for that ward, water body or village.</li>
+        <li>We show you which public body handles it, its official complaint channels and what each one does after you file.</li>
+        <li>
+          You decide whether to file. The department will know it was you, since most ask for your mobile number. Your report here stays
+          anonymous either way.
+        </li>
+        <li>
+          If you file, add the reference number and update the status as things move: reported, marked done, fixed (with a new photo) or
+          still there. Anyone can then see how long a problem stayed open.
+        </li>
+      </ol>
+      <p>
+        <span className="font-semibold">Why we do not file for you.</span>{" "}
+        Department portals have no way for another system to submit a
+        complaint, most need the complainant&rsquo;s own mobile number, and filing in our name would make us the complainant instead of you.
+      </p>
+      <p>
+        <span className="font-semibold">What comes next.</span> We plan to offer departments a regular summary of checked reports for
+        their area, with no reporter details, and to record the status they send back for each one, so the record updates without
+        depending on you.
+      </p>
+    </>,
+  ],
+];
+
 export default function ForCitizensPage() {
   if (process.env.NEXT_PUBLIC_CITIZEN_REPORTS !== "on") notFound();
   return (
@@ -74,6 +135,18 @@ export default function ForCitizensPage() {
         <CitizenApp />
       </div>
 
+      <section className="mt-10">
+        <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">How it works, step by step</h2>
+        <div className="divide-y divide-slate-200 rounded-lg border border-slate-200 text-sm text-slate-700 dark:divide-slate-700 dark:border-slate-700 dark:text-slate-300">
+          {GUIDE.map(([title, body]) => (
+            <details key={title} className="group p-4">
+              <summary className="cursor-pointer font-semibold text-slate-900 dark:text-slate-100">{title}</summary>
+              <div className="mt-2 space-y-2">{body}</div>
+            </details>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-10 grid gap-6 text-sm text-slate-600 sm:grid-cols-2 dark:text-slate-400">
         <div>
           <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">What you can report</h2>
@@ -91,7 +164,7 @@ export default function ForCitizensPage() {
         </div>
       </section>
 
-      <section className="mt-10 text-sm text-slate-700 dark:text-slate-300">
+      <section id="privacy" className="mt-10 scroll-mt-20 text-sm text-slate-700 dark:text-slate-300">
         <h2 className="mb-3 text-lg font-semibold text-slate-900 dark:text-slate-100">Your privacy: what we promise</h2>
         <dl className="space-y-3">
           {PROMISES.map(([title, text]) => (
