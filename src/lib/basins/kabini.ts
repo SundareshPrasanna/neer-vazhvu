@@ -15,6 +15,7 @@ export const KABINI: BasinManifest = {
   // Reached through the Cauvery hierarchy, not city nav.
   cityIds: [],
   parentBasinId: "cauvery-ka",
+  stateCode: "KA",
   displayName: "Kabini Basin",
   displayNameLocal: "ಕಬಿನಿ ಜಲಾನಯನ",
   blurb:

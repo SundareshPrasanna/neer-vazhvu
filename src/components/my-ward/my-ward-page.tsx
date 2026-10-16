@@ -17,6 +17,7 @@ import { WardActionsCard } from "./ward-actions-card";
 import { WardNarrative } from "@/components/insights/ward-narrative";
 import { NewsContext } from "@/components/insights/news-context";
 import { MyWardCityProvider } from "./city-context";
+import { PlaceReports } from "@/components/sightings/place-reports";
 
 interface MyWardPageProps {
   /** City id of the /[cityId]/my-ward route. */
@@ -218,6 +219,8 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
 
           {/* Actions & Representatives */}
           <WardActionsCard wardNumber={wardNumber} />
+
+          <PlaceReports place={cityId} ward={wardNumber} />
 
           {/* News */}
           <NewsContext

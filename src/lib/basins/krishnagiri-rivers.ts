@@ -21,6 +21,7 @@ import {
 export const KRISHNAGIRI_RIVERS: BasinManifest = {
   basinId: "krishnagiri-rivers",
   cityIds: [],
+  stateCode: "TN",
   displayName: "Krishnagiri district: rivers, groundwater and industry",
   displayNameLocal: "கிருஷ்ணகிரி மாவட்டம்: ஆறுகள், நிலத்தடி நீர், தொழிற்சாலைகள்",
   blurb:

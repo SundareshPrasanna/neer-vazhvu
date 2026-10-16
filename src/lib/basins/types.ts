@@ -219,6 +219,8 @@ export interface BasinManifest {
   metricSources?: Record<string, string>;
   displayName: string;
   displayNameLocal?: string;
+  /** ISO 3166-2 subdivision of this (state-portion) basin; citizen reports here route through it. */
+  stateCode: string;
   /** Read by the district Atlas pages of districts inside this basin. */
   canalHead?: CanalHead;
   /** Landing blurb (plain text). */

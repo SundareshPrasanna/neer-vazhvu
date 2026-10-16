@@ -29,6 +29,10 @@ export function tryGetBasinManifest(basinId: string): BasinManifest | null {
   return BASINS[basinId] ?? null;
 }
 
+export function listBasins(): BasinManifest[] {
+  return Object.values(BASINS);
+}
+
 /** Basin ids hosted by a given city, in registry order. */
 export function basinsForCity(cityId: string): BasinManifest[] {
   return Object.values(BASINS).filter((b) => b.cityIds.includes(cityId));

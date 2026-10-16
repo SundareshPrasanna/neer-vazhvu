@@ -174,7 +174,15 @@ guards, landing card, footer, exemptions - derives from the registry, and most o
    example, and lists every message the check can print with its fix.
 6. **Database.** Add a `<nnn>_coimbatore_seed_disabled.sql` migration (and `_water_sources.sql` if
    it has reservoirs), following 046-048 for Surat.
-7. **Check before cutover.** `npm test` runs the onboarding contract
+7. **Citizen reports.** Add the city to its state's file in `src/lib/sightings/routing/states/`
+   (create the state file and list it in `index.ts` if it is the first place there): for each of
+   the seven report roles, the public body that handles it and the channels it officially publishes,
+   each with the official page that says so. A body the whole state shares (the pollution control
+   board, usually) goes once in the state's `roles`; a region's per-corporation bodies go under
+   `corporations`, keyed as `src/lib/sightings/locate-server.ts` resolves them. Never invent a
+   channel: a body with none gets `channels: []`. The onboarding contract fails until every role
+   resolves.
+8. **Check before cutover.** `npm test` runs the onboarding contract
    (`src/lib/cities/onboarding-contract.test.ts`), `npm run data:check` the exemptions register.
    Then drive every route in a browser:
    `uvx --with playwright python scripts/check-city-surfaces.py --city coimbatore --control bangalore`.

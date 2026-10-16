@@ -49,6 +49,7 @@ import {
   listVisibleAtlasDistricts,
   stateHref,
 } from "@/lib/atlas/registry";
+import { PlaceReports } from "@/components/sightings/place-reports";
 
 interface RouteParams {
   params: Promise<{ state: string; district: string }>;
@@ -875,6 +876,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               current-crop capability is left empty rather than answered with a 2009 number.
             </AtlasNote>
           </AtlasSection>
+          <PlaceReports place={entry.scopeId} />
         </AtlasContainer>
       </main>
     </div>

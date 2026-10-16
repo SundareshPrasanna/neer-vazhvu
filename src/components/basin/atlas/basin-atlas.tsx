@@ -33,6 +33,7 @@ import {
   pressurePointStyle, shedStyle, tipLabel, treatmentIcon,
 } from "./map-style";
 import type { AccountabilityData, DepData, GapUnit, MapMatch, PrsData } from "@/lib/basins/panel-types";
+import { PlaceReports } from "@/components/sightings/place-reports";
 
 // Station-readings panel (contract v1): loaded on demand so recharts only
 // ships when a readings-enabled station is actually clicked.
@@ -1444,6 +1445,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             ) : selectedRiver ? (
               <RiverPanel river={selectedRiver} onClear={() => selectRiver(null)} />
             ) : null}
+            {(selectedRiver || selectedPrs) && <PlaceReports place={manifest.basinId} />}
           </div>
         </BottomSheet>
       )}

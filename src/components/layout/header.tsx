@@ -36,6 +36,26 @@ const AFTER_NAV = [
   { href: "/about", key: "nav.about" },
 ] as const;
 
+// Off until the reporting backend is provisioned (src/lib/sightings/auth.ts).
+const CITIZEN_REPORTS = process.env.NEXT_PUBLIC_CITIZEN_REPORTS === "on";
+
+function ForCitizensLink({ label, active }: { label: string; active: boolean }) {
+  return (
+    <Link
+      href="/for-citizens"
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "inline-flex items-center px-2.5 sm:px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500",
+        active
+          ? "border-cyan-700 bg-cyan-50 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300"
+          : "border-cyan-700 text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:bg-cyan-950"
+      )}
+    >
+      {label}
+    </Link>
+  );
+}
+
 function ThemeToggle() {
   const { t } = useLanguage();
   const { resolvedTheme, setTheme } = useTheme();
@@ -238,7 +258,7 @@ function SiteHeader() {
                 </svg>
               </div>
               <div>
-                <span className="font-bold text-lg text-slate-900 dark:text-slate-100">
+                <span className={cn("font-bold text-lg text-slate-900 dark:text-slate-100", CITIZEN_REPORTS && "hidden sm:inline")}>
                   {t("header.title")}
                 </span>
                 <span className="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 ml-2">
@@ -252,6 +272,7 @@ function SiteHeader() {
                 gets the switcher, which lists districts as well as cities. */}
             <div className="flex items-center gap-1 sm:gap-2">
               {isAtlas && <CitySwitcher />}
+              {CITIZEN_REPORTS && <ForCitizensLink label={t("nav.for_citizens")} active={pathname === "/for-citizens"} />}
               {/* The way in for organisations; hidden on that page itself, where it would only point back. */}
               {pathname !== "/for-organisations" && (
                 <Link
@@ -347,6 +368,7 @@ function SiteHeader() {
                 <NavLink key={item.href} href={cityHref} label={t(item.key)} active={pathname === cityHref} />
               );
             })}
+            {CITIZEN_REPORTS && <ForCitizensLink label={t("nav.for_citizens")} active={false} />}
             <CitySwitcher />
             <LanguageToggle />
             <ThemeToggle />
@@ -465,6 +487,15 @@ function SiteHeader() {
                 </Link>
               );
             })}
+            {CITIZEN_REPORTS && (
+              <Link
+                href="/for-citizens"
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-3 rounded-md text-sm font-semibold text-cyan-800 dark:text-cyan-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                {t("nav.for_citizens")}
+              </Link>
+            )}
           </div>
         </nav>
       )}

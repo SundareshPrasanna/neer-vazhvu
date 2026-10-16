@@ -14,6 +14,7 @@ export const ARKAVATHI: BasinManifest = {
   // Hierarchy: the Arkavati is sub-basin C5 of the Cauvery (Karnataka) -
   // the atlas renders "Part of the Cauvery Basin" from this link.
   parentBasinId: "cauvery-ka",
+  stateCode: "KA",
   displayName: "Arkavathi Basin",
   displayNameLocal: "ಅರ್ಕಾವತಿ ಜಲಾನಯನ",
   blurb:
