@@ -93,49 +93,6 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
   );
 }
 
-/** Delete the account; published reports stay unlinked unless the reporter removes them too. */
-function DeleteAccount({ authFetch, onDeleted }: { authFetch: Fetch; onDeleted: () => void }) {
-  const [open, setOpen] = useState(false);
-  const [removeAll, setRemoveAll] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const run = async () => {
-    setBusy(true);
-    const res = await authFetch(`/api/sightings/mine${removeAll ? "?published=remove" : ""}`, { method: "DELETE" }).catch(() => null);
-    setBusy(false);
-    if (!res?.ok) return setError("Could not delete. Please try again.");
-    onDeleted();
-  };
-  if (!open) {
-    return (
-      <button type="button" onClick={() => setOpen(true)} className="text-xs text-slate-500 underline underline-offset-2 dark:text-slate-400">
-        Delete my account
-      </button>
-    );
-  }
-  return (
-    <div className="rounded-lg border border-red-200 p-3 text-sm dark:border-red-900">
-      <p className="text-slate-800 dark:text-slate-200">
-        This deletes your account and every report not yet published, with its photos. Published reports stay on the public record
-        with nothing linking them to you.
-      </p>
-      <label className="mt-2 flex items-center gap-2 text-slate-700 dark:text-slate-300">
-        <input type="checkbox" checked={removeAll} onChange={(e) => setRemoveAll(e.target.checked)} />
-        Remove my published reports too
-      </label>
-      <div className="mt-3 flex gap-2">
-        <button type="button" disabled={busy} onClick={run} className="rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-          Delete my account
-        </button>
-        <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs dark:border-slate-600">
-          Cancel
-        </button>
-      </div>
-      {error && <p className="mt-2 text-xs text-red-700 dark:text-red-400">{error}</p>}
-    </div>
-  );
-}
-
 const ACTIVE = new Set(["open", "reported", "authority_done"]);
 const STALE_DAYS = 14;
 
@@ -204,7 +161,7 @@ function Download({ reports }: { reports: OwnReport[] }) {
 }
 
 /** The reporter's own reports, with the updates they can make. */
-export function MyReports({ reports, authFetch, onChange, onDeleted }: { reports: OwnReport[]; authFetch: Fetch; onChange: () => void; onDeleted: () => void }) {
+export function MyReports({ reports, authFetch, onChange }: { reports: OwnReport[]; authFetch: Fetch; onChange: () => void }) {
   return (
     <div className="space-y-3">
       {reports.length === 0 ? <p className="text-sm text-slate-600 dark:text-slate-400">No reports yet.</p> : <Summary reports={reports} />}
@@ -242,10 +199,11 @@ export function MyReports({ reports, authFetch, onChange, onDeleted }: { reports
           )}
         </ReportCard>
       ))}
-      <div className="space-y-2 pt-4">
-        {reports.length > 0 && <Download reports={reports} />}
-        <DeleteAccount authFetch={authFetch} onDeleted={onDeleted} />
-      </div>
+      {reports.length > 0 && (
+        <div className="pt-4">
+          <Download reports={reports} />
+        </div>
+      )}
     </div>
   );
 }

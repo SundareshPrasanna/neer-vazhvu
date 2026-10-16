@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 import type { OwnReport } from "@/lib/sightings/types";
+import { AccountActions } from "./account-actions";
 import { MyReports } from "./my-reports";
 import { ReportFlow } from "./report-flow";
 import { signInConfigured, useCitizen } from "./use-citizen";
@@ -54,7 +55,7 @@ export function CitizenApp() {
     `rounded-md px-3 py-2 text-sm font-medium ${on ? "bg-cyan-50 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300" : "text-slate-600 dark:text-slate-400"}`;
   return (
     <div>
-      <div className="mb-4 flex items-center gap-1 border-b border-slate-200 pb-2 dark:border-slate-700">
+      <div className="mb-4 flex flex-wrap items-center gap-1 border-b border-slate-200 pb-2 dark:border-slate-700">
         <button type="button" className={tabClass(tab === "report")} onClick={() => setTab("report")}>
           Report
         </button>
@@ -66,11 +67,9 @@ export function CitizenApp() {
             Review
           </Link>
         )}
-        <button type="button" onClick={signOut} className="ml-auto text-xs text-slate-500 underline underline-offset-2 dark:text-slate-400">
-          Sign out
-        </button>
+        <AccountActions authFetch={authFetch} signOut={signOut} />
       </div>
-      {tab === "report" ? <ReportFlow authFetch={authFetch} onSent={load} /> : <MyReports reports={mine ?? []} authFetch={authFetch} onChange={load} onDeleted={signOut} />}
+      {tab === "report" ? <ReportFlow authFetch={authFetch} onSent={load} /> : <MyReports reports={mine ?? []} authFetch={authFetch} onChange={load} />}
     </div>
   );
 }

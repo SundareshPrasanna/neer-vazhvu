@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
         category: v.category,
         subcategory: v.subcategory,
         note: v.note,
-        readings: v.readings,
+        // Omitted, not null: JSON null is a value, and the readings check rejects it.
+        ...(v.readings && { readings: v.readings }),
         water_source: v.waterSource,
         authority_role: roleFor(v.category, v.subcategory),
       },
