@@ -7,8 +7,8 @@ inline `license` for closed sources), and buckets them:
 
   restricted      explicitly restrictive terms (no-derivatives, research-only,
                   all-rights-reserved, evaluation-only, no-redistribution)
-  nc              non-commercial family (CC BY-NC, CC BY-NC-SA, HydroSHEDS
-                  wording, "presume non-commercial")
+  nc              non-commercial family (CC BY-NC, CC BY-NC-SA, "presume
+                  non-commercial")
   share-alike     ODbL / CC BY-SA and other copyleft-on-data terms
   third-party     copyrighted works we cite ((c) Praja, academic papers,
                   NGO/IGO reports) - quotable with citation, not ours to
@@ -52,6 +52,7 @@ Usage:
   python3 scripts/nvdm-encumbrance-report.py --list nc   # artifact list for one bucket
   python3 scripts/nvdm-encumbrance-report.py --json      # machine-readable output
   python3 scripts/nvdm-encumbrance-report.py --selftest  # classifier + lineage unit tests
+  python3 scripts/nvdm-encumbrance-report.py --paid-check PATH...  # gate for a paid output
 
 Exit nonzero if any enveloped source id has no registry match (lineage bug),
 an artifact in the catalogue cannot be read or parsed (a file the audit
@@ -66,6 +67,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from collections import defaultdict
@@ -94,7 +96,7 @@ CLEAN_BUCKETS = ("gov-attribution", "clean-open")
 
 BUCKET_DESC = {
     "restricted": "explicitly restrictive terms (ND, research-only, all-rights-reserved)",
-    "nc": "non-commercial family (CC BY-NC / BY-NC-SA, HydroSHEDS wording, presumed-NC)",
+    "nc": "non-commercial family (CC BY-NC / BY-NC-SA, presumed-NC)",
     "share-alike": "share-alike / copyleft-on-data (ODbL, CC BY-SA)",
     "third-party": "third-party copyrighted works cited ((c) reports, academic papers)",
     "vague": "unverifiable: no stated/canonical licence, unaudited per-record citations, or unproven lineage",
@@ -283,10 +285,12 @@ def classify(license_str: str | None) -> str:
         or "internal use" in n
         or "no redistribution" in n
         or "not be redistributed" in n
+        # Bespoke bars that bite even where commercial use is free (HydroSHEDS s.2.1.2, s.3).
+        or "stand alone product" in n
+        or "own and retain" in n
     ):
         return "restricted"
-    # 2. Non-commercial family. HydroSHEDS' own wording is "free for
-    #    non-commercial and most uses" - NC-encumbered for our purposes.
+    # 2. Non-commercial family.
     if re.search(r"\bnc\b", n) or "non commercial" in n or "noncommercial" in n:
         return "nc"
     # 3. Share-alike / database copyleft. A dual grant that INCLUDES ODbL is
@@ -676,8 +680,10 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
         visiting.add(path)
         doc = docs[path]
         prov = doc.get("provenance", {})
-        status, _, _, _ = own[path]
-        buckets = {status}
+        status, detail, _, _ = own[path]
+        # Every own-source bucket, not just the worst: a determination clearing
+        # a restricted source must not also erase an nc one beside it.
+        buckets = {d["bucket"] for d in detail} or {status}
         ii = prov.get("internal_inputs")
         if prov.get("method") in LINEAGE_METHODS and ii is None:
             # Validator taint semantics: undeclared lineage on a derived/gee/
@@ -778,6 +784,25 @@ def assess_corpus() -> tuple[list[dict], list[str], list[str]]:
         for p in docs
     ]
     return results, audit_errors, sorted(unclassified)
+
+
+def paid_check(paths: list[str], corpus: tuple | None = None) -> int:
+    """Gate for a paid output: every input must be licence-clean, fail-closed.
+
+    Enforces the commercial line in DATA-LICENSE.md (nothing non-commercial in
+    a paid product) and also blocks every other non-clean bucket.
+    """
+    results, audit_errors, unclassified = corpus or assess_corpus()
+    status = {r["path"]: r["status"] for r in results}
+    blocked = 0
+    for p in paths:
+        rel = os.path.relpath(Path(p).resolve(), ROOT)
+        s = status.get(rel, "not-enveloped")
+        blocked += s not in CLEAN_BUCKETS
+        print(f"{'ok' if s in CLEAN_BUCKETS else 'BLOCKED':<8} {s:<15} {rel}")
+    if audit_errors or unclassified:
+        print("corpus audit errors - run the full report", file=sys.stderr)
+    return 1 if blocked or audit_errors or unclassified else 0
 
 
 def selftest() -> int:
@@ -955,11 +980,9 @@ def selftest() -> int:
         == "vague",
     )
     check(
-        "HydroSHEDS wording is nc",
-        classify(
-            "HydroSHEDS licence (free for non-commercial and most uses, attribution required)"
-        )
-        == "nc",
+        # Commercial use is free; the stand-alone bar and WWF's ownership claim are not.
+        "HydroSHEDS registry wording is restricted, not nc",
+        classify(registry_licenses().get("hydrosheds-basins")) == "restricted",
     )
     check(
         "no-stated-licence is vague",
@@ -1167,6 +1190,13 @@ def selftest() -> int:
         "a determination never upgrades a share-alike artifact",
         status_sa == "share-alike",
     )
+    status_nc, _, _, _ = apply_determination(
+        det_prov, "restricted", {"restricted", "nc"}, {"cpcb-nwmp-annual"}
+    )
+    check(
+        "clearing a restricted source leaves an nc source beside it in force",
+        status_nc == "nc",
+    )
     _, _, _, errs_bad = apply_determination(
         {"produced_by": "manual", "rights_determination": full}, "share-alike", set(), set()
     )
@@ -1258,6 +1288,20 @@ def selftest() -> int:
         ),
     )
     check("real-corpus audit is error-free", not audit_errors and not unclassified)
+    # ---- the commercial line: the paid gate passes clean inputs only.
+    corpus = (results, audit_errors, unclassified)
+    clean = str(ROOT / next(r["path"] for r in results if r["status"] in CLEAN_BUCKETS))
+    nc_path = "public/data/elevation-bands-chennai.geojson"
+    check("paid gate passes a licence-clean artifact", paid_check([clean], corpus) == 0)
+    check(
+        "paid gate blocks a non-commercial artifact",
+        by.get(nc_path, {}).get("status") == "nc"
+        and paid_check([str(ROOT / nc_path)], corpus) == 1,
+    )
+    check(
+        "paid gate blocks a path the audit has never seen",
+        paid_check([clean, str(ROOT / "public/data/no-such-file.json")], corpus) == 1,
+    )
 
     print(f"{'FAIL' if fails else 'OK'}: {len(fails)} failures")
     return 1 if fails else 0
@@ -1276,10 +1320,18 @@ def main(argv: list[str]) -> int:
     ap.add_argument(
         "--selftest", action="store_true", help="classifier + lineage unit tests"
     )
+    ap.add_argument(
+        "--paid-check",
+        nargs="+",
+        metavar="PATH",
+        help="exit nonzero unless every PATH may go into a paid output",
+    )
     args = ap.parse_args(argv)
 
     if args.selftest:
         return selftest()
+    if args.paid_check:
+        return paid_check(args.paid_check)
 
     results, audit_errors, unclassified = assess_corpus()
 
