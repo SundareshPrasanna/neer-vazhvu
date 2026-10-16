@@ -16,6 +16,9 @@ interface QueueItem extends OwnReport {
 }
 
 const small = "rounded-md border px-3 py-1.5 text-xs font-medium";
+/** Flags for the reviewer; nothing is rejected automatically. */
+const OLD_PHOTO_DAYS = 30;
+const FAR_KM = 1;
 
 function Item({ item, act }: { item: QueueItem; act: (body: object) => Promise<void> }) {
   const [type, setType] = useState(item.subcategory ? `${item.category}:${item.subcategory}` : item.category);
@@ -26,8 +29,24 @@ function Item({ item, act }: { item: QueueItem; act: (body: object) => Promise<v
   const exifGap =
     item.exif.lat != null && item.lat != null ? Math.hypot((item.exif.lat - item.lat) * 111, (item.exif.lng! - item.lng!) * 111 * Math.cos((item.lat * Math.PI) / 180)) : null;
 
+  const ageDays = item.exif.capturedAt ? (new Date(item.createdAt).getTime() - new Date(item.exif.capturedAt).getTime()) / 86_400_000 : null;
+  const flags = [
+    ageDays != null && ageDays > OLD_PHOTO_DAYS && { text: `Old photo (${Math.round(ageDays)} days)`, tone: "bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-200" },
+    exifGap != null && exifGap > FAR_KM && { text: `Far from pin (${exifGap.toFixed(1)} km)`, tone: "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200" },
+    !item.exif.capturedAt && item.exif.lat == null && { text: "No photo data", tone: "bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200" },
+  ].filter((f): f is { text: string; tone: string } => !!f);
+
   return (
     <ReportCard report={item}>
+      {flags.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {flags.map((f) => (
+            <span key={f.text} className={`rounded-full px-2 py-0.5 text-xs font-medium ${f.tone}`}>
+              {f.text}
+            </span>
+          ))}
+        </div>
+      )}
       <div className="mt-3 flex gap-2 overflow-x-auto">
         {item.photos.map((p, i) =>
           p.url ? (

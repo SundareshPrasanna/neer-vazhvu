@@ -46,6 +46,8 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
   const [previews, setPreviews] = useState<string[]>([]);
   const [coords, setCoords] = useState<Coords | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
+  // Where the pin came from; remounts the map when it moves to a new source.
+  const [pinSource, setPinSource] = useState<"photo" | "device" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState<Sent | null>(null);
@@ -56,7 +58,10 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
     setGeoError(null);
     if (!("geolocation" in navigator)) return setGeoError("This device cannot share its location.");
     navigator.geolocation.getCurrentPosition(
-      (p) => setCoords({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy ?? null }),
+      (p) => {
+        setCoords({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy ?? null });
+        setPinSource("device");
+      },
       () => setGeoError("We could not get your location. Allow location for this site and try again."),
       { enableHighAccuracy: true, timeout: 15_000 },
     );
@@ -65,11 +70,16 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
   const pick = async (files: FileList | null) => {
     if (!files) return;
     const originals = Array.from(files).slice(0, LIMITS.photosPerReport);
-    setMeta(originals[0] ? await readPhotoMeta(originals[0]) : null);
+    const m = originals[0] ? await readPhotoMeta(originals[0]) : null;
+    setMeta(m);
     const picked = await Promise.all(originals.map((f) => shrinkPhoto(f)));
     setPhotos(picked);
     setPreviews(picked.map((f) => URL.createObjectURL(f)));
-    if (!coords) locate();
+    // A photo that knows where it was taken places the pin, so reporting later from home still lands at the spot.
+    if (m?.lat != null && m.lng != null) {
+      setCoords({ lat: m.lat, lng: m.lng, accuracy: null });
+      setPinSource("photo");
+    } else if (!coords) locate();
   };
 
   const isOther = group === OTHER_KEY;
@@ -279,8 +289,9 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
           <input type="file" accept="image/*" capture="environment" multiple className="sr-only" onChange={(e) => pick(e.target.files)} />
         </label>
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-          {testing ? "Photograph the meter or test kit showing the result. " : ""}Keep people&rsquo;s faces, vehicle number plates and house
-          names or numbers out of the photo.
+          {testing ? "Photograph the meter or test kit showing the result. " : "Use a photo you took at the spot, recently. "}Older photos, or
+          photos taken elsewhere, are flagged for our reviewer. Keep faces, vehicle number plates and house names or numbers out of the
+          photo.
         </p>
         {previews.length > 0 && (
           <div className="mt-2 flex gap-2">
@@ -296,9 +307,15 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
         <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">3. Where is it?</h3>
         {coords ? (
           <>
-            <LocationMap lat={coords.lat} lng={coords.lng} onChange={(lat, lng) => setCoords((c) => ({ lat, lng, accuracy: c?.accuracy ?? null }))} />
+            <LocationMap
+              key={pinSource ?? "pin"}
+              lat={coords.lat}
+              lng={coords.lng}
+              onChange={(lat, lng) => setCoords((c) => ({ lat, lng, accuracy: c?.accuracy ?? null }))}
+            />
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Drag the pin if it is off.{coords.accuracy != null && ` Phone accuracy about ${Math.round(coords.accuracy)} m.`}
+              {pinSource === "photo" && "Location taken from your photo. "}Drag the pin if it is off.
+              {coords.accuracy != null && ` Phone accuracy about ${Math.round(coords.accuracy)} m.`}
             </p>
           </>
         ) : (
