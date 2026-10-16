@@ -72,7 +72,10 @@ async function loadLegacyChennaiHistory(): Promise<HistoryPayload> {
       .from("reservoir_daily")
       .select("date, reservoir, current_storage_mcft")
       .not("current_storage_mcft", "is", null)
+      // Several reservoirs share each date; without a tie-breaker rows on a
+      // page boundary came back twice or not at all.
       .order("date", { ascending: true })
+      .order("reservoir", { ascending: true })
       .range(offset, offset + PAGE_SIZE - 1);
 
     if (error || !data || data.length === 0) break;

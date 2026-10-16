@@ -663,7 +663,10 @@ export async function loadCityHistory(config: PlaceConfig): Promise<CityHistory>
       .select("source_code, date, storage_tmc, storage_pct_frl")
       .eq("city_id", config.cityId)
       .in("source_code", sourceCodes)
+      // Several sources share each date, so date alone is not a stable order
+      // across pages: rows on a page boundary came back twice or not at all.
       .order("date", { ascending: true })
+      .order("source_code", { ascending: true })
       .range(offset, offset + PAGE_SIZE - 1);
     if (error || !data) break;
     if (data.length === 0) break;
