@@ -25,6 +25,9 @@ export interface CoastalZoneProperties {
    *  which is beyond the study and has no published rate. */
   mean_erosion_m_yr: number | null;
   dominant_trend: CoastalTrend;
+  /** Official stretch class as published (e.g. "Low Erosion (MoES 2024)"), for
+   *  coasts whose record is classes, not rates. Absent on Chennai/Mumbai. */
+  class_label?: string;
   summary: string;
   source: CoastalSource;
   source_label: string;
@@ -63,6 +66,9 @@ export interface CoastalTransectProperties {
   /** "low" where the shoreline is ambiguous (river/creek mouth, lagoon) and the
    *  per-epoch waterline can snap to a different feature - dimmed, never led with. */
   confidence: "high" | "low";
+  /** Why a seed mask set confidence "low" (e.g. "crosses the Rushikonda
+   *  breakwater"); absent when low comes from the series itself. */
+  low_reason?: string;
   /** true on the one clean, strong eroder the UI pre-selects on load. */
   showcase?: boolean;
   source: "computed";

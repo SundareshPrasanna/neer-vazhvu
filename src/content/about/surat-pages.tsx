@@ -44,7 +44,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           So the dashboard asks the opposite question:{" "}
           <strong>how much room is left before water arrives.</strong> Surat
           Municipal Corporation publishes, hourly and free, a reading{" "}
-          <em>and the operational threshold it is measured against</em> at every
+          <em>and the operational threshold it is measured against</em>{" "}at every
           link of the chain - Ukai&apos;s full reservoir level, the
           causeway&apos;s overflow level, and a danger level for each of five
           urban khadis. No other publisher on this platform hands over both
@@ -56,7 +56,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           Two honesty notes carried on the card itself. A level past a danger
           mark is a trigger for the corporation to act, not a forecast that a
           given street will flood. And the causeway routinely sits{" "}
-          <em>above</em> its overflow level during the monsoon and is closed;
+          <em>above</em>{" "}its overflow level during the monsoon and is closed;
           that negative headroom is rendered as negative rather than clamped to
           zero, because &quot;submerged&quot; is the true state.
         </p>
@@ -118,7 +118,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           Two limits worth stating. Only one CPCB edition is ingested; the
           annual backfill is available and not yet run. And river geometry comes
           from OpenStreetMap, which names the Tapi and the Mindhola but{" "}
-          <strong>none of the five khadis</strong> the corporation monitors
+          <strong>none of the five khadis</strong>{" "}the corporation monitors
           against danger levels - so the creeks most central to the flood story
           have no line on the map. SMC&apos;s own GIS holds a creek layer, but
           it serves rendered tiles only.
@@ -158,7 +158,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           It is a strong geometric base and a weak semantic one:{" "}
           <strong>only 34 of the 3,401 carry a name</strong>, and the
           source&apos;s type-classification fields are empty for every Surat
-          feature. There is no census of water bodies for {cityName} equivalent
+          feature. There is no census of water bodies for {cityName}{" "}equivalent
           to Chennai&apos;s or Bengaluru&apos;s, no restoration register, and no
           lost-bodies study - so the ranking, census and lost-bodies layers are
           absent rather than thin.
@@ -237,7 +237,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           official current population and the city&apos;s own supply breakdown.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          <strong>A vintage conflict we did not smooth over.</strong> SMC&apos;s
+          <strong>A vintage conflict we did not smooth over.</strong>{" "}SMC&apos;s
           Zones page and its GIS both describe nine zones, with South split into
           A and B. The live rainfall feed still reports eight, with a single
           South Zone. Neither surface has been reconciled by the corporation, so
@@ -245,7 +245,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           published rather than remapping them onto the nine.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          <strong>No allocation ledger.</strong> The ledger&apos;s whole subject
+          <strong>No allocation ledger.</strong>{" "}The ledger&apos;s whole subject
           is entitled-versus-received, and no published drinking-water
           entitlement from Ukai or the Tapi was found. The entitled half does
           not exist in public.
@@ -257,7 +257,7 @@ export function SuratPageDescriptions({ cityId, cityName }: CityPagesProps) {
           per-body status.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          <strong>No industrial effluent layer yet.</strong> The Gujarat
+          <strong>No industrial effluent layer yet.</strong>{" "}The Gujarat
           Pollution Control Board&apos;s continuous-monitoring dashboard and the
           Gujarat Environment Management Institute&apos;s discharge-point
           monitoring for the Pandesara and Sachin common effluent treatment

@@ -96,7 +96,7 @@ export function ChennaiStoryEn() {
           each spillway feeding the next. The smaller tanks - those
           under a hundred acres of <em>ayacut</em>, the irrigated
           area below them - were the village&apos;s, looked after
-          by an <em>eri-variyam</em> or <em>kulavariyam</em>
+          by an <em>eri-variyam</em> or <em>kulavariyam</em>{" "}
           committee whose name appears on Chola copper-plates
           from the tenth century onward. The larger
           &ldquo;system tanks&rdquo; were the king&apos;s. By the
@@ -119,7 +119,7 @@ export function ChennaiStoryEn() {
           of South Indian tank governance, documents how this
           was simultaneously hydraulic infrastructure, caste-state
           authority, and temple economy - the same institution
-          doing three jobs at once. The hereditary <em>neerkatti</em>
+          doing three jobs at once. The hereditary <em>neerkatti</em>{" "}
           (water turner) opened and closed a tank&apos;s sluice
           on a calendar that was both agricultural and ritual.
           The kanmoi did not maintain themselves; nor did the
@@ -137,7 +137,7 @@ export function ChennaiStoryEn() {
         />
         <p>
           Inside the municipal boundary the same logic produced a
-          smaller, denser cascade. The {`Long Tank`} - really two
+          smaller, denser cascade. The {`Long Tank`}{" "}- really two
           linked reservoirs, the Mylapore Tank south and the
           Nungambakkam Tank north, five miles long and a mile wide
           at peak - defined the city&apos;s western limit until
@@ -225,7 +225,7 @@ export function ChennaiStoryEn() {
         <p>
           Then came an engineering project that, like a knife
           drawn across a country, severed the cascade laterally.
-          The <strong>Buckingham Canal</strong> began in 1806 as
+          The <strong>Buckingham Canal</strong>{" "}began in 1806 as
           Cochrane&apos;s Canal, an eighteen-kilometre saltwater
           cut from North Madras to Ennore financed by Basil
           Cochrane. In 1877-78, during the Great Famine that
@@ -253,7 +253,7 @@ export function ChennaiStoryEn() {
           bed. T. Nagar stands on the Long Tank&apos;s.
         </PullQuote>
         <p>
-          <strong>1923.</strong> The Madras Presidency, under the
+          <strong>1923.</strong>{" "}The Madras Presidency, under the
           Madras Town Planning Act of 1920, drained the southern
           half of the Long Tank - the Mylapore Tank - to lay out
           the city&apos;s first planned neighbourhood. Theyagaraya
@@ -261,7 +261,7 @@ export function ChennaiStoryEn() {
           for plotting in 1923-25. The shopping district that
           most of urban Tamil Nadu now thinks of as the centre
           of Chennai is built on a drained tank.{" "}
-          <strong>1971.</strong> The northern half - the
+          <strong>1971.</strong>{" "}The northern half - the
           Nungambakkam Tank - was filled to make Valluvar Kottam,
           the memorial to the poet-saint Tiruvalluvar. Spur Tank
           at Chetpet was encroached and silted up by 1939; the
@@ -341,7 +341,7 @@ export function ChennaiStoryEn() {
         <p>
           Chennai&apos;s water condition is one of the better
           documented in the country. Chola inscriptions named the
-          larger eris. The 1822 Ravenshaw plan and the 1834
+          larger eris. The 1822 Ravenshaw plan and the 1834{" "}
           <em>Environs of Madras</em>{" "}survey mapped them. S.
           Muthiah&apos;s <em>Madras Rediscovered</em>{" "}compiled the
           lost-tank inventory. David Mosse&apos;s anthropology

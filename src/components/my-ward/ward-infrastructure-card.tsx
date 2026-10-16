@@ -89,7 +89,7 @@ export function WardInfrastructureCard({ wardNumber, profile }: Props) {
               href={`${cityPrefix}/flood-risk?ward=${wardNumber}&view=drainage`}
               className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
             >
-              {t("my_ward.view_on_map")} &rarr;
+              {t("my_ward.view_on_map")}{" "}&rarr;
             </Link>
           </div>
         )}
@@ -105,7 +105,7 @@ export function WardInfrastructureCard({ wardNumber, profile }: Props) {
                 href={`${cityPrefix}/flood-risk?ward=${wardNumber}&view=sewerage`}
                 className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
               >
-                {t("my_ward.view_on_map")} &rarr;
+                {t("my_ward.view_on_map")}{" "}&rarr;
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">

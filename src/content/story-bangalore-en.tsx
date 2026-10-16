@@ -94,7 +94,7 @@ export function BangaloreStoryEn() {
           He did not just build a town. He built it together with its
           water. The locally remembered version is that his mother
           instructed him in a single Kannada sentence:{" "}
-          <em>keregalum kattu, marangalum nedu</em> - build lakes, plant
+          <em>keregalum kattu, marangalum nedu</em>{" "}- build lakes, plant
           trees. He took it literally. Within his lifetime he had built
           the kere that bears his family deity Kempamma&apos;s name -
           Kempambudhi - alongside Dharmambudhi (whose surplus drained
@@ -103,7 +103,7 @@ export function BangaloreStoryEn() {
           Pete. Three valleys ran off the ridge the city sat on; he
           aligned the kere along all three. Each one was a low earthen
           bund across the gentlest slope of the valley, fronted by a
-          stone <em>kalyani</em> (ಕಲ್ಯಾಣಿ) where temple priests drew
+          stone <em>kalyani</em>{" "}(ಕಲ್ಯಾಣಿ) where temple priests drew
           water for ritual, with a sluice (or sometimes a notched
           spillway) controlling release. The overflow from the upper
           kere fed the next one downstream. By Kempe Gowda&apos;s
@@ -339,7 +339,7 @@ export function BangaloreStoryEn() {
           Harini Nagendra&apos;s 2011 paper in <em>Environmental
           Management</em> - <em>Changes in Public Commons as a
           Consequence of Urbanization: The Agara Lake in Bangalore,
-          India</em> - traces what happened in four decades to one
+          India</em>{" "}- traces what happened in four decades to one
           ninety-acre kere south of the original Pete. Until the
           1970s, Agara was a working agricultural commons: fishers
           netted from a wooden landing on its eastern shore, dhobis
@@ -390,7 +390,7 @@ export function BangaloreStoryEn() {
           The 2015 fire was the trigger for the case <em>Forward
           Foundation v State of Karnataka</em> at the National Green
           Tribunal. The petitioners - a Bengaluru-based environmental
-          trust - documented the upstream <em>rajakaluves</em> feeding
+          trust - documented the upstream <em>rajakaluves</em>{" "}feeding
           Bellandur, the apartment-block encroachments on the
           storm-drain network, and the buffer-zone violations along the
           lake&apos;s edges. The NGT&apos;s 2018 order required the

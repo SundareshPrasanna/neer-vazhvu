@@ -1,0 +1,377 @@
+{
+ "nvdm": "1.0",
+ "dataset": "data-root/facts",
+ "scope": {
+  "kind": "city",
+  "id": "visakhapatnam"
+ },
+ "provenance": {
+  "sources": [
+   {
+    "id": "cgwb-visakhapatnam-aquifer-plans",
+    "title": "Supply by source: CGWB's 2025 aquifer plan, Table 9.1, with the same quantities as Table 5.1 of its June 2022 district report (via visakhapatnam-supply-overview.json)",
+    "publisher": "Central Ground Water Board",
+    "license": "Government of India publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "ngt-andhra-filings",
+    "title": "GVMC's daily supply sheet of 11 March 2021 (NGT OA 14/2021 (SZ)) and the Government of Andhra Pradesh affidavit of Feb 2026 in NGT Principal Bench OA 606/2018 (via the supply-overview and allocations artifacts)",
+    "publisher": "National Green Tribunal",
+    "license": "Government of India tribunal record, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "apwrims-reservoirs",
+    "title": "Daily reservoir storage (via visakhapatnam-dam-storage.json)",
+    "publisher": "Water Resources Department, Government of Andhra Pradesh",
+    "license": "Andhra Pradesh Water Resources Department portal (APWRIMS): we have not found a licence or terms of use on the portal, only a disclaimer and a site footer reading 'All Rights Reserved' - Andhra Pradesh government data, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "ingres-groundwater-andhra",
+    "title": "Mandal assessments (via gwr-blocks-visakhapatnam.json)",
+    "publisher": "IN-GRES",
+    "license": "no explicit licence: we have not found terms of use, a disclaimer or a copyright or licence statement on the IN-GRES portal; a Government of India assessment portal, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "cpcb-nwmp-visakhapatnam",
+    "title": "NWMP water quality (via river-quality-visakhapatnam.json), its 2019-2024 Ground Water tables, and the polluted river stretch lists of September 2018, 2022 and October 2025",
+    "publisher": "Central Pollution Control Board",
+    "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+    "role": "input"
+   },
+   {
+    "id": "appcb-coastal-monitoring",
+    "title": "COMAPS coastal annual averages 2011-2025: station 21 (lavender canal), and stations 16, 17 and 22 where the Gosthani, the Gambheeram Gedda and the Meghadri Gedda surplus course meet the sea",
+    "publisher": "Andhra Pradesh Pollution Control Board",
+    "license": "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "mohua-amrut-status-ap",
+    "title": "AMRUT 2.0 projects (via restoration-projects-visakhapatnam.json)",
+    "publisher": "Ministry of Housing and Urban Affairs",
+    "license": "Government of India publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "nccr-shoreline-assessment",
+    "title": "NCCR's shoreline assessment and the MoES Lok Sabha reply (USQ 2638, 2024) that gives its stretch classes (via visakhapatnam-coastal-zones.geojson)",
+    "publisher": "National Centre for Coastal Research",
+    "license": "Government of India (MoES/NCCR) publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "gvmc-whats-new",
+    "title": "The draft Green City Action Plan (IFC for GVMC), posted by GVMC for comment on 19 Oct 2024: litres a person a day and treatment plants (via visakhapatnam-supply-overview.json)",
+    "publisher": "Greater Visakhapatnam Municipal Corporation",
+    "license": "Greater Visakhapatnam Municipal Corporation publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "ppa-polavaram",
+    "title": "Visakhapatnam's share of the Polavaram Left Main Canal (via allocations-visakhapatnam.json)",
+    "publisher": "Polavaram Project Authority",
+    "license": "Government of India publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "seiaa-ap-clearances",
+    "title": "Environmental clearances for three data-centre campuses (April and June 2026) and APIIC's data-centre park at Madhurawada (December 2024) (via allocations-visakhapatnam.json)",
+    "publisher": "State Environment Impact Assessment Authority, Andhra Pradesh",
+    "license": "Government of India publication, cited with attribution",
+    "role": "input"
+   },
+   {
+    "id": "osm-visakhapatnam-water",
+    "title": "Ponds, tanks, lakes and reservoirs (via visakhapatnam-water-bodies-current.geojson)",
+    "publisher": "OpenStreetMap contributors",
+    "license": "Open Database License (ODbL) 1.0",
+    "role": "input"
+   },
+   {
+    "id": "imd-gridded-rainfall-visakhapatnam",
+    "title": "0.25-degree gridded rainfall for the cell over the city (via imd-rainfall-monthly-visakhapatnam.json)",
+    "publisher": "India Meteorological Department",
+    "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+    "role": "input"
+   }
+  ],
+  "method": "derived",
+  "produced_at": "2026-10-15",
+  "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+  "internal_inputs": [
+   "public/data/visakhapatnam-supply-overview.json",
+   "public/data/allocations-visakhapatnam.json",
+   "public/data/visakhapatnam-dam-storage.json",
+   "public/data/gwr-blocks-visakhapatnam.json",
+   "public/data/visakhapatnam-cgwb-stations.json",
+   "public/data/river-quality-visakhapatnam.json",
+   "public/data/restoration-projects-visakhapatnam.json",
+   "public/geojson/visakhapatnam-water-bodies-current.geojson",
+   "public/geojson/visakhapatnam-coastal-transects.geojson",
+   "public/geojson/visakhapatnam-coastal-zones.geojson",
+   "public/data/imd-rainfall-monthly-visakhapatnam.json"
+  ],
+  "note": "Every figure is read from an artifact this site already serves, except these, which the producer carries as dated constants with their page: APPCB's COMAPS averages for station 21 and the names of its stations 16, 17 and 22; CPCB's polluted river stretch lists (2018, 2022, 2025); and the PFAS research figures."
+ },
+ "place_id": "visakhapatnam",
+ "generated_at": "2026-10-15",
+ "note": "Static snapshot. Re-run after any input artifact changes.",
+ "facts": [
+  {
+   "id": "godavari-largest-source",
+   "tier": 2,
+   "category": "Supply",
+   "title": "The largest source is the Godavari and Yeleru, up to 190 km away",
+   "value": "182",
+   "unit": "MLD of about 380 MLD",
+   "interpretation": "About 380 MLD is available from nine sources (GVMC's figures; CGWB's tables carry the same quantities unchanged since its June 2022 report), and about 182 MLD of it comes from the Godavari and Yeleru system. CGWB lists the source at 190 km from the city, and the water reaches the city through the Yeleru canal. The June 2022 report (AAP 2020-21) said GVMC was able to draw 345.5 MLD of the 380. CGWB gives this source as 182 to 204 MLD; 182 is the figure that makes its own 380 MLD total add up. We have not found a figure that splits it between the two rivers. The next largest, Raiwada, gives 72.5 MLD.",
+   "data_date": "2022-06",
+   "source_url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1750331736769645187file.pdf",
+   "source_label": "CGWB, Aquifer Management Plan of Visakhapatnam and Anakapalli UAs (2025), Table 9.1 (same quantities as CGWB's June 2022 Table 5.1)"
+  },
+  {
+   "id": "canal-shared-with-steel-plant",
+   "tier": 2,
+   "category": "Supply",
+   "title": "The city shares its largest supply canal with the steel plant",
+   "value": "41.641 vs 35.640",
+   "unit": "million gallons a day, city vs steel plant",
+   "interpretation": "On 11 March 2021, the only day for which we have found GVMC's split, 41.641 million gallons of the Yeleru canal's tail-end water went to the city and 35.640 to the RINL steel plant, with the rest to APIIC's industrial parks, NTPC, the port and rural water supply (0.900). The canal was first built to serve the steel plant. The sheet prints no unit for this split; it is read as million gallons a day, the unit of the sheet's other columns.",
+   "data_date": "2021-03-11",
+   "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf",
+   "source_label": "GVMC Daily Water Supply, status 11-03-2021 (annexure to GVMC's action-taken report, NGT OA 14/2021 (SZ))"
+  },
+  {
+   "id": "litres-per-person",
+   "tier": 2,
+   "category": "Supply",
+   "title": "Litres a person a day, against a 135 litre standard",
+   "value": "105 to 110",
+   "unit": "litres a person a day",
+   "interpretation": "The draft Green City Action Plan (prepared by IFC for GVMC, posted by GVMC for comment on 19 Oct 2024) puts average supply at 105 to 110 litres a person a day against the national standard of 135. It is a city-wide average, and the plan does not say how it was worked out.",
+   "data_date": "2024-09",
+   "source_url": "https://www.gvmc.gov.in/WhatsNew/Whats_New_DocOct_658.pdf",
+   "source_label": "Visakhapatnam Green City Action Plan, draft posted for public comment on 19 Oct 2024 (IFC for GVMC), p30"
+  },
+  {
+   "id": "treatment-capacity",
+   "tier": 3,
+   "category": "Supply",
+   "title": "11 water treatment plants",
+   "value": "489",
+   "unit": "MLD of water treatment capacity",
+   "interpretation": "The draft Green City Action Plan gives GVMC 11 water treatment plants with 489 MLD of capacity between them. We have not found a plant-by-plant list with commissioning years.",
+   "data_date": "2024-09",
+   "source_url": "https://www.gvmc.gov.in/WhatsNew/Whats_New_DocOct_658.pdf",
+   "source_label": "Visakhapatnam Green City Action Plan, draft posted for public comment on 19 Oct 2024 (IFC for GVMC), p30"
+  },
+  {
+   "id": "polavaram-three-figures",
+   "tier": 2,
+   "category": "Governance",
+   "title": "Three official figures for the city's Polavaram share",
+   "value": "23.44 / 24 / 12",
+   "unit": "TMC a year",
+   "interpretation": "The Polavaram Project Authority, the Ministry of Jal Shakti and CAG give 23.44 TMC a year for Visakhapatnam from the Polavaram Left Main Canal. The ADB environmental review GVMC published (January 2019) cites a 2004 order for 24 TMC; CGWB's 2025 plan says 12 TMC for the urban area. The documents also describe the beneficiaries differently, and we have not found the 2004 order itself.",
+   "data_date": "2026",
+   "source_url": "https://ppa.gov.in/WPSCore/Common/WebPages/Home/AboutProject.aspx",
+   "source_label": "Polavaram Project Authority, About the Project"
+  },
+  {
+   "id": "data-centre-water",
+   "tier": 2,
+   "category": "Supply",
+   "title": "Data-centre campuses, by their clearances",
+   "value": "0.69",
+   "unit": "MLD of fresh water across three campuses",
+   "interpretation": "Environmental clearances issued in April and June 2026 for three data-centre campuses list total water requirements of 267, 234 and 307 kilolitres a day and name Rural Water Supply and Sanitation as the source of water. Part of each total is the campus's own treated wastewater, recycled on site, so the claim on Rural Water Supply and Sanitation is the fresh water: 239, 207 and 246 kilolitres a day, 0.69 MLD together (0.81 MLD with the recycled water). No cooling-water source is stated. A separate December 2024 clearance for APIIC's data-centre and technology park at Madhurawada, inside the city, lists a total water requirement of 2,644 kilolitres a day, of which fresh water, capped at 1,429 kilolitres a day, is to be met from GVMC's supply and the other 1,215 is to be recycled water from the park's own sewage treatment plant; the clearance records APIIC's request for the allotment as under process, and we have not found a GVMC allotment order. Press reports of August 2026 quoted the state IT minister as telling the Assembly that a 6.5 GW cluster would need about 3 TMC of water a year; we have not found the Assembly's own record.",
+   "data_date": "2026-06-10",
+   "source_url": "https://parivesh.nic.in/",
+   "source_label": "SEIAA Andhra Pradesh environmental clearances SIA/AP/INFRA2/575243/2026, 575126/2026 and 576702/2026 (PARIVESH proposal numbers)"
+  },
+  {
+   "id": "sewers-reach-60-pct",
+   "tier": 2,
+   "category": "Sewage",
+   "title": "Sewers reach six in ten people",
+   "value": "60%",
+   "unit": "of people connected to sewers",
+   "interpretation": "195,025 households, 60% of the population, are connected to underground drainage, by the state's February 2026 affidavit to the National Green Tribunal.",
+   "data_date": "2026-02",
+   "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf",
+   "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (Feb 2026), PDF pp71, 78"
+  },
+  {
+   "id": "sewage-treated",
+   "tier": 2,
+   "category": "Sewage",
+   "title": "Sewage generated against treatment capacity in use",
+   "value": "179",
+   "unit": "MLD of plant capacity in use, against 248 MLD of sewage generated (February 2026)",
+   "interpretation": "The state reports 248 MLD of sewage generated in Visakhapatnam, 237 MLD of treatment capacity installed and 179 MLD of plant capacity in use, a gap of 69 MLD between sewage generated and capacity in use. 33 MLD of treated water is reused, 25 MLD of it at the HPCL refinery.",
+   "data_date": "2026-02",
+   "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf",
+   "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (Feb 2026), PDF pp71, 78"
+  },
+  {
+   "id": "city-reservoirs-vs-last-year",
+   "tier": 2,
+   "category": "Reservoirs",
+   "title": "Three of the reservoirs that supply the city, against a year earlier",
+   "value": "39%",
+   "unit": "of live capacity, against 93% a year earlier",
+   "interpretation": "Raiwada, Thatipudi and Meghadrigedda, three of the reservoirs that supply the city, together held 39% of their live capacity on 15 October 2026, against 93% on the same date a year earlier. Yeleru, the reservoir behind the city's largest source, held 63% against 85%. GVMC's own Mudasarlova reservoir and the Gambheeram reservoir are not in the state's daily feed. Live storage is the water above each dam's lowest outlet.",
+   "data_date": "2026-10-15",
+   "source_url": "https://apwrims.ap.gov.in/",
+   "source_label": "APWRIMS daily reservoir storage (Water Resources Department, Government of Andhra Pradesh)"
+  },
+  {
+   "id": "visakhapatnam-rural-critical",
+   "tier": 2,
+   "category": "Groundwater",
+   "title": "One mandal drew almost all the groundwater it could in 2024-25",
+   "value": "95.06%",
+   "unit": "of extractable groundwater drawn (2024-25)",
+   "interpretation": "In CGWB's December 2025 report (assessment year 2024-25), Visakhapatnam Rural mandal drew 95.06% of the groundwater that can be extracted there each year and was rated critical, the district's only such unit. The district as a whole stood at about 44%. The 2025-26 IN-GRES edition, newer than CGWB's December 2025 report, rates it safe at 47.87%: its extractable resource rises from 225.3 to 437.1 hectare-metres, with a new 223.9 hectare-metre recharge entry from surface irrigation, while extraction falls from 214.2 to 209.2 hectare-metres. That is a revised input, not measured change. The groundwater map colours the 2025-26 edition.",
+   "data_date": "2025",
+   "source_url": "https://ingres.iith.ac.in/",
+   "source_label": "IN-GRES, Andhra Pradesh, assessment year 2024-25 (CGWB, Dynamic Ground Water Resources of AP 2025)"
+  },
+  {
+   "id": "gajuwaka-2025-26",
+   "tier": 3,
+   "category": "Groundwater",
+   "title": "Gajuwaka in the newest assessment",
+   "value": "89.39%",
+   "unit": "of extractable groundwater drawn (2025-26)",
+   "interpretation": "The 2025-26 IN-GRES edition, newer than CGWB's December 2025 report and with rainfall inputs carried over from 2024-25, puts Gajuwaka at 89.39% (semi-critical), up from 60.47% a year earlier. Two revised inputs drive the jump: estimated industrial draw goes from 5.4 to 97.0 hectare-metres, and recharge from surface irrigation falls from 111.95 to 19.19 hectare-metres, cutting the extractable resource from 605.3 to 519.4 hectare-metres.",
+   "data_date": "2026",
+   "source_url": "https://ingres.iith.ac.in/",
+   "source_label": "IN-GRES, Andhra Pradesh, assessment year 2025-26 (newer than CGWB's December 2025 report)"
+  },
+  {
+   "id": "city-groundwater-is-domestic",
+   "tier": 2,
+   "category": "Groundwater",
+   "title": "In the city, groundwater is drawn for homes",
+   "value": "94%",
+   "unit": "of groundwater drawn in the seven urban mandals goes to homes",
+   "interpretation": "In 2024-25, 1,676.9 of the 1,776.2 hectare-metres drawn in the seven urban mandals was for domestic use. In Anandapuram, Padmanabham and Pendurthi, more than 95% of it is irrigation; in Bheemunipatnam, homes take a little more than half (767.8 of 1,432.1 hectare-metres).",
+   "data_date": "2025",
+   "source_url": "https://ingres.iith.ac.in/",
+   "source_label": "IN-GRES, Andhra Pradesh, assessment year 2024-25"
+  },
+  {
+   "id": "wells-on-record",
+   "tier": 4,
+   "category": "Groundwater",
+   "title": "Wells on the groundwater map",
+   "value": "2002",
+   "unit": "the year the oldest hand-read well records begin",
+   "interpretation": "The groundwater page plots wells inside the eleven mandals: AP Ground Water Department wells read by hand once a month, the oldest from 2002, and automatic recorders on the state's APWRIMS portal, read every day and shown as monthly means. Where a recorder and a hand-read well stand at the same site, they are kept as separate series. The wells are too few for a depth map of each ward.",
+   "data_date": "2026-10",
+   "source_url": "https://apwrims.ap.gov.in/",
+   "source_label": "Andhra Pradesh Water Resources Department (APWRIMS) and AP Ground Water Department via the National Water Data Portal (NWIC)"
+  },
+  {
+   "id": "no-river-station",
+   "tier": 2,
+   "category": "Gap",
+   "title": "CPCB samples the city's channels at reservoirs, a creek and a canal",
+   "value": "4",
+   "unit": "CPCB stations on the city's channels in its 2019-2024 tables, none of them a river-type station",
+   "interpretation": "In its 2019-2024 tables, CPCB's national water quality programme samples the city's three channels at four stations: the Meghadrigedda reservoir and a creek by the Naval Dockyard on the Meghadri Gedda, Thatipudi reservoir on the Gosthani, upstream in Vizianagaram district, and the Yeleru canal near Pharma City at Parawada. None is a river-type station: the tables list no river station on any river or gedda in Visakhapatnam or Anakapalli. CPCB's other stations here are one lake, the sea and groundwater wells. APPCB's coastal monitoring samples the Gosthani, the Meghadri Gedda's surplus course and the Gambheeram Gedda where they meet the sea (its stations 16, 22 and 17). No stretch here appears in CPCB's polluted river lists of 2018, 2022 and 2025. Without river stations, those lists say nothing either way about these rivers.",
+   "data_date": "2024",
+   "source_url": "https://cpcb.gov.in/nwmp-data-2024/",
+   "source_label": "CPCB National Water Quality Monitoring Programme, 2019-2024; APPCB COMAPS annual averages 2011-2025 (stations 16, 17 and 22); CPCB polluted river stretch lists, 2018, 2022 and 2025"
+  },
+  {
+   "id": "dockyard-creek-oxygen",
+   "tier": 2,
+   "category": "Rivers",
+   "title": "Oxygen in the creek by the Naval Dockyard",
+   "value": "2.4",
+   "unit": "mg/L dissolved oxygen at its lowest (2024), against CPCB's coastal benchmark of 4",
+   "interpretation": "At the Sardar Vallabhai Patel Bridge by the Naval Dockyard, where the Meghadri Gedda's channel reaches the harbour, CPCB's 12 samples in 2024 recorded dissolved oxygen as low as 2.4 mg/L, after 1.0 mg/L in 2023. CPCB's 2024 coastal table prints 4.0 mg/L, its criterion for bathing-class (SW-II) water, at the head of every page. Both readings are also below 3.0 mg/L, the lowest oxygen floor of any coastal class, harbour waters (SW-IV) included.",
+   "data_date": "2024",
+   "source_url": "https://cpcb.gov.in/nwmp-data-2024/",
+   "source_label": "CPCB National Water Quality Monitoring Programme, creek and marine tables 2023 and 2024; coastal class floors from APPCB's COMAPS tables (p19)"
+  },
+  {
+   "id": "lavender-canal-oxygen",
+   "tier": 2,
+   "category": "Coastal",
+   "title": "Oxygen where a sewage canal meets the harbour",
+   "value": "0.7",
+   "unit": "mg/L dissolved oxygen, 2024-25 average",
+   "interpretation": "APPCB's coastal monitoring at the confluence of the 'lavender canal' sewage with the sea at the harbour averaged 0.7 mg/L of dissolved oxygen, 7.8 mg/L BOD and 19.73 mg/L ammoniacal nitrogen (NH3-N, ammonia measured as nitrogen) in 2024-25. In 2017-18 the same station averaged 6.1 mg/L of oxygen.",
+   "data_date": "2025-03",
+   "source_url": "https://pcb.ap.gov.in/PCBLive/PCB/QualityMonitoring",
+   "source_label": "APPCB, COMAPS annual averages 2011-2025, p9"
+  },
+  {
+   "id": "pfas-research",
+   "tier": 3,
+   "category": "Coastal",
+   "title": "Research: 'forever chemicals' in the sea and sewage",
+   "value": "38",
+   "unit": "of 77 PFAS compounds detected (June 2025 samples)",
+   "interpretation": "A 2026 peer-reviewed study found 38 PFAS compounds in Visakhapatnam's coastal water and sewage, up to 597 ng/L in seawater and 1,324 ng/L in sewage, and estimated that sewage accounts for about 41% of median coastal PFAS concentrations. This is research, not official monitoring; we have not found an official response.",
+   "data_date": "2025-06",
+   "source_url": "https://www.nature.com/articles/s44454-026-00046-0",
+   "source_label": "Khalid et al., npj Emerging Contaminants 2:28 (2026)"
+  },
+  {
+   "id": "amrut-tank-rejuvenation",
+   "tier": 2,
+   "category": "Restoration",
+   "title": "Tanks rejuvenated under AMRUT 2.0",
+   "value": "10 of 11",
+   "unit": "tank projects completed by 5 March 2026 (Rs 23.31 crore)",
+   "interpretation": "MoHUA's status list of 5 March 2026 shows 11 GVMC water-body projects under AMRUT 2.0, worth Rs 23.31 crore together: 10 completed and one, Thungalam, under way. MoHUA's live list, checked on 14 Oct 2026, also shows a 12th, a Rs 2.00 crore project at Rajupalem at DPR stage, which is not counted here. It has no Thungalam row. In its place is a Rs 1.27 crore 'Thimmaraju Tank' project, which appears to be the same project under a new name; MoHUA's live list has no project IDs and does not say so.",
+   "data_date": "2026-03-05",
+   "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+   "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026"
+  },
+  {
+   "id": "water-bodies-mapped",
+   "tier": 4,
+   "category": "Water bodies",
+   "title": "Water bodies on the map",
+   "value": "1,088",
+   "unit": "water bodies mapped in and around the city",
+   "interpretation": "The water-bodies map draws every pond, tank, lake and reservoir OpenStreetMap holds in and around GVMC, as retrieved on 14 October 2026. It is not an official register: we have not found a gazetted lake register. No list of lost tanks is shown: we have not found a published official one.",
+   "data_date": "2026-10-14",
+   "source_url": "https://www.openstreetmap.org/",
+   "source_label": "OpenStreetMap contributors"
+  },
+  {
+   "id": "shoreline-eroding-share",
+   "tier": 2,
+   "category": "Shoreline",
+   "title": "How much of the city's coast is retreating",
+   "value": "35%",
+   "unit": "of 421 reliable points retreating (1990-2026)",
+   "interpretation": "Measured from Landsat and Sentinel-2 images every 100 m from Appikonda to Pedda Nagamayyapalem, just north of Bheemunipatnam: 421 of the 476 points measured give a reliable reading, and 147 of those 421 are retreating and 244 are stable. The Ministry of Earth Sciences (Lok Sabha reply, 11 Dec 2024, drawing on NCCR's shoreline assessment) classes four stretches here as Low Erosion: Yarada, RK Beach, 'Mangamari Peta to Bheemili' and 'Bheemunipatnam to Pedanagamayyapalem'. Its list does not name Lawson's Bay or Rushikonda. RK Beach reads mostly stable here (30 of its 37 reliable points), and the port adds dredged sand to it, so that is a managed beach.",
+   "data_date": "2026",
+   "source_url": "https://web.archive.org/web/20250523084912/https://moes.gov.in/sites/default/files/2638English.pdf",
+   "source_label": "Our satellite measurement, set beside NCCR's National Assessment of Shoreline Changes (2018) and MoES Lok Sabha answer 2638 (2024)"
+  },
+  {
+   "id": "rainfall-normal",
+   "tier": 3,
+   "category": "Rainfall",
+   "title": "An average year's rain over the city",
+   "value": "1,043",
+   "unit": "mm a year, IMD gridded data at 17.75 N 83.25 E (1970-2020 mean)",
+   "interpretation": "Our average of IMD's 0.25-degree gridded rainfall for the grid cell over the city (17.75 N, 83.25 E) is about 1,043 mm a year over 1970-2020. Over 1991-2020 the same cell gives 1,053 mm, close to the 1,054.5 mm normal of IMD's Visakhapatnam airport observatory; IMD's other Visakhapatnam observatory (station 43150) has a 1991-2020 normal of 1,113.1 mm, and the AP planning department's normal for the district is 1,117.7 mm.",
+   "data_date": "2020",
+   "source_url": "https://imdpune.gov.in/cmpg/Griddata/Rainfall_25_NetCDF.html",
+   "source_label": "IMD 0.25 degree gridded rainfall, cell 17.75 N 83.25 E (our average); IMD Climatological Tables 1991-2020 for the station normals"
+  }
+ ]
+}

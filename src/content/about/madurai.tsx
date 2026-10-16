@@ -2,7 +2,7 @@
 
 import { useLanguage } from "@/lib/i18n/context";
 import { getPlaceConfig } from "@/lib/cities";
-import { SubSection, DataSourceGroupHeader, DataSource, type LostBodyEntry } from "@/components/about/primitives";
+import { SubSection, DataSource, type LostBodyEntry } from "@/components/about/primitives";
 import type { CityAboutSlotProps } from "@/components/about/city-about";
 import { MaduraiPageDescriptions } from "./madurai-pages";
 
@@ -57,14 +57,14 @@ export default function MaduraiAbout({ slot, cityId, fallback = null }: CityAbou
               </p>
               <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-2">
                 <li>
-                  <span className="font-semibold">Vaigai is a multi-purpose dam, not a city reservoir.</span> It&apos;s owned by the Tamil Nadu Public Works Department and shared across Madurai, Theni, Sivagangai and Ramanathapuram districts for both irrigation and drinking water. MMC&apos;s sanctioned drinking-water allocation is <span className="font-semibold">1,500 mcft per year</span> - a small slice of Vaigai&apos;s total storage. The most recent reported actual draw is ~900 mcft per year (≈70 MLD continuous).
+                  <span className="font-semibold">Vaigai is a multi-purpose dam, not a city reservoir.</span> It&apos;s owned by the Tamil Nadu Public Works Department and shared across Madurai, Theni, Sivagangai and Ramanathapuram districts for both irrigation and drinking water. MMC&apos;s sanctioned drinking-water allocation is <span className="font-semibold">1,500 mcft per year</span>{" "}- a small slice of Vaigai&apos;s total storage. The most recent reported actual draw is ~900 mcft per year (≈70 MLD continuous).
                 </li>
                 <li>
-                  <span className="font-semibold">We haven&apos;t yet found a public daily feed.</span> Pannaipatty WTP&apos;s daily raw-water intake and treated output, the 28 existing OHTs&apos; live levels (with 37 more being built under Tranche 2), and zone-by-zone supply are tracked inside MMC&apos;s ICCC and SCADA systems for internal monitoring; we don&apos;t have a route to a daily public surface for them today. So a single &quot;days of water left&quot; number for the city would be guesswork; we don&apos;t generate one.
+                  <span className="font-semibold">We haven&apos;t yet found a public daily feed.</span>{" "}Pannaipatty WTP&apos;s daily raw-water intake and treated output, the 28 existing OHTs&apos; live levels (with 37 more being built under Tranche 2), and zone-by-zone supply are tracked inside MMC&apos;s ICCC and SCADA systems for internal monitoring; we don&apos;t have a route to a daily public surface for them today. So a single &quot;days of water left&quot; number for the city would be guesswork; we don&apos;t generate one.
                 </li>
               </ul>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-                What the dashboard <span className="font-semibold">does</span> show: Vaigai&apos;s live dam level (sourced daily from the Tamil Nadu Agriculture Department&apos;s reservoir page), MMC&apos;s public allocation and recent-draw constants, and the structural infrastructure of Pannaipatty WTP and the distribution network. That&apos;s the honest version of what&apos;s currently knowable from outside MMC.
+                What the dashboard <span className="font-semibold">does</span>{" "}show: Vaigai&apos;s live dam level (sourced daily from the Tamil Nadu Agriculture Department&apos;s reservoir page), MMC&apos;s public allocation and recent-draw constants, and the structural infrastructure of Pannaipatty WTP and the distribution network. That&apos;s the honest version of what&apos;s currently knowable from outside MMC.
               </p>
             </SubSection>
           
@@ -317,8 +317,8 @@ export default function MaduraiAbout({ slot, cityId, fallback = null }: CityAbou
               <DataSource
                 name="Copernicus Sentinel-2 (via Earth Engine)"
                 url="https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED"
-                description="NDWI thumbnails + change detection per flagship. Pending for Madurai."
-                frequency="periodic"
+                description="Weekly water-spread readings for 9 Madurai water bodies (6 tanks and 3 dam reservoirs), shown in each one's water-body panel against its usual spread for the season. NDWI thumbnails and change detection are still pending."
+                frequency="weekly"
               />
               <DataSource
                 name="HydroBASINS / MERIT Hydro"
@@ -460,11 +460,11 @@ export default function MaduraiAbout({ slot, cityId, fallback = null }: CityAbou
           
         </>
       );
-    case "satellite-header":
+    case "river-status-consequence":
       return (
-        <>
-          <DataSourceGroupHeader title="Satellite & remote sensing (planned)" />
-        </>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+          Practical consequence: a river on CPCB&apos;s PRS Priority list (e.g. the Madurai-Manamadurai stretch of the Vaigai is Priority III) won&apos;t automatically render as &quot;severely degraded&quot; here. If the underlying NWMP readings show only Class C/D conditions, the badge reflects that. The PRS designation belongs in the river description as historical context, not as the live status.
+        </p>
       );
     default:
       return <>{fallback}</>;

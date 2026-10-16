@@ -14,6 +14,9 @@ import { ShorelineSparkline } from "./shoreline-sparkline";
 interface CoastalDetailPanelProps {
   selected: SelectedCoastal;
   onClose: () => void;
+  /** Per-city replacement for the transect footer's study comparison (coasts
+   *  with no per-transect study to compare against). */
+  transectNote?: string;
 }
 
 function CloseButton({ onClose }: { onClose: () => void }) {
@@ -30,7 +33,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
   );
 }
 
-function SourceFooter({ label, url }: { label: string; url: string }) {
+function SourceFooter({ label, url, note }: { label: string; url: string; note?: string }) {
   return (
     <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-5 text-xs text-slate-400 space-y-1">
       <p>
@@ -39,16 +42,24 @@ function SourceFooter({ label, url }: { label: string; url: string }) {
           {label}
         </a>
       </p>
-      <p>
-        Geometry: OpenStreetMap coastline; rates are the study&apos;s published figures (1990-2024).
-        The coloured dots on the map are our own per-transect measurement - click one for its rate
-        and shoreline movement over time.
-      </p>
+      {note ? (
+        <p>{note}</p>
+      ) : (
+        <p>
+          Geometry: OpenStreetMap coastline; rates are the study&apos;s published figures (1990-2024).
+          The coloured dots on the map are our own per-transect measurement - click one for its rate
+          and shoreline movement over time.
+        </p>
+      )}
     </div>
   );
 }
 
-export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProps) {
+// Zones that carry an official stretch listing instead of a rate (class_label set).
+const CLASSED_ZONE_FOOTER =
+  "Geometry: OpenStreetMap coastline. The official record named above gives no per-zone rate. The coloured dots on the map are our own per-transect measurement: click one for its rate and shoreline movement over time.";
+
+export function CoastalDetailPanel({ selected, onClose, transectNote }: CoastalDetailPanelProps) {
   if (selected.kind === "zone") {
     const z = selected.props;
     const color = TREND_COLORS[z.dominant_trend];
@@ -73,6 +84,11 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
               {TREND_LABELS[z.dominant_trend]}
             </span>
           )}
+          {z.mean_erosion_m_yr == null && z.class_label != null && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              {z.class_label}
+            </span>
+          )}
           <span className="text-xs text-slate-500">{z.length_km} km of coast</span>
         </div>
 
@@ -83,6 +99,11 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
             </div>
             <div className="text-sm text-slate-500">Study mean erosion rate (1990-2024)</div>
           </div>
+        ) : z.class_label != null ? (
+          <div className="mb-5 text-sm font-medium text-slate-500">
+            We have not found an official rate for this stretch. The coloured dots are our own
+            satellite measurement; click one for its rate.
+          </div>
         ) : (
           <div className="mb-5 text-sm font-medium text-slate-500">
             Beyond the study area - see our transect measurements along this stretch.
@@ -91,7 +112,11 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
 
         <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{z.summary}</p>
 
-        <SourceFooter label={z.source_label} url={z.source_url} />
+        <SourceFooter
+          label={z.source_label}
+          url={z.source_url}
+          note={z.class_label != null ? CLASSED_ZONE_FOOTER : undefined}
+        />
       </div>
     );
   }
@@ -113,9 +138,15 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
           <CloseButton onClose={onClose} />
         </div>
 
-        {t.confidence === "low" && (
+        {t.confidence === "low" && t.low_reason && (
           <div className="mb-4 rounded-lg border border-amber-300 dark:border-amber-700/60 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
-            <span className="font-semibold">Low confidence.</span> This transect&apos;s recent year-to-year
+            <span className="font-semibold">Low confidence.</span> This transect {t.low_reason}, so
+            its rate may not describe the open beach. Treat the magnitude with caution.
+          </div>
+        )}
+        {t.confidence === "low" && !t.low_reason && (
+          <div className="mb-4 rounded-lg border border-amber-300 dark:border-amber-700/60 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+            <span className="font-semibold">Low confidence.</span>{" "}This transect&apos;s recent year-to-year
             positions scatter or jump more than our reliability threshold, so the magnitude may be unstable.
             That can happen where the shoreline is genuinely ambiguous (near a river/creek mouth or the
             lagoon) or where cloud/imagery noise affected the readings. Treat the magnitude with caution.
@@ -226,10 +257,14 @@ export function CoastalDetailPanel({ selected, onClose }: CoastalDetailPanelProp
             Computed by Neer Vazhvu: MNDWI water index on Landsat 5/7/8 + Sentinel-2 via Google Earth
             Engine, sampled along this 100 m transect.
           </p>
-          <p>
-            Independent of the study&apos;s CoastSat + DSAS. The spatial pattern matches; absolute
-            rates differ by method (fixed MNDWI threshold, no tidal correction).
-          </p>
+          {transectNote ? (
+            <p>{transectNote}</p>
+          ) : (
+            <p>
+              Independent of the study&apos;s CoastSat + DSAS. The spatial pattern matches; absolute
+              rates differ by method (fixed MNDWI threshold, no tidal correction).
+            </p>
+          )}
         </div>
       </div>
     );

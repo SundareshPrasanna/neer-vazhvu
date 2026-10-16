@@ -187,7 +187,7 @@ export function AhmedabadStoryEn() {
         thesis="Forty years after the founding, the city built a tank that a nineteenth-century survey called probably the largest of its kind in India."
       >
         <p>
-          In <strong>1451</strong> Sultan Qutb-ud-din completed the Hauz-e-Qutb,
+          In <strong>1451</strong>{" "}Sultan Qutb-ud-din completed the Hauz-e-Qutb,
           known today as Kankaria. When T. C. Hope and J. Fergusson recorded
           Ahmedabad&apos;s architecture in 1866 they described it as a regular
           polygon of <strong>34 sides, each 190 feet long</strong>, covering{" "}
@@ -202,7 +202,7 @@ export function AhmedabadStoryEn() {
           Supply-sluice&rdquo;, and the 1879 Gazetteer calls it &ldquo;an
           exquisitely carved water sluice&rdquo;. In the middle, reached by a
           viaduct of arches, was an island garden called Nagina with a summer
-          palace. The <em>Mirat-i-Ahmadi</em> records that under one Mughal
+          palace. The <em>Mirat-i-Ahmadi</em>{" "}records that under one Mughal
           viceroy &ldquo;two pairs of oxen for drawing water and four gardeners
           were appointed&rdquo; to keep the garden going.
         </p>
@@ -363,12 +363,12 @@ export function AhmedabadStoryEn() {
         thesis="The colonial city's first piped water was a filtered trickle from the river, and its first bridge across that river lasted five years."
       >
         <p>
-          From about <strong>1849</strong> the city pumped river water at its
+          From about <strong>1849</strong>{" "}the city pumped river water at its
           south-west corner into a tower fifty-two feet high, filtered it
           &ldquo;through vegetable charcoal and gravel&rdquo;, and carried it by
           an eight-inch earthen pipe to 17 iron standpipes and 10 masonry
           reservoirs. The Gazetteer&apos;s judgement in 1879 was that it yielded
-          &ldquo;<strong>not more than one gallon a day</strong> to each of the
+          &ldquo;<strong>not more than one gallon a day</strong>{" "}to each of the
           people&rdquo;, and that even after filtering it was impure. In the
           mid-1860s two steam pumps replaced the Persian wheels that had lifted
           the water, and they were worked only at night, because the river was
@@ -421,7 +421,7 @@ export function AhmedabadStoryEn() {
           irrigation engineer, the district engineer and the Collector. Its own
           summary elsewhere gives about nineteen feet, the level its detailed
           account records for the evening of the 22nd. Twelve people died. Inside
-          the city <strong>3,887 houses</strong> were ruined, valued at Rs 5,82,080, and
+          the city <strong>3,887 houses</strong>{" "}were ruined, valued at Rs 5,82,080, and
           the water covered &ldquo;more than a third of the town&rdquo;. Until at
           least 1879, passenger boats carried people across the Sabarmati in
           place of the bridge.
@@ -793,7 +793,7 @@ export function AhmedabadStoryEn() {
           and the committee found that it &ldquo;remains by and large dry after
           the month of April however, the canal is used for sewage/trade effluent
           and waste&rdquo;. In about 11 kilometres inside the city it counted{" "}
-          <strong>169 outlets</strong> into the canal, 56 of them discharging
+          <strong>169 outlets</strong>{" "}into the canal, 56 of them discharging
           untreated sewage or effluent on the day of inspection; officers of the
           Irrigation Department told it that &ldquo;no permission is granted for
           any outlet in the canal&rdquo;. AMC&apos;s framework notes that the

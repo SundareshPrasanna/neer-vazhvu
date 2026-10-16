@@ -1,0 +1,338 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/cetp-compliance",
+  "scope": {
+    "kind": "city",
+    "id": "visakhapatnam"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ngt-andhra-filings",
+        "title": "APPCB reports of 06.07.2024 to the NGT in OA 141/2023 (SZ), with its annexed report of 14.12.2023, and in OA 130/2024 (SZ); MoEFCC reply in OA 141/2023 (SZ), with its Sub-Office Vijayawada inspection of 30.08.2024",
+        "publisher": "National Green Tribunal (filings by GVMC, APPCB, CPCB and the Government of Andhra Pradesh)",
+        "license": "Government of India tribunal record, cited with attribution",
+        "url": "https://www.greentribunal.gov.in/news-update"
+      },
+      {
+        "id": "appcb-consents-directions-visakhapatnam",
+        "title": "APPCB consent order (07.04.2025) and CTO committee agenda (17.03.2025) for the Visakha Pharmacity CETP; APPCB Directions Order 692 for AETL (14.12.2023); APPCB CTO committee minutes of 14.02.2025, 29.10.2025 and 08.12.2025; APPCB CETP status (13.03.2020)",
+        "publisher": "Andhra Pradesh Pollution Control Board (consent orders, CTO committee agendas and minutes, directions orders and CETP status statements)",
+        "license": "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+        "url": "https://pcb.ap.gov.in/"
+      },
+      {
+        "id": "industry-ec-compliance-visakhapatnam",
+        "title": "Visakha Pharmacity Ltd website, infrastructure page (undated)",
+        "publisher": "Operators' statutory environmental filings (RINL Visakhapatnam Steel Plant, HPCL Visakh Refinery, Visakhapatnam Port Authority, Visakha Pharmacity CETP via APPCB and NGT records)",
+        "license": "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution",
+        "url": "https://www.visakhapharmacity.com/cms/infrastructure"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
+    "note": "Both CETPs discharge to the sea, not to a river. We have not found a regulator's monthly per-sample record like Surat's GEMI series for either plant. For JN Pharma City, APPCB's report to the NGT in OA 141/2023 (SZ) annexes CSIR-NIO analyses of treated effluent from the CETP's MBR outlet tank, commissioned by the operator, for samples of 14.09.2023, 12.10.2023 and 21.11.2023 (DO, BOD3, pH, nutrients and suspended matter against CPCB standards, pdf pp. 228, 245, 262), plus bio-assay-only reports for January to May 2024; these are not yet carried here. APPCB publishes counts of release samples that did not meet marine discharge standards, carried here as published with overlapping periods kept separate. sample_dates and parameters are empty because no regulator per-sample series has been found."
+  },
+  "_note": "Every norm here is APPCB's marine discharge standard for the plant's consented outfall. For the JN Pharma City CETP, APPCB states that a release which does not meet it is held back and re-treated, so those counts are of samples, not of discharges to the sea.",
+  "monitoring_period": {
+    "from": "2022-01",
+    "to": "2025-08"
+  },
+  "cetps": [
+    {
+      "id": "jnpc",
+      "name": "JN Pharma City CETP (Visakha Pharmacity Ltd)",
+      "short": "JN Pharma City",
+      "operator": "Visakha Pharmacity Ltd (formerly Ramky Pharma City (India) Ltd)",
+      "estate": "Jawaharlal Nehru Pharma City, Parawada",
+      "lat": 17.648208,
+      "lng": 83.080806,
+      "member_units": {
+        "established": 104,
+        "in_operation": 94,
+        "source": {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+          "page": 12,
+          "document": "APPCB report dated 14.12.2023, Annexure-II to its 06.07.2024 report to the NGT in OA 141/2023 (SZ)"
+        }
+      },
+      "capacity_mld": 10.053,
+      "capacity_basis": "consented treatment volume in APPCB order APPCB/VSP/VSP/285/HO/CTO/2025 of 07.04.2025 (high-TDS 3,000 KLD plus low-TDS 7,053 KLD)",
+      "consents": [
+        {
+          "order": "APPCB CFO orders of 12.08.2021 and 02.09.2021",
+          "htds_kld": 2500,
+          "ltds_kld": 7053,
+          "valid_to": "2026-05-31",
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 12
+          }
+        },
+        {
+          "order": "APPCB/VSP/VSP/285/HO/CTO/2025 of 07.04.2025",
+          "htds_kld": 3000,
+          "ltds_kld": 7053,
+          "disposal": "low-TDS effluent treated in the biological ETP, then to sea through the marine outfall after meeting marine discharge standards",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20Visakha%20Pharmacity%20CTO%26HWA%20order%2007.04.2025_20250514_113727.pdf",
+            "page": 1
+          }
+        }
+      ],
+      "receiving_water": "Bay of Bengal, through a marine outfall",
+      "outfall": {
+        "onshore_km": 16,
+        "offshore_km": 1.75,
+        "depth_m": 18.0,
+        "source": {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+          "page": 12
+        },
+        "nio_suggested": {
+          "distance_from_coast_km": 1.44,
+          "depth_m": 18,
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 181
+          }
+        }
+      },
+      "effluent_flow": {
+        "received_ltds_kl_month": 78273,
+        "received_htds_kl_month": 55170,
+        "treated_total_kl_month": 133443,
+        "basis": "MoEFCC prints the low-TDS and high-TDS figures as received at the CETP, and the total as treated effluent (LTDS+HTDS)",
+        "period": "average of March to July 2024",
+        "source": {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20141%20of%202023%20Reply%20Affidavit%20by%20R1.pdf",
+          "page": 33,
+          "document": "MoEFCC Sub-Office, Vijayawada inspection (30.08.2024), in its reply in OA 141/2023 (SZ)"
+        }
+      },
+      "release_compliance": [
+        {
+          "from": "2022-01",
+          "to": "2023-09",
+          "samples": 506,
+          "not_meeting": 26,
+          "pct_as_published": 5,
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 15,
+            "document": "APPCB report dated 14.12.2023, Annexure-II to its 06.07.2024 report to the NGT in OA 141/2023 (SZ)"
+          }
+        },
+        {
+          "from": "2023-04",
+          "to": "2024-03",
+          "samples": 358,
+          "not_meeting": 24,
+          "pct_as_published": 6.7,
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.130%20of%202024%20Report%20by%20R3_1.pdf",
+            "page": 5,
+            "document": "APPCB report to the NGT in OA 130/2024 (SZ), 06.07.2024"
+          }
+        },
+        {
+          "from": "2023-06",
+          "to": "2024-05",
+          "samples": 305,
+          "not_meeting": 16,
+          "pct_as_published": 5.25,
+          "parameters_named": [
+            "TSS",
+            "COD",
+            "NH3-N"
+          ],
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 4,
+            "document": "APPCB report to the NGT in OA 141/2023 (SZ), 06.07.2024 (counts and release rule on pdf p4; parameters on Annexure-VII, pdf p177)"
+          },
+          "parameters_source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 177,
+            "document": "Annexure-VII (printed p175): APPCB Zonal Laboratory, Visakhapatnam, consolidated report of marine outfall discharges, June 2023 to May 2024; scanned page with no text layer"
+          }
+        }
+      ],
+      "release_rule": "Treated water that does not meet marine discharge standards is not allowed into the sea and is sent back to the CETP for re-treatment (APPCB's report in OA 141/2023 (SZ), pdf p4).",
+      "release_compliance_note": "The 358-sample count (April 2023 to March 2024) and the 305-sample count (June 2023 to May 2024) cover overlapping months and come from APPCB reports in two different NGT cases, OA 130/2024 (SZ) and OA 141/2023 (SZ). They are listed as published, not reconciled.",
+      "capacity_claims": [
+        {
+          "value_mld": 12,
+          "basis": "design capacity, operator's website (undated)",
+          "source": {
+            "url": "https://www.visakhapharmacity.com/cms/infrastructure"
+          }
+        },
+        {
+          "value_mld": 5.0,
+          "basis": "consented capacity (4.8 MLD operating, 84 units), APPCB CETP status of 13.03.2020",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti//Status%20of%20CETP%20connectivity%20status%20of%20CEMS%20on%2013-03-2020.pdf",
+            "page": 1
+          }
+        },
+        {
+          "value_mld": 9.553,
+          "basis": "'9553 KLD (High TDS - 2500 KLD + Low TDS effluents - 7053 KLD)', CTO & HWA order of 12.08.2021 with amendments of 02.09.2021 and 13.06.2023, as stated in APPCB CTO committee agenda of 17.03.2025",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/27%20Agenda%20-%20Visakha%20Pharmacity_20250514_113715.pdf",
+            "page": 1
+          },
+          "split_source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 12,
+            "document": "APPCB report dated 14.12.2023 (Annexure-II, OA 141/2023 (SZ)): high-TDS 2,500 KLD and low-TDS 7,053 KLD, no total printed"
+          }
+        },
+        {
+          "value_mld": 9.5,
+          "basis": "'established CETP of 9.5 MLD' (high-TDS 2.5 plus low-TDS 7.0), MoEFCC inspection of 30.08.2024",
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20141%20of%202023%20Reply%20Affidavit%20by%20R1.pdf",
+            "page": 33
+          }
+        },
+        {
+          "value_mld": 10.053,
+          "basis": "consent order of 07.04.2025: high-TDS 3,000 KLD plus low-TDS 7,053 KLD, 'Total 10,053 KLD'",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20Visakha%20Pharmacity%20CTO%26HWA%20order%2007.04.2025_20250514_113727.pdf",
+            "page": 2
+          }
+        },
+        {
+          "value_mld": 50,
+          "basis": "'CETP - 50 MLD' in the list of the pharma city's common infrastructure, APPCB report dated 14.12.2023 (Annexure-II to its NGT report in OA 141/2023 (SZ))",
+          "source": {
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+            "page": 11
+          }
+        }
+      ],
+      "capacity_note": "Six capacity figures are published for this plant. They are listed as printed, with their sources; capacity_mld uses the latest consent order.",
+      "sample_dates": [],
+      "parameters": []
+    },
+    {
+      "id": "aetl",
+      "name": "Atchutapuram Effluent Treatment Ltd CETP",
+      "short": "Atchutapuram",
+      "operator": "Atchutapuram Effluent Treatment Ltd (AETL)",
+      "estate": "APIIC Industrial Estate, Atchutapuram",
+      "lat": null,
+      "lng": null,
+      "position_basis": "no published coordinate found",
+      "capacity_mld": 1.5,
+      "capacity_basis": "CTO & HWA order of 03.03.2025, valid to 31.07.2025: low-TDS 1,050 KLD plus high-TDS 450 KLD, as recited in APPCB Consent Management (CTO) Committee minutes of 29.10.2025 (pdf p18) and 08.12.2025 (pdf p38). On 08.12.2025 the committee recommended renewal for one year (pdf p40); the renewal order itself has not been found online. The earlier CTO & HWA of 06.09.2019, valid to 31.07.2024, set the same volumes (APPCB Directions Order No. 692 of 14.12.2023).",
+      "consents": [
+        {
+          "order": "CTO & HWA of 06.09.2019",
+          "htds_kld": 450,
+          "ltds_kld": 1050,
+          "valid_to": "2024-07-31",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/AETL%20CETP%20VSP%20-%20Dir%20-%2014122023%20-%2006122023.pdf",
+            "page": 1
+          }
+        },
+        {
+          "order": "CTO & HWA of 03.03.2025",
+          "htds_kld": 450,
+          "ltds_kld": 1050,
+          "valid_to": "2025-07-31",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20CTO%20Minutes%2029.10.2025_20251123_213928.pdf",
+            "page": 18,
+            "document": "APPCB Consent Management (CTO) Committee minutes, meeting of 29.10.2025"
+          }
+        },
+        {
+          "order": "renewal for one year, recommended by the CTO committee on 08.12.2025 (order not found online)",
+          "conditions_noted": "APIIC to raise the plant's high-TDS treatment capacity from 450 KLD to 1,125 KLD within one year (pdf p41)",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20CTO%20Minutes%2008.12.2025_20260107_201112.pdf",
+            "page": 40,
+            "document": "APPCB Consent Management (CTO) Committee minutes, meeting of 08.12.2025"
+          }
+        }
+      ],
+      "receiving_water": "Bay of Bengal (marine discharge)",
+      "marine_standard_compliance": [
+        {
+          "from": "2023-04",
+          "to": "2023-09",
+          "samples": 31,
+          "not_meeting": 12,
+          "pct_as_published": 38,
+          "period": "April to September 2023",
+          "quote": "Not meeting the Board standards for marine deposal (12 times out of 31 monitorings) in last six months (38%).",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/AETL%20CETP%20VSP%20-%20Dir%20-%2014122023%20-%2006122023.pdf",
+            "page": 1,
+            "document": "APPCB Directions Order No. 692/APPCB/HO/ECS/VSP/2023, 14.12.2023 (Task Force meeting of 06.12.2023)"
+          },
+          "period_source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/AETL%20CETP%20VSP%20-%20Dir%20-%2014122023%20-%2006122023.pdf",
+            "page": 3,
+            "quote": "Twelve samples out of thirty one samples collected from Apr to Sep'2023 are not meeting the marine discharge standards (38%)."
+          }
+        },
+        {
+          "from": "2024-01",
+          "to": "2024-12",
+          "samples": 60,
+          "not_meeting": 9,
+          "period": "January to December 2024",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20-%20CTO%20minutes%2014.02.2025_20250325_115430.pdf",
+            "page": 48,
+            "document": "APPCB Consent Management (CTO) Committee minutes, meeting of 14.02.2025"
+          }
+        },
+        {
+          "from": "2025-03",
+          "to": "2025-08",
+          "samples": 32,
+          "not_meeting": 10,
+          "period": "March to August 2025",
+          "source": {
+            "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20CTO%20Minutes%2029.10.2025_20251123_213928.pdf",
+            "page": 20,
+            "document": "APPCB Consent Management (CTO) Committee minutes, meeting of 29.10.2025"
+          }
+        }
+      ],
+      "marine_standard_compliance_note": "Counts of samples not meeting APPCB's marine discharge standards, from three APPCB documents, listed as published, not reconciled.",
+      "load_vs_capacity_kld": {
+        "treatment_capacity": {
+          "htds": 450,
+          "ltds": 1050
+        },
+        "permitted_to_member_units_cfe": {
+          "htds": 2721,
+          "ltds": 1749
+        },
+        "permitted_to_member_units_cfo": {
+          "htds": 2622,
+          "ltds": 1648
+        },
+        "received_average_per_day": {
+          "htds": 204,
+          "ltds": 295
+        },
+        "source": {
+          "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/AETL%20CETP%20VSP%20-%20Dir%20-%2014122023%20-%2006122023.pdf",
+          "page": 2
+        }
+      },
+      "sample_dates": [],
+      "parameters": []
+    }
+  ]
+}

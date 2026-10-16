@@ -110,6 +110,12 @@ ADJUDICATED: dict[str, str] = {
     "rendered text - checked by printing every match's surrounding context and getting "
     "nothing back. Kept as an entry rather than silenced globally so the next reader sees "
     "it was adjudicated, not missed.",
+    "visakhapatnam:about:Delhi": "A publisher's official name, not another city's data. The flood source line "
+    "is 'IMD RSMC New Delhi cyclone reports': IMD's Regional Specialised Meteorological Centre for the "
+    "Bay of Bengal sits in New Delhi and issues the after-event reports the flood page cites.",
+    "visakhapatnam:about:Hyderabad": "A publisher's official name, not another city's data. The groundwater "
+    "source line names IN-GRES's host, 'IIT Hyderabad', beside CGWB and the AP Ground Water and Water "
+    "Audit Department.",
 }
 
 NULLISH = ["undefined", "NaN", "[object Object]", "Infinity", "Invalid Date"]

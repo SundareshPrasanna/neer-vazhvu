@@ -1,0 +1,154 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/river-events",
+  "scope": {
+    "kind": "city",
+    "id": "visakhapatnam"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "ngt-andhra-filings",
+        "title": "APPCB report of 22.07.2021 in NGT OA 14/2021 (SZ); GVMC's daily water supply statement of 11.03.2021 in the same case (1421_0.pdf p20); APPCB report of 14.12.2023, annexed to its 06.07.2024 report in OA 141/2023 (SZ); CPCB reply in OA 240/2025 (SZ) with the joint committee report of 04.12.2023",
+        "publisher": "National Green Tribunal (filings by GVMC, APPCB, CPCB and the Government of Andhra Pradesh)",
+        "license": "Government of India tribunal record, cited with attribution",
+        "url": "https://www.greentribunal.gov.in/news-update"
+      },
+      {
+        "id": "gvmc-adb-iee-24x7-nw-2019",
+        "as_of": "2019-01",
+        "title": "GVMC's IEE for the Asian Development Bank, 24x7 Water Supply in North-West sector (GVMC/02), Jan 2019: Table 4, Water Source and Availability in GVMC Area, 'Drawl' column (pdf p20)",
+        "publisher": "Greater Visakhapatnam Municipal Corporation (ADB project)",
+        "url": "https://www.gvmc.gov.in/wss/image_uploads/24x7%20Water%20Supply%20in%20North-West%20sector%20(GVMC02)%20-%20IEE%20-%20Jan%202019.pdf",
+        "license": "Greater Visakhapatnam Municipal Corporation publication, cited with attribution"
+      },
+      {
+        "id": "industry-ec-compliance-visakhapatnam",
+        "title": "HPCL Visakh Refinery Environmental Statement (Form V) 2023-24 (pdf pp. 2, 6)",
+        "publisher": "Operators' statutory environmental filings (RINL Visakhapatnam Steel Plant, HPCL Visakh Refinery, Visakhapatnam Port Authority, Visakha Pharmacity CETP via APPCB and NGT records)",
+        "license": "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution",
+        "url": "https://www.hindustanpetroleum.com/documents/pdf/HPCL-VR-Form-V-2023-24.pdf"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
+    "note": "Curated dated events on the three channels, facts and dates only. Records with source_ids cite NGT filings (the joint committee record also cites HPCL's Environmental Statement); the two NGT OA 14/2021 (SZ) records also compare APPCB's drawal figures with Table 4 of GVMC's January 2019 IEE for the Asian Development Bank, which holds the same figures, and with GVMC's daily supply statement of 11.03.2021; the two May 2020 records cite the Government of Andhra Pradesh High-Power Committee report by URL, whose only copy found online is on a third-party host (safteng.net). The joint committee's discharge volumes were read from the text layer of a scanned copy (OCR)."
+  },
+  "events": [
+    {
+      "id": "hpc-2020-mgr-releases-stopped",
+      "river_id": "meghadrigedda",
+      "category": "milestone",
+      "date": "2020-05-08",
+      "title": "GVMC stops releases from the Meghadrigedda reservoir after the LG Polymers styrene release",
+      "actors": [
+        "GVMC",
+        "District Collector, Visakhapatnam"
+      ],
+      "summary": "After the styrene vapour release at LG Polymers on 7 May 2020, GVMC stopped releases from the Meghadrigedda reservoir on 8 May on the District Collector's orders, on the suspicion that styrene might have dissolved in the reservoir, about 1.5 km north-west of the plant. Supply to Malkapuram, Scindia, Mindi and nearby areas was arranged from other sources.",
+      "url": "https://safteng.net/wp-content/uploads/2020/07/HPCR_on_Styrene_vapour_release_accident_at_LG_Polymers.pdf",
+      "url_label": "High-Power Committee report, pdf p. 284",
+      "source": "Government of Andhra Pradesh, High-Power Committee report on the styrene vapour release at LG Polymers (July 2020); the copy cited is hosted on safteng.net"
+    },
+    {
+      "id": "hpc-2020-styrene-samples",
+      "river_id": "meghadrigedda",
+      "category": "audit",
+      "date": "2020-05-09",
+      "title": "Two sets of reservoir samples, two results",
+      "actors": [
+        "CSIR-NEERI",
+        "NDRF",
+        "GVMC",
+        "APPCB"
+      ],
+      "summary": "Samples taken by CSIR-NEERI and the NDRF's CBRN team on 9 and 10 May 2020 found 1.74 mg/L of styrene in the Meghadrigedda reservoir, against guideline values of 0.02 mg/L (WHO) and 0.1 mg/L (US EPA). GVMC's own samples from the reservoir found no styrene, in analysis reports of 9, 10 and 11 May 2020 from the Regional Laboratory and APPCB. The High-Power Committee report records both.",
+      "url": "https://safteng.net/wp-content/uploads/2020/07/HPCR_on_Styrene_vapour_release_accident_at_LG_Polymers.pdf",
+      "url_label": "High-Power Committee report, pdf pp. 151 and 284",
+      "source": "Government of Andhra Pradesh, High-Power Committee report on the styrene vapour release at LG Polymers (July 2020); the copy cited is hosted on safteng.net"
+    },
+    {
+      "id": "oa14-2021-mgr-drinking",
+      "river_id": "meghadrigedda",
+      "category": "audit",
+      "date": "2021-07-22",
+      "title": "APPCB reports the reservoir fit for drinking after disinfection",
+      "actors": [
+        "APPCB",
+        "National Green Tribunal (Southern Zone)"
+      ],
+      "summary": "In its report to the NGT in the suo motu case OA 14/2021 (SZ), APPCB said samples from across the Meghadrigedda reservoir met IS 10500 drinking-water limits for physico-chemical parameters and heavy metals, with no pesticides detected, and that the water 'is fit for drinking purpose after disinfection'. Drains entering the reservoir read BOD of 4.2 to 4.8 mg/L, slightly above drinking-water standards, which the board said may be due to sewage from residential areas of Pendurthi. The report gives the city's drawal from the reservoir as 41.0 MLD, the same figure as Table 4 of GVMC's January 2019 environmental examination for the Asian Development Bank; GVMC's daily supply sheet for 11 March 2021 gives 8.44 MGD supplied from the reservoir that day, 3.04 MGD of it raw water to the Naval Dockyard (DGNP) and MES. The report states: 'There are no polluted river stretches in GVMC area.'",
+      "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/Report%20filed%20by%20AP-PCB%20in%20OA%20No%2014%20of%202021(SZ).pdf",
+      "url_label": "APPCB report to the NGT in OA 14/2021 (SZ), 22.07.2021, pdf pp. 1, 3, 10, 19",
+      "source_ids": [
+        "ngt-andhra-filings"
+      ]
+    },
+    {
+      "id": "oa14-2021-thatipudi",
+      "river_id": "gosthani",
+      "category": "audit",
+      "date": "2021-07-22",
+      "title": "APPCB describes Thatipudi reservoir to the NGT",
+      "actors": [
+        "APPCB",
+        "National Green Tribunal (Southern Zone)"
+      ],
+      "summary": "APPCB described Thatipudi reservoir as built across the Gosthani near Thatipudi village, Gantyada mandal, Vizianagaram district, to stabilise an irrigated area of 13,861 acres and to supply drinking water to Visakhapatnam, with a drawal of 26.05 MLD for the city, the same figure as Table 4 of GVMC's January 2019 environmental examination for the Asian Development Bank; GVMC's daily supply sheet for 11 March 2021 gives 9.87 MGD supplied from Thatipudi that day. APPCB reported no industries located near the reservoir.",
+      "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/Report%20filed%20by%20AP-PCB%20in%20OA%20No%2014%20of%202021(SZ).pdf",
+      "url_label": "APPCB report to the NGT in OA 14/2021 (SZ), 22.07.2021, pdf pp. 1-3, 10",
+      "source_ids": [
+        "ngt-andhra-filings"
+      ]
+    },
+    {
+      "id": "jc-2023-surplus-course-discharges",
+      "river_id": "meghadrigedda",
+      "category": "audit",
+      "date": "2023-12-04",
+      "title": "Joint committee lists industrial discharges into the Meghadrigedda surplus course",
+      "actors": [
+        "Joint committee, AP High Court WP(PIL) 248/2020",
+        "CPCB"
+      ],
+      "summary": "A joint committee report of 4 December 2023, filed by CPCB with the NGT in OA 240/2025 (SZ), records these discharges into the Meghadrigedda surplus course that joins the sea: HPCL Visakh Refinery, process and washings effluent of 11,820 KLD (kilolitres a day), treated in its effluent plants, and cooling blowdown of 3,59,400 KLD; Coromandel International, cooling-tower blowdown of 91,600 KLD, with its 1,800 KLD of process effluent recycled inside the factory except in the rainy season; The Andhra Petrochemicals, 3,434 KLD treated in its effluent plant and discharged into the Meghadrigedda channel, of which 3,119 KLD is seawater used for cooling and 45 KLD is process effluent; ArcelorMittal Nippon Steel India: the per-plant table says any surplus left after recycling blowdown and slurry-pipeline water goes to the surplus course, but the committee's conclusions count only the first three as discharging into the channel and say ArcelorMittal discharges once-through cooling sea water to the sea. HPCL's own Environmental Statement (Form V) for 2023-24 (pdf pp. 2 and 6) gives 1,26,081 KLD of sea water consumed for cooling and an average of 174 cubic metres an hour of process effluent generated, which is 4,176 KLD (a cubic metre is a kilolitre). Form V labels these as water consumed and effluent generated, where the committee lists discharges, so the two sets of figures are carried as published, not compared.",
+      "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf",
+      "url_label": "CPCB reply in NGT OA 240/2025 (SZ), annexed report, pdf pp. 24-27",
+      "source_ids": [
+        "ngt-andhra-filings",
+        "industry-ec-compliance-visakhapatnam"
+      ],
+      "documents": [
+        {
+          "url": "https://www.hindustanpetroleum.com/documents/pdf/HPCL-VR-Form-V-2023-24.pdf",
+          "page": 2,
+          "title": "HPCL Visakh Refinery Environmental Statement (Form V) 2023-24, Part B: water consumption in m3 per calendar day (sea water for cooling, 126081)"
+        },
+        {
+          "url": "https://www.hindustanpetroleum.com/documents/pdf/HPCL-VR-Form-V-2023-24.pdf",
+          "page": 6,
+          "title": "same statement, Part G: average process effluent generated in 2023-24, 174 m3/hr"
+        }
+      ]
+    },
+    {
+      "id": "oa141-2023-pharma-city-water",
+      "river_id": "yeleru-canal",
+      "category": "audit",
+      "date": "2023-12-14",
+      "title": "APPCB records the Yeleru canal as the pharma city's water source",
+      "actors": [
+        "APPCB",
+        "APIIC",
+        "National Green Tribunal (Southern Zone)"
+      ],
+      "summary": "APPCB's report of 14.12.2023 to the NGT in OA 141/2023 (SZ) states that the source of water for Jawaharlal Nehru Pharma City is the Yeleru canal, supplied by APIIC, and that 94 of the 104 established bulk-drug, pharmaceutical and chemical units are in operation. The pharma city's treated effluent goes to the sea through a marine outfall.",
+      "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+      "url_label": "APPCB report of 14.12.2023, annexed to its 06.07.2024 report to the NGT in OA 141/2023 (SZ), pdf pp. 11-12",
+      "source_ids": [
+        "ngt-andhra-filings"
+      ]
+    }
+  ]
+}

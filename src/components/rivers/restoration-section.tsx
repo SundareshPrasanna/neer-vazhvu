@@ -145,7 +145,7 @@ function ProjectCard({ project }: { project: RestorationProject }) {
           rel="noopener noreferrer"
           className="text-[11px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline"
         >
-          {t("restoration.source")} &rarr;
+          {t("restoration.source")}{" "}&rarr;
         </a>
       </div>
     </div>

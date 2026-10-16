@@ -511,6 +511,77 @@
    "flags": []
   },
   {
+   "path": "public/data/allocations-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "allocations",
+   "bytes": 37261,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "arrangements",
+     "authorities",
+     "dataset",
+     "events",
+     "futures",
+     "gaps",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources",
+     "unit_note",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/allocations/allocations-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_supply.py"
+   ],
+   "headwaters_sources": [
+    "ap-wrd-project-pages-wayback",
+    "apiic-viwsco-note-2009",
+    "cag-polavaram-audit-2025",
+    "cgwb-visakhapatnam-aquifer-plans",
+    "cwc-nrld-2019",
+    "goap-go-ms-100-2016",
+    "goap-go-ms-202-2014",
+    "goap-go-ms-24-2015",
+    "goap-go-ms-76-2024",
+    "goap-go-rt-203-2026",
+    "gvmc-adb-iee-24x7-nw-2019",
+    "gvmc-adb-iee-meghadrigedda-solar-2018",
+    "industry-ec-compliance-visakhapatnam",
+    "moefcc-ec-amns-anakapalli-2026",
+    "mojs-dowr-polavaram-note-2024",
+    "ngt-andhra-filings",
+    "parliament-records-visakhapatnam",
+    "ppa-polavaram",
+    "seiaa-ap-clearances",
+    "viwsco-project-pages"
+   ],
+   "licenses": [
+    "Andhra Pradesh Government Orders Issue Register (goir.ap.gov.in): its copyright page permits reproduction free of charge in any format or media without specific permission, reproduced accurately and with the source prominently acknowledged - Andhra Pradesh government publication, cited with attribution",
+    "Andhra Pradesh Industrial Infrastructure Corporation publication, cited with attribution",
+    "Andhra Pradesh Water Resources Department web pages read from Internet Archive captures (the live site no longer resolves) - Andhra Pradesh government publication, cited with attribution",
+    "Government of India (CWC) publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Greater Visakhapatnam Municipal Corporation publication, cited with attribution",
+    "Parliament of India record, read from the Internet Archive's copy of the Parliament Digital Library - cited with attribution",
+    "Visakhapatnam Industrial Water Supply Company website: we have not found a licence or terms of use on the site, whose footer reads 'Copyright \u00a9 2026 VIWSCO' - company publication, cited with attribution",
+    "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/atlas/ka/kolar/assessments/5590.json",
    "family": "atlas",
    "scope": "ka-kolar",
@@ -65464,6 +65535,44 @@
    "flags": []
   },
   {
+   "path": "public/data/cetp-compliance-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "cetp-compliance",
+   "bytes": 16848,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "cetps",
+     "dataset",
+     "monitoring_period",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py"
+   ],
+   "headwaters_sources": [
+    "appcb-consents-directions-visakhapatnam",
+    "industry-ec-compliance-visakhapatnam",
+    "ngt-andhra-filings"
+   ],
+   "licenses": [
+    "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/chennai-localities.json",
    "family": "data-root",
    "scope": "chennai",
@@ -65904,6 +66013,51 @@
    ],
    "licenses": [
     "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/commitments-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "commitments",
+   "bytes": 54123,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources_note",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_commitments.py"
+   ],
+   "headwaters_sources": [
+    "aphc-wp-pil-248-2020",
+    "gvmc-whats-new",
+    "mohua-amrut-status-ap",
+    "ngt-andhra-filings"
+   ],
+   "licenses": [
+    "Andhra Pradesh High Court judicial record, read as annexed to NGT filings - cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Greater Visakhapatnam Municipal Corporation publication, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -66669,6 +66823,41 @@
    ]
   },
   {
+   "path": "public/data/elevation-bands-visakhapatnam.geojson",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "elevation-bands",
+   "bytes": 1693267,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 7,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "band",
+     "max_m",
+     "min_m",
+     "order"
+    ]
+   },
+   "consumers": [
+    "src/components/map/elevation-bands.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_elevation_bands.py"
+   ],
+   "headwaters_sources": [
+    "fabdem-dem"
+   ],
+   "licenses": [
+    "CC BY-NC-SA 4.0 (non-commercial AND share-alike); derived from Copernicus GLO-30, so the mandatory Copernicus WorldDEM-30 attribution to DLR and Airbus passes down (both notices reproduced in DATA-LICENSE.md)"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/facts-ahmedabad.json",
    "family": "data-root",
    "scope": "ahmedabad",
@@ -67051,6 +67240,69 @@
     "Government of India publication, cited with attribution",
     "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution",
     "Surat Municipal Corporation publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/facts-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "facts",
+   "bytes": 26133,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py"
+   ],
+   "headwaters_sources": [
+    "appcb-coastal-monitoring",
+    "apwrims-reservoirs",
+    "cag-polavaram-audit-2025",
+    "cgwb-visakhapatnam-aquifer-plans",
+    "cpcb-nwmp-visakhapatnam",
+    "gvmc-whats-new",
+    "imd-climatological-tables-visakhapatnam",
+    "imd-gridded-rainfall-visakhapatnam",
+    "ingres-groundwater-andhra",
+    "mohua-amrut-status-ap",
+    "mojs-dowr-polavaram-note-2024",
+    "nccr-shoreline-assessment",
+    "ngt-andhra-filings",
+    "osm-visakhapatnam-water",
+    "ppa-polavaram",
+    "research-papers-visakhapatnam",
+    "seiaa-ap-clearances"
+   ],
+   "licenses": [
+    "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+    "Andhra Pradesh Water Resources Department portal (APWRIMS): we have not found a licence or terms of use on the portal, only a disclaimer and a site footer reading 'All Rights Reserved' - Andhra Pradesh government data, cited with attribution",
+    "Government of India (MoES/NCCR) publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Greater Visakhapatnam Municipal Corporation publication, cited with attribution",
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+    "India Meteorological Department station normals (city.imd.gov.in): we have not found a licence or terms of use on the climatological table pages - Government of India publication, cited with attribution",
+    "Open Database License (ODbL) 1.0",
+    "academic publications, cited with attribution; findings and figures only, no text or images reproduced",
+    "no explicit licence: we have not found terms of use, a disclaimer or a copyright or licence statement on the IN-GRES portal; a Government of India assessment portal, cited with attribution",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -67737,6 +67989,52 @@
    ],
    "licenses": [
     "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/gwr-blocks-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "gwr-blocks",
+   "bytes": 29124,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_unit",
+     "assessment_years",
+     "availability_label",
+     "blocks",
+     "dataset",
+     "district",
+     "generated_at",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-andhra"
+   ],
+   "licenses": [
+    "no explicit licence: we have not found terms of use, a disclaimer or a copyright or licence statement on the IN-GRES portal; a Government of India assessment portal, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -68512,6 +68810,50 @@
    "flags": []
   },
   {
+   "path": "public/data/imd-rainfall-monthly-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 32630,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-climatological-tables-visakhapatnam",
+    "imd-gridded-rainfall-visakhapatnam"
+   ],
+   "licenses": [
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+    "India Meteorological Department station normals (city.imd.gov.in): we have not found a licence or terms of use on the climatological table pages - Government of India publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/imd-rainfall-monthly.json",
    "family": "data-root",
    "scope": "chennai",
@@ -68734,6 +69076,46 @@
     "Government of India publication, cited with attribution",
     "Gujarat government publication, cited with attribution",
     "Surat Municipal Corporation publication (presented at a public CSE convening), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/industrial-sources-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "industrial-sources",
+   "bytes": 9641,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_cetp_join",
+     "_not_mapped",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "scope",
+     "sources"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py"
+   ],
+   "headwaters_sources": [
+    "appcb-consents-directions-visakhapatnam",
+    "industry-ec-compliance-visakhapatnam",
+    "ngt-andhra-filings"
+   ],
+   "licenses": [
+    "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -69424,6 +69806,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
+    "neer-vazhvu-api/scripts/scrape_apwrims_reservoirs.py",
     "neer-vazhvu-api/scripts/scrape_pravah_dams.py"
    ],
    "headwaters_sources": [
@@ -70065,6 +70448,49 @@
    "flags": []
   },
   {
+   "path": "public/data/rainfall-recent-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "rainfall-recent",
+   "bytes": 18817,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/restoration-priority-bangalore.json",
    "family": "data-root",
    "scope": "bangalore",
@@ -70546,6 +70972,46 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated compilation; per-record citations (NGT/HC orders, corporation schemes, press); no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/restoration-projects-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "restoration-projects",
+   "bytes": 12756,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_court_orders_note",
+     "compiled_at",
+     "court_orders",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "projects",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/components/rivers/river-panel.tsx",
+    "src/lib/data/restoration-projects.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_restoration.py"
+   ],
+   "headwaters_sources": [
+    "mohua-amrut-status-ap"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -83008,6 +83474,46 @@
    "flags": []
   },
   {
+   "path": "public/data/river-events-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "river-events",
+   "bytes": 11462,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "events",
+     "nvdm",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py"
+   ],
+   "headwaters_sources": [
+    "ap-hpc-lg-polymers-2020",
+    "aphc-wp-pil-248-2020",
+    "gvmc-adb-iee-24x7-nw-2019",
+    "industry-ec-compliance-visakhapatnam",
+    "ngt-andhra-filings"
+   ],
+   "licenses": [
+    "Andhra Pradesh High Court judicial record, read as annexed to NGT filings - cited with attribution",
+    "Government of Andhra Pradesh committee report, read from a copy on a third-party host (safteng.net) - cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Greater Visakhapatnam Municipal Corporation publication, cited with attribution",
+    "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality-ahmedabad.json",
    "family": "data-root",
    "scope": "ahmedabad",
@@ -83410,6 +83916,52 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "river-quality",
+   "bytes": 29604,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_framing",
+     "_not_attached",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "provenance",
+     "rivers",
+     "scope",
+     "source",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/content/rivers/visakhapatnam.ts",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "appcb-coastal-monitoring",
+    "cpcb-nwmp-visakhapatnam"
+   ],
+   "licenses": [
+    "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality.json",
    "family": "data-root",
    "scope": "chennai",
@@ -83651,6 +84203,164 @@
    ],
    "licenses": [
     "public Surat Municipal Corporation data; open WMS, GetCapabilities declares no fees and no access constraints, no explicit licence stated - cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/visakhapatnam-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "cgwb-stations",
+   "bytes": 302627,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_excluded",
+     "_methodology",
+     "_note",
+     "aquifer",
+     "cadence_note",
+     "dataset",
+     "depth_unit",
+     "district",
+     "nvdm",
+     "provenance",
+     "quality_note",
+     "reading_kind",
+     "retrieved",
+     "scope",
+     "series_label",
+     "source_label",
+     "source_url",
+     "unit_label",
+     "well_type",
+     "wells"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/types.ts",
+    "src/lib/cities/visakhapatnam.ts",
+    "src/types/groundwater.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_apwrims_gw_stations.py",
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py"
+   ],
+   "headwaters_sources": [
+    "apwrims-groundwater",
+    "nwic-nwdp-groundwater-andhra"
+   ],
+   "licenses": [
+    "Andhra Pradesh Water Resources Department portal (APWRIMS): we have not found a licence or terms of use on the portal, only a disclaimer and a site footer reading 'All Rights Reserved' - Andhra Pradesh government data, cited with attribution",
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/visakhapatnam-dam-storage.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "dam-storage",
+   "bytes": 37649,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_fetched",
+     "_note",
+     "_source",
+     "_source_url",
+     "as_of",
+     "dams",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "quality",
+     "scope",
+     "storage_note"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "neer-vazhvu-api/scripts/scrape_apwrims_reservoirs.py",
+    "supabase/migrations/058_visakhapatnam_water_sources.sql"
+   ],
+   "headwaters_sources": [
+    "apwrims-reservoirs",
+    "cag-polavaram-audit-2025",
+    "viwsco-project-pages"
+   ],
+   "licenses": [
+    "Andhra Pradesh Water Resources Department portal (APWRIMS): we have not found a licence or terms of use on the portal, only a disclaimer and a site footer reading 'All Rights Reserved' - Andhra Pradesh government data, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Visakhapatnam Industrial Water Supply Company website: we have not found a licence or terms of use on the site, whose footer reads 'Copyright \u00a9 2026 VIWSCO' - company publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/visakhapatnam-supply-overview.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "supply-overview",
+   "bytes": 15043,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_note",
+     "_sewage",
+     "_sources",
+     "_supply_total_note",
+     "_view_overrides",
+     "allocation_context",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
+     "dataset",
+     "distribution",
+     "groundwater",
+     "hero_copy",
+     "nvdm",
+     "provenance",
+     "scope",
+     "supply_chain",
+     "wtps_summary"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/gurugram.ts",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_supply.py"
+   ],
+   "headwaters_sources": [
+    "cag-polavaram-audit-2025",
+    "cgwb-visakhapatnam-aquifer-plans",
+    "cwc-nrld-2019",
+    "gvmc-adb-iee-meghadrigedda-solar-2018",
+    "gvmc-whats-new",
+    "ngt-andhra-filings",
+    "viwsco-project-pages"
+   ],
+   "licenses": [
+    "Government of India (CWC) publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Greater Visakhapatnam Municipal Corporation publication, cited with attribution",
+    "Visakhapatnam Industrial Water Supply Company website: we have not found a licence or terms of use on the site, whose footer reads 'Copyright \u00a9 2026 VIWSCO' - company publication, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -84144,6 +84854,63 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated flagship register; per-record citations (corporation reports, Ramsar/sanctuary records, press); no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/water-bodies-flagship-visakhapatnam.json",
+   "family": "data-root",
+   "scope": "visakhapatnam",
+   "dataset": "water-bodies-flagship",
+   "bytes": 21888,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "bodies",
+     "compiled_at",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_restoration.py"
+   ],
+   "headwaters_sources": [
+    "apwrims-mi-tanks",
+    "apwrims-reservoirs",
+    "cgwb-visakhapatnam-aquifer-plans",
+    "cpcb-nwmp-visakhapatnam",
+    "cwc-nrld-2019",
+    "gvmc-adb-iee-24x7-nw-2019",
+    "gvmc-adb-iee-meghadrigedda-solar-2018",
+    "gvmc-adb-mudasarlova-2018",
+    "gvmc-whats-new",
+    "historical-gazetteers-visakhapatnam",
+    "industry-ec-compliance-visakhapatnam",
+    "moefcc-wetlands-portal",
+    "ngt-andhra-filings",
+    "vmrda-draft-master-plan-2041"
+   ],
+   "licenses": [
+    "Andhra Pradesh Water Resources Department portal (APWRIMS): we have not found a licence or terms of use on the portal, only a disclaimer and a site footer reading 'All Rights Reserved' - Andhra Pradesh government data, cited with attribution",
+    "Andhra Pradesh government (VMRDA) draft plan document, cited with attribution",
+    "Government of India (CWC) publication, cited with attribution",
+    "Government of India publication, cited with attribution",
+    "Government of India tribunal record, cited with attribution",
+    "Greater Visakhapatnam Municipal Corporation publication, cited with attribution",
+    "MoEFCC Wetlands of India portal: its copyright policy permits reproduction free of charge in any format or media without specific permission, reproduced accurately and with the source prominently acknowledged - Government of India publication, cited with attribution",
+    "Public domain (published 1907 and 1908)",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+    "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -91952,6 +92719,244 @@
    "flags": [
     "unaccounted"
    ]
+  },
+  {
+   "path": "public/geojson/visakhapatnam-coastal-transects.geojson",
+   "family": "geojson-layers",
+   "scope": "visakhapatnam",
+   "dataset": "coastal-transects",
+   "bytes": 229940,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 476,
+    "geometries": [
+     "Point"
+    ],
+    "property_keys": [
+     "confidence",
+     "early_rate_m_yr",
+     "epr_m_yr",
+     "n_epochs",
+     "period",
+     "r_squared",
+     "rate_m_yr",
+     "recent_rate_m_yr",
+     "series",
+     "showcase",
+     "source",
+     "transect_id",
+     "trend",
+     "zone_id"
+    ]
+   },
+   "consumers": [
+    "src/components/coastal/coastal-map.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/gee/coastline.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py"
+   ],
+   "headwaters_sources": [
+    "cwc-coastal-erosion-guidelines-2020",
+    "research-papers-visakhapatnam",
+    "sentinel-2-l2a",
+    "usgs-landsat"
+   ],
+   "licenses": [
+    "Copernicus free and open data, attribution required",
+    "Government of India (CWC) publication, read from the Kerala Irrigation Department's copy - cited with attribution",
+    "USGS public domain, courtesy attribution",
+    "academic publications, cited with attribution; findings and figures only, no text or images reproduced"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/visakhapatnam-coastal-zones.geojson",
+   "family": "geojson-layers",
+   "scope": "visakhapatnam",
+   "dataset": "coastal-zones",
+   "bytes": 19027,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 8,
+    "geometries": [
+     "LineString"
+    ],
+    "property_keys": [
+     "class_label",
+     "dominant_trend",
+     "length_km",
+     "mean_erosion_m_yr",
+     "period",
+     "source",
+     "source_label",
+     "source_url",
+     "summary",
+     "transect_masks",
+     "zone_id",
+     "zone_name"
+    ]
+   },
+   "consumers": [
+    "src/components/coastal/coastal-map.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/gee/coastline.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "scripts/build-visakhapatnam-coastal-seed.py"
+   ],
+   "headwaters_sources": [
+    "cwc-coastal-erosion-guidelines-2020",
+    "nccr-shoreline-assessment",
+    "osm-overpass",
+    "vpa-administration-report-2022-23"
+   ],
+   "licenses": [
+    "Government of India (CWC) publication, read from the Kerala Irrigation Department's copy - cited with attribution",
+    "Government of India (MoES/NCCR) publication, cited with attribution",
+    "Government of India (Visakhapatnam Port Authority) publication, cited with attribution",
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/visakhapatnam-gwr-blocks.geojson",
+   "family": "geojson-layers",
+   "scope": "visakhapatnam",
+   "dataset": "gwr-blocks",
+   "bytes": 299882,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 11,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "agwd_tot",
+     "block",
+     "class",
+     "editions",
+     "ext_id",
+     "na_gwa",
+     "sgw_dev_pe"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/groundwater/districts-as-blocks.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_apwrims_gw_stations.py",
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-andhra"
+   ],
+   "licenses": [
+    "no explicit licence: we have not found terms of use, a disclaimer or a copyright or licence statement on the IN-GRES portal; a Government of India assessment portal, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/visakhapatnam-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "visakhapatnam",
+   "dataset": "rivers",
+   "bytes": 209205,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 3,
+    "geometries": [
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "length_km",
+     "name",
+     "name_te",
+     "osm_ids",
+     "river_id",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/components/basin/basin-overview.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/content/flood/visakhapatnam.ts",
+    "src/content/rivers/visakhapatnam.ts",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-visakhapatnam-water"
+   ],
+   "licenses": [
+    "Open Database License (ODbL) 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/visakhapatnam-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "visakhapatnam",
+   "dataset": "water-bodies-current",
+   "bytes": 2094107,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 1088,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "name",
+     "name_te",
+     "osm_id",
+     "osm_type",
+     "water_type"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-visakhapatnam-water"
+   ],
+   "licenses": [
+    "Open Database License (ODbL) 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
   }
  ],
  "datasets": [
@@ -93498,7 +94503,7 @@
   {
    "family": "data-root",
    "dataset": "allocations",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "bangalore",
     "chennai",
@@ -93506,9 +94511,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "visakhapatnam"
    ],
-   "bytes": 94672,
+   "bytes": 131933,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -93576,11 +94582,12 @@
   {
    "family": "data-root",
    "dataset": "cetp-compliance",
-   "files": 1,
+   "files": 2,
    "scopes": [
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 94291,
+   "bytes": 111139,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -93624,7 +94631,7 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -93633,17 +94640,18 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 4478099,
-   "schema_variants": 8,
+   "bytes": 4780726,
+   "schema_variants": 9,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -93653,9 +94661,10 @@
     "kolkata",
     "madurai",
     "mumbai",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 212007,
+   "bytes": 266130,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -93675,13 +94684,14 @@
   {
    "family": "data-root",
    "dataset": "dam-storage",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "ahmedabad",
-    "pune"
+    "pune",
+    "visakhapatnam"
    ],
-   "bytes": 6499,
-   "schema_variants": 2,
+   "bytes": 44148,
+   "schema_variants": 3,
    "registered": true,
    "has_consumer": true
   },
@@ -93724,15 +94734,16 @@
   {
    "family": "data-root",
    "dataset": "elevation-bands",
-   "files": 5,
+   "files": 6,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "visakhapatnam"
    ],
-   "bytes": 12869764,
+   "bytes": 14563031,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -93740,7 +94751,7 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -93750,9 +94761,10 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 229239,
+   "bytes": 255372,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -93837,7 +94849,7 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 10,
+   "files": 11,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -93848,10 +94860,11 @@
     "kolkata",
     "madurai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 256477,
-   "schema_variants": 7,
+   "bytes": 285601,
+   "schema_variants": 8,
    "registered": true,
    "has_consumer": true
   },
@@ -93870,7 +94883,7 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 11,
+   "files": 12,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -93882,9 +94895,10 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 548056,
+   "bytes": 580686,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -93892,17 +94906,18 @@
   {
    "family": "data-root",
    "dataset": "industrial-sources",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "bangalore",
     "chennai",
     "delhi",
     "madurai",
     "mumbai",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 97894,
-   "schema_variants": 5,
+   "bytes": 107535,
+   "schema_variants": 6,
    "registered": true,
    "has_consumer": true
   },
@@ -93998,7 +95013,7 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 11,
+   "files": 12,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -94010,9 +95025,10 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 207430,
+   "bytes": 226247,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -94049,7 +95065,7 @@
   {
    "family": "data-root",
    "dataset": "restoration-projects",
-   "files": 7,
+   "files": 8,
    "scopes": [
     "ahmedabad",
     "chennai",
@@ -94057,9 +95073,10 @@
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "visakhapatnam"
    ],
-   "bytes": 64498,
+   "bytes": 77254,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -94067,21 +95084,22 @@
   {
    "family": "data-root",
    "dataset": "river-events",
-   "files": 3,
+   "files": 4,
    "scopes": [
     "bangalore",
     "delhi",
-    "madurai"
+    "madurai",
+    "visakhapatnam"
    ],
-   "bytes": 24858,
-   "schema_variants": 1,
+   "bytes": 36320,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 10,
+   "files": 11,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -94092,10 +95110,11 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 1514237,
-   "schema_variants": 9,
+   "bytes": 1543841,
+   "schema_variants": 10,
    "registered": true,
    "has_consumer": true
   },
@@ -94126,7 +95145,7 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -94136,10 +95155,11 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 139703,
-   "schema_variants": 9,
+   "bytes": 154746,
+   "schema_variants": 10,
    "registered": true,
    "has_consumer": true
   },
@@ -94275,16 +95295,17 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-flagship",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "ahmedabad",
     "delhi",
     "hyderabad",
     "kolkata",
     "madurai",
-    "mumbai"
+    "mumbai",
+    "visakhapatnam"
    ],
-   "bytes": 71710,
+   "bytes": 93598,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -94377,12 +95398,13 @@
   {
    "family": "geojson-layers",
    "dataset": "coastal-transects",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "chennai",
-    "mumbai"
+    "mumbai",
+    "visakhapatnam"
    ],
-   "bytes": 928181,
+   "bytes": 1158121,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -94390,13 +95412,14 @@
   {
    "family": "geojson-layers",
    "dataset": "coastal-zones",
-   "files": 2,
+   "files": 3,
    "scopes": [
     "chennai",
-    "mumbai"
+    "mumbai",
+    "visakhapatnam"
    ],
-   "bytes": 34980,
-   "schema_variants": 1,
+   "bytes": 54007,
+   "schema_variants": 2,
    "registered": true,
    "has_consumer": true
   },
@@ -94516,7 +95539,7 @@
   {
    "family": "geojson-layers",
    "dataset": "gwr-blocks",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -94525,9 +95548,10 @@
     "gurugram",
     "hyderabad",
     "madurai",
-    "pune"
+    "pune",
+    "visakhapatnam"
    ],
-   "bytes": 10151644,
+   "bytes": 10451526,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -94591,7 +95615,7 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 10,
+   "files": 11,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -94602,9 +95626,10 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 3110459,
+   "bytes": 3319664,
    "schema_variants": 9,
    "registered": true,
    "has_consumer": true
@@ -94799,7 +95824,7 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 11,
+   "files": 12,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -94811,9 +95836,10 @@
     "madurai",
     "mumbai",
     "pune",
-    "surat"
+    "surat",
+    "visakhapatnam"
    ],
-   "bytes": 36063438,
+   "bytes": 38157545,
    "schema_variants": 11,
    "registered": true,
    "has_consumer": true

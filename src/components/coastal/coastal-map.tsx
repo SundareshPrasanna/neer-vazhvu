@@ -195,7 +195,9 @@ export function CoastalMap({
               <span style={{ fontSize: "11px", color: "#64748b" }}>
                 {props.mean_erosion_m_yr != null
                   ? `study: ${props.dominant_trend} - mean erosion ${props.mean_erosion_m_yr} m/yr`
-                  : `${props.dominant_trend} (published classification) - no published rate; our measurement only`}
+                  : props.class_label != null
+                    ? `${props.class_label} - no official rate found; our measurement only`
+                    : `${props.dominant_trend} (published classification) - no published rate; our measurement only`}
               </span>
             </Tooltip>
           </Polyline>

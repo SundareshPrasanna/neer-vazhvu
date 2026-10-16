@@ -67,7 +67,7 @@ export function CatchmentMethodologySection({
           </li>
           <li>
             <strong>Violet dotted line:</strong> the{" "}
-            <strong>downstream flow path</strong> - how the lake&apos;s
+            <strong>downstream flow path</strong>{" "}- how the lake&apos;s
             overflow actually runs through the channel network, lake by lake,
             until it reaches a river.
           </li>
@@ -80,8 +80,8 @@ export function CatchmentMethodologySection({
         </h4>
         <ul className="list-disc list-outside pl-5 space-y-1">
           <li>
-            <strong>Elevation:</strong> FABDEM (Forest And Buildings removed
-            Copernicus DEM) at 30&nbsp;m. This is a <em>bare-earth</em> surface
+            <strong>Elevation:</strong>{" "}FABDEM (Forest And Buildings removed
+            Copernicus DEM) at 30&nbsp;m. This is a <em>bare-earth</em>{" "}surface
             - buildings and tree canopy are removed - so water routes over the
             real ground rather than over rooftops, which matters in dense urban
             terrain. (The cascade graph uses coarser 90&nbsp;m HydroSHEDS; the
@@ -131,7 +131,7 @@ export function CatchmentMethodologySection({
             threshold-free: there are no impound-vs-transit tuning knobs.
           </li>
           <li>
-            <strong>Downstream:</strong> from the lake&apos;s outlet (its
+            <strong>Downstream:</strong>{" "}from the lake&apos;s outlet (its
             highest-accumulation boundary cell) follow the channel by always
             stepping to the highest-accumulation neighbour until it enters
             another water body; chaining those hops along the cascade gives the
@@ -159,10 +159,10 @@ export function CatchmentMethodologySection({
             authoritative open dataset exists - for Bengaluru, the ATREE/CSEI
             named-lake census published on OpenCity - we attach the real toponym
             by <strong>polygon overlap</strong> and tag it{" "}
-            <code className="text-xs">name_source</code> with a match
+            <code className="text-xs">name_source</code>{" "}with a match
             confidence. OSM-native names are never overwritten, and a small
             pond sitting inside a large lake&apos;s outline is{" "}
-            <em>not</em> given that lake&apos;s name (a wrong name is worse than
+            <em>not</em>{" "}given that lake&apos;s name (a wrong name is worse than
             a blank one).
           </li>
           <li>
@@ -181,7 +181,7 @@ export function CatchmentMethodologySection({
         </h4>
         <ul className="list-disc list-outside pl-5 space-y-1">
           <li>
-            <strong>Not a substitute for a surveyed catchment.</strong> A
+            <strong>Not a substitute for a surveyed catchment.</strong>{" "}A
             30&nbsp;m bare-earth DEM resolves urban catchments well but misses
             sub-cell culverts, storm drains, and engineered diversions that move
             water against the natural terrain.

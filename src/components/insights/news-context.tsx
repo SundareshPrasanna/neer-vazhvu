@@ -73,7 +73,7 @@ export function NewsContext({ domain, zoneName, locationName, cityName }: NewsCo
           rel="noopener noreferrer"
           className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline"
         >
-          {t("news.search_related")} &rarr;
+          {t("news.search_related")}{" "}&rarr;
         </a>
       </div>
     </div>

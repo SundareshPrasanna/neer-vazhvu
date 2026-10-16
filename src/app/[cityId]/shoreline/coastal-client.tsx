@@ -30,8 +30,15 @@ interface CoastalCityCopy {
    *  how the anchor source relates to our measurement. */
   anchorNote: string;
   factsHref: string;
+  /** Shown before the transects load. Both count high-confidence transects
+   *  only, the same set the loaded bar uses for both numbers. */
   fallbackEroding: number;
-  fallbackTotal: number;
+  fallbackReliable: number;
+  /** Replaces the transect panel's study comparison where the coast has no
+   *  per-transect study to compare against. Omit to keep Chennai's wording. */
+  transectNote?: string;
+  /** Legend wording where the zones are not a study's (and no hotspots). */
+  legend?: { zoneLabel: string; showHotspots: boolean };
 }
 
 const CITY_COPY: Record<string, CoastalCityCopy> = {
@@ -43,7 +50,7 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
       headline: "Most of the coast is eroding - and the erosion is speeding up.",
       why: (
         <>
-          the <span className="font-semibold">Ennore &amp; Kattupalli</span> ports interrupt the
+          the <span className="font-semibold">Ennore &amp; Kattupalli</span>{" "}ports interrupt the
           coast&apos;s natural south-to-north sand drift - trapping sand at the breakwaters, but
           starving and eroding the beaches further north (down-drift). The coast gains land where
           the <span className="font-semibold">Adyar &amp; Cooum</span> rivers drop silt at their
@@ -59,8 +66,8 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
     anchorNote:
       "The faint grey bands are the six study zones and the larger labelled dots are named hotspots, both from Anagha, Singh & Frappart (2026). Our independent method matches the study's pattern; absolute rates differ (fixed MNDWI threshold, no tidal correction), so the study serves as validation.",
     factsHref: "/chennai/facts#bucket-coastal",
-    fallbackEroding: 387,
-    fallbackTotal: 905,
+    fallbackEroding: 430,
+    fallbackReliable: 1041,
   },
   mumbai: {
     title: "Mumbai shoreline change",
@@ -72,7 +79,7 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
       why: (
         <>
           erosion concentrates in the <span className="font-semibold">Bandra-Juhu</span> and{" "}
-          <span className="font-semibold">Versova</span> zones - the natural beach belt the
+          <span className="font-semibold">Versova</span>{" "}zones - the natural beach belt the
           state&apos;s own assessments grade medium-to-major risk. Much of the
           &quot;accretion&quot; is not beach recovery: the Coastal Road&apos;s 111-ha reclamation
           and creek-mouth silt push the waterline seaward.
@@ -88,7 +95,40 @@ const CITY_COPY: Record<string, CoastalCityCopy> = {
       "The faint grey bands are seven zones carrying Mumbai's published record: the NCCR national assessment's district table (Mumbai City 93.5% stable behind its seawalls; Mumbai Suburban 43.2% eroding, with Erangal, Manori and Gorai named) and the Maharashtra Shoreline Management Plan 2017 risk grades. No source publishes per-transect rates for Mumbai, so the coloured dots are our own measurement - and Mumbai's ~3-5 m spring tides add positional noise Chennai's microtidal coast lacks; lean on the pattern, not single-transect absolutes.",
     factsHref: "/mumbai/facts",
     fallbackEroding: 110,
-    fallbackTotal: 706,
+    fallbackReliable: 555,
+  },
+  visakhapatnam: {
+    title: "Visakhapatnam shoreline change",
+    summaryCard: {
+      title: "Visakhapatnam coastline",
+      extent: "Appikonda to Pedda Nagamayyapalem, just north of Bheemunipatnam",
+      headline:
+        "Most of the city's coast is holding steady; the beaches from Mangamaripeta to Pedda Nagamayyapalem are eroding.",
+      why: (
+        <>
+          the <span className="font-semibold">Kailasa &amp; Yarada</span>{" "}hills and rock headlands
+          shelter much of this shore (NCCR&apos;s 2018 assessment calls the district the most stable
+          on the Andhra coast). The sandy beaches from{" "}
+          <span className="font-semibold">Mangamaripeta to Pedda Nagamayyapalem</span> lose about
+          1.8 m a year at our median, in line with their official Low Erosion class.{" "}
+          <span className="font-semibold">RK Beach</span> is topped up with sand by the port, so its
+          steady line is partly man-made.
+        </>
+      ),
+      attribution: (n: number) =>
+        `Our satellite measurement (${n.toLocaleString()} transects, no tidal correction), anchored to NCCR's 1990-2016 assessment and the Ministry of Earth Sciences' 2024 stretch classes.`,
+    },
+    anchorLabel: "Anchored to",
+    anchorName: "NCCR 1990-2016 + MoES 2024",
+    anchorUrl: "https://www.nccr.gov.in/sites/default/files/schangenew.pdf",
+    anchorNote:
+      "The faint grey bands are eight zones carrying Visakhapatnam's official record. NCCR's national assessment (1990-2016) covered the old, undivided district: 136.98 km of coast, 102.74 km of it stable. A separate reply by the Ministry of Earth Sciences in the Lok Sabha (11 December 2024) covers today's smaller district (68.08 km of coast) and classes four stretches as Low Erosion: Yarada, RK Beach, Mangamari Peta to Bheemili, and Bheemunipatnam to Pedanagamayyapalem. Our measurement agrees at Yarada and from Mangamaripeta north (median retreat about 1 to 1.8 m a year). At RK Beach it reads close to stable over 1990-2026 and at a Low Erosion pace since 2015; the port regularly adds sand to this beach, so its line is partly man-made. We have found no published per-transect rates for this coast, so the coloured dots are our own measurement, with no tidal correction (spring tide range 1.43 m, Survey of India tide tables via CWC 2020). The two harbour basins are left out; dots at breakwaters, port-built shore, the Dolphin's Nose headland and river mouths are marked low confidence, as are two dots whose measured water edge jumps 180 m or more in one step (one at RK Beach, one north of the Gosthani mouth).",
+    factsHref: "/visakhapatnam/facts",
+    fallbackEroding: 147,
+    fallbackReliable: 421,
+    transectNote:
+      "We have found no published per-transect rate for this coast to check against; the official record is stretch classes (NCCR; Ministry of Earth Sciences, 2024). Absolute rates carry method limits: a fixed MNDWI threshold and no tidal correction (spring tide range 1.43 m).",
+    legend: { zoneLabel: "Official stretch zone (context)", showHotspots: false },
   },
 };
 
@@ -125,12 +165,17 @@ export default function CoastalClient({ cityId }: { cityId: string }) {
         <span className="font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
           {copy.title} - {summary?.period ?? "1990-2026"}
         </span>
+        {/* Both numbers count the same set: high-confidence transects only
+            (the eroding count never includes the low-confidence ones). */}
         <div className="flex items-center gap-2 whitespace-nowrap shrink-0">
           <span className="w-3 h-3 rounded-sm bg-red-600 opacity-80" />
-          <span className="text-xs text-slate-600 dark:text-slate-400">
+          <span
+            className="text-xs text-slate-600 dark:text-slate-400"
+            title="Both numbers count high-confidence transects only; low-confidence ones are left out of both."
+          >
             <span className="font-semibold text-slate-900 dark:text-slate-100">{summary?.eroding ?? copy.fallbackEroding}</span> eroding
             {" / "}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{summary?.total ?? copy.fallbackTotal}</span> transects
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{summary?.highConf ?? copy.fallbackReliable}</span> reliable transects
           </span>
         </div>
         <div className="ml-auto flex items-center gap-3">
@@ -177,7 +222,7 @@ export default function CoastalClient({ cityId }: { cityId: string }) {
               selected ? "bottom-[148px] md:bottom-4" : "bottom-2 md:bottom-4"
             }`}
           >
-            <CoastalLegend />
+            <CoastalLegend zoneLabel={copy.legend?.zoneLabel} showHotspots={copy.legend?.showHotspots} />
           </div>
 
           {/* Sources / honesty note */}
@@ -201,7 +246,11 @@ export default function CoastalClient({ cityId }: { cityId: string }) {
 
         {selected ? (
           <BottomSheet onClose={() => setSelected(null)}>
-            <CoastalDetailPanel selected={selected} onClose={() => setSelected(null)} />
+            <CoastalDetailPanel
+              selected={selected}
+              onClose={() => setSelected(null)}
+              transectNote={copy.transectNote}
+            />
           </BottomSheet>
         ) : null}
       </div>

@@ -1,0 +1,848 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/river-quality",
+  "scope": {
+    "kind": "city",
+    "id": "visakhapatnam"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "cpcb-nwmp-visakhapatnam",
+        "title": "CPCB NWMP annual water-quality tables, 2019-2024 editions (canal, pond/tank, creek/coastal tables and the 2024 split files)",
+        "publisher": "Central Pollution Control Board (National Water Quality Monitoring Programme)",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "url": "https://cpcb.gov.in/nwmp-data-2024/"
+      },
+      {
+        "id": "appcb-coastal-monitoring",
+        "title": "APPCB COMAPS annual averages FY2010-11 to FY2024-25 (pdf pp. 7, 9-10, 19) and APPCB NWMP data for March 2025 (pdf p. 1)",
+        "publisher": "Andhra Pradesh Pollution Control Board (COMAPS and NWMP monthly and annual tables)",
+        "license": "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+        "url": "https://pcb.ap.gov.in/PCBLive/PCB/QualityMonitoring",
+        "documents": [
+          "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Pdf%27s/WQM//COMAPS%20Annual%20Averages%20-%202011%20-%2025(%20upto%20March%20).pdf",
+          "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/MARCH%20-2025.pdf"
+        ]
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
+    "note": "Annual MIN-MAX per station as CPCB prints it; no midpoint is derived. CPCB's 2019-2024 tables list no river station in Visakhapatnam: these are the reservoir, creek and canal stations on the three channels. Station 5678 is attached to the Meghadri Gedda by measured distance to the OSM line (geometry_check).",
+    "conventions": {
+      "reading_shape": "{min, max} for the calendar year, as published. Blank, '-' and BDL cells are null.",
+      "nitrogen": "CPCB's nitrogen column is nitrogen as N (NO3-N + NO2-N in most editions, NO3-N alone in 2023 and the 2024 split files; nitrogen_basis per reading). It is not nitrate as NO3, so nitrate_mgl is null and nothing here is compared with the 45 mg/L BIS nitrate limit.",
+      "typed_single_value_fields": "conductivity_us, cod_mgl and tds_mgl are typed as single numbers and the shared panel renders them so; CPCB prints ranges, carried as conductivity_us_range, cod_mgl_range and tds_mgl_range.",
+      "split_2024": "2024 values come from the combined annual table where CPCB published one (4356, 5678), with samples, BOD mean, COD and TDS from the split files. 5160 and 4927 appear only in the split files. The one disagreement: 5678 pH minimum is 6.1 in the combined creek table and 6.05 in the split file; 6.1 is used.",
+      "geometry_check": {
+        "5160": {
+          "river_id": "meghadrigedda",
+          "offset_m": 702,
+          "limit_m": 3000
+        },
+        "5678": {
+          "river_id": "meghadrigedda",
+          "offset_m": 49,
+          "limit_m": 500
+        },
+        "4927": {
+          "river_id": "gosthani",
+          "offset_m": 547,
+          "limit_m": 3000
+        },
+        "4356": {
+          "river_id": "yeleru-canal",
+          "offset_m": 31,
+          "limit_m": 3000
+        }
+      }
+    },
+    "internal_inputs": [
+      "public/geojson/visakhapatnam-rivers.geojson"
+    ]
+  },
+  "last_updated": "2024",
+  "data_year_range": [
+    2019,
+    2024
+  ],
+  "source": "CPCB National Water Quality Monitoring Programme (NWMP), annual tables for canals, reservoirs and coastal water, 2019-2024",
+  "source_url": "https://cpcb.gov.in/nwmp-data-2024/",
+  "source_label": "CPCB NWMP annual data, 2019-2024 (canal, reservoir and creek tables)",
+  "_framing": "CPCB's NWMP has no river station on any Visakhapatnam or Anakapalli river in its 2019-2024 tables. That is a gap in stations, not a finding about the rivers.",
+  "_not_attached": {
+    "4372, 4373 and the 'Gostani along Vendra' stretch": "West Godavari district (about 16.58 N, 81.57 E), a different river from Visakhapatnam's Gosthani",
+    "2353 Kondakarla Ava": "a lake, not one of these channels",
+    "5155 River Yeleru at Yeleru reservoir, Yeleswaram": "on the Yeleru river at the reservoir the canal draws from (17.30 N, 82.08 E, East Godavari district as CPCB lists it), outside the city; not a station on the canal itself",
+    "4357, 5673-5677, 4349, 4352": "beach and sea stations, for the shoreline and facts pages",
+    "APPCB COMAPS outfall stations": "no published coordinates found; figures are quoted in river notes, never placed on the map"
+  },
+  "rivers": [
+    {
+      "id": "meghadrigedda",
+      "name": "Meghadri Gedda",
+      "name_ta": "",
+      "name_te": "మేఘాద్రి గెడ్డ",
+      "length_km": 29.1,
+      "length_basis": "drawn line in public/geojson/visakhapatnam-rivers.geojson (OpenStreetMap)",
+      "overall_status": "severely_degraded",
+      "cpcb_class": "Not assessed (no river station in CPCB's 2019-2024 tables)",
+      "description": "CPCB's 2019-2024 tables list no river station on the Meghadri Gedda, or on any other river in Visakhapatnam. The readings here come from two other kinds of station on this channel: the Meghadrigedda reservoir, and a tidal creek at the Sardar Vallabhai Patel bridge by the Naval Dockyard, close to where the channel enters the port's inner harbour. Below the reservoir the channel runs to the sea as the reservoir's surplus course.",
+      "notes": "Lowest dissolved oxygen at the dockyard creek: 1.0 mg/L in 2023 and 2.4 mg/L in 2024, against the 4.0 mg/L minimum CPCB prints for Class SW-II coastal water, and below 3.0 mg/L, the lowest oxygen floor APPCB lists for any coastal class, harbour waters (SW-IV) included. APPCB samples the surplus course where, in its words, it joins the sea 'along with all the industrial effluents' at the parallel bridge near the dockyard: annual average DO 2.7 mg/L and BOD 4.3 mg/L in 2023-24, DO 4.4 mg/L and BOD 3.1 mg/L in 2024-25. In the reservoir, CPCB's 12 samples in 2024 ranged from 304 to 1,364 mg/L of dissolved solids; APPCB's sample of 5 March 2025 read DO 7.6 mg/L and BOD 1.8 mg/L.",
+      "stations": [
+        {
+          "id": "nwmp-5160",
+          "nwmp_code": "5160",
+          "name": "Meghadrigedda Reservoir, Visakhapatnam City",
+          "lat": 17.757379,
+          "lng": 83.184834,
+          "stretch": "Reservoir",
+          "position_method": "coordinates as printed in CPCB's 2024 NWMP split files",
+          "osm_river_offset_m_before": 702,
+          "off_osm_river_polyline": false,
+          "readings": [
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 5.5,
+                "max": 8.5
+              },
+              "bod_mgl": {
+                "min": 1.6,
+                "max": 2.8
+              },
+              "ph": {
+                "min": 7.46,
+                "max": 8.49
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 7
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 26,
+                "max": 30
+              },
+              "conductivity_us_range": {
+                "min": 508,
+                "max": 2092
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.5,
+                "max": 1.16
+              },
+              "nitrogen_basis": "NO3-N only",
+              "total_coliform_mpn": {
+                "min": 64,
+                "max": 210
+              },
+              "n_samples": 12,
+              "bod_mean_mgl": 2.3,
+              "cod_mgl_range": {
+                "min": 16,
+                "max": 25,
+                "mean": 20.0
+              },
+              "tds_mgl_range": {
+                "min": 304,
+                "max": 1364
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/CanalDrainSTPWTP%20Reservoir-PhysicoChemical.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/CanalDrainSTPWTPReservoir-Nitorgen%20Indicator.pdf",
+                  "page": 2
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/CanalsDrainSTPWTP%20Reservoir-Bectological.pdf",
+                  "page": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nwmp-5678",
+          "nwmp_code": "5678",
+          "name": "Sardar Vallabhai Patel Bridge, Navel Dockyard",
+          "lat": 17.710863,
+          "lng": 83.262848,
+          "stretch": "Dockyard creek",
+          "position_method": "coordinates as printed in CPCB's 2024 NWMP split files",
+          "osm_river_offset_m_before": 49,
+          "off_osm_river_polyline": false,
+          "readings": [
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 1.0,
+                "max": 5.8
+              },
+              "bod_mgl": {
+                "min": 1.8,
+                "max": 5.6
+              },
+              "ph": {
+                "min": 6.2,
+                "max": 7.4
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 21
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 24,
+                "max": 31
+              },
+              "conductivity_us_range": {
+                "min": 17000,
+                "max": 48800
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.5,
+                "max": 3.7
+              },
+              "nitrogen_basis": "NO3-N only",
+              "total_coliform_mpn": {
+                "min": 43,
+                "max": 1100
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2023/Water_creek_marine_seawater_beach_2023.pdf",
+                  "page": 1
+                }
+              ]
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 2.4,
+                "max": 6.3
+              },
+              "bod_mgl": {
+                "min": 2.1,
+                "max": 4.4
+              },
+              "ph": {
+                "min": 6.1,
+                "max": 7.9
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 11
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 26,
+                "max": 29
+              },
+              "conductivity_us_range": {
+                "min": 562,
+                "max": 53900
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.69,
+                "max": 6.66
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 93,
+                "max": 460
+              },
+              "n_samples": 12,
+              "bod_mean_mgl": 3.3,
+              "cod_mgl_range": {
+                "min": 14,
+                "max": 28,
+                "mean": 21.8
+              },
+              "tds_mgl_range": {
+                "min": 364,
+                "max": 36836
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/Water_creek_marine_seawater_beach_2024.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/Coastal-PhysicoChemical.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/Coastal-Nitorgen%20Indicator.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/Coastal-Bectological.pdf",
+                  "page": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gosthani",
+      "name": "Gosthani",
+      "name_ta": "",
+      "name_te": "గోస్తని",
+      "length_km": 112.9,
+      "length_basis": "drawn line in public/geojson/visakhapatnam-rivers.geojson (OpenStreetMap)",
+      "overall_status": "stressed",
+      "cpcb_class": "Not assessed (no river station in CPCB's 2019-2024 tables)",
+      "description": "CPCB's 2019-2024 tables list no river station on the Gosthani in Visakhapatnam. The readings here are from Thatipudi reservoir on the Gosthani, upstream in Vizianagaram district. CPCB stations named 'Gostani' (4372 and 4373) are on a different river in West Godavari district and are not used here.",
+      "notes": "CPCB published readings for 2021, 2022 and 2024. Lowest dissolved oxygen: 4.1 mg/L (2021). Highest BOD: 2.8 mg/L (2022, 2024). APPCB's monthly sample of 6 March 2025 read DO 7.8 mg/L and BOD 1.9 mg/L. APPCB's 2024-25 annual average where the Gosthani joins the sea near Bheemili: DO 6.1 mg/L, BOD 2.2 mg/L.",
+      "stations": [
+        {
+          "id": "nwmp-4927",
+          "nwmp_code": "4927",
+          "name": "Tatipudi Reservoir, Tatipudi (V), Gantyada (M)",
+          "lat": 18.171722,
+          "lng": 83.196667,
+          "stretch": "Thatipudi reservoir",
+          "position_method": "coordinates as printed in CPCB's 2024 NWMP split files",
+          "osm_river_offset_m_before": 547,
+          "off_osm_river_polyline": false,
+          "readings": [
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 4.1,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.2,
+                "max": 2.4
+              },
+              "ph": {
+                "min": 7.0,
+                "max": 8.2
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 4
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 25,
+                "max": 32
+              },
+              "conductivity_us_range": {
+                "min": 216,
+                "max": 392
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.34,
+                "max": 2.29
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 39,
+                "max": 75
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2021/Water_pond_tanks_2021.pdf",
+                  "page": 1
+                }
+              ]
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 5.7,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.2,
+                "max": 2.8
+              },
+              "ph": {
+                "min": 7.1,
+                "max": 8.5
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 21
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 25,
+                "max": 29
+              },
+              "conductivity_us_range": {
+                "min": 218,
+                "max": 444
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.38,
+                "max": 1.75
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 39,
+                "max": 2400
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2022/Water_pond_tanks_2022.pdf",
+                  "page": 3
+                }
+              ]
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 6,
+                "max": 8.5
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 2.8
+              },
+              "ph": {
+                "min": 7.34,
+                "max": 8.05
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 4
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 23,
+                "max": 32
+              },
+              "conductivity_us_range": {
+                "min": 144,
+                "max": 239
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.3,
+                "max": 0.55
+              },
+              "nitrogen_basis": "NO3-N only",
+              "total_coliform_mpn": {
+                "min": 43,
+                "max": 120
+              },
+              "n_samples": 12,
+              "bod_mean_mgl": 2.2,
+              "cod_mgl_range": {
+                "min": 11,
+                "max": 20,
+                "mean": 14.5
+              },
+              "tds_mgl_range": {
+                "min": 128,
+                "max": 168
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/LPT-PhysicoChemical.pdf",
+                  "page": 2
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/LPT-Nitorgen%20Indicator.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/LPT-Bectological.pdf",
+                  "page": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yeleru-canal",
+      "name": "Yeleru Left Main Canal",
+      "name_ta": "",
+      "length_km": 154.1,
+      "length_basis": "drawn line in public/geojson/visakhapatnam-rivers.geojson (OpenStreetMap)",
+      "overall_status": "stressed",
+      "cpcb_class": "Not assessed (no river station in CPCB's 2019-2024 tables)",
+      "description": "A supply canal, not a river; CPCB's 2019-2024 tables list no river station in Visakhapatnam. The readings here are from CPCB's station on the canal near Jawaharlal Nehru Pharma City at Parawada, which CPCB lists as 'Eleru Canal'. The length shown is the stretch drawn on this map from OpenStreetMap.",
+      "notes": "CPCB published readings for 2019, 2020, 2021, 2022, 2023 and 2024. Lowest dissolved oxygen: 4.5 mg/L (2023). Highest BOD: 3.4 mg/L (2022). APPCB's monthly sample of 6 March 2025 read DO 6.2 mg/L and BOD 1.9 mg/L.",
+      "stations": [
+        {
+          "id": "nwmp-4356",
+          "nwmp_code": "4356",
+          "name": "Eleru Canal near Pharma City, Thadi (V), Paravada (M)",
+          "lat": 17.680833,
+          "lng": 83.079722,
+          "stretch": "Near Pharma City",
+          "position_method": "coordinates as printed in CPCB's 2024 NWMP split files",
+          "osm_river_offset_m_before": 31,
+          "off_osm_river_polyline": false,
+          "readings": [
+            {
+              "year": 2019,
+              "do_mgl": {
+                "min": 5.6,
+                "max": 7.5
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 2.5
+              },
+              "ph": {
+                "min": 7.6,
+                "max": 8.4
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 7,
+                "max": 20
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 25,
+                "max": 32
+              },
+              "conductivity_us_range": {
+                "min": 249,
+                "max": 634
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.63,
+                "max": 2.09
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 69,
+                "max": 150
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2019/Water_Quality_Canals_Sea_Water_Drains_STPs_2019.pdf",
+                  "page": 1
+                }
+              ]
+            },
+            {
+              "year": 2020,
+              "do_mgl": {
+                "min": 4.9,
+                "max": 6.6
+              },
+              "bod_mgl": {
+                "min": 1.5,
+                "max": 2.5
+              },
+              "ph": {
+                "min": 7.4,
+                "max": 8.1
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 7,
+                "max": 11
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 23,
+                "max": 28
+              },
+              "conductivity_us_range": {
+                "min": 248,
+                "max": 398
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.35,
+                "max": 3.47
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 64,
+                "max": 210
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2020/Water_Quality_Canals_2020.pdf",
+                  "page": 1
+                }
+              ]
+            },
+            {
+              "year": 2021,
+              "do_mgl": {
+                "min": 5.5,
+                "max": 8.0
+              },
+              "bod_mgl": {
+                "min": 1.4,
+                "max": 2.2
+              },
+              "ph": {
+                "min": 6.7,
+                "max": 7.9
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 7,
+                "max": 9
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 25,
+                "max": 29
+              },
+              "conductivity_us_range": {
+                "min": 198,
+                "max": 390
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.3,
+                "max": 1.6
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 93,
+                "max": 120
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2021/Water_Quality_Canals_2021.pdf",
+                  "page": 1
+                }
+              ]
+            },
+            {
+              "year": 2022,
+              "do_mgl": {
+                "min": 5.1,
+                "max": 8.2
+              },
+              "bod_mgl": {
+                "min": 1.7,
+                "max": 3.4
+              },
+              "ph": {
+                "min": 7.35,
+                "max": 8.43
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 15
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 26,
+                "max": 29
+              },
+              "conductivity_us_range": {
+                "min": 260,
+                "max": 509
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.39,
+                "max": 2.23
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 93,
+                "max": 460
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2022/Water_Quality_Drains_STPs__WTPs_2022.pdf",
+                  "page": 11
+                }
+              ]
+            },
+            {
+              "year": 2023,
+              "do_mgl": {
+                "min": 4.5,
+                "max": 6.5
+              },
+              "bod_mgl": {
+                "min": 1.1,
+                "max": 2.8
+              },
+              "ph": {
+                "min": 7.3,
+                "max": 8.3
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 21
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 25,
+                "max": 30
+              },
+              "conductivity_us_range": {
+                "min": 275,
+                "max": 381
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.3,
+                "max": 0.9
+              },
+              "nitrogen_basis": "NO3-N only",
+              "total_coliform_mpn": {
+                "min": 75,
+                "max": 460
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2023/Water_Quality_Canals_2023.pdf",
+                  "page": 1
+                }
+              ]
+            },
+            {
+              "year": 2024,
+              "do_mgl": {
+                "min": 5,
+                "max": 6.8
+              },
+              "bod_mgl": {
+                "min": 1.8,
+                "max": 2.5
+              },
+              "ph": {
+                "min": 6.45,
+                "max": 8.46
+              },
+              "conductivity_us": null,
+              "cod_mgl": null,
+              "fecal_coliform_mpn": {
+                "min": 3,
+                "max": 7
+              },
+              "tds_mgl": null,
+              "nitrate_mgl": null,
+              "chromium_mgl": null,
+              "lead_mgl": null,
+              "cadmium_mgl": null,
+              "temperature_c": {
+                "min": 26,
+                "max": 28
+              },
+              "conductivity_us_range": {
+                "min": 241,
+                "max": 479
+              },
+              "nitrogen_n_mgl": {
+                "min": 0.48,
+                "max": 1.59
+              },
+              "nitrogen_basis": "NO3-N + NO2-N",
+              "total_coliform_mpn": {
+                "min": 75,
+                "max": 210
+              },
+              "n_samples": 12,
+              "bod_mean_mgl": 2.1,
+              "cod_mgl_range": {
+                "min": 11,
+                "max": 21,
+                "mean": 15.6
+              },
+              "tds_mgl_range": {
+                "min": 172,
+                "max": 316
+              },
+              "source": [
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/Water_Quality_Canals_2024.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/CanalDrainSTPWTP%20Reservoir-PhysicoChemical.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/CanalDrainSTPWTPReservoir-Nitorgen%20Indicator.pdf",
+                  "page": 1
+                },
+                {
+                  "url": "https://cpcb.gov.in/wqm/2024/CanalsDrainSTPWTP%20Reservoir-Bectological.pdf",
+                  "page": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

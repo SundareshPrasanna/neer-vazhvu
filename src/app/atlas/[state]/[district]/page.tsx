@@ -518,7 +518,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
                 households and not of drinking water. They come from Census 2011 ({irrigation.describes})
                 and cover only the {irrigation.places}{" "}Panchayats with a Census land record, so a block
                 with few such records shows a share of a small area.{censusSampleNote(directory)} Tap and testing figures are JJM and
-                current at the read date. The {unit} category is the one most of the block&rsquo;s
+                current at the read date. The {unit}{" "}category is the one most of the block&rsquo;s
                 Panchayats inherit by projection{groundwater.projection?.method === "administrative-membership" ? `, which here is the ${unit} the register places them in` : `, since blocks and revenue ${unit}s do not nest`}.
                 Untested counts Panchayats whose most recent water-quality sample is more than 90 days
                 before {reading.asOf}; ninety days is the Atlas&rsquo;s own threshold for calling a series
@@ -700,7 +700,7 @@ export default async function AtlasDistrictPage({ params }: RouteParams) {
               {reading.pollutedStretches.count === 0 ? (
                 <div className="space-y-3">
                   <AtlasGap title={`CPCB lists no polluted stretch or location in ${reading.districtName}`}>
-                    The {reading.pollutedStretches.editionLabel} report names no stretch or monitoring location in this district. That is a statement about CPCB&apos;s list, not a measurement of every river here.
+                    The {reading.pollutedStretches.editionLabel}{" "}report names no stretch or monitoring location in this district. That is a statement about CPCB&apos;s list, not a measurement of every river here.
                     {reading.pollutedStretches.notes.map((note) => ` ${note.text}`).join("")}
                   </AtlasGap>
                 </div>

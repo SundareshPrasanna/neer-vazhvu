@@ -1,0 +1,1273 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/dam-storage",
+  "scope": {
+    "kind": "city",
+    "id": "visakhapatnam"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "apwrims-reservoirs",
+        "title": "APWRIMS reservoir daily timeseries and reservoir attributes",
+        "publisher": "Water Resources Department, Government of Andhra Pradesh (APWRIMS)",
+        "license": "Andhra Pradesh Water Resources Department portal (APWRIMS): we have not found a licence or terms of use on the portal, only a disclaimer and a site footer reading 'All Rights Reserved' - Andhra Pradesh government data, cited with attribution"
+      }
+    ],
+    "method": "api",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/scrape_apwrims_reservoirs.py",
+    "note": "Read from the APWRIMS JSON API. Live storage is computed as published gross storage minus design dead storage, except where storage_note says APWRIMS published live storage; the design values are checked against APWRIMS's reservoir attributes on every run. Readings are dated by their own timestamps."
+  },
+  "_source": "APWRIMS daily reservoir feed (AP Water Resources Department)",
+  "_source_url": "https://apwrims.ap.gov.in/api/reservoir/timeseries",
+  "_fetched": "2026-10-15",
+  "_note": "Live storage for the four reservoirs that feed GVMC, from the APWRIMS daily reservoir feed. Yeleru's storage includes Godavari water that the Purushottapatnam lift sends through the Polavaram Left Main Canal into the reservoir (since July 2018). VIWSCO's Kateru pump house sends Godavari water through a 56 km pipeline into the Yeleru canal (since December 2004), not into the reservoir, so that water is not in these figures. All four are multi-use: irrigation, industry and the city draw on the same storage. GVMC's own Mudasarlova reservoir and the Gambhiramgedda reservoir are not in this feed.",
+  "storage_note": "storage_tmc, storage_mcum and storage_pct_live are LIVE storage: APWRIMS publishes gross storage in TMC, and live storage is gross minus the design dead storage (the water below the lowest outlet), floored at zero. storage_pct_live is live storage as a share of designed live capacity. gross_storage_tmc and gross_pct keep the published gross figures. Each reading is dated by the IST date of its own timestamp. Readings that fail a sanity check are counted under quality.rejected and left out. Up to 15 September 2026, APWRIMS published Meghadrigedda's storage as live storage, not gross: those figures reach the design live capacity at full reservoir level, and from the next day the same levels read higher by the dead storage. They are used as live storage, and gross_storage_tmc for those days is the published figure plus the dead storage.",
+  "as_of": "2026-10-15",
+  "quality": {
+    "window": {
+      "start": "2025-10-08",
+      "end": "2026-10-15"
+    },
+    "readings_accepted": 1416,
+    "rejected": {
+      "level_storage_mismatch": 5
+    },
+    "below_dead_storage": 0,
+    "redated_to_timestamp": 0,
+    "duplicate_reading_date": 0,
+    "no_storage_value": 0,
+    "rejected_last_30_days": []
+  },
+  "dams": [
+    {
+      "source_code": "meghadrigedda",
+      "apwrims_name": "MEHADRIGADD RESERVOIR",
+      "apwrims_uuid": "e964c4dd-6a15-4147-9104-0a9626d1ac80",
+      "display_name": "Meghadrigedda",
+      "river": "Naravagedda",
+      "corporations": [
+        "gvmc"
+      ],
+      "frl_m": 18.593,
+      "mddl_m": 13.411,
+      "gross_capacity_tmc": 1.169,
+      "dead_storage_tmc": 0.13,
+      "live_capacity_tmc": 1.039,
+      "gross_capacity_mcum": 33.1,
+      "dead_storage_mcum": 3.68,
+      "live_capacity_mcum": 29.42,
+      "date": "2026-10-15",
+      "reading_time": "2026-10-15T06:42+05:30",
+      "level_m": 16.307,
+      "level_ft": 53.5,
+      "gross_storage_tmc": 0.54,
+      "gross_pct": 46.19,
+      "storage_tmc": 0.41,
+      "storage_pct_live": 39.46,
+      "below_dead_storage": false,
+      "inflow_cusecs": 15,
+      "outflow_cusecs": 15,
+      "storage_mcum": 11.61,
+      "last_year_date": "2025-10-15",
+      "last_year_storage_tmc": 0.93,
+      "last_year_storage_mcum": 26.33,
+      "last_year_pct_live": 89.51,
+      "history": [
+        {
+          "date": "2026-09-16",
+          "level_m": 14.204,
+          "gross_storage_tmc": 0.204,
+          "storage_tmc": 0.074,
+          "storage_pct_live": 7.12,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-17",
+          "level_m": 14.204,
+          "gross_storage_tmc": 0.204,
+          "storage_tmc": 0.074,
+          "storage_pct_live": 7.12,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-18",
+          "level_m": 14.173,
+          "gross_storage_tmc": 0.2,
+          "storage_tmc": 0.07,
+          "storage_pct_live": 6.74,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-19",
+          "level_m": 14.173,
+          "gross_storage_tmc": 0.2,
+          "storage_tmc": 0.07,
+          "storage_pct_live": 6.74,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-20",
+          "level_m": 14.143,
+          "gross_storage_tmc": 0.197,
+          "storage_tmc": 0.067,
+          "storage_pct_live": 6.45,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-21",
+          "level_m": 14.143,
+          "gross_storage_tmc": 0.197,
+          "storage_tmc": 0.067,
+          "storage_pct_live": 6.45,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-22",
+          "level_m": 14.265,
+          "gross_storage_tmc": 0.21,
+          "storage_tmc": 0.08,
+          "storage_pct_live": 7.7,
+          "inflow_cusecs": 111,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-23",
+          "level_m": 14.417,
+          "gross_storage_tmc": 0.228,
+          "storage_tmc": 0.098,
+          "storage_pct_live": 9.43,
+          "inflow_cusecs": 220,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-24",
+          "level_m": 15.789,
+          "gross_storage_tmc": 0.438,
+          "storage_tmc": 0.308,
+          "storage_pct_live": 29.64,
+          "inflow_cusecs": 1564,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-25",
+          "level_m": 16.032,
+          "gross_storage_tmc": 0.483,
+          "storage_tmc": 0.353,
+          "storage_pct_live": 33.97,
+          "inflow_cusecs": 537,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-26",
+          "level_m": 16.154,
+          "gross_storage_tmc": 0.505,
+          "storage_tmc": 0.375,
+          "storage_pct_live": 36.09,
+          "inflow_cusecs": 175,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-27",
+          "level_m": 16.185,
+          "gross_storage_tmc": 0.513,
+          "storage_tmc": 0.383,
+          "storage_pct_live": 36.86,
+          "inflow_cusecs": 175,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-28",
+          "level_m": 16.215,
+          "gross_storage_tmc": 0.52,
+          "storage_tmc": 0.39,
+          "storage_pct_live": 37.54,
+          "inflow_cusecs": 94,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-29",
+          "level_m": 16.215,
+          "gross_storage_tmc": 0.52,
+          "storage_tmc": 0.39,
+          "storage_pct_live": 37.54,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-09-30",
+          "level_m": 16.246,
+          "gross_storage_tmc": 0.527,
+          "storage_tmc": 0.397,
+          "storage_pct_live": 38.21,
+          "inflow_cusecs": 80,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-01",
+          "level_m": 16.246,
+          "gross_storage_tmc": 0.527,
+          "storage_tmc": 0.397,
+          "storage_pct_live": 38.21,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-02",
+          "level_m": 16.246,
+          "gross_storage_tmc": 0.527,
+          "storage_tmc": 0.397,
+          "storage_pct_live": 38.21,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-03",
+          "level_m": 16.246,
+          "gross_storage_tmc": 0.527,
+          "storage_tmc": 0.397,
+          "storage_pct_live": 38.21,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-04",
+          "level_m": 16.246,
+          "gross_storage_tmc": 0.527,
+          "storage_tmc": 0.397,
+          "storage_pct_live": 38.21,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-05",
+          "level_m": 16.246,
+          "gross_storage_tmc": 0.527,
+          "storage_tmc": 0.397,
+          "storage_pct_live": 38.21,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-06",
+          "level_m": 16.276,
+          "gross_storage_tmc": 0.533,
+          "storage_tmc": 0.403,
+          "storage_pct_live": 38.79,
+          "inflow_cusecs": 95,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-07",
+          "level_m": 16.276,
+          "gross_storage_tmc": 0.533,
+          "storage_tmc": 0.403,
+          "storage_pct_live": 38.79,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-08",
+          "level_m": 16.276,
+          "gross_storage_tmc": 0.533,
+          "storage_tmc": 0.403,
+          "storage_pct_live": 38.79,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-09",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 95,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-10",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-11",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-12",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-13",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-14",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        },
+        {
+          "date": "2026-10-15",
+          "level_m": 16.307,
+          "gross_storage_tmc": 0.54,
+          "storage_tmc": 0.41,
+          "storage_pct_live": 39.46,
+          "inflow_cusecs": 15,
+          "outflow_cusecs": 15
+        }
+      ],
+      "days_reported_last_30": 30
+    },
+    {
+      "source_code": "raiwada",
+      "apwrims_name": "RAIWADA RESERVOIR",
+      "apwrims_uuid": "53a12642-b27f-4a34-9ac0-19bab3af825f",
+      "display_name": "Raiwada",
+      "river": "Sarada",
+      "corporations": [
+        "gvmc"
+      ],
+      "frl_m": 113.925,
+      "mddl_m": 98.935,
+      "gross_capacity_tmc": 3.6,
+      "dead_storage_tmc": 0.33,
+      "live_capacity_tmc": 3.27,
+      "gross_capacity_mcum": 101.94,
+      "dead_storage_mcum": 9.34,
+      "live_capacity_mcum": 92.6,
+      "date": "2026-10-15",
+      "reading_time": "2026-10-15T06:40+05:30",
+      "level_m": 105.948,
+      "level_ft": 347.6,
+      "gross_storage_tmc": 1.32,
+      "gross_pct": 36.67,
+      "storage_tmc": 0.99,
+      "storage_pct_live": 30.28,
+      "below_dead_storage": false,
+      "inflow_cusecs": 140,
+      "outflow_cusecs": 140,
+      "storage_mcum": 28.03,
+      "last_year_date": "2025-10-15",
+      "last_year_storage_tmc": 3.05,
+      "last_year_storage_mcum": 86.37,
+      "last_year_pct_live": 93.27,
+      "history": [
+        {
+          "date": "2026-09-16",
+          "level_m": 103.611,
+          "gross_storage_tmc": 0.892,
+          "storage_tmc": 0.562,
+          "storage_pct_live": 17.19,
+          "inflow_cusecs": 220,
+          "outflow_cusecs": 266
+        },
+        {
+          "date": "2026-09-17",
+          "level_m": 103.47,
+          "gross_storage_tmc": 0.871,
+          "storage_tmc": 0.541,
+          "storage_pct_live": 16.54,
+          "inflow_cusecs": 23,
+          "outflow_cusecs": 266
+        },
+        {
+          "date": "2026-09-18",
+          "level_m": 103.327,
+          "gross_storage_tmc": 0.85,
+          "storage_tmc": 0.52,
+          "storage_pct_live": 15.9,
+          "inflow_cusecs": 23,
+          "outflow_cusecs": 266
+        },
+        {
+          "date": "2026-09-19",
+          "level_m": 103.025,
+          "gross_storage_tmc": 0.808,
+          "storage_tmc": 0.478,
+          "storage_pct_live": 14.62,
+          "inflow_cusecs": 22,
+          "outflow_cusecs": 265
+        },
+        {
+          "date": "2026-09-20",
+          "level_m": 102.91,
+          "gross_storage_tmc": 0.787,
+          "storage_tmc": 0.457,
+          "storage_pct_live": 13.98,
+          "inflow_cusecs": 22,
+          "outflow_cusecs": 265
+        },
+        {
+          "date": "2026-09-21",
+          "level_m": 102.861,
+          "gross_storage_tmc": 0.779,
+          "storage_tmc": 0.449,
+          "storage_pct_live": 13.73,
+          "inflow_cusecs": 173,
+          "outflow_cusecs": 265
+        },
+        {
+          "date": "2026-09-22",
+          "level_m": 102.779,
+          "gross_storage_tmc": 0.767,
+          "storage_tmc": 0.437,
+          "storage_pct_live": 13.36,
+          "inflow_cusecs": 191,
+          "outflow_cusecs": 215
+        },
+        {
+          "date": "2026-09-23",
+          "level_m": 103.099,
+          "gross_storage_tmc": 0.815,
+          "storage_tmc": 0.485,
+          "storage_pct_live": 14.83,
+          "inflow_cusecs": 711,
+          "outflow_cusecs": 100
+        },
+        {
+          "date": "2026-09-24",
+          "level_m": 104.001,
+          "gross_storage_tmc": 0.95,
+          "storage_tmc": 0.62,
+          "storage_pct_live": 18.96,
+          "inflow_cusecs": 1859,
+          "outflow_cusecs": 100
+        },
+        {
+          "date": "2026-09-25",
+          "level_m": 105.001,
+          "gross_storage_tmc": 1.125,
+          "storage_tmc": 0.795,
+          "storage_pct_live": 24.31,
+          "inflow_cusecs": 2173,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-09-26",
+          "level_m": 105.699,
+          "gross_storage_tmc": 1.262,
+          "storage_tmc": 0.932,
+          "storage_pct_live": 28.5,
+          "inflow_cusecs": 812,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-09-27",
+          "level_m": 105.75,
+          "gross_storage_tmc": 1.271,
+          "storage_tmc": 0.941,
+          "storage_pct_live": 28.78,
+          "inflow_cusecs": 979,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-09-28",
+          "level_m": 105.796,
+          "gross_storage_tmc": 1.281,
+          "storage_tmc": 0.951,
+          "storage_pct_live": 29.08,
+          "inflow_cusecs": 206,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-09-29",
+          "level_m": 105.848,
+          "gross_storage_tmc": 1.291,
+          "storage_tmc": 0.961,
+          "storage_pct_live": 29.39,
+          "inflow_cusecs": 206,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-09-30",
+          "level_m": 105.9,
+          "gross_storage_tmc": 1.301,
+          "storage_tmc": 0.971,
+          "storage_pct_live": 29.69,
+          "inflow_cusecs": 206,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-10-01",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.31,
+          "storage_tmc": 0.98,
+          "storage_pct_live": 29.97,
+          "inflow_cusecs": 194,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-10-02",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 206,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-10-03",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 90,
+          "outflow_cusecs": 90
+        },
+        {
+          "date": "2026-10-04",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-05",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-06",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-07",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-08",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-09",
+          "level_m": 106.0,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-10",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 25,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-11",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 25,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-12",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 25,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-13",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-14",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        },
+        {
+          "date": "2026-10-15",
+          "level_m": 105.948,
+          "gross_storage_tmc": 1.32,
+          "storage_tmc": 0.99,
+          "storage_pct_live": 30.28,
+          "inflow_cusecs": 140,
+          "outflow_cusecs": 140
+        }
+      ],
+      "days_reported_last_30": 30
+    },
+    {
+      "source_code": "thatipudi",
+      "apwrims_name": "THATIPUDI RESERVOIR",
+      "apwrims_uuid": "eeb82fe7-e68a-4c75-9eb7-456b2581083c",
+      "display_name": "Thatipudi",
+      "river": "Gosthani",
+      "corporations": [
+        "gvmc"
+      ],
+      "frl_m": 90.526,
+      "mddl_m": 76.511,
+      "gross_capacity_tmc": 3.325,
+      "dead_storage_tmc": 0.15,
+      "live_capacity_tmc": 3.175,
+      "gross_capacity_mcum": 94.15,
+      "dead_storage_mcum": 4.25,
+      "live_capacity_mcum": 89.91,
+      "date": "2026-10-15",
+      "reading_time": "2026-10-15T07:01+05:30",
+      "level_m": 85.649,
+      "level_ft": 281.0,
+      "gross_storage_tmc": 1.65,
+      "gross_pct": 49.62,
+      "storage_tmc": 1.5,
+      "storage_pct_live": 47.24,
+      "below_dead_storage": false,
+      "inflow_cusecs": 160,
+      "outflow_cusecs": 160,
+      "storage_mcum": 42.48,
+      "last_year_date": "2025-10-15",
+      "last_year_storage_tmc": 3.0,
+      "last_year_storage_mcum": 84.95,
+      "last_year_pct_live": 94.49,
+      "history": [
+        {
+          "date": "2026-09-16",
+          "level_m": 84.277,
+          "gross_storage_tmc": 1.2875,
+          "storage_tmc": 1.138,
+          "storage_pct_live": 35.83,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 205
+        },
+        {
+          "date": "2026-09-17",
+          "level_m": 84.216,
+          "gross_storage_tmc": 1.2725,
+          "storage_tmc": 1.123,
+          "storage_pct_live": 35.35,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 205
+        },
+        {
+          "date": "2026-09-18",
+          "level_m": 84.155,
+          "gross_storage_tmc": 1.2575,
+          "storage_tmc": 1.108,
+          "storage_pct_live": 34.88,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 205
+        },
+        {
+          "date": "2026-09-19",
+          "level_m": 84.155,
+          "gross_storage_tmc": 1.2575,
+          "storage_tmc": 1.108,
+          "storage_pct_live": 34.88,
+          "inflow_cusecs": 205,
+          "outflow_cusecs": 205
+        },
+        {
+          "date": "2026-09-20",
+          "level_m": 84.369,
+          "gross_storage_tmc": 1.31,
+          "storage_tmc": 1.16,
+          "storage_pct_live": 36.54,
+          "inflow_cusecs": 792,
+          "outflow_cusecs": 185
+        },
+        {
+          "date": "2026-09-21",
+          "level_m": 84.43,
+          "gross_storage_tmc": 1.325,
+          "storage_tmc": 1.175,
+          "storage_pct_live": 37.01,
+          "inflow_cusecs": 358,
+          "outflow_cusecs": 185
+        },
+        {
+          "date": "2026-09-22",
+          "level_m": 84.552,
+          "gross_storage_tmc": 1.355,
+          "storage_tmc": 1.205,
+          "storage_pct_live": 37.95,
+          "inflow_cusecs": 1063,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-23",
+          "level_m": 84.826,
+          "gross_storage_tmc": 1.4225,
+          "storage_tmc": 1.273,
+          "storage_pct_live": 40.08,
+          "inflow_cusecs": 545,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-24",
+          "level_m": 85.435,
+          "gross_storage_tmc": 1.58,
+          "storage_tmc": 1.43,
+          "storage_pct_live": 45.04,
+          "inflow_cusecs": 1413,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-25",
+          "level_m": 85.634,
+          "gross_storage_tmc": 1.645,
+          "storage_tmc": 1.495,
+          "storage_pct_live": 47.09,
+          "inflow_cusecs": 720,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-26",
+          "level_m": 85.801,
+          "gross_storage_tmc": 1.7,
+          "storage_tmc": 1.55,
+          "storage_pct_live": 48.82,
+          "inflow_cusecs": 421,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-27",
+          "level_m": 85.862,
+          "gross_storage_tmc": 1.72,
+          "storage_tmc": 1.57,
+          "storage_pct_live": 49.45,
+          "inflow_cusecs": 488,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-28",
+          "level_m": 85.923,
+          "gross_storage_tmc": 1.74,
+          "storage_tmc": 1.59,
+          "storage_pct_live": 50.08,
+          "inflow_cusecs": 256,
+          "outflow_cusecs": 25
+        },
+        {
+          "date": "2026-09-29",
+          "level_m": 85.954,
+          "gross_storage_tmc": 1.75,
+          "storage_tmc": 1.6,
+          "storage_pct_live": 50.39,
+          "inflow_cusecs": 199,
+          "outflow_cusecs": 84
+        },
+        {
+          "date": "2026-09-30",
+          "level_m": 86.045,
+          "gross_storage_tmc": 1.78,
+          "storage_tmc": 1.63,
+          "storage_pct_live": 51.34,
+          "inflow_cusecs": 315,
+          "outflow_cusecs": 84
+        },
+        {
+          "date": "2026-10-01",
+          "level_m": 86.045,
+          "gross_storage_tmc": 1.78,
+          "storage_tmc": 1.63,
+          "storage_pct_live": 51.34,
+          "inflow_cusecs": 199,
+          "outflow_cusecs": 84
+        },
+        {
+          "date": "2026-10-02",
+          "level_m": 86.045,
+          "gross_storage_tmc": 1.78,
+          "storage_tmc": 1.63,
+          "storage_pct_live": 51.34,
+          "inflow_cusecs": 115,
+          "outflow_cusecs": 115
+        },
+        {
+          "date": "2026-10-03",
+          "level_m": 86.015,
+          "gross_storage_tmc": 1.77,
+          "storage_tmc": 1.62,
+          "storage_pct_live": 51.02,
+          "inflow_cusecs": 20,
+          "outflow_cusecs": 138
+        },
+        {
+          "date": "2026-10-04",
+          "level_m": 86.015,
+          "gross_storage_tmc": 1.77,
+          "storage_tmc": 1.62,
+          "storage_pct_live": 51.02,
+          "inflow_cusecs": 138,
+          "outflow_cusecs": 138
+        },
+        {
+          "date": "2026-10-05",
+          "level_m": 86.015,
+          "gross_storage_tmc": 1.77,
+          "storage_tmc": 1.62,
+          "storage_pct_live": 51.02,
+          "inflow_cusecs": 138,
+          "outflow_cusecs": 138
+        },
+        {
+          "date": "2026-10-06",
+          "level_m": 86.015,
+          "gross_storage_tmc": 1.77,
+          "storage_tmc": 1.62,
+          "storage_pct_live": 51.02,
+          "inflow_cusecs": 138,
+          "outflow_cusecs": 138
+        },
+        {
+          "date": "2026-10-07",
+          "level_m": 85.984,
+          "gross_storage_tmc": 1.76,
+          "storage_tmc": 1.61,
+          "storage_pct_live": 50.71,
+          "inflow_cusecs": 44,
+          "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-08",
+          "level_m": 85.954,
+          "gross_storage_tmc": 1.75,
+          "storage_tmc": 1.6,
+          "storage_pct_live": 50.39,
+          "inflow_cusecs": 44,
+          "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-09",
+          "level_m": 85.954,
+          "gross_storage_tmc": 1.75,
+          "storage_tmc": 1.6,
+          "storage_pct_live": 50.39,
+          "inflow_cusecs": 160,
+          "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-10",
+          "level_m": 85.893,
+          "gross_storage_tmc": 1.73,
+          "storage_tmc": 1.58,
+          "storage_pct_live": 49.76,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-11",
+          "level_m": 85.832,
+          "gross_storage_tmc": 1.71,
+          "storage_tmc": 1.56,
+          "storage_pct_live": 49.13,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 205
+        },
+        {
+          "date": "2026-10-12",
+          "level_m": 85.771,
+          "gross_storage_tmc": 1.69,
+          "storage_tmc": 1.54,
+          "storage_pct_live": 48.5,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 205
+        },
+        {
+          "date": "2026-10-13",
+          "level_m": 85.71,
+          "gross_storage_tmc": 1.67,
+          "storage_tmc": 1.52,
+          "storage_pct_live": 47.87,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-14",
+          "level_m": 85.649,
+          "gross_storage_tmc": 1.65,
+          "storage_tmc": 1.5,
+          "storage_pct_live": 47.24,
+          "inflow_cusecs": 0,
+          "outflow_cusecs": 160
+        },
+        {
+          "date": "2026-10-15",
+          "level_m": 85.649,
+          "gross_storage_tmc": 1.65,
+          "storage_tmc": 1.5,
+          "storage_pct_live": 47.24,
+          "inflow_cusecs": 160,
+          "outflow_cusecs": 160
+        }
+      ],
+      "days_reported_last_30": 30
+    },
+    {
+      "source_code": "yeleru",
+      "apwrims_name": "YELERU RESERVOIR",
+      "apwrims_uuid": "2047859b-a4c5-4f4b-a9e6-35d06bdf0fab",
+      "display_name": "Yeleru",
+      "river": "Yeleru",
+      "corporations": [
+        "gvmc"
+      ],
+      "frl_m": 86.56,
+      "mddl_m": 72.561,
+      "gross_capacity_tmc": 24.11,
+      "dead_storage_tmc": 6.16,
+      "live_capacity_tmc": 17.95,
+      "gross_capacity_mcum": 682.72,
+      "dead_storage_mcum": 174.43,
+      "live_capacity_mcum": 508.29,
+      "date": "2026-10-15",
+      "reading_time": "2026-10-15T06:00+05:30",
+      "level_m": 83.009,
+      "level_ft": 272.34,
+      "gross_storage_tmc": 17.42,
+      "gross_pct": 72.25,
+      "storage_tmc": 11.26,
+      "storage_pct_live": 62.73,
+      "below_dead_storage": false,
+      "inflow_cusecs": 1400,
+      "outflow_cusecs": 825,
+      "storage_mcum": 318.85,
+      "last_year_date": "2025-10-15",
+      "last_year_storage_tmc": 15.23,
+      "last_year_storage_mcum": 431.26,
+      "last_year_pct_live": 84.85,
+      "history": [
+        {
+          "date": "2026-09-16",
+          "level_m": 77.297,
+          "gross_storage_tmc": 10.5,
+          "storage_tmc": 4.34,
+          "storage_pct_live": 24.18,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-17",
+          "level_m": 77.398,
+          "gross_storage_tmc": 10.6,
+          "storage_tmc": 4.44,
+          "storage_pct_live": 24.74,
+          "inflow_cusecs": 1518,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-18",
+          "level_m": 77.45,
+          "gross_storage_tmc": 10.66,
+          "storage_tmc": 4.5,
+          "storage_pct_live": 25.07,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-19",
+          "level_m": 77.498,
+          "gross_storage_tmc": 10.71,
+          "storage_tmc": 4.55,
+          "storage_pct_live": 25.35,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-20",
+          "level_m": 77.599,
+          "gross_storage_tmc": 10.81,
+          "storage_tmc": 4.65,
+          "storage_pct_live": 25.91,
+          "inflow_cusecs": 1565,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-21",
+          "level_m": 77.648,
+          "gross_storage_tmc": 10.87,
+          "storage_tmc": 4.71,
+          "storage_pct_live": 26.24,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-22",
+          "level_m": 77.718,
+          "gross_storage_tmc": 10.94,
+          "storage_tmc": 4.78,
+          "storage_pct_live": 26.63,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-23",
+          "level_m": 77.898,
+          "gross_storage_tmc": 11.12,
+          "storage_tmc": 4.96,
+          "storage_pct_live": 27.63,
+          "inflow_cusecs": 2250,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-09-24",
+          "level_m": 79.05,
+          "gross_storage_tmc": 12.37,
+          "storage_tmc": 6.21,
+          "storage_pct_live": 34.6,
+          "inflow_cusecs": 15480,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-09-25",
+          "level_m": 80.589,
+          "gross_storage_tmc": 14.11,
+          "storage_tmc": 7.95,
+          "storage_pct_live": 44.29,
+          "inflow_cusecs": 8711,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-09-26",
+          "level_m": 81.19,
+          "gross_storage_tmc": 14.81,
+          "storage_tmc": 8.65,
+          "storage_pct_live": 48.19,
+          "inflow_cusecs": 3663,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-09-27",
+          "level_m": 81.558,
+          "gross_storage_tmc": 15.29,
+          "storage_tmc": 9.13,
+          "storage_pct_live": 50.86,
+          "inflow_cusecs": 4055,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-09-28",
+          "level_m": 81.799,
+          "gross_storage_tmc": 15.61,
+          "storage_tmc": 9.45,
+          "storage_pct_live": 52.65,
+          "inflow_cusecs": 3986,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-09-29",
+          "level_m": 81.988,
+          "gross_storage_tmc": 15.87,
+          "storage_tmc": 9.71,
+          "storage_pct_live": 54.09,
+          "inflow_cusecs": 2740,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-09-30",
+          "level_m": 82.119,
+          "gross_storage_tmc": 16.06,
+          "storage_tmc": 9.9,
+          "storage_pct_live": 55.15,
+          "inflow_cusecs": 1598,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-10-01",
+          "level_m": 82.208,
+          "gross_storage_tmc": 16.19,
+          "storage_tmc": 10.03,
+          "storage_pct_live": 55.88,
+          "inflow_cusecs": 2541,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-10-02",
+          "level_m": 82.308,
+          "gross_storage_tmc": 16.33,
+          "storage_tmc": 10.17,
+          "storage_pct_live": 56.66,
+          "inflow_cusecs": 2040,
+          "outflow_cusecs": 250
+        },
+        {
+          "date": "2026-10-03",
+          "level_m": 82.409,
+          "gross_storage_tmc": 16.48,
+          "storage_tmc": 10.32,
+          "storage_pct_live": 57.49,
+          "inflow_cusecs": 2056,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-04",
+          "level_m": 82.488,
+          "gross_storage_tmc": 16.6,
+          "storage_tmc": 10.44,
+          "storage_pct_live": 58.16,
+          "inflow_cusecs": 1715,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-05",
+          "level_m": 82.579,
+          "gross_storage_tmc": 16.73,
+          "storage_tmc": 10.57,
+          "storage_pct_live": 58.89,
+          "inflow_cusecs": 1885,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-06",
+          "level_m": 82.637,
+          "gross_storage_tmc": 16.82,
+          "storage_tmc": 10.66,
+          "storage_pct_live": 59.39,
+          "inflow_cusecs": 1429,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-07",
+          "level_m": 82.707,
+          "gross_storage_tmc": 16.94,
+          "storage_tmc": 10.78,
+          "storage_pct_live": 60.06,
+          "inflow_cusecs": 1640,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-08",
+          "level_m": 82.778,
+          "gross_storage_tmc": 17.05,
+          "storage_tmc": 10.89,
+          "storage_pct_live": 60.67,
+          "inflow_cusecs": 1640,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-09",
+          "level_m": 82.817,
+          "gross_storage_tmc": 17.11,
+          "storage_tmc": 10.95,
+          "storage_pct_live": 61.0,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-10",
+          "level_m": 82.869,
+          "gross_storage_tmc": 17.19,
+          "storage_tmc": 11.03,
+          "storage_pct_live": 61.45,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-11",
+          "level_m": 82.909,
+          "gross_storage_tmc": 17.26,
+          "storage_tmc": 11.1,
+          "storage_pct_live": 61.84,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 350
+        },
+        {
+          "date": "2026-10-12",
+          "level_m": 82.948,
+          "gross_storage_tmc": 17.32,
+          "storage_tmc": 11.16,
+          "storage_pct_live": 62.17,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 325
+        },
+        {
+          "date": "2026-10-13",
+          "level_m": 82.979,
+          "gross_storage_tmc": 17.37,
+          "storage_tmc": 11.21,
+          "storage_pct_live": 62.45,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 625
+        },
+        {
+          "date": "2026-10-14",
+          "level_m": 82.997,
+          "gross_storage_tmc": 17.4,
+          "storage_tmc": 11.24,
+          "storage_pct_live": 62.62,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 625
+        },
+        {
+          "date": "2026-10-15",
+          "level_m": 83.009,
+          "gross_storage_tmc": 17.42,
+          "storage_tmc": 11.26,
+          "storage_pct_live": 62.73,
+          "inflow_cusecs": 1400,
+          "outflow_cusecs": 825
+        }
+      ],
+      "days_reported_last_30": 30
+    }
+  ]
+}

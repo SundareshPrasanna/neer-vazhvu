@@ -216,7 +216,7 @@ export function TankerLedgerPanel({
           operates alongside the utility fleet is not in this ledger at all.
         </p>
         <p>
-          <strong>Sections are not wards.</strong> &quot;Section&quot; is HMWSSB&apos;s own
+          <strong>Sections are not wards.</strong>{" "}&quot;Section&quot; is HMWSSB&apos;s own
           operational unit, not a GHMC ward, and no public mapping between the
           two exists. Booking counts therefore cannot be joined to ward
           population or to any equity denominator.

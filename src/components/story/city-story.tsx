@@ -47,6 +47,9 @@ const STORIES: Partial<Record<CityId, { en: ComponentType } & Partial<Record<Lan
   ahmedabad: {
     en: dynamic(() => import("@/content/story-ahmedabad-en").then((m) => m.AhmedabadStoryEn)),
   },
+  visakhapatnam: {
+    en: dynamic(() => import("@/content/story-visakhapatnam-en").then((m) => m.VisakhapatnamStoryEn)),
+  },
 };
 
 export function CityStory({ cityId, cityDisplayName }: { cityId: CityId; cityDisplayName: string }) {

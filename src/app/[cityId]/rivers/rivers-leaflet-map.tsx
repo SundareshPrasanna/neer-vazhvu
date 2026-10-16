@@ -326,7 +326,8 @@ export function RiversLeafletMap({
               <strong>{s.name}</strong>
               <br />
               <span style={{ fontSize: "11px", color: "#64748b" }}>
-                {s.type.replace(/_/g, " ")} - affects {s.rivers_affected.join(", ")}
+                {s.type.replace(/_/g, " ")}
+                {s.rivers_affected.length > 0 ? ` - affects ${s.rivers_affected.join(", ")}` : null}
               </span>
             </Tooltip>
           </CircleMarker>

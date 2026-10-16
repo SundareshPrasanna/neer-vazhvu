@@ -81,6 +81,10 @@ export interface GroundwaterViewsConfig {
    *  so a bare `true` here used to title the page "CGWB block exploitation
    *  (GWR)" and draw a percent legend over an empty map. */
   exploitation?: boolean;
+  /** Names the `exploitation` layer in the dashboard's groundwater card
+   *  (omit -> "CGWB block exploitation"). Set it where the assessment unit is
+   *  not a block or the source is not CGWB's own release. */
+  exploitationLabel?: string;
   /** Per-ward IDW-interpolated depth choropleth from sparse stations.
    *  Honest only when ward-survey data is dense (Chennai: OpenCity
    *  monthly per-ward survey). Set false where station density is too
@@ -101,6 +105,11 @@ export interface GroundwaterViewsConfig {
    *  available. Loads public/data/<city>-cgwb-stations.json.
    *  Default false. */
   cgwbStations?: boolean;
+  /** Names the `cgwbStations` overlay in the dashboard's groundwater card
+   *  (omit -> "CGWB Year Book station overlay") and on the groundwater page,
+   *  whose info pill then names the stations file's own source. Set it where
+   *  the wells in <city>-cgwb-stations.json are not CGWB Year Book wells. */
+  stationOverlayLabel?: string;
   /** Shown on the groundwater page's not-yet-available state when NO view
    *  is enabled - names the city's specific blockers instead of a generic
    *  line. Ignored once any view is on. */
@@ -469,6 +478,10 @@ interface PlaceConfigBase {
    *  Tracked for migration to v2 in
    *  docs/specs/multi-city-component-discipline.md. */
   reservoirDataSource?: 'v2' | 'legacy-v1';
+  /** Who publishes the reservoir readings, when that is not
+   *  primaryAuthority (a state portal, say). Read by the dashboard's
+   *  methodology line; absent, it names primaryAuthority.acronym. */
+  reservoirPublisher?: string;
 
   /** Reference year for the hero's "On this day in {year}" storage
    *  comparison. Chennai anchors to 2019 (Day Zero). Omit -> same day

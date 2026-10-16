@@ -27,7 +27,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
     <>
       <SubSection id="page-dashboard" title="Home / dashboard">
         <p className={P}>
-          {cityName} impounds nothing. There is no dam anywhere in its water system: supply is
+          {cityName}{" "}impounds nothing. There is no dam anywhere in its water system: supply is
           run-of-river abstraction from the Hooghly at Palta, about 22 km north in Barrackpore,
           plus roughly 110 MLD of deep tube wells. So the &quot;days of water left&quot; question
           every other city on this platform answers has no answer here - the numerator does not
@@ -50,7 +50,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </p>
         <Gap title="Two numbers we deliberately do not publish">
           <p>
-            <strong>No total supply capacity.</strong> KMC&apos;s water-supply page lists plants
+            <strong>No total supply capacity.</strong>{" "}KMC&apos;s water-supply page lists plants
             summing to 2,214.7 MLD plus about 110 MLD of tube wells, while the same page describes
             a target of roughly 1,900 MLD and a requirement of about 1,660 MLD. It is labelled
             &quot;(DRAFT)&quot;, footered 2013, and refers to 2025 in the future tense. Publishing
@@ -58,7 +58,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
             this product until it reconciles.
           </p>
           <p>
-            <strong>No litres-per-capita figure.</strong> KMC contests its own denominator: its
+            <strong>No litres-per-capita figure.</strong>{" "}KMC contests its own denominator: its
             Environment Plan gives more than 4.5 million residents plus a floating population of
             60,00,000 a day, while its water-supply pages frame demand off a &quot;static
             population&quot; of 44.96 lakh. Whatever LPCD anyone quotes for {cityName}, the
@@ -102,7 +102,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
           Hooghly is tidal this far inland and the same location is a different water body six
           hours apart. We keep the two apart rather than averaging them - and that is what
           surfaces the finding: at Bansdroni on 7 May 2026, dissolved oxygen was NIL and faecal
-          coliform 4,900,000 MPN/100ml at high tide, and <em>worse</em> at low tide, BOD 14.53
+          coliform 4,900,000 MPN/100ml at high tide, and <em>worse</em>{" "}at low tide, BOD 14.53
           against 10.75 and faecal coliform 8.4 million against 4.9 million. The board&apos;s own
           observers recorded the water as &quot;Blackish&quot; and &quot;Pungent&quot;.
         </p>
@@ -126,7 +126,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
           {cityName}&apos;s flood risk is drainage-capacity-driven, not release-driven. It has no
           dam and no barrage, so there is no upstream gate to watch: the trigger is rainfall
           intensity against the same 6 mm/hour standard the dashboard runs on. Most of the core
-          city drains through a <strong>combined</strong> system, carrying sewage and stormwater in
+          city drains through a <strong>combined</strong>{" "}system, carrying sewage and stormwater in
           one conduit, which is the single fact tying the city&apos;s flooding, its river pollution
           and its dependence on the wetlands together. A drainage failure and a pollution event
           here are the same event.
@@ -162,7 +162,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
         <p className={P}>
           This page corrects an assumption the research started with. {cityName} is <em>not</em>
           {" "}groundwater-poor: a full India-WRIS station census, paged to exhaustion over
-          2010-2026, finds <strong>703 observation wells and 201,221 readings</strong> across the
+          2010-2026, finds <strong>703 observation wells and 201,221 readings</strong>{" "}across the
           six districts of the metropolitan area - 23 in Kolkata district itself, live to 4 June
           2026. That is denser than Delhi&apos;s 237-well network.
         </p>
@@ -201,7 +201,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
           {" "}from the 1st Census of Water Bodies - ten times the census layer Chennai carries. That
           census matters more here than anywhere: KMC&apos;s own working inventory is a
           departmental tank list compiled in <strong>1993</strong>, supplemented by a 2004 aerial
-          map, so the national census is the only modern per-water-body register {cityName} has and
+          map, so the national census is the only modern per-water-body register {cityName}{" "}has and
           it is not the corporation&apos;s.
         </p>
         <p className={P}>
@@ -213,7 +213,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
           comparing the map census against the satellite count in the same year.
         </p>
         <p className={P}>
-          The <strong>lost water bodies</strong> layer is built differently here for an honest
+          The <strong>lost water bodies</strong>{" "}layer is built differently here for an honest
           reason: no per-pond inventory of what was filled exists. So it enumerates toponymic
           evidence instead - localities and streets still carrying a pond&apos;s name with no water
           body mapped within 300 m today. Eleven of sixteen such localities and twelve of
@@ -234,7 +234,7 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
       <SubSection id="page-sewage" title="Sewage, allocations and commitments">
         <p className={P}>
           The signature finding sits on the dashboard: by KMC&apos;s own statutory accounting,
-          <strong> 910 of {cityName}&apos;s 1,400 MLD of sewage</strong> is treated in the
+          <strong> 910 of {cityName}&apos;s 1,400 MLD of sewage</strong>{" "}is treated in the
           sewage-fed fisheries of the East Kolkata Wetlands - roughly five times what all five of
           the city&apos;s treatment plants manage between them (179 MLD), with 311 MLD (22.21%)
           untreated or only partly treated. The wetlands are 12,500 hectares of working fisheries

@@ -110,7 +110,7 @@ export function ScarcityStateTable({ week }: { week: ScarcityWeek }) {
       </div>
       <div className="mt-4">
         <AtlasNote>
-          The other {num(week.zeroCount)} districts stand at zero in this week&rsquo;s report. The
+          The other {num(week.zeroCount)}{" "}districts stand at zero in this week&rsquo;s report. The
           register is the Water Supply and Sanitation Department&rsquo;s weekly tanker report,
           transcribed edition by edition from the scanned PDF; an edition is accepted only when its
           district rows reproduce the report&rsquo;s own printed totals. Source:{" "}

@@ -43,16 +43,107 @@ TRANSECTS_GEOJSON = (
     REPO_ROOT / "public" / "geojson" / "chennai-coastal-transects.geojson"
 )
 
+CHENNAI_ANCHOR = "neervazhvu (MNDWI/GEE) corroborating Anagha, Singh & Frappart 2026"
+CHENNAI_NOTE_TAIL = (
+    "; post-2024 epochs extend past the study's cutoff. "
+    "Independent of the study's CoastSat+DSAS."
+)
+
+
+def _visakhapatnam_transects_envelope() -> dict:
+    """First-write NVDM envelope for the Visakhapatnam transects; a rerun keeps
+    the committed one (merge_envelope). Licences come from the registry."""
+    from datetime import date
+
+    from registry_license import registry_license  # scripts/ via app.nvdm_io
+
+    return {
+        "nvdm": "1.0",
+        "dataset": "geojson-layers/coastal-transects",
+        "scope": {"kind": "city", "id": "visakhapatnam"},
+        "provenance": {
+            "sources": [
+                {
+                    "id": "usgs-landsat",
+                    "title": "Landsat 5/7/8 surface reflectance archive (GEE collections)",
+                    "publisher": "USGS / NASA (Landsat program)",
+                    "license": registry_license("usgs-landsat"),
+                    "role": "input",
+                },
+                {
+                    "id": "sentinel-2-l2a",
+                    "title": "Sentinel-2 L2A imagery (MNDWI shoreline epochs)",
+                    "publisher": "ESA Copernicus",
+                    "license": registry_license("sentinel-2-l2a"),
+                    "role": "input",
+                },
+                {
+                    "id": "research-papers-visakhapatnam",
+                    "title": "Anagha, Singh & Frappart 2026 - shoreline change along "
+                    "the Chennai coast (Environmental Challenges), Table 2 per-epoch "
+                    "shoreline-position errors, reused as regression weights",
+                    "publisher": "Environmental Challenges (Elsevier)",
+                    "license": registry_license("research-papers-visakhapatnam"),
+                    "as_of": "2026",
+                    "role": "methodology",
+                },
+                {
+                    "id": "cwc-coastal-erosion-guidelines-2020",
+                    "title": "Guidelines for Protection and Control of Coastal Erosion "
+                    "in India, Table 4.3.1 design tide levels (Survey of India Tide "
+                    "Tables 2017), printed p59",
+                    "publisher": "Central Water Commission (prepared by CSIR-National "
+                    "Institute of Oceanography)",
+                    "url": "https://irrigation.kerala.gov.in/sites/default/files/"
+                    "2021-06/CWC_Guidelines_Coastal.pdf",
+                    "license": registry_license("cwc-coastal-erosion-guidelines-2020"),
+                    "as_of": "2020-12",
+                    "role": "methodology",
+                },
+            ],
+            "method": "gee",
+            "produced_at": date.today().isoformat(),
+            "produced_by": "neer-vazhvu-api/app/gee/coastline.py "
+            "(scripts/run_gee_coastline.py)",
+            "internal_inputs": ["public/geojson/visakhapatnam-coastal-zones.geojson"],
+            "note": "Neer Vazhvu computation: MNDWI shoreline on Landsat 5/7/8 + "
+            "Sentinel-2 via GEE, 100 m transects, weighted linear regression over "
+            "the shared epochs (Dec-May median composites, MNDWI threshold 0): the "
+            "same pipeline and constants as Chennai and Mumbai. No tidal correction: "
+            "Visakhapatnam's spring range is 1.43 m (MHWS 1.52 m, MLWS 0.09 m above "
+            "chart datum; Survey of India 2017 via CWC/NIO 2020). The per-epoch "
+            "weights (EPOCH_UNCERTAINTY_M) are the Chennai study's published "
+            "shoreline-position errors, borrowed as relative weights and not "
+            "re-estimated for this coast. Transects on the Visakhapatnam Port inner "
+            "harbour and Gangavaram port chords are dropped; those crossing OSM "
+            "breakwaters/piers, on the Gangavaram port's built flanks, at the "
+            "Dolphin's Nose headland or beside river mouths, and two whose measured "
+            "waterline jumps 180 m or more between epochs up to 2015 (at RK Beach "
+            "and north of the Gosthani mouth), carry confidence 'low' with a "
+            "low_reason (seed transect_masks). "
+            "We have found no published per-transect rate for this coast; the "
+            "official anchor is NCCR's stretch classes (seed zones). Annual refresh "
+            "(coastal-shoreline-refresh.yml).",
+        },
+    }
+
+
 # Per-city coast registry. seaward_sign: +1 = the sea lies to the RIGHT of the
 # south->north baseline (east coast - Chennai); -1 = to the LEFT (west coast -
 # Mumbai). Zone ids + along-shore lengths are read from each city's zones
 # geojson (file order = south->north), so adding a coastal city = a seed
-# geojson + one entry here.
+# geojson + one entry here. anchor / note_tail: the transects file's _source and
+# the end of its _note, naming that coast's own corroborating record. envelope:
+# optional first-write NVDM envelope factory (a new city's file has no
+# committed envelope for merge_envelope to keep). exact_zones: assign zones by
+# exact along-baseline distance (zones_by_distance), not proportionally.
 COASTS: dict[str, dict] = {
     "chennai": {
         "zones": ZONES_GEOJSON,
         "transects": TRANSECTS_GEOJSON,
         "seaward_sign": 1,
+        "anchor": CHENNAI_ANCHOR,
+        "note_tail": CHENNAI_NOTE_TAIL,
     },
     "mumbai": {
         "zones": REPO_ROOT / "public" / "geojson" / "mumbai-coastal-zones.geojson",
@@ -61,6 +152,31 @@ COASTS: dict[str, dict] = {
         / "geojson"
         / "mumbai-coastal-transects.geojson",
         "seaward_sign": -1,
+        # Mumbai's committed file carries the Chennai strings; kept until its
+        # owner relabels it.
+        "anchor": CHENNAI_ANCHOR,
+        "note_tail": CHENNAI_NOTE_TAIL,
+    },
+    "visakhapatnam": {
+        "zones": REPO_ROOT
+        / "public"
+        / "geojson"
+        / "visakhapatnam-coastal-zones.geojson",
+        "transects": REPO_ROOT
+        / "public"
+        / "geojson"
+        / "visakhapatnam-coastal-transects.geojson",
+        # SW -> NE coast with the Bay of Bengal to the SE: sea right of baseline.
+        "seaward_sign": 1,
+        "anchor": "neervazhvu (MNDWI/GEE) anchored to NCCR 1990-2016 (Table 16) "
+        "+ MoES Lok Sabha USQ 2638 (11 Dec 2024) stretch classes",
+        "note_tail": "; no tidal correction (spring range 1.43 m). We have found "
+        "no published per-transect rates for this coast; the official record is "
+        "NCCR's stretch classes.",
+        "envelope": _visakhapatnam_transects_envelope,
+        # Zone III is the 3.8 km harbour chord with every transect dropped, so
+        # zones are assigned by exact distance, not proportionally.
+        "exact_zones": True,
     },
 }
 
@@ -286,6 +402,9 @@ class TransectRate:
     recent_rate_m_yr: float | None = None  # WLR over epochs >= EARLY_SPLIT_YEAR
     confidence: str = "high"  # "high" | "low" (low = ambiguous waterline)
     showcase: bool = False  # one clean strong eroder pre-selected by the UI
+    # Set only by a seed transect_mask (structure, headland, river mouth): why
+    # the transect is "low" regardless of how clean its series looks.
+    low_reason: str | None = None
 
 
 # --------------------------------------------------------------------------
@@ -325,6 +444,136 @@ def load_zones(
 def baseline_from_zones(path: Path = ZONES_GEOJSON) -> list[tuple[float, float]]:
     """Back-compat wrapper: baseline only."""
     return load_zones(path)[0]
+
+
+def zone_lengths_m(path: Path) -> tuple[float, ...]:
+    """Unrounded along-shore length (m) of each seed zone, from its geometry."""
+    fc = json.loads(path.read_text(encoding="utf-8"))
+    out = []
+    for f in fc["features"]:
+        c = f["geometry"]["coordinates"]
+        out.append(
+            sum(_haversine_m(tuple(c[i]), tuple(c[i + 1])) for i in range(len(c) - 1))
+        )
+    return tuple(out)
+
+
+def zones_by_distance(
+    n: int,
+    zone_ids: tuple[str, ...],
+    lengths_m: tuple[float, ...],
+    spacing_m: float = TRANSECT_SPACING_M,
+) -> list[str]:
+    """Exact zone per transect: transect k sits k * spacing_m along the
+    baseline, and the zones tile the baseline in file order. Unlike
+    zones_by_position (proportional, on rounded lengths) a short zone keeps
+    its true boundaries - needed where a zone is a dropped harbour chord."""
+    out, zi, end = [], 0, lengths_m[0]
+    for k in range(n):
+        while zi < len(zone_ids) - 1 and k * spacing_m > end:
+            zi += 1
+            end += lengths_m[zi]
+        out.append(zone_ids[zi])
+    return out
+
+
+def load_transect_masks(path: Path) -> list[dict]:
+    """The seed's per-zone `transect_masks` (empty for a seed without any)."""
+    fc = json.loads(path.read_text(encoding="utf-8"))
+    return [
+        m for f in fc["features"] for m in f["properties"].get("transect_masks", [])
+    ]
+
+
+def _local_xy(p: tuple[float, float], o: tuple[float, float]) -> tuple[float, float]:
+    """Equirectangular metres of lon/lat `p` about origin `o` (fine at < 2 km)."""
+    return (
+        (p[0] - o[0]) * 111_320.0 * math.cos(math.radians(o[1])),
+        (p[1] - o[1]) * 111_320.0,
+    )
+
+
+def _seg_seg_dist(a, b, c, d) -> float:
+    """Shortest distance between segments ab and cd (planar, metres)."""
+
+    def cross(o, p, q):
+        return (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])
+
+    d1, d2 = cross(c, d, a), cross(c, d, b)
+    d3, d4 = cross(a, b, c), cross(a, b, d)
+    if d1 * d2 < 0 and d3 * d4 < 0:
+        return 0.0
+
+    def pt_seg(p, s0, s1):
+        dx, dy = s1[0] - s0[0], s1[1] - s0[1]
+        L2 = dx * dx + dy * dy
+        t = 0.0
+        if L2:
+            t = max(0.0, min(1.0, ((p[0] - s0[0]) * dx + (p[1] - s0[1]) * dy) / L2))
+        return math.hypot(p[0] - (s0[0] + t * dx), p[1] - (s0[1] + t * dy))
+
+    return min(pt_seg(a, c, d), pt_seg(b, c, d), pt_seg(c, a, b), pt_seg(d, a, b))
+
+
+def apply_transect_masks(
+    transects: list[tuple[int, tuple[float, float], tuple[float, float]]],
+    zones: list[str],
+    masks: list[dict],
+    *,
+    on_chord_m: float = 2.0,
+) -> tuple[list, list[str], dict[int, str], dict[str, int]]:
+    """Drop transects cast from a 'drop' chord; flag 'low' ones (pure).
+
+    drop (LineString): the transect's origin lies on the chord (a harbour
+      basin the baseline was drawn across).
+    low  Point + radius_m: origin within radius_m (headland, river mouth).
+    low  LineString/Polygon: the sampled transect line (SAMPLE_S_VALUES span)
+      passes within 10 m of it (breakwater, pier).
+    Returns kept transects, their zones, {tid: low_reason}, {mask name: count}.
+    """
+    s_lo, s_hi = min(SAMPLE_S_VALUES), max(SAMPLE_S_VALUES)
+    masks = sorted(masks, key=lambda m: m["action"] != "drop")  # drops first
+    kept, kept_zones, low, counts = [], [], {}, {}
+    for (tid, origin, normal), zone in zip(transects, zones):
+        a = _local_xy(
+            (origin[0] + normal[0] * s_lo, origin[1] + normal[1] * s_lo), origin
+        )
+        b = _local_xy(
+            (origin[0] + normal[0] * s_hi, origin[1] + normal[1] * s_hi), origin
+        )
+        dropped = False
+        for m in masks:
+            g = m["geometry"]
+            if g["type"] == "Point":
+                if m["action"] != "drop" and _haversine_m(
+                    origin, tuple(g["coordinates"])
+                ) <= float(m.get("radius_m", 0)):
+                    low.setdefault(tid, m["reason"])
+                    counts[m["name"]] = counts.get(m["name"], 0) + 1
+                continue
+            ring = g["coordinates"][0] if g["type"] == "Polygon" else g["coordinates"]
+            pts = [_local_xy(tuple(p), origin) for p in ring]
+            if m["action"] == "drop":
+                hit = any(
+                    _seg_seg_dist((0.0, 0.0), (0.0, 0.0), pts[i], pts[i + 1])
+                    <= on_chord_m
+                    for i in range(len(pts) - 1)
+                )
+                if hit:
+                    dropped = True
+                    counts[m["name"]] = counts.get(m["name"], 0) + 1
+                    break
+            elif any(
+                _seg_seg_dist(a, b, pts[i], pts[i + 1]) <= 10.0
+                for i in range(len(pts) - 1)
+            ):
+                low.setdefault(tid, m["reason"])
+                counts[m["name"]] = counts.get(m["name"], 0) + 1
+        if dropped:
+            continue
+        kept.append((tid, origin, normal))
+        kept_zones.append(zone)
+    return kept, kept_zones, low, counts
 
 
 def build_transects(
@@ -692,12 +941,20 @@ def compute_rates(
 
 
 def transects_to_geojson(
-    rates: list[TransectRate], *, period: str, n_epochs: int
+    rates: list[TransectRate],
+    *,
+    period: str,
+    n_epochs: int,
+    anchor: str = CHENNAI_ANCHOR,
+    note_tail: str = CHENNAI_NOTE_TAIL,
 ) -> dict:
     features = []
     for r in rates:
         if r.wlr_m_yr is None:
             continue
+        # low_reason only when a seed mask set it, so coasts without masks
+        # serialise exactly as before.
+        extra = {"low_reason": r.low_reason} if r.low_reason else {}
         features.append(
             {
                 "type": "Feature",
@@ -721,6 +978,7 @@ def transects_to_geojson(
                     else None,
                     "series": [[y, o] for y, o in r.series] if r.series else None,
                     "confidence": r.confidence,
+                    **extra,
                     "showcase": r.showcase,
                     "source": "computed",
                     "period": period,
@@ -735,9 +993,8 @@ def transects_to_geojson(
         "type": "FeatureCollection",
         "_note": "COMPUTED transect shoreline-change rates (neervazhvu): MNDWI on "
         f"Landsat 5/7/8 + Sentinel-2 via GEE, 100 m transects, WLR over {n_epochs} "
-        f"epochs ({period}); post-2024 epochs extend past the study's cutoff. "
-        "Independent of the study's CoastSat+DSAS.",
-        "_source": "neervazhvu (MNDWI/GEE) corroborating Anagha, Singh & Frappart 2026",
+        f"epochs ({period}){note_tail}",
+        "_source": anchor,
         "features": features,
     }
 
@@ -756,18 +1013,43 @@ def run(*, city: str = "chennai", write: bool = True, log=print) -> dict:
     period = f"{years[0]}-{years[-1]}"
     baseline, zone_ids, zone_lengths = load_zones(coast["zones"])
     transects = build_transects(baseline, seaward_sign=coast["seaward_sign"])
-    zones = zones_by_position(len(transects), zone_ids, zone_lengths)
+    if coast.get("exact_zones"):
+        zones = zones_by_distance(
+            len(transects), zone_ids, zone_lengths_m(coast["zones"])
+        )
+    else:
+        zones = zones_by_position(len(transects), zone_ids, zone_lengths)
+    low: dict[int, str] = {}
+    masks = load_transect_masks(coast["zones"])
+    if masks:
+        n0 = len(transects)
+        transects, zones, low, counts = apply_transect_masks(transects, zones, masks)
+        log(
+            f"{city}: masks dropped {n0 - len(transects)} of {n0} transects, "
+            f"flagged {len(low)} low | {counts}"
+        )
     log(f"{city}: transects: {len(transects)} | epochs: {years}")
     offsets = sample_transect_offsets(transects, configs=configs, log=log)
     rates = compute_rates(transects, offsets, zones)
+    for r in rates:
+        if r.transect_id in low:
+            r.confidence, r.low_reason = "low", low[r.transect_id]
     mark_showcase(rates)
-    fc = transects_to_geojson(rates, period=period, n_epochs=len(years))
+    fc = transects_to_geojson(
+        rates,
+        period=period,
+        n_epochs=len(years),
+        anchor=coast["anchor"],
+        note_tail=coast["note_tail"],
+    )
     if write:
         out_path = coast["transects"]
         # merge_envelope: keep the NVDM envelope of the committed artifact (a
-        # rerun must not strip governance - #220 review repro pattern).
+        # rerun must not strip governance - #220 review repro pattern). A new
+        # city's first write takes its COASTS envelope instead.
+        payload = {**coast["envelope"](), **fc} if "envelope" in coast else fc
         out_path.write_text(
-            json.dumps(merge_envelope(out_path, fc), separators=(",", ":")),
+            json.dumps(merge_envelope(out_path, payload), separators=(",", ":")),
             encoding="utf-8",
         )
         log(f"wrote {out_path} ({len(fc['features'])} transects)")

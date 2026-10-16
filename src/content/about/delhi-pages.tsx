@@ -24,7 +24,7 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
     <>
       <SubSection id="page-dashboard" title="Home / dashboard">
         <p className="text-slate-600 dark:text-slate-400">
-          {cityName} owns no reservoir. Roughly 90% of its raw water arrives from other states
+          {cityName}{" "}owns no reservoir. Roughly 90% of its raw water arrives from other states
           under a stack of instruments - the 1994 five-state Yamuna MoU at Wazirabad, the 102-km
           Munak carrier from Haryana (about 70% of the lifeline), a BBMB-resolved share of Bhakra
           240 km away, and Tehri&apos;s release riding the Upper Ganga Canal - with the city&apos;s
@@ -64,7 +64,7 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
           </p>
         </div>
         <p className="text-slate-600 dark:text-slate-400">
-          What <em>is</em> live daily is rainfall: IMD&apos;s 0.25-degree gridded series for the NCT
+          What <em>is</em>{" "}live daily is rainfall: IMD&apos;s 0.25-degree gridded series for the NCT
           grid point (56 years, long-term mean 624.8 mm - within a millimetre of the figure
           IN-GRES reports for Delhi) extended by Open-Meteo reanalysis for the months IMD has not
           yet published, refreshed by the daily cron and superseded automatically as IMD catches up.
@@ -127,7 +127,7 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           Water quality is Delhi&apos;s one genuinely high-cadence public feed, and it is
-          <strong> monthly</strong> - DPCC samples eight Yamuna stations and about 39 drain points
+          <strong> monthly</strong>{" "}- DPCC samples eight Yamuna stations and about 39 drain points
           every month, which no other state pollution board publishes at that granularity. The
           station panel is derived from that monthly file so the two can never drift apart. The
           shape of the river&apos;s year is visible in it: water arrives at Palla meeting the
@@ -144,7 +144,7 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           One caveat about this feed deserves to be stated loudly, because it is the reason the drain
-          chart is short. <strong>Nobody archives these reports.</strong> DPCC&apos;s page lists only
+          chart is short. <strong>Nobody archives these reports.</strong>{" "}DPCC&apos;s page lists only
           the last three months or so, no open-data portal mirrors them, and the Internet Archive has
           never captured that part of the site. A month that is not saved while it is listed is gone
           permanently. The series therefore starts where our capture started and grows forward; it
@@ -173,7 +173,7 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
           question: how much of Delhi&apos;s industrial effluent reaches treatment at all. The answer
           is <strong>about a third</strong>. Delhi built 213.8 million litres a day of treatment
           capacity; in a median month the plants receive roughly 67. Okhla&apos;s plant runs at
-          <strong> 7%</strong> of what it was built for. The effluent is going somewhere, and it is
+          <strong> 7%</strong>{" "}of what it was built for. The effluent is going somewhere, and it is
           not the treatment works - and in some months DPCC&apos;s own reports record the sample as
           having been taken at the plant&apos;s bypass.
         </p>
@@ -269,7 +269,7 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
           null on purpose: that is what the public record actually contains.
         </p>
         <p className="text-slate-600 dark:text-slate-400">
-          The {" "}<Link href={`/${cityId}/commitments`} className="text-blue-600 dark:text-blue-400 hover:underline">Commitments Register</Link>
+          The{" "}<Link href={`/${cityId}/commitments`} className="text-blue-600 dark:text-blue-400 hover:underline">Commitments Register</Link>
           {" "}holds eight dated promises with their original citations, and never overwrites a
           date. The lead entry is already overdue: the government&apos;s target to trap all 39 major
           drains by 30 June 2026 passed without a public completion statement. DPCC&apos;s monthly

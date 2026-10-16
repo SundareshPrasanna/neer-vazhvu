@@ -229,7 +229,7 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
           <div className="text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/30 rounded-lg px-4 py-3 space-y-1">
             <p>{t("my_ward.data_note")}</p>
             <Link href={`${cityPrefix}/about`} className="text-blue-500 dark:text-blue-400 hover:underline">
-              {t("nav.about")} &rarr;
+              {t("nav.about")}{" "}&rarr;
             </Link>
           </div>
         </>

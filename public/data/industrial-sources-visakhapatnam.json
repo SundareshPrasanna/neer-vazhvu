@@ -1,0 +1,137 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/industrial-sources",
+  "scope": {
+    "kind": "city",
+    "id": "visakhapatnam"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "industry-ec-compliance-visakhapatnam",
+        "title": "RINL CRZ clearance (2014, hosted by RINL) and six-monthly EC compliance report (Apr-Sep 2025)",
+        "publisher": "Operators' statutory environmental filings (RINL Visakhapatnam Steel Plant, HPCL Visakh Refinery, Visakhapatnam Port Authority, Visakha Pharmacity CETP via APPCB and NGT records)",
+        "license": "statutory environmental compliance filings posted publicly by the operators (RINL, HPCL, Visakhapatnam Port Authority, Visakha Pharmacity), cited with attribution",
+        "url": "https://www.vizagsteel.com/"
+      },
+      {
+        "id": "appcb-consents-directions-visakhapatnam",
+        "title": "APPCB consent order for the Visakha Pharmacity CETP (07.04.2025)",
+        "publisher": "Andhra Pradesh Pollution Control Board (consent orders, CTO committee agendas and minutes, directions orders and CETP status statements)",
+        "license": "Andhra Pradesh Pollution Control Board publication; the site footer reads 'All Rights Reserved' - government publication, cited with attribution",
+        "url": "https://pcb.ap.gov.in/"
+      },
+      {
+        "id": "ngt-andhra-filings",
+        "title": "APPCB report of 06.07.2024 to the NGT in OA 141/2023 (SZ) and its annexed report of 14.12.2023; GVMC daily water supply statement in NGT OA 14/2021 (SZ)",
+        "publisher": "National Green Tribunal (filings by GVMC, APPCB, CPCB and the Government of Andhra Pradesh)",
+        "license": "Government of India tribunal record, cited with attribution",
+        "url": "https://www.greentribunal.gov.in/news-update"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
+    "note": "Only units with a published coordinate are mapped, and each marker states what it marks. The 2023 joint committee's list of discharges into the Meghadrigedda surplus course (HPCL, Coromandel, The Andhra Petrochemicals; ArcelorMittal Nippon Steel appears in the committee's per-plant table, but its conclusions say that plant discharges once-through cooling sea water to the sea) has no coordinates and is carried as a dated event in river-events-visakhapatnam.json. Both CETPs and the steel plant's outfall discharge to the sea, not into these channels, so rivers_affected is empty for the two mapped units. Their link to the Yeleru canal, which supplies their water, is stated in each description."
+  },
+  "last_updated": "2025-09",
+  "_not_mapped": {
+    "Coromandel International": "the only published point we have found is CPCB's 2013 air-monitoring station at the plant, not a discharge point",
+    "HPCL Visakh Refinery, The Andhra Petrochemicals, ArcelorMittal Nippon Steel India": "no published coordinate found; in the Meghadrigedda events",
+    "Atchutapuram Effluent Treatment Ltd CETP": "no published coordinate found; in cetp-compliance-visakhapatnam.json"
+  },
+  "_cetp_join": "No cetp_id: the shared panel's compliance card is written for Surat's per-sample record (it prints 'GPCB consent' and 'monthly samples'). Join only after that card is generalised.",
+  "sources": [
+    {
+      "id": "rinl-vsp-outfall",
+      "name": "Visakhapatnam Steel Plant: recommended marine outfall point",
+      "type": "discharge_zone",
+      "lat": 17.594167,
+      "lng": 83.230556,
+      "operator": "Rashtriya Ispat Nigam Ltd (RINL)",
+      "rivers_affected": [],
+      "pollutants": [
+        "cod",
+        "tss",
+        "ammonia",
+        "phenol"
+      ],
+      "position_basis": "the outfall point NIO recommended, as recorded in the 2014 CRZ clearance (2014 document, history vintage); RINL's 2025 compliance report says the outfall follows NIO's recommended route but gives no as-built coordinates",
+      "description": "Marker: the marine outfall point NIO recommended, as the steel plant's 2014 CRZ clearance records it, at 20 m depth and 1.12 km from the landfall point. RINL's compliance report for April to September 2025 says the outfall was built on the route NIO recommended, but gives no coordinates for it. The same report, against a clearance condition that overflow from the pond be discharged to the sea through the marine outfall, says four guard ponds with cameras have been built and RINL is awaiting APPCB's clearance to start operating them. It lists coke-oven effluent treatment plant discharge of 3,482.1 to 4,243.5 KLD against 4,800 KLD in the plant's latest consent to operate (the same report also lists a condition of the 2005 expansion clearance capping coke-oven effluent at 2,880 cum/day), and COD of 262 mg/L in June 2025 against a 250 mg/L limit. It reaches this page through the Yeleru canal: GVMC's daily supply statement of 11 March 2021, filed with the NGT in OA 14/2021 (SZ), lists the steel plant among the canal's users. Its effluent goes to the sea, not into the canal.",
+      "documents": [
+        {
+          "url": "https://www.vizagsteel.com/upload_master/uploads/Others-Environment/EN/581.pdf",
+          "page": 1,
+          "title": "MoEF CRZ clearance F.No. 11-121/2010-IA.III, 12.02.2014 (hosted by RINL)"
+        },
+        {
+          "url": "https://www.vizagsteel.com/upload_master/uploads/Environmental%20Clearences%20(6.3%20-%207.3%20MTPA)/EN/5565.pdf",
+          "page": 14,
+          "title": "RINL six-monthly EC compliance report, Apr-Sep 2025, Part D: coke-oven effluent condition of the 2005 expansion clearance (2,880 cum/day) and the consent's 4,800"
+        },
+        {
+          "url": "https://www.vizagsteel.com/upload_master/uploads/Environmental%20Clearences%20(6.3%20-%207.3%20MTPA)/EN/5565.pdf",
+          "page": 15,
+          "title": "same report: outfall route and guard ponds"
+        },
+        {
+          "url": "https://www.vizagsteel.com/upload_master/uploads/Environmental%20Clearences%20(6.3%20-%207.3%20MTPA)/EN/5565.pdf",
+          "page": 38,
+          "title": "same report, Annexure-2: monthly effluent discharge and quality, Apr-Sep 2025"
+        },
+        {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf",
+          "page": 20,
+          "title": "GVMC daily water supply statement, 11.03.2021, in NGT OA 14/2021 (SZ)"
+        }
+      ],
+      "source": "https://www.vizagsteel.com/upload_master/uploads/Others-Environment/EN/581.pdf"
+    },
+    {
+      "id": "jnpc-cetp",
+      "name": "JN Pharma City CETP (Visakha Pharmacity Ltd)",
+      "type": "cetp",
+      "lat": 17.648208,
+      "lng": 83.080806,
+      "operator": "Visakha Pharmacity Ltd (formerly Ramky Pharma City (India) Ltd)",
+      "rivers_affected": [],
+      "pollutants": [
+        "tss",
+        "cod",
+        "ammonia"
+      ],
+      "capacity_mld": 10.053,
+      "discharges_to": "Bay of Bengal, through a marine outfall (16 km onshore and 1.75 km offshore pipeline, 18 m depth)",
+      "position_basis": "centre of the CETP's bounding coordinates in the Andhra University report annexed to APPCB's NGT report (OA 141/2023 (SZ), pdf p112); the plant, not the outfall",
+      "description": "Treats effluent from the pharma city's bulk-drug, pharmaceutical and chemical units (94 of 104 established units in operation, APPCB, December 2023). The pharma city draws its water from the Yeleru canal, supplied by APIIC; the treated effluent goes to the sea through a marine outfall, not into the canal. Treated effluent is held in guard ponds and released only after it meets marine discharge standards, in the presence of APPCB officials. 16 of 305 samples did not meet marine discharge standards from June 2023 to May 2024, and 26 of 506 from January 2022 to September 2023. A batch that does not meet them is sent back to the CETP for re-treatment. Marker: the plant, not the outfall.",
+      "documents": [
+        {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+          "page": 12,
+          "title": "APPCB report dated 14.12.2023, Annexure-II to its 06.07.2024 report to the NGT, OA 141/2023 (SZ)"
+        },
+        {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+          "page": 15,
+          "title": "same report of 14.12.2023: marine outfall rejections, January 2022 to September 2023, and releases in the presence of APPCB officials"
+        },
+        {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+          "page": 4,
+          "title": "APPCB report to the NGT, OA 141/2023 (SZ), 06.07.2024: marine outfall monitoring"
+        },
+        {
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf",
+          "page": 177,
+          "title": "the 06.07.2024 report's Annexure-VII: samples rejected and parameters exceeded (TSS, COD, NH3-N), June 2023 to May 2024"
+        },
+        {
+          "url": "https://pcb.ap.gov.in/APPCBDOCS/Tenders_Noti/Meetings/DS%20Visakha%20Pharmacity%20CTO%26HWA%20order%2007.04.2025_20250514_113727.pdf",
+          "page": 2,
+          "title": "APPCB consent order APPCB/VSP/VSP/285/HO/CTO/2025 of 07.04.2025: total 10,053 KLD (capacity_mld)"
+        }
+      ],
+      "source": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA.141%20of%202023%20Report%20by%20R3.pdf"
+    }
+  ]
+}

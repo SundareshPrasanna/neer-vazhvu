@@ -89,7 +89,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
           separate source.
         </p>
         <p className={P}>
-          We deliberately do <strong>not</strong> divide that storage by the
+          We deliberately do <strong>not</strong>{" "}divide that storage by the
           city&apos;s demand. The Khadakwasla Complex is an{" "}
           <strong>irrigation project with a drinking-water share inside it</strong>
           : of its 33.77 TMC of use, 22.55 TMC is the irrigation provision and
@@ -111,7 +111,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
           </p>
           <p>
             The 11.5 TMC figure that circulates is the{" "}
-            <strong>Khadakwasla-only</strong> reservation, not PMC&apos;s total.
+            <strong>Khadakwasla-only</strong>{" "}reservation, not PMC&apos;s total.
             The total authorisation is 16.36 TMC. Comparing 11.5 against total
             lifting compares one reservoir&apos;s share against every source the
             city draws on, and we do not repeat it.
@@ -132,7 +132,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
         <p className={P}>
           Pune district totals <strong>63.73% of its extractable resource and
           is categorised SAFE</strong>. Inside it, <strong>Shirur taluka is
-          CRITICAL at 95.71%</strong> and has been in every published edition,
+          CRITICAL at 95.71%</strong>{" "}and has been in every published edition,
           never below 94.24%. 93% of Shirur&apos;s extraction is agriculture -
           this is an irrigation story, not a city one, and agriculture is above
           90% of extraction in 8 of the 14 talukas.
@@ -167,7 +167,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
           <p>
             PMC publishes no groundwater figure at all, and says so: its supply
             accounts explicitly exclude borewells and private tankers, and its
-            2025-26 report <em>recommends creating</em> the monitoring and
+            2025-26 report <em>recommends creating</em>{" "}the monitoring and
             licensing that would produce one. The only independent estimate is
             ACWADAM&apos;s (2019) - roughly 4 TMC a year from perhaps 80,000 to
             125,000 borewells, about a quarter of formal municipal supply. We
@@ -206,7 +206,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
         <p className={P}>
           The Mutha Right Bank Canal is drawn alongside the rivers even though it
           is not one. It carries Khadakwasla water east to the Daund and Indapur
-          command, and it is the other claimant on the same water -
+          command, and it is the other claimant on the same water -{" "}
           {cityName}&apos;s entitlement argument is unreadable without it.
         </p>
         <Gap title="What the monitoring does not include">
@@ -242,7 +242,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
           count above is after that: three swimming pools, a gym pool, a service
           reservoir, a rainwater-harvesting sump and one pool carrying no water
           tag at all. The exclusion is kept narrow on purpose, because{" "}
-          <em>talav</em> is a real water body here - Ganesh Talav and Lakaki
+          <em>talav</em>{" "}is a real water body here - Ganesh Talav and Lakaki
           Talav are lakes, and a broader match for &ldquo;tank&rdquo; would have
           deleted them.
         </p>
@@ -251,7 +251,7 @@ export function PunePageDescriptions({ cityId, cityName }: CityPagesProps) {
             Maharashtra publishes no open vector lake layer. MRSAC, the state
             remote-sensing centre that would be the equivalent of Tamil Nadu&apos;s
             open GeoServer, does not resolve publicly; Bhuvan answers a vector
-            request with <em>Service WFS is disabled</em> and serves raster tiles
+            request with <em>Service WFS is disabled</em>{" "}and serves raster tiles
             only. The Government of India&apos;s First Census of Water Bodies does
             cover Maharashtra and enumerates 3,680 in Pune <em>district</em>, but
             only ten of those fall inside PMC, and its condition columns are

@@ -84,6 +84,23 @@ CITIES = {
         "bbox": (76.84, 28.40, 77.35, 28.89),  # NCT + Najafgarh/Yamuna fringe
         "bands": [192, 205, 210, 214, 218, 224, 330],
     },
+    # Coastal and hilly: the flood story is the narrow strip under 10 m, and
+    # the Kailasa/Yarada ridges are one top band. FABDEM land percentiles:
+    #   p1=3 p5=7 p20=21 p50=48 p80=88 p95=186 p99=318 p100=587
+    "visakhapatnam": {
+        "bbox": (82.95, 17.50, 83.55, 18.00),  # GVMC + Meghadrigedda/Kondakarla
+        "bands": [0, 2, 5, 10, 20, 50, 100],
+        # FABDEM stores this sea as exact 0 m, not as masked pixels, so the
+        # NODATA sentinel alone would draw the Bay of Bengal as the 0-2 m band.
+        "sea_is_zero": True,
+        "provenance": (
+            "FABDEM V1-2 (Hawker et al., University of Bristol; satellite-derived "
+            "30 m DEM with buildings and forests removed) via Google Earth Engine, "
+            "classified into ground-height bands. The sea (FABDEM's exact 0 m) is "
+            "removed; there is no city-boundary clip, as we have not found published "
+            "GVMC boundary geometry. Read them as bands, not spot heights."
+        ),
+    },
 }
 
 # Basin-atlas terrain layers. bbox comes from the boundary file; pixels
@@ -234,7 +251,7 @@ def main() -> int:
         simplify_deg = SIMPLIFY_DEG
         min_area_deg2 = MIN_AREA_DEG2
         out_path = REPO_ROOT / f"public/data/elevation-bands-{name}.geojson"
-        provenance = (
+        provenance = cfg.get("provenance") or (
             "FABDEM V1-2 (Hawker et al., University of Bristol; satellite-derived "
             "30 m DEM with buildings and forests removed) via Google Earth Engine, "
             "classified into ground-height bands and clipped to the official "
@@ -257,6 +274,8 @@ def main() -> int:
         transform = src.transform
         # Land = everything FABDEM defines; sea = the NODATA sentinel.
         land_mask = dem > NODATA + 1
+        if cfg.get("sea_is_zero"):
+            land_mask &= dem != 0
 
     if boundary is not None:
         land_mask &= rasterio.features.geometry_mask(

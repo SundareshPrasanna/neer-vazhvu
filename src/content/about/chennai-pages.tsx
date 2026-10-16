@@ -173,7 +173,7 @@ export function ChennaiPageDescriptions({ cityId: _cityId, cityName: _cityName }
           <div>
             <h4 className="text-sm font-semibold text-emerald-900 dark:text-emerald-100">Rich-Data Deep-Zoom Panel (flagship bodies)</h4>
             <p className="text-sm text-emerald-800/80 dark:text-emerald-200/80 mt-1">
-              Seven Chennai water bodies have a dedicated full-screen panel layered on top of the standard <span className="font-mono text-xs">/water-bodies</span> map. Clicking a flagship body opens yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints, per-year zonal stats, and a sources &amp; methodology modal.
+              Seven Chennai water bodies have a dedicated full-screen panel layered on top of the standard <span className="font-mono text-xs">/water-bodies</span>{" "}map. Clicking a flagship body opens yearly satellite imagery 1984-present, cumulative water-loss and built-gain tints, per-year zonal stats, and a sources &amp; methodology modal.
             </p>
           </div>
           <p className="text-sm text-emerald-800/80 dark:text-emerald-200/80">

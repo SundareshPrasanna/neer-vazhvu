@@ -85,7 +85,7 @@ export function MaduraiStoryEn() {
           The Pandyans, then the Madurai Nayaks, built a network of
           interconnected tanks called <em>kanmoi</em> (கண்மாய்) -
           earthen bunds holding back monsoon runoff, stone{" "}
-          <em>kalingu</em> sluices controlling release, and feeder
+          <em>kalingu</em>{" "}sluices controlling release, and feeder
           channels connecting each tank both upstream and downstream
           to the next. Hundreds of them daisy-chained together
           formed a cascade. The overflow from tank N filled tank

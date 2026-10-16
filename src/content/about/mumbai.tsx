@@ -171,6 +171,12 @@ export default function MumbaiAbout({ slot, cityId, fallback = null }: CityAbout
           
         </>
       );
+    case "river-status-footnote":
+      return (
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+          Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from MPCB&apos;s water-quality reports and its 2019 Mithi action plan, with 2018-2023 Mithi figures from CPCB&apos;s programme as tabled by Praja Foundation. The Ulhas reading is MPCB&apos;s 2004-05 Kalyan region baseline.
+        </p>
+      );
     default:
       return <>{fallback}</>;
   }

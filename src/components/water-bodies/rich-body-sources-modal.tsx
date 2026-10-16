@@ -60,7 +60,7 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
 
           <Section title="Encroachment &amp; built-up surface">
             <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed pb-2">
-              <em>Trust basis:</em> we trust Overture&apos;s methodology on its
+              <em>Trust basis:</em>{" "}we trust Overture&apos;s methodology on its
               consortium backing and public QC process. We have not independently
               ground-truthed the count against high-resolution satellite imagery
               for this body - the conservative-floor framing in the caveats below
@@ -174,7 +174,7 @@ export function RichBodySourcesModal({ body, onClose }: RichBodySourcesModalProp
             <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               <li>
                 <strong className="text-slate-900 dark:text-slate-100">Building counts are a
-                conservative floor.</strong> Overture&apos;s deduplication may count clusters of small
+                conservative floor.</strong>{" "}Overture&apos;s deduplication may count clusters of small
                 structures in dense informal settlements as fewer distinct buildings. Real informal
                 construction density inside the gazette is likely higher than the headline number.
                 We are exploring a fresher per-rooftop count to publish alongside this floor.

@@ -116,7 +116,7 @@ export function BucketSection({
                 href={pageHref}
                 className="text-sm text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap"
               >
-                See live data on {pageLabel} &rarr;
+                See live data on {pageLabel}{" "}&rarr;
               </Link>
             )}
           </div>

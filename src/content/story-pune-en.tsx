@@ -241,7 +241,7 @@ export function PuneStoryEn() {
           allowances: the old municipal limits at{" "}
           <strong>150 litres per person per day</strong>, nine merged villages
           with sewerage at <strong>120</strong>, and{" "}
-          <strong>twenty-five outer villages at 70</strong> - less than half the
+          <strong>twenty-five outer villages at 70</strong>{" "}- less than half the
           old city&apos;s allowance. Against that last line PMC writes, in its
           own report, that their need is also met by tanker supply.
         </p>
@@ -249,7 +249,7 @@ export function PuneStoryEn() {
           In early 2025 that arrangement produced a public-health event PMC
           documents itself. Between January and March, <strong>141 cases</strong>{" "}
           of Guillain-Barré syndrome were recorded in PMC jurisdiction - and{" "}
-          <strong>95 of the 141 were in the newly merged areas</strong> against
+          <strong>95 of the 141 were in the newly merged areas</strong>{" "}against
           46 in the old city. Ten people died, seven of them with GBS confirmed.
           PMC&apos;s own stated conclusion was that contaminated drinking water
           in the newly merged villages was the most probable source, in areas
@@ -287,7 +287,7 @@ export function PuneStoryEn() {
         <p>
           One correction worth making, because the wrong version of this is
           everywhere. The figure usually quoted as Pune&apos;s quota is 11.5
-          TMC. That is the <strong>Khadakwasla-only</strong> reservation,
+          TMC. That is the <strong>Khadakwasla-only</strong>{" "}reservation,
           approved by a state High Power Committee on 10 March 2005 and carried
           into the PMC-WRD agreement of 1 March 2013 as 11.0 TMC domestic plus
           0.5 commercial. It is one reservoir&apos;s share. PMC&apos;s total

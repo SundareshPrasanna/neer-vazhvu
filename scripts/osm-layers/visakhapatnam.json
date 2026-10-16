@@ -1,0 +1,29 @@
+{
+  "_doc": "Visakhapatnam OSM layers for scripts/fetch-osm-layers.ts. Rivers are listed in the order the rivers page should open them: the Meghadri Gedda first (the city's own river and its reservoir), then the Gosthani (Thatipudi and the infiltration wells) and the Yeleru Left Main Canal (the conduit that brings Yeleru and Godavari water to the city). OSM spells the channels as geddas, so each carries one canonical label.",
+  "lang": "te",
+  "layers": {
+    "water-bodies": {
+      "method": "assembled",
+      "_note": "GVMC's ward extent is 82.994-83.464 E, 17.546-17.940 N. The box adds about 5 km on each side so the bodies the city depends on near its edge are whole: Kondakarla Ava on the south-west, Meghadrigedda and the Kanithi balancing reservoir on the west, Gambheeram and the Gosthani mouth at Bheemunipatnam on the north-east. The supply dams at Thatipudi and Raiwada lie north of 18.00 N (OSM's Raiwada polygon starts at 18.005 N) and stay outside. Drains and wastewater are conveyance, not water bodies.",
+      "bbox": "17.50,82.95,18.00,83.55",
+      "refLat": 17.72,
+      "timeout": 180,
+      "exclude": ["drain", "wastewater"]
+    },
+    "rivers": {
+      "method": "walk",
+      "_note": "The box holds the whole OSM line of the Yeleru Left Main Canal, from Yeleswaram in the south-west to the city, and the Gosthani's whole OSM course above Thatipudi in the north, so nothing is clipped. Feature order follows the walk, not this list: loose ways first, then relations by id. The Meghadri Gedda is loose ways, the Gosthani (relation 18028139) and the canal (18283759) are relations, which is what puts the Meghadri Gedda first today.",
+      "bbox": "17.20,82.00,18.40,83.60",
+      "timeout": 120,
+      "select": [
+        "way[\"waterway\"~\"^(river|canal)$\"][\"name\"~\"Meghadri|Gosthani|Gostani|Yeleru Left Main Canal\",i]",
+        "relation[\"waterway\"~\"^(river|canal)$\"][\"name\"~\"Meghadri|Gosthani|Gostani|Yeleru Left Main Canal\",i]"
+      ],
+      "rivers": [
+        { "id": "meghadrigedda", "match": ["meghadri"], "label": "Meghadri Gedda", "local": "మేఘాద్రి గెడ్డ", "waterway": "river" },
+        { "id": "gosthani", "match": ["gosthani", "gostani"], "label": "Gosthani", "local": "గోస్తని", "waterway": "river" },
+        { "id": "yeleru-canal", "_note": "OSM tags no Telugu name on the canal, so none is supplied here.", "match": ["yeleru left main canal"], "label": "Yeleru Left Main Canal", "local": "", "waterway": "canal" }
+      ]
+    }
+  }
+}

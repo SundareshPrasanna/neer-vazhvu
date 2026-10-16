@@ -108,7 +108,7 @@ export function HyderabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
       <SubSection id="page-groundwater" title="Groundwater">
         <p className="text-slate-600 dark:text-slate-400">
           Point observations from the Central Ground Water Board network via
-          India-WRIS, which for {cityName} is live - telemetric readings run to
+          India-WRIS, which for {cityName}{" "}is live - telemetric readings run to
           June 2026, where Delhi&apos;s equivalent network stopped in September
           2025.
         </p>
@@ -275,7 +275,7 @@ export function HyderabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
 
       <SubSection id="page-missing" title="What is missing, and why">
         <p className="text-slate-600 dark:text-slate-400">
-          <strong>My Ward is not available.</strong> A gazette notification on
+          <strong>My Ward is not available.</strong>{" "}A gazette notification on
           25 December 2025 replaced Greater Hyderabad&apos;s 150 wards with 300,
           and on 11 February 2026 the corporation was split into three - GHMC,
           Cyberabad and Malkajgiri. The geometry for those 300 wards is not

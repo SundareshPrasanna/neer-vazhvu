@@ -40,7 +40,7 @@ export function WardRiverCard({ wardNumber, profile, getRiverLabel }: Props) {
             href={riverLink}
             className="text-xs text-blue-600 dark:text-blue-400 hover:underline print:hidden"
           >
-            {t("my_ward.view_quality")} &rarr;
+            {t("my_ward.view_quality")}{" "}&rarr;
           </Link>
         </div>
       </CardHeader>

@@ -69,6 +69,30 @@ export default function KolkataAbout({ slot, cityId, fallback = null }: CityAbou
           
         </>
       );
+    case "source-wris-gwr":
+      return (
+        <DataSource
+          name="IN-GRES - Dynamic Ground Water Resources (West Bengal, by district)"
+          url="https://ingres.iith.ac.in/"
+          description="The annual national groundwater assessment, read here for Kolkata and the five districts around it across four assessment years. It does not place Kolkata district, or South 24 Parganas, anywhere from safe to over-exploited: it classes both as salinity, a water-quality category, so they carry no extraction figures. The other four districts are assessed on extraction."
+          frequency="annual"
+        />
+      );
+    case "data-sources-4":
+      return (
+        <DataSource
+          name="India-WRIS Ground Water Level - CGWB observation wells"
+          url="https://indiawris.gov.in/Dataset/Ground%20Water%20Level"
+          description="703 Central Ground Water Board observation wells across the metropolitan area, 2010 to 2026. Some wells have automatic recorders that read every 6 hours and others are read by hand; the groundwater page shows them as monthly means. Howrah has no reading after 30 April 2023 and Hooghly none after 30 November 2022."
+          frequency="6-hourly and manual, shown monthly"
+        />
+      );
+    case "river-status-footnote":
+      return (
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+          Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from the West Bengal Pollution Control Board&apos;s EMIS portal (41 stations, sampled each quarter at high and low tide).
+        </p>
+      );
     default:
       return <>{fallback}</>;
   }

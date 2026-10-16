@@ -177,7 +177,7 @@ export function FloodRiskContent({
             ))}
           </ul>
           <p className="text-xs text-slate-500 italic mt-2">
-            {t("flood.data_gaps_caveat")}
+            {cfg.data_gaps_caveat ? pick(cfg.data_gaps_caveat) : t("flood.data_gaps_caveat")}
           </p>
         </CardContent>
       </Card>

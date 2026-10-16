@@ -80,6 +80,9 @@ export interface FloodConfig {
   };
   external_sources: ExternalSource[];
   data_gaps: BilingualText[];
+  /** Replaces the shared caveat under the data gaps, for a city where it
+   *  would be wrong (it names Chennai's layers and says none exist here). */
+  data_gaps_caveat?: BilingualText;
   /** Cross-link card copy overrides. The flood.cross_link_* i18n defaults
    *  carry Madurai's specifics (Vaigai dam / Vaigai river system); a second
    *  narrative city overrides them here instead of leaking them. */

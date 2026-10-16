@@ -44,17 +44,17 @@ export default function BangaloreAbout({ slot, cityId, fallback = null }: CityAb
               </p>
               <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-2">
                 <li>
-                  <span className="font-semibold">The 4 upstream dams aren&apos;t Bengaluru&apos;s tap supply.</span> They are irrigation-primary reservoirs owned by the Karnataka Water Resources Department; the city&apos;s drinking-water carve-out is the slice released into BWSSB&apos;s pumping line at T.K. Halli. We track them because they set the seasonal ceiling on what BWSSB can pump - similar to how Madurai tracks Mullaperiyar even though it&apos;s in Kerala.
+                  <span className="font-semibold">The 4 upstream dams aren&apos;t Bengaluru&apos;s tap supply.</span>{" "}They are irrigation-primary reservoirs owned by the Karnataka Water Resources Department; the city&apos;s drinking-water carve-out is the slice released into BWSSB&apos;s pumping line at T.K. Halli. We track them because they set the seasonal ceiling on what BWSSB can pump - similar to how Madurai tracks Mullaperiyar even though it&apos;s in Kerala.
                 </li>
                 <li>
                   <span className="font-semibold">~36% non-revenue water.</span> Audited at 36% for 2017-18 (ISEC Working Paper 505, computed from BWSSB data), down from ~48% in 2007/2017; BWSSB reports a further reduction toward ~30%, not yet independently audited. Even at 36%, more than a third of what BWSSB pumps 95 km is lost between WTP and household meter (physical leakage + commercial losses + unmetered uses). Bringing NRW under 20% would free more water than the entire Stage V augmentation.
                 </li>
                 <li>
-                  <span className="font-semibold">BWSSB&apos;s ~14M jurisdiction overstates piped reach.</span> BWSSB now reports serving ~14M residents, but &quot;served&quot; is a within-jurisdiction figure, not piped coverage: independent benchmarking (ISEC) put actual coverage at ~71% (2017-18), and ~11.46 lakh metered connections in a 14M-person city leave large gaps filled by private borewells (over-extracted - all 6 CGWB blocks Over-Exploited since 2011) and the ~5,000-tanker informal economy. The piped/non-piped split is the single biggest equity gap in Bengaluru&apos;s water story.
+                  <span className="font-semibold">BWSSB&apos;s ~14M jurisdiction overstates piped reach.</span>{" "}BWSSB now reports serving ~14M residents, but &quot;served&quot; is a within-jurisdiction figure, not piped coverage: independent benchmarking (ISEC) put actual coverage at ~71% (2017-18), and ~11.46 lakh metered connections in a 14M-person city leave large gaps filled by private borewells (over-extracted - all 6 CGWB blocks Over-Exploited since 2011) and the ~5,000-tanker informal economy. The piped/non-piped split is the single biggest equity gap in Bengaluru&apos;s water story.
                 </li>
               </ul>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-                What the dashboard <span className="font-semibold">does</span> show: the Cauvery Pumping hero (2,293 MLD installed across Stages I-V / 6 WTPs, ~1,500 MLD delivered, 95 km / 500 m lift, 36% NRW, ~14M served), live daily storage at the 4 upstream Karnataka dams (from Karnataka&apos;s own KWRIS reservoir feed - the state&apos;s native numbers for its own dams, which read higher and fresher than Tamil Nadu&apos;s downstream-monitoring figures we used earlier), 8 years of daily history per dam (2018-today, pre-2026-07 history from the TN Agriculture feed), 14-day AutoARIMA forecasts per dam, and the Stage V under-delivery flag from The Ken (Feb 2026: ~400 MLD actual vs 775 MLD design).
+                What the dashboard <span className="font-semibold">does</span>{" "}show: the Cauvery Pumping hero (2,293 MLD installed across Stages I-V / 6 WTPs, ~1,500 MLD delivered, 95 km / 500 m lift, 36% NRW, ~14M served), live daily storage at the 4 upstream Karnataka dams (from Karnataka&apos;s own KWRIS reservoir feed - the state&apos;s native numbers for its own dams, which read higher and fresher than Tamil Nadu&apos;s downstream-monitoring figures we used earlier), 8 years of daily history per dam (2018-today, pre-2026-07 history from the TN Agriculture feed), 14-day AutoARIMA forecasts per dam, and the Stage V under-delivery flag from The Ken (Feb 2026: ~400 MLD actual vs 775 MLD design).
               </p>
             </SubSection>
           
@@ -433,6 +433,22 @@ export default function BangaloreAbout({ slot, cityId, fallback = null }: CityAb
             </>
           
         </>
+      );
+    case "intelligence-daily-briefing":
+      return (
+        <div className="flex gap-3">
+          <span className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
+          <div>
+            <span className="font-semibold text-slate-800 dark:text-slate-200">Daily briefing</span>
+            <span className="text-slate-600 dark:text-slate-400"> Template-based briefing (no LLM) at the top of the dashboard: the latest daily storage across the four upstream Cauvery dams, set against the supply chain&apos;s published figures. Live for {cityName}.</span>
+          </div>
+        </div>
+      );
+    case "river-status-footnote":
+      return (
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+          Status thresholds follow CPCB&apos;s published Designated Best-Use criteria; readings are from CPCB NWMP annual River Water Quality reports and KSPCB&apos;s monthly water-quality reports. Where the two differ at a station, CPCB&apos;s annual mean is used.
+        </p>
       );
     default:
       return <>{fallback}</>;
