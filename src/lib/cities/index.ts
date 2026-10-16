@@ -7,6 +7,7 @@ import { KOLKATA } from './kolkata';
 import { MADURAI } from './madurai';
 import { MUMBAI } from './mumbai';
 import { PUNE } from './pune';
+import { NAGPUR } from './nagpur';
 import { SURAT } from './surat';
 import { AHMEDABAD } from './ahmedabad';
 import { VISAKHAPATNAM } from './visakhapatnam';
@@ -32,6 +33,7 @@ const REGISTRY: Record<CityId, PlaceConfig> = {
   kolkata: KOLKATA,
   gurugram: GURUGRAM,
   pune: PUNE,
+  nagpur: NAGPUR,
   surat: SURAT,
   ahmedabad: AHMEDABAD,
   visakhapatnam: VISAKHAPATNAM,

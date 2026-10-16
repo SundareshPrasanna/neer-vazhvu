@@ -4,7 +4,7 @@ import { resolve } from "path";
 import { NextResponse } from "next/server";
 import { loadProfilesServer } from "@/lib/utils/load-profiles-server";
 import { requireCity } from "@/lib/require-city";
-import { computeWardRankings } from "@/lib/utils/ward-rankings";
+import { computeWardRankings, englishOrdinal } from "@/lib/utils/ward-rankings";
 import { parseWardsParam } from "@/lib/utils/parse-wards-param";
 import { GRADE_COLORS } from "@/lib/utils/grade-colors";
 
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
 
   const columns = rankings.map((r) => {
     if (!r) return null;
-    const gc = GRADE_COLORS[r.overallGrade] || GRADE_COLORS.C;
+    const gc = r.overallGrade ? GRADE_COLORS[r.overallGrade] || GRADE_COLORS.C : { bg: "#334155", text: "#94a3b8" };
     return { wardNumber: r.wardNumber, zoneName: r.zoneName, grade: r.overallGrade, rank: r.overallRank, total: r.overallTotal, percentile: r.overallPercentile, bg: gc.bg, text: gc.text };
   }).filter(Boolean);
 
@@ -76,10 +76,10 @@ export async function GET(request: Request) {
             <span style={{ fontSize: "32px", fontWeight: 800, color: "white" }}>Ward {c!.wardNumber}</span>
             <span style={{ fontSize: "16px", color: "#cbd5e1" }}>{c!.zoneName}</span>
             <div style={{ width: "80px", height: "80px", borderRadius: "20px", backgroundColor: c!.bg, color: c!.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginTop: "8px" }}>
-              <span style={{ fontSize: "48px", fontWeight: 900, lineHeight: 1 }}>{c!.grade}</span>
+              <span style={{ fontSize: "48px", fontWeight: 900, lineHeight: 1 }}>{c!.grade ?? "-"}</span>
             </div>
-            <span style={{ fontSize: "16px", color: "#e2e8f0", marginTop: "4px" }}>#{c!.rank} of {c!.total}</span>
-            <span style={{ fontSize: "14px", color: "#94a3b8" }}>{c!.percentile}th percentile</span>
+            <span style={{ fontSize: "16px", color: "#e2e8f0", marginTop: "4px" }}>{c!.rank === null ? "No overall grade" : `#${c!.rank} of ${c!.total}`}</span>
+            <span style={{ fontSize: "14px", color: "#94a3b8" }}>{c!.percentile === null ? "Too few factors with data" : `${englishOrdinal(c!.percentile)} percentile`}</span>
           </div>
         ))}
       </div>

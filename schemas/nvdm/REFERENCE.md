@@ -119,7 +119,7 @@ An audited, artifact-level judgement that a NAMED restricted input does not encu
 | `method` | no | one of `geometry`, `published`, `crosswalk`, `manual` | How the relation was established (spec 4.5). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping. |
 | `evidence` | no | string, min length 1 | A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested. |
 
-## Registered scopes (55)
+## Registered scopes (56)
 
 Country is derived from the relations, never stored.
 
@@ -142,6 +142,7 @@ Country is derived from the relations, never stored.
 | `gurugram` | city | Gurugram | `haryana` | `india` | - | - |
 | `hyderabad` | city | Hyderabad | `telangana` | `india` | - | - |
 | `madurai` | city | Madurai | `tamil-nadu` | `india` | - | - |
+| `nagpur` | city | Nagpur | `maharashtra` | `india` | - | - |
 | `pune` | city | Pune | `maharashtra` | `india` | - | - |
 | `surat` | city | Surat | `gujarat` | `india` | - | - |
 | `visakhapatnam` | city | Visakhapatnam | `andhra-pradesh` | `india` | - | - |

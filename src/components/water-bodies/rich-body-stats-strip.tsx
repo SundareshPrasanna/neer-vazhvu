@@ -64,8 +64,8 @@ const SMALL_BODY_PIXELS = 400;
  *  two agree at the 2021/22 join, but for seasonal water they can differ by
  *  tens of points (Chandola 87% to 21%), and a Dynamic World year set against
  *  the 1988-92 JRC average then reports a loss that is only the change of
- *  method. Above this step the comparison is withheld. Measured across the 45
- *  bodies, no step falls between 14.8 and 35.8 points. */
+ *  method. Above this step the comparison is withheld. Measured across the 52
+ *  bodies, steps at or under it reach 23.6 (Sonegaon) and those above start at 35.8. */
 const SPLICE_STEP_MAX = 25;
 const HALO_ZONE = "Halo: 1km buffer - body";
 
@@ -147,7 +147,8 @@ export function RichBodyStatsStrip({ body, year }: RichBodyStatsStripProps) {
         <Stat
           label="Water surface in body"
           help={
-            "The body is its primary boundary (Ramsar for Pallikaranai, OpenStreetMap-mapped for reservoirs). This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A step at the splice is methodology-driven, not a real change in water: JRC counts a pixel as water if it held water at any time in the year, Dynamic World by its most common class. For permanent water the two agree; for seasonal water they can differ by tens of points, and where they differ by more than 25 no 1988-92 comparison is shown for Dynamic World years." +
+            `The body is its primary boundary (${body.boundary_source_label ?? "OpenStreetMap"} for this one). ` +
+            "This shows the share of land inside that boundary classified as water (seasonal or permanent), averaged across the year. Sources splice at year 2021/2022: JRC Global Surface Water v1.4 (Landsat, 1984-2021) and Google's Dynamic World water class (Sentinel-2, 2022-present). A step at the splice is methodology-driven, not a real change in water: JRC counts a pixel as water if it held water at any time in the year, Dynamic World by its most common class. For permanent water the two agree; for seasonal water they can differ by tens of points, and where they differ by more than 25 no 1988-92 comparison is shown for Dynamic World years." +
             (isSmallBody
               ? ` This body covers only about ${bodyPixels} pixels at JRC's 30 m resolution, so a handful of edge pixels changing class moves the figure by several points. Read the direction over decades, not the year-to-year steps, and treat any single year as approximate.`
               : "")

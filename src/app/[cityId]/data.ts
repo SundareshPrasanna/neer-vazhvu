@@ -66,6 +66,7 @@ export function snapshotToSummaries(
       outflowCusecs: (reading?.outflow_cusecs as number | null | undefined) ?? null,
       rainfallMm: 0, // not tracked in v2 ingest yet
       isLive,
+      hasPublicFeed: source.hasPublicFeed !== false,
       noLiveDataReason: isLive
         ? undefined
         : (source.noFeedNote ??

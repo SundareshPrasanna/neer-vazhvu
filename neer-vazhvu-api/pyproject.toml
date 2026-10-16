@@ -35,6 +35,9 @@ xlsx = ["openpyxl>=3.1"]
 # Catchment delineation (delineate-catchments stage): FABDEM via GEE +
 # WhiteboxTools hydrology. whitebox auto-downloads its engine binary on first use.
 hydro = ["rasterio>=1.3", "whitebox>=2.3", "pyproj>=3.6", "duckdb>=1.0"]
+# Rich-body imagery: ingest_rich_body_imagery.py stitches a chip from tiles
+# when Earth Engine refuses it as one request (memory limit).
+imagery = ["pillow>=10"]
 
 [build-system]
 requires = ["setuptools>=75"]

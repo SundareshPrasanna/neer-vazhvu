@@ -20,14 +20,19 @@ export interface MetricRank {
 
 export interface WardRankings {
   wardNumber: number;
-  zoneName: string;
-  zoneNo: string;
+  /** null where a ward is not assigned to one zone (Nagpur). */
+  zoneName: string | null;
+  zoneNo: string | null;
   metrics: MetricRank[];
-  overallRank: number;
+  /** Factors with data for this ward. Below MIN_FACTORS_FOR_OVERALL_GRADE the
+   *  overall fields are null: one factor is not an overall grade. */
+  factorsWithData: number;
+  overallRank: number | null;
+  /** Wards with an overall grade in the city. */
   overallTotal: number;
-  overallScore: number;
-  overallGrade: Grade;
-  overallPercentile: number; // 0-100, higher = better
+  overallScore: number | null;
+  overallGrade: Grade | null;
+  overallPercentile: number | null; // 0-100, higher = better
 }
 
 /* ── Metric definitions ─────────────────────────────────────────────── */
@@ -57,7 +62,7 @@ export interface MetricComputation {
   ranked: Map<number, { value: number; rank: number }>;
   rankTotal: number;
   cityMedian: number | null;
-  zoneMedianByZone: Map<string, number>;
+  zoneMedianByZone: Map<string | null, number>;
   percentileByWard: Map<number, number>;
 }
 
@@ -141,6 +146,40 @@ export const METRICS: MetricDef[] = [
 ];
 
 /* ── Helpers (exported for reuse by uplift planner) ────────────────── */
+
+/** Same floor as the pre-baked ward-risk composite
+ *  (scripts/compute-madurai-ward-risk.ts: `parts.length >= 2`). */
+export const MIN_FACTORS_FOR_OVERALL_GRADE = 2;
+
+export function countFactorsWithData(
+  profile: WardProfile,
+  metricComputations: MetricComputation[],
+): number {
+  return metricComputations.filter((mc) => mc.ranked.has(profile.ward_number)).length;
+}
+
+/** Overall rank of every ward with enough factors, among those wards only. */
+export function rankOverall(
+  allProfiles: WardProfile[],
+  metricComputations: MetricComputation[],
+): { ranked: Map<number, { value: number; rank: number }>; total: number } {
+  const graded = allProfiles.filter(
+    (p) => countFactorsWithData(p, metricComputations) >= MIN_FACTORS_FOR_OVERALL_GRADE,
+  );
+  const ranked = rankEntries(
+    graded.map((p) => ({ id: p.ward_number, value: computeCompositeScore(p, metricComputations), tb: 0 })),
+    true,
+    false,
+  );
+  return { ranked, total: graded.length };
+}
+
+/** "1st", "2nd", "3rd", "11th", "62nd". */
+export function englishOrdinal(n: number): string {
+  const tens = n % 100;
+  if (tens >= 11 && tens <= 13) return `${n}th`;
+  return `${n}${["th", "st", "nd", "rd"][n % 10] ?? "th"}`;
+}
 
 export function median(values: number[]): number {
   if (values.length === 0) return 0;
@@ -237,7 +276,7 @@ export function computeMetric(def: MetricDef, allProfiles: WardProfile[]): Metri
   );
   const rankTotal = applicableProfiles.length;
   const percentileByWard = new Map<number, number>();
-  const zoneValues = new Map<string, number[]>();
+  const zoneValues = new Map<string | null, number[]>();
 
   for (const profile of applicableProfiles) {
     const row = ranked.get(profile.ward_number);
@@ -388,27 +427,22 @@ export function computeWardRankings(
     });
   }
 
-  const compositeScores = allProfiles.map((profile) => ({
-    id: profile.ward_number,
-    value: computeCompositeScore(profile, metricComputations),
-    tb: 0,
-  }));
-  const overallRanked = rankEntries(compositeScores, true, false);
+  const { ranked: overallRanked, total: overallTotal } = rankOverall(allProfiles, metricComputations);
   const overall = overallRanked.get(wardNumber);
-  if (!overall) return null;
-
-  const overallPercentile = percentileFromRank(overall.rank, allProfiles.length);
-  const roundedPercentile = Math.round(overallPercentile);
+  const roundedPercentile = overall
+    ? Math.round(percentileFromRank(overall.rank, overallTotal))
+    : null;
 
   return {
     wardNumber,
     zoneName: ward.zone_name,
     zoneNo: ward.zone_no,
     metrics,
-    overallRank: overall.rank,
-    overallTotal: allProfiles.length,
-    overallScore: Math.round(overall.value * 10) / 10,
-    overallGrade: percentileToGrade(roundedPercentile),
+    factorsWithData: countFactorsWithData(ward, metricComputations),
+    overallRank: overall?.rank ?? null,
+    overallTotal,
+    overallScore: overall ? Math.round(overall.value * 10) / 10 : null,
+    overallGrade: roundedPercentile === null ? null : percentileToGrade(roundedPercentile),
     overallPercentile: roundedPercentile,
   };
 }

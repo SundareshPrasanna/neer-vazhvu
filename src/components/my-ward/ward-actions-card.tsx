@@ -136,6 +136,41 @@ const ACTIONS_BY_CITY: Record<string, CityActionsConfig> = {
       },
     ],
   },
+  // NAGPUR. Checked 2026-10-15. The NMC numbers are the contact block on page
+  // 2 of NMC's natural-disaster plan 2025-26 (nmcnagpur.gov.in, Apatti_
+  // Vyavsthapan_2025-26.pdf), read on the page image because the text layer
+  // is a legacy font: Emergency Control Room 101 / 0712-2567777 / 0712-2567029,
+  // Disaster Management Cell 0712-2551866, Collector's control room 1077. The
+  // water line is Orange City Water's, the operator NMC contracts for water
+  // supply and billing ("Help Line: 1800-266-9899" on ocwindia.com). NMC's
+  // Public Health Engineering page lists a department office line
+  // (0712-2567035); the operator's toll-free line is used for complaints. The
+  // plan names 0712-2551866 the Disaster Management Cell; it is shown under the
+  // shared flood-emergency label. Officers' mobile numbers on the
+  // same pages are left out. No tanker line: NMC runs tankers but publishes no
+  // booking number, and no /nagpur/tanker page exists to point at.
+  nagpur: {
+    quickActions: [
+      {
+        labelKey: "my_ward.report_issue",
+        subLabel: "Orange City Water (NMC's water operator), toll-free 1800-266-9899",
+        href: "https://www.ocwindia.com/contact_us",
+        icon: "complaint",
+      },
+      {
+        labelKey: "my_ward.water_supply_portal",
+        subLabel: "NMC Public Health Engineering (water supply)",
+        href: "https://nmcnagpur.gov.in/219e052492f4008818b8adb6366c7ed6",
+        icon: "portal",
+      },
+    ],
+    helplines: [
+      { labelKey: "my_ward.hl_water_complaint", value: "1800 266 9899", href: "tel:18002669899" },
+      { labelKey: "my_ward.hl_flood_emergency", value: "0712 255 1866", href: "tel:07122551866" },
+      { labelKey: "my_ward.hl_emergency_control_room", value: "101 / 0712 256 7777", href: "tel:101" },
+      { labelKey: "my_ward.hl_district_control_room", value: "1077", href: "tel:1077" },
+    ],
+  },
   // GURUGRAM. The city this bug was actually live for: /gurugram/my-ward
   // serves in production and gurugram was missing from this map, so it was
   // rendering Chennai's helplines.

@@ -1,0 +1,102 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/dam-storage",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "wrd-pravah-nagpur-dams",
+        "title": "Maharashtra WRD Pravah daily dam-safety bulletin",
+        "publisher": "Water Resources Department, Government of Maharashtra",
+        "license": "Maharashtra government publication, cited with attribution"
+      }
+    ],
+    "method": "scrape",
+    "produced_at": "2026-10-16",
+    "produced_by": "neer-vazhvu-api/scripts/scrape_pravah_dams.py",
+    "note": "Parsed from the single daily all-Maharashtra PDF. Last year's live storage is RECONSTRUCTED as ly_pct x live_cap - the bulletin prints it only as a percentage, and the column that sits where a volume would go is today's GROSS storage."
+  },
+  "_source": "Maharashtra WRD Pravah dam-safety feed",
+  "_source_url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
+  "_fetched": "2026-10-16",
+  "_note": "Live storage for the five Nagpur-district dams in the Maharashtra WRD daily bulletin. Totladoh (the Pench hydro-electric reservoir, shared with Madhya Pradesh) and Kamthi Khairy (Navegaon Khairi, the Pench irrigation project's dam) feed NMC's Pench schemes; Khindsi, Nand and Wadgaon are irrigation dams carried for context and excluded from any city total. Storage is whole-dam live storage, not NMC's share.",
+  "dams": [
+    {
+      "source_code": "khindsi",
+      "pravah_name": "Khindsi",
+      "corporations": [],
+      "date": "2026-10-16",
+      "storage_mcum": 56.0,
+      "live_capacity_mcum": 103.0,
+      "gross_capacity_mcum": 103.0,
+      "dead_storage_mcum": 0.0,
+      "storage_tmc": 1.978,
+      "storage_pct_live": 54.4,
+      "last_year_storage_mcum": 102.52,
+      "last_year_pct_live": 99.5
+    },
+    {
+      "source_code": "nand",
+      "pravah_name": "Nand",
+      "corporations": [],
+      "date": "2026-10-16",
+      "storage_mcum": 40.73,
+      "live_capacity_mcum": 53.18,
+      "gross_capacity_mcum": 62.18,
+      "dead_storage_mcum": 9.0,
+      "storage_tmc": 1.438,
+      "storage_pct_live": 76.6,
+      "last_year_storage_mcum": 53.18,
+      "last_year_pct_live": 100.0
+    },
+    {
+      "source_code": "navegaon_khairi",
+      "pravah_name": "Kamthi Khairy",
+      "corporations": [
+        "nmc"
+      ],
+      "date": "2026-10-16",
+      "storage_mcum": 100.32,
+      "live_capacity_mcum": 141.98,
+      "gross_capacity_mcum": 180.98,
+      "dead_storage_mcum": 39.0,
+      "storage_tmc": 3.543,
+      "storage_pct_live": 70.7,
+      "last_year_storage_mcum": 117.32,
+      "last_year_pct_live": 82.6
+    },
+    {
+      "source_code": "totladoh",
+      "pravah_name": "Totladoh",
+      "corporations": [
+        "nmc"
+      ],
+      "date": "2026-10-16",
+      "storage_mcum": 447.78,
+      "live_capacity_mcum": 1016.93,
+      "gross_capacity_mcum": 1166.93,
+      "dead_storage_mcum": 150.0,
+      "storage_tmc": 15.813,
+      "storage_pct_live": 44.0,
+      "last_year_storage_mcum": 1012.96,
+      "last_year_pct_live": 99.6
+    },
+    {
+      "source_code": "wadgaon",
+      "pravah_name": "Wadgaon",
+      "corporations": [],
+      "date": "2026-10-16",
+      "storage_mcum": 74.66,
+      "live_capacity_mcum": 134.9,
+      "gross_capacity_mcum": 151.5,
+      "dead_storage_mcum": 16.6,
+      "storage_tmc": 2.637,
+      "storage_pct_live": 55.3,
+      "last_year_storage_mcum": 134.9,
+      "last_year_pct_live": 100.0
+    }
+  ]
+}

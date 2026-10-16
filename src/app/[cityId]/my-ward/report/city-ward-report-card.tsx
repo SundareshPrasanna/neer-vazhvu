@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchJsonOrNull } from "@/lib/data/fetch-json";
+import { hasWardRankings } from "@/lib/ward-rankings/cities";
 
 interface WardRow {
   ward_number: number;
@@ -140,16 +141,19 @@ export function CityWardReportCard({
       <div className="max-w-3xl mx-auto p-6 text-sm text-slate-600 dark:text-slate-400">
         <p>The ward report card is not available for {cityDisplayName} yet.</p>
         <p className="mt-2">
-          The ward map and the ward rankings cover {cityDisplayName} in the
-          meantime.
+          {hasWardRankings(cityId)
+            ? `The ward map and the ward rankings cover ${cityDisplayName} in the meantime.`
+            : `The ward map covers ${cityDisplayName} in the meantime.`}
         </p>
         <div className="mt-3 flex gap-4">
           <Link href={`/${cityId}/my-ward`} className="text-blue-600 hover:underline">
             ← Back to ward map
           </Link>
-          <Link href={`/${cityId}/my-ward/rankings`} className="text-blue-600 hover:underline">
-            Ward rankings →
-          </Link>
+          {hasWardRankings(cityId) && (
+            <Link href={`/${cityId}/my-ward/rankings`} className="text-blue-600 hover:underline">
+              Ward rankings →
+            </Link>
+          )}
         </div>
       </div>
     );

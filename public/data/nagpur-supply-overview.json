@@ -1,0 +1,446 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "nmc-budget",
+        "title": "NMC Budget 2026-27 (Commissioner's speech, printed pp.B-3 and B-4) and Budget 2025-26 (p.B-4)",
+        "publisher": "Nagpur Municipal Corporation",
+        "license": "Nagpur Municipal Corporation publication, cited with attribution",
+        "retrieved": "2026-10-15"
+      },
+      {
+        "id": "nmc-esr",
+        "title": "NMC Environment Status Reports 2023-24 (pp.132-134), 2022-23 (pp.161-163), 2019-20 (pp.28-31) and the 2017-18 draft (pp.18-23)",
+        "publisher": "Nagpur Municipal Corporation, prepared by CSIR-NEERI",
+        "license": "Nagpur Municipal Corporation publication, cited with attribution",
+        "retrieved": "2026-10-15"
+      },
+      {
+        "id": "mwrra-case-8-2017",
+        "title": "MWRRA Order No. 13/2018 in Case No. 8 of 2017, 12 Sep 2018 (para 32(v), p.23)",
+        "publisher": "Maharashtra Water Resources Regulatory Authority",
+        "license": "Maharashtra government publication, cited with attribution",
+        "retrieved": "2026-10-15"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_nagpur_supply.py",
+    "note": "Transcribed from NMC's budgets and Environment Status Reports and checked against their printed totals at build time. The Budget 2026-27 and the MWRRA order are scans with no text layer: OCR, checked on the page image (Budget pp.B-3, B-4; order p.23). Text-layer figures re-check with --verify. Where editions disagree, both figures ship as findings."
+  },
+  "hero_copy": {
+    "headline": "Four of Nagpur's five treatment plants, 546 of 786 MLD, run on Pench water from Navegaon Khairi",
+    "body": "{city} has five water treatment plants rated 786 MLD. Four of them, 546 MLD, take water from the Pench Project Complex: Totladoh, a hydro-power reservoir whose water is shared with Madhya Pradesh, releases to the Navegaon Khairi pick-up dam, and the water goes to the Mahadula pumping station, at km {km} of the old canal route (ESR 2017-18 draft); NMC told the state regulator that a closed pipeline replaced the canal in April 2015. The fifth plant, 240 MLD, draws from the Kanhan river 14 km from the city. NMC's 2026-27 budget (published May 2026) counts 4.50 lakh water connections, 106 water tanks, 4,650 km of distribution mains and 37 tankers serving areas the network does not reach. NMC's latest published water balance, for 2023-24, records 706 MLD supplied, 410 MLD billed and 41.91% lost between source and consumer. The same report counts certain areas in 36 of the 73 command areas as dark zones, where supply was found to be less than two hours a day.",
+    "wtp_label": "NMC treatment capacity",
+    "wtp_sub": "Pench I 136, Pench II 175, Pench III 120, Pench IV 115 and Kanhan 240 MLD (NMC ESR 2023-24, pp.132-133).",
+    "uphill_label": "Old canal route to Mahadula",
+    "uphill_sub": "Navegaon Khairi to the Mahadula pumping station by the canal (ESR 2017-18 draft, p.22). NMC told the state regulator during Case 8 of 2017 that a closed pipeline replaced the canal in April 2015; no source gives the pipeline's length.",
+    "nrw_sub": "2023-24: 706 MLD supplied, 410 MLD billed (NMC ESR 2023-24, p.133).",
+    "footer": "Figures from NMC Budget 2026-27, Commissioner's speech, pp.B-3 and B-4 (published May 2026; a scan, read from the page images), NMC ESR 2023-24 (CSIR-NEERI), pp.132-134, the ESR 2017-18 draft, pp.19 and 22, and MWRRA Order 13/2018, p.23. The latest water balance NMC has put online is for 2023-24."
+  },
+  "supply_chain": [
+    "Totladoh reservoir on the Pench, whose water is shared with Madhya Pradesh, releases to the Navegaon Khairi pick-up dam",
+    "Mahadula pumping station, at km 48.5 of the old canal route (ESR 2017-18 draft); a closed pipeline replaced the canal in April 2015 (NMC)",
+    "Kanhan river intake, 14 km from the city",
+    "Five treatment plants, 786 MLD: Pench I to IV 546, Kanhan 240",
+    "106 water tanks and 4,650 km of distribution mains",
+    "4.50 lakh water connections"
+  ],
+  "_view_overrides": {
+    "subtitle": "Structure from NMC's Budget 2026-27 (published May 2026) and NMC ESR 2023-24. The source split is rated treatment capacity: NMC's reports give no supply figure per source. Supply in 2023-24 was 706 MLD.",
+    "wtp_label": "NMC treatment capacity",
+    "source_mix_label": "Treatment capacity by source - {total} MLD"
+  },
+  "current_supply_mix_mld": [
+    {
+      "source": "Pench, four plants (rated capacity)",
+      "scheme": "Pench I, II, III and IV",
+      "mld": 546,
+      "capacity_mld": 546,
+      "annual_mcft": null,
+      "note": "'The maximum water is received to city is from Pench Dam' (NMC ESR 2023-24, p.133)."
+    },
+    {
+      "source": "Kanhan, one plant (rated capacity)",
+      "scheme": "Kanhan Water Works",
+      "mld": 240,
+      "capacity_mld": 240,
+      "annual_mcft": null,
+      "note": "Run-of-river intake behind a 1956 barrage of 7.82 Mm3 (ESR 2017-18 draft, p.19)."
+    }
+  ],
+  "current_supply_total_mld": 786,
+  "_supply_total_note": "786 MLD is rated treatment capacity. NMC reported supplying 706 MLD in 2023-24 (257.642 Mcum over the year, NMC ESR 2023-24 Table 6.2).",
+  "wtps_summary": {
+    "fresh_water_wtps_count": 5,
+    "fresh_water_capacity_mld": 786,
+    "total_installed_capacity_mld": 786,
+    "plants": [
+      {
+        "name": "Pench I",
+        "capacity_mld": 136,
+        "raw_water": "Pench"
+      },
+      {
+        "name": "Pench II",
+        "capacity_mld": 175,
+        "raw_water": "Pench"
+      },
+      {
+        "name": "Pench III",
+        "capacity_mld": 120,
+        "raw_water": "Pench"
+      },
+      {
+        "name": "Pench IV (Godhani)",
+        "capacity_mld": 115,
+        "raw_water": "Pench"
+      },
+      {
+        "name": "Kanhan",
+        "capacity_mld": 240,
+        "raw_water": "Kanhan"
+      }
+    ],
+    "_source_ref": "NMC ESR 2023-24, s.6.2.1, printed pp.132-133; the same list in ESR 2022-23, p.161",
+    "edition_2017_18": {
+      "plants": [
+        {
+          "name": "Kanhan Water Works",
+          "capacity_mld": 240,
+          "actual_supply_mld": 185
+        },
+        {
+          "name": "Pench Phase I",
+          "capacity_mld": 136,
+          "actual_supply_mld": 148
+        },
+        {
+          "name": "Pench Phase II",
+          "capacity_mld": 133,
+          "actual_supply_mld": 122
+        },
+        {
+          "name": "Pench Phase III, Stage I",
+          "capacity_mld": 120,
+          "actual_supply_mld": 100
+        },
+        {
+          "name": "Godhni Pench-IV",
+          "capacity_mld": 115,
+          "actual_supply_mld": 86
+        },
+        {
+          "name": "Old Gorewada",
+          "capacity_mld": 16,
+          "actual_supply_mld": 16
+        }
+      ],
+      "capacity_mld": 760,
+      "actual_supply_mld": 657,
+      "_source_ref": "ESR 2017-18 draft (CSIR-NEERI), Table 4.4, printed p.23"
+    },
+    "note": "EDITION FINDING. The 2017-18 draft lists six plants at 760 MLD delivering 657 (Pench II at 133, Old Gorewada at 16). The 2022-23 and 2023-24 editions list five at 786 (Pench II at 175, no Old Gorewada). Neither edition explains the change; both lists are carried as printed."
+  },
+  "allocation_context": {
+    "transmission_distance_km": 48.5,
+    "nrw_pct": 41.91,
+    "_source_ref": "km: ESR 2017-18 draft p.22 ('48.50 Km'; NMC to MWRRA in 2017: 48.4 km of canal, Order 13/2018 para 32(v)). Loss: NMC ESR 2023-24, p.133, 'loss of water ... from source to consumer'."
+  },
+  "distribution": {
+    "population_served": null,
+    "administrative_zones": 10,
+    "ground_level_cwrs": 106,
+    "distribution_network_km": 4650,
+    "connections": {
+      "total": 450000
+    },
+    "_connections_note": "NMC Budget 2026-27, p.B-3 (published May 2026): 4.50 lakh water connections, 106 water tanks, 4,650 km of distribution mains. NMC ESR 2023-24 counts 73 operating command areas in ten water distribution zones.",
+    "note": "Population left off: the last census count (2011) is fifteen years old, and the ESR's own estimate cites a commercial website. The ten zones are NMC's ten water distribution zones (NMC ESR 2023-24, p.133)."
+  },
+  "water_balance_2023_24": {
+    "supplied_mld": 706,
+    "billed_mld": 410,
+    "loss_pct": 41.91,
+    "loss_pct_from_410_of_706": 41.93,
+    "pure_water_supplied_mcm": 257.642,
+    "pure_water_supplied_mld_over_365_days": 705.9,
+    "pure_water_supplied_mld_over_366_days": 703.9,
+    "monthly_pure_water_mm3": [
+      {
+        "month": "2023-04",
+        "mm3": 21.245
+      },
+      {
+        "month": "2023-05",
+        "mm3": 22.366
+      },
+      {
+        "month": "2023-06",
+        "mm3": 21.697
+      },
+      {
+        "month": "2023-07",
+        "mm3": 21.803
+      },
+      {
+        "month": "2023-08",
+        "mm3": 21.962
+      },
+      {
+        "month": "2023-09",
+        "mm3": 21.071
+      },
+      {
+        "month": "2023-10",
+        "mm3": 22.265
+      },
+      {
+        "month": "2023-11",
+        "mm3": 20.85
+      },
+      {
+        "month": "2023-12",
+        "mm3": 21.281
+      },
+      {
+        "month": "2024-01",
+        "mm3": 21.452
+      },
+      {
+        "month": "2024-02",
+        "mm3": 19.856
+      },
+      {
+        "month": "2024-03",
+        "mm3": 21.794
+      }
+    ],
+    "unbilled_mld": 296,
+    "_source_ref": "NMC ESR 2023-24, s.6.2.1 and Table 6.2, printed p.133",
+    "_quote": "Of the 706 MLD water supplied to the city, 41.91% loss of water occurred during the transport and distribution of raw water from source to consumer ... the total volume of water which reached the consumers and was billed for the period Apr-2023-Mar 2024 was 410 MLD (pure water supply of 257.642 MCM)",
+    "_note": "257.642 Mcum is the supplied total (Table 6.2's monthly 'pure water supply' rows): 706 MLD over 365 days, 704 over the 366 days of 2023-24. The report's sentence pairs it with the billed 410 MLD; its table and the arithmetic make it the supplied total. 410 MLD billed is about 150 Mcum a year. NMC prints 41.91%; 410 of 706 gives 41.93%, the same to rounding."
+  },
+  "water_balance_2022_23": {
+    "supplied_mld_stated": "680-700",
+    "billed_mld": 377.454,
+    "loss_pct_stated": 47,
+    "loss_pct_by_own_table": 45.0,
+    "pure_water_supplied_mcm": 250.679,
+    "monthly_pure_water_mm3": [
+      {
+        "month": "2022-04",
+        "mm3": 20.788
+      },
+      {
+        "month": "2022-05",
+        "mm3": 21.867
+      },
+      {
+        "month": "2022-06",
+        "mm3": 21.007
+      },
+      {
+        "month": "2022-07",
+        "mm3": 20.348
+      },
+      {
+        "month": "2022-08",
+        "mm3": 20.507
+      },
+      {
+        "month": "2022-09",
+        "mm3": 20.227
+      },
+      {
+        "month": "2022-10",
+        "mm3": 21.043
+      },
+      {
+        "month": "2022-11",
+        "mm3": 20.077
+      },
+      {
+        "month": "2022-12",
+        "mm3": 21.419
+      },
+      {
+        "month": "2023-01",
+        "mm3": 21.375
+      },
+      {
+        "month": "2023-02",
+        "mm3": 19.622
+      },
+      {
+        "month": "2023-03",
+        "mm3": 22.392
+      }
+    ],
+    "_source_ref": "ESR 2022-23, printed pp.161-162 and Table 6.2",
+    "_finding": "EDITION FINDING. The 2022-23 text states a 47% loss. Its own Table 6.2 gives 250.679 Mcum for the year (686.8 MLD over 365 days) against 377.454 MLD billed, a 45.0% loss. Both are carried as printed. Its twelve monthly rows add to 250.672 Mcum against the printed total of 250.679."
+  },
+  "service_levels": {
+    "tankers_nmc": [
+      {
+        "when": "2016 (ESR) or 2018 (Budgets)",
+        "count": 346,
+        "source": "ESR 2022-23 p.162 and ESR 2023-24 p.134 date it 2016; Budgets 2025-26 and 2026-27, p.B-4, date it 2018"
+      },
+      {
+        "when": "2023",
+        "count": 193,
+        "source": "ESR 2022-23, pp.162-163"
+      },
+      {
+        "when": "2024",
+        "count": 78,
+        "source": "ESR 2023-24, p.134"
+      },
+      {
+        "when": "early 2025",
+        "count": 59,
+        "source": "Budget 2025-26, p.B-4"
+      },
+      {
+        "when": "early 2026",
+        "count": 37,
+        "source": "Budget 2026-27, p.B-4 (scan, checked on the page image)"
+      }
+    ],
+    "_tankers_note": "NMC's own count of tankers serving areas without a network. The documents do not say whether it counts vehicles or daily deployments. Budget 2025-26 names four zones as tanker-free: Dharampeth, Nehru Nagar, Hudkeshwar-Narsala and Mangalwari.",
+    "dark_zones": [
+      {
+        "year": "2022-23",
+        "command_areas": 73,
+        "with_areas_under_2h": 39,
+        "source": "ESR 2022-23, p.163"
+      },
+      {
+        "year": "2023-24",
+        "command_areas": 73,
+        "with_areas_under_2h": 36,
+        "source": "ESR 2023-24, p.134"
+      }
+    ],
+    "_dark_zones_note": "The ESR's wording is 'certain areas under 36 CAs were still considered as dark zones since the water supply was found to be less than 2 h per day': some areas within those command areas, not the whole of each. The ESRs give no citywide hours of supply. ESR 2019-20 (p.31) counted 21 of 68 command areas on 24x7 supply.",
+    "point_of_use_samples_2023_24": {
+      "tested": 16364,
+      "fit": 16050,
+      "unfit": 314,
+      "fit_pct": 98.08,
+      "laboratory": "Regional Public Health Laboratory, Nagpur",
+      "_source_ref": "NMC ESR 2023-24, p.134"
+    },
+    "raw_water_losses_upstream_of_plants": {
+      "canal_seepage_pct": "20-25",
+      "pipeline_leakage_mld": "30-40",
+      "_source_refs": [
+        "ESR 2017-18 draft p.22: seepage of 20-25% over 48.50 km of canal (water audit and leak detection study)",
+        "ESR 2019-20 p.31: NMC's Action Taken Report of June 2019 puts leakage on the Navegaon Khairi-Mahadula raw-water pipeline at 30-40 MLD a day"
+      ],
+      "_note": "These losses sit before the treatment plants; the 41.91% runs from source to consumer."
+    }
+  },
+  "network_series": [
+    {
+      "year": "2017-18",
+      "network_km": 2100,
+      "command_areas": 68,
+      "source": "ESR 2017-18 draft p.23 ('appx 2100 km'); 68 command areas also in ESR 2019-20"
+    },
+    {
+      "year": "2022-23 and 2023-24",
+      "command_areas": 73,
+      "source": "ESR 2022-23 p.161; ESR 2023-24 p.133"
+    },
+    {
+      "year": "2026",
+      "network_km": 4650,
+      "water_tanks": 106,
+      "connections_lakh": 4.5,
+      "source": "Budget 2026-27 p.B-3"
+    }
+  ],
+  "water_revenue_inr_crore": [
+    {
+      "year": "2024-25",
+      "budgeted": 250.0,
+      "received": 195.0,
+      "received_as_of": "to date, Budget 2025-26 (April 2025)",
+      "source": "Budget 2025-26, p.B-4"
+    },
+    {
+      "year": "2025-26",
+      "budgeted": 250.0,
+      "received": 175,
+      "received_as_of": "'January 2027' as printed [sic]; the speech prints no date (published May 2026, latest internal date late February 2026)",
+      "source": "Budget 2026-27, p.B-3"
+    },
+    {
+      "year": "2026-27",
+      "budgeted": 275.0,
+      "received": null,
+      "source": "Budget 2026-27, p.B-4"
+    }
+  ],
+  "_edition_findings": [
+    "Treatment plants: 760 MLD across six (2017-18 draft) against 786 across five (2022-23, 2023-24); Pench II 133 to 175 MLD, Old Gorewada's 16 MLD no longer listed.",
+    "Loss: 47% stated in the 2022-23 text against 45.0% from its own table; 2023-24 prints 41.91%, and 410 of 706 gives 41.93%.",
+    "Supply volume: 700-760 MLD (ESR 2019-20 p.28), 680-700 MLD (ESR 2022-23), 706 MLD (ESR 2023-24).",
+    "Tankers: the 346 baseline is dated 2016 by the ESRs and 2018 by the budgets.",
+    "Network: about 2,100 km (ESR 2017-18 draft) against 4,650 km (Budget 2026-27); 68 command areas (2017-18, 2019-20) against 73 (2022-23, 2023-24) and 106 water tanks (Budget 2026-27).",
+    "Budget 2026-27 reports water revenue received 'to January 2027' in a speech that prints no date (published May 2026; its latest internal date is late February 2026), read here as a misprint for January 2026.",
+    "Conveyance: 48.50 km of canal (ESR 2017-18 p.22) against 48.4 km (NMC to MWRRA, Order 13/2018 para 32(v)); NMC says a closed pipeline has carried the water since April 2015 (same paragraph)."
+  ],
+  "_sources": [
+    {
+      "name": "NMC Budget 2026-27, Commissioner's speech, pp.B-3 to B-4 (Marathi, scan)",
+      "url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf",
+      "date": "2026-05",
+      "extracted": "2026-10-15"
+    },
+    {
+      "name": "NMC Budget 2025-26, Commissioner's speech, p.B-4 (Marathi)",
+      "url": "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf",
+      "date": "2025-04",
+      "extracted": "2026-10-15"
+    },
+    {
+      "name": "NMC Environment Status Report 2023-24 (CSIR-NEERI)",
+      "url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf",
+      "date": "2025-08",
+      "extracted": "2026-10-15"
+    },
+    {
+      "name": "NMC Environment Status Report 2022-23 (CSIR-NEERI)",
+      "url": "https://www.nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_final_Report_2022-2023.pdf",
+      "date": "2025-08",
+      "extracted": "2026-10-15"
+    },
+    {
+      "name": "NMC Environment Status Report 2019-20 (Wayback copy)",
+      "url": "https://web.archive.org/web/20220806150918/https://www.nmcnagpur.gov.in/assets/250/2021/06/mediafiles/Final_2020_ESR_-_AK.pdf",
+      "date": "2020-12",
+      "extracted": "2026-10-15"
+    },
+    {
+      "name": "NMC / CSIR-NEERI draft Environmental Status Report 2017-18 (third-party mirror)",
+      "url": "https://caknnagpur871784109.wordpress.com/wp-content/uploads/2019/12/environmental-status-report-nagpur-2017-18.pdf",
+      "date": "2018-06",
+      "extracted": "2026-10-15"
+    },
+    {
+      "name": "MWRRA Order No. 13/2018, Case No. 8 of 2017",
+      "url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-Final-Order.pdf",
+      "date": "2018-09-12",
+      "extracted": "2026-10-15"
+    }
+  ]
+}

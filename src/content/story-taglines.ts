@@ -21,6 +21,8 @@ export const STORY_TAGLINES: Record<CityId, string> = {
     "The city that outgrew its water in twelve years",
   pune:
     "The city that dammed one river four times and still counts four hours",
+  nagpur:
+    "The city named for a small stream, and the river from Madhya Pradesh that now fills its taps",
   surat:
     "The city the river made, unmade, and made again",
   ahmedabad:

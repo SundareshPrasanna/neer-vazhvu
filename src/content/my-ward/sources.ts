@@ -8,7 +8,8 @@ export interface WardSourceCopy {
   gw?: TranslationEntry;
   /** CGWB block assessment + nearest Year Book well (groundwater card). */
   gwYearbook?: TranslationEntry;
-  /** No Year Book well within 5 km of the ward. */
+  /** No Year Book well within 5 km of the ward. "{map}" becomes a link to
+   *  the city's groundwater page, labelled with its name. */
   gwNoWell?: TranslationEntry;
   flood?: TranslationEntry;
   infra?: TranslationEntry;
@@ -29,12 +30,12 @@ export const MY_WARD_SOURCES: Partial<Record<CityId, WardSourceCopy>> = {
   },
   madurai: {
     gwYearbook: { en: "Source: CGWB Tamil Nadu Ground Water Year Book 2023-24 + GEC 2022 block-level dynamic groundwater resource assessment.", ta: "ஆதாரம்: CGWB தமிழ்நாடு நிலத்தடி நீர் ஆண்டுப் புத்தகம் 2023-24 + GEC 2022 பிளாக்-நிலை இயங்கு நிலத்தடி நீர் வள மதிப்பீடு.", kn: "ಮೂಲ: CGWB ತಮಿಳುನಾಡು ಅಂತರ್ಜಲ ಇಯರ್ ಬುಕ್ 2023-24 + GEC 2022 ಬ್ಲಾಕ್-ಮಟ್ಟದ ಡೈನಮಿಕ್ ಅಂತರ್ಜಲ ಸಂಪನ್ಮೂಲ ಮೌಲ್ಯಮಾಪನ." },
-    gwNoWell: { en: "No CGWB Year Book well within 5 km of this ward; nearest readings shown on /madurai/groundwater.", ta: "இந்த வார்டிலிருந்து 5 கி.மீ-க்குள் CGWB ஆண்டுப் புத்தக கிணறு இல்லை; /madurai/groundwater-இல் அருகிலுள்ள அளவீடுகள் காண்க.", kn: "ಈ ವಾರ್ಡ್‌ನ 5 ಕಿಮೀ ಒಳಗೆ ಯಾವುದೇ CGWB Year Book ಬಾವಿ ಇಲ್ಲ; ಹತ್ತಿರದ ಮಾಪನಗಳನ್ನು /madurai/groundwater ನಲ್ಲಿ ತೋರಿಸಲಾಗಿದೆ." },
+    gwNoWell: { en: "No CGWB Year Book well within 5 km of this ward; nearest readings shown on the {map}.", ta: "இந்த வார்டிலிருந்து 5 கி.மீ-க்குள் CGWB ஆண்டுப் புத்தக கிணறு இல்லை; {map}-இல் அருகிலுள்ள அளவீடுகள் காண்க.", kn: "ಈ ವಾರ್ಡ್‌ನ 5 ಕಿಮೀ ಒಳಗೆ ಯಾವುದೇ CGWB Year Book ಬಾವಿ ಇಲ್ಲ; ಹತ್ತಿರದ ಮಾಪನಗಳನ್ನು {map} ನಲ್ಲಿ ತೋರಿಸಲಾಗಿದೆ." },
     river: CPCB_NWMP,
   },
   bangalore: {
     gwYearbook: { en: "Source: CGWB Karnataka Ground Water Year Book + IN-GRES 2025-26 block-level dynamic groundwater resource assessment.", kn: "ಮೂಲ: CGWB ಕರ್ನಾಟಕ ಅಂತರ್ಜಲ ವಾರ್ಷಿಕ ಪುಸ್ತಕ + IN-GRES 2025-26 ಬ್ಲಾಕ್-ಮಟ್ಟದ ಚಲನಶೀಲ ಅಂತರ್ಜಲ ಸಂಪನ್ಮೂಲ ಮೌಲ್ಯಮಾಪನ." },
-    gwNoWell: { en: "No CGWB Year Book well within 5 km of this ward; nearest readings shown on /bangalore/groundwater.", kn: "ಈ ವಾರ್ಡ್‌ನಿಂದ 5 ಕಿ.ಮೀ ಒಳಗೆ CGWB ವಾರ್ಷಿಕ ಪುಸ್ತಕದ ಬಾವಿ ಇಲ್ಲ; ಹತ್ತಿರದ ವಾಚನಗಳು /bangalore/groundwater ನಲ್ಲಿ." },
+    gwNoWell: { en: "No CGWB Year Book well within 5 km of this ward; nearest readings shown on the {map}.", kn: "ಈ ವಾರ್ಡ್‌ನಿಂದ 5 ಕಿ.ಮೀ ಒಳಗೆ CGWB ವಾರ್ಷಿಕ ಪುಸ್ತಕದ ಬಾವಿ ಇಲ್ಲ; ಹತ್ತಿರದ ವಾಚನಗಳು {map} ನಲ್ಲಿ." },
     flood: { en: "Source: KSNDMC flood-prone zones + BBMP flooding hotspots (Sept 2022).", kn: "ಮೂಲ: KSNDMC ಪ್ರವಾಹ ಪೀಡಿತ ವಲಯಗಳು + BBMP ಪ್ರವಾಹ ಹಾಟ್‌ಸ್ಪಾಟ್‌ಗಳು (ಸೆಪ್ಟೆಂಬರ್ 2022)." },
     infra: { en: "Source: BBMP storm-water-drain master plan (partial); BWSSB sewerage (design capacities).", kn: "ಮೂಲ: BBMP ಮಳೆನೀರು ಚರಂಡಿ ಮಾಸ್ಟರ್ ಪ್ಲಾನ್ (ಭಾಗಶಃ); BWSSB ಒಳಚರಂಡಿ (ವಿನ್ಯಾಸ ಸಾಮರ್ಥ್ಯ)." },
     river: CPCB_NWMP,
@@ -46,13 +47,20 @@ export const MY_WARD_SOURCES: Partial<Record<CityId, WardSourceCopy>> = {
   },
   mumbai: {
     gwYearbook: { en: "Source: CGWB Ground Water Year Book of Maharashtra. Mumbai City + Suburban are excluded from the block-level GEC assessment - stated, not hidden.", mr: "स्रोत: CGWB महाराष्ट्र भूजल वार्षिक पुस्तिका. मुंबई शहर + उपनगर ब्लॉक-स्तरीय GEC मूल्यांकनातून वगळलेले आहेत." },
-    gwNoWell: { en: "No CGWB Year Book well within 5 km of this ward; nearest readings shown on /mumbai/groundwater.", mr: "या वॉर्डपासून 5 किमीच्या आत CGWB वार्षिक पुस्तिकेची विहीर नाही; जवळची वाचने /mumbai/groundwater वर." },
+    gwNoWell: { en: "No CGWB Year Book well within 5 km of this ward; nearest readings shown on the {map}.", mr: "या वॉर्डपासून 5 किमीच्या आत CGWB वार्षिक पुस्तिकेची विहीर नाही; जवळची वाचने {map} वर." },
     flood: { en: "Source: BMC Disaster Management chronic-flooding register + 26 July 2005 record (Concerned Citizens' Commission).", mr: "स्रोत: BMC आपत्ती व्यवस्थापन दीर्घकालीन पूर नोंदवही + 26 जुलै 2005 नोंद." },
     infra: { en: "Source: OSM-traced drainage (community-mapped; BMC's BRIMSTOWAD as-builts are not public); MCGM sewage treatment facilities.", mr: "स्रोत: OSM-आधारित नाले (समुदाय-नकाशित); MCGM सांडपाणी प्रक्रिया केंद्रे." },
   },
+  // Nagpur: no flood, infra or lost-water-body line, because no ward-level
+  // source exists for them (flood is a narrative page; no storm-drain GIS).
+  nagpur: {
+    gwYearbook: { en: "Source: IN-GRES groundwater assessment by taluka unit + GSDA and CGWB telemetry on the National Water Data Portal; latest monthly mean shown." },
+    gwNoWell: { en: "No telemetry well within 5 km of this ward's centre; every station is on the {map}." },
+    river: { en: "Distance is straight-line from the ward centre to the nearest river sampling point with a published location; for every ward this is one of NMC's 23 points (Environment Status Report 2023-24, one sampling round, monsoon 2023)." },
+  },
   ahmedabad: {
     gwYearbook: { en: "Source: IN-GRES 2025-26 assessment (the Ahmedabad Urban unit holds every AMC ward) + Gujarat Surface Water and Ground Water Department and CGWB telemetry on the National Water Data Portal; latest monthly mean shown." },
-    gwNoWell: { en: "No telemetry well within 5 km of this ward's centre; all stations are on /ahmedabad/groundwater." },
+    gwNoWell: { en: "No telemetry well within 5 km of this ward's centre; all stations are on the {map}." },
     river: { en: "Distance is straight-line from the ward centre to the nearest CPCB monitoring station on the Sabarmati. Water quality from CPCB's annual NWMP river tables, 2018-2024." },
   },
 };

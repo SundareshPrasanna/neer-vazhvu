@@ -680,9 +680,7 @@ export async function CityDashboard({ cityId }: { cityId: string }) {
       <div className="text-xs text-slate-500 dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
         <p>
           <span className="font-semibold">Methodology:</span>{" "}
-          {config.waterSources.some((s) => s.type === "reservoir")
-            ? "Reservoir levels"
-            : "Source levels"}{" "}
+          {`${config.waterSources.some((s) => s.type === "reservoir") ? "Reservoir" : "Source"} ${config.reservoirReadingNoun ?? "levels"}`}{" "}
           for {config.displayName} from {config.reservoirPublisher ?? config.primaryAuthority.acronym}.
           {config.defaultConsumptionMld != null && (
             <>

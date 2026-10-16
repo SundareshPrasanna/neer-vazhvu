@@ -35,6 +35,9 @@ export interface FloodConfig {
   /** Scope badge text (e.g. "Vaigai system scope", "Yamuna basin scope").
    *  Config-driven so no city's system name leaks into another city's page. */
   scope_label?: BilingualText;
+  /** Replaces the shared "No known public hazard map" badge for a city
+   *  that has partial official flood lines (Nagpur). */
+  hazard_badge?: BilingualText;
   /** Dam/barrage-release threshold, for cities whose flooding is
    *  release-driven (Madurai's Vaigai, Delhi's Hathnikund). OPTIONAL: not
    *  every flood geography has one. Hyderabad's flooding is rainfall plus

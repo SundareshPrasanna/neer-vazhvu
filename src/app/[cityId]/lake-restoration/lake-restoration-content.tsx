@@ -99,6 +99,34 @@ const CONFIDENCE_TONE: Record<FlagshipBody["confidence"], string> = {
   C: "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900",
 };
 
+// A court-order link is labelled by what sits behind it: the order itself, a
+// document on an official site, press coverage, or any other source.
+const LINK_HOSTS: Record<string, { labelKey: string; name: string }> = {
+  "indiankanoon.org":      { labelKey: "lake.link_order_text", name: "Indian Kanoon" },
+  "greentribunal.gov.in":  { labelKey: "lake.link_document", name: "NGT website" },
+  "lawbeat.in":            { labelKey: "lake.link_coverage", name: "LawBeat" },
+  "livelaw.in":            { labelKey: "lake.link_coverage", name: "LiveLaw" },
+  "lawtrend.in":           { labelKey: "lake.link_coverage", name: "LawTrend" },
+  "business-standard.com": { labelKey: "lake.link_coverage", name: "Business Standard" },
+  "deccanherald.com":      { labelKey: "lake.link_coverage", name: "Deccan Herald" },
+  "thewire.in":            { labelKey: "lake.link_coverage", name: "The Wire" },
+  "sandrp.in":             { labelKey: "lake.link_source", name: "SANDRP" },
+  "nagarikmancha.org":     { labelKey: "lake.link_source", name: "Nagarik Mancha" },
+};
+
+function courtLinkLabel(url: string, t: (key: string) => string): string {
+  let host = "";
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "");
+  } catch {}
+  const hit = Object.entries(LINK_HOSTS).find(([h]) => host === h || host.endsWith(`.${h}`))?.[1];
+  const key = hit?.labelKey ?? (/\.(gov|nic)\.in$/.test(host) ? "lake.link_document" : "lake.link_source");
+  return t(key).replace("{name}", hit?.name ?? host);
+}
+
+// Cases a bench opened itself (suo motu, often on a news report) had no petition.
+const SUO_MOTU = /suo motu|own motion|in re:? news item/i;
+
 const PRIORITY_TONE: Record<PriorityLevel, string> = {
   critical: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700",
   high:     "bg-orange-100 dark:bg-orange-900/40 text-orange-800 dark:text-orange-200 border-orange-300 dark:border-orange-700",
@@ -157,8 +185,10 @@ export function LakeRestorationContent({
   // are optional sections, so a city with neither was being promised two
   // things the page then did not show. Compose the sentence from what will
   // actually render instead of asserting a fixed feature list.
+  // "Scored by ..." holds only where a priority file scores the flagships shown.
+  const flagshipsScored = flagshipFile.bodies.some((b) => priorityByName.has(b.name));
   const introParts = [
-    t("lake.intro_flagship_clause"),
+    flagshipsScored ? t("lake.intro_flagship_clause") : t("lake.intro_flagship_plain"),
     ...(lost.length > 0 ? [t("lake.intro_lost_clause")] : []),
     ...(projectsFile.projects.length > 0 ? [t("lake.intro_programmes_clause")] : []),
     ...(projectsFile.court_orders.length > 0 ? [t("lake.intro_court_clause")] : []),
@@ -237,7 +267,8 @@ export function LakeRestorationContent({
                   {order.directive}.{" "}
                 </>
               )}
-              {t("lake.petition_filed")} <span className="italic">{order.concern}</span>
+              {SUO_MOTU.test(`${order.case} ${order.writ_petition}`) ? t("lake.taken_up_suo_motu") : t("lake.petition_filed")}{" "}
+              <span className="italic">{order.concern.replace(/\.$/, "")}</span>
               {order.specific_tanks.length > 0 && (
                 <>
                   {" "}
@@ -247,7 +278,7 @@ export function LakeRestorationContent({
               .
             </p>
             <a href={order.source} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
-              {t("lake.lawbeat_coverage")} →
+              {courtLinkLabel(order.source, t)} →
             </a>
           </CardContent>
         </Card>
@@ -271,8 +302,8 @@ export function LakeRestorationContent({
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">{p.scheme_name}</span>
                   <div className="flex items-center gap-2">
-                    {p.amount_cr && <span className="text-xs font-mono text-slate-500">Rs {p.amount_cr.toLocaleString()} cr</span>}
-                    <Badge variant="outline" className="text-[10px]">{p.status}</Badge>
+                    {p.amount_cr && <span className="shrink-0 text-xs font-mono text-slate-500">Rs {p.amount_cr.toLocaleString()} cr</span>}
+                    <Badge variant="outline" className="text-[10px] whitespace-normal shrink text-left rounded-md">{p.status}</Badge>
                     {p.partnership_unlock && (
                       <Badge className="text-[10px] bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
                         {t("lake.partnership_target")}

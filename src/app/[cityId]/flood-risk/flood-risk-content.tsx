@@ -45,7 +45,7 @@ export function FloodRiskContent({
             browser scaled the whole page down - the same failure #191 fixed on
             allocations and origins. Allow it to wrap and shrink. */}
         <Badge className="text-xs bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 whitespace-normal shrink min-w-0 text-left">
-          {t("flood.badge_no_hazard_map")}
+          {cfg.hazard_badge ? pick(cfg.hazard_badge) : t("flood.badge_no_hazard_map")}
         </Badge>
       </div>
 

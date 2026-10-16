@@ -59,6 +59,8 @@ interface Props {
   lostSource: string | null;
   /** Publishers of the current layer, from its provenance. */
   currentSource: string | null;
+  /** restoration-priority-<city>.json exists; without it there is no Restoration Priority mode. */
+  hasRestoration: boolean;
 }
 
 type CensusSummary = { total: number; encroached: number; avgStorageLossPct: number | null };
@@ -83,7 +85,7 @@ function Stat({ swatch, value, label }: { swatch: string; value: ReactNode; labe
   );
 }
 
-export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarratives, lostSource, currentSource }: Props) {
+export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarratives, lostSource, currentSource, hasRestoration }: Props) {
   useLockBodyScroll();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
@@ -94,13 +96,13 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
   const hasCatchments = config.hasCatchments ?? false;
   const hasWardSearch = wb?.wardSearch ?? false;
   const hasLostBodies = wb?.lostBodies ?? false;
-  const hasRankingTab = wb?.rankingTab ?? false;
+  const hasRankingTab = (wb?.rankingTab ?? false) && hasRestoration;
   const hasLegalRegister = wb?.legalRegister ?? false;
   const view = wb?.mapView ?? { center: [config.center.lat, config.center.lng] as [number, number], zoom: 11 };
 
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     const m = searchParams.get("mode");
-    if (m === "restoration") return "restoration";
+    if (m === "restoration" && hasRestoration) return "restoration";
     if (m === "catchments" && hasCatchments) return "catchments";
     return "water-bodies";
   });
@@ -108,8 +110,6 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
   const [focusCenter, setFocusCenter] = useState<[number, number] | undefined>();
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [restorationData, setRestorationData] = useState<RestorationPriorityData | null>(null);
-  // Until the fetch settles the Restoration mode stays offered, as before.
-  const [restorationLoaded, setRestorationLoaded] = useState(false);
   const [wardProfiles, setWardProfiles] = useState<WardProfile[]>([]);
   const [censusData, setCensusData] = useState<CensusWaterBodyProperties[]>([]);
   const [censusSummary, setCensusSummary] = useState<CensusSummary | null>(null);
@@ -133,14 +133,11 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
   // Restoration scores, then the body to open on load: the ?ward= deep link's top body (or the
   // nearest one), else the city's configured body, else the top-priority body in restoration view.
   useEffect(() => {
+    if (!hasRestoration) return;
     fetchJsonOrNull<RestorationPriorityData>(restorationPriorityUrl(cityId))
       .then(async (d) => {
         setRestorationData(d);
-        setRestorationLoaded(true);
-        if (!d) {
-          if (searchParams.get("mode") === "restoration") setViewMode("water-bodies");
-          return;
-        }
+        if (!d) return;
         const wardParam = searchParams.get("ward");
         if (hasWardSearch && wardParam) {
           const wardNum = parseInt(wardParam, 10);
@@ -174,10 +171,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
               : undefined;
         if (first) setSelected(toSelected(first));
       })
-      .catch(() => {
-        setRestorationData(null);
-        setRestorationLoaded(true);
-      });
+      .catch(() => setRestorationData(null));
   // First-load anchor only: toggling modes must not re-open a body.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cityId]);
@@ -265,7 +259,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
       onChange={changeMode}
       catchmentsAvailable={hasCatchments}
       catchmentsGapNote={config.catchmentsGapNote}
-      restorationAvailable={!restorationLoaded || restorationData != null}
+      restorationAvailable={hasRestoration && restorationData?.water_bodies.length !== 0}
     />
   );
 
@@ -379,7 +373,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
           <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
             {currentSource && (
               <div>
-                {t("wb.osm_source")} <span className="font-semibold text-slate-700 dark:text-slate-300">{currentSource}</span>
+                {wb?.currentSourceLabel ?? t("wb.osm_source")} <span className="font-semibold text-slate-700 dark:text-slate-300">{currentSource}</span>
               </div>
             )}
             {viewMode === "water-bodies" && lostSourceLabel && (
