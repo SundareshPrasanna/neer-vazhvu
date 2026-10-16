@@ -12,7 +12,7 @@ import { PARAMETERS } from "@/lib/sightings/parameters";
 import { OTHER_KEY, REPORT_GROUPS, WATER_SOURCES, takesReadings } from "@/lib/sightings/taxonomy";
 import type { Handler, PublicReport } from "@/lib/sightings/types";
 import type { Channel } from "@/lib/sightings/routing/types";
-import { HandlerCard } from "./handler-card";
+import { HandlerCard, NationalOnly } from "./handler-card";
 import { Readings } from "./report-card";
 import { readPhotoMeta, shrinkPhoto } from "./use-citizen";
 
@@ -29,6 +29,7 @@ interface Sent {
   handler: Handler | null;
   national: Channel[];
   readings: PublicReport["readings"];
+  role: string | null;
 }
 
 const button = "w-full rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-40";
@@ -130,6 +131,8 @@ export function ReportFlow({ authFetch, onSent }: { authFetch: (url: string, ini
         {sent.readings.length > 0 && <Readings readings={sent.readings} />}
         {sent.handler ? (
           <HandlerCard handler={sent.handler} national={sent.national} />
+        ) : sent.role && sent.national.length > 0 ? (
+          <NationalOnly national={sent.national} />
         ) : (
           <p className="text-sm text-slate-600 dark:text-slate-400">This goes on the public record for the place. No public body takes complaints for it.</p>
         )}

@@ -24,6 +24,7 @@ const CPCB_CAUVERY =
 export const ERODE_RIVERS: BasinManifest = {
   basinId: "erode-rivers",
   cityIds: [],
+  stateCode: "TN",
   displayName: "Erode district: rivers, groundwater and industry",
   displayNameLocal: "ஈரோடு மாவட்டம்: ஆறுகள், நிலத்தடி நீர், தொழிற்சாலைகள்",
   blurb:

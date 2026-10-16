@@ -2,6 +2,7 @@ import "server-only";
 
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { listAtlasDistricts } from "@/lib/atlas/registry";
+import { tryGetBasinManifest } from "@/lib/basins";
 import { publicPhotoUrl } from "./photos";
 import { resolveAuthority } from "./routing";
 import { assess, getParameter, valueText } from "./parameters";
@@ -12,10 +13,11 @@ export const PUBLIC_EVENTS = new Set(["approved", "reported", "authority_done", 
 
 function placeName(row: SightingRow): string {
   if (row.place_kind === "city") return tryGetPlaceConfig(row.place_id)?.displayName ?? row.place_id;
+  if (row.place_kind === "basin") return tryGetBasinManifest(row.place_id)?.displayName ?? row.place_id;
   return listAtlasDistricts().find((d) => d.scopeId === row.place_id)?.name ?? row.place_id;
 }
 
-const unit = (row: SightingRow) => row.ward_name ?? (row.ward_id ? `Ward ${row.ward_id}` : null) ?? row.panchayat_name;
+const unit = (row: SightingRow) => row.ward_name ?? (row.ward_id ? `Ward ${row.ward_id}` : null) ?? row.panchayat_name ?? row.locality;
 
 function where(row: SightingRow): string | null {
   return [row.water_body_name, unit(row)].filter(Boolean).join(", ") || null;

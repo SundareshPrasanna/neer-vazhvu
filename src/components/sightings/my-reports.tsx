@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
 import type { OwnReport } from "@/lib/sightings/types";
-import { HandlerCard } from "./handler-card";
+import { HandlerCard, NationalOnly } from "./handler-card";
 import { ReportCard, StatusChip, day } from "./report-card";
 import { shrinkPhoto } from "./use-citizen";
 
@@ -160,9 +160,9 @@ export function MyReports({ reports, authFetch, onChange, onDeleted }: { reports
           )}
           {r.reviewStatus === "approved" && (
             <>
-              {r.handler && r.caseStatus === "open" && (
+              {r.caseStatus === "open" && (r.handler || r.nationalChannels.length > 0) && (
                 <div className="mt-3">
-                  <HandlerCard handler={r.handler} national={r.nationalChannels} />
+                  {r.handler ? <HandlerCard handler={r.handler} national={r.nationalChannels} /> : <NationalOnly national={r.nationalChannels} />}
                 </div>
               )}
               <Update report={r} authFetch={authFetch} onDone={onChange} />

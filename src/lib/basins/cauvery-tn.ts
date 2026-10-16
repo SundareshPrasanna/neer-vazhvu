@@ -23,6 +23,7 @@ export const CAUVERY_TN: BasinManifest = {
   cityIds: [],
   overviewMode: "sub-basins",
   parentBasinId: undefined,
+  stateCode: "TN",
   displayName: "Cauvery Basin (Tamil Nadu)",
   displayNameLocal: "காவிரி படுகை (தமிழ்நாடு)",
   canalHead: { name: "Mettur", liveGap: "the tnsmart daily reservoir feed" },

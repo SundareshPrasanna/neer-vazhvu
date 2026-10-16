@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const v = parsed.value;
 
     const place = await placePoint(request.nextUrl.origin, v.lng, v.lat);
-    if (!place) return NextResponse.json({ error: "This location is outside the places we cover so far." }, { status: 422 });
+    if (!place) return NextResponse.json({ error: "This location is outside the cities, districts and river basins we cover so far." }, { status: 422 });
 
     // Caps first, so a capped or suspended account costs no image processing.
     const admin = adminClient();
@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
         panchayat_name: place.panchayatName,
         water_body_id: place.waterBodyId,
         water_body_name: place.waterBodyName,
+        locality: place.locality,
         lat: v.lat,
         lng: v.lng,
         location_accuracy_m: v.accuracy,
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     // A piped-supply test outside a limit is the water board's to hear about.
     const role = roleFor(v.category, v.subcategory) ?? (v.waterSource === "piped" && readings.some((r) => r.assessment) ? "water_supply" : null);
     const routed = role ? resolveAuthority(role, { stateCode: place.stateCode, placeId: place.placeId, placeKind: place.placeKind, corporationId: place.corporationId }) : null;
-    return NextResponse.json({ data: { id, placeName: place.placeName, handler: routed?.authority ?? null, national: routed?.national ?? [], readings } });
+    return NextResponse.json({ data: { id, placeName: place.placeName, role, handler: routed?.authority ?? null, national: routed?.national ?? [], readings } });
   } catch (err) {
     logRouteError("sightings/POST", err);
     return internalServerError();

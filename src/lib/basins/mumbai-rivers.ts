@@ -19,6 +19,7 @@ import type { BasinManifest } from "./types";
 export const MUMBAI_RIVERS: BasinManifest = {
   basinId: "mumbai-rivers",
   cityIds: ["mumbai"],
+  stateCode: "MH",
   displayName: "Mumbai's rivers and lakes",
   displayNameLocal: "मुंबईच्या नद्या आणि तलाव",
   blurb:

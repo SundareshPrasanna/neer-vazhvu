@@ -14,6 +14,7 @@ import { CWC_CANALS, cwcCommandAreas, cwcGauges, districtFrame, groundwaterWells
 export const PALAKKAD_RIVERS: BasinManifest = {
   basinId: "palakkad-rivers",
   cityIds: [],
+  stateCode: "KL",
   displayName: "Palakkad district: rivers, reservoirs, wetlands and groundwater",
   displayNameLocal: "പാലക്കാട് ജില്ല: നദികൾ, അണക്കെട്ടുകൾ, തണ്ണീർത്തടങ്ങൾ, ഭൂഗർഭജലം",
   blurb:

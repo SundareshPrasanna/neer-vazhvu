@@ -12,6 +12,7 @@ import type { BasinManifest } from "./types";
 export const CHENNAI_RIVERS: BasinManifest = {
   basinId: "chennai-rivers",
   cityIds: ["chennai"],
+  stateCode: "TN",
   displayName: "Cooum, Adyar & Kosasthalaiyar",
   blurb:
     "Chennai's three rivers - the Cooum, the Adyar and the Kosasthalaiyar - and the Buckingham Canal that links them carry the city's sewage rather than fresh water. The Cooum and Adyar rank among India's most polluted river stretches; the Kosasthalaiyar drains the north past the Manali-Ennore industrial belt. The CAG estimated 243 MLD of raw sewage bypasses the treatment plants into the Cooum, Adyar and Buckingham Canal daily, even as the STPs run well below capacity. Click a river to open the treatment-and-waste gap view.",

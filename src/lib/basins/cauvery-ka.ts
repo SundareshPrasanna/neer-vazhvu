@@ -18,6 +18,7 @@ export const CAUVERY_KA: BasinManifest = {
   // not attached to a city page.
   cityIds: [],
   overviewMode: "sub-basins",
+  stateCode: "KA",
   displayName: "Cauvery Basin (Karnataka)",
   displayNameLocal: "ಕಾವೇರಿ ಜಲಾನಯನ (ಕರ್ನಾಟಕ)",
   blurb:

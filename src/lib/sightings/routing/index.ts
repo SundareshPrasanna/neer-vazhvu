@@ -13,7 +13,7 @@ import type { Authority, Channel } from "./types";
 export interface RoutingTarget {
   stateCode: string;
   placeId: string;
-  placeKind: "city" | "district";
+  placeKind: "city" | "district" | "basin";
   corporationId?: string | null;
 }
 

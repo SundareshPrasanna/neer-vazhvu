@@ -39,6 +39,18 @@ function Channels({ channels }: { channels: Channel[] }) {
   );
 }
 
+/** No local body listed yet for this place: the channels that take complaints from anywhere. */
+export function NationalOnly({ national }: { national: Channel[] }) {
+  return (
+    <div className="rounded-lg border border-slate-200 p-3 text-sm dark:border-slate-700">
+      <p className="text-slate-700 dark:text-slate-300">
+        We have not listed the local body for this place yet. These channels take complaints from anywhere:
+      </p>
+      <Channels channels={national} />
+    </div>
+  );
+}
+
 /** Who handles a report and where a citizen files it. */
 export function HandlerCard({ handler, national = [] }: { handler: Handler; national?: Channel[] }) {
   return (

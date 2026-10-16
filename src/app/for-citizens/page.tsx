@@ -152,7 +152,10 @@ export default function ForCitizensPage() {
       <section className="mt-10 grid gap-6 text-sm text-slate-600 sm:grid-cols-2 dark:text-slate-400">
         <div>
           <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">What you can report</h2>
-          <p>{REPORT_GROUPS.map((g) => g.label).join(", ")}, or anything else about water at a place.</p>
+          <p>
+            {REPORT_GROUPS.map((g) => g.label).join(", ")}, or anything else about water at a place, anywhere in the cities, districts and
+            river basins we cover.
+          </p>
           <p className="mt-2">Have a TDS meter or a water test kit? Add your results under Tap &amp; drinking water.</p>
           <p className="mt-2">Water bills, tanker prices and supply timings belong with your water board.</p>
         </div>

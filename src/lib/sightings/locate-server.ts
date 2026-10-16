@@ -7,13 +7,14 @@ import { corporationsGeoJsonPathFor, wardsGeoJsonPathFor } from "@/lib/cities/da
 import type { PlaceConfig } from "@/lib/cities/types";
 import type { DistrictDirectoryArtifact } from "@/lib/atlas/artifacts";
 import { listPublishedAtlasDistricts, type AtlasDistrict } from "@/lib/atlas/registry";
+import { listBasins, type BasinManifest } from "@/lib/basins";
 import { wardNumberOf } from "@/lib/utils/ward-number";
 import { containing, distanceKm, inBBox, indexPolygons, nearest, type BBox, type IndexedPolygon } from "./locate";
 
 /** Where a report lands. Resolved on the server from GPS only. */
 export interface Placement {
-  placeKind: "city" | "district";
-  /** cityId, or the district's scope id. */
+  placeKind: "city" | "district" | "basin";
+  /** cityId, the district's scope id, or the basinId. */
   placeId: string;
   placeName: string;
   stateCode: string;
@@ -25,6 +26,8 @@ export interface Placement {
   panchayatName: string | null;
   waterBodyId: string | null;
   waterBodyName: string | null;
+  /** Town or district a basin's own map names at the point. */
+  locality: string | null;
 }
 
 interface CityGeo {
@@ -105,6 +108,7 @@ function cityPlacement(c: PlaceConfig, geo: CityGeo, ward: GeoJsonProperties | n
     panchayatName: null,
     waterBodyId: body?.osm_id != null ? String(body.osm_id) : null,
     waterBodyName: (body?.name as string) || null,
+    locality: null,
   };
 }
 
@@ -145,10 +149,46 @@ export async function placePoint(origin: string, lng: number, lat: number): Prom
       panchayatName: holding ? best.gp.name : null,
       waterBodyId: null,
       waterBodyName: null,
+      locality: null,
     };
   }
+
+  const basin = await basinPlacement(origin, lng, lat);
+  if (basin) return basin;
 
   // No ward geometry, or a region corporation known only by its box (Kolkata's Bidhannagar).
   const i = cities.findIndex((c, k) => geos[k].wards.length === 0 || c.corporations?.some((x) => inBBox(lng, lat, box(x.bbox))));
   return i >= 0 ? cityPlacement(cities[i], geos[i], null, lng, lat) : null;
+}
+
+const basinUrl = (b: BasinManifest, file: string) => `/data/basins/${b.basinId}/${file}.geojson`;
+
+/** The smallest onboarded basin whose boundary holds the point, with the town or district and major water body its own map names. */
+async function basinPlacement(origin: string, lng: number, lat: number): Promise<Placement | null> {
+  const basins = [...listBasins()].sort((a, b) => (a.areaKm2 ?? Infinity) - (b.areaKm2 ?? Infinity));
+  for (const b of basins) {
+    const boundary = indexPolygons(await getJson<FeatureCollection>(origin, basinUrl(b, "boundary")));
+    if (!containing(boundary, lng, lat)) continue;
+    const [towns, districts, bodies] = await Promise.all(
+      ["admin-town", "admin-district", "waterbodies-major"].map(async (f) => indexPolygons(await getJson<FeatureCollection>(origin, basinUrl(b, f)))),
+    );
+    const body = containing(bodies, lng, lat)?.properties;
+    const place = containing(towns, lng, lat)?.properties ?? containing(districts, lng, lat)?.properties;
+    return {
+      placeKind: "basin",
+      placeId: b.basinId,
+      placeName: b.displayName,
+      stateCode: b.stateCode,
+      corporationId: null,
+      wardId: null,
+      wardName: null,
+      blockCode: null,
+      panchayatCode: null,
+      panchayatName: null,
+      waterBodyId: body?.tankId != null ? String(body.tankId) : null,
+      waterBodyName: (body?.name as string) || null,
+      locality: (place?.name as string) || null,
+    };
+  }
+  return null;
 }

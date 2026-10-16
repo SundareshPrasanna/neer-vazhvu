@@ -31,7 +31,8 @@ CREATE TABLE sightings (
   reporter_key        TEXT NOT NULL,
 
   -- Server-resolved place (never trusted from the client).
-  place_kind          TEXT NOT NULL CHECK (place_kind IN ('city', 'district')),
+  place_kind          TEXT NOT NULL CHECK (place_kind IN ('city', 'district', 'basin')),
+  -- cityId, district scope id, or basinId.
   place_id            TEXT NOT NULL,
   state_code          TEXT NOT NULL,
   corporation_id      TEXT,
@@ -42,6 +43,8 @@ CREATE TABLE sightings (
   panchayat_name      TEXT,
   water_body_id       TEXT,
   water_body_name     TEXT,
+  -- Town or district a basin's own map names at the point.
+  locality            TEXT,
 
   lat                 NUMERIC(9,6) NOT NULL,
   lng                 NUMERIC(9,6) NOT NULL,
@@ -172,14 +175,14 @@ BEGIN
 
   INSERT INTO sightings (
     reporter_key, place_kind, place_id, state_code, corporation_id, ward_id, ward_name,
-    block_code, panchayat_code, panchayat_name, water_body_id, water_body_name,
+    block_code, panchayat_code, panchayat_name, water_body_id, water_body_name, locality,
     lat, lng, location_accuracy_m, category, subcategory, note, readings, water_source,
     authority_role
   ) VALUES (
     v_key, p_row->>'place_kind', p_row->>'place_id', p_row->>'state_code',
     p_row->>'corporation_id', p_row->>'ward_id', p_row->>'ward_name',
     p_row->>'block_code', p_row->>'panchayat_code', p_row->>'panchayat_name',
-    p_row->>'water_body_id', p_row->>'water_body_name',
+    p_row->>'water_body_id', p_row->>'water_body_name', p_row->>'locality',
     (p_row->>'lat')::NUMERIC, (p_row->>'lng')::NUMERIC, (p_row->>'location_accuracy_m')::NUMERIC,
     p_row->>'category', p_row->>'subcategory', p_row->>'note',
     p_row->'readings', p_row->>'water_source', p_row->>'authority_role'

@@ -1,6 +1,8 @@
 import type { Channel } from "./routing/types";
 import type { CaseStatus, ReviewStatus } from "./status";
 
+export type PlaceKind = "city" | "district" | "basin";
+
 /** Mirrors supabase/migrations/062_citizen_reports.sql. */
 export interface SightingRow {
   id: string;
@@ -8,7 +10,7 @@ export interface SightingRow {
   updated_at: string;
   /** HMAC of the account id (src/lib/sightings/auth.ts), or "deleted". */
   reporter_key: string;
-  place_kind: "city" | "district";
+  place_kind: PlaceKind;
   place_id: string;
   state_code: string;
   corporation_id: string | null;
@@ -19,6 +21,7 @@ export interface SightingRow {
   panchayat_name: string | null;
   water_body_id: string | null;
   water_body_name: string | null;
+  locality: string | null;
   lat: number;
   lng: number;
   location_accuracy_m: number | null;
@@ -68,7 +71,7 @@ export interface PublicReport {
   id: string;
   /** YYYY-MM-DD only. */
   createdAt: string;
-  placeKind: "city" | "district";
+  placeKind: PlaceKind;
   placeId: string;
   placeName: string;
   where: string | null;
