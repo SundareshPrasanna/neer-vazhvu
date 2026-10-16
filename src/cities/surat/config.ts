@@ -83,6 +83,7 @@ const config: PlaceConfig = {
   cityId: 'surat',
   launchOrder: 10,
   displayName: 'Surat',
+  originsTagline: 'The city the river made, unmade, and made again',
   displayNameLocalized: { gu: 'સુરત' },
   stateCode: 'GJ',
   center: { lat: 21.1702, lng: 72.8311 },

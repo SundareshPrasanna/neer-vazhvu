@@ -52,6 +52,7 @@ const config: PlaceConfig = {
   cityId: 'nagpur',
   launchOrder: 13,
   displayName: 'Nagpur',
+  originsTagline: 'The city named for a small stream, and the river from Madhya Pradesh that now fills its taps',
   displayNameLocalized: { mr: 'नागपूर' },
   stateCode: 'MH',
   // Centroid of NMC's own city outline (NMC GIS, NMCAdminBoundaries layer 3,

@@ -30,14 +30,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
-import { STORY_TAGLINES } from "@/content/story-taglines";
+import config from "./config";
 
 export function MumbaiStoryEn() {
   return (
     <StoryPage
       cityId="mumbai"
       cityDisplayName="Mumbai"
-      tagline={STORY_TAGLINES.mumbai}
+      tagline={config.originsTagline}
       lastRevised="July 2026"
     >
       <Hero

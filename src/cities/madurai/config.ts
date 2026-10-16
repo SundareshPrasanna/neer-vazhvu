@@ -4,6 +4,7 @@ const config: PlaceConfig = {
   cityId: 'madurai',
   launchOrder: 2,
   displayName: 'Madurai',
+  originsTagline: 'City of Tanks - what is left of the cascade',
   displayNameLocalized: { ta: 'மதுரை' },
   stateCode: 'TN',
   center: { lat: 9.9252, lng: 78.1198 },

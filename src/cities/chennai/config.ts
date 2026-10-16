@@ -4,6 +4,7 @@ const config: PlaceConfig = {
   cityId: 'chennai',
   launchOrder: 1,
   displayName: 'Chennai',
+  originsTagline: 'City of estuaries - what is left of the sponge',
   displayNameLocalized: { ta: 'சென்னை' },
   stateCode: 'TN',
   center: { lat: 13.0827, lng: 80.2707 },

@@ -49,6 +49,7 @@ const config: PlaceConfig = {
   cityId: 'hyderabad',
   launchOrder: 6,
   displayName: 'Hyderabad',
+  originsTagline: 'City of tanks - how Hyderabad engineered its way out of a flood, and what it still owes that system',
   displayNameLocalized: { te: 'హైదరాబాద్' },
   stateCode: 'TG',
   center: { lat: 17.426, lng: 78.43 },

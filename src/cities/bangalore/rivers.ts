@@ -2,6 +2,7 @@ import config from "./config";
 import type { CityRiversContent } from "@/content/rivers/types";
 
 export const RIVERS: CityRiversContent = {
+  defaultRiverId: "vrishabhavathi",
   metaDescription:
     "River-system map for Bengaluru - Vrishabhavathi, Arkavathi and the Cauvery lifeline, with pollution status from official monitoring.",
   header: {

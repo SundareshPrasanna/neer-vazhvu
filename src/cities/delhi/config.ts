@@ -77,6 +77,7 @@ const config: PlaceConfig = {
   cityId: 'delhi',
   launchOrder: 5,
   displayName: 'Delhi',
+  originsTagline: 'The city that stored water for a thousand years - and the twenty-two kilometres where its river dies',
   displayNameLocalized: { hi: 'दिल्ली' },
   stateCode: 'DL',
   center: { lat: 28.61, lng: 77.21 },

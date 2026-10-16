@@ -72,6 +72,7 @@ const config: PlaceConfig = {
   cityId: 'visakhapatnam',
   launchOrder: 12,
   displayName: 'Visakhapatnam',
+  originsTagline: 'A harbour with no large river - drawing on the Godavari and Yeleru from up to 190 kilometres away',
   displayNameLocalized: { te: 'విశాఖపట్నం' },
   stateCode: 'AP',
   center: { lat: 17.6868, lng: 83.2185 },

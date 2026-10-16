@@ -28,6 +28,7 @@ import type { CityRiversContent } from "@/content/rivers/types";
 // length_km_geom is the drawn OSM line, re-read from
 // public/geojson/visakhapatnam-rivers.geojson.
 export const RIVERS: CityRiversContent = {
+  defaultRiverId: "meghadrigedda",
   metaDescription:
     "Water quality on Visakhapatnam's channels: the Meghadri Gedda, the Gosthani and the Yeleru canal. CPCB's 2019-2024 tables list no river station in the city, so the readings come from the reservoir, creek and canal stations on each channel.",
   // The header tally would count a gedda and a canal as "rivers"; off.

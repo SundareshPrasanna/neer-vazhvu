@@ -55,14 +55,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
-import { STORY_TAGLINES } from "@/content/story-taglines";
+import config from "./config";
 
 export function SuratStoryEn() {
   return (
     <StoryPage
       cityId="surat"
       cityDisplayName="Surat"
-      tagline={STORY_TAGLINES.surat}
+      tagline={config.originsTagline}
       lastRevised="August 2026"
     >
       <Hero

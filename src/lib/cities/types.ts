@@ -372,6 +372,9 @@ interface PlaceConfigBase {
    *  city takes the next number; scripts/gen-city-index.ts rejects duplicates. */
   launchOrder: number;
   displayName: string;
+  /** One English line about the city's water. Heads the Origins page and its
+   *  story's hero, from this one value so the two cannot drift apart. */
+  originsTagline: string;
   /** Localized display names per language. Used wherever copy renders
    *  the city name in a specific regional script (e.g. `{ ta: 'சென்னை' }`
    *  for Chennai's Tamil rendering, `{ kn: 'ಬೆಂಗಳೂರು' }` for Bangalore).

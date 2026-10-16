@@ -23,6 +23,7 @@ const config: PlaceConfig = {
   cityId: 'bangalore',
   launchOrder: 3,
   displayName: 'Bengaluru',
+  originsTagline: 'City of stolen kere - what Kempegowda built and what Bengaluru built over it',
   displayNameLocalized: { kn: 'ಬೆಂಗಳೂರು' },
   stateCode: 'KA',
   center: { lat: 12.9716, lng: 77.5946 },

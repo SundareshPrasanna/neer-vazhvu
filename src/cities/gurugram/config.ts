@@ -47,6 +47,7 @@ const config: PlaceConfig = {
   cityId: 'gurugram',
   launchOrder: 8,
   displayName: 'Gurugram',
+  originsTagline: 'The city that outgrew its water in twelve years',
   displayNameLocalized: { hi: 'गुरुग्राम' },
   stateCode: 'HR',
   // Centre and bbox are COMPUTED from the harvested MCG ward geometry

@@ -77,6 +77,7 @@ const config: PlaceConfig = {
   cityId: 'kolkata',
   launchOrder: 7,
   displayName: 'Kolkata',
+  originsTagline: 'The city that built itself around a pond - and the wetland that takes what it throws away',
   displayNameLocalized: { bn: 'কলকাতা' },
   stateCode: 'WB',
   center: { lat: 22.5726, lng: 88.3639 },

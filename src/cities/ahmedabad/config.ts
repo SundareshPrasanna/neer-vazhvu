@@ -41,6 +41,7 @@ const config: PlaceConfig = {
   cityId: 'ahmedabad',
   launchOrder: 11,
   displayName: 'Ahmedabad',
+  originsTagline: 'The city founded beside a thin stream in a bed of sand - and the canal that now keeps it full',
   displayNameLocalized: { gu: 'અમદાવાદ' },
   stateCode: 'GJ',
   center: { lat: 23.0225, lng: 72.5714 },

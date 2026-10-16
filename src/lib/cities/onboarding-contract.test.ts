@@ -12,8 +12,8 @@ import { test } from "node:test";
 import { scopeCountry, scopeIds, scopeKind } from "../scopes";
 import { CITY_IDS, tryGetPlaceConfig, type PlaceConfig } from "./index";
 import { riversVariant } from "./data-paths";
-import { RIVERS_CONTENT, FLOOD_CONTENT } from "../../cities/generated/content";
-import { STORY_TAGLINES } from "../../content/story-taglines";
+import { RIVERS_CONTENT } from "../../cities/generated/rivers";
+import { FLOOD_CONTENT } from "../../cities/generated/flood";
 import { listPublishedAtlasDistricts } from "../atlas/registry";
 import { resolveAuthority } from "../sightings/routing";
 import { STATE_ROUTING } from "../sightings/routing/states";
@@ -71,7 +71,7 @@ test("a my-ward route has ward geometry", () => {
 
 test("an Origins route has a tagline", () => {
   for (const p of places.filter((p) => p.routes.includes("origins"))) {
-    assert.ok(STORY_TAGLINES[p.cityId]?.trim(), `${p.cityId}: no STORY_TAGLINES entry`);
+    assert.ok(p.originsTagline.trim(), `${p.cityId}: empty originsTagline`);
   }
 });
 

@@ -55,14 +55,14 @@ import {
   PullQuote,
   ThenNow,
 } from "@/components/story/story-shortcodes";
-import { STORY_TAGLINES } from "@/content/story-taglines";
+import config from "./config";
 
 export function GurugramStoryEn() {
   return (
     <StoryPage
       cityId="gurugram"
       cityDisplayName="Gurugram"
-      tagline={STORY_TAGLINES.gurugram}
+      tagline={config.originsTagline}
       lastRevised="August 2026"
     >
       <Hero

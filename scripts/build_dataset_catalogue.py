@@ -272,10 +272,12 @@ def scan_references(
                     "check-sample-corpus.py",
                     "check-generator-drift.py",
                     "check-mirrored-documents.py",
+                    "routes-off.ts",
                 )
             ):
                 continue  # tooling/governance files mention filenames without producing/consuming
-                # them - counting the coverage allowlist as a producer hid a known orphan
+                # them - counting the coverage allowlist as a producer hid a known orphan, and
+                # each city's routes-off.ts is prose for the exemptions register
             if "node_modules" in rel or path.stat().st_size > 2_000_000:
                 continue
             try:

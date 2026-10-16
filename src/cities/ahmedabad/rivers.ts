@@ -6,6 +6,7 @@ import type { CityRiversContent } from "@/content/rivers/types";
 // the city cannot be read without them: one is where its water comes from,
 // the other is where its industrial east drains.
 export const RIVERS: CityRiversContent = {
+  defaultRiverId: "sabarmati",
   metaDescription:
     "The Sabarmati through Ahmedabad: CPCB station readings from Dharoi to Vautha, 2018-2024, a Priority I polluted stretch below the city, and the canals that feed and drain it.",
   header: { scopeLabel: "The Sabarmati, the Khari and two canals" },

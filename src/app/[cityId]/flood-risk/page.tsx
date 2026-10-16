@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { FloodRiskContent } from "./flood-risk-content";
-import { FLOOD_CONTENT } from "@/cities/generated/content";
+import { FLOOD_CONTENT } from "@/cities/generated/flood";
 import { FloodMapPage } from "@/components/flood/flood-map-page";
 import { InteractiveFloodContent } from "./interactive-flood-content";
 

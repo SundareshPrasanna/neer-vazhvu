@@ -1,6 +1,7 @@
 import type { CityRiversContent } from "@/content/rivers/types";
 
 export const RIVERS: CityRiversContent = {
+  defaultRiverId: "yamuna",
   metaDescription:
     "River-system map for Delhi - the Yamuna's 22-km city stretch, the Munak carrier, the Najafgarh and Shahdara drains, with DPCC monthly water-quality status.",
   // Basin-scoped per the Delhi audit: the reach runs Hathnikund -> Palla ->

@@ -58,6 +58,7 @@ const config: PlaceConfig = {
   cityId: 'pune',
   launchOrder: 9,
   displayName: 'Pune',
+  originsTagline: 'The city that dammed one river four times and still counts four hours',
   displayNameLocalized: { mr: 'पुणे' },
   stateCode: 'MH',
 

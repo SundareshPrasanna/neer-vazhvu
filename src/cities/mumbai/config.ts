@@ -54,6 +54,7 @@ const config: PlaceConfig = {
   cityId: 'mumbai',
   launchOrder: 4,
   displayName: 'Mumbai',
+  originsTagline: 'City of seven islands - a place with no river, and the forty-five litres that divide it',
   displayNameLocalized: { mr: 'मुंबई' },
   stateCode: 'MH',
   // MMR re-scope (docs/specs/mumbai-mmr.md): "mumbai" now models the Mumbai

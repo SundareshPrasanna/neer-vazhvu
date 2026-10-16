@@ -7,7 +7,7 @@ import { loadBasinInventory } from "@/lib/basins/data";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient from "./rivers-client";
-import { RIVERS_CONTENT } from "@/cities/generated/content";
+import { RIVERS_CONTENT } from "@/cities/generated/rivers";
 import ChennaiRiversClient from "./chennai-rivers-client";
 
 interface PageProps {
@@ -123,6 +123,7 @@ export default async function CityRiversPage({ params }: PageProps) {
       stationsLabel={header.stationsLabel}
       atlasCtaLabel={header.atlasCtaLabel}
       riverInfo={riverInfo}
+      defaultRiverId={content?.defaultRiverId}
       basin={basinProp}
       overviewBasin={overviewBasinProp}
     />

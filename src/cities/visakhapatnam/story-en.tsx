@@ -1,5 +1,5 @@
 /**
- * Visakhapatnam water story. The tagline lives in story-taglines.ts. Composed
+ * Visakhapatnam water story. The tagline is originsTagline in config.ts. Composed
  * from the Lede / Chapter / PullQuote / ThenNow / CTA shortcodes.
  *
  * NO IMAGES. No archival image of the town, the harbour or the reservoirs has
@@ -210,14 +210,14 @@
 
 import { StoryPage } from "@/components/story/story-page";
 import { Chapter, CTA, Figure, Hero, Lede, PullQuote, ThenNow } from "@/components/story/story-shortcodes";
-import { STORY_TAGLINES } from "@/content/story-taglines";
+import config from "./config";
 
 export function VisakhapatnamStoryEn() {
   return (
     <StoryPage
       cityId="visakhapatnam"
       cityDisplayName="Visakhapatnam"
-      tagline={STORY_TAGLINES.visakhapatnam}
+      tagline={config.originsTagline}
       lastRevised="October 2026"
     >
       <Hero

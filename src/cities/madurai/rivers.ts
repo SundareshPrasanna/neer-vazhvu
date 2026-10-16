@@ -1,6 +1,7 @@
 import type { CityRiversContent } from "@/content/rivers/types";
 
 export const RIVERS: CityRiversContent = {
+  defaultRiverId: "vaigai",
   metaDescription:
     "River-system map for Madurai - Vaigai mainstem, tributaries, and the cross-state Mullaperiyar feeder.",
   header: { scopeLabel: "Vaigai system" },

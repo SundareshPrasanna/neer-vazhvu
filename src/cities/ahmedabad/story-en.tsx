@@ -77,14 +77,14 @@ import {
   CTA,
   ThenNow,
 } from "@/components/story/story-shortcodes";
-import { STORY_TAGLINES } from "@/content/story-taglines";
+import config from "./config";
 
 export function AhmedabadStoryEn() {
   return (
     <StoryPage
       cityId="ahmedabad"
       cityDisplayName="Ahmedabad"
-      tagline={STORY_TAGLINES.ahmedabad}
+      tagline={config.originsTagline}
       lastRevised="October 2026"
     >
       <Hero
