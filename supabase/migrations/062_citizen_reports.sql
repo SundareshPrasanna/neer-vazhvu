@@ -142,14 +142,19 @@ LANGUAGE plpgsql
 SET search_path = public
 AS $$
 DECLARE
-  v_key TEXT := p_row->>'reporter_key';
-  v_rep sighting_reporters%ROWTYPE;
-  v_id  UUID;
+  v_key     TEXT := p_row->>'reporter_key';
+  v_rep     sighting_reporters%ROWTYPE;
+  v_id      UUID;
+  v_daily   INTEGER;
+  v_pending INTEGER;
 BEGIN
   PERFORM pg_advisory_xact_lock(hashtext('sightings:intake'));
 
   INSERT INTO sighting_reporters (reporter_key) VALUES (v_key) ON CONFLICT DO NOTHING;
   SELECT * INTO v_rep FROM sighting_reporters WHERE reporter_key = v_key;
+  -- An array lookup, not a conditional expression: the Supabase CLI's statement splitter cuts the body at one.
+  v_daily   := (ARRAY[p_daily_new, p_daily_trusted])[v_rep.trusted::int + 1];
+  v_pending := (ARRAY[p_pending_new, p_pending_trusted])[v_rep.trusted::int + 1];
 
   IF v_rep.suspended_at IS NOT NULL THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'suspended');
@@ -163,13 +168,11 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'new_paused');
   END IF;
   IF (SELECT count(*) FROM sightings WHERE reporter_key = v_key
-        AND created_at > NOW() - INTERVAL '1 day')
-     >= CASE WHEN v_rep.trusted THEN p_daily_trusted ELSE p_daily_new END THEN
+        AND created_at > NOW() - INTERVAL '1 day') >= v_daily THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'daily_cap');
   END IF;
   IF (SELECT count(*) FROM sightings WHERE reporter_key = v_key
-        AND review_status IN ('received', 'needs_info'))
-     >= CASE WHEN v_rep.trusted THEN p_pending_trusted ELSE p_pending_new END THEN
+        AND review_status IN ('received', 'needs_info')) >= v_pending THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'pending_cap');
   END IF;
 
