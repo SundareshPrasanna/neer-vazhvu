@@ -1,7 +1,8 @@
-import type {
-  RiverData,
-  RiverQualityReading,
-  RiverQualityStatus,
+import {
+  latestReadingOf,
+  type RiverData,
+  type RiverQualityReading,
+  type RiverQualityStatus,
 } from "@/types/river-quality";
 import { measureWorst } from "@/lib/rivers/measure";
 
@@ -80,7 +81,8 @@ function worse(a: RiverQualityStatus, b: RiverQualityStatus): RiverQualityStatus
  * Compute a river's overall_status from its actual NWMP readings.
  *
  * Methodology (kept simple + auditable):
- *   1. For each station, take the most recent year's reading.
+ *   1. For each station, take the most recent reading (the latest month
+ *      for a monthly feed, the latest year for an annual one).
  *   2. Classify that reading via CPCB Designated Best-Use thresholds.
  *   3. The river's overall status is the WORST classification across
  *      its stations - because if any monitored stretch is dead, the
@@ -98,8 +100,8 @@ export function computeRiverStatus(river: RiverData): RiverQualityStatus {
 
   for (const station of river.stations) {
     if (!station.readings || station.readings.length === 0) continue;
-    const sorted = [...station.readings].sort((a, b) => b.year - a.year);
-    const latest = sorted[0];
+    const latest = latestReadingOf(station.readings);
+    if (!latest) continue;
     const status = classifyReading(latest);
     if (!status) continue;
     worst = worst == null ? status : worse(worst, status);

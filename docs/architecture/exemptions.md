@@ -11,9 +11,9 @@ This exists because a platform that treats data gaps as first-class has to be ab
 |---|---|
 | Suppressed freshness checks | 0 |
 | Artifacts with no registered upstream | 90 |
-| Routes a city deliberately does not ship | 47 |
-| Absences the product states on the page | 31 |
-| **Total** | **168** |
+| Routes a city deliberately does not ship | 50 |
+| Absences the product states on the page | 34 |
+| **Total** | **174** |
 
 **1 of these have no recorded rationale.** They are real, deliberate omissions whose original reason was never written down. They are marked rather than back-filled with a guess, because an invented justification reads as authoritative and is worse than an admitted blank. Each is a TODO: record the real reason, or ship the thing.
 
@@ -160,6 +160,9 @@ Derived by diffing each city against the union of every route any city ships, so
 | mumbai | climate-risk | Not built for this city. |
 | mumbai | my-ward | UNRECORDED: Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route. |
 | mumbai | tanker | Not built for this city. |
+| nagpur | climate-risk | Buildable but not built. The sub-basin risk surface rests on HydroBASINS, a global product that also covers the Kanhan and Wainganga basins, so this is a backlog item rather than a refusal. |
+| nagpur | shoreline | Landlocked: Nagpur is near the centre of the country and has no coastline. |
+| nagpur | tanker | NMC publishes how many tankers it runs (37 in the 2026-27 budget speech; 78 in 2024 in the Environment Status Report 2023-24) but no delivery register, booking ledger or price survey, so there is no record of who receives water by tanker or at what price. The operator's own fleet figures appear only in the press. |
 | pune | allocations | The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger. |
 | pune | climate-risk | Not built for this city. |
 | pune | commitments | Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register. |
@@ -204,6 +207,9 @@ Gaps the UI itself renders rather than hiding: the reason below is the copy a re
 | kolkata | water source: KMC deep tube wells | No public tube-well register or daily draw. The ~110 MLD figure is a single line on KMC's water-distribution page. |
 | kolkata | water-bodies catchment atlas | Kolkata has no catchment view, and that is a deliberate omission rather than a missing dataset. Catchments are delineated by tracing water downhill across a 30 m elevation model - which needs a hill. Kolkata has about 11 metres of fall across 40 kilometres of delta, against 43 m in Chennai and 338 m in Mumbai, the cities where this view ships. At that gradient the method would draw confident-looking boundaries that the ground does not support, and in any case most of Kolkata's runoff travels through a combined sewer network rather than over the surface. We would rather show no catchments than invent them. |
 | mumbai | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| nagpur | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
+| nagpur | water source: Gorewada lake | Gorewada lake was built in 1911 on the Pili river as a water source for the city. It is not among the dams in the state’s daily bulletin, so no daily reading is shown here. |
+| nagpur | water source: Kanhan river intake | A river intake, not a reservoir: the Kanhan plant draws from the river itself, so there is no stored volume to show. The state’s daily dam bulletin covers dams, not river intakes. |
 | pune | UI language: mr | Advertised as coming soon and rendered as a disabled chip. The mr dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |
 | surat | storage history chart | Surat has no storage history and will not grow one. The city impounds nothing: it abstracts from a weir pond on the Tapi, which is a river reach rather than a reservoir, and the dam upstream belongs to the state irrigation department, which publishes a level but no volume and no Surat share. Level over a full-reservoir mark is not a quantity of water, so there is nothing here to chart. What Surat does have is the live flood chain at the top of this page. |
 | surat | UI language: gu | Advertised as coming soon and rendered as a disabled chip. The gu dictionary is not populated, and must be translated by a native speaker rather than machine-generated, so the UI falls back to English by contract until it is. |

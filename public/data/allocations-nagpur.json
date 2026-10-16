@@ -1,0 +1,396 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/allocations",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "mahagr-wrd-resolutions",
+        "title": "Water Resources Department GRs: Pench water-use re-planning, 19 Mar 2020 (202003191442414827); Lohghogari-Totladoh diversion, 18 Sep 2019 (201909181817460527); Kolar-Kanhan barrage, 18 Apr 2023 (202304201803571027, text via the orgpedia mahGRs mirror)",
+        "publisher": "Water Resources Department, Government of Maharashtra",
+        "license": "government resolutions, mirrored openly",
+        "retrieved": "2026-10-15"
+      },
+      {
+        "id": "mwrra-case-8-2017",
+        "title": "MWRRA Order No. 13/2018 in Case No. 8 of 2017, 12 Sep 2018",
+        "publisher": "Maharashtra Water Resources Regulatory Authority",
+        "license": "Maharashtra government publication, cited with attribution",
+        "retrieved": "2026-10-15"
+      },
+      {
+        "id": "nmc-esr",
+        "title": "NMC Environment Status Reports: 2017-18 draft (Tables 4.3-4.4, pp.18-23) and 2023-24 (Table 6.2)",
+        "publisher": "Nagpur Municipal Corporation, prepared by CSIR-NEERI",
+        "license": "Nagpur Municipal Corporation publication, cited with attribution",
+        "retrieved": "2026-10-15"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_nagpur_allocations.py",
+    "note": "Claim register: per-arrangement citations are in each row's source_ids and the file's sources map. The MWRRA order is a scan: OCR, checked on the page image (pp.5-6, 22-29, 39, 42, 48-49). The 2020 and 2019 GRs were read in the official PDFs; the 2023 GR's text is the orgpedia mahGRs extraction of the official PDF, which did not open on 15 Oct 2026."
+  },
+  "place_id": "nagpur",
+  "updated": "2026-10-15",
+  "headline": "Nagpur's Pench share is 190 Mcum a year; the latest published figures for its draw, in NMC's 2017-18 report, disagree",
+  "intro": "Four of Nagpur's five treatment plants run on water from the Pench Project Complex, which the state runs for irrigation and hydro-power and shares with two thermal power stations. The city's share has grown in steps: 112 Mcum a year in the project plan and 78 more sanctioned in 1998, set at 190 in the Water Resources Department's resolution of 19 March 2020, with 341 planned once a tunnel brings Kanhan water from Madhya Pradesh. The state water regulator ruled in 2018 that the extra 78 stands in law. The most recent published figure for what the city draws from each source is in NMC's draft 2017-18 report (its table is headed 'present' and gives no year); the regulator's order records that the 2017 monsoon was lean. For the Pench, the Kanhan and Gorewada alike that report's billed and treated figures disagree, so no delivery figure is shown for any of them; each row's note gives both.",
+  "unit_note": "Volumes are in million cubic metres a year (Mcum/yr), the unit of the regulator's order and the state's resolutions; 1 Mcum a year is about 2.74 million litres a day. The dashboard's treatment figures are in MLD. Units are never converted silently.",
+  "authorities": [
+    {
+      "id": "wrd-maharashtra",
+      "name": "Water Resources Department, Government of Maharashtra",
+      "role": "Runs the Pench Project Complex (Totladoh, Navegaon Khairi and Khindsi) and its canals through the Pench Irrigation Management Project, reserves water for non-irrigation users and bills NMC for raw water.",
+      "capacity": "Planned use 965 Mcum a year (1972); re-planned to 922 (phase 1) and 1,205 (phase 2) in 2020",
+      "committed": "Phase 1: NMC 190, irrigation 584, the two thermal stations 20 Mcum a year",
+      "tension": "The 2020 re-planning rests on less water than the project was designed for: a 75%-dependable yield at Totladoh of 1,157.80 Mcum on 1976-2016 data against 1,760.90 in the plan, reservoir evaporation of 132 Mcum against 33 planned, and Madhya Pradesh's Chaurai dam (577 Mcum) storing upstream since 2016. The city's share rose from 112 to 190 as the thermal stations' fell from 127 to 20. The GR is subject to the final decision of a joint committee of the Central Water Commission, Maharashtra and Madhya Pradesh on the project's yield.",
+      "source_refs": [
+        "wrd-gr-2020"
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "pench-nmc",
+      "as_of": "2020-03-19",
+      "source": "Pench Project Complex (Totladoh and Navegaon Khairi)",
+      "authority_id": "wrd-maharashtra",
+      "recipient": "Nagpur Municipal Corporation",
+      "entitled": {
+        "value": 190,
+        "unit": "Mcum/yr",
+        "basis": "190 in the WRD re-planning GR of 19 Mar 2020 (phase 1), equal to the 112 of the plan plus the 78 of 1998",
+        "note": "The regulator's order of 12 Sep 2018 holds the 78 'legal and intact as on today' under section 31B of the MWRRA Act, and records that the conditions attached in 2008 (an agreement within 90 days, and Rs 8,445 lakh to WRD for 8,445 ha of irrigation command) are 'yet to be satisfied' (MWRRA Order 13/2018, pp.25, 39)."
+      },
+      "received": {
+        "value": null,
+        "unit": "Mcum/yr",
+        "year": null,
+        "note": "No delivery figure is shown because the two 2017-18 figures disagree. NMC's table bills 143.00 Mcum of raw water for the Pench Right Bank Canal draw at Mahadula, covering both reservations, 112 and 78 (400 MLD; ESR 2017-18 draft, Table 4.3, p.23), while the four Pench plants treated 456 MLD that year, about 166 Mcum over a year (Table 4.4, p.23), more than the bill. Both are below the 190 entitlement; the year's quota, 139.03 Mcum, was less than the bill. NMC's table does not close: its drawal rows add to 193.60 Mcum against a printed total of 217.60, and 143.00 Mcum is printed beside 400 MLD (146 Mcum over a year); the asterisk on 143.00 has no footnote. The table is headed 'present' drawal and gives no year; it is read here as 2017-18, the report's edition (draft of June 2018). The regulator's order records that the 2017 monsoon was lean: storage in the complex stood at 43% in October 2017 (p.6). The quota the CADA Superintending Engineer set for NMC for 2017-18 on 10 Apr 2018 was 139.03 Mcum, printed as 118.05 domestic and 21.01 industrial, which add to 139.06 (the 'Allocation as per MWRRA Norm' column); the same table's entitlement column gives NMC 148.90 (125.97 + 22.93) (MWRRA Order 13/2018, pp.28, 42). No later per-source figure is published."
+      },
+      "instrument": {
+        "label": "WRD GR of 19 Mar 2020 (Pench water-use re-planning) and MWRRA Order 13/2018",
+        "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202003191442414827.pdf"
+      },
+      "confidence": "high",
+      "note": "NMC's own account to the regulator in October 2017: Pench 190 + Kanhan 60 = 250 Mcum a year (p.6). Its 2017-18 water budget asked for 197.33 Mcum from the Pench complex (p.27).",
+      "source_ids": [
+        "mahagr-wrd-resolutions",
+        "mwrra-case-8-2017",
+        "nmc-esr"
+      ]
+    },
+    {
+      "id": "kanhan-nmc",
+      "as_of": "2018-06",
+      "source": "Kanhan river (Kanhan Water Works intake)",
+      "authority_id": "wrd-maharashtra",
+      "recipient": "Nagpur Municipal Corporation",
+      "entitled": {
+        "value": 55.0,
+        "unit": "Mcum/yr",
+        "basis": "annual reservation in NMC's table (ESR 2017-18 draft, Table 4.3)",
+        "note": "Three other figures for the same source: NMC told the regulator 60 Mcum in October 2017 (MWRRA Order 13/2018, p.6); its 2017-18 water budget counted 58 (p.28); and WRD's GR of 18 Apr 2023 puts the Kanhan Water Works at 65.71 Mcum at present. No reservation order for the Kanhan was found."
+      },
+      "received": {
+        "value": null,
+        "unit": "Mcum/yr",
+        "year": null,
+        "note": "No delivery figure is shown because the two 2017-18 figures disagree. NMC's table bills 43.80 Mcum of raw water (120 MLD; ESR 2017-18 draft, Table 4.3), while the Kanhan plant treated 185 MLD that year (Table 4.4), about 67.5 Mcum over a year, more than both the bill and the 55.00 reservation."
+      },
+      "instrument": {
+        "label": "NMC raw-water reservation table, ESR 2017-18 draft, Table 4.3",
+        "url": "https://caknnagpur871784109.wordpress.com/wp-content/uploads/2019/12/environmental-status-report-nagpur-2017-18.pdf"
+      },
+      "confidence": "medium",
+      "note": "Run-of-river: the 1956 barrage holds 7.82 Mm3 (ESR 2017-18 draft, p.19).",
+      "source_ids": [
+        "nmc-esr",
+        "mwrra-case-8-2017",
+        "mahagr-wrd-resolutions"
+      ]
+    },
+    {
+      "id": "gorewada-nmc",
+      "as_of": "2018-06",
+      "source": "Gorewada lake (1911 bund on the Pili)",
+      "authority_id": "wrd-maharashtra",
+      "recipient": "Nagpur Municipal Corporation",
+      "entitled": {
+        "value": 5.8,
+        "unit": "Mcum/yr",
+        "basis": "annual reservation in NMC's table (ESR 2017-18 draft, Table 4.3)",
+        "note": "NMC's 2017-18 water budget counted 5.84 Mcum from the lake (MWRRA Order 13/2018, p.28)."
+      },
+      "received": {
+        "value": null,
+        "unit": "Mcum/yr",
+        "year": null,
+        "note": "No delivery figure is shown because the two 2017-18 figures disagree. NMC's table bills 6.80 Mcum (20 MLD; ESR 2017-18 draft, Table 4.3), while the Old Gorewada plant is listed at 16 MLD capacity and 16 MLD treated in the same report (Table 4.4). The plant is in the 2017-18 plant list and not in the 2022-23 or 2023-24 lists."
+      },
+      "instrument": {
+        "label": "NMC raw-water reservation table, ESR 2017-18 draft, Table 4.3",
+        "url": "https://caknnagpur871784109.wordpress.com/wp-content/uploads/2019/12/environmental-status-report-nagpur-2017-18.pdf"
+      },
+      "confidence": "medium",
+      "source_ids": [
+        "nmc-esr",
+        "mwrra-case-8-2017"
+      ]
+    },
+    {
+      "id": "nmc-public-wells",
+      "as_of": "2017-10-12",
+      "source": "NMC public borewells (4,967) and public open wells",
+      "recipient": "Nagpur Municipal Corporation",
+      "entitled": {
+        "value": null,
+        "unit": "Mcum/yr",
+        "basis": "NMC's own wells: no external quota",
+        "note": null
+      },
+      "received": {
+        "value": 7.66,
+        "unit": "Mcum/yr",
+        "year": "availability, NMC's 2017-18 water budget",
+        "note": "5.44 Mcum from public borewells + 2.22 from public open wells, as counted in NMC's 2017-18 water budget (MWRRA Order 13/2018, p.28): an availability figure, not a meter reading. The same budget counted 4.56 Mcum from 25,000 private open wells, which NMC does not run."
+      },
+      "instrument": {
+        "label": "NMC water budget 2017-18, as recorded in MWRRA Order 13/2018",
+        "url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-Final-Order.pdf"
+      },
+      "confidence": "medium",
+      "source_ids": [
+        "mwrra-case-8-2017"
+      ]
+    },
+    {
+      "id": "pench-thermal",
+      "as_of": "2020-03-19",
+      "source": "Pench Project Complex",
+      "authority_id": "wrd-maharashtra",
+      "recipient": "Koradi and Khaperkheda thermal power stations (MAHAGENCO)",
+      "entitled": {
+        "value": 20,
+        "unit": "Mcum/yr",
+        "basis": "10 + 10 in the WRD re-planning GR of 19 Mar 2020 (phase 1); 67 + 60 in the project plan",
+        "note": "The CADA letter of 10 Apr 2018 set Khaperkheda's 2017-18 industrial entitlement at 70.15 Mcum and its quota at 64.27 (the column that gives NMC 139.03) (MWRRA Order 13/2018, p.28)."
+      },
+      "received": {
+        "value": null,
+        "unit": "Mcum/yr",
+        "year": null,
+        "note": "No draw figure for the thermal stations was found."
+      },
+      "instrument": {
+        "label": "WRD GR of 19 Mar 2020 (Pench water-use re-planning)",
+        "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202003191442414827.pdf"
+      },
+      "confidence": "high",
+      "note": "The regulator directed CADA to review and reduce the thermal stations' entitlements in phases, since treated sewage from NMC can meet these demands (direction 52(x), p.49). NMC told the Authority in 2017 that it had handed a 130 MLD sewage treatment plant to MAHAGENCO (MWRRA Order 13/2018, p.9; para 32(vii)).",
+      "source_ids": [
+        "mahagr-wrd-resolutions",
+        "mwrra-case-8-2017"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "year": 1965,
+      "title": "112 Mcum for the city, by NMC's account of a 1965 letter",
+      "note": "NMC told the regulator that a State Government letter of 29 Mar 1965 approved a reservation of 112 Mcum for the city (MWRRA Order 13/2018, p.22). The Pench project's sanctioned plan, approved on 21 Aug 1972, allots 965 Mcum a year: 689 to irrigation, 112 to NMC, 67 and 60 to the Koradi and Khaperkheda thermal stations, 2 to fisheries, 2 to industry and 33 to evaporation (WRD GR of 19 Mar 2020).",
+      "source_refs": [
+        "mwrra-order-2018",
+        "wrd-gr-2020"
+      ]
+    },
+    {
+      "year": 1982,
+      "title": "The first Pench treatment plant",
+      "note": "Pench I was commissioned in 1982, Pench II in 1984, Pench III in 2003 and Pench IV in 2018 (ESR 2017-18 draft, p.18). Navegaon Khairi dam was completed in 1976 and Totladoh in 1989 (WRD GR of 19 Mar 2020).",
+      "source_refs": [
+        "esr-2017-18",
+        "wrd-gr-2020"
+      ]
+    },
+    {
+      "year": 1998,
+      "title": "78 Mcum more, sanctioned up to 2005",
+      "note": "NMC, the Pench Project Officer and the regulator date the sanction 21 Mar 1998; the petition prints 31 Mar 1998, and the petitioner's later submissions say 1997 and 1999. It was temporary, up to 2005, on condition that NMC develop an independent source by then (MWRRA Order 13/2018, pp.5, 16, 20, 22, 25, 39).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2008,
+      "title": "Orders to make the 78 permanent, on conditions",
+      "note": "A State Government order of 12 Feb 2008 and a Chief Engineer's order of 27 Dec 2008 converted it to a permanent reservation on conditions: an agreement within 90 days, and Rs 8,445 lakh to WRD for 8,445 ha of irrigation command (MWRRA Order 13/2018, p.25). The regulator records that these conditions 'are yet to be satisfied' (p.39).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2010,
+      "title": "Continued until further orders",
+      "note": "At a meeting on 25 Aug 2010 the Water Resources Minister ordered the temporary reservation of 78 Mcum to continue until further orders. Section 31B of the MWRRA (Amendment and Continuance) Act 2011 protects allocations made before 17 Sep 2010 (MWRRA Order 13/2018, pp.26, 39).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2011,
+      "title": "A 50 Mcum agreement",
+      "note": "An agreement for 50 Mcum of additional use was signed on 1 Jan 2011 and ran to 31 Dec 2016; it was not renewed (MWRRA Order 13/2018, p.26).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2015,
+      "title": "A closed pipeline replaces the canal",
+      "note": "NMC told the regulator that a closed pipeline from Navegaon Khairi, built for Rs 250 crore, came into use in April 2015. On the 48.4 km canal about 30% was lost, so 271 Mcum had to be released to deliver 190; NMC puts the saving at 81 Mcum (MWRRA Order 13/2018, p.23).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2016,
+      "title": "Chaurai dam in Madhya Pradesh starts storing",
+      "note": "Madhya Pradesh's Chaurai dam on the Pench (577 Mcum) has stored water since 2016 (WRD GR of 19 Mar 2020).",
+      "source_refs": [
+        "wrd-gr-2020"
+      ]
+    },
+    {
+      "year": 2017,
+      "title": "A petition to the state water regulator",
+      "note": "Case No. 8 of 2017 asked MWRRA to provide water for irrigation by curtailing NMC's use of Pench water. Storage in the complex stood at 43% in October 2017 (MWRRA Order 13/2018, p.6).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2018,
+      "title": "The regulator's order",
+      "note": "MWRRA Order 13/2018 of 12 Sep 2018 holds the 78 Mcum 'legal and intact as on today'. It directs NMC to keep its water budget within the Authority's norm (135 litres a person a day plus 15% losses); directs NMC and the Water Resources Department to develop alternative sources for the city in a time-bound manner; directs NMC to run a time-bound programme to cut distribution losses, with annual reports to the Authority that are also to be made public; and it directs CADA to review the thermal stations' entitlements (directions 52(i), (ii), (iv), (vii), (x), pp.48-49).",
+      "source_refs": [
+        "mwrra-order-2018"
+      ]
+    },
+    {
+      "year": 2019,
+      "title": "Lohghogari diversion approved in principle",
+      "note": "WRD's GR of 18 Sep 2019 gives in-principle approval, at Rs 3,612 crore in two phases, for a 62 km tunnel to divert 10 TMC from the Kanhan near Lohghogari in Madhya Pradesh into Totladoh. Phase 1 (Rs 17.55 crore) covers approvals only.",
+      "source_refs": [
+        "wrd-gr-2019"
+      ]
+    },
+    {
+      "year": 2020,
+      "title": "Pench water use re-planned",
+      "note": "WRD's GR of 19 Mar 2020 re-plans the complex in two phases: NMC 190 Mcum a year once the command's lift-irrigation schemes run, and 341 once the Lohghogari tunnel also runs; the thermal stations fall to 10 each. The GR is subject to the final decision of the joint committee on the project's yield.",
+      "source_refs": [
+        "wrd-gr-2020"
+      ]
+    },
+    {
+      "year": 2023,
+      "title": "Kolar-Kanhan barrage and the Rohana scheme",
+      "note": "WRD's GR of 18 Apr 2023 approves survey and project-report work for a Kolar-Kanhan barrage at Kamptee (67.88 Mcum storage) and records a Rohana scheme of 68.957 Mcum (read as a year's use; the GR states no period) into the Pench-Gorewada main, planned to reduce the 78 Mcum Pench lift that the GR describes as temporarily sanctioned.",
+      "source_refs": [
+        "wrd-gr-2023"
+      ]
+    }
+  ],
+  "futures": [
+    {
+      "id": "lohghogari-341",
+      "project": "Lohghogari tunnel and Pench phase 2",
+      "mld": null,
+      "earmarked_for": [
+        "Nagpur Municipal Corporation",
+        "Pench command irrigation"
+      ],
+      "status": "Under the 2020 re-planning NMC's Pench share rises to 341 Mcum a year (190 in phase 1) once the lift-irrigation schemes and the Lohghogari tunnel run; irrigation rises to 685. The tunnel (10 TMC from the Kanhan in Madhya Pradesh, 62 km) has in-principle approval at Rs 3,612 crore (GR of 18 Sep 2019). No later primary document on its progress was found.",
+      "source_refs": [
+        "wrd-gr-2020",
+        "wrd-gr-2019"
+      ],
+      "commitment_id": "ngp-lohghogari-diversion"
+    },
+    {
+      "id": "rohana-scheme",
+      "project": "Rohana scheme into the Pench-Gorewada main",
+      "mld": null,
+      "earmarked_for": [
+        "Nagpur Municipal Corporation"
+      ],
+      "status": "68.957 Mcum (read as a year's use; the GR states no period), planned to reduce the 78 Mcum Pench lift (WRD GR of 18 Apr 2023). No construction sanction was found.",
+      "source_refs": [
+        "wrd-gr-2023"
+      ],
+      "commitment_id": "ngp-rohana-reduce-78"
+    },
+    {
+      "id": "kolar-kanhan-barrage",
+      "project": "Kolar-Kanhan barrage, Kamptee",
+      "mld": null,
+      "earmarked_for": [
+        "Nagpur Municipal Corporation (Kanhan Water Works)"
+      ],
+      "status": "A 67.88 Mcum barrage to secure the Kanhan Water Works' 65.71 Mcum and 44.934 Mcum of future demand (yearly figures; the GR states no period). The 2023 GR approves survey and project-report work only.",
+      "source_refs": [
+        "wrd-gr-2023"
+      ],
+      "commitment_id": "ngp-kolar-kanhan-barrage-dpr"
+    }
+  ],
+  "gaps": [
+    "What NMC draws from each source after 2017-18. NMC's latest water balance (ESR 2023-24, Table 6.2) gives only the citywide total of treated water: 257.642 Mcum in 2023-24.",
+    "The annual loss-reduction reports the regulator directed NMC to make public in 2018 (Order 13/2018, direction 52(vii)) were not found online on 15 Oct 2026.",
+    "The joint committee decision on the Pench yield (Central Water Commission, Maharashtra and Madhya Pradesh) that the 2020 re-planning is subject to was not found.",
+    "No reservation order for the Kanhan source was found; the four Kanhan figures (55.00, 58 and 60 Mcum a year, and 65.71 Mcum in a 2023 GR that states no period) come from different documents on different bases.",
+    "Draws by irrigation and by the thermal stations from the same complex, and the raw-water rate NMC pays WRD under MWRRA's bulk water tariff orders."
+  ],
+  "sources": {
+    "wrd-gr-2020": {
+      "title": "GR, Pench project water-use re-planning, 19 Mar 2020 (code 202003191442414827, Marathi; table on p.2)",
+      "publisher": "Water Resources Department, Government of Maharashtra",
+      "year": 2020,
+      "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202003191442414827.pdf"
+    },
+    "wrd-gr-2019": {
+      "title": "GR, Lohghogari-Totladoh diversion, in-principle approval, 18 Sep 2019 (code 201909181817460527, Marathi)",
+      "publisher": "Water Resources Department, Government of Maharashtra",
+      "year": 2019,
+      "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/201909181817460527.pdf"
+    },
+    "wrd-gr-2023": {
+      "title": "GR, Kolar-Kanhan barrage survey and project report, 18 Apr 2023 (official code 202304201803571027, Marathi). The official copy did not open on 15 Oct 2026; this link is the orgpedia mahGRs archive's text of it",
+      "publisher": "Water Resources Department, Government of Maharashtra",
+      "year": 2023,
+      "url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt"
+    },
+    "mwrra-order-2018": {
+      "title": "MWRRA Order No. 13/2018, Case No. 8 of 2017 (scanned)",
+      "publisher": "Maharashtra Water Resources Regulatory Authority",
+      "year": 2018,
+      "url": "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-Final-Order.pdf"
+    },
+    "esr-2017-18": {
+      "title": "NMC / CSIR-NEERI draft Environmental Status Report 2017-18, Tables 4.3-4.4 (third-party mirror, the only copy found)",
+      "publisher": "Nagpur Municipal Corporation",
+      "year": 2018,
+      "url": "https://caknnagpur871784109.wordpress.com/wp-content/uploads/2019/12/environmental-status-report-nagpur-2017-18.pdf"
+    },
+    "esr-2023-24": {
+      "title": "NMC Environment Status Report 2023-24, Table 6.2",
+      "publisher": "Nagpur Municipal Corporation",
+      "year": 2025,
+      "url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+    }
+  }
+}

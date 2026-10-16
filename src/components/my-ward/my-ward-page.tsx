@@ -225,7 +225,7 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
           {/* News */}
           <NewsContext
             domain="groundwater"
-            zoneName={profile.zone_name}
+            zoneName={profile.zone_name ?? undefined}
           />
 
           {/* Data disclaimer */}

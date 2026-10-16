@@ -149,6 +149,9 @@ interface SupplyOverviewData {
      *  horizon); cities on a different plan horizon (Delhi: MPD-2041) must
      *  override it or the page states the wrong year. */
     demand_headline?: string;
+    /** Replaces the "Existing supply mix - {total} MLD total" header, for a
+     *  city whose split is treatment capacity rather than supply. */
+    source_mix_label?: string;
   };
 }
 
@@ -236,7 +239,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
           {/* Source mix */}
           <div>
             <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
-              {t("supply_overview.source_mix_label").replace("{total}", String(data.current_supply_total_mld))}
+              {(data._view_overrides?.source_mix_label ?? t("supply_overview.source_mix_label")).replace("{total}", String(data.current_supply_total_mld))}
             </h3>
             {/* Stacked bar */}
             <div className="flex w-full h-2 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">

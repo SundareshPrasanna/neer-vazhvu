@@ -12,11 +12,16 @@ import Link from "next/link";
  *
  * Self-hides where a city has no static facts file (Chennai runs the dynamic
  * pipeline) or has not graded any fact tier-1.
+ *
+ * A fact's `featured` flag, where set, picks the card instead of its tier, so
+ * a dated document figure can lead the strip without wearing the facts
+ * page's Live badge (tier 1).
  */
 
 export type Fact = {
   id: string;
   tier?: number;
+  featured?: boolean;
   category: string;
   title: string;
   value?: string;
@@ -49,7 +54,7 @@ export function KeyFindings({
   cityDisplayName: string;
   limit?: number;
 }) {
-  const tier1 = facts.filter((f) => f.tier === 1);
+  const tier1 = facts.filter((f) => f.featured ?? f.tier === 1);
   if (tier1.length === 0) return null;
 
   // One per category first, so the strip spans the city's problems rather than

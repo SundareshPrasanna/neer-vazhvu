@@ -264,6 +264,15 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   "pune:climate-risk": "Not built for this city.",
   "pune:shoreline": "Landlocked.",
 
+  // Nagpur - preview-gated, city thirteen. Every other route is on; these
+  // three are off by decision.
+  "nagpur:tanker":
+    "NMC publishes how many tankers it runs (37 in the 2026-27 budget speech; 78 in 2024 in the Environment Status Report 2023-24) but no delivery register, booking ledger or price survey, so there is no record of who receives water by tanker or at what price. The operator's own fleet figures appear only in the press.",
+  "nagpur:shoreline":
+    "Landlocked: Nagpur is near the centre of the country and has no coastline.",
+  "nagpur:climate-risk":
+    "Buildable but not built. The sub-basin risk surface rests on HydroBASINS, a global product that also covers the Kanhan and Wainganga basins, so this is a backlog item rather than a refusal.",
+
   // Hyderabad
   "hyderabad:my-ward":
     "The 300-ward delimitation gazetted 25 Dec 2025 has no public geometry, and with the corporations under a Special Officer there are no sitting councillors to attach to a ward either. Returns with the ward build, following the Mumbai precedent.",

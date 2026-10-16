@@ -10,6 +10,8 @@ import {
   TREND_DO_THRESHOLD,
   TREND_BOD_THRESHOLD,
   computeStationTrend,
+  latestReadingOf,
+  readingPeriodLabel,
 } from "@/types/river-quality";
 import { useLanguage } from "@/lib/i18n/context";
 import { NewsContext } from "@/components/insights/news-context";
@@ -198,9 +200,9 @@ export function RiverPanel({
   const activeStation =
     river.stations.find((s) => s.id === activeStationId) ?? firstStationWithReadings ?? river.stations[0];
 
-  // Latest DO reading from active station
-  const latestReading = [...activeStation.readings].sort((a, b) => b.year - a.year)[0];
-  const latestDO = measureWorst(latestReading?.do_mgl, "lower-is-worse");
+  // Latest reading from the active station (the latest month of a monthly feed)
+  const latestReading = latestReadingOf(activeStation.readings);
+  const latestDO = measureWorst(latestReading?.do_mgl ?? null, "lower-is-worse");
 
   // 3-year trend for the active station
   const trend = computeStationTrend(activeStation.readings);
@@ -291,7 +293,7 @@ export function RiverPanel({
               : t("common.not_available")}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            DO ({latestReading?.year ?? "-"})
+            DO ({latestReading ? readingPeriodLabel(latestReading) : "-"})
           </div>
         </div>
       </div>
@@ -312,7 +314,9 @@ export function RiverPanel({
             <span className={`text-xs font-semibold whitespace-nowrap ${TREND_CONFIG[trend.direction].className}`}>
               {t(TREND_CONFIG[trend.direction].tKey)}
               <span className="font-normal text-slate-400 dark:text-slate-500 ml-1">
-                ({trend.start_year}-{trend.end_year})
+                {trend.start_month && trend.end_month
+                  ? `(${readingPeriodLabel({ year: trend.start_year, month: trend.start_month })} to ${readingPeriodLabel({ year: trend.end_year, month: trend.end_month })})`
+                  : <>({trend.start_year}-{trend.end_year})</>}
               </span>
             </span>
           </div>
@@ -433,7 +437,7 @@ export function RiverPanel({
       {latestReading && (
         <div className="mb-5">
           <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
-            {t("rivers.pollution_profile")} ({latestReading.year})
+            {t("rivers.pollution_profile")} ({readingPeriodLabel(latestReading)})
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
             {/* DO - Dissolved Oxygen (inverted: higher = better) */}
@@ -520,10 +524,10 @@ export function RiverPanel({
                 <div className={`rounded-lg px-2.5 py-1.5 ${exceeded ? "bg-red-50 dark:bg-red-950/30 ring-1 ring-red-200 dark:ring-red-800" : "bg-slate-50 dark:bg-slate-800"}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500 dark:text-slate-400">{t("rivers.fc_title")}</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} MPN</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">{t("rivers.limit")}: {limit} {latestReading.fecal_coliform_unit ?? "MPN"}</span>
                   </div>
                   <div className={`font-mono font-bold ${severe ? "text-red-600 dark:text-red-400" : exceeded ? "text-orange-600 dark:text-orange-400" : "text-green-600 dark:text-green-400"}`}>
-                    {shown} <span className="font-normal text-slate-400">MPN</span>
+                    {shown} <span className="font-normal text-slate-400">{latestReading.fecal_coliform_unit ?? "MPN"}</span>
                     {exceeded && <span className="ml-1 text-[10px] font-semibold text-red-500 dark:text-red-400">{ratio.toFixed(0)}x</span>}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">

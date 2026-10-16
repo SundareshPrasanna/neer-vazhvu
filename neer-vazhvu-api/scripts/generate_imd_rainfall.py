@@ -42,6 +42,7 @@ import numpy as np
 # have; this only takes effect on a city writing the file for the first time.
 ENVELOPE_SOURCE_ID = {
     "pune": "imd-gridded-rainfall-pune",
+    "nagpur": "imd-gridded-rainfall-nagpur",
     "gurugram": "imd-gridded-rainfall-gurugram",
     "ahmedabad": "imd-gridded-rainfall-ahmedabad",
     "visakhapatnam": "imd-gridded-rainfall-visakhapatnam",
@@ -92,6 +93,18 @@ CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
         "(Shivajinagar) observatory normal of 841.2 mm - 31% high. This cell "
         "returns 805.3 mm, within 4.3% of the observatory. Validated against "
         "IMD Climatological Tables 1991-2020, station index 43063.",
+    ),
+    "nagpur": (
+        21.0,
+        79.0,
+        "Nagpur grid point: the 0.25-deg intersection nearest IMD's Nagpur "
+        "(Sonegaon) observatory at 21.10 N, 79.05 E (about 12 km; 21.25/79.0 is "
+        "about 17 km). The node sits just south of the NMC outline "
+        "(21.05-21.23 N) and its cell covers the observatory and the "
+        "south-western part of the city (about 28% of the NMC outline). Checked against the observatory's 1991-2020 normal "
+        "of 1,151.2 mm (IMD Climatological Tables 1991-2020, station index "
+        "42867): see the registry entry imd-gridded-rainfall-nagpur for the "
+        "cell's own 1991-2020 mean.",
     ),
     "gurugram": (
         28.5,

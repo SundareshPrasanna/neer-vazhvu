@@ -21,7 +21,9 @@ Usage:
   python scripts/ingest_rich_body_imagery.py --body-id pallikaranai
   python scripts/ingest_rich_body_imagery.py --body-id pallikaranai --upload
   python scripts/ingest_rich_body_imagery.py --body-id pallikaranai --years 1990,2000,2010,2020,2026
+  python scripts/ingest_rich_body_imagery.py --body-id totladoh --tiles 2
 """
+
 from __future__ import annotations
 
 import argparse
@@ -30,6 +32,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,7 +42,7 @@ from nvdm_write import write_artifact  # noqa: E402
 
 from dotenv import load_dotenv
 from registry_license import registry_license
-from shapely.geometry import box, shape
+from shapely.geometry import shape
 from shapely.ops import unary_union
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -65,11 +68,13 @@ S2_VIS = {"min": 0, "max": 3000, "gamma": 1.1}
 
 DEFAULT_YEARS = list(range(1984, 2027))  # inclusive
 DEFAULT_MAX_DIMENSION = 1200  # px on longer side
+MAX_AUTO_TILES = 4  # memory-limit fallback tries 2 x 2, then 3 x 3, then 4 x 4
 BUFFER_MARGIN_M = 200
 SATELLITE_EVIDENCE_BUCKET = "satellite-evidence"
 
 
 # ------------------------------- helpers ---------------------------------
+
 
 def init_ee() -> None:
     project = os.environ["GEE_CLOUD_PROJECT"]
@@ -108,21 +113,13 @@ def mask_landsat_l2(img):
 
 
 def scale_landsat_sr(img, bands_in: list[str], bands_out: list[str]):
-    scaled = (
-        img.select(bands_in).multiply(0.0000275).add(-0.2).rename(bands_out)
-    )
+    scaled = img.select(bands_in).multiply(0.0000275).add(-0.2).rename(bands_out)
     return scaled
 
 
 def mask_s2(img):
     scl = img.select("SCL")
-    keep = (
-        scl.eq(4)
-        .Or(scl.eq(5))
-        .Or(scl.eq(6))
-        .Or(scl.eq(7))
-        .Or(scl.eq(11))
-    )
+    keep = scl.eq(4).Or(scl.eq(5)).Or(scl.eq(6)).Or(scl.eq(7)).Or(scl.eq(11))
     return img.updateMask(keep)
 
 
@@ -183,8 +180,16 @@ def yearly_median_rgb(year: int, ee_bbox: ee.Geometry):
     return visualized, sensor, count
 
 
-def fetch_chip_jpeg(image: ee.Image, ee_bbox: ee.Geometry, max_dim: int) -> bytes:
-    """Get a JPEG byte-string for the visualized image inside ee_bbox."""
+def fetch_chip_jpeg(
+    image: ee.Image, ee_bbox: ee.Geometry, max_dim: int, tiles: int = 0
+) -> bytes:
+    """Get a JPEG byte-string for the visualized image inside ee_bbox.
+
+    tiles=N fetches it as N x N tiles. tiles=0 (default) makes one request
+    and tiles only if GEE refuses it for memory (a big Sentinel-2 stack:
+    Totladoh's chip spans four MGRS tiles, 365-433 scenes a year)."""
+    if tiles:
+        return fetch_chip_tiled(image, ee_bbox, max_dim, tiles)
     url = image.getThumbURL(
         {
             "region": ee_bbox,
@@ -193,8 +198,70 @@ def fetch_chip_jpeg(image: ee.Image, ee_bbox: ee.Geometry, max_dim: int) -> byte
             "crs": "EPSG:4326",
         }
     )
-    with urllib.request.urlopen(url, timeout=120) as resp:
-        return resp.read()
+    try:
+        with urllib.request.urlopen(url, timeout=120) as resp:
+            return resp.read()
+    except urllib.error.HTTPError as e:
+        if not is_memory_limit(e):
+            raise
+    for n in range(2, MAX_AUTO_TILES + 1):
+        print(f"    GEE memory limit; fetching as {n} x {n} tiles")
+        try:
+            return fetch_chip_tiled(image, ee_bbox, max_dim, n)
+        except urllib.error.HTTPError as e:
+            if n == MAX_AUTO_TILES or not is_memory_limit(e):
+                raise
+
+
+def is_memory_limit(e: urllib.error.HTTPError) -> bool:
+    return e.code == 400 and b"memory limit exceeded" in e.read()
+
+
+def fetch_chip_tiled(
+    image: ee.Image, ee_bbox: ee.Geometry, max_dim: int, n: int
+) -> bytes:
+    """The one-request chip, fetched as n x n PNG tiles on that request's own
+    pixel grid and stitched. Pixel-identical to the one-request chip, and
+    JPEG-encoded as GEE encodes it (quality 95, 4:2:0), so the file is
+    byte-identical too (checked on Totladoh: Landsat 2015 at 1200 px in
+    2 x 2 and 3 x 3, Sentinel-2 2025 at 800 px)."""
+    from PIL import Image  # only this path needs Pillow
+
+    # The grid getThumbURL uses for region + dimensions + crs: the ee client
+    # wraps the image exactly this way before requesting the thumbnail.
+    grid = (
+        image.setDefaultProjection("EPSG:4326", [1, 0, 0, 0, -1, 0])
+        .clipToBoundsAndScale(geometry=ee_bbox, maxDimension=max_dim)
+        .getInfo()["bands"][0]
+    )
+    width, height = grid["dimensions"]
+    a, b, c, d, e, f = grid["crs_transform"]
+    ox, oy = grid.get("origin") or (0, 0)
+    xs = [round(width * i / n) for i in range(n + 1)]
+    ys = [round(height * j / n) for j in range(n + 1)]
+    canvas = Image.new("RGB", (width, height))
+    for j in range(n):
+        for i in range(n):
+            px, py = ox + xs[i], oy + ys[j]  # tile's top-left pixel
+            x0, y0 = a * px + b * py + c, d * px + e * py + f
+            url = image.getThumbURL(
+                {
+                    "crs": "EPSG:4326",
+                    "crs_transform": [a, b, x0, d, e, y0],
+                    "dimensions": f"{xs[i + 1] - xs[i]}x{ys[j + 1] - ys[j]}",
+                    "format": "png",
+                }
+            )
+            with urllib.request.urlopen(url, timeout=120) as resp:
+                tile = Image.open(io.BytesIO(resp.read())).convert("RGB")
+            canvas.paste(tile, (xs[i], ys[j]))
+    out = io.BytesIO()
+    canvas.save(out, "JPEG", quality=95)
+    jpeg = out.getvalue()
+    # Pillow writes JFIF 1.01; GEE writes 1.02. Same pixels either way.
+    if jpeg[6:13] == b"JFIF\x00\x01\x01":
+        jpeg = jpeg[:12] + b"\x02" + jpeg[13:]
+    return jpeg
 
 
 def write_local(path: Path, data: bytes) -> None:
@@ -219,6 +286,7 @@ def upload_supabase(remote_path: str, data: bytes, content_type: str) -> str:
 
 # --------------------------------- main ----------------------------------
 
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--body-id", required=True)
@@ -226,6 +294,13 @@ def main():
     ap.add_argument("--upload", action="store_true", help="upload to Supabase storage")
     ap.add_argument("--max-dim", type=int, default=DEFAULT_MAX_DIMENSION)
     ap.add_argument("--margin-m", type=int, default=BUFFER_MARGIN_M)
+    ap.add_argument(
+        "--tiles",
+        type=int,
+        default=0,
+        help="fetch every chip as N x N tiles (default: one request, tiled "
+        "only when GEE refuses it for memory)",
+    )
     args = ap.parse_args()
 
     body_id = args.body_id
@@ -292,7 +367,7 @@ def main():
             continue
 
         try:
-            jpeg = fetch_chip_jpeg(visualized, ee_bbox, args.max_dim)
+            jpeg = fetch_chip_jpeg(visualized, ee_bbox, args.max_dim, args.tiles)
         except Exception as e:
             print(f"  {year}: chip fetch failed: {e}")
             chips.append(
@@ -347,7 +422,9 @@ def main():
     chips.sort(key=lambda c: c["year"])
 
     available_count = sum(1 for c in chips if c.get("available"))
-    print(f"\nDone: {available_count}/{len(chips)} chips available (incl. {len(existing_chips_by_year) - sum(1 for y in existing_chips_by_year if y in just_processed)} carried over from prior runs)")
+    print(
+        f"\nDone: {available_count}/{len(chips)} chips available (incl. {len(existing_chips_by_year) - sum(1 for y in existing_chips_by_year if y in just_processed)} carried over from prior runs)"
+    )
 
     manifest = {
         "body_id": body_id,
@@ -371,7 +448,9 @@ def main():
     }
     if existing_tints:
         manifest["tints"] = existing_tints
-        print(f"Carried forward {len(existing_tints)} tint layer(s) from the prior manifest")
+        print(
+            f"Carried forward {len(existing_tints)} tint layer(s) from the prior manifest"
+        )
     # `manifest_path` was already defined earlier (top of main) for the
     # existing-manifest read; reuse it for the write.
     manifest_path.parent.mkdir(parents=True, exist_ok=True)

@@ -32,6 +32,7 @@ import {
 } from "@/lib/insights/constants";
 import { assessCensusCapacity } from "@/lib/water-bodies/census-capacity";
 import { PlaceReports } from "@/components/sightings/place-reports";
+import { isOsmId, sourceCode } from "./body-ids";
 
 // recharts loads with the chart when a panel shows it, not with the page.
 const WaterBodyHistoryChart = dynamic(
@@ -673,12 +674,13 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
     }
 
     // NOT EVERY WATER BODY HAS AN OSM ID. The satellite context is keyed on
-    // one, and bodies that come from a national atlas rather than OSM do not
+    // a numeric one, and bodies that come from a national atlas rather than OSM do not
     // carry it - all 3,418 of Surat's are SAC wetland-atlas polygons with an
     // atlas `id` and no `osm_id` at all. Without this guard the panel fired
-    // `?osm_id=undefined` for every one of them.
+    // `?osm_id=undefined` for every one of them. Nagpur's "mrsac:<code>" and
+    // Pune's "way/123" ids are strings the route rejects with a 400.
     const osmId = selected.props.osm_id;
-    if (osmId == null) {
+    if (typeof osmId !== "number") {
       // No setState here on purpose: the derived guard below already requires
       // a non-null osm_id on BOTH sides, so stale state cannot leak into this
       // body's panel, and clearing it synchronously in an effect is what
@@ -804,6 +806,7 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
       ? `${props.area_ha.toLocaleString()} ha`
       : t("wb_panel.unknown");
     const type = localizeType(props.water_type);
+    const code = sourceCode(props.osm_id);
 
     return (
       <div className="h-full flex flex-col bg-white dark:bg-slate-900 overflow-y-auto">
@@ -833,7 +836,11 @@ export function UnifiedDetailPanel({ selected, restorationData, lostNarrative, c
         <div className="p-4 grid grid-cols-2 gap-4">
           <Row label={t("wb_panel.type")} value={type} />
           <Row label={t("wb_panel.area")} value={areaText} />
-          <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
+          {isOsmId(props.osm_id) ? (
+            <Row label={t("wb_panel.osm_id")} value={`#${props.osm_id}`} />
+          ) : code && (
+            <Row label={interpolate(t("wb_panel.source_code"), { source: code[1].toUpperCase() })} value={code[2]} />
+          )}
         </div>
 
         {/* Historical narrative from the city's water-bodies-lost JSON,

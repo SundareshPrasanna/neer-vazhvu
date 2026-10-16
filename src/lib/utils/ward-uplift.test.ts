@@ -174,6 +174,7 @@ describe("computeUpliftPlan - budget", () => {
   it("improves or maintains overall grade", () => {
     const plan = computeUpliftPlan(15, allProfiles, 100, cityDist);
     assert.ok(plan);
+    assert.ok(plan.overallPercentileBefore !== null && plan.overallPercentileAfter !== null);
     assert.ok(
       plan.overallPercentileAfter >= plan.overallPercentileBefore,
       `Percentile decreased from ${plan.overallPercentileBefore} to ${plan.overallPercentileAfter}`,

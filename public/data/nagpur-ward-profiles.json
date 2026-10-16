@@ -1,0 +1,2397 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/ward-profiles",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "mrsac-gatishakti-dma-wards",
+        "title": "MRSAC PM Gati Shakti ward layer (38 wards, 2025)",
+        "publisher": "Maharashtra Remote Sensing Applications Centre (MRSAC)",
+        "license": "Maharashtra government publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "nmc-gis-admin-boundaries",
+        "title": "NMC GIS zone boundaries (zone names)",
+        "publisher": "Nagpur Municipal Corporation",
+        "license": "Nagpur Municipal Corporation publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "mrsac-waterbodies-10k-2017-18",
+        "title": "MRSAC 1:10,000 water bodies, 2017-18",
+        "publisher": "Maharashtra Remote Sensing Applications Centre (MRSAC)",
+        "license": "Maharashtra government publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap names for water bodies",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "nmc-esr-river-stp-tables",
+        "title": "NMC river sampling sites (ESR 2023-24)",
+        "publisher": "Nagpur Municipal Corporation",
+        "license": "Nagpur Municipal Corporation publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "ingres-groundwater-maharashtra",
+        "title": "IN-GRES assessment units",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; a Government of India assessment portal, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-maharashtra",
+        "title": "NWDP groundwater telemetry",
+        "publisher": "National Water Informatics Centre",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_ward_profiles.py",
+    "internal_inputs": [
+      "public/data/gwr-blocks-nagpur.json",
+      "public/data/nagpur-cgwb-stations.json",
+      "public/data/river-quality-nagpur.json",
+      "public/geojson/nagpur-gwr-blocks.geojson",
+      "public/geojson/nagpur-wards-2025.geojson",
+      "public/geojson/nagpur-water-bodies-current.geojson"
+    ],
+    "note": "Point-in-polygon joins of the city's shipped layers onto its ward geometry; sections without a source are marked not_available."
+  },
+  "wards": [
+    {
+      "ward_number": 1,
+      "ward_name": "Prabhag 1",
+      "zone_no": "9",
+      "zone_name": "Ashi Nagar",
+      "centroid": [
+        79.09103,
+        21.204221
+      ],
+      "area_sq_km": 11.305,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-4",
+        "nearest_river_id": "pili",
+        "nearest_km": 1.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Nara_3",
+          "block": "Nagpur (Urban)",
+          "distance_km": 1.5,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 10.55
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 2,
+      "ward_name": "Prabhag 2",
+      "zone_no": "9",
+      "zone_name": "Ashi Nagar",
+      "centroid": [
+        79.111706,
+        21.194721
+      ],
+      "area_sq_km": 8.525,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-5",
+        "nearest_river_id": "pili",
+        "nearest_km": 1.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Nara_3",
+          "block": "Nagpur (Urban)",
+          "distance_km": 3.9,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 10.55
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 3,
+      "ward_name": "Prabhag 3",
+      "zone_no": "9",
+      "zone_name": "Ashi Nagar",
+      "centroid": [
+        79.128563,
+        21.181432
+      ],
+      "area_sq_km": 2.635,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-6",
+        "nearest_river_id": "pili",
+        "nearest_km": 0.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 4,
+      "ward_name": "Prabhag 4",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.153824,
+        21.174733
+      ],
+      "area_sq_km": 10.957,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 3,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-7",
+        "nearest_river_id": "pili",
+        "nearest_km": 0.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 5,
+      "ward_name": "Prabhag 5",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.12572,
+        21.168141
+      ],
+      "area_sq_km": 2.198,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-6",
+        "nearest_river_id": "pili",
+        "nearest_km": 1.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 6,
+      "ward_name": "Prabhag 6",
+      "zone_no": "9",
+      "zone_name": "Ashi Nagar",
+      "centroid": [
+        79.113857,
+        21.174397
+      ],
+      "area_sq_km": 2.256,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-6",
+        "nearest_river_id": "pili",
+        "nearest_km": 2.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      },
+      "boundary_note": "The final notification of 4 Oct 2025 moved part of the line between this ward and ward 7. This outline comes from MRSAC's map, whose ward populations follow the August 2025 draft, so this edge may follow the draft line rather than the final one. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 7,
+      "ward_name": "Prabhag 7",
+      "zone_no": "9",
+      "zone_name": "Ashi Nagar",
+      "centroid": [
+        79.100157,
+        21.169749
+      ],
+      "area_sq_km": 2.243,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-4",
+        "nearest_river_id": "pili",
+        "nearest_km": 2.8
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Nara_3",
+          "block": "Nagpur (Urban)",
+          "distance_km": 5.0,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 10.55
+          }
+        }
+      },
+      "boundary_note": "The final notification of 4 Oct 2025 moved part of the line between this ward and wards 6 and 9. This outline comes from MRSAC's map, whose ward populations follow the August 2025 draft, so this edge may follow the draft line rather than the final one. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 8,
+      "ward_name": "Prabhag 8",
+      "zone_no": "7",
+      "zone_name": "Satranjipura",
+      "centroid": [
+        79.096812,
+        21.157672
+      ],
+      "area_sq_km": 1.006,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-7",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      },
+      "boundary_note": "The final notification of 4 Oct 2025 moved part of the line between this ward and ward 19. This outline comes from MRSAC's map, whose ward populations follow the August 2025 draft, so this edge may follow the draft line rather than the final one. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 9,
+      "ward_name": "Prabhag 9",
+      "zone_no": "10",
+      "zone_name": "Mangalwari",
+      "centroid": [
+        79.08711,
+        21.162685
+      ],
+      "area_sq_km": 4.068,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-5",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Bokhara_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 4.9,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 6.17
+          }
+        }
+      },
+      "boundary_note": "The final notification of 4 Oct 2025 moved part of the line between this ward and ward 7. This outline comes from MRSAC's map, whose ward populations follow the August 2025 draft, so this edge may follow the draft line rather than the final one. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 10,
+      "ward_name": "Prabhag 10",
+      "zone_no": "10",
+      "zone_name": "Mangalwari",
+      "centroid": [
+        79.070246,
+        21.178168
+      ],
+      "area_sq_km": 4.865,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-2",
+        "nearest_river_id": "pili",
+        "nearest_km": 1.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Bokhara_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 2.7,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 6.17
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 11,
+      "ward_name": "Prabhag 11",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.055746,
+        21.196115
+      ],
+      "area_sq_km": 13.786,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Gorewada Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-1",
+        "nearest_river_id": "pili",
+        "nearest_km": 0.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Bokhara_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 1.4,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 6.17
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 12,
+      "ward_name": "Prabhag 12",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.020578,
+        21.171923
+      ],
+      "area_sq_km": 11.019,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pilli-1",
+        "nearest_river_id": "pili",
+        "nearest_km": 3.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 13,
+      "ward_name": "Prabhag 13",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.03074,
+        21.142273
+      ],
+      "area_sq_km": 20.857,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 9,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Ambazari Lake",
+          "Pandrapodi Pond",
+          "Phutala Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-2",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.4
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 14,
+      "ward_name": "Prabhag 14",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.061981,
+        21.158862
+      ],
+      "area_sq_km": 9.576,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-5",
+        "nearest_river_id": "nag",
+        "nearest_km": 3.0
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Bokhara_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 4.9,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 6.17
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 15,
+      "ward_name": "Prabhag 15",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.070628,
+        21.140107
+      ],
+      "area_sq_km": 5.354,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-5",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.3
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 16,
+      "ward_name": "Prabhag 16",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.071777,
+        21.119687
+      ],
+      "area_sq_km": 6.172,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-4",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "IMD Nagpur_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 3.8,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 7.54
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 17,
+      "ward_name": "Prabhag 17",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.093911,
+        21.133271
+      ],
+      "area_sq_km": 4.693,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Gandhi Sagar"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-7",
+        "nearest_river_id": "nag",
+        "nearest_km": 0.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 18,
+      "ward_name": "Prabhag 18",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.107632,
+        21.141451
+      ],
+      "area_sq_km": 1.575,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.2
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 19,
+      "ward_name": "Prabhag 19",
+      "zone_no": "6",
+      "zone_name": "Gandhibagh",
+      "centroid": [
+        79.101214,
+        21.151385
+      ],
+      "area_sq_km": 1.515,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-7",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      },
+      "boundary_note": "The final notification of 4 Oct 2025 moved part of the line between this ward and ward 8. This outline comes from MRSAC's map, whose ward populations follow the August 2025 draft, so this edge may follow the draft line rather than the final one. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 20,
+      "ward_name": "Prabhag 20",
+      "zone_no": "7",
+      "zone_name": "Satranjipura",
+      "centroid": [
+        79.108422,
+        21.160548
+      ],
+      "area_sq_km": 1.169,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Lendi Talav"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 21,
+      "ward_name": "Prabhag 21",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.119422,
+        21.15973
+      ],
+      "area_sq_km": 1.652,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.1
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 22,
+      "ward_name": "Prabhag 22",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.117775,
+        21.148087
+      ],
+      "area_sq_km": 2.029,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 0.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 23,
+      "ward_name": "Prabhag 23",
+      "zone_no": "8",
+      "zone_name": "Lakadganj",
+      "centroid": [
+        79.133315,
+        21.148528
+      ],
+      "area_sq_km": 3.223,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-9",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      },
+      "boundary_note": "MRSAC's ward populations follow a different line between this ward and ward 26 than either the August 2025 draft or the final notification of 4 Oct 2025 (a block of 446 people), so this edge of the outline may not follow the final line. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 24,
+      "ward_name": "Prabhag 24",
+      "zone_no": "8",
+      "zone_name": "Lakadganj",
+      "centroid": [
+        79.143738,
+        21.159188
+      ],
+      "area_sq_km": 3.885,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-9",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.4
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 25,
+      "ward_name": "Prabhag 25",
+      "zone_no": "8",
+      "zone_name": "Lakadganj",
+      "centroid": [
+        79.165987,
+        21.151438
+      ],
+      "area_sq_km": 4.604,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-9",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.8
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 26,
+      "ward_name": "Prabhag 26",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.146984,
+        21.134272
+      ],
+      "area_sq_km": 7.06,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-9",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      },
+      "boundary_note": "MRSAC's ward populations follow a different line between this ward and ward 23 than either the August 2025 draft or the final notification of 4 Oct 2025 (a block of 446 people), so this edge of the outline may not follow the final line. The legal map is kept at the NMC office."
+    },
+    {
+      "ward_number": 27,
+      "ward_name": "Prabhag 27",
+      "zone_no": "5",
+      "zone_name": "Nehru Nagar",
+      "centroid": [
+        79.121563,
+        21.132029
+      ],
+      "area_sq_km": 2.076,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 0.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 28,
+      "ward_name": "Prabhag 28",
+      "zone_no": "5",
+      "zone_name": "Nehru Nagar",
+      "centroid": [
+        79.133411,
+        21.117374
+      ],
+      "area_sq_km": 4.027,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "Bahadura",
+          "block": "Nagpur (Rural)",
+          "distance_km": 4.9,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 13.71
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 29,
+      "ward_name": "Prabhag 29",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.132086,
+        21.088502
+      ],
+      "area_sq_km": 10.783,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pora-2",
+        "nearest_river_id": "pora",
+        "nearest_km": 0.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Rural)",
+          "class": "Safe",
+          "development_pct": 42.93,
+          "note": "Published as Nagpur until 2022-2023. Its assessed area fell by 6,277 of 53,525 ha in 2023-2024, the edition in which Nagpur (Urban) first appears, and changed again slightly in 2025-2026 (by 10 ha), so editions before and after 2023-2024 cover different areas."
+        },
+        "nearest_well": {
+          "name": "Bahadura",
+          "block": "Nagpur (Rural)",
+          "distance_km": 3.7,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 13.71
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 30,
+      "ward_name": "Prabhag 30",
+      "zone_no": "5",
+      "zone_name": "Nehru Nagar",
+      "centroid": [
+        79.119973,
+        21.115999
+      ],
+      "area_sq_km": 2.293,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Sakkardara Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 31,
+      "ward_name": "Prabhag 31",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.109339,
+        21.131171
+      ],
+      "area_sq_km": 2.596,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-8",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.5
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 32,
+      "ward_name": "Prabhag 32",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.107956,
+        21.11358
+      ],
+      "area_sq_km": 2.369,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-7",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 33,
+      "ward_name": "Prabhag 33",
+      "zone_no": "3",
+      "zone_name": "Hanuman Nagar",
+      "centroid": [
+        79.095221,
+        21.112012
+      ],
+      "area_sq_km": 2.165,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-7",
+        "nearest_river_id": "nag",
+        "nearest_km": 2.8
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "IMD Nagpur_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 4.8,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 7.54
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 34,
+      "ward_name": "Prabhag 34",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.103149,
+        21.097055
+      ],
+      "area_sq_km": 5.843,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pora-2",
+        "nearest_river_id": "pora",
+        "nearest_km": 2.6
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": null
+      }
+    },
+    {
+      "ward_number": 35,
+      "ward_name": "Prabhag 35",
+      "zone_no": null,
+      "zone_name": null,
+      "centroid": [
+        79.069323,
+        21.084778
+      ],
+      "area_sq_km": 12.524,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 0,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-pora-1",
+        "nearest_river_id": "pora",
+        "nearest_km": 1.9
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "IMD Nagpur_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 1.5,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 7.54
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 36,
+      "ward_name": "Prabhag 36",
+      "zone_no": "1",
+      "zone_name": "Laxmi Nagar",
+      "centroid": [
+        79.050551,
+        21.098608
+      ],
+      "area_sq_km": 10.51,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": [
+          "Sonegaon Lake"
+        ]
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-1",
+        "nearest_river_id": "nag",
+        "nearest_km": 3.0
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "IMD Nagpur_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 1.2,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 7.54
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 37,
+      "ward_name": "Prabhag 37",
+      "zone_no": "1",
+      "zone_name": "Laxmi Nagar",
+      "centroid": [
+        79.052544,
+        21.115078
+      ],
+      "area_sq_km": 3.366,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 1,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-1",
+        "nearest_river_id": "nag",
+        "nearest_km": 1.4
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "IMD Nagpur_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 2.9,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 7.54
+          }
+        }
+      }
+    },
+    {
+      "ward_number": 38,
+      "ward_name": "Prabhag 38",
+      "zone_no": "1",
+      "zone_name": "Laxmi Nagar",
+      "centroid": [
+        79.025977,
+        21.096658
+      ],
+      "area_sq_km": 13.657,
+      "population_2011": null,
+      "water_bodies": {
+        "current_count": 2,
+        "census_records": 0,
+        "restoration_critical": 0,
+        "restoration_high": 0,
+        "avg_restoration_score": null,
+        "top_bodies": [],
+        "named": []
+      },
+      "lost_bodies": {
+        "count": 0,
+        "names": [],
+        "_data_status": "not_available",
+        "_data_status_note": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards."
+      },
+      "flood": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards."
+      },
+      "drainage": {
+        "_data_status": "not_available",
+        "_data_status_note": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008."
+      },
+      "sewerage": {
+        "_data_status": "not_available",
+        "_data_status_note": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards."
+      },
+      "industrial": {
+        "_data_status": "not_available",
+        "_data_status_note": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards."
+      },
+      "rivers": {
+        "nearest_station_id": "esr-nag-1",
+        "nearest_river_id": "nag",
+        "nearest_km": 3.7
+      },
+      "groundwater_assessment": {
+        "block": {
+          "name": "Nagpur (Urban)",
+          "class": "Safe",
+          "development_pct": 54.62,
+          "note": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison."
+        },
+        "nearest_well": {
+          "name": "IMD Nagpur_1",
+          "block": "Nagpur (Urban)",
+          "distance_km": 3.2,
+          "latest": {
+            "year": 2026,
+            "month": 6,
+            "depth_m_bgl": 7.54
+          }
+        }
+      }
+    }
+  ]
+}

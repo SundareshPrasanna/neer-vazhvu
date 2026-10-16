@@ -120,6 +120,7 @@ export default async function CityRiversPage({ params }: PageProps) {
       mapZoom={mapZoom}
       scopeLabel={header.scopeLabel}
       showHeaderStats={header.showStats ?? true}
+      stationsLabel={header.stationsLabel}
       atlasCtaLabel={header.atlasCtaLabel}
       riverInfo={riverInfo}
       basin={basinProp}

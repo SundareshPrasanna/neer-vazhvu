@@ -38,6 +38,8 @@
 export interface RiversHeader {
   scopeLabel: string;
   showStats?: boolean;
+  /** The tally's name for the river-quality points; default "CPCB stations". */
+  stationsLabel?: string;
   atlasCtaLabel?: string;
   /** The basin above this city's rivers, offered as a header entry point. */
   overviewBasinId?: string;

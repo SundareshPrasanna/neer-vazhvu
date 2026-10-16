@@ -284,6 +284,9 @@ export interface WaterBodiesConfig {
   /** Mount the ward-search box + ward deep-linking (needs
    *  `<cityId>-ward-profiles.json`). */
   wardSearch?: boolean;
+  /** Replaces the map info's "Current water bodies from" for a layer that
+   *  is a dated survey rather than a current map (Nagpur). */
+  currentSourceLabel?: string;
   /** Headline the lost-bodies layer (`<cityId>-water-bodies-lost.geojson`)
    *  in the stats bar: count, hectares lost, tagline. The map draws the layer
    *  wherever the file exists. */
@@ -482,6 +485,11 @@ interface PlaceConfigBase {
    *  primaryAuthority (a state portal, say). Read by the dashboard's
    *  methodology line; absent, it names primaryAuthority.acronym. */
   reservoirPublisher?: string;
+
+  /** Noun after "Reservoir" in the dashboard's methodology line; omit for
+   *  the default "levels". Set where the bulletin prints storage, not
+   *  levels (Nagpur). */
+  reservoirReadingNoun?: string;
 
   /** Reference year for the hero's "On this day in {year}" storage
    *  comparison. Chennai anchors to 2019 (Day Zero). Omit -> same day

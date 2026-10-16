@@ -33,7 +33,7 @@ export function row(...cells: (string | number | null | undefined)[]): string {
 
 export function generateWardCSV(
   wardNumber: number,
-  zoneName: string,
+  zoneName: string | null,
   profile: WardProfile,
   groundwater: GroundwaterData | null,
   representatives: RepresentativeData | null,
