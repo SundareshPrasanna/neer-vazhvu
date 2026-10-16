@@ -18,7 +18,7 @@ draw-off from each.
 wards), Cyberabad (76) and Malkajgiri (74). Despite that, Hyderabad is modelled as a **standalone
 city**, not a region: the three corporations sit under **one** water utility (HMWSSB), so the water
 story is unitary. Only ward surfaces carry a scope badge. See the comment block at the top of
-`src/lib/cities/hyderabad.ts` for the full reasoning.
+`src/cities/hyderabad/config.ts` for the full reasoning.
 
 **Network constraint:** `cpcb.nic.in` refuses TCP from non-India IPs, confirmed 2026-07-26. Any
 scraper touching CPCB (NWMP river quality, polluted river stretches for the Musi) must run from the

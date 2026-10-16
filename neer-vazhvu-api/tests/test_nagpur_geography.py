@@ -88,7 +88,9 @@ def test_rivers_keep_the_nag_first_and_the_join_ids():
 
 
 def test_frame_matches_the_city_config():
-    cfg = (Path(__file__).resolve().parents[2] / "src/lib/cities/nagpur.ts").read_text()
+    cfg = (
+        Path(__file__).resolve().parents[2] / "src/cities/nagpur/config.ts"
+    ).read_text()
     s, w, n, e = geo.FRAME
     assert f"south: {s}, north: {n}, west: {w}, east: {e}" in cfg
 

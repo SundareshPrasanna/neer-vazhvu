@@ -252,7 +252,7 @@ const ROUTE_OFF_REASONS: Record<string, string> = {
   // "Origins is narrative work and gets its own pass", and the pass happened
   // in the same PR rather than a later one. Kept as a comment rather than
   // deleted because a retired exemption is the record that the gap closed
-  // rather than being quietly dropped. src/content/story-pune-en.tsx ships
+  // rather than being quietly dropped. src/cities/pune/story-en.tsx ships
   // ten chapters on the sources listed in its header, with a CC0 Rijksmuseum
   // hero and a 1911 survey plate; the 1961 Panshet death toll is stated as
   // having no official figure, per the state's own current disaster plan,

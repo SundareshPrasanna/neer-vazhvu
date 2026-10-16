@@ -56,7 +56,7 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
 
 ### Flood Risk (Bengaluru)
 
-- **KSNDMC flood-prone zones** + **BBMP Sept 2022 hotspots** declared in `src/content/flood/bangalore.ts` and drawn by the shared `FloodMapPage` (`src/components/flood/flood-map-page.tsx`).
+- **KSNDMC flood-prone zones** + **BBMP Sept 2022 hotspots** declared in `src/cities/bangalore/flood.ts` and drawn by the shared `FloodMapPage` (`src/components/flood/flood-map-page.tsx`).
 - The Sep 2022 IT corridor flooding (Whitefield, Sarjapur Road) is annotated as an event marker.
 - **Narrower than Chennai's CFLOWS.** No CFLOWS-equivalent probabilistic hazard surface for Bengaluru; the page leans on the BBMP hotspot inventory + corridor narrative. Full `t()`-driven for EN + KN parity.
 
@@ -75,7 +75,7 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
 ### Long-form story (Bengaluru)
 
 - `/bangalore/origins` - 4-chapter / ~4,000-word long-form covering tank-economy history → colonial pipe rotation → Cauvery scheme commissioning → present-day Cauvery Stage V + groundwater collapse. Hero image: 1854 Bangalore Cantonment map; Figure: 1834 Ulsoor engraving.
-- EN + KN. Kannada is in `src/content/story-bangalore-kn.tsx` as a parallel module; dispatcher in `src/content/story-bangalore.tsx` reads the active language and routes.
+- EN + KN. Kannada is in `src/cities/bangalore/story-kn.tsx` as a parallel module; dispatcher in `src/content/story-bangalore.tsx` reads the active language and routes.
 - Native-speaker Kannada review pending; copy is AI-drafted and flagged "pending native-speaker review" in the UI.
 
 ### Localisation (Kannada)
@@ -85,8 +85,8 @@ Disables `groundwaterViews.depth` for the reason above; enables `exploitation`, 
   - BangaloreDailyBriefing (`src/content/briefing/bangalore.ts`)
   - CauveryPumpingHero narrative (`PUMPING_HERO_COPY.bangalore`, `src/content/hero/pumping.ts`)
   - TankerExpandedContext + IIScStressWardsMap (`src/content/tanker/bangalore.ts`)
-  - the flood map page copy (`src/content/flood/bangalore.ts`)
-  - the about page's "what each page shows" (`src/content/about/bangalore-pages.tsx`)
+  - the flood map page copy (`src/cities/bangalore/flood.ts`)
+  - the about page's "what each page shows" (`src/cities/bangalore/about-pages.tsx`)
   - My Ward source lines (`src/content/my-ward/sources.ts`)
   - Facts page (`facts.bucket.*` + per-fact `_kn` variants in the JSON)
 - Per-language JSON field picking: city data files where prose differs per-language (tanker-context, facts) carry parallel `_kn` suffixes on every user-facing string. The `pick()` helper reads `_${language}` suffixed fields.

@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -158,22 +157,8 @@ def scope_kinds() -> dict[str, str]:
     {"mumbai": "region"} on the first pass, which is exactly the kind of
     guess-from-memory the gate exists to catch: Kolkata is a region too and
     twelve artifacts failed. Derive it instead."""
-    kinds: dict[str, str] = {}
-    for cfg in (ROOT / "src/lib/cities").glob("*.ts"):
-        # Strip comments first. hyderabad.ts contains a paragraph explaining why
-        # Hyderabad is NOT a region ("MMR needed placeKind:'region' because...")
-        # and a naive match reads that as the setting, which would mis-scope
-        # every Hyderabad artifact.
-        text = "\n".join(
-            line for line in cfg.read_text().splitlines()
-            if not line.lstrip().startswith("//")
-        )
-        m = re.search(r"cityId:\s*['\"]([a-z-]+)['\"]", text)
-        if not m:
-            continue
-        k = re.search(r"placeKind:\s*['\"]([a-z]+)['\"]", text)
-        kinds[m.group(1)] = k.group(1) if k else "city"
-    return kinds
+    configs = json.loads((ROOT / "src/cities/generated/cities.json").read_text())
+    return {cid: c.get("placeKind", "city") for cid, c in configs.items()}
 
 
 def registry_cities() -> dict[str, str]:

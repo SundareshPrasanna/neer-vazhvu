@@ -366,7 +366,11 @@ export interface CorporationConfig {
 }
 
 interface PlaceConfigBase {
+  /** Must equal the city's folder name, src/cities/<cityId>/. */
   cityId: CityId;
+  /** Position in every city list (switcher, landing page, sitemap). The next
+   *  city takes the next number; scripts/gen-city-index.ts rejects duplicates. */
+  launchOrder: number;
   displayName: string;
   /** Localized display names per language. Used wherever copy renders
    *  the city name in a specific regional script (e.g. `{ ta: 'சென்னை' }`

@@ -1,43 +1,17 @@
-import { BANGALORE } from './bangalore';
-import { CHENNAI } from './chennai';
-import { DELHI } from './delhi';
-import { GURUGRAM } from './gurugram';
-import { HYDERABAD } from './hyderabad';
-import { KOLKATA } from './kolkata';
-import { MADURAI } from './madurai';
-import { MUMBAI } from './mumbai';
-import { PUNE } from './pune';
-import { NAGPUR } from './nagpur';
-import { SURAT } from './surat';
-import { AHMEDABAD } from './ahmedabad';
-import { VISAKHAPATNAM } from './visakhapatnam';
-import { isCityId, type CityId } from './ids';
+import { isCityId } from './ids';
+import { CITY_CONFIGS } from '../../cities/generated/registry';
 import type { PlaceConfig } from './types';
 import { previewIds } from '../utils/preview-ids';
 
 export * from './types';
 export { CITY_IDS } from './ids';
 
-// Registry contains every known city, enabled or not. Disabled cities
+// The registry (CITY_CONFIGS, generated from src/cities/<id>/config.ts)
+// contains every known city, enabled or not. Disabled cities
 // (config.enabled === false) are usable internally for scaffolding but
 // filtered out of listEnabledPlaces() and out of any user-facing surface
 // that calls it. Switch a city on by setting `enabled: true` on its
 // CityConfig AND flipping `enabled` to TRUE in the `cities` table.
-const REGISTRY: Record<CityId, PlaceConfig> = {
-  chennai: CHENNAI,
-  madurai: MADURAI,
-  bangalore: BANGALORE,
-  mumbai: MUMBAI,
-  delhi: DELHI,
-  hyderabad: HYDERABAD,
-  kolkata: KOLKATA,
-  gurugram: GURUGRAM,
-  pune: PUNE,
-  nagpur: NAGPUR,
-  surat: SURAT,
-  ahmedabad: AHMEDABAD,
-  visakhapatnam: VISAKHAPATNAM,
-};
 
 export function getPlaceConfig(placeId: string): PlaceConfig {
   const config = tryGetPlaceConfig(placeId);
@@ -53,12 +27,12 @@ export function getPlaceConfig(placeId: string): PlaceConfig {
  * or use listEnabledPlaces().
  */
 export function tryGetPlaceConfig(placeId: string): PlaceConfig | null {
-  return isCityId(placeId) ? REGISTRY[placeId] : null;
+  return isCityId(placeId) ? CITY_CONFIGS[placeId] : null;
 }
 
 /** Cities visible to end users. Disabled cities are excluded. */
 export function listEnabledPlaces(): PlaceConfig[] {
-  return Object.values(REGISTRY).filter((p) => p.enabled !== false);
+  return Object.values(CITY_CONFIGS).filter((p) => p.enabled !== false);
 }
 
 /** ALL registered cities, including disabled ones. Used for URL parsing
@@ -68,7 +42,7 @@ export function listEnabledPlaces(): PlaceConfig[] {
  *  should keep using listVisiblePlaces() or listEnabledPlaces(); only
  *  the URL parser needs to recognise disabled cities. */
 export function listAllPlaces(): PlaceConfig[] {
-  return Object.values(REGISTRY);
+  return Object.values(CITY_CONFIGS);
 }
 
 /** Enabled cities + any cities listed in NEXT_PUBLIC_PREVIEW_CITIES.
@@ -89,7 +63,7 @@ export function listAllPlaces(): PlaceConfig[] {
 export function listVisiblePlaces(): PlaceConfig[] {
   const ids = previewIds(process.env.NEXT_PUBLIC_PREVIEW_CITIES?.toLowerCase());
   return [
-    ...Object.values(REGISTRY).filter((p) => p.enabled !== false),
-    ...Object.values(REGISTRY).filter((p) => ids.has(p.cityId) && p.enabled === false),
+    ...Object.values(CITY_CONFIGS).filter((p) => p.enabled !== false),
+    ...Object.values(CITY_CONFIGS).filter((p) => ids.has(p.cityId) && p.enabled === false),
   ];
 }

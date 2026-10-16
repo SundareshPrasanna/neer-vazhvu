@@ -414,7 +414,7 @@ excluding 7 counted non-water-bodies), `public/geojson/pune-rivers.geojson` (8 r
 **Licence:** ODbL v1.0 - **share-alike**, so these are build fixtures, not part of the licence-clean
 reference corpus.
 
-**THE FETCH BBOX MUST STAY EQUAL TO `pune.bbox` IN `src/lib/cities/pune.ts`.** It did not. The fetch
+**THE FETCH BBOX MUST STAY EQUAL TO `pune.bbox` IN `src/cities/pune/config.ts`.** It did not. The fetch
 box was `18.38,73.65,18.72,74.05` against a map frame of `18.3,73.4,18.95,74.05`, so the producer
 covered about a third of what the reader can pan over. Everything west of 73.65 fell outside it, which
 meant **Panshet, Warasgaon, Temghar, Pawana, Mulshi and Bhama Askhed were all absent from the layer** -

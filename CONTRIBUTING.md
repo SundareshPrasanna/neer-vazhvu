@@ -280,12 +280,12 @@ Current workflow note:
 - **BWSSB Stage V actual-vs-design RTI** - The Ken (Feb 2026) reported Stage V is delivering ~400 MLD against 775 MLD design. A structured RTI to BWSSB for weekly lift logs would unlock the daily Cauvery-pumping series, not just episodic reporting.
 - **Lost-tank coordinate research** - similar to Madurai. The Bangalore lost-tank inventory (~100 documented bodies via T.V. Ramachandra et al.) has name + status but sparse lat/lng. Most have no OSM presence (they're built over).
 - **KSPCB OCMMS scraping** - the Karnataka State Pollution Control Board publishes effluent monitoring for red-category industries. We don't yet pull it into the industrial-sources overlay.
-- **Long-form Kannada story review** - `src/content/story-bangalore-kn.tsx` is a 4-chapter / ~4,000-word translation pending native-speaker review.
+- **Long-form Kannada story review** - `src/cities/bangalore/story-kn.tsx` is a 4-chapter / ~4,000-word translation pending native-speaker review.
 - **More rich-body candidates** - 13 onboarded today. Other candidates: Begur, Allalasandra, Doddabommasandra, Yele Mallappa Shetty. Pattern is registry-driven; see [src/lib/water-bodies/rich-body-registry.ts](src/lib/water-bodies/rich-body-registry.ts).
 
 ### Cross-city / shared
 - **Tamil prose review** - especially `src/app/[cityId]/about/madurai-page-descriptions.tsx` and the Madurai story pages. Native-speaker review wanted.
-- **Kannada prose review** - `src/content/about/bangalore-pages.tsx`, the BangaloreDailyBriefing variants in `src/content/briefing/bangalore.ts`, and the long-form story (`src/content/story-bangalore-kn.tsx`). Native-speaker review wanted.
+- **Kannada prose review** - `src/cities/bangalore/about-pages.tsx`, the BangaloreDailyBriefing variants in `src/content/briefing/bangalore.ts`, and the long-form story (`src/cities/bangalore/story-kn.tsx`). Native-speaker review wanted.
 - **Localization (UI)** - ~1,500 i18n keys covering EN + TA + KN; `npm run i18n:check` enforces parity.
 - **Testing** - Unit tests for scrapers, calculator, intelligence modules, and the shared `src/lib/utils/river-classification.ts` (CPCB Best-Use classifier).
 - **Adding a fifth city** - see the "Adding a new city" subsection above.

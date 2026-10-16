@@ -67,6 +67,7 @@ and it is the one that would have caught all six.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -121,49 +122,25 @@ ADJUDICATED: dict[str, str] = {
 NULLISH = ["undefined", "NaN", "[object Object]", "Infinity", "Invalid Date"]
 
 
-def registered_cities() -> list[dict]:
-    """Read the city registry out of the TS configs without a TS runtime.
+def _configs() -> dict[str, dict]:
+    """Every city config, from src/cities/generated/cities.json."""
+    return json.loads((ROOT / "src/cities/generated/cities.json").read_text())
 
-    Deliberately regex rather than importing: this script must keep working if
-    the config shape changes shape slightly, and a missed city degrades the
-    check rather than breaking it.
-    """
-    out = []
-    for f in sorted((ROOT / "src/lib/cities").glob("*.ts")):
-        text = f.read_text()
-        cid = re.search(r"cityId:\s*'([a-z-]+)'", text)
-        if not cid:
-            continue
-        out.append(
-            {
-                "cityId": cid.group(1),
-                "displayName": (
-                    re.search(r"displayName:\s*'([^']+)'", text) or [None, None]
-                )[1],
-                "authority": (
-                    re.search(r"primaryAuthority:.*?acronym:\s*'([^']+)'", text, re.S)
-                    or [None, None]
-                )[1],
-                "localGov": (
-                    re.search(r"localGovernment:.*?acronym:\s*'([^']+)'", text, re.S)
-                    or [None, None]
-                )[1],
-            }
-        )
-    return out
+
+def registered_cities() -> list[dict]:
+    return [
+        {
+            "cityId": c["cityId"],
+            "displayName": c.get("displayName"),
+            "authority": (c.get("primaryAuthority") or {}).get("acronym"),
+            "localGov": (c.get("localGovernment") or {}).get("acronym"),
+        }
+        for c in _configs().values()
+    ]
 
 
 def routes_for(city: str) -> list[str]:
-    path = ROOT / "src/lib/cities" / f"{city}.ts"
-    text = path.read_text() if path.exists() else ""
-    m = re.search(r"\n  routes: \[(.*?)\n  \]", text, re.S)
-    if not m:
-        return []
-    return [
-        x.strip().strip('"')
-        for x in m.group(1).split(",")
-        if x.strip().strip('"') or x.strip() == '""'
-    ]
+    return list(_configs().get(city, {}).get("routes", []))
 
 
 def forbidden_terms(target: str, cities: list[dict]) -> list[str]:

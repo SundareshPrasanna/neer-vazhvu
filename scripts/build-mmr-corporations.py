@@ -9,7 +9,7 @@ need one clean boundary per corporation. Fetched from OpenStreetMap
 administrative relations (boundary=administrative, admin_level 7-8) by name,
 outer rings stitched into polygons, with corporation_id / acronym / district
 metadata attached. Per-corporation centroid + bbox are printed so they can be
-pasted into the CorporationConfig entries in src/lib/cities/mumbai.ts.
+pasted into the CorporationConfig entries in src/cities/mumbai/config.ts.
 
 Source: OpenStreetMap via Overpass API (ODbL).
 Run:  python3 scripts/build-mmr-corporations.py

@@ -59,7 +59,7 @@ CHENNAI_LEGACY = {
 # Chennai-era unprefixed names that predate the city-token convention.
 SCOPE_HINTS = {
     # BBMB = Bhakra Beas Management Board: Delhi's upstream storage (consumed
-    # by src/lib/cities/delhi.ts; the dams records carry city_id "delhi").
+    # by src/cities/delhi/config.ts; the dams records carry city_id "delhi").
     # Was mis-hinted "bangalore" until 2026-07-30.
     "bbmb-dam-storage.json": "delhi",
     "cag-djb-audit-2025.json": "delhi",

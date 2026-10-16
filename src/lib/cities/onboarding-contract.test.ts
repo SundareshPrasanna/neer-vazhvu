@@ -12,8 +12,7 @@ import { test } from "node:test";
 import { scopeCountry, scopeIds, scopeKind } from "../scopes";
 import { CITY_IDS, tryGetPlaceConfig, type PlaceConfig } from "./index";
 import { riversVariant } from "./data-paths";
-import { RIVERS_CONTENT } from "../../content/rivers";
-import { FLOOD_CONTENT } from "../../content/flood";
+import { RIVERS_CONTENT, FLOOD_CONTENT } from "../../cities/generated/content";
 import { STORY_TAGLINES } from "../../content/story-taglines";
 import { listPublishedAtlasDistricts } from "../atlas/registry";
 import { resolveAuthority } from "../sightings/routing";
@@ -49,7 +48,7 @@ test("a rivers route has curated river content (or its own variant)", () => {
   for (const p of places.filter((p) => p.routes.includes("rivers"))) {
     assert.ok(
       riversVariant(p.cityId) || RIVERS_CONTENT[p.cityId]?.riverInfo,
-      `${p.cityId}: "rivers" is in routes but src/content/rivers has no riverInfo for it`,
+      `${p.cityId}: "rivers" is in routes but its folder has no rivers content with riverInfo`,
     );
   }
 });
@@ -59,7 +58,7 @@ test("a flood-risk route has a renderer: the interactive variant, a flood map or
     const content = FLOOD_CONTENT[p.cityId];
     assert.ok(
       p.flood?.variant === "interactive" || content?.map || content?.config,
-      `${p.cityId}: "flood-risk" is in routes but it has no variant and no src/content/flood map or config`,
+      `${p.cityId}: "flood-risk" is in routes but it has no variant and its folder has no flood map or config`,
     );
   }
 });

@@ -403,7 +403,7 @@ Areas where help is needed:
 - **Data quality** -Improving scraper resilience, handling CMWSSB / BWSSB / TN Agriculture page format changes
 - **Models** -Better forecasting (Prophet, LSTM), improved evaporation integration
 - **Water bodies data** -Adding more documented lost water bodies with verified coordinates and sources
-- **Localization** -Translating the UI for local accessibility. Today: ~1,500 keys covering EN + TA (Chennai/Madurai) + KN (Bangalore). **Marathi (Mumbai) is the biggest open item** - declared as coming-soon in the UI, 0 of ~1,509 keys translated. Native-speaker review wanted for TA prose review and KN long-form story (`src/content/story-bangalore-kn.tsx`)
+- **Localization** -Translating the UI for local accessibility. Today: ~1,500 keys covering EN + TA (Chennai/Madurai) + KN (Bangalore). **Marathi (Mumbai) is the biggest open item** - declared as coming-soon in the UI, 0 of ~1,509 keys translated. Native-speaker review wanted for TA prose review and KN long-form story (`src/cities/bangalore/story-kn.tsx`)
 - **Testing** -Unit tests for scrapers, calculator, and intelligence modules
 
 Please open an issue first to discuss significant changes.

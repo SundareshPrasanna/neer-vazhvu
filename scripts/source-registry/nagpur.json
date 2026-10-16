@@ -30,7 +30,7 @@
         "public/data/water-bodies-flagship-nagpur.json",
         "public/data/restoration-projects-nagpur.json",
         "public/data/facts-nagpur.json",
-        "src/content/story-nagpur-en.tsx",
+        "src/cities/nagpur/story-en.tsx",
         "src/content/my-ward/sources.ts",
         "src/lib/water-bodies/rich-bodies.json"
       ],
@@ -117,7 +117,7 @@
         "public/data/nagpur-supply-overview.json",
         "public/data/allocations-nagpur.json",
         "public/data/facts-nagpur.json",
-        "src/content/story-nagpur-en.tsx"
+        "src/cities/nagpur/story-en.tsx"
       ],
       "refreshMethod": "manual: read any new order that concerns NMC or the Pench Project Complex and update the arrangements and events in neer-vazhvu-api/scripts/build_nagpur_allocations.py",
       "playbook": [
@@ -208,7 +208,7 @@
       "dependsOn": [
         "public/data/nagpur-dam-storage.json",
         "supabase:reservoir_daily_v2",
-        "src/lib/cities/nagpur.ts",
+        "src/cities/nagpur/config.ts",
         "public/data/facts-nagpur.json",
         "src/lib/water-bodies/rich-bodies.json"
       ],
@@ -219,7 +219,7 @@
         "No row is named 'Pench'. Three other publishers use that word for three different dams: CWC's weekly bulletin calls Totladoh 'PENCH' (older spelling 'PENCH (TOTALADOH)'), NWDP's 'Pench Dam' and 'Pench Project' sit at Kamthi Khairy's coordinates, and Madhya Pradesh's 'Pench Dam' is the Machagora structure upstream.",
         "Storage is WHOLE-DAM live storage of a hydro-electric reservoir shared with Madhya Pradesh (Totladoh) and an irrigation dam (Kamthi Khairy). It is never NMC's share; NMC holds a reservation (190 Mcum a year in the first phase, WRD GR of 19 Mar 2020). No days-left runway is computed from it.",
         "The percentage is of DESIGNED LIVE storage (the reservoir_daily_v2 column is called storage_pct_frl for historical reasons). The bulletin prints no FRL; Totladoh's FRL 490.00 m is from CWC's weekly bulletin, Kamthi Khairy's is not published in any source used here.",
-        "Designed (dead, live, gross) Mcum are fixed per dam: Totladoh 150.00/1016.93/1166.93, Kamthi Khairy 39.00/141.98/180.98, Khindsi 0.00/103.00/103.00, Nand 9.00/53.18/62.18, Wadgaon 16.60/134.90/151.50. They equal NRLD-2019 to the cubic metre for Totladoh (p.196) and Kamthikhairy (p.172); Nand (p.197) and Wadgaon (p.205) equal at the bulletin's 0.01 Mcum precision; Khindsi (NRLD RAMTEK p.151) matches on live storage only (NRLD gross 105.13 Mcum). The scraper warns if one changes; a resurvey means updating NAGPUR_DESIGNED, fullCapacityMcft in src/lib/cities/nagpur.ts and the 061 migration together.",
+        "Designed (dead, live, gross) Mcum are fixed per dam: Totladoh 150.00/1016.93/1166.93, Kamthi Khairy 39.00/141.98/180.98, Khindsi 0.00/103.00/103.00, Nand 9.00/53.18/62.18, Wadgaon 16.60/134.90/151.50. They equal NRLD-2019 to the cubic metre for Totladoh (p.196) and Kamthikhairy (p.172); Nand (p.197) and Wadgaon (p.205) equal at the bulletin's 0.01 Mcum precision; Khindsi (NRLD RAMTEK p.151) matches on live storage only (NRLD gross 105.13 Mcum). The scraper warns if one changes; a resurvey means updating NAGPUR_DESIGNED, fullCapacityMcft in src/cities/nagpur/config.ts and the 061 migration together.",
         "Never use CWC's weekly PENCH storage or percentage: its 1.091 BCM capacity is a different denominator (its own storage at FRL is 1.016 BCM, i.e. Pravah's 1,016.93 Mcum), and its storage figure stayed at 1.017 BCM (93.21 %) in every bulletin from 23.07.2026 to 08.10.2026 while the level it printed moved between 484.86 m and 481.80 m. Its level column is consistent with the state bulletin.",
         "The header date flips at midnight and per-dam readings arrive through the morning (Kamthi Khairy 06:49 AM, Khindsi stamped 12:00 AM on 15/10/2026), so a run before about 09:00 IST can carry yesterday's values under today's header. reservoir_daily_v2 rows carry the REPORT date (newest reading); the per-dam date stays in the artifact.",
         "MARATHI ARCHIVE. The same bulletin is kept per date at https://wrd.maharashtra.gov.in/Upload/PDF/Today%27s-Storage-ReportMarathi-DD-MM-YYYY.pdf (apostrophe URL-encoded; the English filename does not exist). Values equal the English PDF of the same day (checked 15-10-2026 for all five rows). Coverage: first copy found 25 Feb 2024 (1 Feb and 15-24 Feb 2024 return 404; 2-14 Feb not checked), with holes after it (15-03-2024 is 404). Every request takes about 50 s, a 404 included; never HEAD (it 404s), always GET. Digits are Devanagari, the time reads 'स.' for AM, and pdftotext breaks the dam names apart (vowel signs land on the neighbouring line), so match rows on the designed triple inside the नागपूर block, never on the name. Each dam row carries its own reading date (15-10-2025: Kamthi Khairy dated 14/10/2025, Totladoh 15/10/2025). The backfill stores the FILE (report) date, as the live scraper stores the report date (on the 25 files checked the file date equals the newest reading in the file); the per-dam reading date stays in the dry-run JSONL (reading_date), and a file whose newest reading is not the file date is reported.",
@@ -586,7 +586,7 @@
       "notes": "Gati Shakti Water_Resources layer 12 'Drainages Network' (same as Major_Medium_Minor_Projects/30 'Drainage_Network_MRSAC'): polylines with River_Name, Drainage_Order and a perennial/dry class. It names the Pora ('Pora Nadi'), which OpenStreetMap leaves unnamed. The hashed URL is the statewide count and length of the six rivers' named segments. No licence or terms are stated on the service. Watershed and sub-watershed layers on the same server return attributes only.",
       "playbook": [
         "River names are exact strings: 'Nag Nadi', 'Pili Nadi', 'Pora Nadi', 'Kanhan River', 'Kolar River', 'Wainganga River'. A renamed segment drops out silently; the producer falls back to OSM for a river with no MRSAC segment and says so in the feature's source.",
-        "river_id values nag, pili, pora, kanhan, kolar, wainganga are join keys with river-quality-nagpur.json and src/content/rivers/nagpur.ts; keep the Nag first in the file.",
+        "river_id values nag, pili, pora, kanhan, kolar, wainganga are join keys with river-quality-nagpur.json and src/cities/nagpur/rivers.ts; keep the Nag first in the file.",
         "Lines are clipped to the map frame (east to 79.65 E), so length_km is the length inside it, not a river's full course; the Nag keeps only its main connected course (MRSAC also labels a separate 10.9 km Dry channel draining south toward Hingna 'Nag Nadi', left out); NMC's ESR states Nag 17 km and Pili 18 km within the city."
       ],
       "lastSeen": {
@@ -637,9 +637,9 @@
         "reviewedOn": "2026-10-15"
       },
       "dependsOn": [
-        "src/content/flood/nagpur.ts"
+        "src/cities/nagpur/flood.ts"
       ],
-      "refreshMethod": "manual: open the new edition's NAGPUR (42867) page and re-check the annual and July normals and the 24-hour records quoted in src/content/flood/nagpur.ts, and the comparison in imd-gridded-rainfall-nagpur's notes",
+      "refreshMethod": "manual: open the new edition's NAGPUR (42867) page and re-check the annual and July normals and the 24-hour records quoted in src/cities/nagpur/flood.ts, and the comparison in imd-gridded-rainfall-nagpur's notes",
       "notes": "Station NAGPUR, index 42867, 21 deg 6' N, 79 deg 3' E, 310 m. Read 2026-10-15: annual mean 1,151.2 mm, 57.1 rainy days; June 190.6, July 347.7, August 277.2, September 183.7 mm; heaviest 24 h 315.0 mm on 12 June 1911; July heaviest 24 h 304.0 mm on 12 July 1994 and wettest July 678.9 mm (1994); September heaviest 24 h 184.4 mm on 19 September 1962; wettest year 1,931.4 mm (1911), driest 364.7 mm (1899).",
       "playbook": [
         "www.imdpune.gov.in is intermittent: download with curl --retry 5 (the bare host without www timed out on 15 Oct 2026). The file is 29.7 MB.",
@@ -665,9 +665,9 @@
         "reviewedOn": "2026-10-15"
       },
       "dependsOn": [
-        "src/content/flood/nagpur.ts"
+        "src/cities/nagpur/flood.ts"
       ],
-      "refreshMethod": "manual: re-query the month for a new event and add it to historical_events in src/content/flood/nagpur.ts with the circle values as printed",
+      "refreshMethod": "manual: re-query the month for a new event and add it to historical_events in src/cities/nagpur/flood.ts with the circle values as printed",
       "notes": "Nagpur city taluka has three revenue circles: Nagpur City, Sitabardi and Pardi. Values read 2026-10-15 (mm, day of reading): 20 Jul 2013 144.6 / 145.0 / 147.0 (July total at Nagpur City 505.3, 166%); 7 Jul 2018 282.0 / 185.0 / 122.0 (558.9, 183.6%); 23 Sep 2023 166 / 166 / 103 (387.2, 202.6%); 20 Jul 2024 96.3 / 96.3 / 103.8 (456.9, 150.1%); 9 Jul 2025 179.0 / 179.0 / 153.5 (541.4, 177.9%). Monthly normals used: July 304.4 mm, September 191.1 mm. The 2023 values match the District Disaster Management Plan 2024, p.59.",
       "playbook": [
         "Machine path, no login: POST https://maharain.maharashtra.gov.in/test/maharain/rpt_past_queries_circle_wise_daily_rain.php with year=<YYYY>&stateCode=11&districtCode=30&month=<5..12>. https only; plain http has no connection. Downloads are untrusted HTML: parse with python3 -I.",
@@ -694,7 +694,7 @@
         "reviewedOn": "2026-10-15"
       },
       "dependsOn": [
-        "src/content/flood/nagpur.ts"
+        "src/cities/nagpur/flood.ts"
       ],
       "refreshMethod": "manual: if NMC publishes a storm-water network or a newer plan, replace the 917 km sentence in the flood page's data gaps",
       "notes": "Section 7.4.1, printed p.109: NMC PWD lays and maintains storm drains; they cover approximately 40% of the city's area; total length approximately 917 km 'as surveyed for preparation of master plan in 2008', across three drainage zones; the Nag starts at Ambazari lake's overflow weir; storm water from the south drains to the Pora. Table 55: storm-water network coverage 35%. Hosted on the Maha Metro site, not NMC's.",
@@ -786,8 +786,8 @@
         "public/data/restoration-projects-nagpur.json",
         "public/data/water-bodies-flagship-nagpur.json",
         "public/data/facts-nagpur.json",
-        "src/content/flood/nagpur.ts",
-        "src/content/story-nagpur-en.tsx",
+        "src/cities/nagpur/flood.ts",
+        "src/cities/nagpur/story-en.tsx",
         "src/lib/water-bodies/rich-bodies.json"
       ],
       "refreshMethod": "manual: search Indian Kanoon for 'Futala', 'Ambazari', 'Sonegaon', 'Nagpur lakes', 'Nag river', 'Orange City Water'; add the order as a dated status_history entry or court_orders row (court, case number and date are the citation; Indian Kanoon is the mirror)",
@@ -956,7 +956,7 @@
       },
       "dependsOn": [
         "public/data/water-bodies-flagship-nagpur.json",
-        "src/content/story-nagpur-en.tsx",
+        "src/cities/nagpur/story-en.tsx",
         "public/images/story/nagpur/MANIFEST.json",
         "src/lib/water-bodies/rich-bodies.json"
       ],
@@ -987,7 +987,7 @@
       "dependsOn": [
         "public/data/water-bodies-flagship-nagpur.json",
         "public/data/facts-nagpur.json",
-        "src/content/story-nagpur-en.tsx",
+        "src/cities/nagpur/story-en.tsx",
         "src/lib/water-bodies/rich-bodies.json"
       ],
       "refreshMethod": "manual",
@@ -1018,9 +1018,9 @@
       "dependsOn": [
         "public/data/water-bodies-flagship-nagpur.json",
         "public/data/facts-nagpur.json",
-        "src/lib/cities/nagpur.ts",
+        "src/cities/nagpur/config.ts",
         "supabase/migrations/061_nagpur_water_sources.sql",
-        "src/content/story-nagpur-en.tsx",
+        "src/cities/nagpur/story-en.tsx",
         "src/lib/water-bodies/rich-bodies.json"
       ],
       "refreshMethod": "manual; watch cwc.gov.in for a newer register edition",
@@ -1054,7 +1054,7 @@
         "reviewedOn": "2026-10-15"
       },
       "dependsOn": [
-        "src/content/story-nagpur-en.tsx",
+        "src/cities/nagpur/story-en.tsx",
         "public/images/story/nagpur/MANIFEST.json"
       ],
       "refreshMethod": "manual: nothing to refresh (closed edition); if the item moves, re-point the MANIFEST download_url and the story's source line",
@@ -1079,7 +1079,7 @@
         "method": "http-meta"
       },
       "dependsOn": [
-        "src/content/story-nagpur-en.tsx"
+        "src/cities/nagpur/story-en.tsx"
       ],
       "refreshMethod": "manual: nothing to refresh (closed edition); an http-meta change means the web edition was re-posted, so re-read the Tanks section",
       "notes": "Cited in the story's malguzari-tank paragraph: 'There are 14,202 tanks irrigating 78 per cent of the net irrigated area in the district', and the old (1908) Bhandara gazetteer quoted on the Nawegaon tank, 'said to have been constructed about 300 years ago by an ancestor of the present malguzar'. Checked 2026-10-15: HTTP 200 with Last-Modified Tue, 27 May 2014 and an ETag.",
@@ -1109,7 +1109,7 @@
       },
       "insecureTLS": true,
       "dependsOn": [
-        "src/content/story-nagpur-en.tsx"
+        "src/cities/nagpur/story-en.tsx"
       ],
       "refreshMethod": "manual: when Census 2027 town tables appear, add the new count beside the 2011 one (never replace it in the story's then-and-now row without a date)",
       "notes": "PCA table, PDF p.35: Nagpur (M Corp.), location code 802710, area 217.56 sq km, 5,27,634 households, 24,05,665 persons (12,25,405 male, 11,80,260 female). Highlights: 'the most populous having 2,405,665 persons'. The 1966 Gazetteer gives the same 217.56 sq km for the 1951 limits. censusindia.gov.in serves an incomplete certificate chain (Node fetch: UNABLE_TO_VERIFY_LEAF_SIGNATURE; curl with the system store succeeds), hence insecureTLS, as on atlas.json's census-2011-village-amenities entries.",
@@ -1142,7 +1142,7 @@
       },
       "dependsOn": [
         "src/components/my-ward/ward-actions-card.tsx",
-        "src/content/flood/nagpur.ts"
+        "src/cities/nagpur/flood.ts"
       ],
       "refreshMethod": "manual: open the new edition, read p.2 on the page image, and update ACTIONS_BY_CITY.nagpur and the dated comment above it",
       "notes": "p.2 contact block (read on the page image 2026-10-15): Emergency Control Room 101, 0712-2567777, 0712-2567029; Disaster Management Cell 0712-2551866; NMC emergency mobile 7030972200; Collector's control room 1077, 0712-2564973, 2565976, 0712-2562668; zone control rooms on pp.2-3. The card ships 1800 266 9899 (OCW), 0712 255 1866, 101 / 0712 256 7777 and 1077.",
@@ -1166,8 +1166,8 @@
         "linkPattern": "s3waas\\.gov\\.in/.*/uploads/.*\\.pdf"
       },
       "dependsOn": [
-        "src/content/story-nagpur-en.tsx",
-        "src/content/flood/nagpur.ts"
+        "src/cities/nagpur/story-en.tsx",
+        "src/cities/nagpur/flood.ts"
       ],
       "refreshMethod": "manual: open the new plan, re-read the city flood pages on the page images, and update the story's 23 September 2023 sentence only if the record changes",
       "notes": "2024 plan: https://cdn.s3waas.gov.in/s3d1f491a404d6854880943e5c3cd9ca25/uploads/2025/01/2025010886.pdf. Story cites printed p.59 (read on the page image): on 23 Sep 2023, torrential rain between midnight and dawn made Ambazari lake, the Nag, the Pili, the Pohra nala and local nalas overflow, with water entering homes in many parts of the city, especially low-lying areas. The same page has the revenue-circle rain (166 / 166 / 103 mm, average 145), which the story leaves to the flood page.",
@@ -1204,7 +1204,7 @@
         "reviewedOn": "2026-10-15"
       },
       "dependsOn": [
-        "src/content/story-nagpur-en.tsx"
+        "src/cities/nagpur/story-en.tsx"
       ],
       "refreshMethod": "manual: check whether a later resolution or work order supersedes 720 or 938 and adjust the story's sentence on Ambazari",
       "notes": "720 (22 Jan 2024): administrative approval of a Rs 25,30,498 estimate, prepared and technically sanctioned by the Irrigation Department, for consultant design, drawings and survey for gates on the Ambazari dam spillway, for the dam's safety. https://nmcnagpur.gov.in/assets/300/2025/01/Public-Notices/720)_NMC_Prashasak_Tharao_22-01-2024.pdf. 938 (27 Jul 2024): 'Removal of Water Hyacinth with Bio Enzymes at Ambazari Lake', Rs 24,78,944 with GST, described as very necessary for the lake's safety. The story gives neither amount.",
@@ -1260,7 +1260,7 @@
       },
       "dependsOn": [
         "public/images/story/nagpur/MANIFEST.json",
-        "src/content/story-nagpur-en.tsx"
+        "src/cities/nagpur/story-en.tsx"
       ],
       "refreshMethod": "manual: query each commons_title in MANIFEST.json through the Commons API (3 s apart) and confirm the file exists with the same licence; pull a plate if its file was deleted for copyright reasons",
       "notes": "Files: Confluence_of_Nag_river_and_Pioli_river.jpg, Confluence_of_Kanhan_and_Pench_river_at_Bina.jpg, Nag_River_23.09.2023.jpg, Dried_Kanhan_riverbed_in_February_2023.jpg (Ganesh Dhamodkar, CC BY-SA 4.0); AmbazariLake.JPG (Wiknowme, CC BY-SA 3.0); Gorewada_lake_nagpur_maharashtra.jpg (Azhar2311, CC BY-SA 4.0); Water_Hyacinth_Ambazari_Lake.jpg (Eco412, CC0). The category URL is a landing page only; the per-file record is MANIFEST.json.",

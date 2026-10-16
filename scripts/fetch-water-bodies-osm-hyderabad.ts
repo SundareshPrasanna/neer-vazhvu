@@ -22,7 +22,7 @@ import { join } from "path";
 import osmtogeojson from "osmtogeojson";
 import { writeArtifact } from "./lib/nvdm-write";
 
-// Core Urban Region bbox per src/lib/cities/hyderabad.ts. [south, west, north, east]
+// Core Urban Region bbox per src/cities/hyderabad/config.ts. [south, west, north, east]
 const BBOX = "17.15,78.10,17.70,78.75";
 
 // Hyderabad centroid latitude (~17.43 N) for the deg^2 -> m^2 conversion in

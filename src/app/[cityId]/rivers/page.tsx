@@ -7,7 +7,7 @@ import { loadBasinInventory } from "@/lib/basins/data";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient from "./rivers-client";
-import { RIVERS_CONTENT } from "@/content/rivers";
+import { RIVERS_CONTENT } from "@/cities/generated/content";
 import ChennaiRiversClient from "./chennai-rivers-client";
 
 interface PageProps {

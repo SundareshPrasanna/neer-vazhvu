@@ -321,7 +321,7 @@ These fit the proposed folder structure well: most belong in `datasets/curated/m
 
 ### Drift risk found on the branch
 
-Frontend `src/lib/cities/mumbai.ts` already models Mumbai as `placeKind: 'region'` with nine corporations. Backend `neer-vazhvu-api/app/cities/mumbai.py` remains BMC/city-shaped and the backend `CityConfig` type has no `place_kind` or `corporations`.
+Frontend `src/cities/mumbai/config.ts` already models Mumbai as `placeKind: 'region'` with nine corporations. Backend `neer-vazhvu-api/app/cities/mumbai.py` remains BMC/city-shaped and the backend `CityConfig` type has no `place_kind` or `corporations`.
 
 That may be acceptable for current backend usage, but it is a live example of metadata drift. The refactor should either:
 

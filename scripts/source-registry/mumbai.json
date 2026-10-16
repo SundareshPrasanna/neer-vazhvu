@@ -96,7 +96,7 @@
       "dependsOn": [
         "public/data/flood-lines-mumbai.json",
         "public/data/flood-lines-nagpur.json",
-        "src/content/flood/nagpur.ts",
+        "src/cities/nagpur/flood.ts",
         "public/data/facts-nagpur.json"
       ],
       "refreshMethod": "manual (new sheets for the 6 MMR rivers -> flood-lines-mumbai.json); Nagpur: neer-vazhvu-api/scripts/build_nagpur_flood_lines.py",
@@ -622,7 +622,7 @@
       },
       "dependsOn": [
         "supabase:reservoir_daily_v2",
-        "src/lib/cities/nagpur.ts"
+        "src/cities/nagpur/config.ts"
       ],
       "refreshMethod": "scripts/backfill_cwc_reservoirs.py (insert-only-missing into reservoir_daily_v2)",
       "notes": "The 527-bulletin archive used for the Mumbai storage backfill ended 2025-05-08. This watch fires if CWC resumes/extends the listing; expect WEEKLY detections if the bulletin resumes - demote or re-tier then. Lineage is a Supabase table, not a committed file: the 996 backfilled rows (Bhatsa 498 + Upper Vaitarna 502, 2015-2025) live in reservoir_daily_v2. Recorded as 'supabase:reservoir_daily_v2' since 2026-07-26, when dependsOn gained table lineage; before that this entry had an empty dependsOn and its alerts were not actionable. ALSO BACKS PUNE from 2026-08-17, and stays a single entry because this is ONE national listing rather than a per-city feed - backfill_cwc_reservoirs.py took a --city flag and the scope here is left as mumbai because that is the city it was registered for; dependsOn already reaches both through supabase:reservoir_daily_v2, which is city-scoped. PUNE GETS TWO OF ITS SEVEN DAMS: KHADAKVASLA is data row 1 of the state table and PANSHET is row 23 with TANAJISAGAR wrapped onto the next line (verified on the 01.05.2025 bulletin). Warasgaon, Temghar, Pavana and Bhama Askhed are NOT IN THE BULLETIN AT ALL - Bhama Askhed appears only in a percentage bullet list, not as a storage row - so the Khadakwasla-chain TOTAL still begins at onboarding. AND THE TWO TAKEN DO NOT REACH BACK EQUALLY FAR: measured over the full 527-bulletin archive, Khadakwasla yields 503 weekly readings from 09 Feb 2015 but PANSHET ONLY 110 FROM 30 MAR 2023, because the string PANSHET does not occur anywhere in the 2018, 2021 or 2022 bulletins - CWC added the dam to its monitored set in early 2023. Verifying that a dam is PRESENT in a recent bulletin says nothing about its DEPTH. Note CWC spells it KHADAKVASLA where Pravah writes Khadakwasla and India-WRIS writes Khadakwasala_1; the match table is keyed on CWC's spelling. Mulshi IS a data row (row 16) and is DELIBERATELY EXCLUDED: Tata hydro rather than a PMC source, and CWC gives it 572 Mcum of capacity against Pravah's 522.76, 9.4% apart, the same unexplained class of disagreement recorded for Pavana. The two dams taken agree to a fifth of a percent on capacity-at-FRL (56.0 vs 55.91 Mcum; 302.0 vs 301.61), which is a cross-check on both publishers rather than a formality.",
@@ -954,7 +954,7 @@
         "public/data/allocations-nagpur.json",
         "public/data/commitments-nagpur.json",
         "public/data/facts-nagpur.json",
-        "src/content/story-nagpur-en.tsx"
+        "src/cities/nagpur/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Government Resolutions are the paper behind the MMR allocation ledger: BMC's Bhatsa share (GR 11-Sep-2019, 427.93 Mm3/yr) and the Barvi sharing GR 18-Sep-2017 among them. The orgpedia mahGRs GitHub mirror is the only way to full-text-search Maharashtra GRs; WRD's own site does not expose them stably. Verified 2026-07-26: the directory listing returns 200. Caveat: GitHub tree pages are partly JS-rendered and paginate above 1,000 files, so if the link-set comes back thin, switch to the GitHub contents API (api.github.com/repos/orgpedia/mahGRs/contents/GRs/Water_Resources_Department) with api-date on the commit date. Named gaps that stay unwatched because they are not public at all: the MWRRA entitlement register (page literally 'Under Construction'), STEM's Thane/Bhiwandi split, MIDC per-buyer quantities.",
