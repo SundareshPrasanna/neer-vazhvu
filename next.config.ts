@@ -101,6 +101,14 @@ const nextConfig: NextConfig = {
     "/*/rivers": ["./public/data/basins/*/inventory.json"],
     // Embeddable atlas reads the same inventory.
     "/embed/basins/*": ["./public/data/basins/*/inventory.json"],
+    // For organisations reads the Krishnagiri records behind its registry card
+    // and its Hosur chart. It revalidates on a server, so without these the
+    // card silently drops out after the first regeneration.
+    "/for-organisations": [
+      "./public/data/basins/krishnagiri-rivers/reservoirs.geojson",
+      "./public/data/basins/krishnagiri-rivers/monitoring-points.geojson",
+      "./public/data/basins/krishnagiri-rivers/readings/tnpcb-chokkarasanapalli.json",
+    ],
   },
   async headers() {
     return [
