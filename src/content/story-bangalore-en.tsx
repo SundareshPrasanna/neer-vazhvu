@@ -187,6 +187,16 @@ export function BangaloreStoryEn() {
           for its first half-century, drew its water from Halsoor lake,
           from open wells, and from the seasonal Vrishabhavathi runoff.
         </p>
+        <Figure
+          src="/images/story/bangalore/cantonment-plan-1843.jpg"
+          alt="A hand-coloured 1843 plan of the Cantonment of Bangalore: barracks and parade grounds laid out in blocks, roads radiating across open ground, and Ulsoor tank shaded blue at the right."
+          caption="The Cantonment in 1843, laid out around Halsoor (Ulsoor) tank."
+          source="Medical Topography and Statistics of the Presidency of Madras (1843), via Wikimedia Commons"
+          credit="B. C. Regel, 1843 (public domain)"
+          size="wide"
+          aspect="1/1"
+          fit="contain"
+        />
         <p>
           The break came with cholera. The Cambridge Urban History
           article by James Heitzman and others titled{" "}
@@ -334,6 +344,16 @@ export function BangaloreStoryEn() {
           (<em>rajakaluves</em>) that had once linked one kere to the
           next had been narrowed, paved over, or built up against.
         </p>
+        <Figure
+          src="/images/story/bangalore/bangalore-guide-map-1938.jpg"
+          alt="A detail of the Survey of India's Bangalore Guide Map, 1938 edition: dense streets of the old city in red, railway lines, and tanks shaded blue, including the large tank at the right edge."
+          caption="Central Bangalore on the Survey of India guide map of 1938 (surveyed 1935-36), when several of the tanks named here still held water."
+          source="Survey of India, Bangalore Guide Map, 2nd revised edition 1938; University of Minnesota scan, via Wikimedia Commons"
+          credit="Survey of India (public domain)"
+          size="wide"
+          aspect="16/10"
+          fit="contain"
+        />
         <p>
           The most-studied single case is Agara. R. D&apos;Souza and
           Harini Nagendra&apos;s 2011 paper in <em>Environmental
