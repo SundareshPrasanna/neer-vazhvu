@@ -38,6 +38,10 @@ const PROMISES: [string, string][] = [
     "Your account is used only to run reporting: the limits, your own report list and stopping misuse. We send you no email and show no ads. Nothing about you goes to any government department, the bodies that handle complaints, or anyone else. If you file a complaint with a body yourself, that body sees what you give it, under its own rules.",
   ],
   [
+    "How reports are used.",
+    "Published reports are part of the public record. We use them, and the averages and trends drawn from them, for analysis, both non-commercial and commercial, always without anything that identifies you.",
+  ],
+  [
     "You can leave at any time.",
     "Delete your account from My reports. Reports not yet published go with it. Published reports stay with nothing linking them to you, or you can remove them too.",
   ],
