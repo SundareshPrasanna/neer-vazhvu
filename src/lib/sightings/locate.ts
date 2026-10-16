@@ -40,6 +40,11 @@ export function distance2(lng: number, lat: number, c: [number, number]): number
   return dx * dx + dy * dy;
 }
 
+/** Kilometres between a point and a [lng, lat] centroid (equirectangular; fine at district scale). */
+export function distanceKm(lng: number, lat: number, c: [number, number]): number {
+  return Math.sqrt(distance2(lng, lat, c)) * 111.2;
+}
+
 export function nearest<T extends { centroid: [number, number] }>(items: T[], lng: number, lat: number): T | null {
   let best: T | null = null;
   let bestD = Infinity;

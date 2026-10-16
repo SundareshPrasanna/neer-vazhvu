@@ -8,7 +8,7 @@ import type { PlaceConfig } from "@/lib/cities/types";
 import type { DistrictDirectoryArtifact } from "@/lib/atlas/artifacts";
 import { listPublishedAtlasDistricts, type AtlasDistrict } from "@/lib/atlas/registry";
 import { wardNumberOf } from "@/lib/utils/ward-number";
-import { containing, inBBox, indexPolygons, nearest, type BBox, type IndexedPolygon } from "./locate";
+import { containing, distanceKm, inBBox, indexPolygons, nearest, type BBox, type IndexedPolygon } from "./locate";
 
 /** Where a report lands. Resolved on the server from GPS only. */
 export interface Placement {
@@ -38,6 +38,9 @@ type Panchayat = { code: string; name: string; blockCode: string; centroid: [num
 // Geometry is fetched from the site's own static files, not bundled: the
 // function stays small and every deployment's lambda stays small.
 const cache = new Map<string, Promise<unknown>>();
+
+/** Towns and reservoirs in onboarded districts lie 2-5 km from a panchayat centre; neighbouring districts 12 km and more. */
+const DISTRICT_REACH_KM = 5;
 
 function getJson<T>(origin: string, path: string | null): Promise<T | null> {
   if (!path) return Promise.resolve(null);
@@ -118,13 +121,17 @@ export async function placePoint(origin: string, lng: number, lat: number): Prom
     if (ward || containing(geos[i].corporations, lng, lat)) return cityPlacement(c, geos[i], ward?.properties ?? null, lng, lat);
   }
 
+  // A panchayat whose box holds the point; else a town or tank bed within
+  // DISTRICT_REACH_KM of one (panchayat boundaries leave both out). Further than
+  // that is a district not yet onboarded, never credited to its neighbour.
   const districts = listPublishedAtlasDistricts().filter((d) => d.bbox && inBBox(lng, lat, d.bbox));
-  const scored = (
-    await Promise.all(districts.map(async (d) => ({ d, gp: nearest(await panchayatsOf(origin, d), lng, lat) })))
-  ).flatMap(({ d, gp }) => (gp ? [{ d, gp, centroid: gp.centroid }] : []));
-  const best = nearest(scored, lng, lat);
+  const all = (
+    await Promise.all(districts.map(async (d) => (await panchayatsOf(origin, d)).map((gp) => ({ d, gp, centroid: gp.centroid }))))
+  ).flat();
+  const holding = nearest(all.filter((x) => inBBox(lng, lat, x.gp.bbox)), lng, lat);
+  const near = holding ?? nearest(all, lng, lat);
+  const best = near && (holding || distanceKm(lng, lat, near.centroid) <= DISTRICT_REACH_KM) ? near : null;
   if (best) {
-    const inside = inBBox(lng, lat, best.gp.bbox);
     return {
       placeKind: "district",
       placeId: best.d.scopeId,
@@ -133,9 +140,9 @@ export async function placePoint(origin: string, lng: number, lat: number): Prom
       corporationId: null,
       wardId: null,
       wardName: null,
-      blockCode: best.gp.blockCode,
-      panchayatCode: inside ? best.gp.code : null,
-      panchayatName: inside ? best.gp.name : null,
+      blockCode: holding ? best.gp.blockCode : null,
+      panchayatCode: holding ? best.gp.code : null,
+      panchayatName: holding ? best.gp.name : null,
       waterBodyId: null,
       waterBodyName: null,
     };
