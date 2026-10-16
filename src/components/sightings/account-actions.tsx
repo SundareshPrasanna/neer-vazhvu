@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { ActionButton } from "./action-feedback";
+
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 /**
@@ -53,9 +55,13 @@ export function AccountActions({ authFetch, signOut }: { authFetch: Fetch; signO
             Remove my published reports too
           </label>
           <div className="mt-3 flex gap-2">
-            <button type="button" disabled={busy} onClick={remove} className="rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-              Yes, delete my account
-            </button>
+            <ActionButton
+              label="Yes, delete my account"
+              busyLabel="Deleting…"
+              busy={busy}
+              onClick={remove}
+              className="rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
+            />
             <button type="button" onClick={() => setConfirming(false)} className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs dark:border-slate-600">
               Cancel
             </button>

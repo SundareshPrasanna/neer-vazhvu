@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
 import type { OwnReport } from "@/lib/sightings/types";
+import { ActionButton, NoticeBar, useNotice } from "./action-feedback";
 import { HandlerCard, NationalOnly } from "./handler-card";
 import { ReportCard, StatusChip, day } from "./report-card";
 import { shrinkPhoto } from "./use-citizen";
@@ -19,8 +20,18 @@ const ACTIONS: { event: CaseEvent; label: string }[] = [
   { event: "still_there", label: "Still there" },
 ];
 
-function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: Fetch; onDone: () => void }) {
+const SAVED: Record<CaseEvent, string> = {
+  reported: "Saved: you reported it.",
+  authority_done: "Saved: the body marked it done.",
+  fixed: "Saved. Your fixed photo is waiting for review.",
+  still_there: "Saved: still there.",
+  closed: "Closed.",
+  reopened: "Reopened.",
+};
+
+function Update({ report, authFetch, onDone, notify }: { report: OwnReport; authFetch: Fetch; onDone: () => void; notify: (text: string, ok?: boolean) => void }) {
   const [open, setOpen] = useState<CaseEvent | null>(null);
+  const [pending, setPending] = useState<CaseEvent | null>(null);
   const [body, setBody] = useState(report.handler?.body ?? "");
   const [reference, setReference] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
@@ -29,6 +40,7 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
 
   const send = async (event: CaseEvent) => {
     setBusy(true);
+    setPending(event);
     setError(null);
     const fd = new FormData();
     fd.append("event", event);
@@ -40,8 +52,10 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
     const res = await authFetch(`/api/sightings/${report.id}/events`, { method: "POST", body: fd }).catch(() => null);
     const json = res ? await res.json().catch(() => ({})) : {};
     setBusy(false);
+    setPending(null);
     if (!res?.ok) return setError(json.error ?? "Could not save. Please try again.");
     setOpen(null);
+    notify(SAVED[event]);
     onDone();
   };
 
@@ -51,15 +65,15 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
     <div className="mt-3 space-y-2">
       <div className="flex flex-wrap gap-2">
         {allowed.map((a) => (
-          <button
+          <ActionButton
             key={a.event}
-            type="button"
-            onClick={() => (a.event === "authority_done" || a.event === "still_there" ? send(a.event) : setOpen(a.event))}
+            label={a.label}
+            busyLabel="Saving…"
+            busy={pending === a.event}
             disabled={busy}
+            onClick={() => (a.event === "authority_done" || a.event === "still_there" ? send(a.event) : setOpen(a.event))}
             className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-700 hover:border-slate-500 dark:border-slate-600 dark:text-slate-300"
-          >
-            {a.label}
-          </button>
+          />
         ))}
       </div>
       {open === "reported" && (
@@ -72,9 +86,14 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
             Reference or complaint number (only you and our reviewer see it)
             <input value={reference} onChange={(e) => setReference(e.target.value.slice(0, 80))} className={field} />
           </label>
-          <button type="button" disabled={busy || !body.trim()} onClick={() => send("reported")} className="mt-2 rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-            Save
-          </button>
+          <ActionButton
+            label="Save"
+            busyLabel="Saving…"
+            busy={pending === "reported"}
+            disabled={busy || !body.trim()}
+            onClick={() => send("reported")}
+            className="mt-2 rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white"
+          />
         </div>
       )}
       {open === "fixed" && (
@@ -83,9 +102,14 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
             A photo of the same spot, now
             <input type="file" accept="image/*" capture="environment" onChange={async (e) => setPhoto(e.target.files?.[0] ? await shrinkPhoto(e.target.files[0]) : null)} className="mt-1 block text-sm" />
           </label>
-          <button type="button" disabled={busy || !photo} onClick={() => send("fixed")} className="mt-2 rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-            Save
-          </button>
+          <ActionButton
+            label="Save"
+            busyLabel="Saving…"
+            busy={pending === "fixed"}
+            disabled={busy || !photo}
+            onClick={() => send("fixed")}
+            className="mt-2 rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white"
+          />
         </div>
       )}
       {error && <p className="text-xs text-red-700 dark:text-red-400">{error}</p>}
@@ -162,8 +186,10 @@ function Download({ reports }: { reports: OwnReport[] }) {
 
 /** The reporter's own reports, with the updates they can make. */
 export function MyReports({ reports, authFetch, onChange }: { reports: OwnReport[]; authFetch: Fetch; onChange: () => void }) {
+  const [notice, notify] = useNotice();
   return (
     <div className="space-y-3">
+      <NoticeBar notice={notice} />
       {reports.length === 0 ? <p className="text-sm text-slate-600 dark:text-slate-400">No reports yet.</p> : <Summary reports={reports} />}
       {reports.map((r) => (
         <ReportCard key={r.id} report={r}>
@@ -194,7 +220,7 @@ export function MyReports({ reports, authFetch, onChange }: { reports: OwnReport
                   {r.handler ? <HandlerCard handler={r.handler} national={r.nationalChannels} /> : <NationalOnly national={r.nationalChannels} />}
                 </div>
               )}
-              <Update report={r} authFetch={authFetch} onDone={onChange} />
+              <Update report={r} authFetch={authFetch} onDone={onChange} notify={notify} />
             </>
           )}
         </ReportCard>

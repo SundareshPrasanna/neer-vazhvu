@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { ActionButton, NoticeBar, useNotice } from "./action-feedback";
 import { ReportCard, day } from "./report-card";
 import { useCitizen } from "./use-citizen";
 import { OTHER_KEY, REPORT_GROUPS } from "@/lib/sightings/taxonomy";
@@ -20,7 +21,16 @@ const small = "rounded-md border px-3 py-1.5 text-xs font-medium";
 const OLD_PHOTO_DAYS = 30;
 const FAR_KM = 1;
 
-function Item({ item, act }: { item: QueueItem; act: (body: object) => Promise<void> }) {
+type Result = { ok: boolean; rejected?: number; error?: string };
+
+function Item({ item, act, notify }: { item: QueueItem; act: (body: object) => Promise<Result>; notify: (text: string, ok?: boolean) => void }) {
+  const [pending, setPending] = useState<string | null>(null);
+  const run = async (key: string, body: object, done: (r: Result) => string) => {
+    setPending(key);
+    const r = await act(body);
+    setPending(null);
+    notify(r.ok ? done(r) : (r.error ?? "That did not work. Please try again."), r.ok);
+  };
   const [type, setType] = useState(item.subcategory ? `${item.category}:${item.subcategory}` : item.category);
   const [candidate, setCandidate] = useState(item.candidateLabel ?? "");
   const [reason, setReason] = useState("");
@@ -101,30 +111,59 @@ function Item({ item, act }: { item: QueueItem; act: (body: object) => Promise<v
             className="w-full rounded-md border border-slate-300 bg-white p-1.5 text-sm dark:border-slate-600 dark:bg-slate-900"
           />
           <div className="flex flex-wrap gap-2">
-            <button type="button" className={`${small} border-emerald-700 bg-emerald-700 text-white`} onClick={() => act({ action: "approve", id: item.id, category, subcategory: subcategory ?? null, candidateLabel: candidate })}>
-              Approve
-            </button>
-            <button type="button" className={`${small} border-slate-400`} onClick={() => act({ action: "reject", id: item.id, reason })}>
-              Reject
-            </button>
-            <button
-              type="button"
+            <ActionButton
+              label="Approve"
+              busyLabel="Approving…"
+              busy={pending === "approve"}
+              disabled={pending != null}
+              className={`${small} border-emerald-700 bg-emerald-700 text-white`}
+              onClick={() =>
+                run("approve", { action: "approve", id: item.id, category, subcategory: subcategory ?? null, candidateLabel: candidate }, () => `Approved. It is now on the ${item.placeName} page.`)
+              }
+            />
+            <ActionButton
+              label="Reject"
+              busyLabel="Rejecting…"
+              busy={pending === "reject"}
+              disabled={pending != null}
+              className={`${small} border-slate-400`}
+              onClick={() =>
+                confirm("Reject this report? Its photos and note will be deleted.") &&
+                run("reject", { action: "reject", id: item.id, reason }, () => "Rejected. Its photos and note are deleted.")
+              }
+            />
+            <ActionButton
+              label="Suspend account"
+              busyLabel="Suspending…"
+              busy={pending === "suspend"}
+              disabled={pending != null}
               className={`${small} border-red-700 text-red-700`}
-              onClick={() => confirm("Suspend this account and reject everything it has waiting?") && act({ action: "suspend", reporterKey: item.reporter.key, reason })}
-            >
-              Suspend account
-            </button>
+              onClick={() =>
+                confirm("Suspend this account and reject everything it has waiting?") &&
+                run("suspend", { action: "suspend", reporterKey: item.reporter.key, reason }, (r) => `Account suspended. ${r.rejected ?? 0} waiting report${r.rejected === 1 ? "" : "s"} rejected.`)
+              }
+            />
           </div>
         </div>
       )}
       {pendingFixed && (
         <div className="mt-3 flex gap-2">
-          <button type="button" className={`${small} border-emerald-700 bg-emerald-700 text-white`} onClick={() => act({ action: "publish_fixed", id: item.id })}>
-            Publish fixed photo
-          </button>
-          <button type="button" className={`${small} border-slate-400`} onClick={() => act({ action: "discard_fixed", id: item.id })}>
-            Discard fixed photo
-          </button>
+          <ActionButton
+            label="Publish fixed photo"
+            busyLabel="Publishing…"
+            busy={pending === "publish_fixed"}
+            disabled={pending != null}
+            className={`${small} border-emerald-700 bg-emerald-700 text-white`}
+            onClick={() => run("publish_fixed", { action: "publish_fixed", id: item.id }, () => "Fixed photo published.")}
+          />
+          <ActionButton
+            label="Discard fixed photo"
+            busyLabel="Discarding…"
+            busy={pending === "discard_fixed"}
+            disabled={pending != null}
+            className={`${small} border-slate-400`}
+            onClick={() => run("discard_fixed", { action: "discard_fixed", id: item.id }, () => "Fixed photo discarded.")}
+          />
         </div>
       )}
     </ReportCard>
@@ -154,10 +193,12 @@ export function ReviewApp() {
     };
   }, [session, authFetch, tick]);
 
-  const act = async (body: object) => {
-    const res = await authFetch("/api/sightings/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!res.ok) setError((await res.json().catch(() => ({}))).error ?? "Action failed.");
+  const [notice, notify] = useNotice();
+  const act = async (body: object): Promise<Result> => {
+    const res = await authFetch("/api/sightings/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
     setTick((t) => t + 1);
+    return res?.ok ? { ok: true, rejected: json.data?.rejected } : { ok: false, error: json.error ?? (res ? undefined : "No connection. Please try again.") };
   };
 
   return (
@@ -177,11 +218,12 @@ export function ReviewApp() {
           </p>
           <div className="mt-4 space-y-4">
             {items?.map((item) => (
-              <Item key={item.id} item={item} act={act} />
+              <Item key={item.id} item={item} act={act} notify={notify} />
             ))}
           </div>
         </>
       )}
+      <NoticeBar notice={notice} />
     </main>
   );
 }
