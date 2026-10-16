@@ -17,6 +17,7 @@ import { STATUS_COLORS } from "@/types/water-bodies";
 import type { ScoredWaterBody } from "@/types/restoration";
 import { getPriorityColor } from "@/types/restoration";
 import type { ViewMode } from "./view-mode-toggle";
+import { takesRiverName } from "./body-ids";
 import { useLanguage } from "@/lib/i18n/context";
 import { useMapTiles } from "@/lib/utils/map-tiles";
 import {
@@ -306,7 +307,7 @@ export function UnifiedMap({
     };
   }, [cityId]);
 
-  // Match unnamed water body polygons to rivers by centroid proximity
+  // Name unnamed river polygons after the river line within 500 m of their centroid
   useEffect(() => {
     if (!currentGeoJSON) return;
     fetchJsonOrNull<GeoJSON.FeatureCollection>(riversGeoJsonUrl)
@@ -342,8 +343,7 @@ export function UnifiedMap({
         const lookup = new Map<number, { name: string; name_ta: string }>();
         for (const feat of currentGeoJSON.features) {
           const props = feat.properties as CurrentWaterBodyProperties;
-          // Only match unnamed polygons
-          if (props.name) continue;
+          if (!takesRiverName(props)) continue;
           // Compute centroid
           const coords = feat.geometry.type === "Polygon"
             ? (feat.geometry as GeoJSON.Polygon).coordinates[0]
@@ -483,6 +483,7 @@ export function UnifiedMap({
     viewMode,
     scoreLookupByOsmId,
     censusMatchByOsmId,
+    riverNameByOsmId,
   ]);
 
   // --- Interaction handlers ---
@@ -727,7 +728,7 @@ export function UnifiedMap({
       {currentGeoJSON && (
         <GeoJSON
           ref={(layer) => { currentLayerRef.current = layer; }}
-          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${tiles.url}`}
+          key={`current-${viewMode}-${language}-${censusMatchByOsmId.size}-${riverNameByOsmId.size}-${tiles.url}`}
           data={currentGeoJSON}
           style={currentStyle}
           onEachFeature={onEachCurrent}

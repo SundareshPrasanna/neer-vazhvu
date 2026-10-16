@@ -3,6 +3,7 @@ import path from "path";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
+import { restorationPriorityFile } from "@/lib/cities/data-paths";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { WaterBodiesClient, type LostNarrative } from "./water-bodies-client";
 
@@ -46,9 +47,11 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
   const config = tryGetPlaceConfig(cityId);
   if (!config) notFound();
 
-  const [lostFile, currentGeoJson] = await Promise.all([
+  const [lostFile, currentGeoJson, hasRestoration] = await Promise.all([
     loadJson<LostFile>(`water-bodies-lost-${cityId}.json`, "data"),
     loadJson<CurrentGeoJson>(`${cityId}-water-bodies-current.geojson`, "geojson"),
+    // The Restoration Priority mode exists only where scores were computed.
+    fs.access(path.join(process.cwd(), "public", "data", restorationPriorityFile(cityId))).then(() => true, () => false),
   ]);
 
   // Gate on the layer that DRAWS THE MAP, not on the optional lost-bodies register: a register
@@ -80,6 +83,7 @@ export default async function CityWaterBodiesPage({ params }: PageProps) {
       lostNarratives={(lostFile?.lost_bodies ?? []).map(({ name, status, side, note }) => ({ name, status, side, note }))}
       lostSource={(typeof ps === "string" ? ps : ps?.citation ?? ps?.name) ?? null}
       currentSource={[...publishers].join(", ") || null}
+      hasRestoration={hasRestoration}
     />
   );
 }

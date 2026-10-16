@@ -54,7 +54,8 @@ export function generateComparisonCSV(
   // Overall row
   const overallCells: (string | number | null)[] = ["Overall water-risk grade", ""];
   for (const r of rankings) {
-    overallCells.push(r.overallScore, r.overallGrade, `#${r.overallRank}/${r.overallTotal}`);
+    if (r.overallGrade === null) overallCells.push("N/A", "N/A", "N/A");
+    else overallCells.push(r.overallScore, r.overallGrade, `#${r.overallRank}/${r.overallTotal}`);
   }
   lines.push(overallCells.map(escapeCSV).join(","));
 
@@ -85,7 +86,7 @@ export function generateComparisonCSV(
   lines.push("");
   lines.push(row("Ward", "Zone"));
   for (const r of rankings) {
-    lines.push(row(r.wardNumber, `${r.zoneNo} - ${r.zoneName}`));
+    lines.push(row(r.wardNumber, r.zoneName === null ? "" : `${r.zoneNo} - ${r.zoneName}`));
   }
 
   // Metadata

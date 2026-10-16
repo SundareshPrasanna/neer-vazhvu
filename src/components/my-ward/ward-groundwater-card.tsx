@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -257,6 +258,9 @@ function CgwbAssessmentCard({
                 )}
               </p>
             )}
+            {block.note && (
+              <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1">{block.note}</p>
+            )}
           </div>
         ) : (
           <p className="text-sm text-slate-400 dark:text-slate-500">{t("ward.no_data")}</p>
@@ -292,7 +296,22 @@ function CgwbAssessmentCard({
           </div>
         ) : gwNoWell ? (
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
-            <p className="text-xs text-slate-500 dark:text-slate-400">{t(gwNoWell)}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {/* "{map}" in the line is the groundwater page, as a link. */}
+              {t(gwNoWell).split("{map}").map((part, i) => (
+                <Fragment key={i}>
+                  {i > 0 && (
+                    <Link
+                      href={`${cityPrefix}/groundwater?ward=${wardNumber}`}
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      {t("nav.groundwater")}
+                    </Link>
+                  )}
+                  {part}
+                </Fragment>
+              ))}
+            </p>
           </div>
         ) : null}
 

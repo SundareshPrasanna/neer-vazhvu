@@ -33,6 +33,58 @@ from registry_license import registry_license  # noqa: E402
 NEAREST_WELL_KM = 5.0
 
 CITIES = {
+    "nagpur": {
+        "wards": "public/geojson/nagpur-wards-2025.geojson",
+        "water_bodies": "public/geojson/nagpur-water-bodies-current.geojson",
+        "river_quality": "public/data/river-quality-nagpur.json",
+        "gw_units": "public/geojson/nagpur-gwr-blocks.geojson",
+        "gw_blocks": "public/data/gwr-blocks-nagpur.json",
+        "gw_stations": "public/data/nagpur-cgwb-stations.json",
+        "sources": [
+            (
+                "mrsac-gatishakti-dma-wards",
+                "MRSAC PM Gati Shakti ward layer (38 wards, 2025)",
+                "Maharashtra Remote Sensing Applications Centre (MRSAC)",
+            ),
+            (
+                "nmc-gis-admin-boundaries",
+                "NMC GIS zone boundaries (zone names)",
+                "Nagpur Municipal Corporation",
+            ),
+            (
+                "mrsac-waterbodies-10k-2017-18",
+                "MRSAC 1:10,000 water bodies, 2017-18",
+                "Maharashtra Remote Sensing Applications Centre (MRSAC)",
+            ),
+            (
+                "osm-overpass",
+                "OpenStreetMap names for water bodies",
+                "OpenStreetMap contributors",
+            ),
+            (
+                "nmc-esr-river-stp-tables",
+                "NMC river sampling sites (ESR 2023-24)",
+                "Nagpur Municipal Corporation",
+            ),
+            (
+                "ingres-groundwater-maharashtra",
+                "IN-GRES assessment units",
+                "CGWB / IIT-Hyderabad (IN-GRES)",
+            ),
+            (
+                "nwic-nwdp-groundwater-maharashtra",
+                "NWDP groundwater telemetry",
+                "National Water Informatics Centre",
+            ),
+        ],
+        "not_available": {
+            "lost_bodies": "No public register of Nagpur's lost lakes has been found, so none can be placed in wards.",
+            "flood": "NMC's City Disaster Management Plan 2025-26 lists the places where water collects in heavy rain by name, fire station by fire station, without locations, so they cannot be placed in wards.",
+            "drainage": "We have not found NMC's storm-water drains published as a map or a file. The City Development Plan 2041 (March 2015) puts the network at about 917 km, as surveyed in 2008.",
+            "sewerage": "NMC's Environment Status Report 2023-24 locates its sewage treatment plants, but we have not found a map of the sewer network, so sewer lines cannot be placed in wards.",
+            "industrial": "MPCB's river action plans name the power stations and industries along the Kanhan and the Kolar, but we have not found their locations published, so they cannot be placed in wards.",
+        },
+    },
     "ahmedabad": {
         "wards": "public/geojson/ahmedabad-wards-2020.geojson",
         "water_bodies": "public/geojson/ahmedabad-water-bodies-current.geojson",
@@ -135,7 +187,13 @@ def main() -> int:
         if s.get("lat") is not None and s.get("lng") is not None
     ]
     units = load(cfg["gw_units"])["features"]
-    latest = {b["name"]: b["latest"] for b in load(cfg["gw_blocks"])["blocks"]}
+    gw_blocks = load(cfg["gw_blocks"])["blocks"]
+    latest = {b["name"]: b["latest"] for b in gw_blocks}
+    # The unit's own caveat (changed inputs or area between editions) travels
+    # with its figure, so a ward card never shows the percentage without it.
+    caveat = {
+        b["name"]: b["history_caveat"] for b in gw_blocks if b.get("history_caveat")
+    }
     wells = load(cfg["gw_stations"])["wells"]
 
     def first_point(geom):
@@ -158,6 +216,8 @@ def main() -> int:
                 "class": latest[unit]["class"],
                 "development_pct": latest[unit]["development_pct"],
             }
+            if unit in caveat:
+                block["note"] = caveat[unit]
         well = min(wells, key=lambda x: km(c, (x["lng"], x["lat"])))
         dist = km(c, (well["lng"], well["lat"]))
         last = well["readings"][-1] if well["readings"] else None
@@ -165,7 +225,7 @@ def main() -> int:
             {
                 "ward_number": p["ward_number"],
                 "ward_name": p["ward_name"],
-                "zone_no": str(p["zone_no"]),
+                "zone_no": None if p["zone_no"] is None else str(p["zone_no"]),
                 "zone_name": p["zone_name"],
                 "centroid": [round(c[0], 6), round(c[1], 6)],
                 "area_sq_km": p["area_sq_km"],
@@ -222,6 +282,9 @@ def main() -> int:
                 },
             }
         )
+        # A ward file that flags an outline caveat carries it to the ward page.
+        if p.get("boundary_note"):
+            profiles[-1]["boundary_note"] = p["boundary_note"]
     profiles.sort(key=lambda x: x["ward_number"])
 
     out = {

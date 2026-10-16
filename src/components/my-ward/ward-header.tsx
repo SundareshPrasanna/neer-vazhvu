@@ -11,7 +11,9 @@ import { useMyWardCity } from "./city-context";
 
 interface WardHeaderProps {
   wardNumber: number;
-  zoneName: string;
+  /** null: the ward is not assigned to one zone (Nagpur wards that cross
+   *  zone lines). An empty string keeps its old rendering. */
+  zoneName: string | null;
   profile: WardProfile;
   groundwater: GroundwaterData | null;
   representatives: RepresentativeData | null;
@@ -54,12 +56,19 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
-          {t("ward.ward")} {wardNumber} - {zoneName}
+          {zoneName === null ? (
+            <>{t("ward.ward")} {wardNumber}</>
+          ) : (
+            <>{t("ward.ward")} {wardNumber} - {zoneName}</>
+          )}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">{t("my_ward.subtitle")}</p>
+        {profile.boundary_note && (
+          <p className="mt-1 text-xs text-amber-700 dark:text-amber-400 max-w-2xl">{profile.boundary_note}</p>
+        )}
       </div>
 
-      <div className="flex items-center gap-2 print:hidden">
+      <div className="flex flex-wrap items-center gap-2 print:hidden">
         {/* Report Card */}
         <Link
           href={`${cityPrefix}/my-ward/report?ward=${wardNumber}`}
@@ -85,7 +94,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
         {/* Share */}
         <ShareMenu
           url={shareUrl}
-          title={`Ward ${wardNumber} - ${zoneName} | Neer Vazhvu`}
+          title={zoneName === null ? `Ward ${wardNumber} | Neer Vazhvu` : `Ward ${wardNumber} - ${zoneName} | Neer Vazhvu`}
           description={t("share.ward_report")}
           ogImageUrl={`/api/og/ward?city=${encodeURIComponent(cityId)}&ward=${wardNumber}`}
         />

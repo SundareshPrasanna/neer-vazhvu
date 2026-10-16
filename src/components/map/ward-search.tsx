@@ -255,9 +255,11 @@ function ResultRow({
         <span className="font-medium text-slate-900 dark:text-slate-100">
           {t("ward.ward")} {w.wardNumber}
         </span>
-        <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-          {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
-        </span>
+        {w.zoneless ? null : (
+          <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
+            {getZoneLabel(w.zone, language)} {t("ward_search.zone_suffix")}
+          </span>
+        )}
       </button>
     );
   }

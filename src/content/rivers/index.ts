@@ -8,6 +8,7 @@ import { RIVERS as DELHI } from "./delhi";
 import { RIVERS as HYDERABAD } from "./hyderabad";
 import { RIVERS as KOLKATA } from "./kolkata";
 import { RIVERS as PUNE } from "./pune";
+import { RIVERS as NAGPUR } from "./nagpur";
 import { RIVERS as SURAT } from "./surat";
 import { RIVERS as AHMEDABAD } from "./ahmedabad";
 import { RIVERS as VISAKHAPATNAM } from "./visakhapatnam";
@@ -23,6 +24,7 @@ export const RIVERS_CONTENT: Partial<Record<CityId, CityRiversContent>> = {
   hyderabad: HYDERABAD,
   kolkata: KOLKATA,
   pune: PUNE,
+  nagpur: NAGPUR,
   surat: SURAT,
   ahmedabad: AHMEDABAD,
   visakhapatnam: VISAKHAPATNAM,

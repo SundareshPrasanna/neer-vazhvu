@@ -1,0 +1,381 @@
+{
+  "nvdm": "1.0",
+  "dataset": "geojson-layers/stps",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "nmc-esr-river-stp-tables",
+        "title": "NMC Environment Status Report 2023-24 (CSIR-NEERI), Table 6.3 'Details of sewage treatment plants run by NMC' and section 6.2.2",
+        "publisher": "Nagpur Municipal Corporation",
+        "url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf",
+        "license": "Nagpur Municipal Corporation publication, cited with attribution",
+        "as_of": "2024-03-31"
+      },
+      {
+        "id": "mpcb-ngt-monthly-progress-reports",
+        "title": "MPCB, Monthly Progress Report to NMCG under NGT O.A. 673/2018 (January 2026; cover line reads 'Jan -2025'), 'Details of 173 existing STP in the State', Sr. 151-162",
+        "publisher": "Maharashtra Pollution Control Board",
+        "url": "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Jan_2026.pdf",
+        "license": "Maharashtra government publication, cited with attribution",
+        "as_of": "2026-01-31"
+      }
+    ],
+    "method": "pdf-extract",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_nagpur_river_quality.py",
+    "note": "13 plants as ESR Table 6.3 prints them, coordinates as printed (Narsala's to three decimals). The 12 operating plants sum to 403.5 MLD, the figure the ESR's text gives against 520 MLD of sewage, itself 73% of supply rather than a measured flow; the utilisation column equals capacity on every row. MPCB's January 2026 report lists all 12 operating plants as Operational and 'Non-Comply' without naming a parameter; no plant-level outlet readings are published."
+  },
+  "type": "FeatureCollection",
+  "summary": {
+    "operational_count": 12,
+    "operational_capacity_mld": 403.5,
+    "trial_run_count": 1,
+    "trial_run_capacity_mld": 20,
+    "sewage_generated_mld_esr": 520,
+    "mpcb_non_comply_jan_2026": 12
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "bhandewadi-130",
+        "name": "Bhandewadi (130 MLD)",
+        "capacity_mld": 130,
+        "utilisation_mld_as_printed": 130,
+        "technology": "SBR",
+        "commissioned": 2016,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 152",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.1590347,
+          21.1378096
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "bhandewadi-200",
+        "name": "Bhandewadi (200 MLD)",
+        "capacity_mld": 200,
+        "utilisation_mld_as_printed": 200,
+        "technology": "SBR",
+        "commissioned": 2018,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 151",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.155832,
+          21.1381883
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "mokshdham",
+        "name": "Mokshdham",
+        "capacity_mld": 5,
+        "utilisation_mld_as_printed": 5,
+        "technology": "MBBR",
+        "commissioned": 2017,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 154",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.088943,
+          21.137628
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "mankapur",
+        "name": "Mankapur",
+        "capacity_mld": 5,
+        "utilisation_mld_as_printed": 5,
+        "technology": "MBBR",
+        "commissioned": 2017,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 153",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.079131,
+          21.19032
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "somalwada-1",
+        "name": "Somalwada-1",
+        "capacity_mld": 20,
+        "utilisation_mld_as_printed": 20,
+        "technology": "SBR",
+        "commissioned": 2021,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 158",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.074979,
+          21.086964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "hazaripahad",
+        "name": "Hazaripahad",
+        "capacity_mld": 4,
+        "utilisation_mld_as_printed": 4,
+        "technology": "SBR",
+        "commissioned": 2019,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 157",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.026774,
+          21.166345
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "dabha",
+        "name": "Dabha",
+        "capacity_mld": 5,
+        "utilisation_mld_as_printed": 5,
+        "technology": "SBR",
+        "commissioned": 2018,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 159",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.011537,
+          21.171881
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "sonegaon",
+        "name": "Sonegaon",
+        "capacity_mld": 0.3,
+        "utilisation_mld_as_printed": 0.3,
+        "technology": "Phytorid Technology",
+        "commissioned": 2019,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 156",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.049576,
+          21.099773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "kachimet",
+        "name": "Kachimet",
+        "capacity_mld": 1,
+        "utilisation_mld_as_printed": 1,
+        "technology": "Soil Bio Technology",
+        "commissioned": 2018,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 155",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.020094,
+          21.15095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "somalwada-2",
+        "name": "Somalwada-2",
+        "capacity_mld": 20,
+        "utilisation_mld_as_printed": 20,
+        "technology": "SBR",
+        "commissioned": 2022,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 162",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.07091,
+          21.088322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "itabhatti",
+        "name": "Itabhatti",
+        "capacity_mld": 10,
+        "utilisation_mld_as_printed": 10,
+        "technology": "SBR",
+        "commissioned": 2022,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 161",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.121171,
+          21.172177
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "ambazari",
+        "name": "Ambazari",
+        "capacity_mld": 3.2,
+        "utilisation_mld_as_printed": 3.2,
+        "technology": "Phytorid Technology",
+        "commissioned": 2021,
+        "status": "Operational",
+        "status_note": null,
+        "consent_to_operate_from": "2022-12-15",
+        "consent_to_operate_until": "2027-04-30",
+        "mpcb_status_jan_2026": "Operational",
+        "mpcb_compliance_jan_2026": "Non-Comply",
+        "mpcb_compliance_source": "MPCB Monthly Progress Report to NMCG under NGT O.A. 673/2018, January 2026, 'Details of 173 existing STP in the State', Sr. 160",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.018274,
+          21.129474
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stp_id": "narsala",
+        "name": "Narsala",
+        "capacity_mld": 20,
+        "utilisation_mld_as_printed": 20,
+        "technology": "SBR",
+        "commissioned": null,
+        "status": "Trial run",
+        "status_note": "ESR prints 'WIP' in the commissioning column",
+        "consent_to_operate_from": null,
+        "consent_to_operate_until": null,
+        "mpcb_status_jan_2026": null,
+        "mpcb_compliance_jan_2026": null,
+        "mpcb_compliance_source": "Not in MPCB's January 2026 list of existing plants",
+        "source": "NMC ESR 2023-24, Table 6.3 (printed p.137)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.192,
+          21.087
+        ]
+      }
+    }
+  ]
+}

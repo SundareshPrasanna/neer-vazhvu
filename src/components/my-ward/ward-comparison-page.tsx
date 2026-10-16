@@ -179,7 +179,7 @@ export function WardComparisonPage({ cityId }: WardComparisonPageProps) {
 
       {/* Comparison table */}
       {!loading && rankings.length >= 1 && (
-        <ComparisonTable rankings={rankings} cityPrefix={cityPrefix} />
+        <ComparisonTable rankings={rankings} cityId={cityId} cityPrefix={cityPrefix} />
       )}
 
       {/* Footer */}

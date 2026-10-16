@@ -477,7 +477,7 @@ def main() -> int:
         ),
         "status_legend": {
             "delivered": "The promised thing verifiably happened, even if late. The dates show how late.",
-            "on-track": "The stated timeline has not lapsed and the latest dated evidence is consistent with it.",
+            "on-track": "The stated date has not passed and the latest dated evidence is consistent with it.",
             "slipped": "The institution itself has moved the date. Old and new dates are both shown.",
             "overdue": "The promised date has passed with no delivery and no formally revised date we can cite.",
             "stalled": "Work or approvals have stopped, by the institution's own account or a court's.",

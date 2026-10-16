@@ -239,6 +239,13 @@ def apply(path: Path, slug: str, city: str, dataset: str, spec: dict, refresh: b
         return False
     if "nvdm" in doc and not refresh:
         return False
+    # A boundary from an official layer (TNSWA, MRSAC) carries its own envelope; never restamp it as OSM.
+    if (
+        "nvdm" in doc
+        and dataset.startswith("geojson-layers/")
+        and (doc.get("provenance", {}).get("sources") or [{}])[0].get("id") != OSM["id"]
+    ):
+        return False
     env = envelope_for(slug, city, dataset, spec, doc)
     merged = {**env, **{k: v for k, v in doc.items() if k not in env}}
     out = dump(merged, raw)

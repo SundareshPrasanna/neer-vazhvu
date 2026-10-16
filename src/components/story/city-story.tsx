@@ -41,6 +41,9 @@ const STORIES: Partial<Record<CityId, { en: ComponentType } & Partial<Record<Lan
   pune: {
     en: dynamic(() => import("@/content/story-pune-en").then((m) => m.PuneStoryEn)),
   },
+  nagpur: {
+    en: dynamic(() => import("@/content/story-nagpur-en").then((m) => m.NagpurStoryEn)),
+  },
   surat: {
     en: dynamic(() => import("@/content/story-surat-en").then((m) => m.SuratStoryEn)),
   },

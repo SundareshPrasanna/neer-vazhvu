@@ -94,6 +94,14 @@ const EXTRA_FEEDS: ExtraFeed[] = [
     note: "regional corporation cards' source-storage pills",
   },
   {
+    id: "nagpur-dam-storage",
+    cityId: "nagpur",
+    file: "public/data/nagpur-dam-storage.json",
+    maxAgeDays: 4, // daily Pravah artifact; same tolerance as the DB feed
+    dateFrom: "json:_fetched",
+    note: "Pravah Nagpur-district dams (local scheduled job step 2c; the cards read reservoir_daily_v2)",
+  },
+  {
     id: "bmc-flood-spots",
     cityId: "mumbai",
     file: "public/data/mumbai-flood-hotspots.geojson",

@@ -18,6 +18,14 @@ const PMC_TOLL_FREE_CALL: Channel = { kind: "helpline", label: "PMC toll-free ca
 
 const PMC_FEEDBACK_AND_MONITORING: Channel = { kind: "email", label: "PMC Feedback and Monitoring Cell", url: "mailto:feedback@punecorporation.org" };
 
+const NMC_GRIEVANCE_REDRESSAL_SYSTEM: Channel = { kind: "portal", label: "NMC Grievance Redressal System (new complaint)", tracked: true, url: "https://nmcnagpur.gov.in/grievance/complaint_form.php" };
+
+const MY_NAGPUR_NMC_ANDROID: Channel = { kind: "app", label: "My Nagpur (NMC) - Android", tracked: true, url: "https://play.google.com/store/apps/details?id=com.app.newnmc" };
+
+const MY_NAGPUR_NMC_IPHONE: Channel = { kind: "app", label: "My Nagpur (NMC) (iPhone)", tracked: true, url: "https://apps.apple.com/in/app/my-nagpur-nmc/id6476917248" };
+
+const OCW_TOLL_FREE_HELPLINE: Channel = { kind: "helpline", label: "Orange City Water (NMC's water operator) toll-free helpline", phone: "1800-266-9899" };
+
 const MYBMC_MARG_ANDROID: Channel = { kind: "app", label: "MyBMC MARG (Android)", tracked: true, url: "https://play.google.com/store/apps/details?id=com.esri.ugms_bmc" };
 
 const MYBMC_MARG_IPHONE: Channel = { kind: "app", label: "MyBMC MARG (iPhone)", tracked: true, url: "https://apps.apple.com/in/app/mybmc-marg/id6759655448" };
@@ -235,6 +243,62 @@ export const MH: StateRouting = {
             AAPLE_SARKAR_GRIEVANCE_REDRESSAL,
           ],
           source: "https://pune.gov.in/en/",
+        },
+      },
+    },
+    nagpur: {
+      roles: {
+        solid_waste: {
+          body: "Nagpur Municipal Corporation - Solid Waste Management Department (collection, transport and disposal of the city's waste)",
+          acronym: "NMC",
+          channels: [
+            NMC_GRIEVANCE_REDRESSAL_SYSTEM,
+            MY_NAGPUR_NMC_ANDROID,
+            MY_NAGPUR_NMC_IPHONE,
+            { kind: "email", label: "NMC Solid Waste Management Department", url: "mailto:swm@nmc.gov.in" },
+          ],
+          source: "https://nmcnagpur.gov.in/5c151c2a9b76f9ef26d7e0f0d00c9a89",
+        },
+        sewerage: {
+          body: "Nagpur Municipal Corporation - Public Health Engineering Department (water supply and sewage management)",
+          acronym: "NMC",
+          channels: [
+            NMC_GRIEVANCE_REDRESSAL_SYSTEM,
+            MY_NAGPUR_NMC_ANDROID,
+            MY_NAGPUR_NMC_IPHONE,
+          ],
+          source: "https://nmcnagpur.gov.in/219e052492f4008818b8adb6366c7ed6",
+        },
+        water_supply: {
+          body: "Nagpur Municipal Corporation - Public Health Engineering Department; Orange City Water Pvt Ltd runs supply and billing for NMC",
+          acronym: "NMC / OCW",
+          channels: [
+            OCW_TOLL_FREE_HELPLINE,
+            NMC_GRIEVANCE_REDRESSAL_SYSTEM,
+            MY_NAGPUR_NMC_ANDROID,
+            MY_NAGPUR_NMC_IPHONE,
+          ],
+          source: "https://nmcnagpur.gov.in/219e052492f4008818b8adb6366c7ed6",
+        },
+        storm_drainage: {
+          body: "Nagpur Municipal Corporation - Public Health Engineering Department (its listed works include strengthening the rain-water drains against urban flooding)",
+          acronym: "NMC",
+          channels: [
+            NMC_GRIEVANCE_REDRESSAL_SYSTEM,
+            MY_NAGPUR_NMC_ANDROID,
+            MY_NAGPUR_NMC_IPHONE,
+          ],
+          source: "https://nmcnagpur.gov.in/219e052492f4008818b8adb6366c7ed6",
+        },
+        water_body: {
+          body: "Nagpur Municipal Corporation (development and upkeep of the city's lakes); Water Resources Department for the irrigation dams",
+          acronym: "NMC / WRD",
+          channels: [
+            NMC_GRIEVANCE_REDRESSAL_SYSTEM,
+            MY_NAGPUR_NMC_ANDROID,
+            MY_NAGPUR_NMC_IPHONE,
+          ],
+          source: "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf",
         },
       },
     },

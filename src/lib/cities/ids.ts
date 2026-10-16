@@ -10,6 +10,7 @@ export const CITY_IDS = [
   "kolkata",
   "gurugram",
   "pune",
+  "nagpur",
   "surat",
   "ahmedabad",
   "visakhapatnam",

@@ -4,7 +4,7 @@ import { resolve } from "path";
 import { NextResponse } from "next/server";
 import { loadProfilesServer } from "@/lib/utils/load-profiles-server";
 import { requireCity } from "@/lib/require-city";
-import { computeWardRankings } from "@/lib/utils/ward-rankings";
+import { computeWardRankings, englishOrdinal, MIN_FACTORS_FOR_OVERALL_GRADE } from "@/lib/utils/ward-rankings";
 import { GRADE_COLORS } from "@/lib/utils/grade-colors";
 
 export const runtime = "nodejs";
@@ -44,7 +44,9 @@ export async function GET(request: Request) {
     return new Response("Ward not found", { status: 404 });
   }
 
-  const gc = GRADE_COLORS[rankings.overallGrade] || GRADE_COLORS.C;
+  const gc = rankings.overallGrade
+    ? GRADE_COLORS[rankings.overallGrade] || GRADE_COLORS.C
+    : { bg: "#334155", text: "#94a3b8" };
   const zoneLine = [rankings.zoneNo && `Zone ${rankings.zoneNo}`, rankings.zoneName].filter(Boolean).join(" - ");
 
   const pills = rankings.metrics.map((m) => {
@@ -85,14 +87,16 @@ export async function GET(request: Request) {
           <span style={{ fontSize: "22px", color: "#94a3b8", marginTop: "4px" }}>{`${city.displayName}${zoneLine ? ` · ${zoneLine}` : ""}`}</span>
         </div>
         <div style={{ width: "120px", height: "120px", borderRadius: "24px", backgroundColor: gc.bg, color: gc.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontSize: "64px", fontWeight: 900, lineHeight: 1 }}>{rankings.overallGrade}</span>
+          <span style={{ fontSize: "64px", fontWeight: 900, lineHeight: 1 }}>{rankings.overallGrade ?? "-"}</span>
           <span style={{ fontSize: "14px", fontWeight: 600 }}>OVERALL</span>
         </div>
       </div>
 
       {/* Rank line */}
       <div style={{ fontSize: "20px", color: "#e2e8f0", marginBottom: "32px", display: "flex" }}>
-        Ranked #{rankings.overallRank} of {rankings.overallTotal} wards - {rankings.overallPercentile}th percentile
+        {rankings.overallPercentile === null
+          ? `No overall grade: it needs data on at least ${MIN_FACTORS_FOR_OVERALL_GRADE} factors`
+          : `Ranked #${rankings.overallRank} of ${rankings.overallTotal} wards - ${englishOrdinal(rankings.overallPercentile)} percentile`}
       </div>
 
       {/* Metric grade pills with rank */}

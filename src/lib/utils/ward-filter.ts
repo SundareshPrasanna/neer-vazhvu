@@ -3,6 +3,8 @@ export interface WardEntry {
   wardName: string;
   wardNameTa?: string;
   zone: string;
+  /** Set when the ward's profile has a null zone (not assigned to one zone). */
+  zoneless?: boolean;
 }
 
 export interface LocalityEntry {
@@ -93,6 +95,10 @@ export function filterLocalities(
  * Derive unique zones from a list of wards.
  */
 export function deriveZones(wards: WardEntry[]): ZoneEntry[] {
+  // Zoneless wards (Nagpur: zones only where one holds 90% of the ward) would
+  // make a zone row's ward count read as the zone's size; localities still
+  // match on zone_name.
+  if (wards.some((w) => w.zoneless)) return [];
   const zoneMap = new Map<string, ZoneEntry>();
   for (const w of wards) {
     // A city with no zone data (Delhi: all 250 wards carry an empty

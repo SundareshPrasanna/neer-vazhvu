@@ -23,6 +23,7 @@ const CITY_ABOUT: Record<CityId, ComponentType<CityAboutSlotProps>> = {
   kolkata: dynamic(() => import("@/content/about/kolkata")),
   gurugram: dynamic(() => import("@/content/about/gurugram")),
   pune: dynamic(() => import("@/content/about/pune")),
+  nagpur: dynamic(() => import("@/content/about/nagpur")),
   surat: dynamic(() => import("@/content/about/surat")),
   ahmedabad: dynamic(() => import("@/content/about/ahmedabad")),
   visakhapatnam: dynamic(() => import("@/content/about/visakhapatnam")),

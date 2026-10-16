@@ -1,0 +1,134 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/flood-lines",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "wrd-flood-line-maps",
+        "title": "Maharashtra WRD Flood Line Maps (red and blue line sheets): 13 of 513 statewide register entries, for five rivers and a nalla in and around Nagpur",
+        "publisher": "Water Resources Department, Government of Maharashtra",
+        "license": "Maharashtra government publication, cited with attribution"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-10-15",
+    "produced_by": "neer-vazhvu-api/scripts/build_nagpur_flood_lines.py",
+    "note": "A list of the official sheets, matched on the register's Marathi descriptions; the sheets are scanned images and nothing here is digitised. register_row is the row number printed in the register."
+  },
+  "place_id": "nagpur",
+  "updated": "2026-10-15",
+  "title": "Official flood lines (red and blue), Nagpur rivers",
+  "intro": "Maharashtra's Water Resources Department publishes the legal flood boundaries for rivers as 'red line and blue line' maps. On the Nag and Pora sheets the legend gives the blue line as the 25-year flood and the red line as the 100-year flood. The Nag sheets were prepared for the Nagpur Municipal Corporation and also print, for landmarks along the river, the 25-year and 100-year flood levels in metres. RD is the distance along the river in metres, counted downstream from Pardi. We link the official sheets; we do not redraw them.",
+  "source": {
+    "label": "WRD Maharashtra, Flood Line Maps (513 entries statewide)",
+    "url": "https://wrd.maharashtra.gov.in/Site/1315/Flood-Line-Maps"
+  },
+  "gaps_note": "The register has no sheet for the Pili, and none for the Nag from Ambazari lake through the city centre: the four Nag sheets cover RD 0 to 3,550 m at the city's eastern edge. The Nag sheets carry no date in their title blocks. The sheets are scanned images with no digital line file (the Pora sheet prints a coordinate grid; the Nag sheets do not), so these lines are not drawn on any map here. The register's descriptions are in Marathi only. This list keeps the register's entries for the Nag, the Pora, the Kanhan, the Kolar, the Vena and the Bagdor nalla around the city; one entry can hold several maps (Bagdor nalla's holds six) or repeat others (Nag map 1 combines maps 2 to 4). The register also lists Nagpur-district entries for the Wainganga (rows 495, 496, 497), the Jam (rows 29, 494) and the Nand (row 187), which are not listed here.",
+  "rivers": [
+    {
+      "name": "Nag river",
+      "context": "Inside NMC: the downstream 3.55 km at Pardi, Punapur and Bharatwada, surveyed for NMC at 1:1,250 (a combined sheet at 1:2,000)",
+      "sheets": [
+        {
+          "label": "Map 1: RD 0 to 3,550 m, the three sheets combined",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/imgw-324194220.pdf",
+          "register_row": 320
+        },
+        {
+          "label": "Map 3: RD 0 to 1,710 m",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/imgw-324194307.pdf",
+          "register_row": 322
+        },
+        {
+          "label": "Map 2: RD 1,710 to 2,040 m",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/imgw-324194354.pdf",
+          "register_row": 321
+        },
+        {
+          "label": "Map 4: RD 2,040 to 3,550 m",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/imgw-324194441%20%281%29.pdf",
+          "register_row": 323
+        }
+      ]
+    },
+    {
+      "name": "Pora river (Narsala-Hudkeshwar)",
+      "context": "South-eastern edge of NMC: 5.3 km from Vihirgaon to Khedi, at 1:5,000, with the observed flood line of 2018",
+      "sheets": [
+        {
+          "label": "Narsala-Hudkeshwar, Vihirgaon to Khedi, 5.3 km",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/Narsala%20Hudkeshwar%20red%20line%20blue%20line%20map.pdf",
+          "register_row": 272
+        }
+      ]
+    },
+    {
+      "name": "Kanhan river",
+      "context": "Outside NMC: Saoner taluka, and from Jilur village down to the Wainganga",
+      "sheets": [
+        {
+          "label": "Kanhan river, Saoner taluka",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/KANAN%20FLOOD%20LINE%20PDF.pdf",
+          "register_row": 53
+        },
+        {
+          "label": "Jilur village to the Bina confluence",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/484.pdf",
+          "register_row": 484
+        },
+        {
+          "label": "Kolar-Kanhan confluence to the Wainganga confluence",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/485.pdf",
+          "register_row": 485
+        }
+      ]
+    },
+    {
+      "name": "Kolar river",
+      "context": "Outside NMC: Nagpur district; the Kolar joins the Kanhan",
+      "sheets": [
+        {
+          "label": "Kolar river, map 1",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/map_scan_1.pdf",
+          "register_row": 285
+        },
+        {
+          "label": "Kolar river, map 2",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/map_scan_2%20%281%29.pdf",
+          "register_row": 286
+        }
+      ]
+    },
+    {
+      "name": "Vena river",
+      "context": "Outside NMC, west of the city: Hingna, Raipur and Kotewada",
+      "sheets": [
+        {
+          "label": "Hingna 0 to 1.4 km and Raipur 0 to 1.5 km",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/Hingana%200%20to%204%20Raipur%200%20to%202%20Km%20on%20Vena%20River%20Nagpur.pdf",
+          "register_row": 171
+        },
+        {
+          "label": "Kotewada 0 to 2.2 km",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/Kotewada%20red%20line%20blue%20line%20survey.pdf",
+          "register_row": 172
+        }
+      ]
+    },
+    {
+      "name": "Bagdor nalla",
+      "context": "Outside NMC: Kamptee taluka, revised maps 1 to 6 in one file",
+      "sheets": [
+        {
+          "label": "Bagdor nalla, revised maps 1 to 6",
+          "url": "https://wrd.maharashtra.gov.in/Site/Upload/PDF/BAGDOR%20NALLA%20-1-6%20MAP.pdf",
+          "register_row": 444
+        }
+      ]
+    }
+  ]
+}

@@ -14,12 +14,18 @@
  * --osm-way also takes a comma list for a body OSM maps as separate ways with
  * no relation (Chandola); each way becomes an outer ring and the first id,
  * whose tags are used, is the body's osm_id.
+ *
+ * --from-layer <shipped NVDM geojson> --match <property>=<value> takes the
+ * boundary from an official layer the platform already ships (Nagpur's MRSAC
+ * 2017-18 survey) instead of OSM. Both files then carry their own envelope
+ * citing that layer's geometry source (its first), and osm_type / osm_id are
+ * the OSM polygon the layer pairs with the feature, which city-map clicks match on.
  */
 
-import { mkdirSync } from "fs";
+import { mkdirSync, readFileSync } from "fs";
 import { writeArtifact } from "./lib/nvdm-write";
 import { registryLicense } from "./lib/registry-contract";
-import { join } from "path";
+import { join, relative, resolve } from "path";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
@@ -191,21 +197,85 @@ function assignInnersToOuters(
   return polygons;
 }
 
-async function main() {
-  const args = parseArgs(process.argv);
-  const osmRel = args["osm-rel"];
-  const osmWay = args["osm-way"];
-  const bodyId = args["body-id"];
-  const displayName = args["name"] || "";
-  const bufferM = parseInt(args["buffer-m"] || "0", 10);
-
-  if ((!osmRel && !osmWay) || !bodyId) {
-    console.error(
-      "Usage: --body-id <slug> --osm-rel <relationId> | --osm-way <wayId> [--name <name>] [--buffer-m <metres>]"
-    );
-    process.exit(1);
+function fromLayer(
+  layerPath: string,
+  match: string,
+  bodyId: string,
+  displayName: string,
+): { feature: Feature<MultiPolygon>; envelopes: Record<"polygon" | "buffer", object> } {
+  const [key, value] = match.split("=");
+  const layer = JSON.parse(readFileSync(layerPath, "utf-8"));
+  const hits = (layer.features as Feature<Polygon | MultiPolygon>[]).filter(
+    (f) => String(f.properties?.[key]) === value,
+  );
+  if (hits.length !== 1) {
+    throw new Error(`${layerPath}: ${hits.length} features with ${key}=${value}, need exactly 1`);
   }
+  const g = hits[0].geometry;
+  const p = hits[0].properties ?? {};
+  const geometry: MultiPolygon =
+    g.type === "MultiPolygon" ? g : { type: "MultiPolygon", coordinates: [g.coordinates] };
+  const src = layer.provenance.sources[0];
+  const license = registryLicense(src.id);
+  const input = relative(process.cwd(), resolve(layerPath));
+  console.log(`Taking ${key}=${value} (${p.name}) from ${input}, source ${src.id}`);
 
+  const paired = typeof p.osm_id === "number";
+  const feature: Feature<MultiPolygon> = {
+    type: "Feature",
+    geometry,
+    properties: {
+      body_id: bodyId,
+      osm_type: paired ? p.osm_type : null,
+      osm_id: paired ? p.osm_id : null,
+      osm_match_iou: p.osm_match_iou ?? null,
+      name: displayName || p.name,
+      name_en: displayName || p.name,
+      name_ta: "",
+      ramsar: false,
+      protect_class: null,
+      protection_title: null,
+      start_date: null,
+      wikidata: null,
+      wikipedia: null,
+      area_ha: Math.round((area(geometry) / 10000) * 100) / 100,
+      source: `${src.title}, ${key} ${value}`,
+      license,
+      fetched_at: new Date().toISOString(),
+    },
+  };
+  const envelope = (dataset: string, note: string) => ({
+    nvdm: "1.0",
+    dataset,
+    scope: layer.scope,
+    provenance: {
+      sources: [{ id: src.id, title: src.title, publisher: src.publisher, license, role: "input" }],
+      method: "derived",
+      produced_at: new Date().toISOString().slice(0, 10),
+      produced_by: "scripts/fetch-rich-body-polygon.ts",
+      internal_inputs: [input],
+      note,
+    },
+  });
+  const where = `feature ${key}=${value} of ${input}`;
+  return {
+    feature,
+    envelopes: {
+      polygon: envelope("geojson-layers/polygon", `The ${where}, geometry unchanged.`),
+      buffer: envelope(
+        "geojson-layers/buffer-1000m",
+        `1 km Minkowski offset (@turf/buffer) of the ${where}, not a circle from the centroid.`,
+      ),
+    },
+  };
+}
+
+async function osmFeature(
+  osmRel: string | undefined,
+  osmWay: string | undefined,
+  bodyId: string,
+  displayName: string,
+): Promise<Feature<MultiPolygon>> {
   const osmType = osmRel ? "relation" : "way";
   const osmIds = ((osmRel ?? osmWay) as string).split(",");
   const osmId = osmIds[0];
@@ -302,6 +372,27 @@ async function main() {
       fetched_at: new Date().toISOString(),
     },
   };
+  return feature;
+}
+
+async function main() {
+  const args = parseArgs(process.argv);
+  const osmRel = args["osm-rel"];
+  const osmWay = args["osm-way"];
+  const layerPath = args["from-layer"];
+  const bodyId = args["body-id"];
+  const displayName = args["name"] || "";
+  const bufferM = parseInt(args["buffer-m"] || "0", 10);
+
+  if ((!osmRel && !osmWay && !(layerPath && args["match"])) || !bodyId) {
+    console.error(
+      "Usage: --body-id <slug> --osm-rel <relationId> | --osm-way <wayId> | --from-layer <geojson> --match <prop>=<value> [--name <name>] [--buffer-m <metres>]"
+    );
+    process.exit(1);
+  }
+
+  const official = layerPath ? fromLayer(layerPath, args["match"], bodyId, displayName) : null;
+  const feature = official?.feature ?? (await osmFeature(osmRel, osmWay, bodyId, displayName));
 
   const outDir = join(process.cwd(), "public/geojson/rich-bodies");
   mkdirSync(outDir, { recursive: true });
@@ -310,7 +401,7 @@ async function main() {
   // Envelope-preserving: a bare writeFileSync here replaced the artifact's
   // whole NVDM wrapper - provenance, sources, scope, conformance - with a
   // FeatureCollection, silently dropping the file off the governance ladder.
-  writeArtifact(bodyPath, { type: "FeatureCollection", features: [feature] });
+  writeArtifact(bodyPath, { ...official?.envelopes.polygon, type: "FeatureCollection", features: [feature] });
   console.log(`\nWrote ${bodyPath}`);
   console.log(`  area: ${feature.properties!.area_ha} ha`);
 
@@ -330,7 +421,7 @@ async function main() {
       },
     };
     const bufPath = join(outDir, `${bodyId}-buffer-${bufferM}m.geojson`);
-    writeArtifact(bufPath, { type: "FeatureCollection", features: [bufFeature] });
+    writeArtifact(bufPath, { ...official?.envelopes.buffer, type: "FeatureCollection", features: [bufFeature] });
     console.log(`Wrote ${bufPath}`);
     const bufGeom = bufFeature.geometry as Polygon | MultiPolygon;
     console.log(`  buffer area: ${Math.round(area(bufGeom) / 10000)} ha`);

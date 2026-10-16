@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   // Dual-shape during the NVDM migration: legacy bare array or the
   // wrapped producer-emitted form ({ envelope..., wards: [...] }).
   const parsed = JSON.parse(profilesRaw);
-  const profiles: { ward_number: number; zone_name: string }[] = Array.isArray(parsed)
+  const profiles: { ward_number: number; zone_name: string | null }[] = Array.isArray(parsed)
     ? parsed
     : parsed.wards;
 
@@ -27,6 +27,8 @@ export async function GET(request: NextRequest) {
     wardNumber: p.ward_number,
     wardName: `Ward ${p.ward_number}`,
     zone: p.zone_name || "",
+    // null (not ""): the ward is not assigned to one zone (Nagpur).
+    ...(p.zone_name === null ? { zoneless: true } : {}),
   }));
 
   return NextResponse.json({ wards });

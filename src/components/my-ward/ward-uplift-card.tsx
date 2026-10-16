@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { GradeBadge } from "@/lib/utils/grade-styles";
 import { loadProfiles, type WardProfile } from "@/lib/hooks/use-ward-profile";
+import { englishOrdinal, MIN_FACTORS_FOR_OVERALL_GRADE } from "@/lib/utils/ward-rankings";
 import {
   buildCityDistributions,
   computeUpliftPlan,
@@ -90,7 +91,8 @@ export function WardUpliftCard({ wardNumber }: Props) {
     );
   }
 
-  const pctDelta = plan.overallPercentileAfter - plan.overallPercentileBefore;
+  const percentileText = (value: number) =>
+    t("uplift.percentile").replace("{ordinal}", englishOrdinal(value)).replace("{value}", String(value));
 
   return (
     <Card>
@@ -128,12 +130,21 @@ export function WardUpliftCard({ wardNumber }: Props) {
         </div>
 
         {/* ── Grade projection hero ───────────────────────────── */}
+        {plan.overallGradeBefore === null || plan.overallGradeAfter === null ||
+        plan.overallPercentileBefore === null || plan.overallPercentileAfter === null ? (
+          <p className="text-xs text-slate-600 dark:text-slate-400 py-3 px-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+            {t("uplift.overall_needs_more")
+              .replace("{min}", String(MIN_FACTORS_FOR_OVERALL_GRADE))
+              .replace("{total}", String(plan.gapAnalysis.length))
+              .replace("{n}", String(plan.factorsWithData))}
+          </p>
+        ) : (
         <div className="flex items-center justify-center gap-4 py-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
           <div className="text-center">
             <GradeBadge grade={plan.overallGradeBefore} size="lg" />
             <p className="text-xs text-slate-500 mt-1">{t("uplift.grade_before")}</p>
             <p className="text-[10px] text-slate-400 tabular-nums">
-              {t("uplift.percentile").replace("{value}", String(plan.overallPercentileBefore))}
+              {percentileText(plan.overallPercentileBefore)}
             </p>
           </div>
 
@@ -141,9 +152,9 @@ export function WardUpliftCard({ wardNumber }: Props) {
             <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
-            {pctDelta > 0 && (
+            {plan.overallPercentileAfter > plan.overallPercentileBefore && (
               <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                +{pctDelta}
+                +{plan.overallPercentileAfter - plan.overallPercentileBefore}
               </span>
             )}
           </div>
@@ -152,10 +163,11 @@ export function WardUpliftCard({ wardNumber }: Props) {
             <GradeBadge grade={plan.overallGradeAfter} size="lg" />
             <p className="text-xs text-slate-500 mt-1">{t("uplift.grade_after")}</p>
             <p className="text-[10px] text-slate-400 tabular-nums">
-              {t("uplift.percentile").replace("{value}", String(plan.overallPercentileAfter))}
+              {percentileText(plan.overallPercentileAfter)}
             </p>
           </div>
         </div>
+        )}
 
         {/* ── Budget summary bar ──────────────────────────────── */}
         {plan.allocations.length > 0 && (
