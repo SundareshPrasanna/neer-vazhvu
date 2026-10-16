@@ -136,13 +136,85 @@ function DeleteAccount({ authFetch, onDeleted }: { authFetch: Fetch; onDeleted: 
   );
 }
 
+const ACTIVE = new Set(["open", "reported", "authority_done"]);
+const STALE_DAYS = 14;
+
+/** An open report whose last update is over two weeks old asks the reporter to check it again. */
+const needsUpdate = (r: OwnReport) =>
+  r.reviewStatus === "approved" &&
+  ACTIVE.has(r.caseStatus ?? "") &&
+  Date.now() - new Date(r.events.at(-1)?.at ?? r.createdAt).getTime() > STALE_DAYS * 86_400_000;
+
+function Summary({ reports }: { reports: OwnReport[] }) {
+  const parts = [
+    [reports.filter((r) => r.reviewStatus === "received" || r.reviewStatus === "needs_info").length, "being checked"],
+    [reports.filter((r) => ACTIVE.has(r.caseStatus ?? "")).length, "open"],
+    [reports.filter((r) => r.caseStatus === "fixed").length, "fixed"],
+    [reports.filter(needsUpdate).length, "need your update"],
+  ] as const;
+  const shown = parts.filter(([n]) => n > 0);
+  if (shown.length === 0) return null;
+  return <p className="text-sm text-slate-700 dark:text-slate-300">{shown.map(([n, label]) => `${n} ${label}`).join(" · ")}</p>;
+}
+
+const csvCell = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
+
+/** Everything the reporter has sent, as a file they keep. */
+function Download({ reports }: { reports: OwnReport[] }) {
+  const save = (kind: "csv" | "json") => {
+    const rows = reports.map((r) => ({
+      id: r.id,
+      sent: r.createdAt,
+      type: r.label,
+      place: r.placeName,
+      where: r.where ?? "",
+      lat: r.lat,
+      lng: r.lng,
+      review: r.reviewStatus,
+      status: r.caseStatus ?? "",
+      waterSource: r.waterSource ?? "",
+      readings: r.readings.map((x) => x.text).join("; "),
+      references: r.references.map((x) => `${x.authorityBody ?? ""} ${x.reference}`.trim()).join("; "),
+      events: r.events.map((e) => `${e.at.slice(0, 10)} ${e.event}`).join("; "),
+    }));
+    const body =
+      kind === "json"
+        ? JSON.stringify(rows, null, 2)
+        : [Object.keys(rows[0] ?? { id: "" }).join(","), ...rows.map((row) => Object.values(row).map((v) => csvCell(String(v))).join(","))].join("\n");
+    const url = URL.createObjectURL(new Blob([body], { type: kind === "json" ? "application/json" : "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `my-neer-vazhvu-reports.${kind}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const link = "text-xs text-slate-500 underline underline-offset-2 dark:text-slate-400";
+  return (
+    <p className="text-xs text-slate-500 dark:text-slate-400">
+      Download my data:{" "}
+      <button type="button" onClick={() => save("csv")} className={link}>
+        CSV
+      </button>{" "}
+      ·{" "}
+      <button type="button" onClick={() => save("json")} className={link}>
+        JSON
+      </button>
+    </p>
+  );
+}
+
 /** The reporter's own reports, with the updates they can make. */
 export function MyReports({ reports, authFetch, onChange, onDeleted }: { reports: OwnReport[]; authFetch: Fetch; onChange: () => void; onDeleted: () => void }) {
   return (
     <div className="space-y-3">
-      {reports.length === 0 && <p className="text-sm text-slate-600 dark:text-slate-400">No reports yet.</p>}
+      {reports.length === 0 ? <p className="text-sm text-slate-600 dark:text-slate-400">No reports yet.</p> : <Summary reports={reports} />}
       {reports.map((r) => (
         <ReportCard key={r.id} report={r}>
+          {needsUpdate(r) && (
+            <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-xs text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+              No update for over two weeks. Is it still there, or fixed?
+            </p>
+          )}
           {r.reviewStatus !== "approved" && (
             <div className="mt-2">
               <StatusChip status={r.reviewStatus === "rejected" ? "closed" : "open"} label={REVIEW_LABEL[r.reviewStatus]} />
@@ -170,7 +242,8 @@ export function MyReports({ reports, authFetch, onChange, onDeleted }: { reports
           )}
         </ReportCard>
       ))}
-      <div className="pt-4">
+      <div className="space-y-2 pt-4">
+        {reports.length > 0 && <Download reports={reports} />}
         <DeleteAccount authFetch={authFetch} onDeleted={onDeleted} />
       </div>
     </div>
