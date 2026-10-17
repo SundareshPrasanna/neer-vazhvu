@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DepartmentApp } from "@/components/sightings/department-app";
-import { displayFont } from "@/components/sightings/display-font";
 import { reportsEnabled } from "@/lib/sightings/auth";
 import { findDepartment, linkSecret, verifyDepartmentToken } from "@/lib/sightings/departments";
 
@@ -20,8 +19,6 @@ export default async function DepartmentPage({ params }: { params: Promise<{ tok
   if (!key) notFound();
   const department = findDepartment(key);
   return (
-    <div className={displayFont.variable}>
-      <DepartmentApp token={token} body={department?.body ?? null} acronym={department?.acronym ?? null} />
-    </div>
+    <DepartmentApp token={token} body={department?.body ?? null} acronym={department?.acronym ?? null} />
   );
 }

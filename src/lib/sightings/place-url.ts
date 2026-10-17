@@ -29,6 +29,13 @@ const REPORTS_LAYER = "layer=reports";
  * page. Basins: the basin's own page (its atlas). Tap water and water tests have no public point, so
  * they never go to a map: only to the ward, GP, district or basin list.
  */
+/** A watershed is named with its river ("Arkavathi watershed, Cauvery"); a river's own states are not named. */
+function basinLabel(b: NonNullable<ReturnType<typeof tryGetBasinManifest>>): string {
+  const river = (name: string) => name.replace(/\s*\(.*\)$/, "").replace(/ Basin$/, "");
+  const parent = b.parentBasinId ? tryGetBasinManifest(b.parentBasinId) : null;
+  return parent ? `${river(b.displayName)} watershed, ${river(parent.displayName)}` : b.displayName.replace(/ Basin\b/, " river basin");
+}
+
 export function placeUrl(p: PlaceFields): PlaceLink | null {
   const mapped = !isPrivateCategory(p.category);
 
@@ -64,6 +71,6 @@ export function placeUrl(p: PlaceFields): PlaceLink | null {
   const join = page.includes("?") ? "&" : "?";
   return {
     href: mapped ? `${page}${join}${REPORTS_LAYER}` : page,
-    label: basin.displayName.replace(/ Basin\b/, " river basin"),
+    label: basinLabel(basin),
   };
 }

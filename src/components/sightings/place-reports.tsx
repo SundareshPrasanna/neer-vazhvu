@@ -7,7 +7,7 @@ import { Camera, Check } from "lucide-react";
 import { OPEN_STATUSES } from "@/lib/sightings/status";
 import type { PublicReport } from "@/lib/sightings/types";
 import { ReportCard } from "./report-card";
-import { btn, fileFocus, link, muted, rule } from "./ui";
+import { appLink, btn, fileFocus, muted, rule } from "./ui";
 import { shrinkPhoto, useCitizen } from "./use-citizen";
 
 /** Anyone who has seen the spot lately can keep the record honest: still there, or gone (with a photo, checked first). */
@@ -112,7 +112,7 @@ export function PlaceReports({ place, ward, body, panchayat }: { place: string; 
   if (!on || !reports) return null;
   // The report page opens its map at this place.
   const report = (
-    <Link href={`/for-citizens?${query}`} className={`inline-flex items-center gap-1.5 text-sm ${link}`}>
+    <Link href={`/for-citizens?${query}`} className={`inline-flex items-center gap-1.5 text-sm ${appLink}`}>
       <Camera className="h-4 w-4" aria-hidden="true" />
       {reports.length ? "Report something" : "Seen something here? Report it"}
     </Link>

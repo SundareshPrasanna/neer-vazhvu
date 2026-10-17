@@ -5,7 +5,7 @@ import { AlertTriangle, Check, MapPin, Plus, Printer, RotateCw } from "lucide-re
 
 import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, Status, day } from "./report-card";
-import { btn, enter, field, link, muted, rule, serif } from "./ui";
+import { appLink, appSection, appTitle, btn, enter, field, muted, rule } from "./ui";
 import { LIMITS } from "@/lib/sightings/limits";
 import { EVENT_LABELS, OPEN_STATUSES, type CaseStatus, type DepartmentEvent } from "@/lib/sightings/status";
 import type { DepartmentItem, HistoryEntry } from "@/lib/sightings/departments";
@@ -155,7 +155,7 @@ function ItemCard({ item, token, onSaved }: { item: DepartmentItem; token: strin
           <p className={`text-sm ${muted}`}>{[item.where, item.placeName].filter(Boolean).join(", ")}</p>
           <h3 className="mt-0.5 text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">{item.label}</h3>
           {item.point && (
-            <a href={osmUrl(item.point)} target="_blank" rel="noopener noreferrer" className={`mt-1 inline-flex items-center gap-1 text-sm print:hidden ${link}`}>
+            <a href={osmUrl(item.point)} target="_blank" rel="noopener noreferrer" className={`mt-1 inline-flex items-center gap-1 text-sm print:hidden ${appLink}`}>
               <MapPin className="h-4 w-4" aria-hidden="true" />
               Open in map
             </a>
@@ -234,7 +234,7 @@ function ItemCard({ item, token, onSaved }: { item: DepartmentItem; token: strin
 function Group({ title, items, empty, token, onSaved }: { title: string; items: DepartmentItem[]; empty: string; token: string; onSaved: (id: string, patch: Patch) => void }) {
   return (
     <section className="pt-10 print:pt-6">
-      <h2 className={`${serif} text-2xl sm:text-3xl`}>{title}</h2>
+      <h2 className={appSection}>{title}</h2>
       {items.length === 0 ? (
         <p className={`mt-4 text-sm ${muted}`}>{empty}</p>
       ) : (
@@ -297,8 +297,8 @@ export function DepartmentApp({ token, body, acronym }: { token: string; body: s
     <div className="dept-sheet mx-auto max-w-4xl px-4 pt-10 pb-16 sm:px-6 sm:pt-14 lg:px-8 print:max-w-none print:px-0 print:pt-0">
       <style>{PRINT_CSS}</style>
       <div className={`border-b pb-8 print:pb-4 ${rule}`}>
-        <p className="text-sm font-semibold tracking-wide text-cyan-800 dark:text-cyan-400">Neer Vazhvu</p>
-        <h1 className={`${serif} mt-3 break-words ${title.length > 70 ? "text-2xl leading-snug sm:text-3xl" : "text-[2rem] leading-[1.1] sm:text-5xl"}`}>{title}</h1>
+        <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Neer Vazhvu</p>
+        <h1 className={`mt-3 break-words ${title.length > 70 ? "text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-100" : appTitle}`}>{title}</h1>
         <p className="mt-3 text-lg text-slate-800 dark:text-slate-200">Checked reports from residents in your area</p>
         <p className={`mt-2 max-w-[60ch] text-sm leading-relaxed ${muted}`}>
           Each report was checked by Neer Vazhvu before publishing. Reporters&rsquo; details are never shared.
@@ -336,7 +336,7 @@ export function DepartmentApp({ token, body, acronym }: { token: string; body: s
       {sheet && (
         <>
           <details className={`group/guide border-b print:hidden ${rule}`}>
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-4 font-semibold text-slate-900 transition-colors hover:text-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 dark:text-slate-100 dark:hover:text-cyan-400 [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-4 font-semibold text-slate-900 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-slate-100 dark:hover:text-blue-400 [&::-webkit-details-marker]:hidden">
               How marking works
               <Plus className="h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 group-open/guide:rotate-45" aria-hidden="true" />
             </summary>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, CheckCircle2, Copy, RotateCw, XCircle } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Check, CheckCircle2, Copy, RotateCw, XCircle } from "lucide-react";
 
 import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, day } from "./report-card";
-import { btn, enter, field, muted, rule, serif } from "./ui";
+import { appSection, appTitle, btn, enter, field, muted, rule } from "./ui";
 import { useCitizen } from "./use-citizen";
 import { OTHER_KEY, REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 import type { OwnReport } from "@/lib/sightings/types";
@@ -285,7 +285,7 @@ function DepartmentLinks({ authFetch, tick }: { authFetch: ReturnType<typeof use
   if (forbidden) return null;
   return (
     <section aria-labelledby="departments" className={`mt-16 border-t pt-10 ${rule}`}>
-      <h2 id="departments" className={`${serif} text-3xl leading-tight sm:text-4xl`}>
+      <h2 id="departments" className={appSection}>
         Departments
       </h2>
       <p className={`mt-2 max-w-[75ch] text-sm ${muted}`}>
@@ -384,9 +384,18 @@ export function ReviewApp() {
   const waiting = (items ?? []).filter((i) => !done[i.id]).length;
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      {/* Back to wherever the reviewer came from; straight to /for-citizens when the page was opened directly. */}
+      <button
+        type="button"
+        onClick={() => (window.history.length > 1 && document.referrer.startsWith(window.location.origin) ? window.history.back() : window.location.assign("/for-citizens"))}
+        className={`${btn("quiet", "sm")} -ml-3 mb-4`}
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        Back
+      </button>
       <header className={`flex flex-wrap items-end justify-between gap-4 border-b pb-6 ${rule}`}>
         <div>
-          <h1 className={`${serif} text-4xl leading-tight sm:text-5xl`}>Review queue</h1>
+          <h1 className={appTitle}>Review queue</h1>
           <p className={`mt-2 ${muted}`}>{items ? `${waiting} waiting, oldest first` : session ? "Loading…" : "Citizen reports"}</p>
         </div>
         {session && (

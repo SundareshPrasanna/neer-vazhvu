@@ -45,7 +45,7 @@ test("tap water and water tests never link to a map", () => {
   assert.equal(placeUrl(at({ place_kind: "city", place_id: "chennai", category: "drinking" })), null);
   assert.deepEqual(placeUrl(at({ place_kind: "basin", place_id: "arkavathi", category: "drinking" })), {
     href: "/bangalore/rivers?basin=arkavathi",
-    label: "Arkavathi river basin",
+    label: "Arkavathi watershed, Cauvery",
   });
 });
 
@@ -62,7 +62,7 @@ test("a district report links to its GP page, else the district page", () => {
 });
 
 test("a basin report links to the basin's atlas with the layer on; an overview basin has no page for it", () => {
-  assert.deepEqual(placeUrl(at({ place_kind: "basin", place_id: "arkavathi" })), { href: "/bangalore/rivers?basin=arkavathi&layer=reports", label: "Arkavathi river basin" });
+  assert.deepEqual(placeUrl(at({ place_kind: "basin", place_id: "arkavathi" })), { href: "/bangalore/rivers?basin=arkavathi&layer=reports", label: "Arkavathi watershed, Cauvery" });
   for (const b of listBasins().filter((x) => x.overviewMode)) assert.equal(placeUrl(at({ place_kind: "basin", place_id: b.basinId })), null, b.basinId);
 });
 

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { displayFont } from "@/components/sightings/display-font";
 import { ReviewApp } from "@/components/sightings/review-app";
 
 export const metadata: Metadata = { title: "Review citizen reports | Neer Vazhvu", robots: { index: false, follow: false } };
@@ -9,8 +8,6 @@ export const metadata: Metadata = { title: "Review citizen reports | Neer Vazhvu
 export default function ReviewPage() {
   if (process.env.NEXT_PUBLIC_CITIZEN_REPORTS !== "on") notFound();
   return (
-    <div className={displayFont.variable}>
-      <ReviewApp />
-    </div>
+    <ReviewApp />
   );
 }

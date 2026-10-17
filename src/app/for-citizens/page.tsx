@@ -167,12 +167,23 @@ function Section({ id, title, intro, extra, children }: { id: string; title: str
 
 const byName = (a: string, b: string) => a.localeCompare(b);
 
+/** A river and its watersheds read as one: sub-basins and the overview basins of one river (the Cauvery's two states) share a name. */
+function basinNames() {
+  const basins = listBasins();
+  const byId = new Map(basins.map((b) => [b.basinId, b]));
+  const names = basins.map((b) => {
+    const root = (b.parentBasinId && byId.get(b.parentBasinId)) || b;
+    return root.overviewMode ? `${root.displayName.replace(/\s*\(.*\)$/, "").replace(/ Basin$/, "")} and its watersheds` : b.displayName;
+  });
+  return [...new Set(names)].sort(byName);
+}
+
 /** The same lists a report's point is placed against (src/lib/sightings/locate-server.ts). */
 function coverage() {
   return {
     cities: listEnabledPlaces().map((c) => c.displayName).sort(byName),
     districts: listPublishedAtlasDistricts().map((d) => d.name).sort(byName),
-    basins: listBasins().map((b) => b.displayName).sort(byName),
+    basins: basinNames(),
   };
 }
 

@@ -38,3 +38,8 @@ export const link = "font-semibold text-cyan-800 underline-offset-2 hover:underl
 export const rule = "border-slate-200 divide-slate-200 dark:border-slate-800 dark:divide-slate-800";
 /** Fades and lifts a freshly shown block in; still under reduced motion. */
 export const enter = "transition duration-300 ease-out starting:translate-y-1 starting:opacity-0 motion-reduce:transition-none";
+
+/** The rest of the app's look, for screens inside it or for officials: sans headings and blue links. The serif stays on the For citizens page. */
+export const appTitle = "text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-slate-100";
+export const appSection = "text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100";
+export const appLink = "font-medium text-blue-600 hover:underline dark:text-blue-400";
