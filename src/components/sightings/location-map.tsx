@@ -26,13 +26,27 @@ function TapToPlace({ onChange }: { onChange: (lat: number, lng: number) => void
   return null;
 }
 
-/** Draggable pin seeded by the photo or GPS; with neither, a country view to tap. Leaflet needs window, so import with ssr:false. */
-export default function LocationMap({ lat, lng, onChange }: { lat: number | null; lng: number | null; onChange: (lat: number, lng: number) => void }) {
+/**
+ * Draggable pin seeded by the photo or GPS. Opens on `focus` (a search result or the place a report started from),
+ * else the pin, else a country view to tap. Leaflet needs window, so import with ssr:false.
+ */
+export default function LocationMap({
+  lat,
+  lng,
+  focus,
+  onChange,
+}: {
+  lat: number | null;
+  lng: number | null;
+  focus?: { lat: number; lng: number; zoom: number } | null;
+  onChange: (lat: number, lng: number) => void;
+}) {
   // The site's own tiles: theme-aware, and allowed by the CSP's img-src.
   const tiles = useMapTiles();
   const placed = lat != null && lng != null;
+  const [center, zoom]: [[number, number], number] = focus ? [[focus.lat, focus.lng], focus.zoom] : placed ? [[lat, lng], 17] : [INDIA, 5];
   return (
-    <MapContainer center={placed ? [lat, lng] : INDIA} zoom={placed ? 17 : 5} scrollWheelZoom={false} className="h-full w-full">
+    <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} className="h-full w-full">
       <TileLayer key={tiles.url} url={tiles.url} attribution={tiles.attribution} />
       {placed && (
         <Marker

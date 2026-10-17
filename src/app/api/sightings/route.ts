@@ -8,7 +8,7 @@ import { storePhotos } from "@/lib/sightings/photos";
 import { assess, getParameter, valueText } from "@/lib/sightings/parameters";
 import { resolveAuthority } from "@/lib/sightings/routing";
 import { byId, toPublic } from "@/lib/sightings/serialize";
-import { roleFor } from "@/lib/sightings/taxonomy";
+import { REPORT_GROUPS, roleFor } from "@/lib/sightings/taxonomy";
 import type { EventRow, PhotoRow, SightingRow } from "@/lib/sightings/types";
 import { parseSubmit } from "@/lib/sightings/validate";
 
@@ -26,6 +26,13 @@ export async function POST(request: NextRequest) {
 
     const place = await placePoint(request.nextUrl.origin, v.lng, v.lat);
     if (!place) return NextResponse.json({ error: "This location is outside the cities, districts and river basins we cover so far." }, { status: 422 });
+
+    const readings = Object.entries(v.readings ?? {}).flatMap(([k, val]) => {
+      const p = getParameter(k);
+      return p ? [{ text: valueText(p, val), assessment: assess(p, val) }] : [];
+    });
+    // A piped-supply test outside a limit is the water board's to hear about.
+    const role = roleFor(v.category, v.subcategory) ?? (v.waterSource === "piped" && readings.some((r) => r.assessment) ? "water_supply" : null);
 
     // Caps first, so a capped or suspended account costs no image processing.
     const admin = adminClient();
@@ -54,7 +61,7 @@ export async function POST(request: NextRequest) {
         // Omitted, not null: JSON null is a value, and the readings check rejects it.
         ...(v.readings && { readings: v.readings }),
         water_source: v.waterSource,
-        authority_role: roleFor(v.category, v.subcategory),
+        authority_role: role,
       },
       p_daily_new: LIMITS.dailyNew,
       p_daily_trusted: LIMITS.dailyTrusted,
@@ -78,12 +85,6 @@ export async function POST(request: NextRequest) {
     const exif = stored.exif ?? (v.photoMeta.capturedAt || v.photoMeta.lat != null ? v.photoMeta : null);
     if (exif) await admin.from("sightings").update({ exif_captured_at: exif.capturedAt, exif_lat: exif.lat, exif_lng: exif.lng }).eq("id", id);
 
-    const readings = Object.entries(v.readings ?? {}).flatMap(([k, val]) => {
-      const p = getParameter(k);
-      return p ? [{ text: valueText(p, val), assessment: assess(p, val) }] : [];
-    });
-    // A piped-supply test outside a limit is the water board's to hear about.
-    const role = roleFor(v.category, v.subcategory) ?? (v.waterSource === "piped" && readings.some((r) => r.assessment) ? "water_supply" : null);
     const routed = role ? resolveAuthority(role, { stateCode: place.stateCode, placeId: place.placeId, placeKind: place.placeKind, corporationId: place.corporationId }) : null;
     return NextResponse.json({ data: { id, placeName: place.placeName, role, handler: routed?.authority ?? null, national: routed?.national ?? [], readings } });
   } catch (err) {
@@ -91,6 +92,9 @@ export async function POST(request: NextRequest) {
     return internalServerError();
   }
 }
+
+/** Shown at ward or village level only, so never listed under the water body their point fell in. */
+const PRIVATE_GROUPS = `(${REPORT_GROUPS.filter((g) => g.private).map((g) => g.key).join(",")})`;
 
 /** Published reports on one place, optionally narrowed to a ward, water body or panchayat. */
 export async function GET(request: NextRequest) {
@@ -111,6 +115,7 @@ export async function GET(request: NextRequest) {
       .eq("review_status", "approved")
       .order("created_at", { ascending: false })
       .limit(50);
+    if (byBody) query = query.not("category", "in", PRIVATE_GROUPS);
     for (const [param, column] of [["ward", "ward_id"], ["panchayat", "panchayat_code"]] as const) {
       const value = q.get(param);
       if (value && /^[A-Za-z0-9:_-]{1,40}$/.test(value)) query = query.eq(column, value);

@@ -29,10 +29,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const key = reporterKey(user.id);
     const own = row?.reporter_key === key;
     if (!row || (!own && !reviewer)) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    if (row.review_status !== "approved") return NextResponse.json({ error: "This report is not published yet." }, { status: 409 });
+    // While a report is being checked, its reporter may record only that they filed it, so the reference is not lost.
+    const early = row.review_status === "received" && own && v.event === "reported" && !!row.authority_role;
+    if (row.review_status !== "approved" && !early) return NextResponse.json({ error: "This report is not published yet." }, { status: 409 });
     if (REVIEWER_ONLY.has(v.event) && !reviewer) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    const next = nextCaseStatus(v.event, row.case_status);
-    if (!next) return NextResponse.json({ error: "That update does not fit this report's status." }, { status: 409 });
+    const next = early ? null : nextCaseStatus(v.event, row.case_status);
+    if (!next && !early) return NextResponse.json({ error: "That update does not fit this report's status." }, { status: 409 });
 
     if (!reviewer) {
       const since = new Date(Date.now() - 86_400_000).toISOString();
@@ -61,9 +63,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       reason: v.reason,
     });
     if (ev.error) throw ev.error;
-    const up = await admin.from("sightings").update({ case_status: next, updated_at: new Date().toISOString() }).eq("id", id);
+    const up = await admin.from("sightings").update({ ...(next && { case_status: next }), updated_at: new Date().toISOString() }).eq("id", id);
     if (up.error) throw up.error;
-    return NextResponse.json({ data: { caseStatus: next } });
+    return NextResponse.json({ data: { caseStatus: next ?? row.case_status } });
   } catch (err) {
     logRouteError("sightings/events", err);
     return internalServerError();

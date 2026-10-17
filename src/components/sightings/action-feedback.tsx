@@ -13,19 +13,21 @@ export function ActionButton({
   className,
   icon,
   pressed,
+  type = "button",
 }: {
   label: string;
   busyLabel: string;
   busy: boolean;
   disabled?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   className: string;
   icon?: React.ReactNode;
   /** For a button that opens a panel: shows it as pressed while the panel is open. */
   pressed?: boolean;
+  type?: "button" | "submit";
 }) {
   return (
-    <button type="button" onClick={onClick} disabled={busy || disabled} aria-busy={busy} aria-pressed={pressed} className={className}>
+    <button type={type} onClick={onClick} disabled={busy || disabled} aria-busy={busy} aria-pressed={pressed} className={className}>
       {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : icon}
       {busy ? busyLabel : label}
     </button>

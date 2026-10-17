@@ -204,3 +204,29 @@ async function basinPlacement(origin: string, lng: number, lat: number): Promise
   }
   return null;
 }
+
+/** Where the map opens for a report started from a place page: a water body, ward, panchayat, or the place itself. */
+export async function viewOf(
+  origin: string,
+  q: { place: string; ward?: string | null; body?: string | null; panchayat?: string | null },
+): Promise<{ lat: number; lng: number; zoom: number } | null> {
+  const mid = (b: BBox, zoom: number) => ({ lng: (b[0] + b[2]) / 2, lat: (b[1] + b[3]) / 2, zoom });
+  const city = listEnabledPlaces().find((c) => c.cityId === q.place);
+  if (city) {
+    const geo = await geoFor(origin, city.cityId);
+    const body = q.body && geo.bodies.find((b) => String(b.feature.properties?.osm_id) === q.body);
+    if (body) return mid(body.bbox, 16);
+    const ward = q.ward && geo.wards.find((w) => String(wardNumberOf(w.feature.properties)) === q.ward);
+    if (ward) return mid(ward.bbox, 15);
+    return { ...city.center, zoom: 12 };
+  }
+  const district = listPublishedAtlasDistricts().find((d) => d.scopeId === q.place);
+  if (district) {
+    const gp = q.panchayat ? (await panchayatsOf(origin, district)).find((p) => p.code === q.panchayat) : null;
+    if (gp) return { lng: gp.centroid[0], lat: gp.centroid[1], zoom: 14 };
+    return district.bbox ? mid(district.bbox, 10) : null;
+  }
+  const basin = listBasins().find((b) => b.basinId === q.place);
+  const boundary = basin ? indexPolygons(await getJson<FeatureCollection>(origin, basinUrl(basin, "boundary")))[0] : null;
+  return boundary ? mid(boundary.bbox, 9) : null;
+}

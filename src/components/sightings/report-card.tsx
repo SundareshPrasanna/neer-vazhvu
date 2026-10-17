@@ -90,16 +90,9 @@ export function ReportCard({ report }: { report: PublicReport }) {
       <div className="min-w-0 flex-1 space-y-2">
         <div>
           <p className="font-semibold leading-snug text-slate-900 dark:text-slate-100">{report.label}</p>
-          <p className={`text-sm ${muted}`}>
-            {[report.where, report.placeName].filter(Boolean).join(", ")} · {day(report.createdAt)}
-          </p>
+          <p className={`text-sm ${muted}`}>{[report.where, report.placeName, day(report.createdAt)].filter(Boolean).join(", ")}</p>
         </div>
-        {report.caseStatus && (
-          <p className="flex flex-wrap items-center gap-x-2 text-sm">
-            <Status status={report.caseStatus} />
-            {report.handler && <span className={muted}>· {report.handler.acronym ?? report.handler.body}</span>}
-          </p>
-        )}
+        {report.caseStatus && <Status status={report.caseStatus} />}
         {report.readings.length > 0 && <Readings readings={report.readings} source={report.waterSource} />}
         {report.events.length > 1 && <History events={report.events} />}
       </div>

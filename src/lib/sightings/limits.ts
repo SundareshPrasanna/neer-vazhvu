@@ -28,3 +28,6 @@ export const CAP_MESSAGES: Record<CapReason, string> = {
   daily_cap: "You have reached today's limit. Please try again tomorrow.",
   pending_cap: "You have several reports waiting for review. Please wait until they are reviewed.",
 };
+
+/** Said to reporters after sending; keep it true to how fast the queue is actually cleared. */
+export const REVIEW_WITHIN_DAYS = 3;

@@ -92,7 +92,7 @@ export function parseEvent(form: FormData): Parsed<EventInput> {
   if (!event || !CASE_EVENTS.includes(event)) return { ok: false, error: "Unknown update." };
   const authorityBody = str(form.get("authorityBody"), 160);
   if (event === "reported" && !authorityBody) return { ok: false, error: "Say who you reported it to." };
-  const photo = photos(form)[0] ?? null;
+  const photo = event === "fixed" ? (photos(form)[0] ?? null) : null;
   if (event === "fixed" && !photo) return { ok: false, error: "Add a photo showing it fixed." };
   return {
     ok: true,

@@ -3,18 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  AlertTriangle, ArrowLeft, ArrowRight, Camera, Check, CheckCircle2, CloudRain, Construction, Droplets, GlassWater, ImageIcon, ImagePlus,
-  Loader2, LocateFixed, Lock, MapPin, MessageCircle, Plus, Send, Sprout, Trash2, Waves, Wrench, X,
+  AlertTriangle, ArrowLeft, ArrowRight, Camera, Check, CheckCircle2, CloudRain, Construction, Droplets, EyeOff, GlassWater, ImageIcon, ImagePlus,
+  Loader2, LocateFixed, Lock, MapPin, MessageCircle, Plus, Search, Send, Sprout, Trash2, Waves, Wrench, X,
   type LucideIcon,
 } from "lucide-react";
 
-import { LIMITS } from "@/lib/sightings/limits";
+import { LIMITS, REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { PARAMETERS, assess } from "@/lib/sightings/parameters";
 import { OTHER_KEY, REPORT_GROUPS, WATER_SOURCES, takesReadings } from "@/lib/sightings/taxonomy";
 import type { Handler, PublicReport } from "@/lib/sightings/types";
 import type { Channel } from "@/lib/sightings/routing/types";
 import { ActionButton } from "./action-feedback";
 import { HandlerCard, NationalOnly } from "./handler-card";
+import { PhotoBlur } from "./photo-blur";
+import { ReminderLink } from "./reminder";
 import { Readings, day } from "./report-card";
 import { btn, enter, field, fieldBox, fileFocus, link, muted, rule, serif } from "./ui";
 import { readPhotoMeta, shrinkPhoto } from "./use-citizen";
@@ -29,15 +31,19 @@ const GROUPS = [...REPORT_GROUPS, { key: OTHER_KEY, label: "Something else", hin
 
 const STEPS = ["Photo", "What", "Where", "Send"];
 const TITLES = ["Start with a photo", "What does it show?", "Where is it?", "Check and send"];
+const WATER_TEST = "water_test";
 const OLD_PHOTO_DAYS = 30;
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 type Shot = { file: File; url: string; meta: Awaited<ReturnType<typeof readPhotoMeta>> };
 type Coords = { lat: number; lng: number; accuracy: number | null };
+export type View = { lat: number; lng: number; zoom: number };
+type Hit = { name: string; lat: number; lng: number };
 type PinFrom = "photo" | "device" | "map";
 /** What the server says about a pin, keyed by the pin it was asked about. */
 type Place = { key: string; name?: string; outside?: boolean; failed?: boolean };
 interface Sent {
+  id: string;
   placeName: string;
   handler: Handler | null;
   national: Channel[];
@@ -51,8 +57,74 @@ const chip =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 aria-pressed:border-cyan-700 aria-pressed:bg-cyan-700 aria-pressed:text-white " +
   "dark:border-slate-600 dark:text-slate-300";
 
+/** Filed with the body straight away: the reference is saved now, while the report is still being checked. */
+function Filed({ id, body: handlerBody, authFetch }: { id: string; body: string; authFetch: Fetch }) {
+  const [open, setOpen] = useState(false);
+  const [body, setBody] = useState(handlerBody);
+  const [reference, setReference] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async () => {
+    setBusy(true);
+    setError(null);
+    const fd = new FormData();
+    fd.append("event", "reported");
+    fd.append("authorityBody", body.trim());
+    if (reference.trim()) fd.append("reference", reference.trim());
+    const res = await authFetch(`/api/sightings/${id}/events`, { method: "POST", body: fd }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
+    setBusy(false);
+    if (!res?.ok) return setError(json.error ?? "Could not save. Please try again.");
+    setSaved(true);
+  };
+
+  if (saved) {
+    return (
+      <p role="status" className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+        <Check className="h-4 w-4" aria-hidden="true" />
+        Saved. Your report will show as reported once it is published.
+      </p>
+    );
+  }
+  if (!open) {
+    return (
+      <p className="text-sm text-slate-800 dark:text-slate-200">
+        Filed it already?{" "}
+        <button type="button" onClick={() => setOpen(true)} className={link}>
+          Save the reference number
+        </button>
+      </p>
+    );
+  }
+  return (
+    <div className={`space-y-4 rounded-xl bg-slate-50 p-4 sm:p-5 dark:bg-slate-900 ${enter}`}>
+      <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
+        Reported to
+        <input value={body} onChange={(e) => setBody(e.target.value.slice(0, 160))} className={`${field} mt-1.5`} />
+      </label>
+      <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
+        Reference or complaint number <span className={`font-normal ${muted}`}>Only you and our reviewer see it</span>
+        <input value={reference} onChange={(e) => setReference(e.target.value.slice(0, 80))} className={`${field} mt-1.5`} />
+      </label>
+      <div className="flex gap-2">
+        <ActionButton label="Save" busyLabel="Saving…" busy={busy} disabled={!body.trim()} onClick={save} className={btn("primary", "md")} />
+        <button type="button" onClick={() => setOpen(false)} className={btn("quiet", "md")}>
+          Cancel
+        </button>
+      </div>
+      {error && (
+        <p role="alert" className="text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /** Photo, what, where, send: one decision per screen, with a live summary beside it on wide screens. */
-export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch; onSent: () => void; onOpenMine: () => void }) {
+export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch: Fetch; onSent: () => void; onOpenMine: () => void; view?: View | null }) {
   const [step, setStep] = useState(0);
   const [shots, setShots] = useState<Shot[]>([]);
   const [preparing, setPreparing] = useState(0);
@@ -65,8 +137,14 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
   const [values, setValues] = useState<Record<string, string>>({ tds: "" });
   const [coords, setCoords] = useState<Coords | null>(null);
   const [pinFrom, setPinFrom] = useState<PinFrom | null>(null);
-  // Bumped when the pin moves by itself (photo, GPS) so the map recentres; a tap or a drag keeps the view.
+  // Bumped when the pin moves by itself (photo, GPS) or a search result is picked, so the map recentres; a tap or a drag keeps the view.
   const [mapKey, setMapKey] = useState(0);
+  const [focus, setFocus] = useState<View | null>(null);
+  const [search, setSearch] = useState("");
+  const [hits, setHits] = useState<Hit[] | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [blurring, setBlurring] = useState<number | null>(null);
   const [finding, setFinding] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [place, setPlace] = useState<Place | null>(null);
@@ -118,6 +196,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
         setFinding(false);
         setCoords({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy ?? null });
         setPinFrom("device");
+        setFocus(null);
         setMapKey((k) => k + 1);
       },
       () => {
@@ -132,10 +211,12 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
   const pinToPhoto = (m: Shot["meta"]) => {
     setCoords({ lat: m.lat!, lng: m.lng!, accuracy: null });
     setPinFrom("photo");
+    setFocus(null);
     setMapKey((k) => k + 1);
   };
 
-  const pick = async (files: FileList | null) => {
+  // A camera photo is taken at the spot, so the phone's location is the spot's; a gallery photo may be from anywhere.
+  const pick = async (files: FileList | null, via: "camera" | "gallery") => {
     const chosen = Array.from(files ?? [])
       .filter((f) => f.type.startsWith("image/"))
       .slice(0, LIMITS.photosPerReport - shots.length);
@@ -152,7 +233,32 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
     // A photo that knows where it was taken places the pin, so reporting later from home still lands at the spot.
     const gps = added.find((s) => s.meta.lat != null && s.meta.lng != null);
     if (gps && pinFrom !== "map" && pinFrom !== "photo") pinToPhoto(gps.meta);
-    else if (!coords && !gps && !finding) locate();
+    else if (!coords && !gps && !finding && via === "camera") locate();
+  };
+
+  const findPlace = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (search.trim().length < 3) return;
+    setSearching(true);
+    setSearchError(null);
+    const res = await authFetch(`/api/sightings/search?q=${encodeURIComponent(search.trim())}`).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
+    setSearching(false);
+    if (!res?.ok) return setSearchError(json.error ?? "Search is not working right now. Tap the map instead.");
+    setHits(json.data);
+  };
+
+  const goTo = (h: Hit) => {
+    setFocus({ lat: h.lat, lng: h.lng, zoom: 16 });
+    setMapKey((k) => k + 1);
+    setHits(null);
+  };
+
+  const blurred = (i: number, file: File) => {
+    const url = URL.createObjectURL(file);
+    URL.revokeObjectURL(shots[i].url);
+    setShots((s) => s.map((x, j) => (j === i ? { ...x, file, url } : x)));
+    setBlurring(null);
   };
 
   const removeShot = (i: number) => {
@@ -170,7 +276,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
 
   // Why each screen cannot move on yet; null = ready.
   const blockers = [
-    shots.length ? null : "Add at least one photo.",
+    !shots.length ? "Add at least one photo." : here?.outside ? "This spot is outside the places we cover." : null,
     !group
       ? "Choose what it shows."
       : isOther
@@ -239,6 +345,9 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
     setCoords(null);
     setPinFrom(null);
     setPlace(null);
+    setFocus(null);
+    setSearch("");
+    setHits(null);
     setGeoError(null);
     setError(null);
     setSent(null);
@@ -255,10 +364,11 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
             Thank you. Your report is in.
           </h2>
           <p className={`max-w-[48ch] text-lg leading-relaxed ${muted}`}>
-            We check every report before it appears on the {sent.placeName} pages. Follow it, and keep its status up to date, under My
-            reports.
+            We check every report before it appears on the {sent.placeName} pages, usually within {REVIEW_WITHIN_DAYS} days. Follow it, and
+            keep its status up to date, under My reports.
           </p>
           {sent.readings.length > 0 && <Readings readings={sent.readings} />}
+          {routed && <ReminderLink />}
           <div className="flex flex-wrap gap-3 pt-2">
             <button type="button" onClick={reset} className={btn("primary")}>
               <Camera className="h-4 w-4" aria-hidden="true" />
@@ -277,11 +387,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
           ) : (
             <p className={muted}>No public body takes complaints for this kind of report. It goes on the public record for the place.</p>
           )}
-          {routed && (
-            <p className="text-sm text-slate-800 dark:text-slate-200">
-              If you file, add the reference number under My reports so its progress stays on the record.
-            </p>
-          )}
+          {routed && <Filed id={sent.id} body={sent.handler?.body ?? ""} authFetch={authFetch} />}
         </div>
       </div>
     );
@@ -298,14 +404,19 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
         {finding ? (
           "Finding where you are…"
         ) : !coords ? (
-          (geoError ?? "No location yet. You can place it on the map.")
+          (geoError ?? (step === 0 ? "This photo has no location in it." : "No location yet. Tap the map where it is."))
         ) : here?.outside ? (
-          "This spot is outside the cities, districts and river basins we cover so far."
+          <>
+            This spot is outside the cities, districts and river basins we cover so far.{" "}
+            <a href="#where" className="underline underline-offset-2">
+              See where you can report
+            </a>
+          </>
         ) : here ? (
           <>
             {here.name && <span className="font-semibold text-slate-900 dark:text-slate-100">{here.name}</span>}
             <span className={muted}>
-              {here.name ? " · " : "Location set · "}
+              {here.name ? ", " : "Location set, "}
               {pinFrom && PIN_FROM[pinFrom]}
               {pinFrom === "device" && coords.accuracy != null && `, about ${Math.round(coords.accuracy)} m`}
             </span>
@@ -317,7 +428,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
     </p>
   );
 
-  const addInput = <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { void pick(e.target.files); e.target.value = ""; }} />;
+  const addInput = <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { void pick(e.target.files, "gallery"); e.target.value = ""; }} />;
 
   const photoStep = (
     <>
@@ -331,7 +442,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
           onDrop={(e) => {
             e.preventDefault();
             setDragging(false);
-            void pick(e.dataTransfer.files);
+            void pick(e.dataTransfer.files, "gallery");
           }}
           className={`grid gap-3 rounded-xl transition-colors pointer-fine:place-items-center pointer-fine:border pointer-fine:border-dashed pointer-fine:px-6 pointer-fine:py-14 ${
             dragging ? "border-cyan-600 bg-cyan-50/70 dark:bg-cyan-950/40" : "border-slate-300 dark:border-slate-700"
@@ -340,7 +451,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
           <label className={`${btn("primary", "xl")} ${fileFocus} w-full pointer-fine:hidden`}>
             <Camera className="h-5 w-5" aria-hidden="true" />
             Take a photo
-            <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => { void pick(e.target.files); e.target.value = ""; }} />
+            <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => { void pick(e.target.files, "camera"); e.target.value = ""; }} />
           </label>
           <label className={`${btn("secondary", "xl")} ${fileFocus} w-full pointer-fine:hidden`}>
             {addInput}
@@ -361,6 +472,14 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
               <li key={s.url} className={`relative aspect-square overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800 ${enter}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={s.url} alt={`Photo ${i + 1}`} className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setBlurring(i)}
+                  className="absolute bottom-1.5 left-1.5 inline-flex h-8 items-center gap-1.5 rounded-full bg-slate-900/70 px-2.5 text-xs font-semibold text-white transition-colors hover:bg-slate-900 focus-visible:outline-2 focus-visible:outline-white"
+                >
+                  <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                  Blur<span className="sr-only"> part of photo {i + 1}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => removeShot(i)}
@@ -389,11 +508,35 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
             )}
           </ul>
           {locationLine}
+          {!coords && !finding && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <button type="button" onClick={locate} className={btn("secondary", "md")}>
+                <LocateFixed className="h-4 w-4" aria-hidden="true" />
+                I am at the spot: use my location
+              </button>
+              <span className={`text-sm ${muted}`}>Not there now? You will place it on the map.</span>
+            </div>
+          )}
+          {here?.outside && (
+            <button
+              type="button"
+              onClick={() => {
+                setCoords(null);
+                setPinFrom(null);
+              }}
+              className={btn("quiet", "sm")}
+            >
+              The location is wrong: I will place it on the map
+            </button>
+          )}
           {oldPhoto && (
             <p className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-300">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               This photo is from {day(oldPhoto)}. A report should show the place as it is now.
             </p>
+          )}
+          {blurring != null && shots[blurring] && (
+            <PhotoBlur src={shots[blurring].url} onDone={(f) => blurred(blurring, f)} onClose={() => setBlurring(null)} />
           )}
         </>
       )}
@@ -402,25 +545,38 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
 
   const GroupIcon = ICONS[selected?.icon ?? ""] ?? MessageCircle;
   const whatStep = !selected ? (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
-      {GROUPS.map((g) => {
-        const Icon = ICONS[g.icon] ?? MessageCircle;
-        return (
-          <button
-            key={g.key}
-            type="button"
-            onClick={() => {
-              setGroup(g.key);
-              setType(null);
-            }}
-            className="flex min-h-28 flex-col items-start gap-2 rounded-xl border border-slate-200 bg-white p-3.5 text-left transition-[border-color,background-color,transform] duration-200 hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 active:translate-y-px dark:border-slate-700 dark:bg-slate-900 dark:hover:border-slate-500 dark:hover:bg-slate-800"
-          >
-            <Icon className="h-5 w-5" style={{ color: g.color }} aria-hidden="true" />
-            <span className="font-semibold leading-snug text-slate-900 dark:text-slate-100">{g.label}</span>
-            <span className={`text-xs leading-snug ${muted}`}>{g.hint}</span>
-          </button>
-        );
-      })}
+    <div className="space-y-5">
+      <button
+        type="button"
+        onClick={() => {
+          setGroup("drinking");
+          setType(WATER_TEST);
+        }}
+        className={`inline-flex items-center gap-1.5 text-sm ${link}`}
+      >
+        <GlassWater className="h-4 w-4" aria-hidden="true" />
+        Have water test results? Add them
+      </button>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+        {GROUPS.map((g) => {
+          const Icon = ICONS[g.icon] ?? MessageCircle;
+          return (
+            <button
+              key={g.key}
+              type="button"
+              onClick={() => {
+                setGroup(g.key);
+                setType(null);
+              }}
+              className="flex min-h-28 flex-col items-start gap-2 rounded-xl border border-slate-200 bg-white p-3.5 text-left transition-[border-color,background-color,transform] duration-200 hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 active:translate-y-px dark:border-slate-700 dark:bg-slate-900 dark:hover:border-slate-500 dark:hover:bg-slate-800"
+            >
+              <Icon className="h-5 w-5" style={{ color: g.color }} aria-hidden="true" />
+              <span className="font-semibold leading-snug text-slate-900 dark:text-slate-100">{g.label}</span>
+              <span className={`text-xs leading-snug ${muted}`}>{g.hint}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   ) : (
     <div className={`space-y-7 ${enter}`}>
@@ -551,11 +707,52 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
 
   const whereStep = (
     <>
+      <form onSubmit={findPlace} role="search" className="space-y-2">
+        <div className="flex gap-2">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search a place, e.g. a lake, road or village"
+            aria-label="Search a place"
+            className={`${field} min-w-0 flex-1`}
+          />
+          <ActionButton
+            label="Find"
+            busyLabel="Finding…"
+            busy={searching}
+            disabled={search.trim().length < 3}
+            type="submit"
+            icon={<Search className="h-4 w-4" aria-hidden="true" />}
+            className={btn("secondary", "lg")}
+          />
+        </div>
+        {searchError && <p className="text-sm text-amber-800 dark:text-amber-300">{searchError}</p>}
+        {hits && (
+          <div className={`text-sm ${enter}`}>
+            {hits.length === 0 ? (
+              <p className={muted}>No place found by that name. Try a nearby landmark, or tap the map.</p>
+            ) : (
+              <ul className={`divide-y border-y ${rule}`}>
+                {hits.map((h) => (
+                  <li key={`${h.lat},${h.lng}`}>
+                    <button type="button" onClick={() => goTo(h)} className="w-full px-1 py-2.5 text-left text-slate-900 hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-900">
+                      {h.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className={`mt-1.5 text-xs ${muted}`}>Search by OpenStreetMap Nominatim.</p>
+          </div>
+        )}
+      </form>
       <div className={`isolate h-72 overflow-hidden rounded-xl border sm:h-96 ${rule}`}>
         <LocationMap
           key={mapKey}
           lat={coords?.lat ?? null}
           lng={coords?.lng ?? null}
+          focus={focus ?? (coords ? null : view)}
           onChange={(lat, lng) => {
             setCoords({ lat, lng, accuracy: null });
             setPinFrom("map");
@@ -644,9 +841,9 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
   );
 
   const subtitle = [
-    "Of the problem itself, at the spot. Keep faces, vehicle number plates and house names or numbers out of the frame.",
+    "Of the problem itself, at the spot, with no faces, vehicle number plates or house names or numbers (you can blur them). For a water test, photograph the meter or kit showing the reading.",
     selected ? null : "Pick the closest. If nothing fits, choose Something else.",
-    "Tap the map or drag the pin to the exact spot.",
+    focus && !coords ? "Now tap the exact spot on the map." : "Tap the map or drag the pin to the exact spot. Far from here? Search for the place.",
     null,
   ][step];
 
@@ -694,10 +891,10 @@ export function ReportFlow({ authFetch, onSent, onOpenMine }: { authFetch: Fetch
           {[photoStep, whatStep, whereStep, sendStep][step]}
         </div>
 
-        {blockers[step] && <p className={`mt-8 text-sm sm:hidden ${muted}`}>{blockers[step]}</p>}
         <div
-          className={`sticky bottom-0 z-10 -mx-4 mt-4 flex items-center gap-3 border-t bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:mt-10 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none ${rule}`}
+          className={`sticky bottom-0 z-10 -mx-4 mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t bg-background/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:mt-10 sm:flex-nowrap sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none ${rule}`}
         >
+          {blockers[step] && <p className={`w-full text-sm sm:hidden ${muted}`}>{blockers[step]}</p>}
           {step > 0 && (
             <button type="button" onClick={() => go(step - 1)} className={btn("quiet", "lg")}>
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />

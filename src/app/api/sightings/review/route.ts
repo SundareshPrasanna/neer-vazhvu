@@ -125,7 +125,11 @@ export async function POST(request: NextRequest) {
         if (!isValidReport(category, subcategory)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
         if (category !== row.category || subcategory !== row.subcategory) await event(id, "reclassified", { category, subcategory });
         await publishPhotos(await photosOf(id, "report"));
-        const role = roleFor(category, subcategory);
+        // A reclassified report takes its new type's body; otherwise the one it was sent with (a piped test over a limit has one).
+        const role = category === row.category && subcategory === row.subcategory ? row.authority_role : roleFor(category, subcategory);
+        const filed = role
+          ? (await admin.from("sighting_events").select("id", { count: "exact", head: true }).eq("sighting_id", id).eq("event", "reported")).count
+          : 0;
         const up = await admin
           .from("sightings")
           .update({
@@ -134,8 +138,8 @@ export async function POST(request: NextRequest) {
             authority_role: role,
             candidate_label: category === OTHER_KEY ? clip(body.candidateLabel, 80) : null,
             review_status: "approved",
-            // Only reports a body handles have a status to follow.
-            case_status: role ? "open" : null,
+            // Only reports a body handles have a status to follow; one filed while being checked starts as reported.
+            case_status: role ? (filed ? "reported" : "open") : null,
             ...reviewed,
           })
           .eq("id", id);

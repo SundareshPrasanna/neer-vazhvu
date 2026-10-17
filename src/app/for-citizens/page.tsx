@@ -6,6 +6,10 @@ import { CitizenApp } from "@/components/sightings/citizen-app";
 import { displayFont } from "@/components/sightings/display-font";
 import { ShareGuide } from "@/components/sightings/share-guide";
 import { muted, rule, serif } from "@/components/sightings/ui";
+import { listPublishedAtlasDistricts } from "@/lib/atlas/registry";
+import { listBasins } from "@/lib/basins";
+import { listEnabledPlaces } from "@/lib/cities";
+import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 
 export const metadata: Metadata = {
@@ -31,7 +35,7 @@ const PROMISES: [string, string][] = [
   ],
   [
     "Photos are cleaned",
-    "We strip the hidden location and date from every photo; our reviewer sees them only until the report is checked, and then they are deleted. Photos that show a face, a vehicle number plate or a house name or number are rejected, so please keep them out of the frame.",
+    "We strip the hidden location and date from every photo; our reviewer sees them only until the report is checked, and then they are deleted. Photos that show a face, a vehicle number plate or a house name or number are rejected, so keep them out of the frame or blur them before sending.",
   ],
   [
     "We never share, sell or reuse anything about you",
@@ -55,8 +59,11 @@ const GUIDE: [string, React.ReactNode][] = [
   [
     "Making a good report",
     <ul key="good" className="list-disc space-y-1.5 pl-5">
-      <li>Stand at the spot, so the location is right. Drag the pin if it is off.</li>
-      <li>Take one clear photo of the problem itself. Keep faces, vehicle number plates and house names or numbers out of the frame.</li>
+      <li>Stand at the spot, so the location is right. Drag the pin if it is off. Sending it later? Search for the place on the map.</li>
+      <li>
+        Take one clear photo of the problem itself. Keep faces, vehicle number plates and house names or numbers out of the frame, or blur them
+        before sending.
+      </li>
       <li>Pick the closest type. If nothing fits, choose Something else and describe it in a line.</li>
       <li>For a water test, photograph the meter or kit showing the result, choose where the water came from and enter the values you have. TDS alone is fine.</li>
       <li>One problem per report. Two problems at the same place make two reports.</li>
@@ -76,13 +83,16 @@ const GUIDE: [string, React.ReactNode][] = [
   [
     "What happens after you send it",
     <ol key="after" className="list-decimal space-y-1.5 pl-5">
-      <li>We check it. Reports that identify people, or are not about water at a place, are not published.</li>
+      <li>Straight away, we show you which public body handles it, its official complaint channels and what each one does after you file.</li>
+      <li>
+        We check it, usually within {REVIEW_WITHIN_DAYS} days. Reports that identify people, or are not about water at a place, are not
+        published.
+      </li>
       <li>It goes on the public record for that ward, water body or village.</li>
-      <li>We show you which public body handles it, its official complaint channels and what each one does after you file.</li>
       <li>You decide whether to file. The department will know it was you, since most ask for your mobile number. Your report here stays anonymous either way.</li>
       <li>
-        If you file, add the reference number and update the status as things move: reported, marked done, fixed (with a new photo) or still
-        there. Anyone can then see how long a problem stayed open.
+        If you file, save the reference number (you can do it straight after sending) and update the status as things move: reported, done
+        by the department, fixed (with a new photo) or still there. A calendar reminder helps you come back to it.
       </li>
     </ol>,
   ],
@@ -141,21 +151,39 @@ function Section({ id, title, intro, extra, children }: { id: string; title: str
   );
 }
 
+const byName = (a: string, b: string) => a.localeCompare(b);
+
+/** The same lists a report's point is placed against (src/lib/sightings/locate-server.ts). */
+function coverage() {
+  return {
+    cities: listEnabledPlaces().map((c) => c.displayName).sort(byName),
+    districts: listPublishedAtlasDistricts().map((d) => d.name).sort(byName),
+    basins: listBasins().map((b) => b.displayName).sort(byName),
+  };
+}
+
 export default function ForCitizensPage() {
   if (process.env.NEXT_PUBLIC_CITIZEN_REPORTS !== "on") notFound();
+  const where = coverage();
+  const places: [string, string[]][] = [
+    ["Cities", where.cities],
+    ["Districts", where.districts],
+    ["River basins", where.basins],
+  ];
   return (
     <main className={`${displayFont.variable} mx-auto max-w-7xl px-4 sm:px-6 lg:px-8`}>
       <CitizenApp
+        coverage={{ cities: where.cities.length, districts: where.districts.length, basins: where.basins.length }}
         header={
           <header className="max-w-3xl pt-10 pb-10 sm:pt-16 sm:pb-14 group-data-[signed-in]/citizen:pb-6 sm:group-data-[signed-in]/citizen:pt-12 sm:group-data-[signed-in]/citizen:pb-8">
             <h1
               className={`${serif} text-[2.5rem] leading-[1.04] sm:text-6xl group-data-[signed-in]/citizen:text-[2rem] sm:group-data-[signed-in]/citizen:text-5xl`}
             >
-              Put what you see on the record
+              Report trash, sewage or dirty water near you
             </h1>
             <p className={`mt-4 max-w-[52ch] text-lg leading-relaxed group-data-[signed-in]/citizen:hidden ${muted}`}>
-              Trash in a lake, sewage in a river, muddy water from the tap: send a photo. We check it, add it to the public record for that
-              place and show you which public body handles it.
+              Send a photo from a lake, river, drain or tap. We check it, add it to the public record for that place and show you which
+              public body handles it.
             </p>
           </header>
         }
@@ -172,6 +200,16 @@ export default function ForCitizensPage() {
           }
         >
           <Disclosures items={GUIDE} />
+        </Section>
+        <Section id="where" title="Where you can report" intro="Anywhere inside these places. We add more as each one is onboarded.">
+          <dl className={`border-t ${rule}`}>
+            {places.map(([label, names]) => (
+              <div key={label} className={`grid gap-1 border-b py-4 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6 ${rule}`}>
+                <dt className="font-semibold text-slate-900 dark:text-slate-100">{label}</dt>
+                <dd className={`leading-relaxed ${muted}`}>{names.join(", ")}</dd>
+              </div>
+            ))}
+          </dl>
         </Section>
         <Section id="privacy" title="How we protect you" intro="What we promise about your reports and your account, and the limits we cannot promise away.">
           <Disclosures items={PROMISES.map(([title, text]) => [title, <p key={title}>{text}</p>])} />

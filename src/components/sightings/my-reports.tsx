@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Camera, Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
 
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
 import type { OwnReport } from "@/lib/sightings/types";
 import { ActionButton, useFlash } from "./action-feedback";
 import { HandlerCard, NationalOnly } from "./handler-card";
+import { ReminderLink } from "./reminder";
 import { History, Readings, Status, day } from "./report-card";
 import { btn, enter, field, fileFocus, link, muted, rule, serif } from "./ui";
 import { shrinkPhoto } from "./use-citizen";
@@ -15,10 +16,13 @@ type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 const ACTIONS: { event: CaseEvent; label: string }[] = [
   { event: "reported", label: "I reported it" },
-  { event: "authority_done", label: "They marked it done" },
+  { event: "authority_done", label: "Department says it's done" },
   { event: "fixed", label: "It is fixed" },
   { event: "still_there", label: "Still there" },
 ];
+
+/** Updates that save with one tap wait this long, so a wrong tap can be undone before it reaches the public record. */
+const UNDO_MS = 5000;
 
 /** Said beside the status once a change is saved. */
 const SAVED: Record<CaseEvent, string> = {
@@ -33,6 +37,10 @@ const SAVED: Record<CaseEvent, string> = {
 function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: Fetch; onSaved: (text: string) => void }) {
   const [open, setOpen] = useState<CaseEvent | null>(null);
   const [pending, setPending] = useState<CaseEvent | null>(null);
+  const [queued, setQueued] = useState<CaseEvent | null>(null);
+  const waiting = useRef<CaseEvent | null>(null);
+  // Being checked: only "I reported it", so a reference from filing straight away is not lost.
+  const early = report.reviewStatus === "received";
   const [body, setBody] = useState(report.handler?.body ?? "");
   const [reference, setReference] = useState("");
   const [photo, setPhoto] = useState<{ file: File; url: string } | null>(null);
@@ -55,11 +63,50 @@ function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: 
     setPending(null);
     if (!res?.ok) return setError(json.error ?? "Could not save. Please try again.");
     setOpen(null);
-    onSaved(SAVED[event]);
+    onSaved(early ? "Saved. It shows as reported once published" : SAVED[event]);
   };
 
-  const allowed = ACTIONS.filter((a) => nextCaseStatus(a.event, report.caseStatus));
+  // The latest send for the timer and for leaving the page mid-wait, which saves rather than drops the update.
+  const sendLatest = useRef(send);
+  useEffect(() => {
+    sendLatest.current = send;
+  });
+  useEffect(
+    () => () => {
+      if (waiting.current) void sendLatest.current(waiting.current);
+    },
+    [],
+  );
+  useEffect(() => {
+    if (!queued) return;
+    const t = setTimeout(() => {
+      waiting.current = null;
+      setQueued(null);
+      void sendLatest.current(queued);
+    }, UNDO_MS);
+    return () => clearTimeout(t);
+  }, [queued]);
+  const queue = (event: CaseEvent) => {
+    waiting.current = event;
+    setQueued(event);
+  };
+  const undo = () => {
+    waiting.current = null;
+    setQueued(null);
+  };
+
+  const allowed = early ? ACTIONS.filter((a) => a.event === "reported") : ACTIONS.filter((a) => nextCaseStatus(a.event, report.caseStatus));
   if (allowed.length === 0) return null;
+  if (queued) {
+    return (
+      <p role="status" className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-800 dark:text-slate-200">
+        <span>{ACTIONS.find((a) => a.event === queued)?.label}: saving in a few seconds.</span>
+        <button type="button" onClick={undo} className={link}>
+          Undo
+        </button>
+      </p>
+    );
+  }
   const panel = `space-y-4 rounded-xl bg-slate-50 p-4 sm:p-5 dark:bg-slate-900 ${enter}`;
   return (
     <div className="space-y-3">
@@ -73,7 +120,7 @@ function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: 
             busy={pending === a.event && !open}
             disabled={pending != null}
             pressed={a.event === "reported" || a.event === "fixed" ? open === a.event : undefined}
-            onClick={() => (a.event === "authority_done" || a.event === "still_there" ? send(a.event) : setOpen(open === a.event ? null : a.event))}
+            onClick={() => (a.event === "authority_done" || a.event === "still_there" ? queue(a.event) : setOpen(open === a.event ? null : a.event))}
             className={btn("secondary", "md")}
           />
         ))}
@@ -136,6 +183,7 @@ function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: 
           {error}
         </p>
       )}
+      {!early && <ReminderLink />}
     </div>
   );
 }
@@ -153,8 +201,11 @@ const needsUpdate = (r: OwnReport) =>
 function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; authFetch: Fetch; saved: string | null; onSaved: (text: string) => void }) {
   const [open, setOpen] = useState(false);
   const approved = r.reviewStatus === "approved";
-  const routed = r.caseStatus === "open" && (r.handler || r.nationalChannels.length > 0);
-  const hasMore = approved || r.events.length > 1 || r.readings.length > 0;
+  const handled = !!r.handler || r.nationalChannels.length > 0;
+  // Being checked or not yet reported: where to file. Being checked and handled: the reference can be saved already.
+  const routed = (r.caseStatus === "open" || checking(r)) && handled;
+  const updatable = approved || (r.reviewStatus === "received" && handled);
+  const hasMore = updatable || r.events.length > 1 || r.readings.length > 0;
   const panel = `report-${r.id}`;
   return (
     <li className="py-5">
@@ -172,14 +223,14 @@ function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; auth
             <div className="min-w-0">
               <p className="font-semibold leading-snug text-slate-900 dark:text-slate-100">{r.label}</p>
               <p className={`mt-0.5 text-sm ${muted}`}>
-                {[r.where, r.placeName].filter(Boolean).join(", ")} · {day(r.createdAt)}
+                {[r.where, r.placeName, day(r.createdAt)].filter(Boolean).join(", ")}
               </p>
             </div>
             {hasMore && (
               <button type="button" aria-expanded={open} aria-controls={panel} onClick={() => setOpen(!open)} className={`${btn("quiet", "sm")} -mr-3 shrink-0`}>
-                <span className="hidden sm:inline">{approved ? "Update" : "Details"}</span>
+                <span className="hidden sm:inline">{updatable ? "Update" : "Details"}</span>
                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} aria-hidden="true" />
-                <span className="sr-only sm:hidden">{approved ? "Update" : "Details"}</span>
+                <span className="sr-only sm:hidden">{updatable ? "Update" : "Details"}</span>
               </button>
             )}
           </div>
@@ -206,7 +257,7 @@ function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; auth
       {open && (
         <div id={panel} className={`mt-5 space-y-7 sm:pl-28 ${enter}`}>
           {r.readings.length > 0 && <Readings readings={r.readings} source={r.waterSource} />}
-          {approved && (
+          {updatable && (
             <Update
               report={r}
               authFetch={authFetch}

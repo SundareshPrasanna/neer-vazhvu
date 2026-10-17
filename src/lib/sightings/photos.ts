@@ -81,12 +81,12 @@ export async function storePhotos(
     processed.push(p);
   }
   const admin = adminClient();
-  const stamp = Date.now().toString(36);
+  // Random names, not timestamps: a public photo URL must not carry the time of day.
   const rows = processed.map((p, i) => ({
     sighting_id: sightingId,
     reporter_key: reporterKey,
     kind,
-    storage_path: `${placeId}/${sightingId}/${kind}-${stamp}-${i}.webp`,
+    storage_path: `${placeId}/${sightingId}/${kind}-${crypto.randomUUID()}.webp`,
     sha256: p.sha256,
     bytes: p.bytes,
     width: p.width,

@@ -22,10 +22,11 @@ export function nextCaseStatus(event: CaseEvent, current: CaseStatus | null): Ca
   return current ? (NEXT[event][current] ?? null) : null;
 }
 
+/** Public wording names no body: the reporter records these, and a body's name beside "not yet reported" would read as blame. */
 export const CASE_LABELS: Record<CaseStatus, string> = {
-  open: "Open",
+  open: "Not yet reported",
   reported: "Reported",
-  authority_done: "Marked done by the body",
+  authority_done: "Department says done",
   fixed: "Fixed",
   closed: "Closed",
 };
@@ -35,8 +36,8 @@ export const EVENT_LABELS: Record<string, string> = {
   approved: "Published",
   rejected: "Not published",
   reclassified: "Type corrected",
-  reported: "Reported to the body",
-  authority_done: "Body marked it done",
+  reported: "Reported to the department",
+  authority_done: "Department said done",
   fixed: "Confirmed fixed with a photo",
   still_there: "Checked: still there",
   closed: "Closed",

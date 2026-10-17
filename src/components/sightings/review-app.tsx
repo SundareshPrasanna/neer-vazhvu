@@ -62,9 +62,9 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
     [
       "Reporter",
       <>
-        <span className="font-mono text-xs">#{item.reporter.key.slice(0, 8)}</span> · {item.reporter.total} sent, {item.reporter.rejected} rejected,{" "}
+        <span className="font-mono text-xs">#{item.reporter.key.slice(0, 8)}</span>, {item.reporter.total} sent, {item.reporter.rejected} rejected,{" "}
         {item.reporter.trusted ? "trusted" : "new"}
-        {item.reporter.suspended && <span className="font-semibold text-red-700 dark:text-red-400"> · suspended</span>}
+        {item.reporter.suspended && <span className="font-semibold text-red-700 dark:text-red-400">, suspended</span>}
       </>,
     ],
   ];
@@ -94,7 +94,7 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
       <div className="min-w-0 space-y-5">
         <div>
           <p className={`text-sm ${muted}`}>
-            {[item.where, item.placeName].filter(Boolean).join(", ")} · sent {day(item.createdAt)}
+            {[item.where, item.placeName].filter(Boolean).join(", ")}, sent {day(item.createdAt)}
           </p>
           <h2 className="mt-1 text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">{item.label}</h2>
         </div>
@@ -323,7 +323,7 @@ export function ReviewApp() {
                       <div>
                         <p className="font-medium text-slate-900 dark:text-slate-100">{o.text}</p>
                         <p className={muted}>
-                          {item.label} · {[item.where, item.placeName].filter(Boolean).join(", ")}
+                          {[item.label, item.where, item.placeName].filter(Boolean).join(", ")}
                         </p>
                       </div>
                     </div>
