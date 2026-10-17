@@ -61,6 +61,9 @@ export function Readings({ readings, source }: { readings: PublicReport["reading
   );
 }
 
+/** Said after an update recorded by someone other than the reporter or our reviewer. */
+const BY: Partial<Record<string, string>> = { resident: ", by someone nearby", department: ", by the department" };
+
 /** What happened to a report, oldest first, on a thin line. */
 export function History({ events }: { events: PublicReport["events"] }) {
   return (
@@ -72,6 +75,7 @@ export function History({ events }: { events: PublicReport["events"] }) {
           <span className="text-slate-800 dark:text-slate-200">
             {EVENT_LABELS[e.event] ?? e.event}
             {e.authorityBody && ` (${e.authorityBody})`}
+            {BY[e.by] ?? ""}
           </span>
         </li>
       ))}
@@ -80,7 +84,7 @@ export function History({ events }: { events: PublicReport["events"] }) {
 }
 
 /** One published report: photo, what, where, status and its dated history. */
-export function ReportCard({ report }: { report: PublicReport }) {
+export function ReportCard({ report, children }: { report: PublicReport; children?: React.ReactNode }) {
   return (
     <article className="flex gap-3 py-3">
       {report.photoUrls[0] && (
@@ -95,6 +99,7 @@ export function ReportCard({ report }: { report: PublicReport }) {
         {report.caseStatus && <Status status={report.caseStatus} />}
         {report.readings.length > 0 && <Readings readings={report.readings} source={report.waterSource} />}
         {report.events.length > 1 && <History events={report.events} />}
+        {children}
       </div>
     </article>
   );

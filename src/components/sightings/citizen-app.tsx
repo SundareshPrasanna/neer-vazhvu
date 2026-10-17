@@ -97,6 +97,18 @@ export function CitizenApp({ header, coverage }: { header: React.ReactNode; cove
       // Storage blocked: the map opens on the default view.
     }
   }, []);
+  // Signed in from a place page's "Still there / It's gone": go back there.
+  useEffect(() => {
+    if (!session) return;
+    let back: string | null = null;
+    try {
+      back = sessionStorage.getItem("nv-return");
+      sessionStorage.removeItem("nv-return");
+    } catch {
+      // Storage blocked: stay here.
+    }
+    if (back?.startsWith("/") && !back.startsWith("//")) window.location.assign(back);
+  }, [session]);
   useEffect(() => {
     if (!session) return;
     let from: string | null = null;

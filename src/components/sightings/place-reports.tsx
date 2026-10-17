@@ -2,11 +2,86 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Camera } from "lucide-react";
+import { Camera, Check } from "lucide-react";
 
+import { OPEN_STATUSES } from "@/lib/sightings/status";
 import type { PublicReport } from "@/lib/sightings/types";
 import { ReportCard } from "./report-card";
-import { link, muted, rule } from "./ui";
+import { btn, fileFocus, link, muted, rule } from "./ui";
+import { shrinkPhoto, useCitizen } from "./use-citizen";
+
+/** Anyone who has seen the spot lately can keep the record honest: still there, or gone (with a photo, checked first). */
+function SeenLately({ report, citizen }: { report: PublicReport; citizen: ReturnType<typeof useCitizen> }) {
+  const [state, setState] = useState<"idle" | "busy" | "still" | "gone">("idle");
+  const [error, setError] = useState<string | null>(null);
+  if (!report.caseStatus || !OPEN_STATUSES.has(report.caseStatus)) return null;
+
+  // Signed out: sign in, then come back to this page.
+  const signedOut = () => {
+    if (citizen.session) return false;
+    try {
+      sessionStorage.setItem("nv-return", window.location.pathname + window.location.search + window.location.hash);
+    } catch {
+      // Storage blocked: sign-in lands on the report page instead.
+    }
+    citizen.signIn();
+    return true;
+  };
+  const send = async (event: "still_there" | "fixed", file?: File) => {
+    setState("busy");
+    setError(null);
+    const fd = new FormData();
+    fd.append("event", event);
+    if (file) fd.append("photos", file);
+    const res = await citizen.authFetch(`/api/sightings/${report.id}/events`, { method: "POST", body: fd }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
+    if (!res?.ok) {
+      setState("idle");
+      return setError(json.error ?? "Could not save. Please try again.");
+    }
+    setState(event === "still_there" ? "still" : "gone");
+  };
+
+  if (state === "still" || state === "gone") {
+    return (
+      <p role="status" className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+        <Check className="h-4 w-4" aria-hidden="true" />
+        {state === "still" ? "Thanks. Noted as still there." : "Thanks. Your photo is checked before the report changes."}
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-1.5">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`text-sm ${muted}`}>Seen it lately?</span>
+        <button type="button" disabled={state === "busy"} onClick={() => !signedOut() && send("still_there")} className={btn("secondary", "sm")}>
+          Still there
+        </button>
+        <label className={`${btn("secondary", "sm")} ${fileFocus}`} onClick={(e) => signedOut() && e.preventDefault()}>
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="sr-only"
+            disabled={state === "busy"}
+            onChange={async (e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (f) await send("fixed", await shrinkPhoto(f));
+            }}
+          />
+          <Camera className="h-4 w-4" aria-hidden="true" />
+          It&rsquo;s gone
+        </label>
+      </div>
+      {error && (
+        <p role="alert" className="text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 /**
  * Citizen reports that landed on this place (and ward, water body or
@@ -15,6 +90,7 @@ import { link, muted, rule } from "./ui";
 export function PlaceReports({ place, ward, body, panchayat }: { place: string; ward?: string | number | null; body?: string | number | null; panchayat?: string | null }) {
   const [reports, setReports] = useState<PublicReport[] | null>(null);
   const on = process.env.NEXT_PUBLIC_CITIZEN_REPORTS === "on";
+  const citizen = useCitizen();
   const q = new URLSearchParams({ place });
   if (ward != null) q.set("ward", String(ward));
   if (body != null) q.set("body", String(body));
@@ -52,11 +128,13 @@ export function PlaceReports({ place, ward, body, panchayat }: { place: string; 
       </div>
       <div className={`mt-2 divide-y border-y ${rule}`}>
         {reports.map((r) => (
-          <ReportCard key={r.id} report={r} />
+          <ReportCard key={r.id} report={r}>
+            <SeenLately report={r} citizen={citizen} />
+          </ReportCard>
         ))}
       </div>
       <p className={`mt-2 text-xs ${muted}`}>
-        Photographed by residents and checked before publishing. Status updates come from the resident who reported it.
+        Photographed by residents and checked before publishing. Updates come from residents and, where noted, the department; a fixed photo is checked before it counts.
       </p>
     </section>
   );

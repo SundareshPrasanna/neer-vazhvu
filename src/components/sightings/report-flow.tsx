@@ -15,6 +15,7 @@ import type { Handler, PublicReport } from "@/lib/sightings/types";
 import type { Channel } from "@/lib/sightings/routing/types";
 import { ActionButton } from "./action-feedback";
 import { HandlerCard, NationalOnly } from "./handler-card";
+import { NotifyToggle } from "./notify-toggle";
 import { PhotoBlur } from "./photo-blur";
 import { ReminderLink } from "./reminder";
 import { Readings, day } from "./report-card";
@@ -369,6 +370,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
           </p>
           {sent.readings.length > 0 && <Readings readings={sent.readings} />}
           {routed && <ReminderLink />}
+          <NotifyToggle authFetch={authFetch} />
           <div className="flex flex-wrap gap-3 pt-2">
             <button type="button" onClick={reset} className={btn("primary")}>
               <Camera className="h-4 w-4" aria-hidden="true" />

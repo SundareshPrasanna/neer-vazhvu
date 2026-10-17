@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, CheckCircle2, RotateCw, XCircle } from "lucide-react";
+import { AlertTriangle, Check, CheckCircle2, Copy, RotateCw, XCircle } from "lucide-react";
 
-import { ActionButton } from "./action-feedback";
+import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, day } from "./report-card";
 import { btn, enter, field, muted, rule, serif } from "./ui";
 import { useCitizen } from "./use-citizen";
@@ -234,6 +234,110 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
   );
 }
 
+interface DepartmentLink {
+  key: string;
+  body: string;
+  acronym: string | null;
+  open: number;
+  all: number;
+  notOurs: number;
+  /** /department/<signed token> on this site. */
+  path: string;
+}
+
+/** Every body with published reports and its private link, to hand over to that department. Reviewer only (the API checks). */
+function DepartmentLinks({ authFetch, tick }: { authFetch: ReturnType<typeof useCitizen>["authFetch"]; tick: number }) {
+  const [list, setList] = useState<DepartmentLink[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [forbidden, setForbidden] = useState(false);
+  const [copied, flash] = useFlash<string>();
+  /** When the clipboard is blocked: the link in a field to copy by hand. */
+  const [manual, setManual] = useState<{ key: string; url: string } | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    authFetch("/api/sightings/department/links")
+      .then(async (res) => {
+        if (!live) return;
+        if (res.status === 403) return setForbidden(true);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) return setError(json.error ?? "Could not load the department links.");
+        setList(json.data);
+        setError(null);
+      })
+      .catch(() => live && setError("Could not load the department links."));
+    return () => {
+      live = false;
+    };
+  }, [authFetch, tick]);
+
+  const copy = async (d: DepartmentLink) => {
+    const url = `${window.location.origin}${d.path}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setManual(null);
+      flash(d.key);
+    } catch {
+      setManual({ key: d.key, url });
+    }
+  };
+
+  if (forbidden) return null;
+  return (
+    <section aria-labelledby="departments" className={`mt-16 border-t pt-10 ${rule}`}>
+      <h2 id="departments" className={`${serif} text-3xl leading-tight sm:text-4xl`}>
+        Departments
+      </h2>
+      <p className={`mt-2 max-w-[75ch] text-sm ${muted}`}>
+        Each body that handles published reports. Its link opens a private page where its officers see those reports, mark each one and
+        print a summary, with nothing about the reporters. Anyone holding a link can mark that body&rsquo;s reports, so hand it to the
+        department directly.
+      </p>
+      {error && (
+        <p role="alert" className="mt-6 text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+      {list && list.length === 0 && <p className={`py-8 ${muted}`}>No published report has a handling body yet.</p>}
+      {list && list.length > 0 && (
+        <ul className={`mt-6 divide-y border-y ${rule}`}>
+          {list.map((d) => (
+            <li key={d.key} className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
+              <div className="min-w-0 flex-1 basis-64">
+                <p className="font-semibold leading-snug break-words text-slate-900 dark:text-slate-100">
+                  {d.acronym && !d.body.includes(d.acronym) ? `${d.body} (${d.acronym})` : d.body}
+                </p>
+                <p className={`mt-0.5 text-sm tabular-nums ${muted}`}>
+                  {d.open} open of {d.all}
+                  {d.notOurs > 0 && `, ${d.notOurs} marked not theirs`}
+                </p>
+                {manual?.key === d.key && (
+                  <input
+                    readOnly
+                    value={manual.url}
+                    onFocus={(e) => e.currentTarget.select()}
+                    aria-label={`Link for ${d.body}`}
+                    className={`${field} mt-2 font-mono text-xs`}
+                  />
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <a href={d.path} target="_blank" rel="noopener noreferrer" className={btn("quiet", "sm")}>
+                  Open
+                </a>
+                <button type="button" onClick={() => copy(d)} className={btn("secondary", "sm")}>
+                  {copied === d.key ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+                  <span aria-live="polite">{copied === d.key ? "Copied" : "Copy link"}</span>
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 /** Reviewer queue: oldest first. The API checks the reviewer allowlist. Decisions show in place until the next refresh. */
 export function ReviewApp() {
   const { session, ready, signIn, authFetch } = useCitizen();
@@ -334,6 +438,7 @@ export function ReviewApp() {
               );
             })}
           </ul>
+          <DepartmentLinks authFetch={authFetch} tick={tick} />
         </>
       )}
     </main>

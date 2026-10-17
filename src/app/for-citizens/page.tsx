@@ -39,7 +39,7 @@ const PROMISES: [string, string][] = [
   ],
   [
     "We never share, sell or reuse anything about you",
-    "Your account is used only to run reporting: the limits, your own report list and stopping misuse. We send you no email and show no ads. Nothing about you goes to any government department, the bodies that handle complaints, or anyone else. If you file a complaint with a body yourself, that body sees what you give it, under its own rules.",
+    "Your account is used only to run reporting: the limits, your own report list and stopping misuse. We send you no email and show no ads. Notifications come only if you turn them on, carry nothing about you, and can be turned off at any time. Nothing about you goes to any government department, the bodies that handle complaints, or anyone else. If you file a complaint with a body yourself, that body sees what you give it, under its own rules.",
   ],
   [
     "How reports are used",
@@ -92,7 +92,13 @@ const GUIDE: [string, React.ReactNode][] = [
       <li>You decide whether to file. The department will know it was you, since most ask for your mobile number. Your report here stays anonymous either way.</li>
       <li>
         If you file, save the reference number (you can do it straight after sending) and update the status as things move: reported, done
-        by the department, fixed (with a new photo) or still there. A calendar reminder helps you come back to it.
+        by the department, fixed (with a new photo) or still there. Turn on notifications, or add a calendar reminder, to hear when something
+        changes.
+      </li>
+      <li>
+        Anyone who passes the spot can say it is still there, or send a photo showing it fixed. We share checked reports, never anything
+        about you, with the departments that handle them, and they can mark what they have done. A fixed photo is checked before the record
+        changes.
       </li>
     </ol>,
   ],

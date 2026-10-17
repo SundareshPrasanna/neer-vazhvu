@@ -13,6 +13,8 @@ export const LIMITS = {
   photosPerReport: 3,
   /** Status updates per report per reporter per rolling day. */
   updatesPerReportDaily: 5,
+  /** Updates on other people's reports ("still there", fixed photos) per person per rolling day. */
+  residentDaily: 20,
   /** Per photo as uploaded; the browser resizes to ~0.5 MB first. 3 x 1.4 MB
    *  stays under Vercel's 4.5 MB request body limit. */
   photoBytes: 1.4 * 1024 * 1024,

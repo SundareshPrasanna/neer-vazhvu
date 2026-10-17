@@ -7,6 +7,7 @@ import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
 import type { OwnReport } from "@/lib/sightings/types";
 import { ActionButton, useFlash } from "./action-feedback";
 import { HandlerCard, NationalOnly } from "./handler-card";
+import { NotifyToggle } from "./notify-toggle";
 import { ReminderLink } from "./reminder";
 import { History, Readings, Status, day } from "./report-card";
 import { btn, enter, field, fileFocus, link, muted, rule, serif } from "./ui";
@@ -381,6 +382,7 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
             {due === 1 ? "One report needs" : `${due} reports need`} your update: is it still there, or fixed?
           </p>
         )}
+        <NotifyToggle authFetch={authFetch} />
         <div className="hidden lg:block">
           <Download reports={reports} />
         </div>

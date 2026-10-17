@@ -1,5 +1,5 @@
 import type { Channel } from "./routing/types";
-import type { CaseStatus, ReviewStatus } from "./status";
+import type { ActorRole, CaseStatus, ReviewStatus } from "./status";
 
 export type PlaceKind = "city" | "district" | "basin";
 
@@ -52,7 +52,7 @@ export interface PhotoRow {
 export interface EventRow {
   sighting_id: string;
   created_at: string;
-  actor_role: "reporter" | "reviewer" | "system";
+  actor_role: ActorRole;
   event: string;
   authority_body: string | null;
   reference: string | null;
@@ -83,7 +83,8 @@ export interface PublicReport {
   readings: { text: string; assessment: string | null }[];
   waterSource: string | null;
   photoUrls: string[];
-  events: { event: string; at: string; authorityBody: string | null }[];
+  /** `by` says who recorded it: the reporter, another resident, the handling department or our reviewer. */
+  events: { event: string; at: string; authorityBody: string | null; by: ActorRole }[];
   handler: Handler | null;
 }
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LogOut, Trash2 } from "lucide-react";
 
 import { ActionButton } from "./action-feedback";
+import { stopNotices } from "./notify-toggle";
 import { btn } from "./ui";
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
@@ -30,7 +31,7 @@ export function AccountActions({ authFetch, signOut }: { authFetch: Fetch; signO
   return (
     <>
       <div className="order-first -mr-3 flex w-full items-center justify-end sm:order-last sm:ml-auto sm:w-auto">
-        <button type="button" onClick={signOut} className={btn("quiet", "sm")}>
+        <button type="button" onClick={() => void stopNotices(authFetch).finally(signOut)} className={btn("quiet", "sm")}>
           <LogOut className="h-4 w-4" aria-hidden="true" />
           Sign out
         </button>

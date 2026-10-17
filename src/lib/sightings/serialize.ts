@@ -9,7 +9,7 @@ import { assess, getParameter, valueText } from "./parameters";
 import { WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
 import type { EventRow, OwnReport, PhotoRow, PublicReport, SightingRow } from "./types";
 
-export const PUBLIC_EVENTS = new Set(["approved", "reported", "authority_done", "fixed", "still_there", "closed", "reopened"]);
+export const PUBLIC_EVENTS = new Set(["approved", "reported", "authority_done", "fixed", "still_there", "closed", "reopened", "action_taken"]);
 
 function placeName(row: SightingRow): string {
   if (row.place_kind === "city") return tryGetPlaceConfig(row.place_id)?.displayName ?? row.place_id;
@@ -68,7 +68,7 @@ export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[
     events: events
       .filter((e) => PUBLIC_EVENTS.has(e.event))
       // authority_body is reporter-typed: shown to the reporter only.
-      .map((e) => ({ event: e.event, at: istDate(e.created_at), authorityBody: null })),
+      .map((e) => ({ event: e.event, at: istDate(e.created_at), authorityBody: null, by: e.actor_role })),
     handler: resolved(row)?.authority ?? null,
   };
 }
@@ -81,7 +81,7 @@ export function toOwn(row: SightingRow, photos: PhotoRow[], events: EventRow[]):
     lat: Number(row.lat),
     lng: Number(row.lng),
     where: where(row),
-    events: events.map((e) => ({ event: e.event, at: e.created_at, authorityBody: e.authority_body })),
+    events: events.map((e) => ({ event: e.event, at: e.created_at, authorityBody: e.authority_body, by: e.actor_role })),
     reviewStatus: row.review_status,
     rejectReason: rejected?.reason ?? null,
     references: events.flatMap((e) => (e.reference ? [{ authorityBody: e.authority_body, reference: e.reference, at: e.created_at }] : [])),

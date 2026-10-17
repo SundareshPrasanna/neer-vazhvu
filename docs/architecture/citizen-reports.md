@@ -1,6 +1,6 @@
 # Citizen reports (sightings)
 
-Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026.
+Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications and department channel (migration 063).
 
 ## 1. What it is
 
@@ -37,6 +37,9 @@ Developer reference for the module behind `/for-citizens`. Code name in paths an
 | `SIGHTINGS_REPORTER_KEY_SECRET` | `auth.ts` `reporterKey()` | yes; never change once live | HMAC key that turns an account id into the stored reporter tag. Generate with `openssl rand -hex 32` |
 | `SIGHTINGS_REVIEWER_IDS` | `auth.ts` `isReviewer()` | keep private | Comma-separated Supabase auth user ids allowed to review |
 | `VERCEL_AUTOMATION_BYPASS_SECRET` | `locate-server.ts` `getJson()` | yes | Sent as `x-vercel-protection-bypass` when the server fetches its own geometry. Needed on any deployment behind Vercel Deployment Protection; without it every point resolves as "outside" |
+| `SIGHTINGS_DEPARTMENT_LINK_SECRET` | `departments.ts` | yes | Signs each department's private status link (`openssl rand -hex 32`). Missing or under 32 characters: the department channel is off. Changing it replaces every link |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | `notify.ts`, `notify-toggle.tsx` | private key yes | Web Push keys for opt-in notifications. The public key is inlined at build time; without both keys the toggle hides and notices are skipped |
+| `CRON_SECRET` (Vercel and GitHub) | `/api/cron/sightings-nudges` | yes | Bearer token for the daily nudge; the same value in Vercel and the repository secret |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (GitHub Actions secrets) | `.github/workflows/citizen-reports-review.yml` | yes | Daily review-queue count (section 2, Review alert) |
 
 None of the `SIGHTINGS_*` variables or the flag are in `.env.example`.
@@ -171,6 +174,25 @@ Review alert
 **Public cards** (`report-card.tsx`, `place-reports.tsx`): photo, type, place and date. Status words name no body (`CASE_LABELS`: Not yet reported, Reported, Department says done, Fixed, Closed), because the reporter records them, and a named body beside "not yet reported" would read as blame. A footnote says updates come from the resident who reported it. A place with no reports yet shows only "Seen something here? Report it". Its link carries the place, ward, water body or panchayat, which survive the Google sign-in round trip in `sessionStorage` (`nv-report-from`) and open the map there through `/locate?place=`.
 
 User-facing text in this module uses no em dashes and no middle dots as separators.
+
+## Updates after publishing: residents, departments, notifications (migration 063)
+
+`supabase/migrations/063_citizen_reports_updates.sql` must be applied before switch-on. It widens `sighting_events.actor_role` to `resident` and `department`, adds the events `fix_submitted`, `fix_rejected`, `action_taken` and `not_ours`, creates `sighting_push_subscriptions` (endpoint, reporter_key, keys; RLS on, no policies) and adds `sightings.nudged_at`.
+
+**Who can move a report** (`POST /api/sightings/[id]/events`, `POST /api/sightings/department`):
+
+| Who | How | Can say | Limits |
+|---|---|---|---|
+| The reporter | My reports | reported (also while being checked), department says done, fixed (with a photo), still there | 5 per report per day |
+| Anyone else signed in | "Seen it lately?" on the place's page | still there; it's gone (a fixed photo) | 1 per report per day, 20 a day in all; published, open reports only |
+| The handling department | its private link | action taken (status: department says done), not ours (recorded only), closed | 5 per report and 300 a day per department |
+| Our reviewer | review queue | approve, reject, publish or discard a fixed photo, close, reopen | none |
+
+A fixed claim from anyone but a reviewer is recorded as `fix_submitted` and does not move the status. Publishing its photo in the review queue records `fixed` and moves the status; discarding it records `fix_rejected` and tells whoever sent it. Only one fixed photo can wait at a time. Public history labels each update by who made it (", by someone nearby", ", by the department"); `fix_submitted`, `fix_rejected` and `not_ours` stay private.
+
+**Notifications** (`src/lib/sightings/notify.ts`, `push.ts`, `public/citizen-sw.js`, `notify-toggle.tsx`): opt-in Web Push, keyed to the reporter tag only; no email, no phone. Permission is asked only on tap; iPhone needs the site on the home screen. Notices: published, not published, someone nearby says it is still there, fixed (after the photo is checked), a fixed photo not accepted (to its sender), a department update, and a nudge after 14 days with no update from anyone. Notices are sent after the response (`after()`), never fail the action, and carry nothing personal. `POST/DELETE /api/sightings/push` saves or removes this browser's subscription (5 per reporter, push services of Google, Mozilla, Apple and Microsoft only). Signing out unsubscribes the browser; deleting the account deletes the rows. The nudge runs daily at 10:00 IST (`.github/workflows/citizen-reports-nudges.yml` calls `POST /api/cron/sightings-nudges` with `CRON_SECRET`); it only considers reporters with notifications on and sets `nudged_at` once a browser received it.
+
+**Department channel** (`src/lib/sightings/departments.ts`, `/department/[token]`, `department-app.tsx`): one department per handling body, keyed by a hash of state code and body name. Its link is `<origin>/department/<key>.<sig>` (HMAC under `SIGHTINGS_DEPARTMENT_LINK_SECRET`); the page is unlisted, noindex, no-referrer, and disallowed in `robots.ts`. It lists that body's checked reports (open first) with photos, type, place text, India date, status and history, never anything about the reporter and never the exact point; each item can be marked, and the page prints as a summary to hand over. The reviewer copies each department's link from the Departments section at `/admin/sightings` (`GET /api/sightings/department/links`). One link cannot be revoked on its own; rotating the secret replaces them all. Matching loads approved rows and resolves each in memory (fine to about 20,000 rows; store the key on the row before then).
 
 ## 4. Data model
 
@@ -422,6 +444,10 @@ All routes run on the Node runtime. "User" means a valid Supabase bearer token; 
 | `/api/sightings/mine` | GET | user | none | `{ data: OwnReport[] (newest 100), reviewer: boolean }` | |
 | `/api/sightings/mine` | DELETE | user | `?published=remove` (optional) | `{ data: { deleted: <count> } }` | |
 | `/api/sightings/[id]/events` | POST | owner or reviewer | multipart: `event`, `authorityBody` (required for `reported`), `reference?`, `reason?`, `photos` (`fixed` only: one file, required; ignored on other events) | `{ data: { caseStatus } }` (unchanged, so null, for an early `reported`) | 400 validation or photo; 403 reviewer-only event or suspended; 404 bad id or not owner; 409 not published (except the owner's early `reported`), transition not allowed, duplicate photo; 429 caps |
+| `/api/sightings/push` | POST, DELETE | user | JSON subscription `{endpoint, keys}` / `{endpoint}` | `{ data: { ok } }` | 400 bad subscription |
+| `/api/sightings/department` | GET, POST | signed department link (`token`) | GET `?token=`; POST JSON `{ token, id, event, note? }` | GET `{ body, acronym, asOf, open[], done[] }`; POST the new status | 404 bad link, 409 not this department's or not fitting, 410 body gone, 429 limits |
+| `/api/sightings/department/links` | GET | reviewer | none | each body with counts and its link path | 503 secret unset |
+| `/api/cron/sightings-nudges` | POST | `Authorization: Bearer CRON_SECRET` | none | counts only | 401, 500 secret unset |
 | `/api/sightings/review` | GET | reviewer | none | `{ data: [...] }`: up to 50 `received` (oldest first) plus approved reports with an unpublished fixed photo; each is `OwnReport` plus `note`, `candidateLabel`, `exif`, `photos`, `reporter` | 403 not reviewer |
 | `/api/sightings/review` | POST | reviewer | JSON `{ action, id?, reporterKey?, category?, subcategory?, candidateLabel?, reason? }`; actions `approve`, `reject`, `publish_fixed`, `discard_fixed`, `suspend` | `{ data: { ok: true } }`; `suspend` returns `{ data: { rejected: <count> } }` | 400 bad id, bad reporter, invalid type, unknown action; 403; 404; 409 already reviewed |
 
@@ -533,8 +559,9 @@ Setup: `.env.local` with every variable in section 2, the tester's auth user id 
 4. **Basins have no contract check.** Several roles resolve to no body (section 10), so those reports show national channels only.
 5. **Basin tank ids such as `KA06LH0006 ( NRLD 2019)`** fail the `body` parameter's pattern (`[A-Za-z0-9:_-]{1,40}`). No UI queries basins by body today.
 6. **Suspension can be shed** by deleting the account and signing in again.
-7. **The `fixed` event changes status before its photo is reviewed.** If the photo is discarded, the report stays `fixed` with no photo.
+7. **Departments and the exact point:** departments see the ward, water body or village text only. Adding the point (non-private categories only, with a map link) also needs the /for-citizens privacy text updated.
 8. **The reporter cannot see their own note** (`toOwn` omits it).
 9. **Not checked from the code:** whether anonymous sign-in is off in Supabase Auth; whether `VERCEL_AUTOMATION_BYPASS_SECRET` is set for Preview; whether `capture="environment"` opens the camera under `camera=()` on iOS Safari and Android Chrome; whether sharp on Vercel decodes HEIC (the browser's JPEG re-encode usually makes this moot); how often phone browsers strip GPS from gallery photos. Migration 062 and the buckets were applied and verified in production on 16 Oct 2026, Google sign-in is configured, and the workflow's `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` repository secrets exist.
 10. **`.env.example`** lacks the flag and the `SIGHTINGS_*` variables.
 11. **No rotation procedure** exists for `SIGHTINGS_REPORTER_KEY_SECRET` (section 2).
+12. **"Not ours" notes:** the reviewer sees each department's count of items marked "not ours" but not its note, which would help correct the routing data.
