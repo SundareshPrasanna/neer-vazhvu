@@ -116,7 +116,7 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
             </div>
           ))}
         </dl>
-        {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} />}
+        {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} test={item.test} />}
 
         {item.reviewStatus === "received" && (
           <div className={`space-y-3 border-t pt-5 ${rule}`}>

@@ -31,3 +31,8 @@ ALTER TABLE sighting_push_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- When the reporter was last reminded about an open report, so the two-week nudge is sent once per lull.
 ALTER TABLE sightings ADD COLUMN IF NOT EXISTS nudged_at TIMESTAMPTZ;
+
+-- How a water test was done (instrument, filtered or not, optional calibration, pump run, depth, model).
+-- Set after the row is created, so create_sighting is unchanged.
+ALTER TABLE sightings ADD COLUMN IF NOT EXISTS test_meta JSONB
+  CHECK (test_meta IS NULL OR jsonb_typeof(test_meta) = 'object');

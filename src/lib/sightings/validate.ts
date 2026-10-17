@@ -3,6 +3,7 @@ import { LIMITS } from "./limits";
 import { CASE_EVENTS, type CaseEvent } from "./status";
 import { PARAMETERS } from "./parameters";
 import { OTHER_KEY, WATER_SOURCES, isValidReport, takesReadings, type WaterSource } from "./taxonomy";
+import { MAX_DEPTH_FT, MAX_MODEL_CHARS, TEST_CALIBRATED, TEST_FILTERED, TEST_INSTRUMENTS, type TestMeta } from "./test-meta";
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; error: string };
 
@@ -30,6 +31,8 @@ export interface SubmitInput {
   note: string | null;
   readings: Record<string, number> | null;
   waterSource: WaterSource | null;
+  /** With readings only: how the test was done. */
+  testMeta: TestMeta | null;
   photos: File[];
   /** Read by the phone from the original photo; unverified. */
   photoMeta: { capturedAt: string | null; lat: number | null; lng: number | null };
@@ -60,6 +63,25 @@ export function parseSubmit(form: FormData): Parsed<SubmitInput> {
   const source = str(form.get("waterSource"), 20) as WaterSource | null;
   if (source && !WATER_SOURCES.some((w) => w.key === source)) return { ok: false, error: "Unknown water source." };
   if (readings && !source) return { ok: false, error: "Choose where the water came from." };
+  let testMeta: TestMeta | null = null;
+  if (readings) {
+    const instrument = TEST_INSTRUMENTS.find((t) => t.key === str(form.get("test.instrument"), 20))?.key;
+    if (!instrument) return { ok: false, error: "Choose what you tested with." };
+    const filtered = TEST_FILTERED.find((t) => t.key === str(form.get("test.filtered"), 20))?.key;
+    if (!filtered) return { ok: false, error: "Say whether the water was filtered." };
+    testMeta = { instrument, filtered };
+    const calibrated = TEST_CALIBRATED.find((t) => t.key === str(form.get("test.calibrated"), 20))?.key;
+    if (calibrated) testMeta.calibrated = calibrated;
+    const flushed = str(form.get("test.flushed"), 5);
+    if (flushed === "yes" || flushed === "no") testMeta.flushed = flushed === "yes";
+    const depth = num(form.get("test.depthFt"));
+    if (depth != null) {
+      if (depth <= 0 || depth > MAX_DEPTH_FT) return { ok: false, error: "The borewell depth looks out of range." };
+      testMeta.depthFt = Math.round(depth);
+    }
+    const model = str(form.get("test.model"), MAX_MODEL_CHARS);
+    if (model) testMeta.model = model;
+  }
   const files = photos(form);
   if (files.length < 1) return { ok: false, error: "Add at least one photo." };
   if (files.length > LIMITS.photosPerReport) return { ok: false, error: `Add at most ${LIMITS.photosPerReport} photos.` };
@@ -74,6 +96,7 @@ export function parseSubmit(form: FormData): Parsed<SubmitInput> {
       lat, lng, accuracy: num(form.get("accuracy")), category, subcategory, note, photos: files,
       readings,
       waterSource: category === "drinking" ? source : null,
+      testMeta,
       photoMeta: { capturedAt, lat: gps ? pLat : null, lng: gps ? pLng : null },
     },
   };

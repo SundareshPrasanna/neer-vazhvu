@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
     }
     const exif = stored.exif ?? (v.photoMeta.capturedAt || v.photoMeta.lat != null ? v.photoMeta : null);
     if (exif) await admin.from("sightings").update({ exif_captured_at: exif.capturedAt, exif_lat: exif.lat, exif_lng: exif.lng }).eq("id", id);
+    if (v.testMeta) await admin.from("sightings").update({ test_meta: v.testMeta }).eq("id", id);
 
     const routed = role ? resolveAuthority(role, { stateCode: place.stateCode, placeId: place.placeId, placeKind: place.placeKind, corporationId: place.corporationId }) : null;
     const shownOn = placeUrl({

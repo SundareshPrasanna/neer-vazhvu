@@ -1,5 +1,6 @@
 import type { Channel } from "./routing/types";
 import type { ActorRole, CaseStatus, ReviewStatus } from "./status";
+import type { TestMeta } from "./test-meta";
 
 export type PlaceKind = "city" | "district" | "basin";
 
@@ -30,6 +31,7 @@ export interface SightingRow {
   note: string | null;
   readings: Record<string, number> | null;
   water_source: string | null;
+  test_meta: TestMeta | null;
   candidate_label: string | null;
   authority_role: string | null;
   review_status: ReviewStatus;
@@ -82,6 +84,8 @@ export interface PublicReport {
   /** Resident's own test results, each with how it sits against BIS limits. */
   readings: { text: string; assessment: string | null }[];
   waterSource: string | null;
+  /** How the test was done, as one public line; null without readings or details. */
+  test: string | null;
   photoUrls: string[];
   /** `by` says who recorded it: the reporter, another resident, the handling department or our reviewer. */
   events: { event: string; at: string; authorityBody: string | null; by: ActorRole }[];
@@ -101,4 +105,6 @@ export interface OwnReport extends PublicReport {
   rejectReason: string | null;
   references: { authorityBody: string | null; reference: string; at: string }[];
   nationalChannels: Channel[];
+  /** The full test details, for the reporter's own list and download. */
+  testMeta: TestMeta | null;
 }

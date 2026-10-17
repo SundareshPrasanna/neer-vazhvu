@@ -34,7 +34,7 @@ export function Status({ status, label }: { status: string; label?: string }) {
 }
 
 /** A resident's own test results against BIS IS 10500. */
-export function Readings({ readings, source }: { readings: PublicReport["readings"]; source?: string | null }) {
+export function Readings({ readings, source, test }: { readings: PublicReport["readings"]; source?: string | null; test?: string | null }) {
   return (
     <div className="text-sm">
       <ul className="space-y-1 text-slate-800 dark:text-slate-200">
@@ -51,7 +51,7 @@ export function Readings({ readings, source }: { readings: PublicReport["reading
         ))}
       </ul>
       <p className={`mt-1.5 text-xs ${muted}`}>
-        A home test{source ? ` (${source.toLowerCase()})` : ""}, not a lab result. Limits:{" "}
+        {test ? `${test}.` : `A home test${source ? ` (${source.toLowerCase()})` : ""}, not a lab result.`} Limits:{" "}
         <a href={BIS_SOURCE} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
           BIS IS 10500
         </a>
@@ -97,7 +97,7 @@ export function ReportCard({ report, children }: { report: PublicReport; childre
           <p className={`text-sm ${muted}`}>{[report.where, report.placeName, day(report.createdAt)].filter(Boolean).join(", ")}</p>
         </div>
         {report.caseStatus && <Status status={report.caseStatus} />}
-        {report.readings.length > 0 && <Readings readings={report.readings} source={report.waterSource} />}
+        {report.readings.length > 0 && <Readings readings={report.readings} source={report.waterSource} test={report.test} />}
         {report.events.length > 1 && <History events={report.events} />}
         {children}
       </div>

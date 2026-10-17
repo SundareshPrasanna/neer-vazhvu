@@ -263,7 +263,7 @@ function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; auth
       </div>
       {open && (
         <div id={panel} className={`mt-5 space-y-7 sm:pl-28 ${enter}`}>
-          {r.readings.length > 0 && <Readings readings={r.readings} source={r.waterSource} />}
+          {r.readings.length > 0 && <Readings readings={r.readings} source={r.waterSource} test={r.test} />}
           {updatable && (
             <Update
               report={r}
@@ -316,6 +316,12 @@ function Download({ reports }: { reports: OwnReport[] }) {
       status: r.caseStatus ?? "",
       waterSource: r.waterSource ?? "",
       readings: r.readings.map((x) => x.text).join("; "),
+      testedWith: r.testMeta?.instrument ?? "",
+      filtered: r.testMeta?.filtered ?? "",
+      calibrated: r.testMeta?.calibrated ?? "",
+      pumpRanFirst: r.testMeta?.flushed == null ? "" : r.testMeta.flushed ? "yes" : "no",
+      borewellDepthFt: r.testMeta?.depthFt ?? "",
+      meterModel: r.testMeta?.model ?? "",
       references: r.references.map((x) => `${x.authorityBody ?? ""} ${x.reference}`.trim()).join("; "),
       events: r.events.map((e) => `${e.at.slice(0, 10)} ${e.event}`).join("; "),
     }));

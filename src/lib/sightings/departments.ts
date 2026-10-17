@@ -117,6 +117,7 @@ export interface DepartmentItem {
   caseStatus: CaseStatus;
   readings: PublicReport["readings"];
   waterSource: string | null;
+  test: string | null;
   photoUrls: string[];
   /** The public point (PublicReport.point): rounded to about 100 m, null for tap water and water tests. */
   point: PublicReport["point"];
@@ -239,6 +240,7 @@ export async function departmentItems(admin: SupabaseClient, key: string): Promi
         caseStatus: r.case_status!,
         readings: p.readings,
         waterSource: p.waterSource,
+        test: p.test,
         photoUrls: p.photoUrls,
         point: p.point,
         history: historyFor(eventMap.get(r.id) ?? [], key, PUBLIC_EVENTS),

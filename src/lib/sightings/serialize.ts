@@ -8,6 +8,7 @@ import { placeUrl } from "./place-url";
 import { resolveAuthority } from "./routing";
 import { assess, getParameter, valueText } from "./parameters";
 import { WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
+import { testLabel } from "./test-meta";
 import type { EventRow, OwnReport, PhotoRow, PublicReport, SightingRow } from "./types";
 
 export const PUBLIC_EVENTS = new Set(["approved", "reported", "authority_done", "fixed", "still_there", "closed", "reopened", "action_taken"]);
@@ -66,6 +67,7 @@ export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[
     caseStatus: row.case_status,
     readings: readings(row),
     waterSource: WATER_SOURCES.find((w) => w.key === row.water_source)?.label ?? null,
+    test: row.test_meta ? testLabel(row.test_meta, WATER_SOURCES.find((w) => w.key === row.water_source)?.label ?? null) : null,
     photoUrls: photos
       .filter((p) => p.public_path)
       .sort((a, b) => (a.kind === b.kind ? a.ordinal - b.ordinal : a.kind === "report" ? -1 : 1))
@@ -94,6 +96,7 @@ export function toOwn(row: SightingRow, photos: PhotoRow[], events: EventRow[]):
     rejectReason: rejected?.reason ?? null,
     references: events.flatMap((e) => (e.reference ? [{ authorityBody: e.authority_body, reference: e.reference, at: e.created_at }] : [])),
     nationalChannels: resolved(row)?.national ?? [],
+    testMeta: row.test_meta ?? null,
   };
 }
 

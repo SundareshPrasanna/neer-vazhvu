@@ -12,6 +12,7 @@ import {
 import { LIMITS, REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { PARAMETERS, assess } from "@/lib/sightings/parameters";
 import { OTHER_KEY, REPORT_GROUPS, WATER_SOURCES, takesReadings } from "@/lib/sightings/taxonomy";
+import { MAX_MODEL_CHARS, TEST_CALIBRATED, TEST_FILTERED, TEST_INSTRUMENTS, testLabel, type Calibrated, type Filtered, type Instrument } from "@/lib/sightings/test-meta";
 import type { Handler, PublicReport } from "@/lib/sightings/types";
 import type { Channel } from "@/lib/sightings/routing/types";
 import { ActionButton } from "./action-feedback";
@@ -127,6 +128,23 @@ function Filed({ id, body: handlerBody, authFetch }: { id: string; body: string;
   );
 }
 
+/** One choice from a few, as a row of chips; tapping the chosen one again clears it when optional. */
+function Choice<K extends string>({ legend, hint, options, value, onChange, optional }: { legend: string; hint?: string; options: readonly { key: K; label: string }[]; value: K | null; onChange: (k: K | null) => void; optional?: boolean }) {
+  return (
+    <fieldset>
+      <legend className="font-medium text-slate-900 dark:text-slate-100">{legend}</legend>
+      {hint && <p className={`mt-1 text-sm ${muted}`}>{hint}</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {options.map((o) => (
+          <button key={o.key} type="button" aria-pressed={value === o.key} onClick={() => onChange(value === o.key && optional ? null : o.key)} className={chip}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 /** Photo, what, where, send: one decision per screen, with a live summary beside it on wide screens. */
 export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch: Fetch; onSent: () => void; onOpenMine: () => void; view?: View | null }) {
   const [step, setStep] = useState(0);
@@ -139,6 +157,13 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
   const [source, setSource] = useState<string | null>(null);
   // Water-test results by parameter key, as typed; TDS is offered first.
   const [values, setValues] = useState<Record<string, string>>({ tds: "" });
+  // How the test was done: two required choices, the rest optional.
+  const [instrument, setInstrument] = useState<Instrument | null>(null);
+  const [filtered, setFiltered] = useState<Filtered | null>(null);
+  const [calibrated, setCalibrated] = useState<Calibrated | null>(null);
+  const [flushed, setFlushed] = useState<"yes" | "no" | null>(null);
+  const [depth, setDepth] = useState("");
+  const [model, setModel] = useState("");
   const [coords, setCoords] = useState<Coords | null>(null);
   const [pinFrom, setPinFrom] = useState<PinFrom | null>(null);
   // Bumped when the pin moves by itself (photo, GPS) or a search result is picked, so the map recentres; a tap or a drag keeps the view.
@@ -273,6 +298,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
   const selected = GROUPS.find((g) => g.key === group);
   const isOther = group === OTHER_KEY;
   const testing = !!group && takesReadings(group, type);
+  const wellWater = source === "borewell" || source === "open_well";
   const entered = Object.entries(values).filter(([, v]) => v.trim() !== "");
   const typeLabel = isOther ? note.trim() || null : (selected?.types.find((t) => t.key === type)?.label ?? null);
   const takenAt = shots[0]?.meta.takenAt;
@@ -291,7 +317,11 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
             ? "Enter at least one result."
             : testing && !source
               ? "Choose where the water is from."
-              : null,
+              : testing && !instrument
+                ? "Choose what you tested with."
+                : testing && !filtered
+                  ? "Say whether the water was filtered."
+                  : null,
     !coords ? "Place the pin on the map." : here?.outside ? "This spot is outside the places we cover." : !here ? "Finding the place…" : null,
     null,
   ];
@@ -317,7 +347,15 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
       if (type && !isOther) fd.append("subcategory", type);
       if (note.trim()) fd.append("note", note.trim());
       if (group === "drinking" && source) fd.append("waterSource", source);
-      if (testing) entered.forEach(([k, v]) => fd.append(`reading.${k}`, v.trim()));
+      if (testing) {
+        entered.forEach(([k, v]) => fd.append(`reading.${k}`, v.trim()));
+        if (instrument) fd.append("test.instrument", instrument);
+        if (filtered) fd.append("test.filtered", filtered);
+        if (calibrated) fd.append("test.calibrated", calibrated);
+        if (flushed && wellWater) fd.append("test.flushed", flushed);
+        if (depth.trim() && wellWater) fd.append("test.depthFt", depth.trim());
+        if (model.trim()) fd.append("test.model", model.trim());
+      }
       const meta = shots[0]?.meta;
       if (meta?.takenAt) fd.append("takenAt", meta.takenAt);
       if (meta?.lat != null && meta.lng != null) {
@@ -346,6 +384,12 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
     setNote("");
     setSource(null);
     setValues({ tds: "" });
+    setInstrument(null);
+    setFiltered(null);
+    setCalibrated(null);
+    setFlushed(null);
+    setDepth("");
+    setModel("");
     setCoords(null);
     setPinFrom(null);
     setPlace(null);
@@ -380,7 +424,12 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
               .
             </p>
           )}
-          {sent.readings.length > 0 && <Readings readings={sent.readings} />}
+          {sent.readings.length > 0 && (
+            <Readings
+              readings={sent.readings}
+              test={instrument && filtered ? testLabel({ instrument, filtered }, WATER_SOURCES.find((w) => w.key === source)?.label ?? null) : null}
+            />
+          )}
           {routed && <ReminderLink />}
           <NotifyToggle authFetch={authFetch} />
           <div className="flex flex-wrap gap-3 pt-2">
@@ -716,6 +765,49 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
           )}
         </fieldset>
       )}
+      {testing && (
+        <>
+          <Choice legend="What did you test with?" options={TEST_INSTRUMENTS} value={instrument} onChange={setInstrument} />
+          <Choice
+            legend="Was the water filtered?"
+            hint="A reading after a filter or RO tells you about the filter, not the water source."
+            options={TEST_FILTERED}
+            value={filtered}
+            onChange={setFiltered}
+          />
+          <details className={`group/more rounded-xl border px-4 ${rule}`}>
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 font-medium text-slate-900 focus-visible:outline-2 focus-visible:outline-cyan-500 dark:text-slate-100 [&::-webkit-details-marker]:hidden">
+              More about this test <span className={`text-sm font-normal ${muted}`}>Optional</span>
+            </summary>
+            <div className="space-y-5 pb-5">
+              <Choice legend="When was the meter last calibrated?" options={TEST_CALIBRATED} value={calibrated} onChange={setCalibrated} optional />
+              {wellWater && (
+                <>
+                  <Choice
+                    legend="Did the pump run a few minutes before you took the sample?"
+                    hint="The first water out of the pipe is not the groundwater."
+                    options={[{ key: "yes", label: "Yes" }, { key: "no", label: "No" }] as const}
+                    value={flushed}
+                    onChange={setFlushed}
+                    optional
+                  />
+                  <label className="block">
+                    <span className="font-medium text-slate-900 dark:text-slate-100">Borewell depth, if you know it</span>
+                    <span className="mt-2 flex items-center gap-3">
+                      <input inputMode="numeric" value={depth} onChange={(e) => setDepth(e.target.value.replace(/[^0-9]/g, "").slice(0, 4))} className={`${fieldBox} w-28 text-right tabular-nums`} />
+                      <span className={`text-sm ${muted}`}>feet</span>
+                    </span>
+                  </label>
+                </>
+              )}
+              <label className="block">
+                <span className="font-medium text-slate-900 dark:text-slate-100">Meter brand and model</span>
+                <input value={model} onChange={(e) => setModel(e.target.value.slice(0, MAX_MODEL_CHARS))} className={`${field} mt-2`} />
+              </label>
+            </div>
+          </details>
+        </>
+      )}
     </div>
   );
 
@@ -799,6 +891,9 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
     ...(sourceLabel ? [["Water from", sourceLabel] as [string, string]] : []),
     ...(testing && entered.length
       ? [["Results", entered.map(([k, v]) => `${PARAMETERS.find((p) => p.key === k)?.name} ${v}`).join(", ")] as [string, string]]
+      : []),
+    ...(testing && instrument
+      ? [["Tested with", [TEST_INSTRUMENTS.find((t) => t.key === instrument)?.label, filtered === "filtered" ? "after a filter" : null].filter(Boolean).join(", ")] as [string, string]]
       : []),
   ];
   /** The report as it stands: a large photo beside the steps on wide screens, a thumbnail row on the phone's last step. */

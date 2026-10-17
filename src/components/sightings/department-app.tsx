@@ -179,7 +179,7 @@ function ItemCard({ item, token, onSaved }: { item: DepartmentItem; token: strin
           <dt className={muted}>Item</dt>
           <dd className="font-mono text-xs leading-5 text-slate-800 dark:text-slate-200">{itemRef(item.id)}</dd>
         </dl>
-        {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} />}
+        {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} test={item.test} />}
         {item.history.length > 0 && <History entries={item.history} />}
 
         {(item.actions.length > 0 || error) && (
