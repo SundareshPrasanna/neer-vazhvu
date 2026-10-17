@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Camera, Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
 
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
@@ -253,6 +254,11 @@ function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; auth
             )}
           </p>
           {r.reviewStatus === "rejected" && r.rejectReason && <p className={`mt-1 text-sm ${muted}`}>{r.rejectReason}</p>}
+          {approved && r.placeHref && (
+            <Link href={r.placeHref} className={`mt-1.5 inline-block text-sm ${link}`}>
+              {r.placeHref.includes("layer=reports") ? "See it on the map" : "See where it appears"}
+            </Link>
+          )}
         </div>
       </div>
       {open && (

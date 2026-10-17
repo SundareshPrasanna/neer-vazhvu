@@ -4,6 +4,7 @@ import { tryGetPlaceConfig } from "@/lib/cities";
 import { listAtlasDistricts } from "@/lib/atlas/registry";
 import { tryGetBasinManifest } from "@/lib/basins";
 import { publicPhotoUrl } from "./photos";
+import { placeUrl } from "./place-url";
 import { resolveAuthority } from "./routing";
 import { assess, getParameter, valueText } from "./parameters";
 import { WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
@@ -46,8 +47,12 @@ function readings(row: SightingRow): PublicReport["readings"] {
   });
 }
 
+/** About 100 m: enough to find a stretch of bank, not a person. */
+const roundPoint = (v: number) => Math.round(v * 1000) / 1000;
+
 export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[]): PublicReport {
   const hidePoint = isPrivateCategory(row.category);
+  const shownOn = placeUrl(row);
   return {
     id: row.id,
     createdAt: istDate(row.created_at),
@@ -70,6 +75,9 @@ export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[
       // authority_body is reporter-typed: shown to the reporter only.
       .map((e) => ({ event: e.event, at: istDate(e.created_at), authorityBody: null, by: e.actor_role })),
     handler: resolved(row)?.authority ?? null,
+    point: hidePoint ? null : [roundPoint(Number(row.lat)), roundPoint(Number(row.lng))],
+    placeHref: shownOn?.href ?? null,
+    placeLabel: shownOn?.label ?? null,
   };
 }
 

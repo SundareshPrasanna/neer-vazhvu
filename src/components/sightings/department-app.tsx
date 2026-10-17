@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Check, Plus, Printer, RotateCw } from "lucide-react";
+import { AlertTriangle, Check, MapPin, Plus, Printer, RotateCw } from "lucide-react";
 
 import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, Status, day } from "./report-card";
-import { btn, enter, field, muted, rule, serif } from "./ui";
+import { btn, enter, field, link, muted, rule, serif } from "./ui";
 import { LIMITS } from "@/lib/sightings/limits";
 import { EVENT_LABELS, OPEN_STATUSES, type CaseStatus, type DepartmentEvent } from "@/lib/sightings/status";
 import type { DepartmentItem, HistoryEntry } from "@/lib/sightings/departments";
@@ -53,6 +53,9 @@ const historyText = (e: HistoryEntry) =>
 
 /** A short handle to name an item in a meeting. */
 const itemRef = (id: string) => `NV-${id.slice(0, 8).toUpperCase()}`;
+
+/** OpenStreetMap at the public point (about 100 m), with a marker. */
+const osmUrl = ([lat, lng]: [number, number]) => `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`;
 
 /** Prints as a clean summary in either theme: dark text on white, hairlines light, status dots kept. */
 const PRINT_CSS = `@media print{@page{margin:14mm 12mm}.dept-sheet{print-color-adjust:exact;-webkit-print-color-adjust:exact}.dark .dept-sheet,.dark .dept-sheet *{color:#0f172a!important;border-color:#e2e8f0!important}}`;
@@ -151,6 +154,12 @@ function ItemCard({ item, token, onSaved }: { item: DepartmentItem; token: strin
         <div>
           <p className={`text-sm ${muted}`}>{[item.where, item.placeName].filter(Boolean).join(", ")}</p>
           <h3 className="mt-0.5 text-lg font-semibold leading-snug text-slate-900 dark:text-slate-100">{item.label}</h3>
+          {item.point && (
+            <a href={osmUrl(item.point)} target="_blank" rel="noopener noreferrer" className={`mt-1 inline-flex items-center gap-1 text-sm print:hidden ${link}`}>
+              <MapPin className="h-4 w-4" aria-hidden="true" />
+              Open in map
+            </a>
+          )}
         </div>
         <dl className="grid grid-cols-[4rem_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
           <dt className={muted}>Status</dt>

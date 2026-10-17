@@ -86,6 +86,11 @@ export interface PublicReport {
   /** `by` says who recorded it: the reporter, another resident, the handling department or our reviewer. */
   events: { event: string; at: string; authorityBody: string | null; by: ActorRole }[];
   handler: Handler | null;
+  /** [lat, lng] rounded to 3 decimals (about 100 m) for the public map; null for tap water and water tests. */
+  point: [number, number] | null;
+  /** The public page it shows on and that page's name (src/lib/sightings/place-url.ts); null where none does. */
+  placeHref: string | null;
+  placeLabel: string | null;
 }
 
 /** What the reporter sees of their own report. */

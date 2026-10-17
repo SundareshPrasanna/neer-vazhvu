@@ -1,7 +1,8 @@
 /**
  * The department channel: one private signed link per handling body. Its officers see the checked
  * reports routed to that body and mark each one. Departments are not users: the link is the only
- * credential, and what it shows is the public record (never the reporter, note, references or point).
+ * credential, and what it shows is the public record (never the reporter, note or references; the
+ * point only as the public map has it, rounded and never for tap water).
  *
  * No `server-only` import, so the pure helpers run under node:test; the database helpers load
  * serialize (server-only) lazily. The secret is a non-public env var, so nothing here works in a browser.
@@ -117,6 +118,8 @@ export interface DepartmentItem {
   readings: PublicReport["readings"];
   waterSource: string | null;
   photoUrls: string[];
+  /** The public point (PublicReport.point): rounded to about 100 m, null for tap water and water tests. */
+  point: PublicReport["point"];
   history: HistoryEntry[];
   actions: DepartmentEvent[];
 }
@@ -237,6 +240,7 @@ export async function departmentItems(admin: SupabaseClient, key: string): Promi
         readings: p.readings,
         waterSource: p.waterSource,
         photoUrls: p.photoUrls,
+        point: p.point,
         history: historyFor(eventMap.get(r.id) ?? [], key, PUBLIC_EVENTS),
         actions: actionsFor(r.case_status),
       };

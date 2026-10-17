@@ -192,7 +192,22 @@ A fixed claim from anyone but a reviewer is recorded as `fix_submitted` and does
 
 **Notifications** (`src/lib/sightings/notify.ts`, `push.ts`, `public/citizen-sw.js`, `notify-toggle.tsx`): opt-in Web Push, keyed to the reporter tag only; no email, no phone. Permission is asked only on tap; iPhone needs the site on the home screen. Notices: published, not published, someone nearby says it is still there, fixed (after the photo is checked), a fixed photo not accepted (to its sender), a department update, and a nudge after 14 days with no update from anyone. Notices are sent after the response (`after()`), never fail the action, and carry nothing personal. `POST/DELETE /api/sightings/push` saves or removes this browser's subscription (5 per reporter, push services of Google, Mozilla, Apple and Microsoft only). Signing out unsubscribes the browser; deleting the account deletes the rows. The nudge runs daily at 10:00 IST (`.github/workflows/citizen-reports-nudges.yml` calls `POST /api/cron/sightings-nudges` with `CRON_SECRET`); it only considers reporters with notifications on and sets `nudged_at` once a browser received it.
 
-**Department channel** (`src/lib/sightings/departments.ts`, `/department/[token]`, `department-app.tsx`): one department per handling body, keyed by a hash of state code and body name. Its link is `<origin>/department/<key>.<sig>` (HMAC under `SIGHTINGS_DEPARTMENT_LINK_SECRET`); the page is unlisted, noindex, no-referrer, and disallowed in `robots.ts`. It lists that body's checked reports (open first) with photos, type, place text, India date, status and history, never anything about the reporter and never the exact point; each item can be marked, and the page prints as a summary to hand over. The reviewer copies each department's link from the Departments section at `/admin/sightings` (`GET /api/sightings/department/links`). One link cannot be revoked on its own; rotating the secret replaces them all. Matching loads approved rows and resolves each in memory (fine to about 20,000 rows; store the key on the row before then).
+**Department channel** (`src/lib/sightings/departments.ts`, `/department/[token]`, `department-app.tsx`): one department per handling body, keyed by a hash of state code and body name. Its link is `<origin>/department/<key>.<sig>` (HMAC under `SIGHTINGS_DEPARTMENT_LINK_SECRET`); the page is unlisted, noindex, no-referrer, and disallowed in `robots.ts`. It lists that body's checked reports (open first) with photos, type, place text, India date, status and history, never anything about the reporter; the same rounded point as public pages, with an "Open in map" link; each item can be marked, and the page prints as a summary to hand over. The reviewer copies each department's link from the Departments section at `/admin/sightings` (`GET /api/sightings/department/links`). One link cannot be revoked on its own; rotating the secret replaces them all. Matching loads approved rows and resolves each in memory (fine to about 20,000 rows; store the key on the row before then).
+
+## Where reports appear (map layer and links)
+
+`src/lib/sightings/place-url.ts` `placeUrl(row)` gives each report's public page, carried as `placeHref` and `placeLabel` on every public report and on the submit response. The thank-you screen says "Once checked, it appears on the map for ..." and My reports links "See it on the map".
+
+| Placement | Page | Map layer |
+|---|---|---|
+| City, in a water body | `/<city>/water-bodies?layer=reports` | yes |
+| City, in a ward (cities with a ward page) | `/<city>/my-ward?ward=<n>` | no (list) |
+| District, in a gram panchayat | `/atlas/<state>/<district>/panchayats/<lgd>` | no (list) |
+| District, elsewhere | `/atlas/<state>/<district>` | no (list) |
+| Basin hosted by a city's rivers page (e.g. Arkavathi on Bengaluru's) | `/<city>/rivers?basin=<id>&layer=reports`, which opens the deep dive | yes |
+| Other basin | `/embed/basins/<id>?layer=reports` | yes |
+
+`src/components/sightings/citizen-reports-layer.tsx` is one generic Leaflet layer, used by the basin atlas (a "Citizen reports" row in its Layers list, with legend rows and a PDF legend entry) and the water-bodies map (a toggle in its layers card). It is off by default and on with `?layer=reports`. It reads `GET /api/sightings?bbox=w,s,e,n` for the view (up to 500 newest published reports with a point; nothing when the view is over 12 degrees) and draws one dot per report in its group's colour; a dot opens the photo, type, place, date, status and "Seen it lately?".
 
 ## 4. Data model
 
@@ -257,7 +272,7 @@ The `fixed` event moves the status at once; its photo waits in the private bucke
 | id, place name, type label, case status, readings with BIS assessment, water source label, handler | yes | yes | yes |
 | Dates | IST date only (`YYYY-MM-DD`) | full timestamps | full timestamps |
 | `where` text | water body and ward, GP or locality; private categories: ward, GP or locality only | water body and unit | as own |
-| Exact point | no | yes | yes |
+| Point | rounded to 3 decimals (about 100 m); none for private categories | exact | exact |
 | Photos | published only | published, plus 1-hour signed URLs for unpublished | all, with kind and published flag |
 | Events | `approved`, `reported`, `authority_done`, `fixed`, `still_there`, `closed`, `reopened`; date only; authority body blanked | all events, with the authority body | as own |
 | Reference numbers, reject reason, national channels | no | yes | yes |
@@ -287,7 +302,7 @@ The reporter cannot see their own note; `OwnReport` has no note field.
 
 **Around the report.** Blurring (`photo-blur.tsx`) happens on the phone, so the unblurred image is never uploaded. Place search goes through `/api/sightings/search`, so Nominatim sees the server, never the device; queries are cached in memory per instance (cleared past 500) and not logged by the module. The calendar reminder is built in the browser. The review-queue workflow posts counts and the oldest item's wait in whole days to a public GitHub issue once a day, never an id, place, type, photo or hour.
 
-**Public output omits** the tag, the point and its accuracy, the note, the time of day, reference numbers, the reporter-typed authority body, EXIF, the candidate label, and every report not approved. No category's public output carries a point; a private category (`private: true` in `taxonomy.ts`, today only "Tap & drinking water") also drops the water body name from `where`, leaving the ward, GP or basin locality, or nothing.
+**Public output omits** the tag, the exact point and its accuracy, the note, the time of day, reference numbers, the reporter-typed authority body, EXIF, the candidate label, and every report not approved. Public output carries the point rounded to 3 decimals (about 100 m), so reports can sit on a map; a private category (`private: true` in `taxonomy.ts`, today only "Tap & drinking water") gets no point at all and also drops the water body name from `where`, leaving the ward, GP or basin locality, or nothing.
 
 Photo file names are random, so a public photo URL carries no upload time. `GET /api/sightings?body=` leaves out private categories, so a tap-water report is never listed under the water body its point fell in.
 
@@ -438,7 +453,7 @@ All routes run on the Node runtime. "User" means a valid Supabase bearer token; 
 | Route | Method | Auth | Input | Output | Errors |
 |---|---|---|---|---|---|
 | `/api/sightings` | POST | user | multipart: `photos` (1-3), `lat`, `lng`, `accuracy?`, `category`, `subcategory` (none for `other`), `note` (required for `other`), `waterSource` (drinking only; required with readings), `reading.<key>` (`water_test`: at least one), `takenAt?`, `photoLat?`, `photoLng?` | `{ data: { id, placeName, role, handler, national, readings } }` | 400 validation or photo; 409 duplicate photo; 422 outside; 429 caps |
-| `/api/sightings` | GET | none | `place` (required, `[a-z0-9-]{2,40}`), `body?`, `ward?`, `panchayat?` | `{ data: PublicReport[] }`: newest 50 approved; `Cache-Control: public, s-maxage=60, stale-while-revalidate=300`; `{ data: [] }` when off | 400 invalid place |
+| `/api/sightings` | GET | none | `place` (`[a-z0-9-]{2,40}`) with `body?`, `ward?`, `panchayat?`; or `bbox=w,s,e,n` (inside India, at most 12 degrees a side; private categories left out) | `{ data: PublicReport[] }`: newest 50 approved; `Cache-Control: public, s-maxage=60, stale-while-revalidate=300`; `{ data: [] }` when off | 400 invalid place |
 | `/api/sightings/locate` | GET | user | `lat`, `lng`; or `place` with optional `ward`, `body`, `panchayat` | point: `{ data: { placeName, where } }` or `{ data: null }` (outside); place: `{ data: { lat, lng, zoom } }` or `{ data: null }` | 400 invalid location (point mode) |
 | `/api/sightings/search` | GET | user | `q` (trimmed, at most 120 characters) | `{ data: [{ name, lat, lng }] }`, at most 5; empty under 3 characters | 502 search failed |
 | `/api/sightings/mine` | GET | user | none | `{ data: OwnReport[] (newest 100), reviewer: boolean }` | |
@@ -559,7 +574,7 @@ Setup: `.env.local` with every variable in section 2, the tester's auth user id 
 4. **Basins have no contract check.** Several roles resolve to no body (section 10), so those reports show national channels only.
 5. **Basin tank ids such as `KA06LH0006 ( NRLD 2019)`** fail the `body` parameter's pattern (`[A-Za-z0-9:_-]{1,40}`). No UI queries basins by body today.
 6. **Suspension can be shed** by deleting the account and signing in again.
-7. **Departments and the exact point:** departments see the ward, water body or village text only. Adding the point (non-private categories only, with a map link) also needs the /for-citizens privacy text updated.
+7. **Reports that appear on no public page:** tap-water reports in cities without a ward page (Mumbai, Hyderabad, Kolkata, Gurugram, Pune, Surat, Visakhapatnam), and reports placed in an overview basin (the whole Cauvery), which has neither the list nor the layer. `placeUrl` returns null for them.
 8. **The reporter cannot see their own note** (`toOwn` omits it).
 9. **Not checked from the code:** whether anonymous sign-in is off in Supabase Auth; whether `VERCEL_AUTOMATION_BYPASS_SECRET` is set for Preview; whether `capture="environment"` opens the camera under `camera=()` on iOS Safari and Android Chrome; whether sharp on Vercel decodes HEIC (the browser's JPEG re-encode usually makes this moot); how often phone browsers strip GPS from gallery photos. Migration 062 and the buckets were applied and verified in production on 16 Oct 2026, Google sign-in is configured, and the workflow's `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` repository secrets exist.
 10. **`.env.example`** lacks the flag and the `SIGHTINGS_*` variables.

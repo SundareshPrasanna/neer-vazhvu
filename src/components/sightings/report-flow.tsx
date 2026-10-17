@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import {
   AlertTriangle, ArrowLeft, ArrowRight, Camera, Check, CheckCircle2, CloudRain, Construction, Droplets, EyeOff, GlassWater, ImageIcon, ImagePlus,
   Loader2, LocateFixed, Lock, MapPin, MessageCircle, Plus, Search, Send, Sprout, Trash2, Waves, Wrench, X,
@@ -46,6 +47,8 @@ type Place = { key: string; name?: string; outside?: boolean; failed?: boolean }
 interface Sent {
   id: string;
   placeName: string;
+  placeHref: string | null;
+  placeLabel: string | null;
   handler: Handler | null;
   national: Channel[];
   readings: PublicReport["readings"];
@@ -368,6 +371,15 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
             We check every report before it appears on the {sent.placeName} pages, usually within {REVIEW_WITHIN_DAYS} days. Follow it, and
             keep its status up to date, under My reports.
           </p>
+          {sent.placeHref && sent.placeLabel && (
+            <p className={`max-w-[48ch] text-lg leading-relaxed ${muted}`}>
+              Once checked, it appears {sent.placeHref.includes("layer=reports") ? "on the map" : "in the list"} for{" "}
+              <Link href={sent.placeHref} className={link}>
+                {sent.placeLabel}
+              </Link>
+              .
+            </p>
+          )}
           {sent.readings.length > 0 && <Readings readings={sent.readings} />}
           {routed && <ReminderLink />}
           <NotifyToggle authFetch={authFetch} />

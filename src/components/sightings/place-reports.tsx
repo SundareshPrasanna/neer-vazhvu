@@ -11,7 +11,7 @@ import { btn, fileFocus, link, muted, rule } from "./ui";
 import { shrinkPhoto, useCitizen } from "./use-citizen";
 
 /** Anyone who has seen the spot lately can keep the record honest: still there, or gone (with a photo, checked first). */
-function SeenLately({ report, citizen }: { report: PublicReport; citizen: ReturnType<typeof useCitizen> }) {
+export function SeenLately({ report, citizen }: { report: PublicReport; citizen: ReturnType<typeof useCitizen> }) {
   const [state, setState] = useState<"idle" | "busy" | "still" | "gone">("idle");
   const [error, setError] = useState<string | null>(null);
   if (!report.caseStatus || !OPEN_STATUSES.has(report.caseStatus)) return null;

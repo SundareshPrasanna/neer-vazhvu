@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const PROMISES: [string, string][] = [
   [
     "Nobody can see who sent a report",
-    "Public pages show the photo, what it shows, the place and the date. Never your name, email or Google account, never your notes, and never the time of day.",
+    "Public pages show the photo, what it shows, the place and the date, and maps show the report within about 100 m of where it was sent. Never your name, email or Google account, never your notes, and never the time of day.",
   ],
   ["Your home stays private", "Tap-water reports and water test results show only the ward or village, never the point on the map."],
   [
@@ -88,7 +88,7 @@ const GUIDE: [string, React.ReactNode][] = [
         We check it, usually within {REVIEW_WITHIN_DAYS} days. Reports that identify people, or are not about water at a place, are not
         published.
       </li>
-      <li>It goes on the public record for that ward, water body or village.</li>
+      <li>It goes on the public record for its place: in the list and, within about 100 m, on the map.</li>
       <li>You decide whether to file. The department will know it was you, since most ask for your mobile number. Your report here stays anonymous either way.</li>
       <li>
         If you file, save the reference number (you can do it straight after sending) and update the status as things move: reported, done
@@ -101,6 +101,14 @@ const GUIDE: [string, React.ReactNode][] = [
         changes.
       </li>
     </ol>,
+  ],
+  [
+    "Where you will see your report",
+    <p key="where">
+      On the page for its place: a lake&rsquo;s panel on the water bodies map, your ward&rsquo;s page, the village or district page, or the
+      river basin&rsquo;s map, where a Citizen reports layer shows every published report. The confirmation after sending, and My reports,
+      link straight to it. Tap-water reports and water tests show at ward or village level only, never on the map.
+    </p>,
   ],
   [
     "Why we do not file complaints for you",
