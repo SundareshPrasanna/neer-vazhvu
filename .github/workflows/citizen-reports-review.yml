@@ -1,0 +1,90 @@
+name: Citizen reports waiting for review
+
+# Tells the reviewer when citizen reports (or "fixed" photos) are waiting in
+# /admin/sightings. One issue, assigned to the repository owner so GitHub
+# notifies them: opened when the queue fills, a comment when new reports
+# arrive, closed when it is empty.
+#
+# This repository is public, so the issue carries counts and whole days only:
+# never a report's id, place, type or photo. Once a day, because a public
+# hourly signal would date a report to its hour, and reporters are promised
+# that the time of day is never shown.
+
+on:
+  schedule:
+    - cron: '30 3 * * *'   # 09:00 IST daily
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  queue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the review queue
+        uses: actions/github-script@v7
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        with:
+          script: |
+            const TITLE = 'Citizen reports waiting for review';
+            const { owner, repo } = context.repo;
+            const base = process.env.SUPABASE_URL;
+            const key = process.env.SUPABASE_SERVICE_KEY;
+
+            // Count rows (and the oldest created_at) through PostgREST, without reading any row's content.
+            async function count(table, filter, since) {
+              const q = `${filter}${since ? `&created_at=gt.${encodeURIComponent(since)}` : ''}`;
+              const res = await fetch(`${base}/rest/v1/${table}?select=created_at&${q}&order=created_at.asc&limit=1`, {
+                headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact' },
+              });
+              if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
+              const rows = await res.json();
+              return { n: Number((res.headers.get('content-range') ?? '*/0').split('/')[1]) || 0, oldest: rows[0]?.created_at ?? null };
+            }
+            const REPORTS = 'review_status=eq.received';
+            const FIXED = 'kind=eq.fixed&public_path=is.null';
+
+            const open = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', labels: 'citizen-reports', per_page: 100 });
+            const existing = open.find((i) => i.title === TITLE);
+
+            const [reports, fixed] = await Promise.all([count('sightings', REPORTS), count('sighting_photos', FIXED)]);
+            const total = reports.n + fixed.n;
+            core.info(`waiting: ${reports.n} reports, ${fixed.n} fixed photos`);
+
+            if (total === 0) {
+              if (existing) await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: 'closed', state_reason: 'completed' });
+              return;
+            }
+
+            const oldest = [reports.oldest, fixed.oldest].filter(Boolean).sort()[0];
+            const days = Math.floor((Date.now() - new Date(oldest).getTime()) / 86_400_000);
+            const waited = days === 0 ? 'The oldest arrived in the last day.' : `The oldest has waited ${days} day${days === 1 ? '' : 's'}.`;
+            const parts = [reports.n && `${reports.n} report${reports.n === 1 ? '' : 's'}`, fixed.n && `${fixed.n} fixed photo${fixed.n === 1 ? '' : 's'}`].filter(Boolean);
+            const body = [
+              `**${parts.join(' and ')}** waiting for review. ${waited}`,
+              '',
+              'Review them at https://neervazhvu.org/admin/sightings',
+              '',
+              `Last checked ${new Date().toISOString().slice(0, 10)}. This issue is rewritten every morning at 09:00 IST`,
+              'and closes itself when the queue is empty.',
+              'A comment here means new reports have arrived. Counts only: the repository is public.',
+            ].join('\n');
+
+            if (!existing) {
+              await github.rest.issues.create({ owner, repo, title: TITLE, body, labels: ['citizen-reports'], assignees: [owner] });
+              return;
+            }
+            // New since the last run: the body is rewritten every run (its date line changes daily), so its update time marks the last check.
+            const since = existing.updated_at;
+            const [newReports, newFixed] = await Promise.all([count('sightings', REPORTS, since), count('sighting_photos', FIXED, since)]);
+            await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+            const fresh = newReports.n + newFixed.n;
+            if (fresh > 0) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: existing.number,
+                body: `${fresh} new since yesterday's check; ${total} waiting in all. https://neervazhvu.org/admin/sightings`,
+              });
+            }

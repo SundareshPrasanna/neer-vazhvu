@@ -1,5 +1,6 @@
 import type { Channel } from "./routing/types";
-import type { CaseStatus, ReviewStatus } from "./status";
+import type { ActorRole, CaseStatus, ReviewStatus } from "./status";
+import type { TestMeta } from "./test-meta";
 
 export type PlaceKind = "city" | "district" | "basin";
 
@@ -30,6 +31,7 @@ export interface SightingRow {
   note: string | null;
   readings: Record<string, number> | null;
   water_source: string | null;
+  test_meta: TestMeta | null;
   candidate_label: string | null;
   authority_role: string | null;
   review_status: ReviewStatus;
@@ -52,7 +54,7 @@ export interface PhotoRow {
 export interface EventRow {
   sighting_id: string;
   created_at: string;
-  actor_role: "reporter" | "reviewer" | "system";
+  actor_role: ActorRole;
   event: string;
   authority_body: string | null;
   reference: string | null;
@@ -82,9 +84,17 @@ export interface PublicReport {
   /** Resident's own test results, each with how it sits against BIS limits. */
   readings: { text: string; assessment: string | null }[];
   waterSource: string | null;
+  /** How the test was done, as one public line; null without readings or details. */
+  test: string | null;
   photoUrls: string[];
-  events: { event: string; at: string; authorityBody: string | null }[];
+  /** `by` says who recorded it: the reporter, another resident, the handling department or our reviewer. */
+  events: { event: string; at: string; authorityBody: string | null; by: ActorRole }[];
   handler: Handler | null;
+  /** [lat, lng] rounded to 3 decimals (about 100 m) for the public map; null for tap water and water tests. */
+  point: [number, number] | null;
+  /** The public page it shows on and that page's name (src/lib/sightings/place-url.ts); null where none does. */
+  placeHref: string | null;
+  placeLabel: string | null;
 }
 
 /** What the reporter sees of their own report. */
@@ -95,4 +105,6 @@ export interface OwnReport extends PublicReport {
   rejectReason: string | null;
   references: { authorityBody: string | null; reference: string; at: string }[];
   nationalChannels: Channel[];
+  /** The full test details, for the reporter's own list and download. */
+  testMeta: TestMeta | null;
 }

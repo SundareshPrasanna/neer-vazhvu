@@ -1,0 +1,20 @@
+name: Citizen reports two-week nudges
+
+# Asks the app to send one browser notice to each reporter (notifications on)
+# whose published, open reports have had no update for two weeks. The app
+# picks who and what; this run sees counts only.
+
+on:
+  schedule:
+    - cron: '30 4 * * *'   # 10:00 IST daily
+  workflow_dispatch:
+
+jobs:
+  nudge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the nudges
+        run: |
+          curl -X POST "${{ secrets.APP_URL }}/api/cron/sightings-nudges" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --fail --silent --show-error --max-time 120

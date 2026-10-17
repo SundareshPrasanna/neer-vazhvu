@@ -79,6 +79,7 @@ export async function DELETE(request: NextRequest) {
       if (up.error) throw up.error;
     }
     await admin.from("sighting_reporters").delete().eq("reporter_key", key);
+    await admin.from("sighting_push_subscriptions").delete().eq("reporter_key", key);
     const { error } = await admin.auth.admin.deleteUser(user.id);
     if (error) throw error;
     return NextResponse.json({ data: { deleted: gone.length } });

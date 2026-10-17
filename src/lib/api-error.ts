@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 
 export function logRouteError(route: string, error: unknown) {
-  const message = error instanceof Error ? error.message : String(error);
+  // Supabase errors are plain objects with a code and message.
+  const e = error as { code?: string; message?: string } | null;
+  const message = error instanceof Error ? error.message : e?.message ? `${e.code ?? ""} ${e.message}`.trim() : String(error);
   console.error(`[${route}] ${message}`);
 }
 

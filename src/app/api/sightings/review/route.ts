@@ -1,8 +1,10 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reporterKey, requireReviewer } from "@/lib/sightings/auth";
+import { notifyReporter } from "@/lib/sightings/notify";
 import { INTAKE_BUCKET, deletePhotos, publicPhotoUrl, publishPhotos } from "@/lib/sightings/photos";
+import { nextCaseStatus } from "@/lib/sightings/status";
 import { byId, toOwn } from "@/lib/sightings/serialize";
 import { OTHER_KEY, isValidReport, roleFor } from "@/lib/sightings/taxonomy";
 import type { EventRow, PhotoRow, SightingRow } from "@/lib/sightings/types";
@@ -125,7 +127,11 @@ export async function POST(request: NextRequest) {
         if (!isValidReport(category, subcategory)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
         if (category !== row.category || subcategory !== row.subcategory) await event(id, "reclassified", { category, subcategory });
         await publishPhotos(await photosOf(id, "report"));
-        const role = roleFor(category, subcategory);
+        // A reclassified report takes its new type's body; otherwise the one it was sent with (a piped test over a limit has one).
+        const role = category === row.category && subcategory === row.subcategory ? row.authority_role : roleFor(category, subcategory);
+        const filed = role
+          ? (await admin.from("sighting_events").select("id", { count: "exact", head: true }).eq("sighting_id", id).eq("event", "reported")).count
+          : 0;
         const up = await admin
           .from("sightings")
           .update({
@@ -134,14 +140,15 @@ export async function POST(request: NextRequest) {
             authority_role: role,
             candidate_label: category === OTHER_KEY ? clip(body.candidateLabel, 80) : null,
             review_status: "approved",
-            // Only reports a body handles have a status to follow.
-            case_status: role ? "open" : null,
+            // Only reports a body handles have a status to follow; one filed while being checked starts as reported.
+            case_status: role ? (filed ? "reported" : "open") : null,
             ...reviewed,
           })
           .eq("id", id);
         if (up.error) throw up.error;
         await event(id, "approved");
         await admin.from("sighting_reporters").update({ trusted: true }).eq("reporter_key", row.reporter_key);
+        after(() => notifyReporter(row.reporter_key, { title: "Your report is published", body: "It is now on the public record for its place.", url: "/for-citizens" }));
         break;
       }
       case "reject": {
@@ -149,14 +156,27 @@ export async function POST(request: NextRequest) {
         await deletePhotos(await photosOf(id));
         await admin.from("sightings").update({ review_status: "rejected", note: null, ...reviewed }).eq("id", id);
         await event(id, "rejected");
+        after(() => notifyReporter(row.reporter_key, { title: "Your report was not published", body: "Open My reports to see why.", url: "/for-citizens" }));
         break;
       }
-      case "publish_fixed":
+      // A fixed claim, from the reporter or anyone nearby, moves the status only once its photo is checked.
+      case "publish_fixed": {
         await publishPhotos((await photosOf(id, "fixed")).filter((p) => !p.public_path));
+        const next = nextCaseStatus("fixed", row.case_status);
+        if (next) {
+          await admin.from("sightings").update({ case_status: next, updated_at: new Date().toISOString() }).eq("id", id);
+          await event(id, "fixed");
+          after(() => notifyReporter(row.reporter_key, { title: "One of your reports is fixed", body: "A checked photo shows the spot now. The record says Fixed.", url: "/for-citizens" }));
+        }
         break;
-      case "discard_fixed":
+      }
+      case "discard_fixed": {
         await deletePhotos((await photosOf(id, "fixed")).filter((p) => !p.public_path));
+        await event(id, "fix_rejected");
+        const sent = (await admin.from("sighting_events").select("actor_key").eq("sighting_id", id).eq("event", "fix_submitted").order("created_at", { ascending: false }).limit(1)).data?.[0];
+        if (sent?.actor_key) after(() => notifyReporter(sent.actor_key, { title: "Your fixed photo was not accepted", body: "The report stays as it was. You can send another photo of the spot.", url: "/for-citizens" }));
         break;
+      }
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }

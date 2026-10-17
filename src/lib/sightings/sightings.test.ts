@@ -115,7 +115,7 @@ test("a water test needs at least one in-range result and its source", () => {
   assert.equal(parseSubmit(form({ waterSource: "borewell" })).ok, false);
   assert.equal(parseSubmit(form({ "reading.tds": "640" })).ok, false, "source required");
   assert.equal(parseSubmit(form({ "reading.tds": "99999", waterSource: "borewell" })).ok, false);
-  const ok = parseSubmit(form({ "reading.tds": "640", "reading.fluoride": "1.2", waterSource: "borewell" }));
+  const ok = parseSubmit(form({ "reading.tds": "640", "reading.fluoride": "1.2", waterSource: "borewell", "test.instrument": "meter", "test.filtered": "raw" }));
   assert.ok(ok.ok && ok.value.readings?.tds === 640 && ok.value.readings?.fluoride === 1.2 && ok.value.waterSource === "borewell");
 });
 

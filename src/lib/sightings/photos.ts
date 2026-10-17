@@ -36,7 +36,8 @@ export async function processPhoto(file: File): Promise<ProcessedPhoto | { error
 
   const exif = { capturedAt: null as string | null, lat: null as number | null, lng: null as number | null };
   try {
-    const tags = await exifr.parse(raw, { gps: true, pick: ["DateTimeOriginal", "CreateDate", "latitude", "longitude"] });
+    // No `pick`: exifr derives latitude/longitude only when it reads the whole GPS block.
+    const tags = await exifr.parse(raw, { gps: true });
     const when = tags?.DateTimeOriginal ?? tags?.CreateDate;
     if (when instanceof Date && !Number.isNaN(when.getTime())) exif.capturedAt = when.toISOString();
     if (typeof tags?.latitude === "number" && typeof tags?.longitude === "number") [exif.lat, exif.lng] = [tags.latitude, tags.longitude];
@@ -80,12 +81,12 @@ export async function storePhotos(
     processed.push(p);
   }
   const admin = adminClient();
-  const stamp = Date.now().toString(36);
+  // Random names, not timestamps: a public photo URL must not carry the time of day.
   const rows = processed.map((p, i) => ({
     sighting_id: sightingId,
     reporter_key: reporterKey,
     kind,
-    storage_path: `${placeId}/${sightingId}/${kind}-${stamp}-${i}.webp`,
+    storage_path: `${placeId}/${sightingId}/${kind}-${crypto.randomUUID()}.webp`,
     sha256: p.sha256,
     bytes: p.bytes,
     width: p.width,
