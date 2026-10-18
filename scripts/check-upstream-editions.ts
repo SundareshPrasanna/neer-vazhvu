@@ -9,6 +9,8 @@
  *   --check                     fetch + compare vs lastSeen -> editions-report.md
  *   --accept <id> [--edition <label>] | --accept-all
  *                               re-fetch and record lastSeen (also baselines)
+ *   --check-blocked             the local job's pass over ciBlocked sources:
+ *                               re-accept the unchanged, report the rest
  */
 
 import { createHash } from "crypto";
@@ -57,6 +59,8 @@ const BROWSER_UA =
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_STORED_LINKS = 500;
 const LOCAL_CHECK_MAX_AGE_DAYS = 90;
+// Methods whose "ok" proves nothing was observed, so --check-blocked must never re-accept them.
+const NOT_FETCHED = ["human-review", "term-expiry", "continuous"];
 
 /* ── Registry types ────────────────────────────────────────────────────── */
 
@@ -726,7 +730,7 @@ function compare(e: SourceEntry, obs: Observed): CheckResult {
       observed: obs,
     };
   }
-  if (m === "api-date") {
+  if (m === "api-date" || m === "url-template") {  // url-template observes "<year> <url>" in apiDate
     const changed = obs.apiDate !== last.apiDate;
     return {
       entry: e,
@@ -848,11 +852,13 @@ function persist(byFile: Map<string, RegistryFile>) {
   for (const [path, reg] of byFile) writeFileSync(path, JSON.stringify(reg, null, 2) + "\n");
 }
 
-async function accept(ids: string[] | "all", editionLabel: string | undefined) {
+async function accept(ids: string[] | "all" | "blocked", editionLabel: string | undefined) {
   const { entries, byFile } = loadRegistry();
   const targets =
-    ids === "all" ? entries : entries.filter((e) => (ids as string[]).includes(e.id));
-  if (ids !== "all") {
+    ids === "all" ? entries
+    : ids === "blocked" ? entries.filter((e) => e.ciBlocked && !NOT_FETCHED.includes(e.detection.method))
+    : entries.filter((e) => ids.includes(e.id));
+  if (Array.isArray(ids)) {
     const missing = (ids as string[]).filter((id) => !entries.some((e) => e.id === id));
     if (missing.length) {
       console.error(`Unknown source id(s): ${missing.join(", ")}`);
@@ -864,6 +870,12 @@ async function accept(ids: string[] | "all", editionLabel: string | undefined) {
   for (const e of targets) {
     try {
       const obs = await observe(e);
+      const r = ids === "blocked" ? compare(e, obs) : null;
+      if (r && r.state !== "ok") {  // a new edition, or anything unexpected, waits for a person
+        failures++;
+        console.error(`${r.state.toUpperCase()} ${e.id}: ${r.detail}`);
+        continue;
+      }
       e.lastSeen = {
         ...obs,
         edition: editionLabel ?? e.lastSeen?.edition,
@@ -938,6 +950,7 @@ async function main() {
   }
 
   if (flag("--accept-all")) return accept("all", valueOf("--edition"));
+  if (flag("--check-blocked")) return accept("blocked", undefined);
   if (flag("--accept")) {
     const id = valueOf("--accept");
     if (!id) {
@@ -949,7 +962,7 @@ async function main() {
 
   if (!flag("--check")) {
     console.error(
-      "Usage: check-upstream-editions.ts --validate | --check | --accept <id> [--edition <label>] | --accept-all",
+      "Usage: check-upstream-editions.ts --validate | --check | --accept <id> [--edition <label>] | --accept-all | --check-blocked",
     );
     process.exit(2);
   }
