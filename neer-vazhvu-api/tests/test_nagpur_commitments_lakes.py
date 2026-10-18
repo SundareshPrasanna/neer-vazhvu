@@ -1,5 +1,8 @@
 """Nagpur commitments register and lake-restoration files against their consumers.
 
+The commitments rows are src/cities/nagpur/commitments.json, built by
+build_commitments.py (which runs the shared checks); these tests add Nagpur's own.
+
 The commitments page (commitments-client.tsx) and the lake-restoration page
 (lake-restoration-content.tsx) read these fields without guards; React keys are
 the commitment id, the flagship name, the project scheme_name and the court
@@ -15,8 +18,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "neer-vazhvu-api" / "scripts"))
 
-import build_nagpur_commitments as bc  # noqa: E402
+import build_commitments as engine  # noqa: E402
 import build_nagpur_lakes as bl  # noqa: E402
+
+SPEC = json.loads((ROOT / "src/cities/nagpur/commitments.json").read_text())
+COMMITMENTS = SPEC["payload"]["commitments"]
+# Government Resolutions whose official PDF did not open on 15 October 2026, so
+# the row links the orgpedia mahGRs archive copy.
+MIRROR_CODES = {
+    "202211021115299425",  # Naik lake, AMRUT 2.0
+    "202211021157345625",  # Lendi lake, AMRUT 2.0
+    "202303061239587125",  # AMRUT 2.0 water distribution
+    "202304061347581325",  # AMRUT 1.0 pipeline replacement
+    "202304201803571027",  # Kolar-Kanhan barrage DPR, Rohana
+}
 
 STATUSES = {"delivered", "on-track", "slipped", "overdue", "stalled", "unverified"}
 DATE = re.compile(r"^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$")
@@ -26,9 +41,9 @@ BANNED = re.compile(r"\b(still|failed|lapsed|awaiting|workbook|drop)\b", re.I)
 
 
 def test_commitment_rows_match_the_page():
-    ids = [c["id"] for c in bc.COMMITMENTS]
+    ids = [c["id"] for c in COMMITMENTS]
     assert len(ids) == len(set(ids))
-    for c in bc.COMMITMENTS:
+    for c in COMMITMENTS:
         for key in ("category", "title", "committed_by", "what"):
             assert isinstance(c[key], str) and c[key], (c["id"], key)
         assert c["status"] in STATUSES
@@ -52,7 +67,7 @@ def test_commitment_rows_match_the_page():
 
 
 def test_statuses_follow_the_dates():
-    for c in bc.COMMITMENTS:
+    for c in COMMITMENTS:
         if c["status"] == "slipped":
             assert c["revised_due"], c["id"]
         if c["status"] == "overdue":
@@ -60,7 +75,7 @@ def test_statuses_follow_the_dates():
 
 
 def test_ids_linked_from_the_allocation_ledger_exist():
-    ids = {c["id"] for c in bc.COMMITMENTS}
+    ids = {c["id"] for c in COMMITMENTS}
     for linked in (
         "ngp-lohghogari-diversion",
         "ngp-rohana-reduce-78",
@@ -70,16 +85,14 @@ def test_ids_linked_from_the_allocation_ledger_exist():
     ledger = ROOT / "public" / "data" / "allocations-nagpur.json"
     if ledger.exists():
         arrangements = {a["id"] for a in json.loads(ledger.read_text())["arrangements"]}
-        for c in bc.COMMITMENTS:
+        for c in COMMITMENTS:
             if c.get("ledger_id"):
                 assert c["ledger_id"] in arrangements, c["id"]
 
 
 def test_mirror_text_grs_are_flagged_and_linked():
-    flagged = [
-        c for c in bc.COMMITMENTS if c["commitment_source"].get("text_via_mirror")
-    ]
-    assert {c["commitment_source"]["gr_code"] for c in flagged} <= set(bc.MIRROR_CODES)
+    flagged = [c for c in COMMITMENTS if c["commitment_source"].get("text_via_mirror")]
+    assert {c["commitment_source"]["gr_code"] for c in flagged} <= MIRROR_CODES
     for c in flagged:
         cs = c["commitment_source"]
         assert "archive copy" in cs["label"] and cs["gr_code"] in cs["label"]
@@ -90,7 +103,8 @@ def test_mirror_text_grs_are_flagged_and_linked():
 
 
 def test_producer_invariants_hold():
-    bc.check()
+    problems, _ = engine.check("nagpur", SPEC, "2026-10-15")
+    assert problems == []
 
 
 def test_lake_files_match_the_page():
@@ -124,7 +138,7 @@ def test_ambazari_is_placed_in_the_city_not_at_nrld_coordinates():
 def test_page_text_is_plain():
     page = json.loads((ROOT / "public/data/commitments-nagpur.json").read_text())
     texts = [
-        json.dumps(bc.COMMITMENTS),
+        json.dumps(COMMITMENTS),
         json.dumps([bl.bodies(), bl.projects(), bl.court_orders()]),
         json.dumps([page[k] for k in ("headline", "intro", "status_legend")]),
     ]

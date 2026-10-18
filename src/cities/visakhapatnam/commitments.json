@@ -1,0 +1,791 @@
+{
+  "_doc": "Commitments for /visakhapatnam/commitments. Edit rows under payload.commitments and set payload.updated, then run: python3 neer-vazhvu-api/scripts/build_commitments.py --city visakhapatnam. The status rule and the checks are in that script's docstring.",
+  "build": {
+    "indent": 1,
+    "trailingNewline": false,
+    "envelope": {
+      "dataset": "data-root/commitments",
+      "scope": {
+        "kind": "city",
+        "id": "visakhapatnam"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "id": "ngt-andhra-filings",
+            "title": "GVMC, Government of AP and court records filed with the NGT",
+            "publisher": "National Green Tribunal"
+          },
+          {
+            "id": "mohua-amrut-status-ap",
+            "title": "AMRUT 2.0 status lists (AP, 05-03-2026; GVMC live list)",
+            "publisher": "Ministry of Housing and Urban Affairs"
+          },
+          {
+            "id": "gvmc-whats-new",
+            "title": "Draft Visakhapatnam Green City Action Plan (IFC for GVMC, dated Sept 2024), posted by GVMC for comment on 19 Oct 2024",
+            "publisher": "Greater Visakhapatnam Municipal Corporation"
+          }
+        ],
+        "method": "manual",
+        "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_commitments.py",
+        "note": "Each commitment cites a dated official record: GVMC's and the state's own filings to the NGT, APPCB's reports to it, the AP High Court's orders recording GVMC's dates, or MoHUA's AMRUT 2.0 lists. The draft Green City Action Plan GVMC posted for public comment on 19 Oct 2024 is cited only for context and dated status records; a draft is not a commitment, so its 2034 water-loss target has no row. AMRUT milestones checked against MoHUA's live list on 2026-10-14."
+      }
+    }
+  },
+  "payload": {
+    "place_id": "visakhapatnam",
+    "updated": "2026-10-15",
+    "headline": "What Visakhapatnam has promised about its water and sewage, and by when",
+    "intro": "Most of the city's dated promises are about sewage: how much of the city is connected, how much is treated, and when the rest will be. They come from GVMC's and the state's own filings to the National Green Tribunal, the AP High Court's orders, and the national AMRUT 2.0 project lists. Where several documents date the same work, it has one row and every date is in its history. From the AMRUT 2.0 list the register carries every GVMC project of Rs 10 crore or more, and every project past its scheduled date that is not marked complete.",
+    "status_legend": {
+      "delivered": "The promised thing verifiably happened, even if late. The dates show how late.",
+      "on-track": "The stated date has not passed and a dated progress figure for the work is consistent with it.",
+      "slipped": "The institution itself has moved the date and the latest date has not passed. Old and new dates are both shown.",
+      "overdue": "The latest stated date, original or revised, has passed and we have not found a dated record of completion.",
+      "stalled": "Work or approvals have stopped, by the institution's own account or a court's.",
+      "unverified": "We can cite the promise but cannot yet cite its current status either way."
+    },
+    "update_model": "History is kept, never overwritten. A status changes only against a dated citation.",
+    "sources_note": "GVMC's own notes, affidavits and reports to the National Green Tribunal and the High Court's committee (2021 to 2025), the Government of Andhra Pradesh's compliance affidavit (February 2026) and its monthly progress report for February 2024, APPCB's report to the Tribunal of 27 April 2026, the AP High Court's orders of 12 November 2025 and 11 March 2026, and MoHUA's AMRUT 2.0 lists. The draft Green City Action Plan (IFC for GVMC), posted by GVMC for comment on 19 Oct 2024, is cited for context only. Press reports are not used.",
+    "commitments": [
+      {
+        "id": "gvmc-ugd-362cr",
+        "category": "Sewerage",
+        "title": "Pendurthi underground drainage network",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation",
+        "what": "Complete the underground drainage network for the Pendurthi area (Zone VIII), which GVMC put at Rs 362 crore in its 2021 filings to the National Green Tribunal. GVMC's notes of November 2023 and December 2025 give the Pendurthi package as Rs 412 crore, and the draft Green City Action Plan (p78) describes that Rs 412 crore as a 226 km network and a 46 MLD tertiary treatment plant with 15 years of upkeep; we have not found a document that reconciles the two figures. The new Narava plant this network feeds and the state's target for sewer connections in Gajuwaka and Pendurthi by FY 2028-29 are separate rows.",
+        "due": "2021-10",
+        "commitment_source": {
+          "label": "GVMC action-taken report, NGT OA 14/2021 (SZ), enclosing a supply sheet dated 12-03-2021",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf",
+          "date": "2021-03"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2021-03",
+            "status": "on-track",
+            "note": "Physical progress 60%; 'expected to be completed by the end of October 2021' (PDF p3).",
+            "source_label": "GVMC action-taken report, NGT OA 14/2021 (SZ), enclosing a supply sheet dated 12-03-2021",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+          },
+          {
+            "date": "2021-10",
+            "status": "slipped",
+            "note": "Physical progress 73%; 'expected to be completed by the end of August 2022' (PDF p3).",
+            "source_label": "GVMC report signed by the SE Water Supply, NGT OA 14/2021 (SZ), filed after 22-10-2021",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/142021.pdf"
+          },
+          {
+            "date": "2023-11-27",
+            "status": "slipped",
+            "note": "Package-I, 226 km, Rs 412 crore: '93% completed', probable completion 'Dec 2024' in the note's table (PDF p42); its text says 'about 93% completed (with target completion of May'2024)' (PDF p41).",
+            "source_label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf"
+          },
+          {
+            "date": "2024-03-27",
+            "status": "slipped",
+            "note": "Pendurthi (Zone VIII) sewer network: 190 of 226 km laid; probable completion 'May'2024' (PDF p5).",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2025-12-08",
+            "status": "slipped",
+            "note": "Package-I, sewer network in Pendurthi area, 210 km, Rs 412 crore: '97% completed', probable completion 'Mar'2026' in the note's table (PDF p25). The note's text gives 'about 93% completed (with target completion of May'2026)' (PDF p24); GVMC's November 2023 note gave a target of May 2024.",
+            "source_label": "GVMC note dated 08.12.2025, Annexure-B to APPCB's report of 09.12.2025, annexed to its report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF pp24-26",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "overdue",
+            "note": "Both dates in GVMC's December 2025 note, March 2026 in its table and May 2026 in its text, have passed. We have not found a completion record in the NGT filings checked for this register.",
+            "source_label": "Neer Vazhvu register check, 15 Oct 2026 (we have not found a completion record)",
+            "source_url": null
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": "2026-05"
+      },
+      {
+        "id": "gvmc-gajuwaka-sewer-network",
+        "category": "Sewerage",
+        "title": "Gajuwaka and Malkapuram underground drainage network",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation",
+        "what": "Complete the 429 km sewer network for the Gajuwaka and Malkapuram areas (Zone VI), one of two Smart City packages GVMC puts at Rs 942 crore together with Pendurthi; this package is Rs 530 crore. The new Narava plant this network feeds and the state's target for sewer connections in Gajuwaka and Pendurthi by FY 2028-29 are separate rows.",
+        "due": "2024-12",
+        "commitment_source": {
+          "label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf",
+          "date": "2023-11-27"
+        },
+        "status": "slipped",
+        "status_history": [
+          {
+            "date": "2023-11-27",
+            "status": "on-track",
+            "note": "The note's text says 'about 40% completed (with target completion of Dec'2024)' (PDF p41); its table gives 429 km, '45% Completed', probable completion 'Dec'2024', Rs 530 crore (PDF p42).",
+            "source_label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf"
+          },
+          {
+            "date": "2024-03-27",
+            "status": "slipped",
+            "note": "Gajuwaka (Zone VI) sewer network: 140 of 429 km laid; probable completion 'May'2025' (PDF p5).",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2025-12-08",
+            "status": "slipped",
+            "note": "The note's table gives 48% completed (153 km), Rs 145 crore against a total project cost of Rs 530 crore, probable completion 'Oct'2025', and the remark 'Work proposed for pre-closure and balance work to be tendered during Jan'2026' (PDF p25). The note's text gives 'about 40% completed (with target completion of Dec'2026)' (PDF p24); GVMC's November 2023 note gave a target of Dec 2024. The 'slipped' status rests on that Dec 2026 date; on the table's Oct 2025 date this row would be overdue.",
+            "source_label": "GVMC note dated 08.12.2025, Annexure-B to APPCB's report of 09.12.2025, annexed to its report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF pp24-26",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": "2026-12"
+      },
+      {
+        "id": "gvmc-narava-54mld-stp",
+        "category": "Sewage treatment",
+        "title": "A new 54 MLD treatment plant at Narava",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation",
+        "what": "Bring into use a new 54 MLD sewage treatment plant beside the existing one at Narava. GVMC says the Pendurthi and Gajuwaka sewer networks, which are separate rows, will carry sewage to it. In 2021 GVMC told the Tribunal the plant would be completed by the end of October 2021, then that it would be 'commenced by the end of August 2022'. The state's list of plants for February 2024 shows a second 54 MLD plant at Narava commissioned in October 2022, with 15 MLD of its capacity in use. GVMC's notes of November 2023 and December 2025 list the plant as in execution, due by December 2024 and then December 2026. Every date is shown below.",
+        "due": "2021-10",
+        "commitment_source": {
+          "label": "GVMC action-taken report, NGT OA 14/2021 (SZ), enclosing a supply sheet dated 12-03-2021",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf",
+          "date": "2021-03"
+        },
+        "status": "slipped",
+        "status_history": [
+          {
+            "date": "2021-03",
+            "status": "unverified",
+            "note": "Sewage from Pendurthi 'will be treated in 54 MLD STP which is under construction at Narava and it will be completed by the end of October 2021' (PDF pp3-4).",
+            "source_label": "GVMC action-taken report, NGT OA 14/2021 (SZ), enclosing a supply sheet dated 12-03-2021",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+          },
+          {
+            "date": "2021-10",
+            "status": "slipped",
+            "note": "Sewage from Pendurthi 'will be treated in 108 MLD STP, which is under construction at Narava and it will be commenced by the end of August 2022' (PDF p3).",
+            "source_label": "GVMC report signed by the SE Water Supply, NGT OA 14/2021 (SZ), filed after 22-10-2021",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/142021.pdf"
+          },
+          {
+            "date": "2023-11-27",
+            "status": "slipped",
+            "note": "The note's table gives the 54 MLD plant at Narava as '90% completed', probable completion 'Dec'2024' (PDF p42). Its text says the plant 'would come into function within 12 months i.e. by Dec 2024' once the sewerage project, 'at 85%', is complete; that 85% is the sewerage project's, not the plant's (PDF p41).",
+            "source_label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf"
+          },
+          {
+            "date": "2024-02",
+            "status": "unverified",
+            "note": "The state's list of plants for February 2024 shows two 54 MLD plants at Narava, one commissioned in August 2001 and one in October 2022, the second with 15 MLD of its capacity in use.",
+            "source_label": "Andhra Pradesh monthly progress report for February 2024 for NGT Principal Bench OA 673/2018, annexed to APPCB's report of 11.05.2024 in NGT OA 40/2024 (SZ), PDF pp7-8",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/4024_3.pdf"
+          },
+          {
+            "date": "2024-03-27",
+            "status": "slipped",
+            "note": "GVMC's affidavit gives the date in its November 2023 note: the new 54 MLD plant 'would come into function within 12 months i.e. by Dec 2024' (PDF p5). The 93% it gives is the sewerage project's, not the plant's.",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2025-12-08",
+            "status": "slipped",
+            "note": "The note says the plant 'would come into function within 12 months i.e. by Dec 2026' (PDF p24); GVMC's November 2023 note gave Dec 2024. Its table, like the 2023 one, reads '54 MLD already completed and in operation, another 54 MLD is in execution' (PDF p25).",
+            "source_label": "GVMC note dated 08.12.2025, Annexure-B to APPCB's report of 09.12.2025, annexed to its report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF pp24-26",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": "2026-12"
+      },
+      {
+        "id": "gvmc-appughar-second-stp",
+        "category": "Sewage treatment",
+        "title": "Second 25 MLD treatment plant at Appughar, with new sewer lines",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation",
+        "what": "Build a second 25 MLD sewage treatment plant beside the existing one at Appughar, with additional sewer lines and gaps in the existing network filled, part funded by AMRUT 2.0. GVMC's December 2025 note says the plant is to treat dry-weather flow from drains that now reach the sea. The documents give five costs: Rs 88 crore (GVMC, 2023), Rs 90 crore with drain diversions (GVMC's 2024 affidavit; the draft Green City Action Plan), Rs 372 crore (GVMC, December 2025), Rs 363.38 crore (AMRUT 2.0 project AP-GVMC-4780) and a Rs 272 crore contract (High Court, March 2026). Reading AP-GVMC-4780 as this work is an inference from its title, its AMRUT funding, its contract stage and the state's AMRUT 2.0 listing of a 25 MLD GVMC plant with the same March 2028 date; we have not found a document that states the link.",
+        "due": "2026-03",
+        "commitment_source": {
+          "label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf",
+          "date": "2023-11-27"
+        },
+        "status": "slipped",
+        "status_history": [
+          {
+            "date": "2023-11-27",
+            "status": "unverified",
+            "note": "'Providing additional Sewer Network & Gaps including construction of 25 MLD STP at Appughar': 50 km, Rs 88 crore, 'Tender Stage', probable completion 'Mar'2026 (2 years duration)', 25% of the funds proposed under AMRUT 2.0 and 75% from GVMC (PDF p43).",
+            "source_label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf"
+          },
+          {
+            "date": "2024-03-27",
+            "status": "unverified",
+            "note": "GVMC's sworn affidavit counts a 25 MLD plant inside Rs 641 crore of new sewerage works, 80% from its own funds, to start in May-June 2024 and finish 'by the Dec'2027' (PDF p5); its 2023 note splits that Rs 641 crore into this project (Rs 88 crore) and Madhurawada (Rs 553 crore). The affidavit also lists the remaining 14 of 24 drains that reach the sea, with gaps in the sewer network and house connections, at Rs 90 crore, 'In tenders', with 'Construction of New STP Mar'2026 (2 years duration)' (PDF p7); it does not name the site.",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2024-09",
+            "status": "unverified",
+            "note": "The draft plan lists 'Diversion of dry weather flow drains and streams, which includes gaps in the sewerage network, house service connections and construction of an additional 25MLD STP at Appughar with a cost of INR 90 crore' as 'Sanctioned and Under Tender Stage' (p78), naming the site of the affidavit's Rs 90 crore line.",
+            "source_label": "Draft Visakhapatnam Green City Action Plan (IFC for GVMC, dated Sept 2024), posted by GVMC for comment on 19 Oct 2024",
+            "source_url": "https://www.gvmc.gov.in/WhatsNew/Whats_New_DocOct_658.pdf"
+          },
+          {
+            "date": "2025-11-12",
+            "status": "slipped",
+            "note": "The High Court records the Advocate General's statement that tendering for the second Appughar plant would be completed by December 2025, construction would start around January 2026, and the plant would take about 18 months to build.",
+            "source_label": "AP High Court order of 12.11.2025 in WP(PIL) 248/2020, quoted in APPCB's report of 09.12.2025, annexed to its report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF p19",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          },
+          {
+            "date": "2025-12-08",
+            "status": "slipped",
+            "note": "GVMC now gives the project as 207 km of sewer network with the 25 MLD plant, Rs 372 crore, 'Tender Stage', probable completion 'Mar'2029' (PDF p25). The Rs 641 crore plan is restated as Rs 925 crore, now 25 MLD here and 20 MLD in Madhurawada, to start in Feb-Mar 2026 and finish 'by the Mar'2029'; the note's text also puts the two new projects at 'Rs.887(553+334) crores' (PDF p24).",
+            "source_label": "GVMC note dated 08.12.2025, Annexure-B to APPCB's report of 09.12.2025, annexed to its report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF pp24-26",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          },
+          {
+            "date": "2026-02-13",
+            "status": "slipped",
+            "note": "The state lists 25 MLD and 20 MLD of new treatment capacity for the city by March 2029, the sizes GVMC gives for Appughar and Madhurawada, against a gap of 69 MLD between sewage generated (248 MLD, PDF p71) and the 179 MLD of plant capacity in use; installed capacity is 237 MLD (PDF p78). Its AMRUT 2.0 annexure lists a 25 MLD GVMC plant as 'Tender to be called', March 2028 (PDF p134).",
+            "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF pp71, 78, 134)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+          },
+          {
+            "date": "2026-03-05",
+            "status": "slipped",
+            "note": "AP-GVMC-4780, Rs 363.38 crore. Milestone 'At Implementation Stage', scheduled or revised completion March 2028.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-03-11",
+            "status": "slipped",
+            "note": "The contract has been allotted at Rs 272 crore, Rs 38 crore of it for the plant and the rest for sewer lines and drains, under an agreement dated 10.01.2026; soil testing and structural designs were 'in the process of being prepared'. GVMC's Commissioner undertook to file a timeline, with the last date 'fixed for March 2027'. The court listed the case for 17.06.2026.",
+            "source_label": "AP High Court order of 11.03.2026 in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp46-48",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf"
+          },
+          {
+            "date": "2026-04-27",
+            "status": "slipped",
+            "note": "APPCB reports that 'The GVMC has awarded work order to construct 25 MLD STP in addition to the existing STP at Appughar' (PDF p7). It gives no new date.",
+            "source_label": "APPCB report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF p7",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "slipped",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows 'Providing additional Sewer Network and Gaps in Exiting Network in GVMC area' (Rs 363.38 crore) at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": "2027-03"
+      },
+      {
+        "id": "gvmc-madhurawada-sewerage",
+        "category": "Sewerage",
+        "title": "Madhurawada sewerage system with a 20 MLD treatment plant",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (IFC loan); dates also from the Government of Andhra Pradesh",
+        "what": "A comprehensive sewerage system for Madhurawada (Zone II), which GVMC says has no underground drainage: sewer lines, house connections and a treatment plant at Kapuluppada. GVMC gave it as 450 km with a 50 MLD plant in 2023 and as 398 km with a 20 MLD first-phase plant in December 2025, at Rs 553 crore both times. The state's target for sewer connections in Madhurawada by FY 2029-30 is a separate row.",
+        "due": "2027-12",
+        "commitment_source": {
+          "label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf",
+          "date": "2023-11-27"
+        },
+        "status": "slipped",
+        "status_history": [
+          {
+            "date": "2023-11-27",
+            "status": "unverified",
+            "note": "450 km and 50 MLD, Rs 553 crore, 'Approval Stage', probable completion 'Dec'2027 (3 years duration)', 92% of the funds through a loan and 8% from AMRUT 2.0 (PDF p43).",
+            "source_label": "GVMC note of 27.11.2023 to the High Court's committee in WP(PIL) 248/2020, annexed to CPCB's reply in NGT OA 240/2025 (SZ), PDF pp40-43",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Reply%20filed%20by%20R3%20CPCB.pdf"
+          },
+          {
+            "date": "2024-03-27",
+            "status": "unverified",
+            "note": "GVMC's sworn affidavit lists Madhurawada (Zone II) at Rs 553 crore, 'Permission from the GoAP is awaited with the financial assistance of International Finance Corporation' (PDF p7), and counts a 50 MLD plant inside Rs 641 crore of new works to finish 'by the Dec'2027' (PDF p5).",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2024-09",
+            "status": "unverified",
+            "note": "The draft plan lists 'Providing comprehensive sewerage system in Zone 2 (Madhurwada Zone) of GVMC with a loan from IFC of INR 553 crore' under 'Detailed Project Report (DPR) Submitted for Sanction' (p78).",
+            "source_label": "Draft Visakhapatnam Green City Action Plan (IFC for GVMC, dated Sept 2024), posted by GVMC for comment on 19 Oct 2024",
+            "source_url": "https://www.gvmc.gov.in/WhatsNew/Whats_New_DocOct_658.pdf"
+          },
+          {
+            "date": "2025-12-08",
+            "status": "slipped",
+            "note": "Listed among new projects 'PROPOSED': 398 km and a 20 MLD first-phase plant, Rs 553 crore with a Rs 498 crore IFC loan, 'Tender Stage', probable completion 'Mar'2029' (PDF p25). The note's text gives 'Dec'2028' as the targeted completion, with work 'expected to be grounded by Feb'2026' (PDF p26).",
+            "source_label": "GVMC note dated 08.12.2025, Annexure-B to APPCB's report of 09.12.2025, annexed to its report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF pp24-26",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          },
+          {
+            "date": "2026-02-13",
+            "status": "slipped",
+            "note": "The state lists 25 MLD and 20 MLD of new treatment capacity for the city by March 2029 (PDF p78), the sizes GVMC gives for Appughar and Madhurawada.",
+            "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p78)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+          },
+          {
+            "date": "2026-04-27",
+            "status": "slipped",
+            "note": "APPCB reports that GVMC 'has awarded work order to construct' the '20 MLD STP at Kappulauppada' (PDF p7). It gives no new date.",
+            "source_label": "APPCB report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF p7",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          }
+        ],
+        "next_check": "2027-06-01",
+        "revised_due": "2029-03"
+      },
+      {
+        "id": "gvmc-divert-10-drains",
+        "category": "Sewerage",
+        "title": "Divert 10 drains that reach the sea to treatment plants",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation",
+        "what": "Divert 10 of the 24 drains GVMC identified as flowing into the sea between the Coastal Battery (fishing harbour) and Rishikonda to nearby sewage treatment plants, at a cost of Rs 3 crore. GVMC's plan for the other 14 drains is quoted in the second Appughar plant row.",
+        "due": "2024-06",
+        "commitment_source": {
+          "label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf",
+          "date": "2024-03-27"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2024-03-27",
+            "status": "unverified",
+            "note": "Works for 10 drains, Rs 3 crore, 'already under execution', 'To be Completed by May, June'2024' (PDF pp6-7).",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2024-09",
+            "status": "overdue",
+            "note": "The draft plan (September 2024) lists 'Diversion of dry weather flow drains and streams to near STP (i.e. from coastal battery to Rushikonda-1st stretch) with a cost of INR 3 crore' among 'UGD Ongoing Projects' (p78).",
+            "source_label": "Draft Visakhapatnam Green City Action Plan (IFC for GVMC, dated Sept 2024), posted by GVMC for comment on 19 Oct 2024",
+            "source_url": "https://www.gvmc.gov.in/WhatsNew/Whats_New_DocOct_658.pdf"
+          },
+          {
+            "date": "2026-04-24",
+            "status": "overdue",
+            "note": "APPCB's officials inspected drains from Bheemili to the Shipping Harbour on 24.04.2026 and 'observed that 11 open drains joining gray water into the sea' (PDF p8). The report does not name the drains, so we cannot tell whether the ten in this row are among them.",
+            "source_label": "APPCB report of 27.04.2026 in NGT OA 240/2025 (SZ), PDF p8",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%20240%20of%202025%20Report%20filed%20by%20R2%20APPCB.pdf"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "overdue",
+            "note": "The date has passed. We have not found a completion record for these ten drains in the NGT filings checked for this register.",
+            "source_label": "Neer Vazhvu register check, 15 Oct 2026 (we have not found a completion record)",
+            "source_url": null
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "ap-ugd-gajuwaka-pendurthi",
+        "category": "Sewerage",
+        "title": "Sewer connections in Gajuwaka and Pendurthi by FY 2028-29",
+        "committed_by": "Government of Andhra Pradesh",
+        "what": "Underground drainage in the Gajuwaka and Pendurthi areas, which the state's affidavit lists as in progress, to bring sewer connections to a further 15% of the city's population by FY 2028-29. The same affidavit puts 60% of the city's population as connected in February 2026, the same share GVMC gave the Tribunal in March 2024. GVMC's two sewer-network packages for these areas are separate rows.",
+        "due": "FY 2028-29",
+        "commitment_source": {
+          "label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p71)",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf",
+          "date": "2026-02-13"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-02-13",
+            "status": "unverified",
+            "note": "Listed in the state's compliance affidavit to the NGT.",
+            "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p71)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+          }
+        ],
+        "next_check": "2027-06-01",
+        "revised_due": null
+      },
+      {
+        "id": "ap-ugd-madhurawada-ifc",
+        "category": "Sewerage",
+        "title": "Sewer connections in Madhurawada by FY 2029-30",
+        "committed_by": "Government of Andhra Pradesh",
+        "what": "Sewer connections for Madhurawada, listed as an IFC-funded work, to bring a further 10% of the city's population onto the sewer network by FY 2029-30. GVMC's Madhurawada sewerage project is a separate row.",
+        "due": "FY 2029-30",
+        "commitment_source": {
+          "label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p71)",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf",
+          "date": "2026-02-13"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-02-13",
+            "status": "unverified",
+            "note": "Listed in the state's compliance affidavit to the NGT as 'Madhurawada (IFC)-2029-30(10%)'.",
+            "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p71)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+          }
+        ],
+        "next_check": "2027-06-01",
+        "revised_due": null
+      },
+      {
+        "id": "ap-ugd-anakapalli-bheemili",
+        "category": "Sewerage",
+        "title": "Sewerage for Anakapalli, Bheemili and other areas by FY 2031-32",
+        "committed_by": "Government of Andhra Pradesh",
+        "what": "Sewer connections for Anakapalli, Bheemili and other areas, to bring a further 15% of the city's population onto the sewer network by FY 2031-32. In March 2024 GVMC put sewerage for the Bheemili and Anakapalle areas at Rs 300 crore and Rs 250 crore, with the project reports still to be prepared.",
+        "due": "FY 2031-32",
+        "commitment_source": {
+          "label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p71)",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf",
+          "date": "2026-02-13"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2024-03-27",
+            "status": "unverified",
+            "note": "GVMC's sworn affidavit lists the Bheemili (Zone I) area at Rs 300 crore and the Anakapalle (Zone VII) area at Rs 250 crore, both at 'DPR' stage, 'To be Prepared', among future proposals 'envisaged for completion within a span of 3 to 4 years' (PDF p7).",
+            "source_label": "GVMC Commissioner's affidavit, NGT OA 40/2024 (SZ)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/OA%2040%20of%202024%20Affidavit%20by%20R3%20Greater%20Vizag.pdf"
+          },
+          {
+            "date": "2026-02-13",
+            "status": "unverified",
+            "note": "Listed in the state's compliance affidavit to the NGT.",
+            "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p71)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+          }
+        ],
+        "next_check": "2028-01-01",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-aptidco-stps-7-9-mld",
+        "category": "Sewage treatment",
+        "title": "7.90 MLD of sewage treatment plants for APTIDCO housing colonies",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "7.90 MLD of sewage treatment plants for APTIDCO housing colonies (AMRUT 2.0 project AP-GVMC-12041, Rs 36.73 crore). The state's progress report for February 2024 lists four GVMC APTIDCO plants (4.00 MLD) as completed and eight more (3.90 MLD) as due by May 2024. Together they make the 7.90 MLD in the title, but we have not found a document that says they are this project.",
+        "due": "2026-09",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2024-02",
+            "status": "unverified",
+            "note": "The state's progress report for February 2024 lists four GVMC APTIDCO plants, at Satyanarayanapuram, Parawada, Dabbanda and Aganampudi (4.00 MLD in all), as completed with trial runs in progress, and eight more (3.90 MLD) at 30% to 60% physical progress, with a completion timeline of May 2024.",
+            "source_label": "Andhra Pradesh monthly progress report for February 2024 for NGT Principal Bench OA 673/2018, annexed to APPCB's report of 11.05.2024 in NGT OA 40/2024 (SZ), PDF pp15-16, 19-20",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/4024_3.pdf"
+          },
+          {
+            "date": "2026-02-13",
+            "status": "slipped",
+            "note": "The state's affidavit lists the same eight plants under its AMRUT 2.0 AP TIDCO heading, 3.90 MLD in all, at 58% to 85% physical progress, 'Work in progress', with a completion timeline of March 2026. The 4.00 MLD completed by February 2024 and these 3.90 MLD add up to the 7.90 MLD in MoHUA's project title; reading them as one project is an inference.",
+            "source_label": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (PDF p125, Annexure VII)",
+            "source_url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+          },
+          {
+            "date": "2026-03-05",
+            "status": "slipped",
+            "note": "AP-GVMC-12041, Rs 36.73 crore. Milestone 'At Implementation Stage', scheduled or revised completion September 2026.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "overdue",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed. The scheduled or revised completion, September 2026, has passed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-aptidco-sewer-network",
+        "category": "Sewerage",
+        "title": "Sewerage network for 9,408 APTIDCO housing units",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "Sewerage network for 9,408 APTIDCO housing units (AMRUT 2.0 project AP-GVMC-12175, Rs 2.82 crore).",
+        "due": "2026-06",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12175, Rs 2.82 crore. Milestone 'At Implementation Stage', scheduled or revised completion June 2026.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "overdue",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed. The scheduled or revised completion, June 2026, has passed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-thungalam-tank",
+        "category": "Water bodies",
+        "title": "Rejuvenation of the water body at Thungalam",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "Rejuvenation of the water body at Thungalam (AMRUT 2.0 project AP-GVMC-8818, Rs 1.27 crore). MoHUA's live list has no Thungalam row. It lists a 'Thimmaraju Tank' at the same cost, Rs 1.27 crore, which appears to be the same project under a new name; the live list has no project IDs and does not say so.",
+        "due": "2026-09",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-8818, Rs 1.27 crore. Milestone 'At Implementation Stage', scheduled or revised completion September 2026.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "overdue",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows 'Thimmaraju Tank' (Rs 1.27 crore), which appears to be this project under a new name (the list has no project IDs and does not say so), at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed. The scheduled or revised completion, September 2026, has passed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-aptidco-water-supply",
+        "category": "Water supply",
+        "title": "Internal water supply for 9,408 APTIDCO housing units",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "Internal water supply for 9,408 APTIDCO housing units (AMRUT 2.0 project AP-GVMC-12135, Rs 22.64 crore).",
+        "due": "2026-09",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12135, Rs 22.64 crore. Milestone 'At Implementation Stage', scheduled or revised completion September 2026.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "overdue",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed. The scheduled or revised completion, September 2026, has passed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-aptidco-water-supply-five-sites",
+        "category": "Water supply",
+        "title": "Water supply for APTIDCO housing at ASR Nagar, Thalavaripalem, Actchamniadulova, Dabbanda and Trijunction",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "Water supply for APTIDCO housing at ASR Nagar, Thalavaripalem, Actchamniadulova, Dabbanda and Trijunction (AMRUT 2.0 project AP-GVMC-12067, Rs 11.78 crore).",
+        "due": "2026-09",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12067, Rs 11.78 crore. Milestone 'At Implementation Stage', scheduled or revised completion September 2026.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "overdue",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed. The scheduled or revised completion, September 2026, has passed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-pumping-mains-scada",
+        "category": "Water supply",
+        "title": "Replacing pumping mains, extending distribution mains into unserved areas, and SCADA for the network",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "Replacing pumping mains, extending distribution mains into unserved areas, and SCADA for the network (AMRUT 2.0 project AP-GVMC-12858, Rs 55.00 crore).",
+        "due": "2026-12",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12858, Rs 55.00 crore. Milestone 'At Implementation Stage', scheduled or revised completion December 2026.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "unverified",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-24x7-nrw-zones-3-5-8",
+        "category": "Water supply",
+        "title": "24x7 water supply and network improvement to reduce non-revenue water in Zones 3, 5 and 8",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "24x7 water supply and network improvement to reduce non-revenue water in Zones 3, 5 and 8 (AMRUT 2.0 project AP-GVMC-12873, Rs 48.50 crore).",
+        "due": "2027-03",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12873, Rs 48.50 crore. Milestone 'At Implementation Stage', scheduled or revised completion March 2027.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "unverified",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-samyavalasa-wtp",
+        "category": "Water supply",
+        "title": "10 MLD water treatment plant near Samyavalasa, Bheemili",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "10 MLD water treatment plant near Samyavalasa, Bheemili (AMRUT 2.0 project AP-GVMC-12857, Rs 13.71 crore).",
+        "due": "2027-03",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12857, Rs 13.71 crore. Milestone 'At Implementation Stage', scheduled or revised completion March 2027.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "unverified",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'Contract Awarded', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      },
+      {
+        "id": "amrut-narava-industrial-main",
+        "category": "Water supply",
+        "title": "Treated-water main from Narava WTP to HPCL, Coromandel and the Navy berth",
+        "committed_by": "Greater Visakhapatnam Municipal Corporation (AMRUT 2.0)",
+        "what": "Treated-water main from Narava WTP to HPCL, Coromandel and the Navy berth (AMRUT 2.0 project AP-GVMC-12875, Rs 150.00 crore).",
+        "due": "2028-03",
+        "commitment_source": {
+          "label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+          "url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf",
+          "date": "2026-03-05"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-03-05",
+            "status": "unverified",
+            "note": "AP-GVMC-12875, Rs 150.00 crore. Milestone 'NIT Stage', scheduled or revised completion March 2028.",
+            "source_label": "MoHUA, Status of Approved Projects under AMRUT 2.0 in Andhra Pradesh, as on 05-03-2026",
+            "source_url": "https://amrut.mohua.gov.in/assets/Status-of-Approved-Projects-under-AMRUT-2-in-Andhra-Pradesh-as-on-05-03-2026_.pdf"
+          },
+          {
+            "date": "2026-10-14",
+            "status": "unverified",
+            "note": "MoHUA's live list for GVMC (captured 2026-10-14; it carries no as-of date) shows this project at 'NIT Issued', not 'Project Completed'. The list has four stages: DPR Stage, NIT Issued, Contract Awarded and Project Completed.",
+            "source_label": "MoHUA AMRUT 2.0 approved projects, GVMC (live list)",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/bE45Yjhjd3ovYVZaSnRUdTJpbnE0UT09/YWgzMHUxWkJFeHJGMlFDaUExZ2tFQT09"
+          }
+        ],
+        "next_check": "2027-01-15",
+        "revised_due": null
+      }
+    ]
+  }
+}

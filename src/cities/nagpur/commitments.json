@@ -1,0 +1,945 @@
+{
+  "_doc": "Commitments for /nagpur/commitments. Edit rows under payload.commitments and set payload.updated, then run: python3 neer-vazhvu-api/scripts/build_commitments.py --city nagpur. The status rule and the checks are in that script's docstring.",
+  "build": {
+    "indent": 2,
+    "trailingNewline": false,
+    "envelope": {
+      "dataset": "data-root/commitments",
+      "scope": {
+        "kind": "city",
+        "id": "nagpur"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "id": "mahagr-nagpur-resolutions",
+            "title": "Government Resolutions on Nagpur's water, sewage, lakes and the 2023 flood (UDD, R&F, Environment, Tourism)",
+            "publisher": "Government of Maharashtra"
+          },
+          {
+            "id": "mahagr-wrd-resolutions",
+            "title": "Water Resources Department GRs: Lohghogari (17 and 18 Sep 2019), Pench re-planning (19 Mar 2020), Kolar-Kanhan barrage (18 Apr 2023)",
+            "publisher": "Government of Maharashtra, Water Resources Department"
+          },
+          {
+            "id": "nmc-budget",
+            "title": "NMC budgets 2025-26 and 2026-27 (Commissioner's speech and fund statements)",
+            "publisher": "Nagpur Municipal Corporation"
+          },
+          {
+            "id": "nmc-esr",
+            "title": "NMC Environment Status Reports 2017-18 (draft), 2019-20, 2022-23 and 2023-24",
+            "publisher": "Nagpur Municipal Corporation (prepared by CSIR-NEERI)"
+          },
+          {
+            "id": "amrut2-portal-nagpur",
+            "title": "AMRUT 2.0 portal: Nagpur approved projects",
+            "publisher": "Ministry of Housing and Urban Affairs"
+          },
+          {
+            "id": "nagpur-court-docket",
+            "title": "Supreme Court, Bombay High Court (Nagpur Bench) and NGT orders, read on Indian Kanoon",
+            "publisher": "Supreme Court of India; Bombay High Court; National Green Tribunal"
+          },
+          {
+            "id": "nmc-phe-projects-deck",
+            "title": "NMC Public Health Engineering, 'ongoing and proposed project' deck, 11 July 2024",
+            "publisher": "Nagpur Municipal Corporation"
+          },
+          {
+            "id": "nmc-24x7-deck-2015",
+            "title": "NMC 24x7 case-study deck, ICRIER workshop, 23 February 2015",
+            "publisher": "Nagpur Municipal Corporation"
+          },
+          {
+            "id": "adb-iee-nagpur-2010",
+            "title": "ADB draft Initial Environmental Examination 42907-01 (June 2010)",
+            "publisher": "Asian Development Bank"
+          },
+          {
+            "id": "nsscdcl-projects",
+            "title": "Nagpur Smart City project list",
+            "publisher": "Nagpur Smart and Sustainable City Development Corporation"
+          },
+          {
+            "id": "jica-nag-river-loan",
+            "title": "JICA ex-ante evaluation and loan announcement, Nag River Pollution Abatement",
+            "publisher": "Japan International Cooperation Agency"
+          }
+        ],
+        "method": "manual",
+        "produced_by": "neer-vazhvu-api/scripts/build_nagpur_commitments.py",
+        "note": "Each promise and each status change cites a dated document; quotes checked against the source text on 2026-10-15. Five GR texts were read from the orgpedia mahGRs archive copy because the official PDF did not open; those rows say so and link both."
+      }
+    },
+    "expect": {
+      "total": 22,
+      "byStatus": {
+        "delivered": 4,
+        "on-track": 1,
+        "slipped": 1,
+        "overdue": 3,
+        "stalled": 1,
+        "unverified": 12
+      }
+    }
+  },
+  "payload": {
+    "place_id": "nagpur",
+    "updated": "2026-10-15",
+    "headline": "What has been promised about Nagpur's water, and by when",
+    "intro": "Twenty-two commitments on Nagpur's water supply, new sources, sewage and the Nag, the city's lakes, and the works at Ambazari after the flood of September 2023, each on a dated document: a Government Resolution, a court order, an NMC budget or report, the AMRUT 2.0 portal or a funder's document. Four are delivered and one is on track. One has a date moved by NMC that has not yet come; three are past their date with no delivery on record, one of them after NMC moved it. One, Lendi lake, is recorded by NMC as not completed because of opposition to removing encroachments. Twelve can be cited as promises, but their current status cannot yet be cited either way.",
+    "status_legend": {
+      "delivered": "The promised thing verifiably happened, even if late. The dates show how late.",
+      "on-track": "The stated date has not passed and the latest dated evidence is consistent with it.",
+      "slipped": "The institution itself has moved the date. Old and new dates are both shown.",
+      "overdue": "The promised date has passed with no delivery and no formally revised date we can cite.",
+      "stalled": "Work or approvals have stopped, by the institution's own account or a court's.",
+      "unverified": "We can cite the promise but cannot yet cite its current status either way."
+    },
+    "update_model": "Statuses change only against a dated citation. The register is re-checked each spring against NMC's new budget and Environment Status Report, against new Government Resolutions and the AMRUT 2.0 portal, and after hearings in the High Court and the National Green Tribunal. A passed next-check date with no new citation is flagged, never silently updated.",
+    "sources_note": "NMC's 2026-27 budget is a scanned Marathi document; its figures were read from the page images. Five Government Resolutions (Naik and Lendi lakes, AMRUT 2.0 water supply, the 2023 AMRUT 1.0 pipeline sanction and the Kolar-Kanhan barrage) did not open at the State's GR portal on 15 October 2026; their text was read from the orgpedia mahGRs archive copy, which each of those rows links beside the official address. Court and tribunal orders were read on Indian Kanoon; the court, case number and date are the citation. Where two official documents give different costs or lengths for the same work, both are stated.",
+    "commitments": [
+      {
+        "id": "ngp-24x7-ppp-slb-targets",
+        "category": "Water supply",
+        "title": "Water round the clock across the city, with service targets at 5 and 10 years",
+        "committed_by": "Nagpur Municipal Corporation and Nagpur Environmental Services Ltd, with the operator Orange City Water, under the contract of 3 June 2011",
+        "what": "NMC's Superintending Engineer (Water Works) set out the contract's citywide targets in 2015: within 5 years, 100% coverage, 24-hour supply, working meters on every connection, 80% of complaints settled within 24 hours and 100% water quality; within 10 years, non-revenue water down from 60-70% to 20% (under 40% by year 5), 150 litres per person a day and 95% of charges collected. The slide gives years, not dates; counted from the contract of 3 June 2011 (its date in the High Court's record), the 10-year marks fell in 2021.",
+        "due": "2021-06",
+        "commitment_source": {
+          "label": "NMC Superintending Engineer (Water Works), '24X7 Water Initiative and Waste Water Reuse, Case Study Nagpur', ICRIER workshop, 23 February 2015, slide 14",
+          "url": "https://icrier.org/Urbanisation/events/23-2-15/Nagpur%2024x7_23.02.15.pdf",
+          "date": "2015-02-23"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2015-02-23",
+            "status": "on-track",
+            "note": "By December 2014, 434 of 564 km of pipeline had been replaced (75% physical progress) and about 75,000 of a targeted 3,21,000 connections made.",
+            "source_label": "NMC deck, ICRIER workshop, slide 17",
+            "source_url": "https://icrier.org/Urbanisation/events/23-2-15/Nagpur%2024x7_23.02.15.pdf"
+          },
+          {
+            "date": "2020-12",
+            "status": "overdue",
+            "note": "'Till date only 21 command areas receive 24x7 water and the rest 47 command areas are not yet covered.'",
+            "source_label": "NMC Environment Status Report 2019-20, printed p.31 (archived copy)",
+            "source_url": "https://web.archive.org/web/20220806150918/https://www.nmcnagpur.gov.in/assets/250/2021/06/mediafiles/Final_2020_ESR_-_AK.pdf"
+          },
+          {
+            "date": "2024-03",
+            "status": "overdue",
+            "note": "In 2023-24, 41.91% of the 706 MLD supplied was lost between source and consumer (410 MLD billed), and parts of 36 of the 73 command areas were 'considered as dark zones since the water supply was found to be less than 2 h per day'.",
+            "source_label": "NMC Environment Status Report 2023-24, printed pp.133-134",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2026-05-08",
+            "status": "overdue",
+            "note": "The contract is in arbitration over a rate rebasement the operator sought in February 2025. The High Court rejected NMC's application to replace the sole arbitrator appointed on 30 September 2025.",
+            "source_label": "Bombay High Court (Nagpur Bench), MCA (ARBN) 278/2026, 2026:BHC-NAG:7281",
+            "source_url": "https://indiankanoon.org/doc/171236121/"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-nrw-billed-452",
+        "category": "Water supply",
+        "title": "Cut non-revenue water by 10% and raise billed water to 452 MLD",
+        "committed_by": "Nagpur Municipal Corporation (Action Taken Report, June 2019)",
+        "what": "NMC's Action Taken Report of June 2019, as quoted in its Environment Status Report for 2019-20: 'NMC has a target of reducing non-revenue water by 10% and increase the billed water to 452 MLD.' The same report records a loss of 30-40 MLD a day from the raw-water pipeline between Navegaon Khairi and Mahadula. No date was given for the target.",
+        "due": null,
+        "commitment_source": {
+          "label": "NMC Environment Status Report 2019-20, printed p.31 (archived copy)",
+          "url": "https://web.archive.org/web/20220806150918/https://www.nmcnagpur.gov.in/assets/250/2021/06/mediafiles/Final_2020_ESR_-_AK.pdf",
+          "date": "2020-12"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2020-12",
+            "status": "unverified",
+            "note": "Target stated, with no date.",
+            "source_label": "NMC Environment Status Report 2019-20, printed p.31 (archived copy)",
+            "source_url": "https://web.archive.org/web/20220806150918/https://www.nmcnagpur.gov.in/assets/250/2021/06/mediafiles/Final_2020_ESR_-_AK.pdf"
+          },
+          {
+            "date": "2024-03",
+            "status": "unverified",
+            "note": "Billed water in 2023-24 was 410 MLD of 706 MLD supplied.",
+            "source_label": "NMC Environment Status Report 2023-24, printed p.133, Table 6.2",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-amrut1-water",
+        "category": "Water supply",
+        "title": "AMRUT 1.0: new elevated tanks and 377 km of distribution pipeline",
+        "committed_by": "Government of Maharashtra, Urban Development Department, for NMC (AMRUT 1.0)",
+        "what": "The revised sanction of 25 June 2018 (Rs 273.78 crore: Centre 91.25, State 45.64, NMC 136.89) covers 58.719 km of feeder mains, 42 elevated tanks and 1 ground tank, and 377.84 km of distribution pipeline, to be finished within 24 months of the work order. A further sanction of 6 April 2023 added Rs 37.17 crore to replace old pipelines in the Binaki and Indora-II command areas. NMC's budgets count 32 elevated tanks under the scheme, against 42 in the sanction; neither document explains the difference.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Urban Development Department, GR AMRUT-2016/PK394(1)/NAVI-33, 25 June 2018 (pages 2-3 headed AMRUT-2018/PK128/NAVI-33)",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/201806251513514425.pdf",
+          "date": "2018-06-25",
+          "gr_code": "201806251513514425"
+        },
+        "status": "delivered",
+        "status_history": [
+          {
+            "date": "2023-04-06",
+            "status": "unverified",
+            "note": "Rs 37.17 crore sanctioned to replace old pipelines in the Binaki (Rs 11.55 crore) and Indora-II (Rs 25.62 crore) command areas.",
+            "source_label": "GR AMRUT-2023/PK127/NAVI-33, 6 April 2023, text in the orgpedia mahGRs archive copy",
+            "source_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202304061347581325.pdf.mr.txt"
+          },
+          {
+            "date": "2024-03",
+            "status": "unverified",
+            "note": "377.5 km of pipeline completed under AMRUT 1.0.",
+            "source_label": "NMC Environment Status Report 2023-24, printed p.134",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2025-04",
+            "status": "unverified",
+            "note": "27 of 32 elevated tanks and the 377 km of pipeline complete.",
+            "source_label": "NMC Budget 2025-26 (Marathi)",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf"
+          },
+          {
+            "date": "2026-05",
+            "status": "delivered",
+            "note": "All 32 elevated tanks and the 377 km of pipeline complete.",
+            "source_label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), printed p.B-4",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+          }
+        ],
+        "next_check": null,
+        "revised_due": null
+      },
+      {
+        "id": "ngp-amrut2-water",
+        "category": "Water supply",
+        "title": "AMRUT 2.0: water pipelines for layouts and slums without them",
+        "committed_by": "Government of Maharashtra, Urban Development Department, for NMC (AMRUT 2.0)",
+        "what": "Sanctioned on 6 March 2023 at Rs 381.85 crore (Centre 25%, State 25%, NMC 50%): distribution pipelines in authorised and unauthorised layouts and slums, feeder mains, a sump and booster pumps at Jaitala, to be finished within 24 months (24 months from the work order, whose date is not published; NMC's 2025-26 budget gave May 2025). The planned pipeline length has grown across NMC's documents, from 287 km (Environment Status Report 2023-24) to 324 km (Budget 2026-27). The AMRUT 2.0 portal lists the project at Rs 421.85 crore.",
+        "due": "2025-05",
+        "commitment_source": {
+          "label": "Government of Maharashtra, Urban Development Department, GR AMRUT-2023/PK105/NAVI-33, 6 March 2023 (official code 202303061239587125; official PDF did not open on 15 October 2026; text read from the orgpedia mahGRs archive copy)",
+          "url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202303061239587125.pdf.mr.txt",
+          "date": "2023-03-06",
+          "gr_code": "202303061239587125",
+          "official_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202303061239587125.pdf",
+          "text_via_mirror": true,
+          "mirror_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202303061239587125.pdf.mr.txt"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2023-03-06",
+            "status": "on-track",
+            "note": "Sanctioned at Rs 381.85 crore, 24 months to complete.",
+            "source_label": "GR AMRUT-2023/PK105/NAVI-33, 6 March 2023, text in the orgpedia mahGRs archive copy",
+            "source_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202303061239587125.pdf.mr.txt"
+          },
+          {
+            "date": "2024-03",
+            "status": "on-track",
+            "note": "256 of 287 km of pipeline laid; work in progress.",
+            "source_label": "NMC Environment Status Report 2023-24, printed p.134",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2025-04",
+            "status": "on-track",
+            "note": "Feeder mains 31 of 42 km and distribution pipelines 269 of 288 km laid; 84% physical and 52% financial progress; the remaining work by May 2025.",
+            "source_label": "NMC Budget 2025-26 (Marathi), printed pp.B-4 to B-6",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf"
+          },
+          {
+            "date": "2026-05",
+            "status": "slipped",
+            "note": "Feeder mains 36 of 42 km and distribution pipelines 299 of 324 km laid; 95% physical and 71% financial progress; the remaining work by May 2026.",
+            "source_label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), printed p.B-4",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "overdue",
+            "note": "The revised date of May 2026 has passed. The AMRUT 2.0 portal lists the project at Rs 421.85 crore with the milestone 'Contract Awarded' (read on 15 October 2026; the portal gives no dates).",
+            "source_label": "MoHUA AMRUT 2.0 portal, Nagpur approved projects",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/TTN2eVhpdTRLYWVxbjFYdEllaWROQT09/UkJ0czN0UWJmNE9MemtZVEh0SC8rQT09"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": "2026-05"
+      },
+      {
+        "id": "ngp-pench-iv",
+        "category": "Water supply",
+        "title": "Pench-IV: a further 115 MLD treatment plant at Godhani",
+        "committed_by": "Nagpur Municipal Corporation (project described in a 2010 ADB draft environmental examination prepared by NMC)",
+        "what": "'NMC intends to augment Nagpur City water supply by 115 MLD by implementing Pench Phase III, Stage II (Pench-IV)': a 27.4 km pipeline from the Pench reservoir to Mahadula, a new treatment plant at Godhani and mains to the city.",
+        "due": null,
+        "commitment_source": {
+          "label": "Asian Development Bank, draft Initial Environmental Examination 42907-01, June 2010, printed p.1",
+          "url": "https://www.adb.org/sites/default/files/project-documents//42907-01-ind-iee-draft.pdf",
+          "date": "2010-06"
+        },
+        "status": "delivered",
+        "status_history": [
+          {
+            "date": "2018-06",
+            "status": "delivered",
+            "note": "Pench-IV 'commissioned in 2018', then supplying 86 MLD of its 115 MLD.",
+            "source_label": "NMC Environment Status Report 2017-18 (draft), s.4.1; copy on a third-party site",
+            "source_url": "https://caknnagpur871784109.wordpress.com/wp-content/uploads/2019/12/environmental-status-report-nagpur-2017-18.pdf"
+          },
+          {
+            "date": "2024-03",
+            "status": "delivered",
+            "note": "Pench-IV's 115 MLD is one of five plants totalling 786 MLD.",
+            "source_label": "NMC Environment Status Report 2023-24, printed pp.132-133",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          }
+        ],
+        "next_check": null,
+        "revised_due": null,
+        "ledger_id": "pench-nmc"
+      },
+      {
+        "id": "ngp-lohghogari-diversion",
+        "category": "New water sources",
+        "title": "Bring 10 TMC from the Kanhan at Lohghogari into Totladoh by tunnel",
+        "committed_by": "Government of Maharashtra, Water Resources Department",
+        "what": "In-principle approval to divert 10 TMC from the Kanhan near Lohghogari, in Chhindwara district of Madhya Pradesh, through a 62 km tunnel into Totladoh, to make up for the inflow the Pench has lost to Madhya Pradesh's Chaurai dam. Estimated at Rs 3,612 crore in two phases; phase 1 (Rs 17.55 crore) covers only the approvals, including Madhya Pradesh's consent, and phase 2 cannot start before them. A GR of the previous day asked the Finance Department to provide the funds within three years. The Water Resources Department's re-planning of Pench water (19 March 2020) raises NMC's share to 341 Mcum a year once the tunnel is built. No later Government document on the project was found.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Water Resources Department, GR PRASHAMA-2019/PK357/MOPR-2, 18 September 2019",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/201909181817460527.pdf",
+          "date": "2019-09-18",
+          "gr_code": "201909181817460527"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2019-09-17",
+            "status": "unverified",
+            "note": "The Finance Department to make the funds needed to complete the project available to the Urban Development Department within three years.",
+            "source_label": "GR Sankirna-2019/(PK 245/2019)/MOPR-2, 17 September 2019, clause 6",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/201909171825128827.pdf"
+          },
+          {
+            "date": "2020-03-19",
+            "status": "unverified",
+            "note": "The Pench re-planning GR sets NMC at 190 Mcum a year in phase 1 and 341 Mcum a year in phase 2, after the lift schemes and the Lohghogari tunnel.",
+            "source_label": "GR Sankirna-2020/(10/2020)/SV (Policy), 19 March 2020",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202003191442414827.pdf"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null,
+        "ledger_id": "pench-nmc"
+      },
+      {
+        "id": "ngp-kolar-kanhan-barrage-dpr",
+        "category": "New water sources",
+        "title": "Survey and project report for a barrage at the Kolar-Kanhan confluence",
+        "committed_by": "Government of Maharashtra, Water Resources Department, with the Vidarbha Irrigation Development Corporation",
+        "what": "Approval of Rs 1.98 crore (Rs 1,97,67,544) for the remaining survey, design and detailed project report of a barrage near Kamptee with 67.88 Mcum of storage. The GR says the barrage would secure the 65.71 Mcum now supplied to NMC's Kanhan water works and a future demand of 44.934 Mcum. No date was set for the report.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Water Resources Department, GR Sankirna-2018/(342/2018)/JaSaA, 18 April 2023 (official code 202304201803571027; official PDF did not open on 15 October 2026; text read from the orgpedia mahGRs archive copy)",
+          "url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt",
+          "date": "2023-04-18",
+          "gr_code": "202304201803571027",
+          "official_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202304201803571027.pdf",
+          "text_via_mirror": true,
+          "mirror_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2023-04-18",
+            "status": "unverified",
+            "note": "Survey and project-report work approved; construction is not sanctioned.",
+            "source_label": "GR Sankirna-2018/(342/2018)/JaSaA, 18 April 2023, text in the orgpedia mahGRs archive copy",
+            "source_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null,
+        "ledger_id": "kanhan-nmc"
+      },
+      {
+        "id": "ngp-rohana-reduce-78",
+        "category": "New water sources",
+        "title": "Rohana scheme: reduce the city's 78 Mcum lift from Pench",
+        "committed_by": "Government of Maharashtra, Water Resources Department",
+        "what": "The same GR describes a Rohana water supply scheme putting 68.957 Mcum into the Pench-Gorewada pipeline, proposed to cut promptly the 78 Mcum lift from the Pench project that the GR describes as temporarily sanctioned. The GR gives no sanction or date for the Rohana scheme itself.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Water Resources Department, GR Sankirna-2018/(342/2018)/JaSaA, 18 April 2023 (official code 202304201803571027; official PDF did not open on 15 October 2026; text read from the orgpedia mahGRs archive copy)",
+          "url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt",
+          "date": "2023-04-18",
+          "gr_code": "202304201803571027",
+          "official_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202304201803571027.pdf",
+          "text_via_mirror": true,
+          "mirror_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2023-04-18",
+            "status": "unverified",
+            "note": "Scheme described in the GR's preamble; no sanction.",
+            "source_label": "GR Sankirna-2018/(342/2018)/JaSaA, 18 April 2023, text in the orgpedia mahGRs archive copy",
+            "source_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Water_Resources_Department/202304201803571027.pdf.mr.txt"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null,
+        "ledger_id": "pench-nmc"
+      },
+      {
+        "id": "ngp-nag-river-nrcp-jica",
+        "category": "Sewage and the Nag",
+        "title": "Nag River Pollution Abatement Project: sewers and three treatment plants for the Nag and Pili",
+        "committed_by": "Government of India (National River Conservation Directorate, Ministry of Jal Shakti) with a JICA loan; Government of Maharashtra; NMC as the implementing agency",
+        "what": "About 520 km of sewers, 92 MLD of new treatment capacity at three sites, rehabilitation of two 5 MLD plants and 7 new pumping stations for the Nag, the Pili and Bor nala, at Rs 1,926.99 crore (Centre 1,115.22, State 507.36, NMC 304.41). The Government of India's sanction of 14 March 2023 allows 8 years, to March 2031; JICA's loan documents plan completion in July 2028, when all packages are in service. Both dates are shown.",
+        "due": "2031-03",
+        "commitment_source": {
+          "label": "Government of Maharashtra, Environment and Climate Change Department, GR RANYO-2024/PK82, 3 March 2025 (implementation order citing the Government of India's sanction of 14 March 2023)",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202503031716017604.pdf",
+          "date": "2025-03-03",
+          "gr_code": "202503031716017604"
+        },
+        "status": "on-track",
+        "status_history": [
+          {
+            "date": "2020-03-27",
+            "status": "on-track",
+            "note": "Loan agreement signed: 29,082 million yen; completion planned for July 2028.",
+            "source_label": "JICA, loan announcement of 30 March 2020, item 7; ex-ante evaluation, s.3(5)",
+            "source_url": "https://www2.jica.go.jp/yen_loan/pdf/en/7078/20200330_31_en.pdf"
+          },
+          {
+            "date": "2025-04",
+            "status": "on-track",
+            "note": "Project management consultant at work from 4 November 2024; works to start in 2025-26. NMC aims to finish in 5 of the 8 years.",
+            "source_label": "NMC Budget 2025-26 (Marathi)",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf"
+          },
+          {
+            "date": "2026-03-23",
+            "status": "on-track",
+            "note": "The Centre's release of Rs 167.44 crore (30 June 2025) moved to the project's single nodal account.",
+            "source_label": "GR RANYO-2025/PK75/TK-3, 23 March 2026",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202603231615583504.pdf"
+          },
+          {
+            "date": "2026-05",
+            "status": "on-track",
+            "note": "Package 5 (non-sewerage works: electric crematoria at Mokshdham, Rs 1.32 crore) awarded on 20 October 2025 and begun; tenders published for packages 3 and 4, with two bids in package 3 under technical evaluation; package 2's draft tender under scrutiny; package 1's survey done. Rs 233.50 crore provided for 2026-27.",
+            "source_label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), printed pp.B-5 to B-6; fund head A46201960401, PDF p.330, for the Rs 233.50 crore",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+          },
+          {
+            "date": "2026-09-11",
+            "status": "on-track",
+            "note": "The State's matching share of Rs 69.76 crore to be credited to the project account, taking funds placed there to Rs 237.20 crore (167.44 + 69.76, our sum).",
+            "source_label": "GR RANYO-2025/PK75, 4 September 2026, corrigendum 11 September 2026",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202609041540478204.pdf"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-pohra-amrut2",
+        "category": "Sewage and the Nag",
+        "title": "Pohra river sewerage: sewers for the south of the city and 45 MLD of sewage treatment",
+        "committed_by": "Government of Maharashtra, Urban Development Department, for NMC (AMRUT 2.0)",
+        "what": "Sanctioned on 9 November 2023 at Rs 957.01 crore including GST (Centre 25%, State 25%, NMC 50%): about 535 km of sewers, 45 MLD of treatment (the sanction: 35 MLD at Chikhali and 10 MLD at Jaitala; NMC's July 2024 deck: one 45 MLD plant at Chikhali) and 6 pumping stations for the south zone and Hudkeshwar-Narsala. Work orders for all five packages were issued on 25 June 2024. The sanction allows 30 months from the work order (December 2026), and NMC's 2025-26 budget aimed to finish within two years. The AMRUT 2.0 portal lists Rs 987.01 crore and NMC's engineering deck Rs 1,030 crore for the same project; all three figures are stated.",
+        "due": "2026-12",
+        "commitment_source": {
+          "label": "Government of Maharashtra, Urban Development Department, GR AMRUT-2023/PK460/NAVI-33, 9 November 2023",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202311091254222925.pdf",
+          "date": "2023-11-09",
+          "gr_code": "202311091254222925"
+        },
+        "status": "slipped",
+        "status_history": [
+          {
+            "date": "2025-04",
+            "status": "on-track",
+            "note": "Work orders for five packages issued on 25 June 2024; to be finished within 2 years.",
+            "source_label": "NMC Budget 2025-26 (Marathi)",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf"
+          },
+          {
+            "date": "2025-12-14",
+            "status": "on-track",
+            "note": "NMC allowed to borrow up to Rs 400 crore for the project.",
+            "source_label": "GR NAMPA-1125/PK244/NAVI-26, 14 December 2025",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202512141527210725.pdf"
+          },
+          {
+            "date": "2026-05",
+            "status": "slipped",
+            "note": "176 of 537 km of sewers laid; 35% physical and 20% financial progress (Rs 162 crore spent); completion now targeted for March 2027.",
+            "source_label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), printed pp.B-6 to B-7",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "slipped",
+            "note": "Listed on the AMRUT 2.0 portal at Rs 987.01 crore, milestone 'Contract Awarded'.",
+            "source_label": "MoHUA AMRUT 2.0 portal, Nagpur approved projects",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/TTN2eVhpdTRLYWVxbjFYdEllaWROQT09/UkJ0czN0UWJmNE9MemtZVEh0SC8rQT09"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": "2027-03"
+      },
+      {
+        "id": "ngp-narsala-20mld-stp",
+        "category": "Sewage and the Nag",
+        "title": "A 20 MLD sewage treatment plant at Narsala under the Smart City programme",
+        "committed_by": "Nagpur Smart and Sustainable City Development Corporation, for NMC",
+        "what": "A 20 MLD sewage treatment plant for the Pohra river catchment at Narsala. NMC's documents describe it differently: on trial run in 2023-24, and under 'Proposed STPs' in July 2024. No completion date is published.",
+        "due": null,
+        "commitment_source": {
+          "label": "NMC Public Health Engineering, 'ongoing and proposed project' deck, 11 July 2024, slide 9",
+          "url": "https://docs.google.com/presentation/d/1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA/edit",
+          "date": "2024-07-11"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2024-03",
+            "status": "unverified",
+            "note": "Listed as 'WIP', on 'Trial run', 20 MLD, SBR.",
+            "source_label": "NMC Environment Status Report 2023-24, printed p.137, Table 6.3",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2024-07-11",
+            "status": "unverified",
+            "note": "Listed under 'Proposed STPs': 'Under Smart city Project at Narsala - 20 MLD'.",
+            "source_label": "NMC Public Health Engineering deck, slide 9",
+            "source_url": "https://docs.google.com/presentation/d/1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA/edit"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "unverified",
+            "note": "NSSCDCL lists 'STP (Sewage Treatment Plant - Pohra river)' (MAH-NAG-050), which we take to be this plant: 'Work Order Issued' (undated page).",
+            "source_label": "NSSCDCL project list, read 15 October 2026",
+            "source_url": "https://www.nsscdcl.org/Projects.jsp"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-bhandewadi-200-reuse",
+        "category": "Sewage and the Nag",
+        "title": "A 200 MLD sewage plant at Bhandewadi, with treated water sold to power stations",
+        "committed_by": "Nagpur Municipal Corporation, with Vishwaraj Environment (design-build-finance-operate-transfer) and MAHAGENCO",
+        "what": "Work order of 12 December 2014 for a 200 MLD sewage treatment plant at Bhandewadi, project cost Rs 573.34 crore, with the treated water piped to the Koradi and Khaperkheda thermal power stations. Operation and maintenance runs for 30 years, from 1 July 2018 to 30 June 2048.",
+        "due": null,
+        "commitment_source": {
+          "label": "NMC Public Health Engineering, 'ongoing and proposed project' deck, 11 July 2024, slide 10 (records the work order of 12 December 2014)",
+          "url": "https://docs.google.com/presentation/d/1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA/edit",
+          "date": "2014-12-12"
+        },
+        "status": "delivered",
+        "status_history": [
+          {
+            "date": "2018-06-30",
+            "status": "delivered",
+            "note": "Plant commissioned.",
+            "source_label": "NMC Public Health Engineering deck, slide 10",
+            "source_url": "https://docs.google.com/presentation/d/1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA/edit"
+          },
+          {
+            "date": "2020-06-05",
+            "status": "delivered",
+            "note": "Pipeline for reuse at the power stations commissioned.",
+            "source_label": "NMC Public Health Engineering deck, slide 10",
+            "source_url": "https://docs.google.com/presentation/d/1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA/edit"
+          }
+        ],
+        "next_check": null,
+        "revised_due": null
+      },
+      {
+        "id": "ngp-nag-municipal-bonds",
+        "category": "Sewage and the Nag",
+        "title": "Raise Rs 200 crore in municipal bonds for NMC's share of the Nag project",
+        "committed_by": "Nagpur Municipal Corporation",
+        "what": "NMC's 2026-27 budget states that it intends to raise Rs 200 crore through municipal bonds during 2026-27 towards its share of the Nag River Pollution Abatement Project, and expects a central incentive of Rs 26 crore.",
+        "due": "2027-03",
+        "commitment_source": {
+          "label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), Accounts and Finance section",
+          "url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf",
+          "date": "2026-05"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-05",
+            "status": "unverified",
+            "note": "Intention stated in the budget.",
+            "source_label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), Accounts and Finance section",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+          }
+        ],
+        "next_check": "2027-04-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-naik-lake-amrut2",
+        "category": "Lakes",
+        "title": "Rejuvenate Naik lake (AMRUT 2.0)",
+        "committed_by": "Government of Maharashtra, Urban Development Department, for NMC (AMRUT 2.0)",
+        "what": "Sanctioned on 2 November 2022 at Rs 12.95 crore (Centre 3.24, State 3.24, NMC 6.48): cleaning and desilting, a storm drain, a sewer line, an edge wall, a toilet block, a yoga shed, a compound wall and an immersion tank. The GR sets 12 months to complete the project, with the work order due within 45 days (the due date counts 12 months from the 45-day work-order deadline). The AMRUT 2.0 portal now lists the project as completed at Rs 15.95 crore; it does not date the completion.",
+        "due": "2023-12",
+        "commitment_source": {
+          "label": "Government of Maharashtra, Urban Development Department, GR AMRUT-2022/PK268/NAVI-33, 2 November 2022 (Naik lake) (official code 202211021115299425; official PDF did not open on 15 October 2026; text read from the orgpedia mahGRs archive copy)",
+          "url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202211021115299425.pdf.mr.txt",
+          "date": "2022-11-02",
+          "gr_code": "202211021115299425",
+          "official_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202211021115299425.pdf",
+          "text_via_mirror": true,
+          "mirror_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202211021115299425.pdf.mr.txt"
+        },
+        "status": "delivered",
+        "status_history": [
+          {
+            "date": "2022-11-02",
+            "status": "on-track",
+            "note": "Sanctioned at Rs 12.95 crore, 12 months to complete.",
+            "source_label": "GR AMRUT-2022/PK268/NAVI-33, 2 November 2022, text in the orgpedia mahGRs archive copy",
+            "source_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202211021115299425.pdf.mr.txt"
+          },
+          {
+            "date": "2024-03",
+            "status": "unverified",
+            "note": "NMC reports the 1st phase of work completed at Naik lake.",
+            "source_label": "NMC Environment Status Report 2023-24, printed pp.137-138",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "delivered",
+            "note": "'Naik Lake Rejuvenation Project', Rs 15.95 crore, milestone 'Project Completed'.",
+            "source_label": "MoHUA AMRUT 2.0 portal, Nagpur approved projects",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/TTN2eVhpdTRLYWVxbjFYdEllaWROQT09/UkJ0czN0UWJmNE9MemtZVEh0SC8rQT09"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-lendi-lake-amrut2",
+        "category": "Lakes",
+        "title": "Rejuvenate Lendi lake (AMRUT 2.0)",
+        "committed_by": "Government of Maharashtra, Urban Development Department, for NMC (AMRUT 2.0)",
+        "what": "Sanctioned on 2 November 2022 at Rs 14.13 crore (Centre 3.53, State 3.53, NMC 7.07), with completion expected in 12 months and the work order due within 45 days (the due date counts 12 months from the 45-day work-order deadline).",
+        "due": "2023-12",
+        "commitment_source": {
+          "label": "Government of Maharashtra, Urban Development Department, GR AMRUT-2022/PK268/NAVI-33, 2 November 2022 (Lendi lake) (official code 202211021157345625; official PDF did not open on 15 October 2026; text read from the orgpedia mahGRs archive copy)",
+          "url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202211021157345625.pdf.mr.txt",
+          "date": "2022-11-02",
+          "gr_code": "202211021157345625",
+          "official_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202211021157345625.pdf",
+          "text_via_mirror": true,
+          "mirror_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202211021157345625.pdf.mr.txt"
+        },
+        "status": "stalled",
+        "status_history": [
+          {
+            "date": "2022-11-02",
+            "status": "on-track",
+            "note": "Sanctioned at Rs 14.13 crore, 12 months to complete.",
+            "source_label": "GR AMRUT-2022/PK268/NAVI-33, 2 November 2022, text in the orgpedia mahGRs archive copy",
+            "source_url": "https://github.com/orgpedia/mahGRs/blob/main/GRs/Urban_Development_Department/202211021157345625.pdf.mr.txt"
+          },
+          {
+            "date": "2024-03",
+            "status": "stalled",
+            "note": "NMC's report records that 'the development work was not completed on account of opposition from residents to removal of encroachment', and that the lake was not sampled because of dense vegetation and low water.",
+            "source_label": "NMC Environment Status Report 2023-24, printed p.138",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2026-10-15",
+            "status": "stalled",
+            "note": "Lendi lake is not among the five Nagpur projects on the AMRUT 2.0 portal.",
+            "source_label": "MoHUA AMRUT 2.0 portal, Nagpur approved projects",
+            "source_url": "https://amrut.mohua.gov.in/approvedProjects/list/TTN2eVhpdTRLYWVxbjFYdEllaWROQT09/UkJ0czN0UWJmNE9MemtZVEh0SC8rQT09"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-three-lakes-by-2024",
+        "category": "Lakes",
+        "title": "Rejuvenate Gandhisagar, Sonegaon and Sakkardara lakes by 2024",
+        "committed_by": "Nagpur Municipal Corporation",
+        "what": "NMC's Environment Status Report for 2022-23 records that NMC 'dedicated a huge surplus of Rs 100 crore to the rejuvenation of Gandhi Sagar, Sonegaon and Sakkardara lake to be completed by 2024'. Sonegaon's work also carries State sanctions: phase 1 under the basic-amenities scheme (Rs 17.32 crore, 28 February 2019) and phase 2 under the Tourism Department (Rs 24.96 crore, 7 November 2023, to be spent by 31 March 2024).",
+        "due": "2024",
+        "commitment_source": {
+          "label": "NMC Environment Status Report 2022-23, printed p.85",
+          "url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_final_Report_2022-2023.pdf",
+          "date": "2023"
+        },
+        "status": "overdue",
+        "status_history": [
+          {
+            "date": "2023-11-07",
+            "status": "on-track",
+            "note": "Sonegaon phase 2 sanctioned at Rs 24.96 crore with Rs 8.25 crore released; the money to be spent by 31 March 2024 and the works completed immediately.",
+            "source_label": "Government of Maharashtra, Tourism and Cultural Affairs Department, GR TDS-2023/03/PK114 (Part-IV), 7 November 2023",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202311071447498623.pdf"
+          },
+          {
+            "date": "2024-03",
+            "status": "on-track",
+            "note": "1st phase of work completed at Gandhisagar, Sakkardara and Sonegaon; all three 'under 2nd phase of development and beautification'.",
+            "source_label": "NMC Environment Status Report 2023-24, printed pp.137-138",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf"
+          },
+          {
+            "date": "2026-05",
+            "status": "overdue",
+            "note": "The 2026-27 budget provides Rs 12 crore for Sonegaon lake beautification and Rs 1 crore as NMC's share for Gandhisagar's rejuvenation.",
+            "source_label": "NMC Budget 2026-27 (Marathi, scanned; read from the page images), Water Supply and Sewerage Fund, heads A46201373309 and A46201373311 (PDF pp.322 and 330)",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+          },
+          {
+            "date": "2026-07-10",
+            "status": "overdue",
+            "note": "Rs 20 crore of State funds sanctioned for works at Sakkardara lake, to be executed by the Nagpur Improvement Trust.",
+            "source_label": "Government of Maharashtra, Urban Development Department, GR MANAPA-2026/PK152/Part-1/NAVI-16, 10 July 2026",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202607101202098425.pdf"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-futala-ngt-actions",
+        "category": "Lakes",
+        "title": "Keep Futala lake clean and lay a sewer for the settlement on its bank",
+        "committed_by": "NMC, on directions of the Bombay High Court (2023), the Supreme Court (2025) and the National Green Tribunal (2025-26)",
+        "what": "The High Court directed on 30 November 2023 that no permanent construction be undertaken within Futala lake and that NMC and Maha Metro keep the water body clean; the Supreme Court upheld this on 7 October 2025. In the Tribunal's own case on the lake, a joint committee of CPCB, MPCB and NMC reported that about 145-160 houses beside the lake have no sewer and that the settlement has 8 cow shelters (gaushalas); on 18 November 2025 the Tribunal asked NMC for an action plan with a timeline within one month.",
+        "due": null,
+        "commitment_source": {
+          "label": "National Green Tribunal (Western Zone), OA 73/2025, order of 18 November 2025",
+          "url": "https://indiankanoon.org/doc/34576620/",
+          "date": "2025-11-18"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2025-10-07",
+            "status": "on-track",
+            "note": "The Supreme Court upheld the High Court's directions on Futala.",
+            "source_label": "Supreme Court of India, Swacch Association, Nagpur v. State of Maharashtra, 2025 INSC 1199",
+            "source_url": "https://indiankanoon.org/doc/85333771/"
+          },
+          {
+            "date": "2026-02-03",
+            "status": "on-track",
+            "note": "NMC reported 19 CCTV cameras and nuisance-squad rounds at the lake, and a sewer for the settlement estimated at Rs 23,63,583.",
+            "source_label": "National Green Tribunal (Western Zone), OA 73/2025, order of 3 February 2026",
+            "source_url": "https://indiankanoon.org/doc/177467634/"
+          },
+          {
+            "date": "2026-07-31",
+            "status": "unverified",
+            "note": "The planned sewer lengthened from 150 m to 443 m.",
+            "source_label": "National Green Tribunal (Western Zone), OA 73/2025, order of 31 July 2026",
+            "source_url": "https://indiankanoon.org/doc/121444604/"
+          },
+          {
+            "date": "2026-09-10",
+            "status": "unverified",
+            "note": "Technical sanction of Rs 33,09,488 and a budget provision of Rs 36,24,426 (NMC resolution 22 of 27 June 2026). The case was next listed for 29 October 2026.",
+            "source_label": "National Green Tribunal (Western Zone), OA 73/2025, order of 10 September 2026",
+            "source_url": "https://indiankanoon.org/doc/144526823/"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-lakes-atr-hc-2026",
+        "category": "Lakes",
+        "title": "An action-taken report to the High Court on conserving the city's lakes",
+        "committed_by": "District Collector, Nagpur and the NMC Commissioner, on the Bombay High Court's direction",
+        "what": "Disposing of a case it opened on its own motion about the city's lakes, the High Court directed the District Collector and the NMC Commissioner to look into the issue, conduct the necessary enquiry, take the steps essential for conserving the lakes, and submit an action-taken report to the Registrar (Judicial) within four months.",
+        "due": "2026-09-07",
+        "commitment_source": {
+          "label": "Bombay High Court (Nagpur Bench), Suo Motu PIL 24/2026, order of 7 May 2026",
+          "url": "https://indiankanoon.org/doc/185727412/",
+          "date": "2026-05-07"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2026-05-07",
+            "status": "unverified",
+            "note": "Directions issued; report due within four months. Reports filed with the Registrar are not published, so whether it was filed cannot be checked from public records.",
+            "source_label": "Bombay High Court (Nagpur Bench), Suo Motu PIL 24/2026",
+            "source_url": "https://indiankanoon.org/doc/185727412/"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-ambazari-dam-strengthening",
+        "category": "Ambazari and the 2023 flood",
+        "title": "Complete the works to strengthen Ambazari dam",
+        "committed_by": "Government of Maharashtra, through a High Level Committee under the Divisional Commissioner, Nagpur; NMC as the dam's owner",
+        "what": "After the overflow of 23 September 2023, the State set up a High Level Committee to complete urgently the works taken up to strengthen Ambazari dam, citing the High Court's orders in PIL 96/2017 (21 March 2018) and PIL 56/2023. No completion date was set.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Urban Development Department, GR NAMPA-3023/PK261/NAVI-26, 5 January 2024",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202401051235518225.pdf",
+          "date": "2024-01-05",
+          "gr_code": "202401051235518225"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2025-04",
+            "status": "unverified",
+            "note": "Rs 11 crore (Rs 1,100 lakh) budgeted for Ambazari dam strengthening in 2025-26.",
+            "source_label": "NMC Budget 2025-26 (Marathi), Water Supply and Sewerage Fund, head A43801940707",
+            "source_url": "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf"
+          },
+          {
+            "date": "2025-07-02",
+            "status": "unverified",
+            "note": "The High Court recorded, from the affidavit placed before it, that the safety of Ambazari dam is NMC's responsibility, the dam being NMC's property.",
+            "source_label": "Bombay High Court (Nagpur Bench), PIL 56/2023, order of 2 July 2025",
+            "source_url": "https://indiankanoon.org/doc/51036572/"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-ambazari-escape-gates",
+        "category": "Ambazari and the 2023 flood",
+        "title": "Gates on Ambazari's spillway, and flood-safety measures before the monsoon",
+        "committed_by": "Water Resources Department (Nagpur Irrigation Division South), by affidavit; the State's High Level Committee",
+        "what": "The Irrigation Department told the High Court that the general layout and design of three escape gates, each 4 m by 2.5 m, for the spillway, which has no gates, were in progress (affidavit of 26 February 2024), and that a high-level submersible bridge across the spill had been technically sanctioned on 7 February 2024. On 8 May 2024 the court asked the High Level Committee to take essential safety measures to be completed before that monsoon. No completion date for the gates appears in the orders.",
+        "due": null,
+        "commitment_source": {
+          "label": "Bombay High Court (Nagpur Bench), PIL 56/2023, order of 11 July 2024 (records the affidavit of 26 February 2024)",
+          "url": "https://indiankanoon.org/doc/62849948/",
+          "date": "2024-02-26"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2024-05-08",
+            "status": "unverified",
+            "note": "Temporary flood-safety measures to be completed before the 2024 monsoon and placed on record.",
+            "source_label": "Bombay High Court (Nagpur Bench), PIL 56/2023, order of 8 May 2024",
+            "source_url": "https://indiankanoon.org/doc/199189158/"
+          },
+          {
+            "date": "2024-07-11",
+            "status": "unverified",
+            "note": "Gate design in progress, to be sent to the Maharashtra Engineering Research Institute; NMC and other agencies to clear obstructions so the Nag downstream carries at least 75 cumecs.",
+            "source_label": "Bombay High Court (Nagpur Bench), PIL 56/2023, order of 11 July 2024",
+            "source_url": "https://indiankanoon.org/doc/62849948/"
+          }
+        ],
+        "next_check": "2026-11-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-sep2023-flood-restoration",
+        "category": "Ambazari and the 2023 flood",
+        "title": "Rebuild river and nala walls and roads damaged by the rain of September 2023",
+        "committed_by": "Government of Maharashtra, Revenue and Forest Department (special package); NMC executes",
+        "what": "A special package of Rs 204.72 crore for the damage of 22-23 September 2023 in the city: 8.41 km of river and nala retaining walls (Rs 163.23 crore) and 61.38 km of road repairs (Rs 41.48 crore). No completion date was set. NMC's 2025-26 budget gives the package as Rs 204.81 crore, approved on 20 February 2024.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Revenue and Forest Department, GR CLS-2023/PK227/M-3, 22 February 2024",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202402221153440819.pdf",
+          "date": "2024-02-22",
+          "gr_code": "202402221153440819"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2024-03-30",
+            "status": "unverified",
+            "note": "Rs 14.51 crore released to NMC.",
+            "source_label": "GR CLS-2023/PK227/M-3, 30 March 2024",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202403301649281019.pdf"
+          },
+          {
+            "date": "2024-12-30",
+            "status": "unverified",
+            "note": "Rs 72.12 crore released to NMC.",
+            "source_label": "GR CLS-2023/PK227/M-3, 30 December 2024",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202412301756366919.pdf"
+          },
+          {
+            "date": "2026-03-31",
+            "status": "unverified",
+            "note": "Rs 70.26 crore released to NMC.",
+            "source_label": "GR CLS-2023/PK227/M-3, 31 March 2026",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202603311426599719.pdf"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      },
+      {
+        "id": "ngp-nag-widening-crazy-castle",
+        "category": "Ambazari and the 2023 flood",
+        "title": "Widen the Nag below Ambazari, from 14 m to 18 m",
+        "committed_by": "Government of Maharashtra, Revenue and Forest Department (State Disaster Mitigation Fund); Maha Metro executes",
+        "what": "Rs 19.84 crore (Rs 19,84,12,976) from the State Disaster Mitigation Fund to widen the Nag channel from 14 m to 18 m at Crazy Castle, near Ambazari, approved by the State Executive Committee on 25 March 2025 and citing the High Court's order of 12 February 2025 in PIL 56/2023. No completion date was set.",
+        "due": null,
+        "commitment_source": {
+          "label": "Government of Maharashtra, Revenue and Forest Department, GR AYUPA-2025/PK47/AYUPA-2, 7 May 2025",
+          "url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202505071618095219.pdf",
+          "date": "2025-05-07",
+          "gr_code": "202505071618095219"
+        },
+        "status": "unverified",
+        "status_history": [
+          {
+            "date": "2025-06-23",
+            "status": "unverified",
+            "note": "Corrigendum to the sanction.",
+            "source_label": "GR AYUPA-2025/PK47/AYUPA-2, corrigendum of 23 June 2025",
+            "source_url": "https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/202506231440028919.pdf"
+          }
+        ],
+        "next_check": "2027-03-01",
+        "revised_due": null
+      }
+    ]
+  }
+}

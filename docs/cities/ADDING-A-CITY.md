@@ -177,8 +177,16 @@ Other shared builders take a per-city file in their own directory:
 rivers, drainage, localities), and the config dict in
 `neer-vazhvu-api/scripts/build_ward_profiles.py` for ward profiles.
 
-Everything else (supply, facts, commitments, restoration, river quality, the
-dam scraper) is still a per-city script today:
+Commitments are an input file, not a script: `src/cities/<id>/commitments.json`
+(copy Nagpur's, which passes every check), built by
+`python3 neer-vazhvu-api/scripts/build_commitments.py --city <id>`. The builder
+fails on a broken row (a status the page does not know, a status that is not
+its latest history entry, counts that disagree with `build.expect`) and warns
+on the rest (a history entry with no citation, a recheck date that has passed).
+`--all --check` lists the warnings for every city.
+
+Everything else (supply, facts, restoration, river quality, the dam scraper)
+is still a per-city script today:
 `neer-vazhvu-api/scripts/build_<id>_<what>.py`. Start from the most recent
 city's version. These are being replaced by shared builders that read per-city
 JSON inputs, so keep curated content (rows, citations, wording) in clearly
