@@ -19,7 +19,7 @@ This page is the reference for what goes in the folder.
 | `flood.ts` or `flood.tsx` | if `flood-risk` is a route | `FLOOD`: the flood map layers or the narrative config. | `/<city>/flood-risk` |
 | `my-ward.ts` | if `my-ward` is a route | `MY_WARD`: the source line under each card, and the city's own complaint portals and helplines. | My Ward cards |
 | `routes-off.ts` | if any route is left out | `ROUTES_OFF`: why each route the city does not ship is off. | the exemptions register |
-| `commitments.json` | if `commitments` is a route | The commitments register: `payload` is what the page shows (rows, legend, intro), `build` is how the file is written. Built by `neer-vazhvu-api/scripts/build_commitments.py --city <id>`, which checks every row. | `/<city>/commitments` (through `public/data/commitments-<id>.json`) |
+| `commitments.json`, `restoration-projects.json`, `water-bodies-flagship.json`, `allocations.json` | if the matching route is on | Curated research, one file per artifact: `payload` is exactly what the page shows, `build` is how the file is written. Built and checked by `neer-vazhvu-api/scripts/build_curated.py <family> --city <id>`. | `/<city>/commitments`, `/<city>/lake-restoration`, `/<city>/allocations` (through `public/data/<family>-<id>.json`) |
 | `pipeline.json` | if a shared pipeline covers the city | Settings only Python scripts read: the IMD rainfall grid point, the provisional-rainfall point, IN-GRES assessment units, elevation bands, adjudicated cross-city mentions. The app never imports it. | `scripts/city_manifest.py` |
 
 Copy the folder of the most similar city and edit it; that is quicker than

@@ -1,7 +1,7 @@
 """Nagpur commitments register and lake-restoration files against their consumers.
 
 The commitments rows are src/cities/nagpur/commitments.json, built by
-build_commitments.py (which runs the shared checks); these tests add Nagpur's own.
+build_curated.py (which runs the shared checks); these tests add Nagpur's own.
 
 The commitments page (commitments-client.tsx) and the lake-restoration page
 (lake-restoration-content.tsx) read these fields without guards; React keys are
@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "neer-vazhvu-api" / "scripts"))
 
-import build_commitments as engine  # noqa: E402
+import build_curated as engine  # noqa: E402
 import build_nagpur_lakes as bl  # noqa: E402
 
 SPEC = json.loads((ROOT / "src/cities/nagpur/commitments.json").read_text())
@@ -103,8 +103,10 @@ def test_mirror_text_grs_are_flagged_and_linked():
 
 
 def test_producer_invariants_hold():
-    problems, _ = engine.check("nagpur", SPEC, "2026-10-15")
+    problems, warnings = engine.check("commitments", "nagpur", SPEC, "2026-10-15")
     assert problems == []
+    # Every "Rs T crore (Centre a, State b, NMC c)" in the rows adds up.
+    assert [w for w in warnings if "crore" in w] == []
 
 
 def test_lake_files_match_the_page():

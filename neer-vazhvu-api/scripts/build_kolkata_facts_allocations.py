@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Kolkata facts + allocation ledger, compiled from verified primary sources.
+Kolkata facts, compiled from verified primary sources. The allocation ledger,
+/kolkata/allocations, is curated content: src/cities/kolkata/allocations.json,
+built by build_curated.py.
 
 Every entry here carries a source URL and a date. Nothing graded [R] (news or
 search snippet) or [U] (asserted but unreachable) from the pre-onboarding
@@ -306,151 +308,6 @@ def facts():
     ]
 
 
-def allocations():
-    """Shape is fixed by src/app/[cityId]/allocations/allocations-client.tsx:
-    arrangements need `instrument` {label,url} and a `confidence` grade;
-    authorities need capacity/committed/tension/source_refs; `sources` is a
-    Record keyed by the id that source_refs point at, not a list."""
-    return {
-        "place_id": "kolkata",
-        "updated": date.today().isoformat(),
-        "headline": "Who is entitled to Kolkata's water, and who actually receives it",
-        "intro": (
-            "Kolkata's supply is run-of-river abstraction from the Hooghly, not a dam quota, "
-            "so there is no entitlement document holding the city to a share of its own water. "
-            "What does exist on paper is the water KMC sells onward: two bulk arrangements with "
-            "neighbouring municipal bodies, both published by KMC itself. Those two sales are "
-            "also why Bidhannagar and Budge Budge sit inside this platform's Kolkata scope at "
-            "all - they are the verified water relationships in a metropolitan area whose "
-            "administrative structure is otherwise unresolved."
-        ),
-        "unit_note": "MLD = million litres per day. Entitlements here are published bulk-sale volumes, not adjudicated shares.",
-        "authorities": [
-            {
-                "id": "kmc",
-                "name": "Kolkata Municipal Corporation, Water Supply Department",
-                "role": "Abstracts from the Hooghly, treats, distributes, and sells bulk water onward.",
-                "capacity": None,
-                "committed": "112.7 MLD sold on to two neighbouring bodies",
-                "tension": (
-                    "KMC publishes plant capacities summing to 2,324.7 MLD beside a ~1,900 MLD "
-                    "target and a ~1,660 MLD requirement, on a page labelled DRAFT and footered "
-                    "2013. Until that reconciles, no total-capacity figure can be stated - so "
-                    "what KMC owes onward is known while what it actually has is not."
-                ),
-                "source_refs": ["kmc-wd"],
-            }
-        ],
-        "arrangements": [
-            {
-                "id": "kmc-bidhannagar",
-                "source": "Hooghly at Palta (Indira Gandhi WTP)",
-                "authority_id": "kmc",
-                "recipient": "Bidhannagar Municipal Corporation (Salt Lake)",
-                "entitled": {
-                    "value": 90,
-                    "unit": "MLD",
-                    "basis": "bulk sale published by KMC",
-                    "year": None,
-                    "note": "Listed on KMC's water-supply department page as a bulk sale to Bidhannagar.",
-                },
-                "received": {
-                    "value": None,
-                    "unit": "MLD",
-                    "basis": None,
-                    "year": None,
-                    "note": "Neither KMC nor Bidhannagar publishes a delivered-volume series. The entitlement is on paper; the realisation is not observable.",
-                },
-                "instrument": {
-                    "label": "KMC Water Supply Department, bulk supply listing",
-                    "url": WD,
-                },
-                # medium, not high: the figure is published by the seller on a page
-                # that is itself labelled draft and dated 2013. Real, but not audited.
-                "confidence": "medium",
-                "note": "The larger of KMC's two bulk sales, and the reason Bidhannagar is in scope.",
-            },
-            {
-                "id": "kmc-budge-budge",
-                "source": "Garden Reach Water Works",
-                "authority_id": "kmc",
-                "recipient": "Budge Budge Municipality",
-                "entitled": {
-                    "value": 22.7,
-                    "unit": "MLD",
-                    "basis": "bulk sale published by KMC",
-                    "year": None,
-                    "note": "Listed on KMC's water-supply department page as a bulk sale to Budge Budge.",
-                },
-                "received": {
-                    "value": None,
-                    "unit": "MLD",
-                    "basis": None,
-                    "year": None,
-                    "note": "No delivered-volume series is published by either party.",
-                },
-                "instrument": {
-                    "label": "KMC Water Supply Department, bulk supply listing",
-                    "url": WD,
-                },
-                "confidence": "medium",
-                "note": "Drawn from Garden Reach rather than Palta, so a different plant carries it.",
-            },
-        ],
-        "events": [
-            {
-                "year": 2021,
-                "title": "KMC files its District Environment Plan",
-                "note": (
-                    "The NGT-mandated filing that put Kolkata's sewage balance on the record: "
-                    "910 of 1,400 MLD treated by the East Kolkata Wetlands, outside KMC's own "
-                    "boundary, against 179 MLD across all five city STPs."
-                ),
-                "source_refs": ["kmc-dep"],
-            }
-        ],
-        "futures": [
-            {
-                "id": "grww-225",
-                "project": "Garden Reach Water Works expansion",
-                "mld": 225,
-                "earmarked_for": ["Kolkata Municipal Corporation"],
-                "status": "Under construction, no dated completion published",
-                "source_refs": ["kmc-wd"],
-            },
-            {
-                "id": "igwtp-90",
-                "project": "Indira Gandhi WTP (Palta) expansion",
-                "mld": 90,
-                "earmarked_for": ["Kolkata Municipal Corporation"],
-                "status": "Under construction, no dated completion published",
-                "source_refs": ["kmc-wd"],
-            },
-        ],
-        "gaps": [
-            "No abstraction or production series exists for any Kolkata plant. The intake that supplies most of the city publishes no daily figure.",
-            "No non-revenue-water figure for Kolkata was found in this research pass at all.",
-            "Delivered volumes against both bulk sales are unpublished by seller and buyers alike.",
-            "The current tariff schedule has not been located; the one in hand is 2010-11.",
-            "KMDA's role in metropolitan supply is not established to primary sources, and the number of municipal corporations in the KMA is itself unresolved.",
-        ],
-        "sources": {
-            "kmc-wd": {
-                "title": "Water Supply Department (draft page, footered 2013)",
-                "publisher": "Kolkata Municipal Corporation",
-                "year": 2013,
-                "url": WD,
-            },
-            "kmc-dep": {
-                "title": "District Environment Plan 2021 - Kolkata",
-                "publisher": "Kolkata Municipal Corporation",
-                "year": 2021,
-                "url": DEP,
-            },
-        },
-    }
-
-
 def main() -> int:
     f = {
         "place_id": "kolkata",
@@ -465,13 +322,12 @@ def main() -> int:
         "facts": facts(),
     }
     write_artifact(DATA_DIR / "facts-kolkata.json", f)
-    write_artifact(DATA_DIR / "allocations-kolkata.json", allocations())
     tiers = {}
     for x in f["facts"]:
         tiers[x["tier"]] = tiers.get(x["tier"], 0) + 1
     print(
         f"kolkata: {len(f['facts'])} facts (tier1={tiers.get(1, 0)} tier2={tiers.get(2, 0)} "
-        f"tier3={tiers.get(3, 0)}), 2 allocation arrangements, 5 named gaps"
+        f"tier3={tiers.get(3, 0)}), 5 named gaps"
     )
     return 0
 
