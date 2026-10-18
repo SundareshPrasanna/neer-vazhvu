@@ -16,10 +16,13 @@
  * registered in scripts/source-registry/hyderabad.json.
  *
  * HOUSE RULE APPLIED THROUGHOUT: figures that exist only in news reporting -
- * HMWSSB's service-area size, population served, headline supply in MLD, and
- * every published STP count - are NOT repeated here, because they are
- * mutually inconsistent across sources. Where a number is absent, that is
- * deliberate and is said out loud.
+ * HMWSSB's service-area size, population served and headline supply in MLD -
+ * are NOT repeated here, because they are mutually inconsistent across
+ * sources. STP counts are not repeated either: the official ones (the
+ * Government of Telangana's NGT action-taken report in OA 606/2018, figures
+ * as on 31.12.2024) count different sets of plants from the 39 sanctioned
+ * under AMRUT 2.0, so no single STP total is stated. Where a number is
+ * absent, that is deliberate and is said out loud.
  */
 
 import Link from "next/link";

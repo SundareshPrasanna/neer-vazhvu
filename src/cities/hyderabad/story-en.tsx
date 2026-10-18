@@ -40,8 +40,10 @@
  *     (news-sourced; the GO itself is an outstanding fetch).
  *
  * Figures NOT used anywhere in this story because they are news-sourced only
- * and mutually inconsistent: HMWSSB's service-area size, population served,
- * total supply in MLD, and every published STP count. See
+ * and mutually inconsistent: HMWSSB's service-area size, population served
+ * and total supply in MLD. STP counts are not used either: the official ones
+ * (the Government of Telangana's NGT action-taken report in OA 606/2018)
+ * count different sets of plants from the 39 sanctioned under AMRUT 2.0. See
  * docs/cities/hyderabad/data-sources.md.
  *
  * English only; Telugu follows in the i18n pass.
