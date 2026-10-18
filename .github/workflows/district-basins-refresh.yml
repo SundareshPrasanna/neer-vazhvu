@@ -1,38 +1,40 @@
-# Weekly refresh of the living feeds on the district maps (Erode and
-# Krishnagiri, public/data/basins/<basin>): groundwater wells, CWC river flow, water
-# quality and reservoir levels from NWIC's National Water Data Portal, and
-# TNPCB's real-time sensor stations. Those sources move daily to weekly; every
-# other family on the map (boundaries, canals, the industry register, the
-# polluted-stretch panel) changes by edition and is rebuilt by hand.
+# Weekly refresh of the living feeds on every district map (public/data/basins/<basin>,
+# each config on scripts/lib/tn_district_basin.py): groundwater wells, CWC river flow,
+# water quality and reservoir levels from NWIC's National Water Data Portal, the state
+# dashboards' reservoir storage, and Kerala's dam bulletins and NWMP reports. Every other
+# family on the map (boundaries, canals, the industry register, the polluted-stretch
+# panel) changes by edition and is rebuilt by hand.
 #
-# Artifact-commit pattern (like bmc-floodspots-refresh.yml): files committed
-# back to main. `--live` calls only the two portals above, works from the
-# frozen boundary inputs in pipeline-inputs, and puts last week's files back
-# if a feed returns under 80% of last week's features, so a flaky response
-# cannot thin the map; a missed week just keeps the previous files.
-# The deployed site serves the pinned corpus, so a refresh reaches it with the
-# next data release.
+# `--live` refreshes each feed on its own and puts a feed's previous files back if it
+# fails twice or returns under 80% of its features, so one flaky source never thins the
+# map or holds the others back. TNPCB's real-time dashboard refuses GitHub runners, so
+# the local scheduled job reads it (`--live --only tnpcb-rt`). One commit per run; the
+# job goes red when any feed kept old files, so a silent no-op cannot look green.
+# The deployed site serves the pinned corpus, so a refresh reaches it with the next
+# data release.
 name: District Basins Live-Feed Refresh
 
 on:
   schedule:
     - cron: '15 5 * * 1'   # Mondays 05:15 UTC = 10:45 IST
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Refresh and gate, but do not commit (always the case off main)
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
+concurrency:
+  group: district-basins-refresh
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    # One district basin per job, in series: both read the same NWDP and TNPCB
-    # endpoints, and two readers at once would double the load for nothing.
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        basin: [erode-rivers, krishnagiri-rivers, palakkad-rivers]
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -44,39 +46,56 @@ jobs:
       - name: Install shapely and pdftotext
         run: |
           pip install "shapely>=2,<3"
-          sudo apt-get install -y poppler-utils   # Kerala's dam bulletins are PDFs
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils   # Kerala's dam bulletins are PDFs
 
+      # Basins in series: they read the same portals, and two readers at once would double the load for nothing.
       - name: Refresh the living feeds
+        id: refresh
+        timeout-minutes: 35   # leaves time to commit what did refresh if a portal hangs
         run: |
-          script="scripts/build_$(tr '-' '_' <<< '${{ matrix.basin }}')_basin.py"
-          for attempt in 1 2 3; do
-            if python "$script" --live; then
-              exit 0
-            fi
-            echo "attempt $attempt failed; retrying in 120s"
-            sleep 120
+          failed=""
+          for cfg in scripts/build_*_basin.py; do
+            grep -q DistrictBasinBuild "$cfg" || continue
+            echo "::group::$cfg"
+            python "$cfg" --live --skip tnpcb-rt || failed="$failed $(basename "$cfg")"
+            echo "::endgroup::"
           done
-          echo "NWDP or TNPCB unreachable or partial after 3 attempts; keeping last week's files"
-          exit 0
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
 
-      - name: Commit refreshed feeds
+      - name: Gate and commit
+        if: always()
+        env:
+          DRY_RUN: ${{ inputs.dry_run || github.ref != 'refs/heads/main' }}
         run: |
+          CHANGED=$(git status --porcelain -uall -- public/data/basins | awk '{print $2}')
+          if [ -z "$CHANGED" ]; then echo "No feed change to commit"; exit 0; fi
+          echo "$CHANGED"
+          # Direct pushes skip the PR gate, so the NVDM gate runs here, after the catalogue so a new file is assessed.
+          python3 scripts/build_dataset_catalogue.py
+          # shellcheck disable=SC2086
+          bash scripts/nvdm-gate.sh HEAD $CHANGED
+          python3 scripts/validate_nvdm.py --selftest
+          if [ "$DRY_RUN" = "true" ]; then echo "Dry run: not committed"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          B=public/data/basins/${{ matrix.basin }}
-          # The living feeds this basin serves (not every basin has real-time stations).
-          FEEDS=$(ls $B/groundwater-wells.geojson $B/gauging-stations.geojson $B/realtime-stations.geojson $B/reservoirs.geojson $B/monitoring-points.geojson $B/inventory.json 2>/dev/null)
-          # Direct pushes skip the PR gate, so the NVDM gate runs here against HEAD, after
-          # the catalogue so a new file is assessed; any failure aborts before commit.
-          python3 scripts/build_dataset_catalogue.py
-          bash scripts/nvdm-gate.sh HEAD $FEEDS $B/readings
-          python3 scripts/validate_nvdm.py
-          python3 scripts/validate_nvdm.py --selftest
-          git add $FEEDS $B/readings docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
-          if git diff --staged --quiet; then
-            echo "No feed change to commit"
-            exit 0
-          fi
-          git commit -m "${{ matrix.basin }} live-feed refresh ($(date -u +%Y-%m-%d))"
-          git pull --rebase origin main
-          git push
+          # Onto the newest main: carry only the refreshed files across, then regenerate the catalogue against that tree.
+          carry=$(mktemp -d)
+          for f in $CHANGED; do mkdir -p "$carry/$(dirname "$f")" && cp "$f" "$carry/$f"; done
+          for _ in 1 2 3; do
+            git fetch -q origin main
+            git reset -q --hard origin/main
+            cp -R "$carry/public" .
+            python3 scripts/build_dataset_catalogue.py
+            python3 scripts/validate_nvdm.py
+            git add public/data/basins docs/architecture/dataset-catalogue.json docs/architecture/dataset-catalogue.md docs/architecture/nvdm-conformance.md
+            git commit -q -m "District basins live-feed refresh ($(date -u +%Y-%m-%d))"
+            git push -q origin HEAD:main && exit 0
+            sleep 20
+          done
+          exit 1
+
+      - name: Fail on a feed that kept old files
+        if: always() && (steps.refresh.outcome != 'success' || steps.refresh.outputs.failed != '')
+        run: |
+          echo "::error::Not every feed refreshed (step ${{ steps.refresh.outcome }};${{ steps.refresh.outputs.failed }}) - those feeds kept their previous files (see the refresh log)"
+          exit 1

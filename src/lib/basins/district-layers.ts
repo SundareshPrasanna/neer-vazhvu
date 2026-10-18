@@ -71,8 +71,8 @@ export function groundwaterWells(rows: ClassRow[]): BasinLayer {
 }
 
 export const TN_GROUNDWATER_WELLS = groundwaterWells([
-  { value: "cgwb-telemetry", label: "CGWB telemetry, readings to September 2026", color: "#0369a1" },
-  { value: "state-telemetry", label: "Tamil Nadu state telemetry, readings to September 2026", color: "#0e7490" },
+  { value: "cgwb-telemetry", label: "CGWB telemetry, six-hourly", color: "#0369a1" },
+  { value: "state-telemetry", label: "Tamil Nadu state telemetry, six-hourly", color: "#0e7490" },
   { value: "cgwb-manual", label: "CGWB manual wells, readings 2021 to 2024", color: "#64748b", defaultOff: true },
 ]);
 

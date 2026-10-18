@@ -109,7 +109,6 @@ TNPCB_OFFICE = {"PND": "DEE Perundurai", "EDL": "DEE Erode"}
 # The WRD register prints Bhavanisagar as "Bhavani". NRSC's dam point for it (TNGIS
 # generic_viewer:tn_reservoirs_point_nrsc, "LOWER BHAWANI") guards the alias.
 RESERVOIR_ALIASES = {"Bhavani": ("Bhavanisagar (Lower Bhavani dam)", (77.09595, 11.46365), "reservoirs: the register's 'Bhavani' waterspread is not at the Bhavanisagar dam")}
-WB_NOT_A_NAME = {"", "none", "no", "cauvery"}
 # TN WRD sub-basin name -> the key cauvery-tn already uses (scripts/basin-sources/cauvery-tn.json).
 SUB_BASIN_KEY = {
     "Upperbhavani": "114", "Lower Bhavani": "120", "Mettur Reservoir To Noyel Confluence": "123",

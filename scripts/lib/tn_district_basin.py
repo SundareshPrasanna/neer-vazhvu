@@ -105,6 +105,9 @@ WB_CLASS = {"stream": "Stream", "streem": "Stream", "odai": "Odai", "odaii": "Od
             "kuttai": "Kuttai", "kulam": "Kulam", "tank": "Tank", "eri": "Eri", "anaicut": "Anaicut"}
 WB_STREAM_CLASSES = {"Stream", "Odai", "Vaikkal"}
 WB_MAJOR_HA = 5.0
+WB_RESERVOIR_MIN_HA = 1.0  # a sliver inside a reservoir's waterspread is not the reservoir
+# Blanks and the basin labels NRSC rows print in water_body_name (Krishnagiri served 776 "Pennar Cauvery" as names).
+WB_NOT_A_NAME = {"", "none", "no", "nil", "cauvery", "cauvery south", "pennar cauvery", "pennaiyar"}
 WATERSHED_LEVELS = (  # family, source column, level label, heavy (sliced per catchment)
     ("watersheds", "watershed", "watershed", False),
     ("sub-watersheds", "subwatersh", "sub-watershed", False),
@@ -128,7 +131,6 @@ WQ_REPORT_PARAMS = (
     ("Conduc", "Conductivity", "µmho/cm", None, None, (1, 100000)),
 )
 WQ_REPORT_EXPLAINER = "Each point is the month's laboratory sample, as the board's monthly NWMP report prints it."
-LIVE_FILES = ("groundwater-wells.geojson", "gauging-stations.geojson", "realtime-stations.geojson", "reservoirs.geojson", "monitoring-points.geojson", "inventory.json")
 LIVE_MIN_SHARE = 0.8  # a feed returning under this share of last week's features is a partial response, not news
 
 CTX = ssl.create_default_context()
@@ -144,7 +146,7 @@ REQUIRED = (
 OPTIONAL = {
     "CANAL_RIVERS": {}, "CANAL_NAMES": {}, "CANAL_DROP": None, "SIPCOT_PARKS": (), "ESTATES_PROVENANCE": "", "ESTATES_SOURCE_FILE": "",
     "TNPCB_RT_SITES": (), "CWC_STATIONS": {}, "CWC_FLOW_EXCLUDED_MONTHS": {}, "CWC_FLOW_EXCLUDED_NOTE": {}, "FLOW_MASS_BALANCE": {},
-    "RESERVOIR_LEVELS": {}, "RESERVOIR_ALIASES": {}, "REPO_FAMILIES": (), "CETP_SCHEMES": None, "WB_NOT_A_NAME": {"", "none", "no"}, "RESERVOIR_STORAGE": {},
+    "RESERVOIR_LEVELS": {}, "RESERVOIR_ALIASES": {}, "REPO_FAMILIES": (), "CETP_SCHEMES": None, "WB_NOT_A_NAME": WB_NOT_A_NAME, "RESERVOIR_STORAGE": {},
     # Read only by the Tamil Nadu steps (TNGIS sub-basins, panchayats and industry register).
     "TNRD_DISTRICT_NAME": None, "SUB_BASIN_KEY": {}, "REGISTER_YEARS": None, "TNPCB_OFFICE": {}, "SECTOR_LOOKUP": None,
     # A frame read from a configured layer instead of TNGIS (see build_boundary / build_sheds).
@@ -343,6 +345,7 @@ class DistrictBasinBuild:
         self.inventory: dict = {"basinId": cfg.BASIN_ID, "generatedFrom": cfg.GENERATED_FROM, "generatedOn": TODAY, "families": {}}
         self.district = None
         self.sheds: Sheds | None = None
+        self._tnsmart: dict | None = None
 
     # ── fetching and writing ──────────────────────────────────────────────────
 
@@ -712,9 +715,11 @@ class DistrictBasinBuild:
         The page carries one JSON array of every reservoir it relays; the reading is a snapshot,
         not a series, so it is served as a current fact and never charted.
         """
-        raw = self.cached("tnsmart-reservoirs.json", lambda: {"html": artifact_text_from(TNSMART)})
-        rows = json.loads(re.search(r"\[\s*\{[^\[\]]*?depth_ft.*?\}\s*\]", raw["html"], re.S).group(0))
-        return {str(r["name"]).strip(): r for r in rows}
+        if self._tnsmart is None:
+            raw = self.cached("tnsmart-reservoirs.json", lambda: {"html": artifact_text_from(TNSMART)})
+            rows = json.loads(re.search(r"\[\s*\{[^\[\]]*?depth_ft.*?\}\s*\]", raw["html"], re.S).group(0))
+            self._tnsmart = {str(r["name"]).strip(): r for r in rows}
+        return self._tnsmart
 
     def build_reservoirs(self) -> None:
         cfg, district, sheds = self.cfg, self.district, self.sheds
@@ -1042,10 +1047,10 @@ class DistrictBasinBuild:
             printed = str(p.get("water_body_name") or "").strip().strip("'\"")
             recorded_as = WB_CLASS.get(printed.lower())
             name = None if recorded_as or printed.lower() in cfg.WB_NOT_A_NAME else printed
-            if name is None:  # the largest waterspreads are unnamed here; the WRD reservoir register names them
+            ha = round(area_km2(g) * 100, 2)
+            if name is None and ha >= WB_RESERVOIR_MIN_HA:  # the largest waterspreads are unnamed here; the WRD reservoir register names them
                 pt = g.representative_point()
                 name = next((f"{n} reservoir" for n, rg in reservoirs if rg.contains(pt)), None)
-            ha = round(area_km2(g) * 100, 2)
             props = {
                 "name": name, "recordedAs": recorded_as, "kind": "stream-parcel" if recorded_as in WB_STREAM_CLASSES else "water-body",
                 "areaHa": ha, "sourceDepartment": p.get("source_department"), "ownerDepartment": p.get("owner_department"),
@@ -1468,47 +1473,102 @@ class DistrictBasinBuild:
             raise SystemExit(f"{self.cfg.BASIN_ID}: no engine step named {step!r}")
         fn()
 
-    def refresh_live(self) -> int:
-        """The weekly job: living feeds only, previous files restored if a feed comes back thin."""
+    def refresh_reservoirs(self, reading) -> None:
+        """One source's reading onto the served reservoir points; a configured dam that reads nothing fails the feed."""
+        fp = self.BASIN / "reservoirs.geojson"
+        res = json.loads(fp.read_text())
+        for f in res["features"]:
+            if (props := reading(f["properties"]["name"])) is None:
+                raise RuntimeError(f"no CWC level rows for {f['properties']['name']}")
+            f["properties"].update(props)
+        write_artifact(fp, {"type": "FeatureCollection", "features": res["features"]}, compact=True)
+
+    def write_inventory(self) -> None:
+        """inventory.json in the served file's own format (the enveloper writes indent 2 and a newline, the build indent 1)."""
+        fp = self.BASIN / "inventory.json"
+        raw = fp.read_text() if fp.exists() else ""
+        write_artifact(fp, self.inventory, indent=2 if raw.startswith('{\n  "') else 1)
+        if raw.endswith("\n"):
+            fp.write_text(fp.read_text() + "\n")
+
+    def live_feeds(self) -> dict:
+        """The living feeds this basin serves: name -> (step, family it writes)."""
+        cfg = self.cfg
+        feeds = {"wells": (self.build_groundwater_wells, "groundwater-wells")}
+        if cfg.TNPCB_RT_SITES:
+            feeds["tnpcb-rt"] = (self.build_realtime_stations, "realtime-stations")
+        feeds["cwc"] = (self.build_gauging_stations, "gauging-stations")
+        if cfg.KSDMA_RESERVOIRS:
+            feeds["ksdma"] = (self.build_ksdma_reservoirs, "reservoirs")
+        if cfg.RESERVOIR_LEVELS:  # separate feeds, so one source's failure never rolls back the other's reading
+            feeds["levels"] = (lambda: self.refresh_reservoirs(lambda n: self.reservoir_level_pack(n) if n in cfg.RESERVOIR_LEVELS else {}), "reservoirs")
+        if cfg.RESERVOIR_STORAGE:
+            feeds["storage"] = (lambda: self.refresh_reservoirs(self.storage_reading), "reservoirs")
+        if cfg.WQ_REPORTS:
+            feeds["wq-reports"] = (self.build_wq_report_stations, "monitoring-points")
+        return feeds
+
+    def refresh_live(self, only: set, skip: set) -> int:
+        """The weekly job, one feed at a time: a feed that fails or comes back thin keeps its previous files and the
+        others still refresh. Exit 1 if any requested feed did not refresh."""
         self.LIVE = True
         B = self.BASIN
-        served = [f for f in LIVE_FILES if (B / f).exists()]  # not every basin serves every living feed
-        before = {p: p.read_bytes() for p in [B / f for f in served] + sorted((B / "readings").glob("*.json"))}
-        counts = {f: len(json.loads((B / f).read_text())["features"]) for f in served if f.endswith(".geojson")}
-        self.inventory["families"] = json.loads((B / "inventory.json").read_text())["families"]
-        try:
-            self.district = self.build_boundary(write=False)
-            self.sheds = Sheds(self.build_sheds(self.district, write=False))
-            self.build_groundwater_wells()
-            if self.cfg.TNPCB_RT_SITES:
-                self.build_realtime_stations()
-            self.build_gauging_stations()
-            if self.cfg.KSDMA_RESERVOIRS:
-                self.build_ksdma_reservoirs()
-            if self.cfg.WQ_REPORTS:
-                self.build_wq_report_stations()
-            res = json.loads((B / "reservoirs.geojson").read_text())
-            for f in res["features"]:
-                f["properties"].update({k: v for k, v in (self.reservoir_level_pack(f["properties"]["name"]) or {}).items()})
-            write_artifact(B / "reservoirs.geojson", {"type": "FeatureCollection", "features": res["features"]}, compact=True)
-            for f, n in counts.items():
-                now = len(json.loads((B / f).read_text())["features"])
-                if now < LIVE_MIN_SHARE * n:
-                    raise SystemExit(f"{f}: {now} features against {n} last week - a partial response, keeping last week's files")
-            write_artifact(B / "inventory.json", self.inventory, indent=1)
-        except BaseException:
-            for p, b in before.items():
-                p.write_bytes(b)
-            raise
-        return 0
+        feeds = self.live_feeds()
+        if unknown := only - feeds.keys():  # skipping a feed a basin does not serve is fine
+            raise SystemExit(f"{self.cfg.BASIN_ID}: no living feed named {', '.join(sorted(unknown))} (feeds: {', '.join(feeds)})")
+        served = json.loads((B / "inventory.json").read_text())["families"]
+        self.inventory["families"] = json.loads(json.dumps(served))
+        self.district = self.build_boundary(write=False)
+        self.sheds = Sheds(self.build_sheds(self.district, write=False))
+        failed = []
+        for name, (step, family) in feeds.items():
+            if (only and name not in only) or name in skip:
+                continue
+            fp = B / f"{family}.geojson"
+            for attempt in (1, 2):
+                before = {p: p.read_bytes() for p in [fp, *(B / "readings").glob("*.json")] if p.exists()}
+                row = self.inventory["families"].get(family)
+                n = len(json.loads(fp.read_text())["features"]) if fp.exists() else 0
+                try:
+                    step()
+                    if (now := len(json.loads(fp.read_text())["features"])) < LIVE_MIN_SHARE * n:
+                        raise RuntimeError(f"{now} features against {n} before, a partial response")
+                    break
+                except BaseException as e:
+                    for p in {*(B / "readings").glob("*.json")} - before.keys():
+                        p.unlink()
+                    for p, b in before.items():
+                        p.write_bytes(b)
+                    if row is not None:
+                        self.inventory["families"][family] = row
+                    if not isinstance(e, (Exception, SystemExit)):  # Ctrl-C: keep the feeds already refreshed, then stop
+                        if self.inventory["families"] != served:
+                            self.write_inventory()
+                        raise
+                    print(f"  {name}: attempt {attempt} failed, previous files kept ({e})")
+                    if attempt == 2:
+                        failed.append(name)
+                    else:
+                        time.sleep(60)
+        if self.inventory["families"] != served:
+            self.write_inventory()
+        print(f"{self.cfg.BASIN_ID}: " + (f"NOT refreshed: {', '.join(failed)}" if failed else "every requested feed refreshed"))
+        return 1 if failed else 0
 
     def main(self, argv: list[str]) -> int:
         self.BASIN.mkdir(parents=True, exist_ok=True)
+        names = lambda flag: set(argv[argv.index(flag) + 1].split(",")) if flag in argv else set()  # noqa: E731
+        only, skip = names("--only"), names("--skip")
         if "--live" in argv:
-            return self.refresh_live()
-        self.district = self.build_boundary()
-        self.sheds = Sheds(self.build_sheds(self.district))
-        for step in self.cfg.STEPS:
+            return self.refresh_live(only, skip)
+        steps = [s for s in self.cfg.STEPS if not only or (s if isinstance(s, str) else s.__name__) in only]
+        if only:  # rebuild the named steps only; every other family and its inventory row stay as served
+            if unknown := only - {s if isinstance(s, str) else s.__name__ for s in steps}:
+                raise SystemExit(f"{self.cfg.BASIN_ID}: no step named {', '.join(sorted(unknown))}")
+            self.inventory["families"] = json.loads((self.BASIN / "inventory.json").read_text())["families"]
+        self.district = self.build_boundary(write=not only)
+        self.sheds = Sheds(self.build_sheds(self.district, write=not only))
+        for step in steps:
             self.run_step(step)
-        write_artifact(self.BASIN / "inventory.json", self.inventory, indent=1)
+        self.write_inventory()
         return 0
