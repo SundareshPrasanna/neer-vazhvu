@@ -73,9 +73,6 @@ Report = tuple[list[str], list[str]]  # (problems, warnings)
 
 # The statuses the commitments page knows how to sort, colour and count.
 STATUSES = {"delivered", "on-track", "slipped", "overdue", "stalled", "unverified"}
-# Hyderabad's file predates the shared vocabulary; its rows move to `unverified`
-# in their own change, after which this allowance goes.
-LEGACY_STATUSES = {"unverifiable"}
 DATE = re.compile(r"^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$")
 REQUIRED_TEXT = ("category", "title", "committed_by", "what")
 # "Rs 1,926.99 crore (Centre 1,115.22, State 507.36, NMC 304.41)" or
@@ -136,14 +133,12 @@ def check_commitments(city: str, spec: dict, today: str) -> Report:
             if not (isinstance(r.get(key), str) and r[key].strip()):
                 problems.append(f"{rid}: {key} is empty")
         status = r.get("status")
-        if status not in STATUSES | LEGACY_STATUSES:
+        if status not in STATUSES:
             problems.append(
                 f"{rid}: status {status!r} is not one of {sorted(STATUSES)}"
             )
         elif status not in legend:
             problems.append(f"{rid}: status {status!r} has no entry in status_legend")
-        elif status in LEGACY_STATUSES:
-            warnings.append(f"{rid}: status {status!r} is not one the page knows")
         history = r.get("status_history") or []
         if history and history[-1].get("status") != status:
             problems.append(
