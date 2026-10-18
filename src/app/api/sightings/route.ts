@@ -8,8 +8,9 @@ import { storePhotos } from "@/lib/sightings/photos";
 import { assess, getParameter, valueText } from "@/lib/sightings/parameters";
 import { placeUrl } from "@/lib/sightings/place-url";
 import { resolveAuthority } from "@/lib/sightings/routing";
+import { loadExtras } from "@/lib/sightings/extras";
 import { byId, toPublic } from "@/lib/sightings/serialize";
-import { REPORT_GROUPS, roleFor } from "@/lib/sightings/taxonomy";
+import { REPORT_GROUPS, isCommunityReport, roleFor } from "@/lib/sightings/taxonomy";
 import type { EventRow, PhotoRow, SightingRow } from "@/lib/sightings/types";
 import { parseSubmit } from "@/lib/sightings/validate";
 
@@ -86,6 +87,14 @@ export async function POST(request: NextRequest) {
     const exif = stored.exif ?? (v.photoMeta.capturedAt || v.photoMeta.lat != null ? v.photoMeta : null);
     if (exif) await admin.from("sightings").update({ exif_captured_at: exif.capturedAt, exif_lat: exif.lat, exif_lng: exif.lng }).eq("id", id);
     if (v.testMeta) await admin.from("sightings").update({ test_meta: v.testMeta }).eq("id", id);
+    // A group name beside a home report would narrow down who sent it.
+    if (v.groupId && isCommunityReport(v.category)) {
+      const [member, group] = await Promise.all([
+        admin.from("sighting_group_members").select("group_id").eq("group_id", v.groupId).eq("reporter_key", key).maybeSingle(),
+        admin.from("sighting_groups").select("status").eq("id", v.groupId).maybeSingle(),
+      ]);
+      if (member.data && group.data?.status === "approved") await admin.from("sightings").update({ group_id: v.groupId }).eq("id", id);
+    }
 
     const routed = role ? resolveAuthority(role, { stateCode: place.stateCode, placeId: place.placeId, placeKind: place.placeKind, corporationId: place.corporationId }) : null;
     const shownOn = placeUrl({
@@ -162,9 +171,10 @@ export async function GET(request: NextRequest) {
     const photos = { data: parts.flatMap(([p]) => (p.data ?? []) as PhotoRow[]) };
     const events = { data: parts.flatMap(([, e]) => (e.data ?? []) as EventRow[]) };
     const photoMap = byId(photos.data as PhotoRow[]);
+    const extras = await loadExtras(admin, rows);
     const eventMap = byId(events.data as EventRow[]);
     return NextResponse.json(
-      { data: rows.map((r) => toPublic(r, photoMap.get(r.id) ?? [], eventMap.get(r.id) ?? [])) },
+      { data: rows.map((r) => toPublic(r, photoMap.get(r.id) ?? [], eventMap.get(r.id) ?? [], extras.get(r.id))) },
       { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } },
     );
   } catch (err) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Check, MapPin, Plus, Printer, RotateCw } from "lucide-react";
+import { AlertTriangle, CalendarDays, Check, Heart, MapPin, Plus, Printer, RotateCw } from "lucide-react";
 
 import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, Status, day } from "./report-card";
@@ -9,6 +9,7 @@ import { appLink, appSection, appTitle, btn, enter, field, muted, rule } from ".
 import { LIMITS } from "@/lib/sightings/limits";
 import { EVENT_LABELS, OPEN_STATUSES, type CaseStatus, type DepartmentEvent } from "@/lib/sightings/status";
 import type { DepartmentItem, HistoryEntry } from "@/lib/sightings/departments";
+import { fixitDay } from "@/lib/sightings/groups";
 
 /** Status words for the department: what the record says, never a judgement of it. */
 const STATUS_WORDS: Record<CaseStatus, string> = {
@@ -179,6 +180,22 @@ function ItemCard({ item, token, onSaved }: { item: DepartmentItem; token: strin
           <dt className={muted}>Item</dt>
           <dd className="font-mono text-xs leading-5 text-slate-800 dark:text-slate-200">{itemRef(item.id)}</dd>
         </dl>
+        {(item.fixit || item.thanksCount > 0) && (
+          <ul className="space-y-1 text-sm text-slate-800 dark:text-slate-200">
+            {item.fixit && (
+              <li className="flex items-start gap-2">
+                <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" aria-hidden="true" />
+                A community clean-up is planned here on {fixitDay(item.fixit.startsAt)} by {item.fixit.groupName}.
+              </li>
+            )}
+            {item.thanksCount > 0 && (
+              <li className="flex items-start gap-2">
+                <Heart className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" aria-hidden="true" />
+                Thanked by {item.thanksCount} {item.thanksCount === 1 ? "person" : "people"}
+              </li>
+            )}
+          </ul>
+        )}
         {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} test={item.test} />}
         {item.history.length > 0 && <History entries={item.history} />}
 

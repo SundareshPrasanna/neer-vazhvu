@@ -4,12 +4,13 @@ import { tryGetPlaceConfig } from "@/lib/cities";
 import { listAtlasDistricts } from "@/lib/atlas/registry";
 import { tryGetBasinManifest } from "@/lib/basins";
 import { publicPhotoUrl } from "./photos";
+import { followTargets } from "./follows";
 import { placeUrl } from "./place-url";
 import { resolveAuthority } from "./routing";
 import { assess, getParameter, valueText } from "./parameters";
 import { WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
 import { testLabel } from "./test-meta";
-import type { EventRow, OwnReport, PhotoRow, PublicReport, SightingRow } from "./types";
+import type { EventRow, OwnReport, PhotoRow, PublicFixit, PublicReport, SightingRow } from "./types";
 
 export const PUBLIC_EVENTS = new Set(["approved", "reported", "authority_done", "fixed", "still_there", "closed", "reopened", "action_taken"]);
 
@@ -51,7 +52,13 @@ function readings(row: SightingRow): PublicReport["readings"] {
 /** About 100 m: enough to find a stretch of bank, not a person. */
 const roundPoint = (v: number) => Math.round(v * 1000) / 1000;
 
-export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[]): PublicReport {
+/** What toPublic needs beyond the row: the group's name and the next planned clean-up, loaded by the caller. */
+export interface PublicExtras {
+  groupName?: string | null;
+  fixit?: PublicFixit | null;
+}
+
+export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[], extras: PublicExtras = {}): PublicReport {
   const hidePoint = isPrivateCategory(row.category);
   const shownOn = placeUrl(row);
   return {
@@ -78,15 +85,20 @@ export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[
       .map((e) => ({ event: e.event, at: istDate(e.created_at), authorityBody: null, by: e.actor_role })),
     handler: resolved(row)?.authority ?? null,
     point: hidePoint ? null : [roundPoint(Number(row.lat)), roundPoint(Number(row.lng))],
+    seenCount: events.filter((e) => e.event === "seen_too").length,
+    thanksCount: events.filter((e) => e.event === "thanks").length,
+    groupName: extras.groupName ?? null,
+    fixit: extras.fixit ?? null,
+    followTarget: followTargets(row).at(-1)!,
     placeHref: shownOn?.href ?? null,
     placeLabel: shownOn?.label ?? null,
   };
 }
 
-export function toOwn(row: SightingRow, photos: PhotoRow[], events: EventRow[]): OwnReport {
+export function toOwn(row: SightingRow, photos: PhotoRow[], events: EventRow[], extras: PublicExtras = {}): OwnReport {
   const rejected = events.findLast((e) => e.event === "rejected");
   return {
-    ...toPublic(row, photos, events),
+    ...toPublic(row, photos, events, extras),
     createdAt: row.created_at,
     lat: Number(row.lat),
     lng: Number(row.lng),

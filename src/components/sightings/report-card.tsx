@@ -1,7 +1,8 @@
 import { AlertTriangle } from "lucide-react";
 
+import { nodFor, seenText, thanksText } from "@/lib/sightings/community";
 import { BIS_SOURCE } from "@/lib/sightings/parameters";
-import { CASE_LABELS, EVENT_LABELS } from "@/lib/sightings/status";
+import { CASE_LABELS, EVENT_LABELS, NOD_EVENTS } from "@/lib/sightings/status";
 import type { PublicReport } from "@/lib/sightings/types";
 import { muted } from "./ui";
 
@@ -64,11 +65,14 @@ export function Readings({ readings, source, test }: { readings: PublicReport["r
 /** Said after an update recorded by someone other than the reporter or our reviewer. */
 const BY: Partial<Record<string, string>> = { resident: ", by someone nearby", department: ", by the department" };
 
+/** "Seen it too" and thanks are counted, never listed. */
+const NODS: ReadonlySet<string> = new Set(NOD_EVENTS);
+
 /** What happened to a report, oldest first, on a thin line. */
 export function History({ events }: { events: PublicReport["events"] }) {
   return (
     <ol className="space-y-1.5 border-l border-slate-200 pl-3.5 text-sm dark:border-slate-700">
-      {events.map((e, i) => (
+      {events.filter((e) => !NODS.has(e.event)).map((e, i) => (
         <li key={i} className="relative">
           <span className="absolute top-[0.55rem] -left-[1.0625rem] h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-500" aria-hidden="true" />
           <span className={`tabular-nums ${muted}`}>{day(e.at)}</span>{" "}
@@ -83,6 +87,20 @@ export function History({ events }: { events: PublicReport["events"] }) {
   );
 }
 
+/**
+ * Quietly, the group it was sent with and how many people have seen it too or said thank you. Never who. A count the
+ * report's action shows live beside its button (seen while open, thanks once fixed; community-actions.tsx) is left to it.
+ */
+export function Standing({ report }: { report: PublicReport }) {
+  const live = nodFor(report);
+  const parts = [
+    report.groupName && `Sent with ${report.groupName}`,
+    live !== "seen_too" && report.seenCount > 0 && seenText(report.seenCount),
+    live !== "thanks" && report.thanksCount > 0 && thanksText(report.thanksCount),
+  ].filter(Boolean);
+  return parts.length ? <p className={`text-xs ${muted}`}>{parts.join(". ")}.</p> : null;
+}
+
 /** One published report: photo, what, where, status and its dated history. */
 export function ReportCard({ report, children }: { report: PublicReport; children?: React.ReactNode }) {
   return (
@@ -95,6 +113,7 @@ export function ReportCard({ report, children }: { report: PublicReport; childre
         <div>
           <p className="font-semibold leading-snug text-slate-900 dark:text-slate-100">{report.label}</p>
           <p className={`text-sm ${muted}`}>{[report.where, report.placeName, day(report.createdAt)].filter(Boolean).join(", ")}</p>
+          <Standing report={report} />
         </div>
         {report.caseStatus && <Status status={report.caseStatus} />}
         {report.readings.length > 0 && <Readings readings={report.readings} source={report.waterSource} test={report.test} />}

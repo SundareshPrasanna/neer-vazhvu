@@ -1,6 +1,6 @@
 # Citizen reports (sightings)
 
-Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications and department channel (migration 063).
+Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications, department channel, nods, follows, groups and clean-ups (migration 063).
 
 ## 1. What it is
 
@@ -137,17 +137,20 @@ Review alert
 | File | Renders or does |
 |---|---|
 | `src/app/for-citizens/page.tsx` | Page shell (404 unless flag), header copy, "How it works" (`GUIDE`), "Where you can report" (built from the same city, district and basin lists `placePoint` uses) and "How we protect you" (`PROMISES`); mounts `CitizenApp`. `PROMISES` is the public privacy text: keep it in step with section 5. `GUIDE` quotes `REVIEW_WITHIN_DAYS` |
-| `src/components/sightings/citizen-app.tsx` | Signed-out vs signed-in; "New report" and "My reports" views; review-queue link for reviewers; loads `/api/sightings/mine`; keeps a place page's `?place=` query across sign-in and asks `/locate?place=` where to open the map |
+| `src/components/sightings/citizen-app.tsx` | Signed-out vs signed-in; "New report", "My reports" and "Groups" views (keeps `?join=` across sign-in); review-queue link for reviewers; loads `/api/sightings/mine`; keeps a place page's `?place=` query across sign-in and asks `/locate?place=` where to open the map |
 | `src/components/sightings/report-flow.tsx` | The capture flow: photos, type tiles (`ICONS` maps group icon names), location (GPS, map, place search), readings, submit; after sending, shows the handler and lets the reporter record filing at once |
 | `src/components/sightings/photo-blur.tsx` | Pixelates faces, plates or house names on the phone before upload |
 | `src/components/sightings/reminder.tsx` | Builds an `.ics` reminder in the browser; nothing is sent |
 | `src/components/sightings/location-map.tsx` | Leaflet map with a draggable pin (import with `ssr: false`) |
 | `src/components/sightings/handler-card.tsx` | `HandlerCard` (body, channels, "what to expect" once per system) and `NationalOnly` |
 | `src/components/sightings/my-reports.tsx` | Reporter's own list, status updates, two-week stale prompt, CSV/JSON download |
+| `src/components/sightings/groups-panel.tsx` | Start, join, leave a group; the host's invite link; `useMyGroups` (also used by the Send step and `FixitActions`) |
 | `src/components/sightings/account-actions.tsx` | Sign out; delete account (optionally with published reports) |
 | `src/components/sightings/review-app.tsx` | Review queue at `/admin/sightings`: approve (with reclassify and candidate label), reject, suspend, publish or discard fixed photos. Flags a photo taken over 30 days before sending or over 1 km from the pin |
 | `src/components/sightings/place-reports.tsx` | `PlaceReports`: public cards for a place, plus a "Report something" link to `/for-citizens` with the same query (call sites in section 6) |
-| `src/components/sightings/report-card.tsx` | `ReportCard`, `Status`, `Readings`, `History`, `day()` |
+| `src/components/sightings/report-card.tsx` | `ReportCard`, `Status`, `Readings`, `History`, `day()`; a quiet line with the group and the counts |
+| `src/components/sightings/community-actions.tsx` | `CommunityActions` on every public card: "I've seen it too", "It's gone", "I want to help" (follow, clean-up) on open reports; "Thank you" on fixed ones; nothing on home reports |
+| `src/components/sightings/fixit-actions.tsx` | A planned clean-up with "I'll come", or "Plan a clean-up" for a host of a reviewed group |
 | `src/components/sightings/share-guide.tsx` | Share sheet, WhatsApp, copy link |
 | `src/components/sightings/use-citizen.ts` | Browser Supabase client (storage key `nv-citizen-auth`), Google sign-in, `authFetch`, `readPhotoMeta`, `shrinkPhoto` |
 | `src/components/sightings/action-feedback.tsx`, `ui.ts`, `display-font.ts` | Busy buttons and "Saved" flashes, shared classes, Newsreader as `--font-display` |
@@ -177,14 +180,14 @@ User-facing text in this module uses no em dashes and no middle dots as separato
 
 ## Updates after publishing: residents, departments, notifications (migration 063)
 
-`supabase/migrations/063_citizen_reports_updates.sql` must be applied before switch-on. It widens `sighting_events.actor_role` to `resident` and `department`, adds the events `fix_submitted`, `fix_rejected`, `action_taken` and `not_ours`, creates `sighting_push_subscriptions` (endpoint, reporter_key, keys; RLS on, no policies) and adds `sightings.nudged_at`.
+`supabase/migrations/063_citizen_reports_updates.sql` must be applied before switch-on. It widens `sighting_events.actor_role` to `resident` and `department`, adds the events `fix_submitted`, `fix_rejected`, `action_taken`, `not_ours`, `seen_too` and `thanks`, creates `sighting_push_subscriptions` (endpoint, reporter_key, keys; RLS on, no policies), adds `sightings.nudged_at`, `sightings.test_meta` and `sightings.group_id`, and creates `sighting_follows`, `sighting_groups`, `sighting_group_members`, `sighting_fixits` and `sighting_fixit_rsvps` (all RLS on, no policies).
 
 **Who can move a report** (`POST /api/sightings/[id]/events`, `POST /api/sightings/department`):
 
 | Who | How | Can say | Limits |
 |---|---|---|---|
 | The reporter | My reports | reported (also while being checked), department says done, fixed (with a photo), still there | 5 per report per day |
-| Anyone else signed in | "Seen it lately?" on the place's page | still there; it's gone (a fixed photo) | 1 per report per day, 20 a day in all; published, open reports only |
+| Anyone else signed in | the card on the place's page or map | still there (recorded by "I've seen it too"); it's gone (a fixed photo) | 1 per report per day, 20 a day in all; published, open, community reports only |
 | The handling department | its private link | action taken (status: department says done), not ours (recorded only), closed | 5 per report and 300 a day per department |
 | Our reviewer | review queue | approve, reject, publish or discard a fixed photo, close, reopen | none |
 
@@ -193,6 +196,34 @@ A fixed claim from anyone but a reviewer is recorded as `fix_submitted` and does
 **Notifications** (`src/lib/sightings/notify.ts`, `push.ts`, `public/citizen-sw.js`, `notify-toggle.tsx`): opt-in Web Push, keyed to the reporter tag only; no email, no phone. Permission is asked only on tap; iPhone needs the site on the home screen. Notices: published, not published, someone nearby says it is still there, fixed (after the photo is checked), a fixed photo not accepted (to its sender), a department update, and a nudge after 14 days with no update from anyone. Notices are sent after the response (`after()`), never fail the action, and carry nothing personal. `POST/DELETE /api/sightings/push` saves or removes this browser's subscription (5 per reporter, push services of Google, Mozilla, Apple and Microsoft only). Signing out unsubscribes the browser; deleting the account deletes the rows. The nudge runs daily at 10:00 IST (`.github/workflows/citizen-reports-nudges.yml` calls `POST /api/cron/sightings-nudges` with `CRON_SECRET`); it only considers reporters with notifications on and sets `nudged_at` once a browser received it.
 
 **Department channel** (`src/lib/sightings/departments.ts`, `/department/[token]`, `department-app.tsx`): one department per handling body, keyed by a hash of state code and body name. Its link is `<origin>/department/<key>.<sig>` (HMAC under `SIGHTINGS_DEPARTMENT_LINK_SECRET`); the page is unlisted, noindex, no-referrer, and disallowed in `robots.ts`. It lists that body's checked reports (open first) with photos, type, place text, India date, status and history, never anything about the reporter; the same rounded point as public pages, with an "Open in map" link; each item can be marked, and the page prints as a summary to hand over. The reviewer copies each department's link from the Departments section at `/admin/sightings` (`GET /api/sightings/department/links`). One link cannot be revoked on its own; rotating the secret replaces them all. Matching loads approved rows and resolves each in memory (fine to about 20,000 rows; store the key on the row before then).
+
+## Taking part: nods, follows, groups and clean-ups (migration 063)
+
+Reasons to come back without turning reports into a feed: no likes, comments, names or ranks. Everything here needs sign-in, and nothing here applies to a home report (tap water, water tests; `isCommunityReport` in `taxonomy.ts`), in the UI or on the server.
+
+**Nods** (`POST /api/sightings/[id]/events` with `seen_too` or `thanks`; `CommunityActions`):
+
+- "I've seen it too": open community reports, not by their own reporter (403). Once per person (unique index `uq_sighting_events_once`; a repeat is a success that changes nothing). The first tap also records `still_there` for that person unless they recorded one in the last 24 hours, moving the status as `still_there` does. The reporter is told at 1, 3, 10 and 25 people (`community.ts`), never on every tap.
+- "Thank you": fixed community reports, anyone signed in including the reporter, once per person, no notice.
+- Both return `{ seenCount, thanksCount }`. Counts appear on public cards ("Seen by 12 people", "Thanked by 3 people"); nods never appear in the history. Public cards are cached and carry nothing about the viewer, so after a reload the button is back and a second tap is a no-op.
+- Limits: a nod counts once toward the resident 20-a-day cap (the cap leaves out `seen_too` and counts the `still_there` it records). The `still_there` it records uses the one-update-per-report-per-day limit, so "It's gone" from the same person waits a day.
+
+**Follows** (`/api/sightings/follows`, table `sighting_follows`): "I want to help" > "Follow this place" stores the report's most specific place key (`followTarget`: `body:<id>`, `<place>:gp:<code>`, `<place>:ward:<n>` or the place id; `follows.ts`). At most 50 per person. `notifyFollowers` tells followers when a report there is published, its fixed photo is published, a department updates it or a clean-up is planned; at most 200 notices per event; never for home reports. My reports lists "Places you follow" with "Stop following", and a private line ("Your reports were seen by 23 people nearby and thanked 4 times").
+
+**Groups** (`/api/sightings/groups`, `groups.ts`, `groups-panel.tsx`, the "Groups" tab): colleges, schools, residents' associations, lake groups, NGOs. A group is a name; its members are tags.
+
+- Start: name 3 to 80 characters with a letter, one of six kinds, optional city or district. At most 3 started (rejected ones count) and 10 joined per person; suspended accounts cannot start one. The starter hosts. A group waits for a reviewer (review queue, "Groups waiting for review"; the daily review alert counts them); hosts are told the outcome.
+- Join: by invite link `/for-citizens?join=XXXX-XXXX-XXXX` (12 characters from crypto random bytes, no I, O, 0 or 1), which survives the Google sign-in. Pending and approved groups can be joined; rejected ones cannot. Hosts can make a new link.
+- Leave (and account deletion, via `settleGroup`): an empty group never reviewed is deleted; a reviewed one stays so its reports keep its name; a group left without a host gets its longest-standing member as host. Account deletion also sets `created_by` on groups and clean-ups to `deleted`.
+- "Send with": on the Send step, for members of an approved group, community reports only (a group name beside a ward-level home report would narrow down who sent it). The submit route checks membership, approval and the category again. Public cards show "Sent with <group>"; `/for-citizens` lists "Groups taking part" with reports sent, how many are fixed and clean-ups done (no members), revalidated every 5 minutes, empty on a database error.
+
+**Clean-ups** (`/api/sightings/fixits`, `fixit-actions.tsx`, table `sighting_fixits` and `sighting_fixit_rsvps`):
+
+- Only a host of an approved group, only on an approved community report of a `FIXIT_TYPES` type (litter, floating trash, plastic, ritual waste) whose status is open (`OPEN_STATUSES`). Never sewage, drains, hazardous, medical or burning waste, dead animals or debris: unsafe for volunteers, and manual scavenging is illegal.
+- Start 2 hours to 60 days ahead, entered and shown in India time. One active clean-up per report (one that started over 3 hours ago no longer counts; two hosts at once, the earlier stands); 10 upcoming per group. The planner is counted as coming.
+- On planning, the reporter and followers are told. Anyone signed in can say "I'll come" or "Not coming" until it is over (start plus 3 hours). Hosts can cancel (everyone coming is told) or mark it done after the start.
+- The card shows "Clean-up planned by <group>, <day, time>, meet at <point>", how many are coming and the safety line (`SAFETY_LINE`); the "I want to help" panel opens by itself when one is planned. The department page shows "A community clean-up is planned here on <date> by <group>" and the thanks count.
+- Reminders (the daily nudge run): people coming and the group's hosts, for clean-ups starting within 24 hours; hosts, 6 hours after one is over and the report is still open (past week only), asking for an "It's gone" photo. Each once; `reminded_at` before the start means the reminder went, after it means the photo request went. Browser notifications only, so a clean-up planned less than a day ahead of the 10:00 IST run may get no reminder.
 
 ## How a water test was done (`test_meta`)
 
@@ -213,7 +244,7 @@ Public pages show only the instrument and the filtering, as one line under the r
 | Basin hosted by a city's rivers page (e.g. Arkavathi on Bengaluru's) | `/<city>/rivers?basin=<id>&layer=reports`, which opens the deep dive | yes |
 | Other basin | `/embed/basins/<id>?layer=reports` | yes |
 
-`src/components/sightings/citizen-reports-layer.tsx` is one generic Leaflet layer, used by the basin atlas (a "Citizen reports" row in its Layers list, with legend rows and a PDF legend entry) and the water-bodies map (a toggle in its layers card). It is off by default and on with `?layer=reports`. It reads `GET /api/sightings?bbox=w,s,e,n` for the view (up to 500 newest published reports with a point; nothing when the view is over 12 degrees) and draws one dot per report in its group's colour; a dot opens the photo, type, place, date, status and "Seen it lately?".
+`src/components/sightings/citizen-reports-layer.tsx` is one generic Leaflet layer, used by the basin atlas (a "Citizen reports" row in its Layers list, with legend rows and a PDF legend entry) and the water-bodies map (a toggle in its layers card). It is off by default and on with `?layer=reports`. It reads `GET /api/sightings?bbox=w,s,e,n` for the view (up to 500 newest published reports with a point; nothing when the view is over 12 degrees) and draws one dot per report in its group's colour; a dot opens the photo, type, place, date, status and the card's actions (`CommunityActions`).
 
 ## 4. Data model
 
@@ -303,12 +334,14 @@ The reporter cannot see their own note; `OwnReport` has no note field.
 
 **Delete account** (`DELETE /api/sightings/mine`):
 1. Every report not `approved` (received, needs_info, rejected) is deleted, with its photos in both buckets. With `?published=remove`, approved reports go too.
-2. In what remains, `sightings.reporter_key`, `sighting_photos.reporter_key` and `sighting_events.actor_key` become `deleted`.
-3. The `sighting_reporters` row is deleted, then the Supabase auth user.
+2. In what remains, `sightings.reporter_key`, `sighting_photos.reporter_key`, `sighting_events.actor_key`, `sighting_groups.created_by` and `sighting_fixits.created_by` become `deleted`.
+3. The `sighting_reporters` row is deleted, with push subscriptions, follows, group memberships (each group then settles: a new host, or gone if never reviewed and empty) and clean-up sign-ups; then the Supabase auth user.
 
 **Around the report.** Blurring (`photo-blur.tsx`) happens on the phone, so the unblurred image is never uploaded. Place search goes through `/api/sightings/search`, so Nominatim sees the server, never the device; queries are cached in memory per instance (cleared past 500) and not logged by the module. The calendar reminder is built in the browser. The review-queue workflow posts counts and the oldest item's wait in whole days to a public GitHub issue once a day, never an id, place, type, photo or hour.
 
 **Public output omits** the tag, the exact point and its accuracy, the note, the time of day, reference numbers, the reporter-typed authority body, EXIF, the candidate label, and every report not approved. Public output carries the point rounded to 3 decimals (about 100 m), so reports can sit on a map; a private category (`private: true` in `taxonomy.ts`, today only "Tap & drinking water") gets no point at all and also drops the water body name from `where`, leaving the ward, GP or basin locality, or nothing.
+
+**Groups and nods.** A report sent with a group shows the group's name, never the sender's; groups show no members anywhere public; a group tag is accepted only on community reports. Nod and follow counts are totals, never who. Home reports take no nods, follows, group tag or clean-up, and are never announced to followers.
 
 Photo file names are random, so a public photo URL carries no upload time. `GET /api/sightings?body=` leaves out private categories, so a tap-water report is never listed under the water body its point fell in.
 
@@ -465,6 +498,11 @@ All routes run on the Node runtime. "User" means a valid Supabase bearer token; 
 | `/api/sightings/mine` | GET | user | none | `{ data: OwnReport[] (newest 100), reviewer: boolean }` | |
 | `/api/sightings/mine` | DELETE | user | `?published=remove` (optional) | `{ data: { deleted: <count> } }` | |
 | `/api/sightings/[id]/events` | POST | owner or reviewer | multipart: `event`, `authorityBody` (required for `reported`), `reference?`, `reason?`, `photos` (`fixed` only: one file, required; ignored on other events) | `{ data: { caseStatus } }` (unchanged, so null, for an early `reported`) | 400 validation or photo; 403 reviewer-only event or suspended; 404 bad id or not owner; 409 not published (except the owner's early `reported`), transition not allowed, duplicate photo; 429 caps |
+| `/api/sightings/[id]/events` (nods) | POST | user | `event` `seen_too` or `thanks` | `{ data: { seenCount, thanksCount } }` | 403 home report, own report (`seen_too`), suspended; 409 not open (`seen_too`) or not fixed (`thanks`); 429 caps |
+| `/api/sightings/follows` | GET, POST, DELETE | user | JSON `{ target }` (POST, DELETE) | GET the person's follows with a name and page link each; POST, DELETE `{ data: { ok } }` | 400 bad target; 429 over 50 |
+| `/api/sightings/groups` | GET | none; `?scope=mine` user; `?scope=pending` reviewer | | public: approved groups with counts, cached 5 minutes; mine: groups with role, status, members, the host's invite link, and clean-ups; pending: groups waiting | 403 not reviewer |
+| `/api/sightings/groups` | POST | user; approve and reject reviewer | JSON `{ action, ... }`: `create { name, kind, placeId? }`, `join { code }`, `leave { groupId }`, `rotate { groupId }`, `approve`/`reject { groupId }` | per action | 400 validation; 403 suspended, not host, not reviewer; 404; 409 rejected group or already reviewed; 429 limits |
+| `/api/sightings/fixits` | POST | user | JSON `{ action, ... }`: `create { sightingId, groupId, startsAt, meetingPoint, note? }`, `rsvp`/`unrsvp`/`cancel`/`done { fixitId }` | create: the `PublicFixit`; rsvp: `{ going, mine }`; cancel, done: `{ status }` | 400 time or text; 403 not a host of an approved group, suspended; 404; 409 type or status not allowed, one already planned, no longer planned; 429 10 per group |
 | `/api/sightings/push` | POST, DELETE | user | JSON subscription `{endpoint, keys}` / `{endpoint}` | `{ data: { ok } }` | 400 bad subscription |
 | `/api/sightings/department` | GET, POST | signed department link (`token`) | GET `?token=`; POST JSON `{ token, id, event, note? }` | GET `{ body, acronym, asOf, open[], done[] }`; POST the new status | 404 bad link, 409 not this department's or not fitting, 410 body gone, 429 limits |
 | `/api/sightings/department/links` | GET | reviewer | none | each body with counts and its link path | 503 secret unset |

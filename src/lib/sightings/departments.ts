@@ -123,6 +123,9 @@ export interface DepartmentItem {
   point: PublicReport["point"];
   history: HistoryEntry[];
   actions: DepartmentEvent[];
+  /** A reviewed group's next planned clean-up here (its name and start), and how many people said thank you once fixed. */
+  fixit: { groupName: string; startsAt: string } | null;
+  thanksCount: number;
 }
 
 export interface HistoryEntry {
@@ -219,6 +222,7 @@ export async function departmentItems(admin: SupabaseClient, key: string): Promi
   const ids = (await approvedRoutable(admin)).filter((r) => departmentOf(r)?.key === key).map((r) => r.id);
   if (!ids.length) return { open: [], done: [] };
   const { PUBLIC_EVENTS, byId, toPublic } = await import("./serialize");
+  const { loadExtras } = await import("./extras");
   const [rows, photos, events] = await Promise.all([
     inChunks<SightingRow>(ids, (c) => admin.from("sightings").select("*").in("id", c)),
     inChunks<PhotoRow>(ids, (c) => admin.from("sighting_photos").select("*").in("sighting_id", c)),
@@ -226,11 +230,12 @@ export async function departmentItems(admin: SupabaseClient, key: string): Promi
   ]);
   const photoMap = byId(photos);
   const eventMap = byId(events);
+  const extras = await loadExtras(admin, rows);
   const items = rows
     .filter((r) => r.review_status === "approved" && r.case_status && departmentOf(r)?.key === key)
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .map((r): DepartmentItem => {
-      const p = toPublic(r, photoMap.get(r.id) ?? [], []);
+      const p = toPublic(r, photoMap.get(r.id) ?? [], eventMap.get(r.id) ?? [], extras.get(r.id));
       return {
         id: p.id,
         date: p.createdAt,
@@ -245,6 +250,8 @@ export async function departmentItems(admin: SupabaseClient, key: string): Promi
         point: p.point,
         history: historyFor(eventMap.get(r.id) ?? [], key, PUBLIC_EVENTS),
         actions: actionsFor(r.case_status),
+        fixit: p.fixit ? { groupName: p.fixit.groupName, startsAt: p.fixit.startsAt } : null,
+        thanksCount: p.thanksCount,
       };
     });
   return { open: items.filter((i) => OPEN_STATUSES.has(i.caseStatus)), done: items.filter((i) => !OPEN_STATUSES.has(i.caseStatus)) };

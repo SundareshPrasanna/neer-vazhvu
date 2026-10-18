@@ -1,6 +1,6 @@
 /** Hand-written form parsing (the repo's no-zod convention). */
 import { LIMITS } from "./limits";
-import { CASE_EVENTS, type CaseEvent } from "./status";
+import { CASE_EVENTS, NOD_EVENTS, type CaseEvent, type NodEvent } from "./status";
 import { PARAMETERS } from "./parameters";
 import { OTHER_KEY, WATER_SOURCES, isValidReport, takesReadings, type WaterSource } from "./taxonomy";
 import { MAX_DEPTH_FT, MAX_MODEL_CHARS, TEST_CALIBRATED, TEST_FILTERED, TEST_INSTRUMENTS, type TestMeta } from "./test-meta";
@@ -33,6 +33,8 @@ export interface SubmitInput {
   waterSource: WaterSource | null;
   /** With readings only: how the test was done. */
   testMeta: TestMeta | null;
+  /** A group the reporter belongs to, to send it with; checked against membership by the route. */
+  groupId: string | null;
   photos: File[];
   /** Read by the phone from the original photo; unverified. */
   photoMeta: { capturedAt: string | null; lat: number | null; lng: number | null };
@@ -97,13 +99,15 @@ export function parseSubmit(form: FormData): Parsed<SubmitInput> {
       readings,
       waterSource: category === "drinking" ? source : null,
       testMeta,
+      groupId: /^[0-9a-f-]{36}$/.test(str(form.get("groupId"), 40) ?? "") ? str(form.get("groupId"), 40) : null,
       photoMeta: { capturedAt, lat: gps ? pLat : null, lng: gps ? pLng : null },
     },
   };
 }
 
 export interface EventInput {
-  event: CaseEvent;
+  /** A status update, or a nod ("seen_too" on open reports, "thanks" on fixed ones), which carries nothing else. */
+  event: CaseEvent | NodEvent;
   authorityBody: string | null;
   reference: string | null;
   reason: string | null;
@@ -111,8 +115,8 @@ export interface EventInput {
 }
 
 export function parseEvent(form: FormData): Parsed<EventInput> {
-  const event = str(form.get("event"), 20) as CaseEvent | null;
-  if (!event || !CASE_EVENTS.includes(event)) return { ok: false, error: "Unknown update." };
+  const event = str(form.get("event"), 20) as CaseEvent | NodEvent | null;
+  if (!event || !(CASE_EVENTS.includes(event as CaseEvent) || NOD_EVENTS.includes(event as NodEvent))) return { ok: false, error: "Unknown update." };
   const authorityBody = str(form.get("authorityBody"), 160);
   if (event === "reported" && !authorityBody) return { ok: false, error: "Say who you reported it to." };
   const photo = event === "fixed" ? (photos(form)[0] ?? null) : null;

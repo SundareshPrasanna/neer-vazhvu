@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Camera, Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
 
+import { impactLine } from "@/lib/sightings/community";
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
 import type { OwnReport } from "@/lib/sightings/types";
 import { ActionButton, useFlash } from "./action-feedback";
@@ -353,6 +354,60 @@ function Download({ reports }: { reports: OwnReport[] }) {
   );
 }
 
+type Followed = { target: string; label: string; href: string | null };
+
+/** The places this person follows (from report cards), each with "Stop following". Nothing until they follow one. */
+function FollowedPlaces({ authFetch, className }: { authFetch: Fetch; className?: string }) {
+  const [places, setPlaces] = useState<Followed[] | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    authFetch("/api/sightings/follows")
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((j) => live && setPlaces(Array.isArray(j?.data) ? j.data : []))
+      .catch(() => live && setPlaces([]));
+    return () => {
+      live = false;
+    };
+  }, [authFetch]);
+  if (!places?.length) return null;
+  const stop = async (target: string) => {
+    setBusy(target);
+    setError(null);
+    const res = await authFetch("/api/sightings/follows", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ target }) }).catch(() => null);
+    setBusy(null);
+    if (!res?.ok) return setError("Could not stop following. Please try again.");
+    setPlaces((all) => all && all.filter((p) => p.target !== target));
+  };
+  return (
+    <div className={className}>
+      <p className="mb-1.5 text-sm font-medium text-slate-900 dark:text-slate-100">Places you follow</p>
+      <ul className="space-y-1.5 text-sm">
+        {places.map((p) => (
+          <li key={p.target} className="flex items-baseline justify-between gap-3">
+            {p.href ? (
+              <Link href={p.href} className={`min-w-0 ${link}`}>
+                {p.label}
+              </Link>
+            ) : (
+              <span className="min-w-0 text-slate-800 dark:text-slate-200">{p.label}</span>
+            )}
+            <button type="button" disabled={busy === p.target} onClick={() => stop(p.target)} className={`shrink-0 text-xs ${link} disabled:opacity-45`}>
+              {busy === p.target ? "Stopping…" : "Stop following"}
+            </button>
+          </li>
+        ))}
+      </ul>
+      {error && (
+        <p role="alert" className="mt-1.5 text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /** The reporter's own reports: what needs their update first, each with its status and what they can do next. */
 export function MyReports({ reports, authFetch, onChange, onNew }: { reports: OwnReport[] | null; authFetch: Fetch; onChange: () => void; onNew: () => void }) {
   const [saved, flash] = useFlash<{ id: string; text: string }>();
@@ -366,6 +421,7 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
           <Camera className="h-4 w-4" aria-hidden="true" />
           Make a report
         </button>
+        <FollowedPlaces authFetch={authFetch} className="pt-4" />
       </div>
     );
   }
@@ -375,6 +431,11 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
     [reports.filter((r) => ACTIVE.has(r.caseStatus ?? "")).length, "Open"],
     [reports.filter((r) => r.caseStatus === "fixed").length, "Fixed"],
   ];
+  // Private: only the reporter sees what their reports drew.
+  const impact = impactLine(
+    reports.reduce((n, r) => n + r.seenCount, 0),
+    reports.reduce((n, r) => n + r.thanksCount, 0),
+  );
   // Stable: needs-your-update first, otherwise newest first as sent.
   const sorted = [...reports].sort((a, b) => Number(needsUpdate(b)) - Number(needsUpdate(a)));
   return (
@@ -388,6 +449,7 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
             </div>
           ))}
         </dl>
+        {impact && <p className={`text-sm ${muted}`}>{impact}</p>}
         {due > 0 && (
           <p className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-300">
             <Clock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -395,6 +457,7 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
           </p>
         )}
         <NotifyToggle authFetch={authFetch} />
+        <FollowedPlaces authFetch={authFetch} />
         <div className="hidden lg:block">
           <Download reports={reports} />
         </div>

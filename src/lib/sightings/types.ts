@@ -32,6 +32,7 @@ export interface SightingRow {
   readings: Record<string, number> | null;
   water_source: string | null;
   test_meta: TestMeta | null;
+  group_id: string | null;
   candidate_label: string | null;
   authority_role: string | null;
   review_status: ReviewStatus;
@@ -69,6 +70,16 @@ export interface Handler {
 }
 
 /** Safe for anyone: no reporter, no note, no exact point, no time of day. */
+/** A planned clean-up as the public sees it: the group, when, where to meet, and how many are coming. Never who. */
+export interface PublicFixit {
+  id: string;
+  groupName: string;
+  startsAt: string;
+  meetingPoint: string;
+  note: string | null;
+  going: number;
+}
+
 export interface PublicReport {
   id: string;
   /** YYYY-MM-DD only. */
@@ -92,6 +103,15 @@ export interface PublicReport {
   handler: Handler | null;
   /** [lat, lng] rounded to 3 decimals (about 100 m) for the public map; null for tap water and water tests. */
   point: [number, number] | null;
+  /** People other than the reporter who said "seen this too", and thanks once fixed. */
+  seenCount: number;
+  thanksCount: number;
+  /** The group it was sent with, by name only; null when sent alone. */
+  groupName: string | null;
+  /** The next planned clean-up at this spot, if a group has planned one. */
+  fixit: PublicFixit | null;
+  /** The most specific place key to follow for this report (water body, panchayat, ward or place); see follows.ts. */
+  followTarget: string;
   /** The public page it shows on and that page's name (src/lib/sightings/place-url.ts); null where none does. */
   placeHref: string | null;
   placeLabel: string | null;

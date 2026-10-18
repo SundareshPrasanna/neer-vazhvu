@@ -2,6 +2,7 @@ import { NextResponse, after, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reporterKey, requireReviewer } from "@/lib/sightings/auth";
+import { notifyFollowers } from "@/lib/sightings/follows";
 import { notifyReporter } from "@/lib/sightings/notify";
 import { INTAKE_BUCKET, deletePhotos, publicPhotoUrl, publishPhotos } from "@/lib/sightings/photos";
 import { nextCaseStatus } from "@/lib/sightings/status";
@@ -149,6 +150,7 @@ export async function POST(request: NextRequest) {
         await event(id, "approved");
         await admin.from("sighting_reporters").update({ trusted: true }).eq("reporter_key", row.reporter_key);
         after(() => notifyReporter(row.reporter_key, { title: "Your report is published", body: "It is now on the public record for its place.", url: "/for-citizens" }));
+        after(() => notifyFollowers(admin, row, { title: "A new report at a place you follow", body: "Open it to see what was reported.", url: "/for-citizens" }, [row.reporter_key]));
         break;
       }
       case "reject": {
@@ -167,6 +169,7 @@ export async function POST(request: NextRequest) {
           await admin.from("sightings").update({ case_status: next, updated_at: new Date().toISOString() }).eq("id", id);
           await event(id, "fixed");
           after(() => notifyReporter(row.reporter_key, { title: "One of your reports is fixed", body: "A checked photo shows the spot now. The record says Fixed.", url: "/for-citizens" }));
+          after(() => notifyFollowers(admin, row, { title: "Fixed at a place you follow", body: "A checked photo shows the spot now.", url: "/for-citizens" }, [row.reporter_key]));
         }
         break;
       }

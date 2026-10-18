@@ -6,6 +6,7 @@ import { Lock } from "lucide-react";
 
 import type { OwnReport } from "@/lib/sightings/types";
 import { AccountActions } from "./account-actions";
+import { GroupsPanel, pendingJoin, rememberJoin } from "./groups-panel";
 import { MyReports } from "./my-reports";
 import { ReportFlow, type View } from "./report-flow";
 import { btn, link, muted, rule, serif } from "./ui";
@@ -85,12 +86,14 @@ const FROM_KEY = "nv-report-from";
 /** Sign-in, the report form and the reporter's own reports, under the page's header (compact once signed in). */
 export function CitizenApp({ header, coverage }: { header: React.ReactNode; coverage: Coverage }) {
   const { session, ready, signIn, signOut, authFetch } = useCitizen();
-  const [view, setView] = useState<"report" | "mine">("report");
+  // An invite link (?join=) opens the Groups view, before and after sign-in.
+  const [view, setView] = useState<"report" | "mine" | "groups">(() => (pendingJoin() ? "groups" : "report"));
   const [start, setStart] = useState<View | null>(null);
 
   // A report started from a place page opens its map there; kept across the Google sign-in round trip, which drops the query.
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
+    rememberJoin();
     try {
       if (q.get("place")) sessionStorage.setItem(FROM_KEY, q.toString());
     } catch {
@@ -162,6 +165,9 @@ export function CitizenApp({ header, coverage }: { header: React.ReactNode; cove
               My reports{" "}
               {!!mine?.length && <span className="rounded-full bg-slate-200 px-1.5 text-xs tabular-nums dark:bg-slate-700">{mine.length}</span>}
             </button>
+            <button type="button" aria-pressed={view === "groups"} onClick={() => setView("groups")} className={tab}>
+              Groups
+            </button>
           </div>
           {reviewer && (
             <Link href="/admin/sightings" className={btn("quiet", "sm")}>
@@ -173,8 +179,10 @@ export function CitizenApp({ header, coverage }: { header: React.ReactNode; cove
         <div className="pt-8 sm:pt-10">
           {view === "report" ? (
             <ReportFlow authFetch={authFetch} onSent={load} onOpenMine={() => setView("mine")} view={start} />
-          ) : (
+          ) : view === "mine" ? (
             <MyReports reports={mine} authFetch={authFetch} onChange={load} onNew={() => setView("report")} />
+          ) : (
+            <GroupsPanel citizen={{ session, authFetch }} />
           )}
         </div>
       </>

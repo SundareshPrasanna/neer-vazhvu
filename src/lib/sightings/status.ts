@@ -37,6 +37,10 @@ export function departmentNext(event: DepartmentEvent, current: CaseStatus | nul
   return current ? (DEPARTMENT_NEXT[event][current] ?? null) : null;
 }
 
+/** One tap each, once per person per report: "seen this too" on open reports, "thank you" on fixed ones. Counted, never in the history. */
+export const NOD_EVENTS = ["seen_too", "thanks"] as const;
+export type NodEvent = (typeof NOD_EVENTS)[number];
+
 /** Statuses on which anyone nearby may say "still there" or send a fixed photo. */
 export const OPEN_STATUSES: ReadonlySet<CaseStatus> = new Set(["open", "reported", "authority_done"]);
 
@@ -56,6 +60,8 @@ export const CASE_LABELS: Record<CaseStatus, string> = {
 export const EVENT_LABELS: Record<string, string> = {
   submitted: "Report sent",
   fix_submitted: "Fixed photo sent for checking",
+  seen_too: "Seen too",
+  thanks: "Thanked",
   fix_rejected: "Fixed photo not accepted",
   action_taken: "Action taken",
   not_ours: "Not theirs to handle",

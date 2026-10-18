@@ -189,6 +189,13 @@ export const REPORT_GROUPS: readonly ReportGroup[] = [
   },
 ];
 
+/**
+ * The only types a group may hold a fix-it day (clean-up) for: litter and ritual waste on a bank, cleared from the bank.
+ * Never sewage, drains, hazardous, medical or burning waste, dead animals or debris: unsafe for volunteers, and
+ * manual scavenging is illegal in India.
+ */
+export const FIXIT_TYPES: ReadonlySet<string> = new Set(["garbage_on_bank", "floating_trash", "plastic_buildup", "immersion_residue"]);
+
 /** Free text, reviewer-sorted: into an existing type or tagged as a candidate. */
 export const OTHER_KEY = "other";
 
@@ -225,4 +232,9 @@ export function takesReadings(category: string, subcategory: string | null): boo
 
 export function isPrivateCategory(category: string): boolean {
   return GROUPS.get(category)?.private === true;
+}
+
+/** Reports about a shared, public place: only these take anyone else's updates, "seen this too", thanks, help or clean-ups. */
+export function isCommunityReport(category: string): boolean {
+  return !isPrivateCategory(category);
 }

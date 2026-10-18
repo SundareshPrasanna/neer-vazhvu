@@ -234,6 +234,125 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
   );
 }
 
+interface PendingGroup {
+  id: string;
+  name: string;
+  kindLabel: string;
+  placeName: string | null;
+  createdAt: string;
+  members: number;
+}
+
+/** Groups waiting for review: approved groups can be named on reports and host clean-ups. Reviewer only (the API checks). */
+function PendingGroups({ authFetch, tick }: { authFetch: ReturnType<typeof useCitizen>["authFetch"]; tick: number }) {
+  const [list, setList] = useState<PendingGroup[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [forbidden, setForbidden] = useState(false);
+  const [done, setDone] = useState<Record<string, Outcome>>({});
+  const [confirm, setConfirm] = useState<string | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
+  const [failed, setFailed] = useState<{ id: string; text: string } | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    authFetch("/api/sightings/groups?scope=pending")
+      .then(async (res) => {
+        if (!live) return;
+        if (res.status === 403) return setForbidden(true);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) return setError(json.error ?? "Could not load the groups.");
+        setList(json.data);
+        setDone({});
+        setError(null);
+      })
+      .catch(() => live && setError("Could not load the groups."));
+    return () => {
+      live = false;
+    };
+  }, [authFetch, tick]);
+
+  const decide = async (g: PendingGroup, action: "approve" | "reject") => {
+    setPending(`${action}:${g.id}`);
+    setFailed(null);
+    const res = await authFetch("/api/sightings/groups", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, groupId: g.id }) }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
+    setPending(null);
+    setConfirm(null);
+    if (!res?.ok) return setFailed({ id: g.id, text: json.error ?? (res ? "That did not work. Please try again." : "No connection. Please try again.") });
+    setDone((d) => ({ ...d, [g.id]: action === "approve" ? { text: "Approved. Its hosts are told.", ok: true } : { text: "Rejected.", ok: false } }));
+  };
+
+  if (forbidden) return null;
+  return (
+    <section aria-labelledby="pending-groups" className={`mt-16 border-t pt-10 ${rule}`}>
+      <h2 id="pending-groups" className={appSection}>
+        Groups waiting for review
+      </h2>
+      <p className={`mt-2 max-w-[75ch] text-sm ${muted}`}>
+        An approved group&rsquo;s name shows on reports its members send with it, and its hosts can plan clean-ups. Reject a name that
+        names a person, misleads, or is not a real group.
+      </p>
+      {error && (
+        <p role="alert" className="mt-6 text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+      {list && list.length === 0 && <p className={`py-8 ${muted}`}>No groups waiting.</p>}
+      {list && list.length > 0 && (
+        <ul className={`mt-6 divide-y border-y ${rule}`}>
+          {list.map((g) => {
+            const o = done[g.id];
+            return (
+              <li key={g.id} className="flex flex-wrap items-center gap-x-6 gap-y-3 py-4">
+                <div className="min-w-0 flex-1 basis-64">
+                  <p className="font-semibold leading-snug break-words text-slate-900 dark:text-slate-100">{g.name}</p>
+                  <p className={`mt-0.5 text-sm tabular-nums ${muted}`}>
+                    {[g.kindLabel, g.placeName].filter(Boolean).join(", ")}. Started {day(g.createdAt)}. {g.members} {g.members === 1 ? "member" : "members"}.
+                  </p>
+                  {failed?.id === g.id && (
+                    <p role="alert" className="mt-1 text-sm font-medium text-red-700 dark:text-red-400">
+                      {failed.text}
+                    </p>
+                  )}
+                </div>
+                {o ? (
+                  <p role="status" className={`flex items-center gap-2 text-sm font-medium ${o.ok ? "text-emerald-700 dark:text-emerald-400" : muted} ${enter}`}>
+                    {o.ok ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : <XCircle className="h-4 w-4" aria-hidden="true" />}
+                    {o.text}
+                  </p>
+                ) : confirm === g.id ? (
+                  <div role="alertdialog" aria-label={`Reject ${g.name}`} className={`flex flex-wrap items-center gap-2 ${enter}`}>
+                    <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Reject this group?</span>
+                    <ActionButton label="Reject" busyLabel="Rejecting…" busy={pending === `reject:${g.id}`} onClick={() => decide(g, "reject")} className={btn("danger", "sm")} />
+                    <button type="button" onClick={() => setConfirm(null)} disabled={pending != null} className={btn("quiet", "sm")}>
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <ActionButton
+                      label="Approve"
+                      busyLabel="Approving…"
+                      busy={pending === `approve:${g.id}`}
+                      disabled={pending != null}
+                      icon={<Check className="h-4 w-4" aria-hidden="true" />}
+                      onClick={() => decide(g, "approve")}
+                      className={btn("approve", "sm")}
+                    />
+                    <button type="button" onClick={() => setConfirm(g.id)} disabled={pending != null} className={btn("secondary", "sm")}>
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 interface DepartmentLink {
   key: string;
   body: string;
@@ -447,6 +566,7 @@ export function ReviewApp() {
               );
             })}
           </ul>
+          <PendingGroups authFetch={authFetch} tick={tick} />
           <DepartmentLinks authFetch={authFetch} tick={tick} />
         </>
       )}

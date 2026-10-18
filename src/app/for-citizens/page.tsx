@@ -9,6 +9,9 @@ import { muted, rule, serif } from "@/components/sightings/ui";
 import { listPublishedAtlasDistricts } from "@/lib/atlas/registry";
 import { listBasins } from "@/lib/basins";
 import { listEnabledPlaces } from "@/lib/cities";
+import { logRouteError } from "@/lib/api-error";
+import { adminClient, reportsEnabled } from "@/lib/sightings/auth";
+import { FIXIT_LABELS, SAFETY_LINE, loadPublicGroups, type PublicGroup } from "@/lib/sightings/groups";
 import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 
@@ -19,10 +22,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/for-citizens" },
 };
 
+/** The groups list is read from the database; refreshed every few minutes. */
+export const revalidate = 300;
+
 const PROMISES: [string, string][] = [
   [
     "Nobody can see who sent a report",
     "Public pages show the photo, what it shows, the place and the date, and maps show the report within about 100 m of where it was sent. Never your name, email or Google account, never your notes, and never the time of day.",
+  ],
+  [
+    "Groups show the group, never you",
+    "If you send a report with a group, it shows the group's name, never yours. Members are never listed, not even to the group's hosts.",
   ],
   ["Your home stays private", "Tap-water reports and water test results show only the ward or village, never the point on the map."],
   [
@@ -111,6 +121,30 @@ const GUIDE: [string, React.ReactNode][] = [
     </p>,
   ],
   [
+    "Groups and clean-ups",
+    <>
+      <p>
+        Colleges, schools, residents&rsquo; associations, lake groups and NGOs can take part together. Once signed in, open Groups to start
+        one, or join one with the code or invite link its host shares. We check each new group before its name appears anywhere.
+      </p>
+      <p>
+        A report sent with a group shows the group&rsquo;s name, never the sender&rsquo;s, and counts towards what the group has done. Members
+        are never listed.
+      </p>
+      <p>A checked group&rsquo;s hosts can plan a clean-up at a reported spot, and anyone signed in can say they will come. Clean-ups are only for:</p>
+      <ul className="list-disc space-y-1 pl-5">
+        {FIXIT_LABELS.map((l) => (
+          <li key={l}>{l}</li>
+        ))}
+      </ul>
+      <p>
+        Never sewage, drains, debris, burning, hazardous or medical waste, or dead animals: those need the department&rsquo;s trained staff and
+        equipment, and clearing sewage by hand is against the law. A clean-up adds hands to the department&rsquo;s work; the report stays open
+        until it is fixed. {SAFETY_LINE}
+      </p>
+    </>,
+  ],
+  [
     "Why we do not file complaints for you",
     <>
       <p>
@@ -167,6 +201,21 @@ function Section({ id, title, intro, extra, children }: { id: string; title: str
 
 const byName = (a: string, b: string) => a.localeCompare(b);
 
+/** Reviewed groups and what they did together (the same data as GET /api/sightings/groups); none while reporting is off. */
+async function groupsTakingPart(): Promise<PublicGroup[]> {
+  if (!reportsEnabled()) return [];
+  try {
+    return await loadPublicGroups(adminClient());
+  } catch (err) {
+    logRouteError("for-citizens groups", err);
+    return [];
+  }
+}
+
+/** Groups shown in full; the rest are counted. */
+const GROUPS_SHOWN = 60;
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
 /** A river and its watersheds read as one: sub-basins and the overview basins of one river (the Cauvery's two states) share a name. */
 function basinNames() {
   const basins = listBasins();
@@ -187,9 +236,10 @@ function coverage() {
   };
 }
 
-export default function ForCitizensPage() {
+export default async function ForCitizensPage() {
   if (process.env.NEXT_PUBLIC_CITIZEN_REPORTS !== "on") notFound();
   const where = coverage();
+  const groups = await groupsTakingPart();
   const places: [string, string[]][] = [
     ["Cities", where.cities],
     ["Districts", where.districts],
@@ -235,6 +285,34 @@ export default function ForCitizensPage() {
               </div>
             ))}
           </dl>
+        </Section>
+        <Section
+          id="groups"
+          title="Groups taking part"
+          intro="Colleges, schools, residents' associations, lake groups and NGOs that report together and hold clean-ups. Each group is checked before its name appears."
+        >
+          {groups.length ? (
+            <div>
+              <ul className={`border-t ${rule}`}>
+                {groups.slice(0, GROUPS_SHOWN).map((g) => (
+                  <li key={g.id} className={`grid gap-1 border-b py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline sm:gap-6 ${rule}`}>
+                    <div className="min-w-0">
+                      <p className="font-semibold break-words text-slate-900 dark:text-slate-100">{g.name}</p>
+                      <p className={`text-sm ${muted}`}>{[g.kindLabel, g.placeName].filter(Boolean).join(", ")}</p>
+                    </div>
+                    <p className={`text-sm tabular-nums ${muted}`}>
+                      {plural(g.reports, "report", "reports")}, {g.fixed} fixed, {plural(g.cleanups, "clean-up", "clean-ups")}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              {groups.length > GROUPS_SHOWN && <p className={`mt-4 text-sm ${muted}`}>And {plural(groups.length - GROUPS_SHOWN, "more group", "more groups")}.</p>}
+            </div>
+          ) : (
+            <p className={`max-w-[62ch] leading-relaxed ${muted}`}>
+              No groups yet. Sign in and open Groups to start one for your college, school, residents&rsquo; association or lake.
+            </p>
+          )}
         </Section>
         <Section id="privacy" title="How we protect you" intro="What we promise about your reports and your account, and the limits we cannot promise away.">
           <Disclosures items={PROMISES.map(([title, text]) => [title, <p key={title}>{text}</p>])} />

@@ -16,6 +16,7 @@ import {
   linkSecret,
   verifyDepartmentToken,
 } from "@/lib/sightings/departments";
+import { notifyFollowers } from "@/lib/sightings/follows";
 import { notifyReporter } from "@/lib/sightings/notify";
 import type { DepartmentEvent } from "@/lib/sightings/status";
 import type { SightingRow } from "@/lib/sightings/types";
@@ -101,6 +102,7 @@ export async function POST(request: NextRequest) {
     if (event !== "not_ours" && caseStatus !== row.case_status && row.reporter_key !== "deleted") {
       const word = NOTICE[event];
       after(() => notifyReporter(row.reporter_key, { title: "Update on your report", body: `The department marked one of your reports: ${word}.`, url: "/for-citizens" }));
+      after(() => notifyFollowers(admin, row, { title: "Update at a place you follow", body: `The department marked a report: ${word}.`, url: "/for-citizens" }, [row.reporter_key]));
     }
     return NextResponse.json({ data: { caseStatus, actions: actionsFor(caseStatus), at: istDate(Date.now()) } }, { headers: PRIVATE });
   } catch (err) {

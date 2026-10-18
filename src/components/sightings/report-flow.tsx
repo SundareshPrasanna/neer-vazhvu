@@ -11,7 +11,7 @@ import {
 
 import { LIMITS, REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { PARAMETERS, assess } from "@/lib/sightings/parameters";
-import { OTHER_KEY, REPORT_GROUPS, WATER_SOURCES, takesReadings } from "@/lib/sightings/taxonomy";
+import { OTHER_KEY, REPORT_GROUPS, WATER_SOURCES, isCommunityReport, takesReadings } from "@/lib/sightings/taxonomy";
 import { MAX_MODEL_CHARS, TEST_CALIBRATED, TEST_FILTERED, TEST_INSTRUMENTS, testLabel, type Calibrated, type Filtered, type Instrument } from "@/lib/sightings/test-meta";
 import type { Handler, PublicReport } from "@/lib/sightings/types";
 import type { Channel } from "@/lib/sightings/routing/types";
@@ -22,7 +22,8 @@ import { PhotoBlur } from "./photo-blur";
 import { ReminderLink } from "./reminder";
 import { Readings, day } from "./report-card";
 import { btn, enter, field, fieldBox, fileFocus, link, muted, rule, serif } from "./ui";
-import { readPhotoMeta, shrinkPhoto } from "./use-citizen";
+import { useMyGroups } from "./groups-panel";
+import { readPhotoMeta, shrinkPhoto, useCitizen } from "./use-citizen";
 
 const LocationMap = dynamic(() => import("./location-map"), {
   ssr: false,
@@ -180,6 +181,11 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState<Sent | null>(null);
+  // Reviewed groups the person can send with (null sends it alone); never for tap water, which shows only the ward.
+  const citizen = useCitizen();
+  const { data: myGroups } = useMyGroups(citizen);
+  const sendGroups = group && isCommunityReport(group) ? (myGroups?.groups.filter((g) => g.status === "approved") ?? []) : [];
+  const [withGroup, setWithGroup] = useState<string | null>(null);
   const top = useRef<HTMLDivElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
@@ -346,6 +352,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
       fd.append("category", group);
       if (type && !isOther) fd.append("subcategory", type);
       if (note.trim()) fd.append("note", note.trim());
+      if (withGroup && sendGroups.some((g) => g.id === withGroup)) fd.append("groupId", withGroup);
       if (group === "drinking" && source) fd.append("waterSource", source);
       if (testing) {
         entered.forEach(([k, v]) => fd.append(`reading.${k}`, v.trim()));
@@ -924,6 +931,15 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
   const sendStep = (
     <>
       <div className="lg:hidden">{draft(true)}</div>
+      {sendGroups.length > 0 && (
+        <Choice
+          legend="Send with"
+          hint="With a group, the report shows the group's name, never yours."
+          options={[{ key: "", label: "Just me" }, ...sendGroups.map((g) => ({ key: g.id, label: g.name }))]}
+          value={withGroup ?? ""}
+          onChange={(k) => setWithGroup(k || null)}
+        />
+      )}
       {!isOther && (
         <label className="block">
           <span className="font-medium text-slate-900 dark:text-slate-100">Anything our reviewer should know?</span>

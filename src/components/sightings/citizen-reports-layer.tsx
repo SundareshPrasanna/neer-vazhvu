@@ -7,8 +7,8 @@ import L from "leaflet";
 import { OPEN_STATUSES } from "@/lib/sightings/status";
 import { OTHER_KEY, REPORT_GROUPS, getGroup } from "@/lib/sightings/taxonomy";
 import type { PublicReport } from "@/lib/sightings/types";
-import { SeenLately } from "./place-reports";
-import { Status, day } from "./report-card";
+import { CommunityActions } from "./community-actions";
+import { Standing, Status, day } from "./report-card";
 import { muted } from "./ui";
 import { useCitizen } from "./use-citizen";
 
@@ -65,10 +65,11 @@ function ReportPopup({ report, citizen }: { report: PublicReport; citizen: Retur
         <div className="min-w-0">
           <div className="text-sm font-semibold leading-snug text-slate-900 dark:text-slate-100">{report.label}</div>
           <div className={`mt-0.5 text-xs leading-snug ${muted}`}>{[report.where ?? report.placeName, day(report.createdAt)].join(", ")}</div>
+          <Standing report={report} />
         </div>
       </div>
       {report.caseStatus && <Status status={report.caseStatus} />}
-      <SeenLately report={report} citizen={citizen} />
+      <CommunityActions report={report} citizen={citizen} />
     </div>
   );
 }
