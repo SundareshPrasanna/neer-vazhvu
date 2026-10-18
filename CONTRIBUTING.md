@@ -1,6 +1,6 @@
 # Contributing to Neer Vazhvu
 
-Thanks for your interest in contributing! This project tracks Indian cities' water systems (Chennai, Madurai, Bengaluru, Mumbai and Delhi live, more on the way) and aims to make civic data accessible to everyone.
+Thanks for your interest in contributing! This project tracks Indian cities' water systems (Chennai, Madurai, Bengaluru, Mumbai, Delhi and other cities live, more on the way) and aims to make civic data accessible to everyone.
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
@@ -24,8 +24,10 @@ Without Supabase configured, pages render from the static files in `public/data`
 ### Python API (FastAPI)
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 cd neer-vazhvu-api
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -45,9 +47,9 @@ If you need real data flowing through, you'll need a [Supabase](https://supabase
 neer-vazhvu/
 ├── src/                  # Next.js frontend (App Router)
 │   ├── app/
-│   │   ├── (chennai-flat)/        # Legacy Chennai-only routes (/, /my-ward, /groundwater, /water-bodies, /rivers, /flood-risk, /about, /facts, /origins)
-│   │   └── [cityId]/              # Multi-city parallel routes for Madurai, Bengaluru, Mumbai, Delhi and future cities
+│   │   └── [cityId]/              # Per-city routes for every registered city (see src/lib/cities/ids.ts)
 │   ├── components/                # React components (most are city-agnostic; per-city forks live in dashboard/, my-ward/, water-bodies/)
+│   ├── content/                   # Per-city written content (Origins, About, rivers, flood)
 │   ├── lib/
 │   │   ├── cities/                # *** Place config registry — add a city by adding a file here ***
 │   │   │   ├── chennai.ts         # CityConfig: GCC 200 wards, CMWSSB reservoirs, days-left hero, etc.
@@ -55,17 +57,21 @@ neer-vazhvu/
 │   │   │   ├── bangalore.ts       # CityConfig: GBA 369 wards, 4 upstream Cauvery reservoirs (all isPrimaryDrinkingSource=false), cauvery-pumping hero, KN locale
 │   │   │   ├── mumbai.ts          # CityConfig: first region place — 9 MMR corporations, 7 BMC lakes, days-left hero with upper-bound heroNote
 │   │   │   ├── delhi.ts           # CityConfig: MCD 250 wards, 6 sources ALL hasPublicFeed=false (no authority publishes daily), cauvery-pumping hero w/ hero_copy overrides, HI upcoming
+│   │   │   ├── ...                # One file per registered city (see ids.ts)
 │   │   │   └── types.ts           # PlaceConfig union + GroundwaterViewsConfig + UrbanSupplyConfig + heroMode discriminator
 │   │   ├── hooks/                 # Per-city promise caches: use-ward-profile, use-my-ward-data, use-ward-representatives
 │   │   ├── i18n/                  # ~1,500 EN/TA/KN translation keys (one file)
 │   │   └── utils/                 # Shared utils incl. river-classification (CPCB Best-Use thresholds, used by all cities)
 │   └── types/                     # TypeScript definitions
 ├── neer-vazhvu-api/               # Python API (FastAPI)
-│   ├── app/scrapers/              # CMWSSB, NASA POWER, Open-Meteo, OpenCity, WRIS (Madurai + Bangalore), TN Agriculture ARS (Madurai), KWRIS (Bengaluru), Pravah (Mumbai). Delhi has none - no authority publishes a daily feed for it (see docs/cities/delhi/features.md)
+│   ├── app/scrapers/              # CMWSSB, NASA POWER, Open-Meteo, OpenCity, WRIS (Madurai + Bangalore), TN Agriculture ARS (Madurai), KWRIS (Bengaluru). Delhi has none - no authority publishes a daily feed for it (see docs/cities/delhi/features.md)
 │   ├── app/etl/                   # Pipeline orchestrator, constants
 │   ├── app/gee/                   # Earth Engine Phase 1 summaries and catchment tooling
 │   ├── app/intelligence/          # ARIMAX forecaster, risk scorer, briefing
-│   └── app/routers/               # API endpoints
+│   ├── app/routers/               # API endpoints
+│   └── tests/                     # pytest suite
+├── schemas/nvdm/                  # NVDM data standard (rules, guide, scope registry)
+├── docs/                          # Design notes, methodology, per-city docs
 ├── public/
 │   ├── data/                      # Static JSON: per-city files carry the city id in the name, as a prefix (madurai-supply-overview.json) or a suffix (imd-rainfall-monthly-bangalore.json); a few older Chennai files carry none. Every file follows NVDM (schemas/nvdm/)
 │   └── geojson/                   # Static spatial: same per-city naming convention
@@ -288,7 +294,7 @@ Current workflow note:
 - **Kannada prose review** - `src/content/about/bangalore-pages.tsx`, the BangaloreDailyBriefing variants in `src/content/briefing/bangalore.ts`, and the long-form story (`src/content/story-bangalore-kn.tsx`). Native-speaker review wanted.
 - **Localization (UI)** - ~1,500 i18n keys covering EN + TA + KN; `npm run i18n:check` enforces parity.
 - **Testing** - Unit tests for scrapers, calculator, intelligence modules, and the shared `src/lib/utils/river-classification.ts` (CPCB Best-Use classifier).
-- **Adding a fifth city** - see the "Adding a new city" subsection above.
+- **Adding a new city** - see the "Adding a new city" subsection above.
 
 ## Submitting a Pull Request
 
