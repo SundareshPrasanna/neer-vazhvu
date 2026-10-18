@@ -85,6 +85,8 @@ export interface WardGroundwaterAssessment {
     /** "Safe" | "Semi Critical" | "Critical" | "Over Exploited" */
     class: string;
     development_pct: number | null;
+    /** The assessment's own caveat on this unit's figure, where it has one. */
+    note?: string;
   } | null;
   nearest_well: {
     name: string;
@@ -108,8 +110,11 @@ export function isSectionUnavailable(
 
 export interface WardProfile {
   ward_number: number;
-  zone_no: string;
-  zone_name: string;
+  /** null where a ward is not assigned to one zone (Nagpur). */
+  zone_no: string | null;
+  zone_name: string | null;
+  /** A caveat on the ward's mapped outline, shown in the ward header. */
+  boundary_note?: string;
   centroid: [number, number];
   area_sq_km: number;
 

@@ -69,6 +69,18 @@ CITIES = {
         "bbox": (77.40, 12.80, 77.85, 13.20),  # BBMP + GBA fringe
         "bands": [700, 840, 870, 900, 930, 960, 1000],
     },
+    # Nagpur: the NMC outline's extent (NMC GIS NMCAdminBoundaries/MapServer/3,
+    # 21.053-21.231 N, 78.993-79.184 E) rounded outward. Inland, so there is
+    # no sea to mask. The Nag falls about 35 m across the city, from Ambazari
+    # (~317 m) to the Pardi-Punapur reach (~282 m) where WRD's flood-line
+    # sheets give 100-year levels near 283-284 m on a mean-sea-level datum.
+    # Edges sit on the FABDEM percentiles this script printed on 2026-10-15
+    # (p0=269 p5=280 p20=288 p40=296 p60=306 p80=320 p95=345 p100=379).
+    "nagpur": {
+        "bbox": (78.99, 21.05, 79.19, 21.24),
+        "bands": [265, 280, 288, 296, 306, 320, 345],
+        "sea_is_zero": False,
+    },
     # Delhi is a very flat plain with one hard edge: 80% of the NCT sits
     # between 203 m and 221 m, then the Ridge quartzite climbs to ~326 m.
     # So the plain is cut finely and the Ridge is a single top band.

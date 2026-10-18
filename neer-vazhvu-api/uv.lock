@@ -1414,6 +1414,9 @@ hydro = [
     { name = "rasterio", version = "1.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "whitebox" },
 ]
+imagery = [
+    { name = "pillow" },
+]
 imd = [
     { name = "imdlib" },
     { name = "xarray" },
@@ -1434,6 +1437,7 @@ requires-dist = [
     { name = "openpyxl", marker = "extra == 'xlsx'", specifier = ">=3.1" },
     { name = "pandas", specifier = ">=2.2" },
     { name = "pdfplumber", marker = "extra == 'cpcb'", specifier = ">=0.11" },
+    { name = "pillow", marker = "extra == 'imagery'", specifier = ">=10" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pydantic-settings", specifier = ">=2.0" },
     { name = "pyproj", marker = "extra == 'hydro'", specifier = ">=3.6" },
@@ -1450,7 +1454,7 @@ requires-dist = [
     { name = "xarray", marker = "extra == 'imd'", specifier = ">=2024.0" },
     { name = "xlrd", specifier = ">=2.0" },
 ]
-provides-extras = ["dev", "imd", "cpcb", "xlsx", "hydro"]
+provides-extras = ["dev", "imd", "cpcb", "xlsx", "hydro", "imagery"]
 
 [[package]]
 name = "numba"

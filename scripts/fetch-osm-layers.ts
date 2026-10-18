@@ -47,6 +47,9 @@ interface Layer {
   metadata?: { source: string; note: string; script: string };
   wards?: string;
   profiles?: string;
+  /** ward-join only: zone outlines (properties zone_name, zone_no). When set,
+   *  each place takes the zone at its own point instead of its ward's zone. */
+  zones?: string;
   wikidata?: { parents: string };
   /** Write an array payload as { [wrapAs]: rows } so the file can carry an NVDM envelope. */
   wrapAs?: string;
@@ -555,6 +558,11 @@ async function wardJoin(_city: string, l: Layer, lang: string): Promise<Built> {
   const raw = readJson(l.profiles!);
   const profiles: Array<{ ward_number: number; zone_no: string; zone_name: string }> = Array.isArray(raw) ? raw : raw.wards;
   const profileMap = new Map(profiles.map((p) => [p.ward_number, p]));
+  const zones = l.zones
+    ? (readJson(l.zones).features as Array<{ properties: { zone_name: string; zone_no: string } }>)
+    : null;
+  const zoneAt = (lat: number, lng: number) =>
+    zones!.find((z) => booleanPointInPolygon(point([lng, lat]), z as unknown as Parameters<typeof booleanPointInPolygon>[1]))?.properties;
   const findWard = (lat: number, lng: number): number | null => {
     const pt = point([lng, lat]);
     for (const f of wards) {
@@ -578,7 +586,10 @@ async function wardJoin(_city: string, l: Layer, lang: string): Promise<Built> {
     if (!profile) return;
     seen.add(name.toLowerCase().trim());
     const type = place === "neighbourhood" || place === "quarter" ? place : "suburb";
-    rows.push({ name: name.trim(), name_ta: local, type, lat: c.lat, lng: c.lng, ward_number: ward, zone_name: profile.zone_name, zone_no: profile.zone_no });
+    const zone = zones ? zoneAt(c.lat, c.lng) : profile;
+    // Consumers read zone_name as a string: a place outside every zone outline stops the run.
+    if (!zone) throw new Error(`${name.trim()} (${c.lat}, ${c.lng}, ward ${ward}) lies outside every zone in ${l.zones}`);
+    rows.push({ name: name.trim(), name_ta: local, type, lat: c.lat, lng: c.lng, ward_number: ward, zone_name: zone.zone_name, zone_no: zone.zone_no });
   };
   for (const el of osm.elements) {
     const tags = el.tags || {};

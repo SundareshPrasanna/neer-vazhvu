@@ -37,9 +37,10 @@ interface CetpCompliance {
   total_exceedances: number;
   parameters_ever_breached: number;
 }
-import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
+import { compareReadingPeriod, type RiverQualityData } from "@/types/river-quality";
 
 import { RiverPanel } from "@/components/rivers/river-panel";
+import { StationMarkerKey } from "@/components/rivers/station-marker-key";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 import { basinDataUrl } from "@/lib/basins/paths";
@@ -72,6 +73,9 @@ interface ClientProps {
    *  label. Cities whose partner review asked for a cleaner header (Bengaluru)
    *  turn it off in the per-city header config. Default true. */
   showHeaderStats?: boolean;
+  /** What the tally calls the river-quality points (default "CPCB stations"),
+   *  for a city whose points are not all CPCB's. */
+  stationsLabel?: string;
   /** Label for the basin-atlas CTA button; defaults to the treatment-gaps
    *  framing used by the original Chennai-baseline surface. */
   atlasCtaLabel?: string;
@@ -180,6 +184,7 @@ export default function RiversClient({
   mapZoom = 9,
   scopeLabel,
   showHeaderStats = true,
+  stationsLabel = "CPCB stations",
   atlasCtaLabel,
   riverInfo,
   basin = null,
@@ -453,7 +458,7 @@ export default function RiversClient({
         // crashed the whole map.
         .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
         .map((s) => {
-        const sorted = [...s.readings].sort((a, b) => b.year - a.year);
+        const sorted = [...s.readings].sort((a, b) => compareReadingPeriod(b, a));
         const latest = sorted[0] ?? null;
         return {
           id: s.id,
@@ -492,7 +497,7 @@ export default function RiversClient({
         {showHeaderStats && (
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers
-            {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
+            {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} ${stationsLabel}`}
             {cpcbStationsWithoutCoords > 0 &&
               ` (+${cpcbStationsWithoutCoords} without a published coordinate)`}
             {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
@@ -557,6 +562,7 @@ export default function RiversClient({
             industrialSources={industrialMarkers}
             drains={drainMarkers}
           />
+          <StationMarkerKey stations={cpcbStationMarkers} />
 
           {/* Drill-down hint: shown where at least one river opens a basin atlas. */}
           {drillableNames.length > 0 && !coachDismissed && !openBasinRiverId && (

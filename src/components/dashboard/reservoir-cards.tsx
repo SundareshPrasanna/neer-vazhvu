@@ -51,6 +51,7 @@ export function ReservoirCards({
                 displayName={getReservoirDisplayName(r.name, t, r.displayName)}
                 capacityMcft={r.capacity}
                 reason={r.noLiveDataReason ?? t("dash.no_live_data")}
+                noFeed={r.hasPublicFeed === false}
               />
             );
           }

@@ -2,17 +2,37 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
+import { tryGetPlaceConfig, type PlaceConfig } from "@/lib/cities";
 import type { WardRankings, Grade } from "@/lib/utils/ward-rankings";
 import { GRADE_STYLES, GRADE_PRINT_KEY, GradeBadge } from "@/lib/utils/grade-styles";
 import { InfoTooltip } from "./info-tooltip";
 
-const METRIC_PAGE: Record<string, string> = {
-  wb_health: "/water-bodies",
-  wb_density: "/water-bodies",
-  flood_risk: "/flood-risk?view=hazard",
-  drainage: "/flood-risk?view=drainage",
-  sewerage_infra: "/flood-risk?view=sewerage",
+/** The interactive flood map's view for each flood metric. */
+const FLOOD_VIEW: Record<string, string> = {
+  flood_risk: "hazard",
+  drainage: "drainage",
+  sewerage_infra: "sewerage",
 };
+
+/** Where a metric row links (ward null) or a ward's cell in it. Only the
+ *  interactive flood map (Chennai) has hazard, drainage and sewerage views
+ *  and opens on ?ward=; any other flood page is linked as itself, and a city
+ *  without one gets no link. */
+function metricHref(
+  key: string,
+  config: PlaceConfig | null,
+  cityPrefix: string,
+  ward: number | null,
+): string | null {
+  const withWard = (path: string) =>
+    ward == null ? path : `${path}${path.includes("?") ? "&" : "?"}ward=${ward}`;
+  if (key === "wb_health" || key === "wb_density") return `${cityPrefix}${withWard("/water-bodies")}`;
+  const view = FLOOD_VIEW[key];
+  if (!view || !config?.routes.includes("flood-risk")) return null;
+  return config.flood?.variant === "interactive"
+    ? `${cityPrefix}${withWard(`/flood-risk?view=${view}`)}`
+    : `${cityPrefix}/flood-risk`;
+}
 
 const NUMBER_FORMAT = new Intl.NumberFormat("en-IN", {
   minimumFractionDigits: 0,
@@ -44,12 +64,13 @@ function bestAndWorst(
 }
 
 function overallBestAndWorst(rankings: WardRankings[]): { bestIdx: number; worstIdx: number } {
-  let bestIdx = 0;
-  let worstIdx = 0;
-  for (let i = 1; i < rankings.length; i++) {
-    if (rankings[i].overallRank < rankings[bestIdx].overallRank) bestIdx = i;
-    if (rankings[i].overallRank > rankings[worstIdx].overallRank) worstIdx = i;
-  }
+  let bestIdx = -1;
+  let worstIdx = -1;
+  rankings.forEach((r, i) => {
+    if (r.overallRank == null) return;
+    if (bestIdx < 0 || r.overallRank < rankings[bestIdx].overallRank!) bestIdx = i;
+    if (worstIdx < 0 || r.overallRank > rankings[worstIdx].overallRank!) worstIdx = i;
+  });
   return { bestIdx, worstIdx };
 }
 
@@ -68,12 +89,15 @@ function cellBg(role: "best" | "worst" | null): string {
 
 interface ComparisonTableProps {
   rankings: WardRankings[];
+  /** Decides which pages and views the metric rows can link to. */
+  cityId: string;
   /** "" for Chennai (legacy flat URLs), "/<cityId>" otherwise. */
   cityPrefix?: string;
 }
 
-export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTableProps) {
+export function ComparisonTable({ rankings, cityId, cityPrefix = "" }: ComparisonTableProps) {
   const { t } = useLanguage();
+  const config = tryGetPlaceConfig(cityId);
 
   if (rankings.length === 0) return null;
 
@@ -113,13 +137,21 @@ export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTablePr
               {rankings.map((r, idx) => (
                 <td key={r.wardNumber} className="py-2 px-2">
                   <Link href={`${cityPrefix}/my-ward/report?ward=${r.wardNumber}`} className={`flex flex-col items-center gap-0.5 py-1 px-1.5 hover:bg-slate-100/80 dark:hover:bg-slate-700/30 transition-colors rounded-lg ${cellBg(cellRole(idx, overallHL.bestIdx, overallHL.worstIdx, rankings.length))}`}>
-                    <GradeBadge grade={r.overallGrade} size="sm" />
-                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 tabular-nums">
-                      #{r.overallRank}<span className="text-slate-400">/{r.overallTotal}</span>
-                    </span>
-                    <span className="text-xs text-slate-400 tabular-nums">
-                      {r.overallPercentile}%
-                    </span>
+                    {r.overallGrade === null ? (
+                      <span className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                        {t("compare.overall_not_graded")}
+                      </span>
+                    ) : (
+                      <>
+                        <GradeBadge grade={r.overallGrade} size="sm" />
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 tabular-nums">
+                          #{r.overallRank}<span className="text-slate-400">/{r.overallTotal}</span>
+                        </span>
+                        <span className="text-xs text-slate-400 tabular-nums">
+                          {r.overallPercentile}%
+                        </span>
+                      </>
+                    )}
                   </Link>
                 </td>
               ))}
@@ -129,12 +161,13 @@ export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTablePr
             {metricKeys.map((key) => {
               const hl = bestAndWorst(rankings, key);
               const metricDef = rankings[0].metrics.find((m) => m.key === key);
+              const rowLink = metricHref(key, config, cityPrefix, null);
               return (
                 <tr key={key} className="border-b border-slate-50 dark:border-slate-800/50 last:border-0">
                   <td className="py-2 pr-3 text-slate-700 dark:text-slate-300 text-sm">
                     <span className="inline-flex items-center flex-wrap">
-                      {METRIC_PAGE[key] ? (
-                        <Link href={`${cityPrefix}${METRIC_PAGE[key]}`} className="group hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                      {rowLink ? (
+                        <Link href={rowLink} className="group hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                           <span>{t(metricDef?.label ?? key)}</span>
                           <span className="text-xs text-slate-400 ml-1">
                             {metricDef?.unit}
@@ -161,8 +194,7 @@ export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTablePr
                         <td key={r.wardNumber} className="py-2 px-2 text-center text-slate-400">-</td>
                       );
                     }
-                    const base = METRIC_PAGE[key];
-                    const cellLink = base ? `${cityPrefix}${base}${base.includes("?") ? "&" : "?"}ward=${r.wardNumber}` : null;
+                    const cellLink = metricHref(key, config, cityPrefix, r.wardNumber);
                     const cellContent = (
                       <>
                         <GradeBadge grade={m.grade} />
@@ -212,12 +244,18 @@ export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTablePr
                   <p className="text-xs text-slate-500 dark:text-slate-400">{r.zoneName}</p>
                 </div>
                 <div className="flex items-center gap-2">
+                  {r.overallGrade === null ? (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 text-right max-w-[9rem]">
+                      {t("compare.overall_not_graded")}
+                    </p>
+                  ) : (
                   <div className="text-center">
                     <GradeBadge grade={r.overallGrade} size="sm" />
                     <p className="text-xs text-slate-400 mt-0.5 tabular-nums">
                       #{r.overallRank}/{r.overallTotal}
                     </p>
                   </div>
+                  )}
                   <span className="text-slate-300 dark:text-slate-600 text-sm print:hidden">&rsaquo;</span>
                 </div>
               </Link>
@@ -227,8 +265,7 @@ export function ComparisonTable({ rankings, cityPrefix = "" }: ComparisonTablePr
                 {r.metrics.map((m) => {
                   const hl = bestAndWorst(rankings, m.key);
                   const mobileRole = cellRole(idx, hl.bestIdx, hl.worstIdx, rankings.length);
-                  const mBase = METRIC_PAGE[m.key];
-                  const mobileLink = mBase ? `${cityPrefix}${mBase}${mBase.includes("?") ? "&" : "?"}ward=${r.wardNumber}` : null;
+                  const mobileLink = metricHref(m.key, config, cityPrefix, r.wardNumber);
                   const mobileInner = (
                     <>
                       <div className="min-w-0 flex-1">

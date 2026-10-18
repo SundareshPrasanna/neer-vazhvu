@@ -40,6 +40,10 @@ export interface MissingDataCardProps {
    *  card can sit alongside live cards in the same grid without an
    *  inconsistent interaction surface. */
   onClick?: () => void;
+  /** True when the source has no public daily feed at all; false (the
+   *  default) when it has one and only the latest date's reading is
+   *  missing. Picks the words in the value slot. */
+  noFeed?: boolean;
 }
 
 const DefaultIcon = () => (
@@ -66,7 +70,9 @@ export function MissingDataCard({
   cta,
   icon,
   onClick,
+  noFeed = false,
 }: MissingDataCardProps) {
+  const { t } = useLanguage();
   return (
     <Card
       className={`border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 ${
@@ -82,8 +88,9 @@ export function MissingDataCard({
           {icon ?? <DefaultIcon />}
         </div>
 
+        {/* Words, not a dash: the slot where a live card shows its figure. */}
         <div className="text-base sm:text-lg font-semibold text-slate-400 dark:text-slate-500">
-          —
+          {t(noFeed ? "dash.no_daily_reading" : "dash.no_reading_yet")}
         </div>
 
         {subtitle && (
@@ -134,11 +141,13 @@ export function MissingReservoirCard({
   capacityMcft,
   reason,
   cta,
+  noFeed,
 }: {
   displayName: string;
   capacityMcft: number;
   reason: string;
   cta?: { label: string; href: string };
+  noFeed?: boolean;
 }) {
   const { t } = useLanguage();
   const subtitle =
@@ -151,6 +160,7 @@ export function MissingReservoirCard({
       subtitle={subtitle}
       reason={reason}
       cta={cta}
+      noFeed={noFeed}
     />
   );
 }

@@ -32,7 +32,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const title = `Comparing ${config.displayName} Wards ${wardList} | Neer Vazhvu`;
   const description =
     rankings.length > 0
-      ? `Side-by-side comparison: ${rankings.map((r) => `Ward ${r!.wardNumber} (Grade ${r!.overallGrade})`).join(", ")}`
+      ? `Side-by-side comparison: ${rankings.map((r) => (r!.overallGrade ? `Ward ${r!.wardNumber} (Grade ${r!.overallGrade})` : `Ward ${r!.wardNumber}`)).join(", ")}`
       : `Side-by-side water infrastructure comparison for ${config.displayName} wards.`;
 
   return {

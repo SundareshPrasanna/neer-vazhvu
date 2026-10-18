@@ -99,7 +99,7 @@ export function WardMultiSelector({
   const wardLabel = useCallback(
     (wardNumber: number): string => {
       const w = wards.find((entry) => entry.wardNumber === wardNumber);
-      return w
+      return w && !w.zoneless
         ? `${wardNumber} - ${getZoneLabel(w.zone, language)}`
         : String(wardNumber);
     },

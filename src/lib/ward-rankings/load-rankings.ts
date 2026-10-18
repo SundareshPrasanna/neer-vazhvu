@@ -152,7 +152,7 @@ function loadChennaiRankings(): WardRankingsBundle {
   const rows: WardRankingRow[] = [];
   for (const profile of profiles) {
     const ranking = computeWardRankings(profile.ward_number, profiles);
-    if (!ranking) continue;
+    if (!ranking || !isGraded(ranking)) continue;
     rows.push(chennaiRankingToRow(ranking, localities));
   }
   rows.sort((a, b) => a.rank - b.rank);
@@ -176,8 +176,19 @@ function loadChennaiRankings(): WardRankingsBundle {
   };
 }
 
+type GradedWardRankings = WardRankings & {
+  overallRank: number;
+  overallScore: number;
+  overallGrade: Grade;
+  overallPercentile: number;
+};
+
+function isGraded(r: WardRankings): r is GradedWardRankings {
+  return r.overallGrade !== null && r.overallRank !== null && r.overallScore !== null && r.overallPercentile !== null;
+}
+
 function chennaiRankingToRow(
-  r: WardRankings,
+  r: GradedWardRankings,
   localities: Map<number, string[]>,
 ): WardRankingRow {
   const metricColumns: WardRankingMetricColumn[] = [];
@@ -192,7 +203,7 @@ function chennaiRankingToRow(
   return {
     wardNumber: r.wardNumber,
     wardName: `Ward ${r.wardNumber}`,
-    zone: r.zoneName,
+    zone: r.zoneName ?? "",
     grade: r.overallGrade,
     localities: localities.get(r.wardNumber) ?? [],
     compositeScore: r.overallScore,

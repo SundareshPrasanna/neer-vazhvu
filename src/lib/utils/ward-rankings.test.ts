@@ -3,7 +3,7 @@ import test from "node:test";
 
 import type { WardProfile } from "@/lib/hooks/use-ward-profile";
 
-import { computeWardRankings } from "./ward-rankings";
+import { computeWardRankings, englishOrdinal } from "./ward-rankings";
 
 function buildWardProfile(
   overrides: Partial<WardProfile> & Pick<WardProfile, "ward_number">,
@@ -295,4 +295,44 @@ test("sewerage ties are broken by SPS density, not raw SPS count", () => {
   const otherSewerMetric = otherRankings.metrics.find((metric) => metric.key === "sewerage_infra");
   assert.ok(otherSewerMetric);
   assert.equal(otherSewerMetric.rank, 2);
+});
+
+test("a ward with data on one factor gets no overall grade; graded wards rank among themselves", () => {
+  const noData = { _data_status: "not_available" as const, reason: "x" };
+  const oneFactor = (ward_number: number, current_count: number) =>
+    buildWardProfile({
+      ward_number,
+      water_bodies: { current_count, census_records: 0, restoration_critical: 0, restoration_high: 0, avg_restoration_score: null, top_bodies: [] },
+      flood: noData as unknown as WardProfile["flood"],
+      drainage: noData as unknown as WardProfile["drainage"],
+      sewerage: noData as unknown as WardProfile["sewerage"],
+    });
+  const twoFactor = (ward_number: number, score: number) => ({
+    ...oneFactor(ward_number, 1),
+    water_bodies: { current_count: 1, census_records: 0, restoration_critical: 0, restoration_high: 0, avg_restoration_score: score, top_bodies: [] },
+  });
+  const profiles = [oneFactor(1, 3), oneFactor(2, 1), twoFactor(3, 10), twoFactor(4, 20)];
+
+  const one = computeWardRankings(1, profiles);
+  assert.ok(one);
+  assert.equal(one.factorsWithData, 1);
+  assert.equal(one.overallGrade, null);
+  assert.equal(one.overallRank, null);
+  assert.equal(one.overallPercentile, null);
+  assert.equal(one.overallScore, null);
+  assert.equal(one.metrics.find((m) => m.key === "wb_density")?.value, 3);
+
+  const two = computeWardRankings(3, profiles);
+  assert.ok(two);
+  assert.equal(two.factorsWithData, 2);
+  assert.equal(two.overallTotal, 2);
+  assert.equal(two.overallRank, 1);
+  assert.equal(two.overallGrade, "A");
+});
+
+test("englishOrdinal", () => {
+  assert.deepEqual(
+    [1, 2, 3, 4, 11, 12, 13, 21, 22, 62, 100, 101, 111].map(englishOrdinal),
+    ["1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st", "22nd", "62nd", "100th", "101st", "111th"],
+  );
 });

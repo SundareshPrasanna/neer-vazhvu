@@ -57,6 +57,10 @@ CITIES = {
     # west-east rainfall gradient makes the western cell 31% high against
     # IMD's own Shivajinagar observatory normal.
     "pune": (18.5000, 74.0000),
+    # Nagpur, added together with its IMD base series: generate_imd_rainfall.py's
+    # grid point (21.0, 79.0), the cell nearest IMD's Nagpur observatory, not
+    # the city centre, so the provisional months continue the same series.
+    "nagpur": (21.0000, 79.0000),
     # Matches the IMD gridded point in generate_imd_rainfall.py for the same
     # reason as Kolkata and Pune: the provisional months have to continue the
     # series they are filling, not start a parallel one at the city centre.

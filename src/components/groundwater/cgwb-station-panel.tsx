@@ -41,6 +41,10 @@ function readingDateKey(year: number, month: number) {
   return year * 100 + month;
 }
 
+/** One style for a station's own caveats (identity_note, quality_note). */
+const STATION_NOTE =
+  "text-xs text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 rounded-md p-2 mb-3 leading-relaxed";
+
 export function CgwbStationPanel({
   station,
   onClose,
@@ -144,7 +148,7 @@ export function CgwbStationPanel({
       </div>
 
       {station.identity_note && (
-        <p className="text-xs text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 rounded-md p-2 mb-3 leading-relaxed">
+        <p className={STATION_NOTE}>
           {station.identity_note}
         </p>
       )}
@@ -166,6 +170,12 @@ export function CgwbStationPanel({
             </span>
           ))}
         </div>
+      )}
+
+      {station.quality_note && (
+        <p className={STATION_NOTE}>
+          {station.quality_note}
+        </p>
       )}
 
       {/* Headline stats */}

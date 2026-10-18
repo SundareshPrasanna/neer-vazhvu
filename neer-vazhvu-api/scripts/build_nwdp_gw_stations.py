@@ -26,6 +26,7 @@ Shallow and deep piezometers stand side by side in the same neighbourhoods
 nothing here averages stations into one city level.
 
 Run:  python3 neer-vazhvu-api/scripts/build_nwdp_gw_stations.py --city ahmedabad
+      python3 neer-vazhvu-api/scripts/build_nwdp_gw_stations.py --city nagpur
 """
 
 import argparse
@@ -56,6 +57,10 @@ CITIES = {
     "ahmedabad": {
         "district_label": "Ahmedabad",
         "source_id": "nwic-nwdp-groundwater-gujarat",
+        # The state agency named in the provenance title, beside CGWB.
+        "state_agency": "Gujarat Surface Water and Ground Water Department",
+        "well_type": "Telemetric piezometers (state and CGWB)",
+        "unit_label": "taluka",
         # Telemetry only: the manual quarterly series stop in 2020 (state) and
         # May 2023 (CGWB) for this district, and the 2026-2030 CGWB manual
         # resource is empty.
@@ -72,6 +77,61 @@ CITIES = {
         "district_tags": ["Ahmedabad", "Gandhinagar", "Surendranagar", "Sabarkantha"],
         "units": "public/geojson/ahmedabad-gwr-blocks.geojson",
         "start": "2021-01-01",
+    },
+    "nagpur": {
+        "district_label": "Nagpur",
+        "source_id": "nwic-nwdp-groundwater-maharashtra",
+        "state_agency": "Maharashtra Groundwater Surveys and Development Agency (GSDA)",
+        # GSDA's are digital recorders in dug wells and piezometers (National
+        # Hydrology Project and Atal Bhujal; India-WRIS lists 12 of the NHP
+        # stations as dug wells); CGWB's are semi-confined piezometers
+        # 23.5-69.5 m deep (the ten in the district).
+        "well_type": (
+            "Telemetric recorders in GSDA dug wells and piezometers, and CGWB piezometers"
+        ),
+        "aquifer": (
+            "Not published per station on this portal; India-WRIS lists the ten "
+            "CGWB piezometers in the district as semi-confined, 23.5 to 69.5 m deep"
+        ),
+        "unit_label": "taluka",
+        # Telemetry only: CGWB manual quarterly stops in May 2023 here and its
+        # 2026-2030 resource is empty; GSDA's manual monthly resource has a
+        # different row shape (positive-down, `Date of Monitoring`).
+        "resources": {
+            "Maharashtra GW": [
+                "5b0a8a48-83cf-4ffd-8cf2-5e299e51dc60",  # 2021-2025
+                "7a821ef4-b73b-4243-9a42-4f1a6f300230",  # 2026-2030
+            ],
+            "CGWB": [
+                "2da4e849-2249-4e15-a609-a6166e30a300",  # 2021-2025
+                "53d52a41-1853-449a-b54c-566054a5ad58",  # 2026-2030
+            ],
+        },
+        # Wardha, Bhandara, Chandrapur, Gondia and Amravati tags were checked:
+        # none places inside the district, so Nagpur's own tag is enough.
+        "district_tags": ["Nagpur"],
+        "units": "public/geojson/nagpur-gwr-blocks.geojson",
+        "start": "2021-01-01",
+        # Per-station notes shown on the station panel. Both series pass the
+        # shared quality rules but carry features the portal does not explain.
+        "quality_notes": {
+            # Six negative monthly means: 2025-07 -0.14, 2026-05 -0.23,
+            # 2026-06 -0.62, 2026-07 -0.55, 2026-08 -0.40, 2026-09 -0.40.
+            "Paradsinga_1": (
+                "From July 2025 this station's readings drift above ground level: six "
+                "monthly means are below zero (July 2025, and May, June, July, August "
+                "and September 2026). The portal gives no reason, so these months "
+                "should not be read as water standing above the ground."
+            ),
+            # Monthly means 34.00 (Apr 2023) -> 23.08 (May) -> 9.45 (Jun 2023);
+            # 9.53 (Jan 2024) -> 31.37 (Feb 2024).
+            "Khairi (Kh)": (
+                "The level steps from about 34 m to about 9 m below ground between "
+                "April and June 2023, and back to about 31 m in February 2024. The "
+                "portal does not explain either step, so compare readings only "
+                "within each stretch."
+            ),
+        },
     },
 }
 
@@ -224,6 +284,9 @@ def main() -> int:
                 - sum(r["n_obs"] for r in readings),
             }
         )
+        note = cfg.get("quality_notes", {}).get(name)
+        if note:
+            wells[-1]["quality_note"] = note
 
     if not wells:
         print("no stations placed - check the unit polygons", file=sys.stderr)
@@ -239,8 +302,8 @@ def main() -> int:
                 {
                     "id": cfg["source_id"],
                     "title": (
-                        f"Groundwater level telemetry, {label} district: Gujarat "
-                        "Surface Water and Ground Water Department and CGWB six-hourly "
+                        f"Groundwater level telemetry, {label} district: "
+                        f"{cfg['state_agency']} and CGWB six-hourly "
                         "resources on the National Water Data Portal"
                     ),
                     "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
@@ -257,12 +320,15 @@ def main() -> int:
             ),
         },
         "district": label,
-        "well_type": "Telemetric piezometers (state and CGWB)",
-        "aquifer": "Not published per station; shallow and deep piezometers sit side by side",
+        "well_type": cfg["well_type"],
+        "aquifer": cfg.get(
+            "aquifer",
+            "Not published per station; shallow and deep piezometers sit side by side",
+        ),
         "depth_unit": "metres below ground level (monthly mean)",
         "series_label": "NWDP telemetry",
         "reading_kind": "monthly means",
-        "unit_label": "taluka",
+        "unit_label": cfg["unit_label"],
         "cadence_note": (
             "Telemetric recorders reading every six hours; shown as monthly means. "
             "Months with no reading that passed the quality rules are absent, not zero."
