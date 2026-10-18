@@ -106,8 +106,9 @@ def main() -> int:
     )
     dated = [c for c in require(commits, "commitments") if c["due"]]
     overdue = [c for c in dated if c["status"] == "overdue"]
-    # The interpretation names these five by hand; a status change must rewrite it.
+    # The interpretation names these six by hand; a status change must rewrite it.
     named = {
+        "ahm-kotarpur-400-mld-wtp",
         "ahm-stp-sola-jagatpur",
         "ahm-stp-vinzol-75",
         "ahm-kharicut-phase-1",
@@ -170,7 +171,7 @@ def main() -> int:
             "title": "Dated water promises past their date",
             "value": f"{len(overdue)} of {len(dated)}",
             "unit": "dated commitments are past their stated date",
-            "interpretation": "Two sewage treatment plants AMC told the High Court would be ready by September 2025 and February 2026, the Kharicut canal's two-year rebuild, the 2050 drainage master plan due in March 2023, and the state's target of reusing 70% of treated wastewater by 2025. Each status cites a dated document on the commitments page.",
+            "interpretation": "The 400 MLD Kotarpur treatment plant MoHUA scheduled for 16 October 2026, 76.5% built by its report of 18 October; two sewage treatment plants AMC told the High Court would be ready by September 2025 and February 2026; the Kharicut canal's two-year rebuild; the 2050 drainage master plan due in March 2023; and the state's target of reusing 70% of treated wastewater by 2025. Each status cites a dated document on the commitments page.",
             "data_date": "2026-10",
             "source_url": "https://ahmedabadcity.gov.in/",
             "source_label": "AMC budgets, High Court orders and state filings (see /ahmedabad/commitments)",

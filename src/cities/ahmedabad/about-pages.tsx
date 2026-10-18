@@ -463,8 +463,10 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
           tracks ten promises about {cityName}&apos;s water, from AMC&apos;s
           budgets, its affidavits to the Gujarat High Court, the state&apos;s
           2018 reuse policy and the Chief Minister&apos;s Office.{" "}
-          <strong>Five have passed their dates</strong>{" "}with the work still
-          described as under way: the Sola (30 MLD) and Jagatpur (15 MLD) sewage
+          <strong>Six have passed their dates</strong>{" "}with the work still
+          described as under way: the 400 MLD Kotarpur treatment plant, which
+          MoHUA scheduled for 16 October 2026 and whose weekly report put at
+          76.5% built on 18 October; the Sola (30 MLD) and Jagatpur (15 MLD) sewage
           plants, due by September 2025; the Vinzol 75 MLD plant, due 15
           February 2026; the Kharicut canal rebuild, which AMC said in February
           2023 would take two years; the 2050 sewerage and storm-water master
@@ -476,7 +478,8 @@ export function AhmedabadPageDescriptions({ cityId, cityName }: CityPagesProps) 
           The rest are still ahead or were never given a date. Where documents
           give different costs for the same work, all are shown: the 400 MLD
           Kotarpur plant has been Rs 118 crore (2023-24 budget), Rs 138 crore
-          (MoHUA, March 2026) and Rs 230.42 crore (2026-27 budget). A status
+          (MoHUA, March 2026), Rs 230.42 crore (2026-27 budget) and Rs 181.77
+          crore awarded (MoHUA progress report, October 2026). A status
           changes only against a dated document, and the register is re-checked
           each February against the new budget.
         </p>
