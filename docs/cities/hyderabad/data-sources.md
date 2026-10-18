@@ -337,9 +337,16 @@ file when its data actually lands in the repo.
   attributes). `my-ward`, ward profiles and any per-ward composite stay off until it lands.
 - **No sitting councillors.** The three corporations are under a Special Officer with elections
   pending, so ward representatives is an honest empty state, not a gap to backfill.
-- **Sewerage/STP figures are not usable yet.** Public numbers are mutually inconsistent across
-  sources (772 MLD from 25 STPs, 45 STPs at 1,878 MLD, 38 STPs, 39 under AMRUT 2.0). **None is used.**
-  Get HMWSSB's RTI 4(1)(b) disclosure or an annual report first.
+- **Sewerage/STP figures: one official source, several sets of plants.** The Government of
+  Telangana's action-taken report to the NGT in OA 606/2018 (figures as on 31.12.2024; PDF pp21-22,
+  [greentribunal.gov.in](https://www.greentribunal.gov.in/sites/default/files/news_updates/COMPLIANCE%20REPORT%20BY%20GOVT%20OF%20TELANGANA%20IN%20OA%20NO.%20606%20of%202018%20%28COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES%29.pdf))
+  gives 25 existing STPs at 772.30 MLD, 11 newly commissioned at 663.00 MLD, "36 STPs of capacity
+  1435.30 MLD" in operation, and 1878 MLD in GHMC once 9 more of 443 MLD are completed. HMWSSB's
+  press release reported by Siasat on 4 Sep 2025 gives "39 STPs with a capacity of 972 million litres
+  per day (MLD)" sanctioned under AMRUT 2.0. These count different sets of plants, so the register
+  quotes each as printed and adds none together. Counts of 45 or 38 STPs are not in that filing and
+  are not used. HMWSSB's RTI 4(1)(b) disclosure or an annual report would give the whole estate in
+  one place.
 - **HMWSSB service-area basics are news-sourced only** (~1,480 sq km, 1.68 crore population,
   ~1,954 MLD supplied, Core Urban Region 2,053 sq km). Not used until primary-confirmed.
 - **Telangana state remote-sensing WebGIS is login-gated** (`tgrac.telangana.gov.in`) - including
