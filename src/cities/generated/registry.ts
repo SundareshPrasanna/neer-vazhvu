@@ -12,10 +12,10 @@ import hyderabad from "../hyderabad/config";
 import kolkata from "../kolkata/config";
 import gurugram from "../gurugram/config";
 import pune from "../pune/config";
+import nagpur from "../nagpur/config";
 import surat from "../surat/config";
 import ahmedabad from "../ahmedabad/config";
 import visakhapatnam from "../visakhapatnam/config";
-import nagpur from "../nagpur/config";
 
 /** Every city's config, keyed by id. Read it through src/lib/cities. */
 export const CITY_CONFIGS: Record<CityId, PlaceConfig> = {
@@ -28,8 +28,8 @@ export const CITY_CONFIGS: Record<CityId, PlaceConfig> = {
   kolkata: kolkata,
   gurugram: gurugram,
   pune: pune,
+  nagpur: nagpur,
   surat: surat,
   ahmedabad: ahmedabad,
   visakhapatnam: visakhapatnam,
-  nagpur: nagpur,
 };

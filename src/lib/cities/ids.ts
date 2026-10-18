@@ -1,6 +1,6 @@
 import { CITY_IDS } from "../../cities/generated/ids";
 
-/** Every registered place, in launch order: one per folder in src/cities/,
+/** Every registered place, in list order: one per folder in src/cities/,
  *  listed by scripts/gen-city-index.ts. A new folder makes every
  *  `Record<CityId, X>` (the registry included) a type error until it is filled in. */
 export { CITY_IDS };

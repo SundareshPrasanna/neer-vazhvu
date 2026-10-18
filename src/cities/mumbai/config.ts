@@ -52,7 +52,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // GeoJSON, no per-ward data - logged as a gap).
 const config: PlaceConfig = {
   cityId: 'mumbai',
-  launchOrder: 4,
+  listOrder: 40,
   displayName: 'Mumbai',
   originsTagline: 'City of seven islands - a place with no river, and the forty-five litres that divide it',
   displayNameLocalized: { mr: 'मुंबई' },

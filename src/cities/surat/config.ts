@@ -81,7 +81,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // would assert a history the city does not have.
 const config: PlaceConfig = {
   cityId: 'surat',
-  launchOrder: 10,
+  listOrder: 100,
   displayName: 'Surat',
   originsTagline: 'The city the river made, unmade, and made again',
   displayNameLocalized: { gu: 'સુરત' },

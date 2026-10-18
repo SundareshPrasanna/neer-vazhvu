@@ -45,7 +45,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // on unverified numbers would be worse than shipping none.
 const config: PlaceConfig = {
   cityId: 'gurugram',
-  launchOrder: 8,
+  listOrder: 80,
   displayName: 'Gurugram',
   originsTagline: 'The city that outgrew its water in twelve years',
   displayNameLocalized: { hi: 'गुरुग्राम' },

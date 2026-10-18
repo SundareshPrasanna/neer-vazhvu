@@ -16,7 +16,7 @@ In a script (scripts under neer-vazhvu-api/ already put scripts/ on sys.path):
 
 From a shell or workflow:
 
-    python3 scripts/city_manifest.py --ids                        # every city, launch order
+    python3 scripts/city_manifest.py --ids                        # every city, list order
     python3 scripts/city_manifest.py --ids --has rainfall.imdGrid # cities with that section
     python3 scripts/city_manifest.py --get kolkata center         # one value, as JSON
 
@@ -39,7 +39,7 @@ NOTE_KEYS = ("_note", "_notes")
 
 @lru_cache(maxsize=1)
 def configs() -> dict[str, dict]:
-    """Every city config (config.ts as JSON), in launch order."""
+    """Every city config (config.ts as JSON), in list order."""
     return json.loads((CITIES_DIR / "generated" / "cities.json").read_text())
 
 

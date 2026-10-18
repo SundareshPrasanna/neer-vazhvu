@@ -2,7 +2,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 
 const config: PlaceConfig = {
   cityId: 'madurai',
-  launchOrder: 2,
+  listOrder: 20,
   displayName: 'Madurai',
   originsTagline: 'City of Tanks - what is left of the cascade',
   displayNameLocalized: { ta: 'மதுரை' },

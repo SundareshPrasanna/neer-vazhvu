@@ -20,10 +20,10 @@ export const CITY_ABOUT: Record<CityId, ComponentType<CityAboutSlotProps>> = {
   kolkata: dynamic(() => import("../kolkata/about")),
   gurugram: dynamic(() => import("../gurugram/about")),
   pune: dynamic(() => import("../pune/about")),
+  nagpur: dynamic(() => import("../nagpur/about")),
   surat: dynamic(() => import("../surat/about")),
   ahmedabad: dynamic(() => import("../ahmedabad/about")),
   visakhapatnam: dynamic(() => import("../visakhapatnam/about")),
-  nagpur: dynamic(() => import("../nagpur/about")),
 };
 
 /** Each city's Origins story per language (src/cities/<id>/story-<lang>.tsx). */
@@ -60,6 +60,9 @@ export const CITY_STORIES: Partial<
   pune: {
     en: dynamic(() => import("../pune/story-en")),
   },
+  nagpur: {
+    en: dynamic(() => import("../nagpur/story-en")),
+  },
   surat: {
     en: dynamic(() => import("../surat/story-en")),
   },
@@ -68,8 +71,5 @@ export const CITY_STORIES: Partial<
   },
   visakhapatnam: {
     en: dynamic(() => import("../visakhapatnam/story-en")),
-  },
-  nagpur: {
-    en: dynamic(() => import("../nagpur/story-en")),
   },
 };

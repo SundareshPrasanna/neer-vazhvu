@@ -2,7 +2,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 
 const config: PlaceConfig = {
   cityId: 'chennai',
-  launchOrder: 1,
+  listOrder: 10,
   displayName: 'Chennai',
   originsTagline: 'City of estuaries - what is left of the sponge',
   displayNameLocalized: { ta: 'சென்னை' },

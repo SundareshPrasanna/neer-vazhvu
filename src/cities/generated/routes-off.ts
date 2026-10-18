@@ -12,10 +12,10 @@ import { ROUTES_OFF as hyderabad } from "../hyderabad/routes-off";
 import { ROUTES_OFF as kolkata } from "../kolkata/routes-off";
 import { ROUTES_OFF as gurugram } from "../gurugram/routes-off";
 import { ROUTES_OFF as pune } from "../pune/routes-off";
+import { ROUTES_OFF as nagpur } from "../nagpur/routes-off";
 import { ROUTES_OFF as surat } from "../surat/routes-off";
 import { ROUTES_OFF as ahmedabad } from "../ahmedabad/routes-off";
 import { ROUTES_OFF as visakhapatnam } from "../visakhapatnam/routes-off";
-import { ROUTES_OFF as nagpur } from "../nagpur/routes-off";
 
 /** Why each city leaves out the routes it does not ship (routes-off.ts). Read by the exemptions register. */
 export const ROUTES_OFF_BY_CITY: Partial<Record<CityId, RoutesOff>> = {
@@ -28,8 +28,8 @@ export const ROUTES_OFF_BY_CITY: Partial<Record<CityId, RoutesOff>> = {
   kolkata: kolkata,
   gurugram: gurugram,
   pune: pune,
+  nagpur: nagpur,
   surat: surat,
   ahmedabad: ahmedabad,
   visakhapatnam: visakhapatnam,
-  nagpur: nagpur,
 };

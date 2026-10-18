@@ -39,7 +39,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // taluka on IN-GRES's own unit polygons, with 139 telemetry stations.
 const config: PlaceConfig = {
   cityId: 'ahmedabad',
-  launchOrder: 11,
+  listOrder: 110,
   displayName: 'Ahmedabad',
   originsTagline: 'The city founded beside a thin stream in a bed of sand - and the canal that now keeps it full',
   displayNameLocalized: { gu: 'અમદાવાદ' },

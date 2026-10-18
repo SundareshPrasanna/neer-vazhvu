@@ -21,7 +21,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // Chennai-style days-left math.
 const config: PlaceConfig = {
   cityId: 'bangalore',
-  launchOrder: 3,
+  listOrder: 30,
   displayName: 'Bengaluru',
   originsTagline: 'City of stolen kere - what Kempegowda built and what Bengaluru built over it',
   displayNameLocalized: { kn: 'ಬೆಂಗಳೂರು' },

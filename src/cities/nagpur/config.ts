@@ -50,7 +50,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // stations, 2017-2024. The treatment panel stays off (below).
 const config: PlaceConfig = {
   cityId: 'nagpur',
-  launchOrder: 13,
+  listOrder: 95,
   displayName: 'Nagpur',
   originsTagline: 'The city named for a small stream, and the river from Madhya Pradesh that now fills its taps',
   displayNameLocalized: { mr: 'नागपूर' },

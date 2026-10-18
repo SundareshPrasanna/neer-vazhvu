@@ -75,7 +75,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // runner path (launchd stopgap pattern), never from CI.
 const config: PlaceConfig = {
   cityId: 'delhi',
-  launchOrder: 5,
+  listOrder: 50,
   displayName: 'Delhi',
   originsTagline: 'The city that stored water for a thousand years - and the twenty-two kilometres where its river dies',
   displayNameLocalized: { hi: 'दिल्ली' },

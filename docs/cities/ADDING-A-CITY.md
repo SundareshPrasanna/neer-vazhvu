@@ -72,8 +72,9 @@ default).
 1. Copy the folder of the most similar city, for example
    `cp -r src/cities/ahmedabad src/cities/coimbatore`. Ids are lowercase
    (`a-z`, `0-9`, `-`) and permanent.
-2. In `config.ts` set `cityId` (the folder name), `launchOrder` (the next free
-   number), `displayName`, `stateCode`, `center`, `bbox`, and leave
+2. In `config.ts` set `cityId` (the folder name), `listOrder` (its place in
+   the city lists: the last city's number + 10, or a number between two
+   cities), `displayName`, `stateCode`, `center`, `bbox`, and leave
    `enabled: false` until step 11.
 3. Run `npm run cities:gen`. It writes `src/cities/generated/` and adds the
    city's row to `schemas/nvdm/scopes.json`. If the city's state is new, it

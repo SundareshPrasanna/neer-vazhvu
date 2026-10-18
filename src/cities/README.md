@@ -37,7 +37,7 @@ outside this folder, each in the directory of the tool that reads it.
 ([`scripts/gen-city-index.ts`](../../scripts/gen-city-index.ts)) from the folders.
 Never edit it by hand. It holds:
 
-- `ids.ts`: every city id, in `launchOrder`.
+- `ids.ts`: every city id, in `listOrder`.
 - `registry.ts`: every `config.ts`, keyed by id.
 - `pages.tsx`: the About and Origins loaders.
 - `rivers.ts`, `flood.ts`, `my-ward.ts`, `routes-off.ts`: one map per optional module.
@@ -61,7 +61,7 @@ section("rainfall.imdGrid")                   # {city: value} for cities that ha
 ```
 
 ```bash
-python3 scripts/city_manifest.py --ids                         # every city, launch order
+python3 scripts/city_manifest.py --ids                         # every city, list order
 python3 scripts/city_manifest.py --ids --has elevationBands    # cities with that section
 python3 scripts/city_manifest.py --get kolkata center          # one config value as JSON
 ```
@@ -81,5 +81,6 @@ script sees the data, so write the why there rather than in the script.
 - **A new kind of per-city content is one line.** Add it to `MODULES` in
   `scripts/gen-city-index.ts` (the file name, the constant it exports, its type)
   and the generator builds the map.
-- **`launchOrder` is the city's position in every list.** The next city takes the
-  next number.
+- **`listOrder` is the city's position in every list**, lowest first. Numbers go
+  in tens, so a city can sit between two others (Nagpur is 95, between Pune's 90
+  and Surat's 100); one added at the end takes the last number + 10.

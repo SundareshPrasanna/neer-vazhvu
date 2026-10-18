@@ -3,7 +3,7 @@
  *
  * A city is a folder, src/cities/<id>/. This script finds every folder, reads
  * its config.ts, and writes the files the app imports instead of hand-kept
- * lists: the city ids in launch order, the config registry, the About and
+ * lists: the city ids in list order, the config registry, the About and
  * Origins loaders, one map per optional module (MODULES below), and
  * cities.json (every config as plain JSON, for Python scripts and workflows;
  * read it through scripts/city_manifest.py). Adding a city or a
@@ -54,7 +54,7 @@ export const MODULES = [
 
 export interface CityFolder {
   id: string;
-  launchOrder: number;
+  listOrder: number;
   config: Record<string, unknown>;
   stories: string[];
   /** The MODULES files this folder has. */
@@ -93,7 +93,7 @@ export async function scanCities(dir = CITIES_DIR): Promise<CityFolder[]> {
       continue;
     }
     if (config.cityId !== id) problems.push(`${id}: config.cityId is "${config.cityId}", expected the folder name`);
-    if (!Number.isInteger(config.launchOrder)) problems.push(`${id}: launchOrder must be an integer`);
+    if (!Number.isInteger(config.listOrder)) problems.push(`${id}: listOrder must be an integer`);
     const stories = [...files]
       .map((f) => /^story-([a-z]{2,3})\.tsx$/.exec(f)?.[1])
       .filter((l): l is string => Boolean(l))
@@ -105,7 +105,7 @@ export async function scanCities(dir = CITIES_DIR): Promise<CityFolder[]> {
     }
     cities.push({
       id,
-      launchOrder: config.launchOrder,
+      listOrder: config.listOrder,
       config,
       stories,
       modules: MODULES.filter((m) => files.has(`${m.file}.ts`) || files.has(`${m.file}.tsx`)).map((m) => m.file),
@@ -113,17 +113,17 @@ export async function scanCities(dir = CITIES_DIR): Promise<CityFolder[]> {
   }
   const seen = new Map<number, string>();
   for (const c of cities) {
-    const other = seen.get(c.launchOrder);
-    if (other) problems.push(`${c.id}: launchOrder ${c.launchOrder} is already taken by ${other}`);
-    seen.set(c.launchOrder, c.id);
+    const other = seen.get(c.listOrder);
+    if (other) problems.push(`${c.id}: listOrder ${c.listOrder} is already taken by ${other}`);
+    seen.set(c.listOrder, c.id);
   }
   if (problems.length) throw new Error(`src/cities/ has problems:\n  ${problems.join("\n  ")}`);
-  return cities.sort((a, b) => a.launchOrder - b.launchOrder);
+  return cities.sort((a, b) => a.listOrder - b.listOrder);
 }
 
 export function renderIndex(cities: CityFolder[]): Record<string, string> {
   const ids = `${HEADER}
-/** Every registered city, in launch order. */
+/** Every registered city, in list order. */
 export const CITY_IDS = [
 ${cities.map((c) => `  ${JSON.stringify(c.id)},`).join("\n")}
 ] as const;

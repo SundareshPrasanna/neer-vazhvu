@@ -75,7 +75,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // three missing wards are recovered and a name/borough join is built.
 const config: PlaceConfig = {
   cityId: 'kolkata',
-  launchOrder: 7,
+  listOrder: 70,
   displayName: 'Kolkata',
   originsTagline: 'The city that built itself around a pond - and the wetland that takes what it throws away',
   displayNameLocalized: { bn: 'কলকাতা' },

@@ -47,7 +47,7 @@ import type { PlaceConfig } from '@/lib/cities/types';
 // lakes.hmda.gov.in, India-WRIS and OpenCity are all reachable from anywhere.
 const config: PlaceConfig = {
   cityId: 'hyderabad',
-  launchOrder: 6,
+  listOrder: 60,
   displayName: 'Hyderabad',
   originsTagline: 'City of tanks - how Hyderabad engineered its way out of a flood, and what it still owes that system',
   displayNameLocalized: { te: 'హైదరాబాద్' },
