@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS sighting_group_members (
 CREATE INDEX IF NOT EXISTS idx_sighting_group_members_reporter ON sighting_group_members (reporter_key);
 -- A report sent with a group shows the group's name, never the reporter's.
 ALTER TABLE sightings ADD COLUMN IF NOT EXISTS group_id UUID REFERENCES sighting_groups(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS idx_sightings_group ON sightings (group_id) WHERE group_id IS NOT NULL;
 
 -- Fix-it days: a reviewed group's clean-up at a reported spot, for safe report types only (enforced in the API).
 CREATE TABLE IF NOT EXISTS sighting_fixits (

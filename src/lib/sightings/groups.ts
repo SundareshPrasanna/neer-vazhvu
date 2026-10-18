@@ -8,7 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { listPublishedAtlasDistricts } from "@/lib/atlas/registry";
 import { listEnabledPlaces } from "@/lib/cities";
-import { OPEN_STATUSES, type CaseStatus, type ReviewStatus } from "./status";
+import { CASE_LABELS, OPEN_STATUSES, type CaseStatus, type ReviewStatus } from "./status";
 import { FIXIT_TYPES, REPORT_GROUPS, isCommunityReport } from "./taxonomy";
 
 export const GROUP_KINDS = [
@@ -278,4 +278,244 @@ export interface MyGroups {
   hosting: string[];
   /** Cities and districts a new group can name. */
   places: { id: string; name: string }[];
+}
+
+/* Adding one's own report to a group afterwards (POST /api/sightings/[id]/group). */
+
+export type TagTarget = { reporter_key: string; category: string; review_status: ReviewStatus };
+
+/**
+ * Why this person cannot set or clear the group of this report, or null. `group` is their place in the group to set
+ * (null when they are not in it), or "clear". Home reports never carry a group: its name could point to who sent them.
+ */
+export function tagProblem(r: TagTarget, key: string, group: { status: GroupStatus } | null | "clear"): { status: number; error: string } | null {
+  if (r.reporter_key !== key) return { status: 403, error: "Only the person who sent this report can change its group." };
+  if (!isCommunityReport(r.category)) return { status: 409, error: "Only reports about a shared place can carry a group's name." };
+  if (r.review_status === "rejected") return { status: 409, error: "This report was not published." };
+  if (group !== "clear" && group?.status !== "approved") return { status: 403, error: "Choose an active group you belong to." };
+  return null;
+}
+
+/* The evidence pack: what a group did together over a period, for its own records (NSS, NAAC, a letter). Counts, never who. */
+
+export const PACK_LIMITS = { defaultMonths: 3, maxYears: 2 } as const;
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** A YYYY-MM-DD date's year, month and day, or null when it is not a real date. */
+function ymd(s: string): [number, number, number] | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) return null;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const t = new Date(Date.UTC(y, mo - 1, d));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d ? [y, mo, d] : null;
+}
+
+/** An instant's date in India, YYYY-MM-DD. */
+export const istDate = (ms: number) => new Date(ms + IST_MS).toISOString().slice(0, 10);
+
+/** A date moved by days, months or years; a day the month lacks becomes its last (31 May less 3 months is 28 or 29 February). */
+export function shiftDate(date: string, { days = 0, months = 0, years = 0 }: { days?: number; months?: number; years?: number }): string {
+  const [y, m, d] = ymd(date)!;
+  const total = (y + years) * 12 + m - 1 + months;
+  const [ty, tm] = [Math.floor(total / 12), ((total % 12) + 12) % 12];
+  const last = new Date(Date.UTC(ty, tm + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(ty, tm, Math.min(d, last)) + days * 86_400_000).toISOString().slice(0, 10);
+}
+
+/** "18 October 2026". */
+export function packDate(date: string): string {
+  const [y, m, d] = ymd(date)!;
+  return `${d} ${MONTHS[m - 1]} ${y}`;
+}
+
+/** The academic year's start: the most recent 1 June, today included. */
+export const academicYearStart = (today: string) => `${Number(today.slice(0, 4)) - (today.slice(5) >= "06-01" ? 0 : 1)}-06-01`;
+
+export type PackPreset = "30d" | "3m" | "year" | "all";
+export const PACK_PRESETS: { key: PackPreset; label: string }[] = [
+  { key: "30d", label: "Last 30 days" },
+  { key: "3m", label: "Last 3 months" },
+  { key: "year", label: "Since 1 June" },
+  { key: "all", label: "All time" },
+];
+
+/** A preset's dates, ending today. "All time" is the longest period a pack covers. */
+export function presetPeriod(key: PackPreset, today: string): { from: string; to: string } {
+  const from =
+    key === "30d"
+      ? shiftDate(today, { days: -29 })
+      : key === "3m"
+        ? shiftDate(today, { months: -PACK_LIMITS.defaultMonths })
+        : key === "year"
+          ? academicYearStart(today)
+          : shiftDate(today, { years: -PACK_LIMITS.maxYears });
+  return { from, to: today };
+}
+
+/** India dates, both included, and the instants that bound them (`end` excluded). */
+export interface PackPeriod {
+  from: string;
+  to: string;
+  start: string;
+  end: string;
+}
+
+const istMidnight = (date: string) => {
+  const [y, m, d] = ymd(date)!;
+  return new Date(Date.UTC(y, m - 1, d) - IST_MS).toISOString();
+};
+
+/**
+ * `from` and `to` as given (YYYY-MM-DD, India), either may be missing: `to` defaults to today and is never later; `from`
+ * defaults to 3 months before `to`. At most 2 years.
+ */
+export function parsePackPeriod(from: string | null, to: string | null, now: number): { ok: true; value: PackPeriod } | { ok: false; error: string } {
+  if ((from && !ymd(from)) || (to && !ymd(to))) return { ok: false, error: "Choose the dates again." };
+  const today = istDate(now);
+  const last = !to || to > today ? today : to;
+  const first = from || shiftDate(last, { months: -PACK_LIMITS.defaultMonths });
+  if (first > last) return { ok: false, error: "The start date is after the end date." };
+  if (first < shiftDate(last, { years: -PACK_LIMITS.maxYears })) return { ok: false, error: `Choose a period of at most ${PACK_LIMITS.maxYears} years.` };
+  return { ok: true, value: { from: first, to: last, start: istMidnight(first), end: istMidnight(shiftDate(last, { days: 1 })) } };
+}
+
+/** One report as the pack route loads it. `reporterKey` is used only to count members who sent one; it never leaves. */
+export interface PackReportSource {
+  reviewStatus: ReviewStatus;
+  reporterKey: string;
+  category: string;
+  /** When it was published (reviewed_at). */
+  publishedAt: string;
+  type: string;
+  caseStatus: CaseStatus | null;
+  /** Water body and ward or panchayat, with the city, district or basin. */
+  place: string;
+  /** The most specific place key (follows.ts), for counting distinct places. */
+  placeKey: string;
+  href: string | null;
+  photo: string | null;
+  fixedPhoto: string | null;
+  seen: number;
+  thanks: number;
+}
+
+export interface PackCleanupSource {
+  status: "planned" | "done" | "cancelled";
+  startsAt: string;
+  /** Tags of those who said they would come; counted only. */
+  coming: string[];
+  report: PackReportSource;
+}
+
+export interface PackReport {
+  /** India date it was published. */
+  date: string;
+  type: string;
+  place: string;
+  caseStatus: CaseStatus | null;
+  status: string;
+  href: string | null;
+  photo: string | null;
+}
+
+export interface PackCleanup {
+  /** India date it was held. */
+  date: string;
+  place: string;
+  type: string;
+  coming: number;
+  /** The report's status now. */
+  caseStatus: CaseStatus | null;
+  status: string;
+  photo: string | null;
+  fixedPhoto: string | null;
+  href: string | null;
+}
+
+export interface GroupPack {
+  group: { name: string; kindLabel: string; placeName: string | null };
+  period: { from: string; to: string };
+  prepared: string;
+  totals: {
+    reports: number;
+    places: number;
+    byStatus: { status: CaseStatus; label: string; count: number }[];
+    byType: { label: string; count: number }[];
+    /** Members who sent at least one of these reports. */
+    senders: number;
+    seen: number;
+    thanks: number;
+    cleanups: number;
+    /** Different people who said they would come to those clean-ups. */
+    coming: number;
+    members: number;
+  };
+  cleanups: PackCleanup[];
+  reports: PackReport[];
+}
+
+const STATUS_ORDER: CaseStatus[] = ["open", "reported", "authority_done", "fixed", "closed"];
+
+/**
+ * The pack from what the route loaded: only published community reports in the period, and clean-ups held (marked done)
+ * in it at published reports. Counts only; no reporter tags, points, notes or times of day.
+ */
+export function shapePack(input: {
+  group: GroupPack["group"];
+  period: PackPeriod;
+  now: number;
+  members: number;
+  reports: PackReportSource[];
+  cleanups: PackCleanupSource[];
+}): GroupPack {
+  const [start, end] = [Date.parse(input.period.start), Date.parse(input.period.end)];
+  const within = (iso: string) => Date.parse(iso) >= start && Date.parse(iso) < end;
+  const shown = (r: PackReportSource) => r.reviewStatus === "approved" && isCommunityReport(r.category);
+  const at = (iso: string) => istDate(Date.parse(iso));
+  const statusLabel = (s: CaseStatus | null) => (s ? CASE_LABELS[s] : "");
+  const reports = input.reports.filter((r) => shown(r) && within(r.publishedAt)).sort((a, b) => Date.parse(a.publishedAt) - Date.parse(b.publishedAt));
+  const cleanups = input.cleanups
+    .filter((c) => c.status === "done" && shown(c.report) && within(c.startsAt))
+    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
+  const types = new Map<string, number>();
+  for (const r of reports) types.set(r.type, (types.get(r.type) ?? 0) + 1);
+  const sum = (f: (r: PackReportSource) => number) => reports.reduce((n, r) => n + f(r), 0);
+  return {
+    group: input.group,
+    period: { from: input.period.from, to: input.period.to },
+    prepared: istDate(input.now),
+    totals: {
+      reports: reports.length,
+      places: new Set(reports.map((r) => r.placeKey)).size,
+      byStatus: STATUS_ORDER.map((status) => ({ status, label: CASE_LABELS[status], count: reports.filter((r) => r.caseStatus === status).length })),
+      byType: [...types].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
+      senders: new Set(reports.map((r) => r.reporterKey).filter((k) => k !== "deleted")).size,
+      seen: sum((r) => r.seen),
+      thanks: sum((r) => r.thanks),
+      cleanups: cleanups.length,
+      coming: new Set(cleanups.flatMap((c) => c.coming)).size,
+      members: input.members,
+    },
+    cleanups: cleanups.map((c) => ({
+      date: at(c.startsAt),
+      place: c.report.place,
+      type: c.report.type,
+      coming: new Set(c.coming).size,
+      caseStatus: c.report.caseStatus,
+      status: statusLabel(c.report.caseStatus),
+      photo: c.report.photo,
+      fixedPhoto: c.report.fixedPhoto,
+      href: c.report.href,
+    })),
+    reports: reports.map((r) => ({
+      date: at(r.publishedAt),
+      type: r.type,
+      place: r.place,
+      caseStatus: r.caseStatus,
+      status: statusLabel(r.caseStatus),
+      href: r.href,
+      photo: r.photo,
+    })),
+  };
 }

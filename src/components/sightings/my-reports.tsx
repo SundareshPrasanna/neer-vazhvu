@@ -5,15 +5,18 @@ import Link from "next/link";
 import { Camera, Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
 
 import { impactLine } from "@/lib/sightings/community";
+import type { MyGroup } from "@/lib/sightings/groups";
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
+import { isCommunityReport } from "@/lib/sightings/taxonomy";
 import type { OwnReport } from "@/lib/sightings/types";
 import { ActionButton, useFlash } from "./action-feedback";
+import { useMyGroups } from "./groups-panel";
 import { HandlerCard, NationalOnly } from "./handler-card";
 import { NotifyToggle } from "./notify-toggle";
 import { ReminderLink } from "./reminder";
 import { History, Readings, Status, day } from "./report-card";
-import { btn, enter, field, fileFocus, link, muted, rule, serif } from "./ui";
-import { shrinkPhoto } from "./use-citizen";
+import { btn, enter, field, fieldBox, fileFocus, link, muted, rule, serif } from "./ui";
+import { shrinkPhoto, useCitizen } from "./use-citizen";
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 
@@ -191,6 +194,71 @@ function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: 
   );
 }
 
+/** The group a community report shows, added or taken out afterwards. The report shows the group's name, never the sender's. */
+function SentWith({ report: r, groups, authFetch, onSaved }: { report: OwnReport; groups: MyGroup[]; authFetch: Fetch; onSaved: (text: string) => void }) {
+  const [name, setName] = useState(r.groupName);
+  const [choosing, setChoosing] = useState(false);
+  const [pick, setPick] = useState(groups[0]?.id ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const chosen = groups.some((g) => g.id === pick) ? pick : (groups[0]?.id ?? "");
+
+  const save = async (groupId: string | null) => {
+    setBusy(true);
+    setError(null);
+    const res = await authFetch(`/api/sightings/${r.id}/group`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ groupId }) }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
+    setBusy(false);
+    if (!res?.ok) return setError(json.error ?? (res ? "Could not save. Please try again." : "No connection. Please try again."));
+    setName(json.data?.groupName ?? null);
+    setChoosing(false);
+    onSaved("Saved");
+  };
+
+  return (
+    <div>
+      <p className="mb-1.5 text-sm font-medium text-slate-900 dark:text-slate-100">Group</p>
+      {name ? (
+        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
+          <span className="text-slate-800 dark:text-slate-200">Sent with {name}</span>
+          <button type="button" disabled={busy} onClick={() => save(null)} className={`${link} disabled:opacity-45`}>
+            {busy ? "Removing…" : "Remove"}
+          </button>
+        </p>
+      ) : choosing ? (
+        <div className={`space-y-2 ${enter}`}>
+          <div className="flex flex-wrap gap-2">
+            <label className="sr-only" htmlFor={`group-${r.id}`}>
+              Group
+            </label>
+            <select id={`group-${r.id}`} value={chosen} onChange={(e) => setPick(e.target.value)} className={`${fieldBox} min-w-0 flex-1 basis-48 sm:max-w-xs`}>
+              {groups.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+            <ActionButton label="Add" busyLabel="Adding…" busy={busy} disabled={!chosen} onClick={() => save(chosen)} className={btn("primary", "md")} />
+            <button type="button" onClick={() => setChoosing(false)} disabled={busy} className={btn("quiet", "md")}>
+              Cancel
+            </button>
+          </div>
+          <p className={`text-sm ${muted}`}>The report will show the group&rsquo;s name, never yours.</p>
+        </div>
+      ) : (
+        <button type="button" onClick={() => setChoosing(true)} className={`text-sm ${link}`}>
+          Add to group
+        </button>
+      )}
+      {error && (
+        <p role="alert" className="mt-1.5 text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 const ACTIVE = new Set(["open", "reported", "authority_done"]);
 const STALE_DAYS = 14;
 const checking = (r: OwnReport) => r.reviewStatus === "received" || r.reviewStatus === "needs_info";
@@ -201,14 +269,28 @@ const needsUpdate = (r: OwnReport) =>
   ACTIVE.has(r.caseStatus ?? "") &&
   Date.now() - new Date(r.events.at(-1)?.at ?? r.createdAt).getTime() > STALE_DAYS * 86_400_000;
 
-function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; authFetch: Fetch; saved: string | null; onSaved: (text: string) => void }) {
+function Row({
+  report: r,
+  groups,
+  authFetch,
+  saved,
+  onSaved,
+}: {
+  report: OwnReport;
+  groups: MyGroup[];
+  authFetch: Fetch;
+  saved: string | null;
+  onSaved: (text: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const approved = r.reviewStatus === "approved";
   const handled = !!r.handler || r.nationalChannels.length > 0;
   // Being checked or not yet reported: where to file. Being checked and handled: the reference can be saved already.
   const routed = (r.caseStatus === "open" || checking(r)) && handled;
   const updatable = approved || (r.reviewStatus === "received" && handled);
-  const hasMore = updatable || r.events.length > 1 || r.readings.length > 0;
+  // A community report, by someone in an active group (or already sent with one, so it can be taken out).
+  const groupable = isCommunityReport(r.category) && (r.reviewStatus === "received" || approved) && (groups.length > 0 || !!r.groupName);
+  const hasMore = updatable || groupable || r.events.length > 1 || r.readings.length > 0;
   const panel = `report-${r.id}`;
   return (
     <li className="py-5">
@@ -294,6 +376,7 @@ function Row({ report: r, authFetch, saved, onSaved }: { report: OwnReport; auth
               <History events={r.events} />
             </div>
           )}
+          {groupable && <SentWith report={r} groups={groups} authFetch={authFetch} onSaved={onSaved} />}
         </div>
       )}
     </li>
@@ -411,6 +494,10 @@ function FollowedPlaces({ authFetch, className }: { authFetch: Fetch; className?
 /** The reporter's own reports: what needs their update first, each with its status and what they can do next. */
 export function MyReports({ reports, authFetch, onChange, onNew }: { reports: OwnReport[] | null; authFetch: Fetch; onChange: () => void; onNew: () => void }) {
   const [saved, flash] = useFlash<{ id: string; text: string }>();
+  // Active groups the person is in, for "Add to group" on their community reports.
+  const citizen = useCitizen();
+  const { data: myGroups } = useMyGroups(citizen);
+  const groups = myGroups?.groups.filter((g) => g.status === "approved") ?? [];
   if (!reports) return <div className="h-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />;
   if (reports.length === 0) {
     return (
@@ -468,6 +555,7 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
             <Row
               key={r.id}
               report={r}
+              groups={groups}
               authFetch={authFetch}
               saved={saved?.id === r.id ? saved.text : null}
               onSaved={(text) => {

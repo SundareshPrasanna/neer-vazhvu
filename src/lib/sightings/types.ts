@@ -117,6 +117,44 @@ export interface PublicReport {
   placeLabel: string | null;
 }
 
+/**
+ * Published reports of one thing at one spot, counted together (src/lib/sightings/issues.ts). Counts and India dates
+ * only: never who, never an exact point.
+ */
+export interface PublicIssue {
+  /** The first report's id. */
+  id: string;
+  category: string;
+  subcategory: string | null;
+  label: string;
+  /** The first report's place text; for tap water and water tests, the ward, panchayat or place. */
+  where: string | null;
+  /** YYYY-MM-DD in India time: the first report, and the newest report or "still there" or "seen it too". */
+  firstOn: string;
+  lastSeenOn: string;
+  /** Whole days since the first report while open; null once fixed or closed, or with no status. */
+  daysOpen: number | null;
+  /** YYYY-MM-DD the last report in it was fixed or closed; null until all are. */
+  resolvedOn: string | null;
+  reports: number;
+  /** Different people who reported it or said still there or seen it too; for tap water and water tests, homes. */
+  people: number;
+  /** The most advanced open status (department says done, reported, open); fixed or closed once all are. */
+  status: CaseStatus | null;
+  /** The newest published report photo, or the fixed photo once fixed; never a home's. */
+  photoUrl: string | null;
+  /** Newest first. */
+  reportIds: string[];
+  /** Reviewed groups it was sent with, by name. */
+  groups: string[];
+  fixitPlanned: boolean;
+  /** Fixed issues of this type at this spot before this one. */
+  earlierFixes: number;
+  /** The first report's rounded point; null for tap water and water tests. */
+  point: [number, number] | null;
+  placeHref: string | null;
+}
+
 /** What the reporter sees of their own report. */
 export interface OwnReport extends PublicReport {
   lat: number;

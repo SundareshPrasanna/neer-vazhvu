@@ -5,6 +5,7 @@ import { test } from "node:test";
 import {
   FIXIT_LABELS,
   JOIN_CODE_RE,
+  academicYearStart,
   canHost,
   canPlan,
   cleanName,
@@ -16,9 +17,16 @@ import {
   istInputToIso,
   newJoinCode,
   normalizeJoinCode,
+  packDate,
+  parsePackPeriod,
+  presetPeriod,
   reminderDue,
+  shapePack,
+  shiftDate,
   startsAtProblem,
+  tagProblem,
   type FixitTarget,
+  type PackReportSource,
 } from "./groups";
 import { FIXIT_TYPES, REPORT_GROUPS } from "./taxonomy";
 
@@ -130,4 +138,166 @@ test("reminders: once before (within a day), once after (asking hosts for a phot
   assert.equal(reminderDue(f(-9, { reminded_at: new Date(NOW - 10 * H).toISOString() }), NOW), "after", "the reminder before does not count as the ask");
   assert.equal(reminderDue(f(-30, { reminded_at: new Date(NOW - 2 * H).toISOString() }), NOW), null, "asked already");
   assert.equal(reminderDue(f(-24 * 9), NOW), null);
+});
+
+test("who may add a report to a group afterwards: its sender, a community report, an active group they are in", () => {
+  const r = { reporter_key: "me", category: "dumping", review_status: "approved" as const };
+  const active = { status: "approved" as const };
+  assert.equal(tagProblem(r, "me", active), null);
+  assert.equal(tagProblem({ ...r, review_status: "received" }, "me", active), null, "while it is being checked");
+  assert.equal(tagProblem(r, "me", "clear"), null, "clearing needs no group");
+  assert.equal(tagProblem(r, "someone", active)?.status, 403);
+  assert.equal(tagProblem(r, "someone", "clear")?.status, 403);
+  assert.equal(tagProblem({ ...r, category: "drinking" }, "me", active)?.status, 409, "never a home report");
+  assert.equal(tagProblem({ ...r, review_status: "rejected" }, "me", active)?.status, 409);
+  assert.equal(tagProblem({ ...r, review_status: "rejected" }, "me", "clear")?.status, 409);
+  for (const g of [null, { status: "pending" as const }, { status: "rejected" as const }]) assert.equal(tagProblem(r, "me", g)?.status, 403, JSON.stringify(g));
+});
+
+test("pack dates: shifting, the academic year and presets", () => {
+  assert.equal(shiftDate("2026-10-18", { months: -3 }), "2026-07-18");
+  assert.equal(shiftDate("2026-05-31", { months: -3 }), "2026-02-28", "a day the month lacks becomes its last");
+  assert.equal(shiftDate("2028-05-31", { months: -3 }), "2028-02-29");
+  assert.equal(shiftDate("2026-01-15", { months: -3 }), "2025-10-15");
+  assert.equal(shiftDate("2028-02-29", { years: -2 }), "2026-02-28");
+  assert.equal(shiftDate("2026-03-01", { days: -1 }), "2026-02-28");
+  assert.equal(packDate("2026-06-01"), "1 June 2026");
+  assert.equal(academicYearStart("2026-10-18"), "2026-06-01");
+  assert.equal(academicYearStart("2026-06-01"), "2026-06-01", "1 June itself");
+  assert.equal(academicYearStart("2026-05-31"), "2025-06-01");
+  assert.equal(academicYearStart("2027-01-10"), "2026-06-01");
+  assert.deepEqual(presetPeriod("30d", "2026-10-18"), { from: "2026-09-19", to: "2026-10-18" }, "30 days, today included");
+  assert.deepEqual(presetPeriod("3m", "2026-10-18"), { from: "2026-07-18", to: "2026-10-18" });
+  assert.deepEqual(presetPeriod("year", "2026-03-02"), { from: "2025-06-01", to: "2026-03-02" });
+  assert.deepEqual(presetPeriod("all", "2026-10-18"), { from: "2024-10-18", to: "2026-10-18" });
+  for (const k of ["30d", "3m", "year", "all"] as const) {
+    const p = presetPeriod(k, "2026-10-18");
+    assert.ok(parsePackPeriod(p.from, p.to, NOW).ok, k);
+  }
+});
+
+test("pack period: India dates, both included; default 3 months; never past today; at most 2 years", () => {
+  const ok = (from: string | null, to: string | null) => {
+    const r = parsePackPeriod(from, to, NOW);
+    assert.ok(r.ok, `${from}..${to}`);
+    return r.value;
+  };
+  const err = (from: string | null, to: string | null) => {
+    const r = parsePackPeriod(from, to, NOW);
+    assert.ok(!r.ok, `${from}..${to}`);
+    return r.error;
+  };
+  assert.deepEqual(ok(null, null), { from: "2026-07-18", to: "2026-10-18", start: "2026-07-17T18:30:00.000Z", end: "2026-10-18T18:30:00.000Z" });
+  assert.deepEqual(ok("", ""), ok(null, null), "empty is missing");
+  assert.equal(ok(null, "2026-09-30").from, "2026-06-30");
+  assert.equal(ok("2026-06-01", null).to, "2026-10-18");
+  assert.equal(ok("2026-06-01", "2027-01-01").to, "2026-10-18", "a later end is today");
+  assert.deepEqual(ok("2026-10-18", "2026-10-18"), { from: "2026-10-18", to: "2026-10-18", start: "2026-10-17T18:30:00.000Z", end: "2026-10-18T18:30:00.000Z" });
+  assert.equal(ok("2024-10-18", "2026-10-18").from, "2024-10-18", "exactly 2 years");
+  assert.match(err("2024-10-17", "2026-10-18"), /2 years/);
+  assert.match(err("2026-10-01", "2026-09-01"), /after/);
+  assert.match(err("2026-11-01", null), /after/, "a start after today");
+  for (const bad of ["2026-02-30", "18-10-2026", "2026-1-5", "yesterday"]) assert.match(err(bad, null), /dates/, bad);
+  assert.match(err(null, "2026-13-01"), /dates/);
+});
+
+const src = (over: Partial<PackReportSource> = {}): PackReportSource => ({
+  reviewStatus: "approved",
+  reporterKey: "k1",
+  category: "dumping",
+  publishedAt: "2026-09-10T06:00:00Z",
+  type: "Garbage on the bank",
+  caseStatus: "open",
+  place: "Velachery Lake, Ward 177, Chennai",
+  placeKey: "city:chennai:body:1",
+  href: "/chennai/water-bodies?layer=reports",
+  photo: "https://x/p1.webp",
+  fixedPhoto: null,
+  seen: 0,
+  thanks: 0,
+  ...over,
+});
+
+test("pack totals: published community reports in the period only, counts never who", () => {
+  const period = parsePackPeriod("2026-09-01", "2026-09-30", NOW);
+  assert.ok(period.ok);
+  const reports = [
+    src({ seen: 3 }),
+    src({ reporterKey: "k2", caseStatus: "fixed", fixedPhoto: "https://x/f1.webp", thanks: 2, publishedAt: "2026-09-02T04:00:00Z" }),
+    src({ reporterKey: "k2", type: "Floating trash", placeKey: "chennai:ward:12", caseStatus: "reported" }),
+    src({ reporterKey: "deleted", type: "Floating trash", placeKey: "chennai:ward:12" }),
+    // The first India day starts at 18:30 UTC the day before; the last ends at 18:30 UTC on it.
+    src({ reporterKey: "k3", publishedAt: "2026-08-31T18:30:00Z" }),
+    src({ reporterKey: "k4", publishedAt: "2026-09-30T18:29:59Z" }),
+    // Left out: outside the period, not published, or a home report.
+    src({ reporterKey: "x1", publishedAt: "2026-08-31T18:29:59Z" }),
+    src({ reporterKey: "x2", publishedAt: "2026-09-30T18:30:00Z" }),
+    src({ reporterKey: "x3", reviewStatus: "received" }),
+    src({ reporterKey: "x4", reviewStatus: "rejected" }),
+    src({ reporterKey: "x5", reviewStatus: "needs_info" }),
+    src({ reporterKey: "x6", category: "drinking" }),
+  ];
+  const cleanups = [
+    { status: "done" as const, startsAt: "2026-09-20T01:30:00Z", coming: ["a", "b", "k1"], report: reports[1] },
+    { status: "done" as const, startsAt: "2026-09-27T01:30:00Z", coming: ["a", "c"], report: src({ reporterKey: "other-group" }) },
+    { status: "planned" as const, startsAt: "2026-09-25T01:30:00Z", coming: ["d"], report: reports[0] },
+    { status: "cancelled" as const, startsAt: "2026-09-26T01:30:00Z", coming: ["e"], report: reports[0] },
+    { status: "done" as const, startsAt: "2026-10-02T01:30:00Z", coming: ["f"], report: reports[0] },
+    { status: "done" as const, startsAt: "2026-09-21T01:30:00Z", coming: ["g"], report: src({ reviewStatus: "rejected" }) },
+  ];
+  const pack = shapePack({ group: { name: "Anna University NSS unit", kindLabel: "College", placeName: "Chennai" }, period: period.value, now: NOW, members: 40, reports, cleanups });
+  const t = pack.totals;
+  assert.deepEqual(pack.period, { from: "2026-09-01", to: "2026-09-30" });
+  assert.equal(pack.prepared, "2026-10-18");
+  assert.equal(t.reports, 6);
+  assert.equal(t.places, 2);
+  assert.equal(t.senders, 4, "k1 to k4; a deleted account is not counted as a member");
+  assert.deepEqual(
+    t.byStatus.map((s) => [s.label, s.count]),
+    [
+      ["Not yet reported", 4],
+      ["Reported", 1],
+      ["Department says done", 0],
+      ["Fixed", 1],
+      ["Closed", 0],
+    ],
+  );
+  assert.deepEqual(t.byType, [
+    { label: "Garbage on the bank", count: 4 },
+    { label: "Floating trash", count: 2 },
+  ]);
+  assert.equal(t.seen, 3);
+  assert.equal(t.thanks, 2);
+  assert.equal(t.cleanups, 2, "done, in the period, at a published report");
+  assert.equal(t.coming, 4, "different people across the clean-ups: a, b, k1, c");
+  assert.equal(t.members, 40);
+  // Oldest first, India dates.
+  assert.deepEqual(
+    pack.reports.map((r) => r.date),
+    ["2026-09-01", "2026-09-02", "2026-09-10", "2026-09-10", "2026-09-10", "2026-09-30"],
+  );
+  assert.deepEqual(pack.cleanups[0], {
+    date: "2026-09-20",
+    place: "Velachery Lake, Ward 177, Chennai",
+    type: "Garbage on the bank",
+    coming: 3,
+    caseStatus: "fixed",
+    status: "Fixed",
+    photo: "https://x/p1.webp",
+    fixedPhoto: "https://x/f1.webp",
+    href: "/chennai/water-bodies?layer=reports",
+  });
+  // Nothing about who: no tags, and nothing beyond the listed fields.
+  const json = JSON.stringify(pack);
+  for (const k of ["k1", "k2", "k3", "k4", "deleted", "other-group", "\"a\""]) assert.ok(!json.includes(k), k);
+  assert.deepEqual(Object.keys(pack.reports[0]).sort(), ["caseStatus", "date", "href", "photo", "place", "status", "type"]);
+});
+
+test("an empty pack still has every status, at zero", () => {
+  const period = parsePackPeriod(null, null, NOW);
+  assert.ok(period.ok);
+  const pack = shapePack({ group: { name: "Lake friends", kindLabel: "Lake group", placeName: null }, period: period.value, now: NOW, members: 1, reports: [], cleanups: [] });
+  assert.equal(pack.totals.byStatus.length, 5);
+  assert.ok(pack.totals.byStatus.every((s) => s.count === 0));
+  assert.deepEqual([pack.reports, pack.cleanups, pack.totals.byType], [[], [], []]);
 });

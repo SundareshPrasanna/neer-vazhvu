@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import { Check, Copy, RotateCw, Users } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Check, Copy, FileText, RotateCw, Users } from "lucide-react";
 
 import { GROUP_KINDS, GROUP_LIMITS, SAFETY_LINE, normalizeJoinCode, type GroupKind, type MyGroup, type MyGroups } from "@/lib/sightings/groups";
 import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { ActionButton, useFlash } from "./action-feedback";
+import { GroupPack } from "./group-pack";
 import { btn, enter, field, muted, rule, serif } from "./ui";
 import type { useCitizen } from "./use-citizen";
 
@@ -125,6 +126,12 @@ function GroupItem({ group, authFetch, onChange }: { group: MyGroup; authFetch: 
   const [leaving, setLeaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, flash] = useFlash<boolean>();
+  const [pack, setPack] = useState(false);
+  const packButton = useRef<HTMLButtonElement>(null);
+  const closePack = useCallback(() => {
+    setPack(false);
+    packButton.current?.focus();
+  }, []);
   const link = group.joinPath ? `${typeof window === "undefined" ? "" : window.location.origin}${group.joinPath}` : null;
   const status = STATUS[group.status];
 
@@ -164,6 +171,16 @@ function GroupItem({ group, authFetch, onChange }: { group: MyGroup; authFetch: 
         </p>
       )}
       {group.status === "rejected" && <p className={`text-sm ${muted}`}>Reports cannot be sent with this group. You can still send them on your own.</p>}
+      {group.status === "approved" && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <button ref={packButton} type="button" onClick={() => setPack(true)} className={btn("secondary", "md")}>
+            <FileText className="h-4 w-4" aria-hidden="true" />
+            Evidence pack
+          </button>
+          <span className={`text-xs ${muted}`}>The group&rsquo;s reports and clean-ups, to print or download. Counts only, never names.</span>
+        </div>
+      )}
+      {pack && <GroupPack group={group} authFetch={authFetch} onClose={closePack} />}
       {link && (
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-slate-900 dark:text-slate-100" htmlFor={`invite-${group.id}`}>

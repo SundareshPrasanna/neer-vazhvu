@@ -2,9 +2,10 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reporterKey, reportsEnabled, requireUser } from "@/lib/sightings/auth";
+import { CARDS_PER_ISSUE, buildIssues, type IssueEvent } from "@/lib/sightings/issues";
 import { CAP_MESSAGES, LIMITS, type CapReason } from "@/lib/sightings/limits";
 import { placePoint } from "@/lib/sightings/locate-server";
-import { storePhotos } from "@/lib/sightings/photos";
+import { publicPhotoUrl, storePhotos } from "@/lib/sightings/photos";
 import { assess, getParameter, valueText } from "@/lib/sightings/parameters";
 import { placeUrl } from "@/lib/sightings/place-url";
 import { resolveAuthority } from "@/lib/sightings/routing";
@@ -128,8 +129,17 @@ function parseBbox(raw: string | null): [number, number, number, number] | null 
   return [w, s, e, n];
 }
 
+/** Newest published reports a place page lists as cards; its issues are built from up to 500. */
+const PLACE_CARDS = 50;
+
+const firstPhoto = (photos: PhotoRow[], kind: PhotoRow["kind"]) => {
+  const p = photos.filter((x) => x.kind === kind && x.public_path).sort((a, b) => a.ordinal - b.ordinal)[0];
+  return p ? publicPhotoUrl(p.public_path!) : null;
+};
+
 /**
- * Published reports on one place, optionally narrowed to a ward, water body or panchayat; or, with `bbox`, every
+ * Published reports on one place, optionally narrowed to a ward, water body or panchayat, with the issues they make
+ * (issues.ts) and the cards those issues open to beyond the newest 50 (`issueReports`); or, with `bbox`, every
  * published report with a public point inside a map's view (tap water and water tests have none).
  */
 export async function GET(request: NextRequest) {
@@ -148,7 +158,7 @@ export async function GET(request: NextRequest) {
     let query = admin.from("sightings").select("*").eq("review_status", "approved").order("created_at", { ascending: false });
     query = bbox
       ? query.gte("lng", bbox[0]).gte("lat", bbox[1]).lte("lng", bbox[2]).lte("lat", bbox[3]).limit(500)
-      : query.eq(byBody ? "water_body_id" : "place_id", byBody ? bodyId : placeId!).limit(50);
+      : query.eq(byBody ? "water_body_id" : "place_id", byBody ? bodyId : placeId!).limit(500);
     if (byBody || bbox) query = query.not("category", "in", PRIVATE_GROUPS);
     for (const [param, column] of bbox ? [] : ([["ward", "ward_id"], ["panchayat", "panchayat_code"]] as const)) {
       const value = q.get(param);
@@ -169,14 +179,25 @@ export async function GET(request: NextRequest) {
       ),
     );
     const photos = { data: parts.flatMap(([p]) => (p.data ?? []) as PhotoRow[]) };
-    const events = { data: parts.flatMap(([, e]) => (e.data ?? []) as EventRow[]) };
+    // `select("*")` brings each actor's tag: issues count people by it, and it never leaves the server.
+    const events = { data: parts.flatMap(([, e]) => (e.data ?? []) as (EventRow & IssueEvent)[]) };
     const photoMap = byId(photos.data as PhotoRow[]);
     const extras = await loadExtras(admin, rows);
-    const eventMap = byId(events.data as EventRow[]);
-    return NextResponse.json(
-      { data: rows.map((r) => toPublic(r, photoMap.get(r.id) ?? [], eventMap.get(r.id) ?? [], extras.get(r.id))) },
-      { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } },
+    const eventMap = byId(events.data);
+    const all = rows.map((r) => toPublic(r, photoMap.get(r.id) ?? [], eventMap.get(r.id) ?? [], extras.get(r.id)));
+    const headers = { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" };
+    if (bbox) return NextResponse.json({ data: all }, { headers });
+
+    const cards = all.slice(0, PLACE_CARDS);
+    const issues = buildIssues(
+      rows.map((r, i) => {
+        const p = photoMap.get(r.id) ?? [];
+        return { row: r, report: all[i], events: eventMap.get(r.id) ?? [], reportPhoto: firstPhoto(p, "report"), fixedPhoto: firstPhoto(p, "fixed") };
+      }),
     );
+    const listed = new Set(cards.map((r) => r.id));
+    const opens = new Set(issues.flatMap((i) => i.reportIds.slice(0, CARDS_PER_ISSUE)));
+    return NextResponse.json({ data: cards, issues, issueReports: all.filter((r) => opens.has(r.id) && !listed.has(r.id)) }, { headers });
   } catch (err) {
     logRouteError("sightings/GET", err);
     return internalServerError();
