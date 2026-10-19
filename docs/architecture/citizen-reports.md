@@ -4,6 +4,7 @@ Developer reference for the module behind `/for-citizens`. Code name in paths an
 
 ## 1. What it is
 
+- Public name: **Neer Mitra** ("water friend"), for the feature and for the people who take part (page eyebrow and title, share text, thank-you screen, Neer Mitra groups, Neer Mitra evidence pack). It is a feature name inside Neer Vazhvu, never a separate site or app: neermitra.com and two student projects already use the name, and Nal Jal Mitra is a Jal Jeevan Mission role. The header button stays "For citizens"; department-facing text says "reports from residents".
 - A signed-in citizen sends a photo-backed observation about water at a place: trash or sewage in a lake, unsafe tap water, a burst pipe, an encroachment, a home water-test result, or good news.
 - The server binds the GPS point to a covered place (city ward, district Gram Panchayat, or river basin). A reviewer approves or rejects it.
 - Approved reports appear on that place's public pages: ward page, water-body panel, district and GP pages, basin atlas.

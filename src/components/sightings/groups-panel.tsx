@@ -399,7 +399,7 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
       </div>
 
       <aside className="space-y-4 lg:pt-1">
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">How groups work</h2>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">How Neer Mitra groups work</h2>
         <ul className={`space-y-3 text-sm leading-relaxed ${muted}`}>
           <li>When you send a report, choose to send it with your group. The report shows the group&rsquo;s name, never yours.</li>
           <li>Members are never listed. A host sees how many members a group has, not who they are.</li>

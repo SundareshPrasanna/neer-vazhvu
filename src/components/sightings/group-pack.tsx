@@ -91,7 +91,7 @@ function Sheet({ pack }: { pack: Pack }) {
   ];
   return (
     <>
-      <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Neer Vazhvu evidence pack</p>
+      <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Neer Mitra evidence pack</p>
       <h1 id="pack-title" className={`mt-3 break-words ${appTitle}`}>
         {group.name}
       </h1>

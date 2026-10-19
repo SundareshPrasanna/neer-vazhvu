@@ -16,9 +16,9 @@ import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 
 export const metadata: Metadata = {
-  title: "For citizens | Neer Vazhvu",
+  title: "Neer Mitra: for citizens | Neer Vazhvu",
   description:
-    "Report trash, sewage, unsafe tap water or encroachment on a lake, river or drain near you, or add your own water test results. We check it, put it on the public record and tell you who handles it. Nothing on the record identifies you.",
+    "Become a Neer Mitra. Report trash, sewage, unsafe tap water or encroachment on a lake, river or drain near you, or add your own water test results. We check it, put it on the public record and tell you who handles it. Nothing on the record identifies you.",
   alternates: { canonical: "/for-citizens" },
 };
 
@@ -251,14 +251,15 @@ export default async function ForCitizensPage() {
         coverage={{ cities: where.cities.length, districts: where.districts.length, basins: where.basins.length }}
         header={
           <header className="max-w-3xl pt-10 pb-10 sm:pt-16 sm:pb-14 group-data-[signed-in]/citizen:pb-6 sm:group-data-[signed-in]/citizen:pt-12 sm:group-data-[signed-in]/citizen:pb-8">
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Neer Mitra</p>
             <h1
-              className={`${serif} text-[2.5rem] leading-[1.04] sm:text-6xl group-data-[signed-in]/citizen:text-[2rem] sm:group-data-[signed-in]/citizen:text-5xl`}
+              className={`mt-3 ${serif} text-[2.5rem] leading-[1.04] sm:text-6xl group-data-[signed-in]/citizen:text-[2rem] sm:group-data-[signed-in]/citizen:text-5xl`}
             >
               Report trash, sewage or dirty water near you
             </h1>
             <p className={`mt-4 max-w-[52ch] text-lg leading-relaxed group-data-[signed-in]/citizen:hidden ${muted}`}>
               Send a photo from a lake, river, drain or tap. We check it, add it to the public record for that place and show you which
-              public body handles it.
+              public body handles it. Everyone who does is a Neer Mitra, a friend of the water near them.
             </p>
           </header>
         }

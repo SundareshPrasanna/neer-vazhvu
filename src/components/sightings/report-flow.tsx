@@ -416,7 +416,7 @@ export function ReportFlow({ authFetch, onSent, onOpenMine, view }: { authFetch:
         <div className="space-y-5">
           <CheckCircle2 className="h-9 w-9 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
           <h2 ref={heading} tabIndex={-1} className={`${serif} text-3xl leading-tight focus:outline-none sm:text-4xl`}>
-            Thank you. Your report is in.
+            Thank you, Neer Mitra. Your report is in.
           </h2>
           <p className={`max-w-[48ch] text-lg leading-relaxed ${muted}`}>
             We check every report before it appears on the {sent.placeName} pages, usually within {REVIEW_WITHIN_DAYS} days. Follow it, and

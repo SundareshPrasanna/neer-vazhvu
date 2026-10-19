@@ -5,14 +5,14 @@ import { Check, MessageCircle, Share2 } from "lucide-react";
 import { useFlash } from "./action-feedback";
 import { btn } from "./ui";
 
-const TEXT = "Report trash, sewage or unsafe water near you, privately, on Neer Vazhvu. Here is how it works:";
+const TEXT = "Become a Neer Mitra: report trash, sewage or unsafe water near you, privately, on Neer Vazhvu. Here is how it works:";
 
 /** Share the guide: the phone's share sheet, WhatsApp, or a copied link. */
 export function ShareGuide() {
   const [copied, flash] = useFlash<true>(2500);
   const share = async () => {
     const url = `${window.location.origin}/for-citizens#how-it-works`;
-    if (navigator.share) return navigator.share({ title: "Neer Vazhvu: for citizens", text: TEXT, url }).catch(() => {});
+    if (navigator.share) return navigator.share({ title: "Neer Mitra, on Neer Vazhvu", text: TEXT, url }).catch(() => {});
     await navigator.clipboard?.writeText(url).catch(() => {});
     flash(true);
   };
