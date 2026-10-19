@@ -150,7 +150,7 @@ export interface GWRData {
   assessment_unit?: string;
   /** The block panel's label for availability_ham, in the file's own words.
    *  A file that sets it has had its display wording checked, so the page
-   *  also shows its `source` and `assessment_unit` (Visakhapatnam today). */
+   *  also shows its `source` and `assessment_unit` (Visakhapatnam, Nagpur). */
   availability_label?: string;
 }
 
@@ -287,6 +287,9 @@ export interface CgwbStation {
   block_inferred?: boolean;
   readings: CgwbStationReading[];
   quality?: CgwbStationQuality;
+  /** A caveat on this station's series (e.g. a drift or an unexplained
+   *  step), shown on its panel only when present. */
+  quality_note?: string;
   /* The fields below are set only by files that carry them (the Andhra
      Pradesh feeds today); panels and labels change only where they exist. */
   /** The well's own network ("APWRIMS piezometer recorder"). */

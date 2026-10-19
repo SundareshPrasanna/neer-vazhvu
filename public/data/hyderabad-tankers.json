@@ -15,23 +15,23 @@
    }
   ],
   "method": "api",
-  "produced_at": "2026-09-30",
+  "produced_at": "2026-10-17",
   "produced_by": "neer-vazhvu-api/scripts/build_hyderabad_tankers.py",
   "note": "Monthly bookings AND deliveries per HMWSSB division and section, from HMWSSB's own files on the Telangana Open Data Portal. Rankings are per era because HMWSSB re-cut its sections in Feb 2026."
  },
  "_source": "HMWSSB tanker bookings and deliveries",
  "_source_url": "https://data.telangana.gov.in/dataset/hyderabad-metropolitan-water-supply-and-sewerage-board-hmwssb-water-tankers-data",
  "_licence": "Telangana government publication (portal label: Open Government License, India), cited with attribution",
- "_fetched": "2026-09-30",
- "_upstream_modified": "2026-09-06",
+ "_fetched": "2026-10-17",
+ "_upstream_modified": "2026-10-16",
  "_note": "Monthly tanker bookings AND deliveries per HMWSSB division and section, from HMWSSB's own files on the Telangana Open Data Portal. 'section' is HMWSSB's operational unit, NOT a GHMC ward, and no public section-boundary geometry exists - so this renders as ranked tables, not a map. HMWSSB re-cut its divisions and sections in Feb 2026; rankings are given per era and section names are kept as published.",
- "_coverage": "Series runs Jan 2022 to Aug 2026, as the portal stood on 2026-09-06. It adds a month at a time.",
+ "_coverage": "Series runs Jan 2022 to Sep 2026, as the portal stood on 2026-10-16. It adds a month at a time.",
  "totals": {
-  "bookings": 5356766,
-  "delivered": 5281651,
-  "shortfall": 75115,
-  "fulfilment_pct": 98.6,
-  "months": 55
+  "bookings": 5505653,
+  "delivered": 5421008,
+  "shortfall": 84645,
+  "fulfilment_pct": 98.5,
+  "months": 56
  },
  "monthly": [
   {
@@ -473,6 +473,14 @@
    "delivered": 151859,
    "fulfilment_pct": 92.4,
    "sections_reporting": 273
+  },
+  {
+   "month": "2026-09",
+   "label": "Sep 2026",
+   "bookings": 148887,
+   "delivered": 139357,
+   "fulfilment_pct": 93.6,
+   "sections_reporting": 270
   }
  ],
  "seasonality": [
@@ -2513,11 +2521,19 @@
   {
    "id": "post_recut",
    "from": "Feb 2026",
-   "to": "Aug 2026",
-   "months": 7,
-   "bookings": 1551329,
-   "delivered": 1479761,
+   "to": "Sep 2026",
+   "months": 8,
+   "bookings": 1700216,
+   "delivered": 1619118,
    "sections": [
+    {
+     "section": "KONDAPUR",
+     "division": "90",
+     "bookings": 52550,
+     "delivered": 50121,
+     "shortfall": 2429,
+     "months_reporting": 4
+    },
     {
      "section": "KONDAPUR (DIV 15) (OLD)",
      "division": "15",
@@ -2527,12 +2543,20 @@
      "months_reporting": 4
     },
     {
-     "section": "KONDAPUR",
+     "section": "MADHAPUR",
+     "division": "91",
+     "bookings": 41888,
+     "delivered": 38214,
+     "shortfall": 3674,
+     "months_reporting": 4
+    },
+    {
+     "section": "NEKNAMPUR",
      "division": "90",
-     "bookings": 41868,
-     "delivered": 39854,
-     "shortfall": 2014,
-     "months_reporting": 3
+     "bookings": 39559,
+     "delivered": 38521,
+     "shortfall": 1038,
+     "months_reporting": 4
     },
     {
      "section": "KONDAPUR (NEW)",
@@ -2543,20 +2567,12 @@
      "months_reporting": 3
     },
     {
-     "section": "MADHAPUR",
+     "section": "MATRUSRI NAGAR",
      "division": "91",
-     "bookings": 33539,
-     "delivered": 30535,
-     "shortfall": 3004,
-     "months_reporting": 3
-    },
-    {
-     "section": "NEKNAMPUR",
-     "division": "90",
-     "bookings": 31909,
-     "delivered": 31065,
-     "shortfall": 844,
-     "months_reporting": 3
+     "bookings": 28034,
+     "delivered": 26722,
+     "shortfall": 1312,
+     "months_reporting": 4
     },
     {
      "section": "MADHAPUR (NEW)",
@@ -2567,12 +2583,12 @@
      "months_reporting": 2
     },
     {
-     "section": "MATRUSRI NAGAR",
-     "division": "91",
-     "bookings": 22313,
-     "delivered": 21304,
-     "shortfall": 1009,
-     "months_reporting": 3
+     "section": "BALAJI NAGAR",
+     "division": "92",
+     "bookings": 23556,
+     "delivered": 22206,
+     "shortfall": 1350,
+     "months_reporting": 4
     },
     {
      "section": "MANIKONDA (DIV 18) (OLD)",
@@ -2583,12 +2599,28 @@
      "months_reporting": 4
     },
     {
+     "section": "VASANTH NAGAR",
+     "division": "92",
+     "bookings": 22218,
+     "delivered": 21796,
+     "shortfall": 422,
+     "months_reporting": 4
+    },
+    {
      "section": "NEKNAMPUR (NEW)",
      "division": "90",
      "bookings": 21754,
      "delivered": 21753,
      "shortfall": 1,
      "months_reporting": 3
+    },
+    {
+     "section": "JUBILEE HILLS",
+     "division": "85",
+     "bookings": 19739,
+     "delivered": 19036,
+     "shortfall": 703,
+     "months_reporting": 4
     },
     {
      "section": "MATRUSRI NAGAR (NEW)",
@@ -2607,20 +2639,20 @@
      "months_reporting": 4
     },
     {
-     "section": "BALAJI NAGAR",
-     "division": "92",
-     "bookings": 18948,
-     "delivered": 17805,
-     "shortfall": 1143,
-     "months_reporting": 3
+     "section": "PRAGATHI NAGAR",
+     "division": "94",
+     "bookings": 18553,
+     "delivered": 16711,
+     "shortfall": 1842,
+     "months_reporting": 4
     },
     {
-     "section": "VASANTH NAGAR",
-     "division": "92",
-     "bookings": 18678,
-     "delivered": 18305,
-     "shortfall": 373,
-     "months_reporting": 3
+     "section": "MANIKONDA",
+     "division": "90",
+     "bookings": 17861,
+     "delivered": 17262,
+     "shortfall": 599,
+     "months_reporting": 4
     },
     {
      "section": "MANIKONDA (NEW)",
@@ -2628,14 +2660,6 @@
      "bookings": 17438,
      "delivered": 17435,
      "shortfall": 3,
-     "months_reporting": 3
-    },
-    {
-     "section": "JUBILEE HILLS",
-     "division": "85",
-     "bookings": 17280,
-     "delivered": 16644,
-     "shortfall": 636,
      "months_reporting": 3
     },
     {
@@ -2655,20 +2679,36 @@
      "months_reporting": 3
     },
     {
-     "section": "MANIKONDA",
+     "section": "SRI RAM NAGAR",
      "division": "90",
-     "bookings": 15227,
-     "delivered": 14745,
-     "shortfall": 482,
-     "months_reporting": 3
+     "bookings": 15554,
+     "delivered": 14656,
+     "shortfall": 898,
+     "months_reporting": 4
     },
     {
-     "section": "PRAGATHI NAGAR",
-     "division": "94",
-     "bookings": 15201,
-     "delivered": 13701,
-     "shortfall": 1500,
-     "months_reporting": 3
+     "section": "SR NAGAR",
+     "division": "86",
+     "bookings": 15410,
+     "delivered": 14150,
+     "shortfall": 1260,
+     "months_reporting": 4
+    },
+    {
+     "section": "GAYATRI NAGAR",
+     "division": "92",
+     "bookings": 15184,
+     "delivered": 13238,
+     "shortfall": 1946,
+     "months_reporting": 4
+    },
+    {
+     "section": "ANJAIAH NAGAR",
+     "division": "91",
+     "bookings": 14807,
+     "delivered": 12586,
+     "shortfall": 2221,
+     "months_reporting": 4
     },
     {
      "section": "HAFEEZPET (OLD)",
@@ -2687,12 +2727,28 @@
      "months_reporting": 4
     },
     {
-     "section": "SR NAGAR",
-     "division": "86",
-     "bookings": 13010,
-     "delivered": 11905,
-     "shortfall": 1105,
-     "months_reporting": 3
+     "section": "NIZAMPET",
+     "division": "94",
+     "bookings": 13352,
+     "delivered": 12529,
+     "shortfall": 823,
+     "months_reporting": 4
+    },
+    {
+     "section": "BHANDARI LAYOUT",
+     "division": "94",
+     "bookings": 13230,
+     "delivered": 12358,
+     "shortfall": 872,
+     "months_reporting": 4
+    },
+    {
+     "section": "MASJID BANDA",
+     "division": "90",
+     "bookings": 13171,
+     "delivered": 12664,
+     "shortfall": 507,
+     "months_reporting": 4
     },
     {
      "section": "BALAJI NAGAR (NEW)",
@@ -2711,20 +2767,12 @@
      "months_reporting": 3
     },
     {
-     "section": "GAYATRI NAGAR",
-     "division": "92",
-     "bookings": 12650,
-     "delivered": 10931,
-     "shortfall": 1719,
-     "months_reporting": 3
-    },
-    {
-     "section": "SRI RAM NAGAR",
+     "section": "NALLAGANDLA",
      "division": "90",
-     "bookings": 12385,
-     "delivered": 11644,
-     "shortfall": 741,
-     "months_reporting": 3
+     "bookings": 12470,
+     "delivered": 11561,
+     "shortfall": 909,
+     "months_reporting": 4
     },
     {
      "section": "GAYATRI NAGAR (NEW)",
@@ -2735,12 +2783,36 @@
      "months_reporting": 3
     },
     {
-     "section": "ANJAIAH NAGAR",
-     "division": "91",
-     "bookings": 12060,
-     "delivered": 10297,
-     "shortfall": 1763,
-     "months_reporting": 3
+     "section": "VENGAL RAO NAGAR",
+     "division": "86",
+     "bookings": 11940,
+     "delivered": 11036,
+     "shortfall": 904,
+     "months_reporting": 4
+    },
+    {
+     "section": "GACHIBOWLI",
+     "division": "90",
+     "bookings": 11680,
+     "delivered": 10444,
+     "shortfall": 1236,
+     "months_reporting": 4
+    },
+    {
+     "section": "PEERZADIGUDA",
+     "division": "74",
+     "bookings": 11447,
+     "delivered": 10489,
+     "shortfall": 958,
+     "months_reporting": 4
+    },
+    {
+     "section": "MACHABOLLARAM",
+     "division": "71",
+     "bookings": 11399,
+     "delivered": 10551,
+     "shortfall": 848,
+     "months_reporting": 4
     },
     {
      "section": "S.R.NAGAR (OLD)",
@@ -2748,22 +2820,6 @@
      "bookings": 11372,
      "delivered": 11372,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "NIZAMPET",
-     "division": "94",
-     "bookings": 11315,
-     "delivered": 10628,
-     "shortfall": 687,
-     "months_reporting": 3
-    },
-    {
-     "section": "MASJID BANDA",
-     "division": "90",
-     "bookings": 10872,
-     "delivered": 10436,
-     "shortfall": 436,
      "months_reporting": 3
     },
     {
@@ -2775,28 +2831,20 @@
      "months_reporting": 3
     },
     {
-     "section": "BHANDARI LAYOUT",
-     "division": "94",
-     "bookings": 10708,
-     "delivered": 10048,
-     "shortfall": 660,
-     "months_reporting": 3
+     "section": "GAJULARAMARAM",
+     "division": "93",
+     "bookings": 10390,
+     "delivered": 8655,
+     "shortfall": 1735,
+     "months_reporting": 4
     },
     {
-     "section": "VENGAL RAO NAGAR",
-     "division": "86",
-     "bookings": 10653,
-     "delivered": 9796,
-     "shortfall": 857,
-     "months_reporting": 3
-    },
-    {
-     "section": "NALLAGANDLA",
-     "division": "90",
-     "bookings": 10352,
-     "delivered": 9566,
-     "shortfall": 786,
-     "months_reporting": 3
+     "section": "HYDERSHAHKOTE",
+     "division": "79",
+     "bookings": 10236,
+     "delivered": 8078,
+     "shortfall": 2158,
+     "months_reporting": 4
     },
     {
      "section": "MADHAPUR -1 (OLD)",
@@ -2815,6 +2863,30 @@
      "months_reporting": 2
     },
     {
+     "section": "KISMATPUR",
+     "division": "79",
+     "bookings": 9976,
+     "delivered": 8897,
+     "shortfall": 1079,
+     "months_reporting": 4
+    },
+    {
+     "section": "IRRUM MANZIL",
+     "division": "85",
+     "bookings": 9951,
+     "delivered": 9558,
+     "shortfall": 393,
+     "months_reporting": 4
+    },
+    {
+     "section": "VENKATESHWARA COLONY",
+     "division": "85",
+     "bookings": 9849,
+     "delivered": 9404,
+     "shortfall": 445,
+     "months_reporting": 4
+    },
+    {
      "section": "BANJARA HILLS (OLD)",
      "division": "6",
      "bookings": 9821,
@@ -2823,12 +2895,12 @@
      "months_reporting": 3
     },
     {
-     "section": "GACHIBOWLI",
-     "division": "90",
-     "bookings": 9718,
-     "delivered": 8622,
-     "shortfall": 1096,
-     "months_reporting": 3
+     "section": "HYDERGUDA",
+     "division": "79",
+     "bookings": 9609,
+     "delivered": 9049,
+     "shortfall": 560,
+     "months_reporting": 4
     },
     {
      "section": "NIZAMPET (PD 7) (OLD)",
@@ -2839,6 +2911,14 @@
      "months_reporting": 6
     },
     {
+     "section": "OU COLONY",
+     "division": "84",
+     "bookings": 9308,
+     "delivered": 8402,
+     "shortfall": 906,
+     "months_reporting": 4
+    },
+    {
      "section": "KISMATHPUR (DIV 18) (OLD)",
      "division": "18",
      "bookings": 9246,
@@ -2847,20 +2927,12 @@
      "months_reporting": 5
     },
     {
-     "section": "GAJULARAMARAM",
-     "division": "93",
-     "bookings": 9189,
-     "delivered": 7531,
-     "shortfall": 1658,
-     "months_reporting": 3
-    },
-    {
-     "section": "MACHABOLLARAM",
-     "division": "71",
-     "bookings": 8916,
-     "delivered": 8159,
-     "shortfall": 757,
-     "months_reporting": 3
+     "section": "AMEERPET",
+     "division": "86",
+     "bookings": 9045,
+     "delivered": 8587,
+     "shortfall": 458,
+     "months_reporting": 4
     },
     {
      "section": "SRI RAM NAGAR (NEW)",
@@ -2879,6 +2951,14 @@
      "months_reporting": 2
     },
     {
+     "section": "BANJARA HILLS",
+     "division": "85",
+     "bookings": 8492,
+     "delivered": 8227,
+     "shortfall": 265,
+     "months_reporting": 4
+    },
+    {
      "section": "VENKATESHWARA COLONY (NEW)",
      "division": "85",
      "bookings": 8429,
@@ -2887,35 +2967,19 @@
      "months_reporting": 3
     },
     {
+     "section": "BODUPPAL",
+     "division": "74",
+     "bookings": 8390,
+     "delivered": 5972,
+     "shortfall": 2418,
+     "months_reporting": 4
+    },
+    {
      "section": "IRRUM MANZIL (NEW)",
      "division": "85",
      "bookings": 8294,
      "delivered": 8228,
      "shortfall": 66,
-     "months_reporting": 3
-    },
-    {
-     "section": "PEERZADIGUDA",
-     "division": "74",
-     "bookings": 8265,
-     "delivered": 7485,
-     "shortfall": 780,
-     "months_reporting": 3
-    },
-    {
-     "section": "VENKATESHWARA COLONY",
-     "division": "85",
-     "bookings": 8242,
-     "delivered": 7867,
-     "shortfall": 375,
-     "months_reporting": 3
-    },
-    {
-     "section": "HYDERSHAHKOTE",
-     "division": "79",
-     "bookings": 8096,
-     "delivered": 6159,
-     "shortfall": 1937,
      "months_reporting": 3
     },
     {
@@ -2935,20 +2999,12 @@
      "months_reporting": 3
     },
     {
-     "section": "IRRUM MANZIL",
-     "division": "85",
-     "bookings": 8016,
-     "delivered": 7694,
-     "shortfall": 322,
-     "months_reporting": 3
-    },
-    {
-     "section": "KISMATPUR",
-     "division": "79",
-     "bookings": 7964,
-     "delivered": 7007,
-     "shortfall": 957,
-     "months_reporting": 3
+     "section": "SRINAGAR COLONY",
+     "division": "86",
+     "bookings": 7954,
+     "delivered": 7516,
+     "shortfall": 438,
+     "months_reporting": 4
     },
     {
      "section": "PRAGATHINAGAR (PD 7) (OLD)",
@@ -2975,6 +3031,14 @@
      "months_reporting": 3
     },
     {
+     "section": "SOMAJIGUDA",
+     "division": "85",
+     "bookings": 7638,
+     "delivered": 7163,
+     "shortfall": 475,
+     "months_reporting": 4
+    },
+    {
      "section": "VENGAL RAO NAGAR (NEW)",
      "division": "86",
      "bookings": 7609,
@@ -2983,12 +3047,12 @@
      "months_reporting": 3
     },
     {
-     "section": "HYDERGUDA",
-     "division": "79",
-     "bookings": 7578,
-     "delivered": 7076,
-     "shortfall": 502,
-     "months_reporting": 3
+     "section": "MAHADEVPURAM",
+     "division": "93",
+     "bookings": 7472,
+     "delivered": 6641,
+     "shortfall": 831,
+     "months_reporting": 4
     },
     {
      "section": "GAYATRI NAGAR (OLD)",
@@ -3005,22 +3069,6 @@
      "delivered": 7271,
      "shortfall": 1,
      "months_reporting": 4
-    },
-    {
-     "section": "OU COLONY",
-     "division": "84",
-     "bookings": 7251,
-     "delivered": 6548,
-     "shortfall": 703,
-     "months_reporting": 3
-    },
-    {
-     "section": "AMEERPET",
-     "division": "86",
-     "bookings": 7177,
-     "delivered": 6747,
-     "shortfall": 430,
-     "months_reporting": 3
     },
     {
      "section": "GACHIBOWLI (NEW)",
@@ -3047,20 +3095,20 @@
      "months_reporting": 3
     },
     {
-     "section": "SRINAGAR COLONY",
-     "division": "86",
-     "bookings": 6894,
-     "delivered": 6502,
-     "shortfall": 392,
-     "months_reporting": 3
+     "section": "BHAGYA NAGAR COLONY",
+     "division": "91",
+     "bookings": 7004,
+     "delivered": 6407,
+     "shortfall": 597,
+     "months_reporting": 4
     },
     {
-     "section": "BANJARA HILLS",
-     "division": "85",
-     "bookings": 6818,
-     "delivered": 6604,
-     "shortfall": 214,
-     "months_reporting": 3
+     "section": "IZZATH NAGAR",
+     "division": "91",
+     "bookings": 6868,
+     "delivered": 6320,
+     "shortfall": 548,
+     "months_reporting": 4
     },
     {
      "section": "SOMAJIGUDA (NEW)",
@@ -3079,20 +3127,12 @@
      "months_reporting": 3
     },
     {
-     "section": "BODUPPAL",
-     "division": "74",
-     "bookings": 6683,
-     "delivered": 4388,
-     "shortfall": 2295,
-     "months_reporting": 3
-    },
-    {
-     "section": "SOMAJIGUDA",
-     "division": "85",
-     "bookings": 6643,
-     "delivered": 6226,
-     "shortfall": 417,
-     "months_reporting": 3
+     "section": "BANDLAGUDA JAGIR",
+     "division": "79",
+     "bookings": 6717,
+     "delivered": 6032,
+     "shortfall": 685,
+     "months_reporting": 4
     },
     {
      "section": "GACHIBOWLI (DIV 15) (OLD)",
@@ -3111,12 +3151,20 @@
      "months_reporting": 3
     },
     {
-     "section": "MAHADEVPURAM",
-     "division": "93",
-     "bookings": 6376,
-     "delivered": 5619,
-     "shortfall": 757,
-     "months_reporting": 3
+     "section": "KRISHNA NAGAR",
+     "division": "86",
+     "bookings": 6484,
+     "delivered": 6235,
+     "shortfall": 249,
+     "months_reporting": 4
+    },
+    {
+     "section": "HITEC CITY",
+     "division": "91",
+     "bookings": 6463,
+     "delivered": 5274,
+     "shortfall": 1189,
+     "months_reporting": 4
     },
     {
      "section": "BANJARA HILLS (NEW)",
@@ -3127,12 +3175,20 @@
      "months_reporting": 3
     },
     {
+     "section": "KPHB COLONY",
+     "division": "92",
+     "bookings": 6324,
+     "delivered": 6053,
+     "shortfall": 271,
+     "months_reporting": 4
+    },
+    {
      "section": "DOYENS SECTION (OLD)",
      "division": "15",
-     "bookings": 6231,
-     "delivered": 5462,
-     "shortfall": 769,
-     "months_reporting": 4
+     "bookings": 6234,
+     "delivered": 5464,
+     "shortfall": 770,
+     "months_reporting": 5
     },
     {
      "section": "SRINAGAR COLONY (NEW)",
@@ -3140,22 +3196,6 @@
      "bookings": 6189,
      "delivered": 6178,
      "shortfall": 11,
-     "months_reporting": 3
-    },
-    {
-     "section": "BHAGYA NAGAR COLONY",
-     "division": "91",
-     "bookings": 6130,
-     "delivered": 5591,
-     "shortfall": 539,
-     "months_reporting": 3
-    },
-    {
-     "section": "IZZATH NAGAR",
-     "division": "91",
-     "bookings": 5925,
-     "delivered": 5460,
-     "shortfall": 465,
      "months_reporting": 3
     },
     {
@@ -3167,6 +3207,14 @@
      "months_reporting": 3
     },
     {
+     "section": "GANDHI NAGAR",
+     "division": "87",
+     "bookings": 5761,
+     "delivered": 5156,
+     "shortfall": 605,
+     "months_reporting": 4
+    },
+    {
      "section": "IZZATH NAGAR (NEW)",
      "division": "91",
      "bookings": 5757,
@@ -3175,20 +3223,44 @@
      "months_reporting": 3
     },
     {
-     "section": "KRISHNA NAGAR",
-     "division": "86",
-     "bookings": 5572,
-     "delivered": 5348,
-     "shortfall": 224,
-     "months_reporting": 3
+     "section": "PADMA NAGAR",
+     "division": "93",
+     "bookings": 5743,
+     "delivered": 4845,
+     "shortfall": 898,
+     "months_reporting": 4
     },
     {
-     "section": "KPHB COLONY",
-     "division": "92",
-     "bookings": 5332,
-     "delivered": 5095,
-     "shortfall": 237,
-     "months_reporting": 3
+     "section": "NARSINGI",
+     "division": "90",
+     "bookings": 5703,
+     "delivered": 5560,
+     "shortfall": 143,
+     "months_reporting": 4
+    },
+    {
+     "section": "GSI",
+     "division": "75",
+     "bookings": 5443,
+     "delivered": 4730,
+     "shortfall": 713,
+     "months_reporting": 4
+    },
+    {
+     "section": "FILM NAGAR",
+     "division": "85",
+     "bookings": 5426,
+     "delivered": 5210,
+     "shortfall": 216,
+     "months_reporting": 4
+    },
+    {
+     "section": "CHAITANYAPURI",
+     "division": "75",
+     "bookings": 5384,
+     "delivered": 4957,
+     "shortfall": 427,
+     "months_reporting": 4
     },
     {
      "section": "BANDLAGUDA JAGIR (NEW)",
@@ -3199,12 +3271,12 @@
      "months_reporting": 3
     },
     {
-     "section": "GSI",
-     "division": "75",
-     "bookings": 5133,
-     "delivered": 4431,
-     "shortfall": 702,
-     "months_reporting": 3
+     "section": "MEHDIPATNAM",
+     "division": "84",
+     "bookings": 5108,
+     "delivered": 4664,
+     "shortfall": 444,
+     "months_reporting": 4
     },
     {
      "section": "BHAGYA NAGAR COLONY (NEW)",
@@ -3215,28 +3287,12 @@
      "months_reporting": 3
     },
     {
-     "section": "GANDHI NAGAR",
-     "division": "87",
-     "bookings": 5062,
-     "delivered": 4509,
-     "shortfall": 553,
-     "months_reporting": 3
-    },
-    {
-     "section": "BANDLAGUDA JAGIR",
-     "division": "79",
-     "bookings": 4937,
-     "delivered": 4370,
-     "shortfall": 567,
-     "months_reporting": 3
-    },
-    {
-     "section": "HITEC CITY",
-     "division": "91",
-     "bookings": 4825,
-     "delivered": 3922,
-     "shortfall": 903,
-     "months_reporting": 3
+     "section": "MADEENAGUDA",
+     "division": "90",
+     "bookings": 5049,
+     "delivered": 4914,
+     "shortfall": 135,
+     "months_reporting": 4
     },
     {
      "section": "KRISHNA NAGAR (NEW)",
@@ -3247,11 +3303,27 @@
      "months_reporting": 3
     },
     {
+     "section": "MANSOORABAD",
+     "division": "75",
+     "bookings": 4806,
+     "delivered": 4143,
+     "shortfall": 663,
+     "months_reporting": 4
+    },
+    {
      "section": "SOMAJIGUDA (OLD)",
      "division": "6",
      "bookings": 4798,
      "delivered": 4798,
      "shortfall": 0,
+     "months_reporting": 4
+    },
+    {
+     "section": "DEEPTHISRI NAGAR",
+     "division": "90",
+     "bookings": 4784,
+     "delivered": 4583,
+     "shortfall": 201,
      "months_reporting": 4
     },
     {
@@ -3263,6 +3335,22 @@
      "months_reporting": 3
     },
     {
+     "section": "SHAMSHIGUDA",
+     "division": "91",
+     "bookings": 4772,
+     "delivered": 3406,
+     "shortfall": 1366,
+     "months_reporting": 4
+    },
+    {
+     "section": "VANASTHALIPURAM",
+     "division": "76",
+     "bookings": 4724,
+     "delivered": 4288,
+     "shortfall": 436,
+     "months_reporting": 4
+    },
+    {
      "section": "BHAGYANAGAR (OLD)",
      "division": "9",
      "bookings": 4637,
@@ -3271,28 +3359,12 @@
      "months_reporting": 4
     },
     {
-     "section": "MANSOORABAD",
-     "division": "75",
-     "bookings": 4563,
-     "delivered": 3909,
-     "shortfall": 654,
-     "months_reporting": 3
-    },
-    {
-     "section": "NARSINGI",
-     "division": "90",
-     "bookings": 4488,
-     "delivered": 4378,
-     "shortfall": 110,
-     "months_reporting": 3
-    },
-    {
-     "section": "FILM NAGAR",
-     "division": "85",
-     "bookings": 4456,
-     "delivered": 4275,
-     "shortfall": 181,
-     "months_reporting": 3
+     "section": "BK GUDA",
+     "division": "86",
+     "bookings": 4559,
+     "delivered": 4069,
+     "shortfall": 490,
+     "months_reporting": 4
     },
     {
      "section": "PEERZADIGUDA (NEW)",
@@ -3303,20 +3375,12 @@
      "months_reporting": 3
     },
     {
-     "section": "PADMA NAGAR",
-     "division": "93",
-     "bookings": 4422,
-     "delivered": 3633,
-     "shortfall": 789,
-     "months_reporting": 3
-    },
-    {
-     "section": "CHAITANYAPURI",
-     "division": "75",
-     "bookings": 4410,
-     "delivered": 4012,
-     "shortfall": 398,
-     "months_reporting": 3
+     "section": "AG COLONY",
+     "division": "86",
+     "bookings": 4375,
+     "delivered": 3986,
+     "shortfall": 389,
+     "months_reporting": 4
     },
     {
      "section": "BK GUDA (NEW)",
@@ -3324,22 +3388,6 @@
      "bookings": 4332,
      "delivered": 4148,
      "shortfall": 184,
-     "months_reporting": 3
-    },
-    {
-     "section": "SHAMSHIGUDA",
-     "division": "91",
-     "bookings": 4232,
-     "delivered": 3015,
-     "shortfall": 1217,
-     "months_reporting": 3
-    },
-    {
-     "section": "MADEENAGUDA",
-     "division": "90",
-     "bookings": 4227,
-     "delivered": 4115,
-     "shortfall": 112,
      "months_reporting": 3
     },
     {
@@ -3351,12 +3399,20 @@
      "months_reporting": 4
     },
     {
-     "section": "DEEPTHISRI NAGAR",
-     "division": "90",
-     "bookings": 4104,
-     "delivered": 3937,
-     "shortfall": 167,
-     "months_reporting": 3
+     "section": "YOUSUFGUDA",
+     "division": "86",
+     "bookings": 4122,
+     "delivered": 3768,
+     "shortfall": 354,
+     "months_reporting": 4
+    },
+    {
+     "section": "GADDIANNAARAM",
+     "division": "75",
+     "bookings": 4106,
+     "delivered": 3861,
+     "shortfall": 245,
+     "months_reporting": 4
     },
     {
      "section": "MEHDIPATNAM (NEW)",
@@ -3367,20 +3423,12 @@
      "months_reporting": 2
     },
     {
-     "section": "VANASTHALIPURAM",
-     "division": "76",
-     "bookings": 4029,
-     "delivered": 3637,
-     "shortfall": 392,
-     "months_reporting": 3
-    },
-    {
-     "section": "BK GUDA",
-     "division": "86",
-     "bookings": 4011,
-     "delivered": 3563,
-     "shortfall": 448,
-     "months_reporting": 3
+     "section": "MOTI NAGAR",
+     "division": "92",
+     "bookings": 4081,
+     "delivered": 2744,
+     "shortfall": 1337,
+     "months_reporting": 4
     },
     {
      "section": "FILM NAGAR (NEW)",
@@ -3391,19 +3439,19 @@
      "months_reporting": 3
     },
     {
+     "section": "HYDER NAGAR",
+     "division": "91",
+     "bookings": 3905,
+     "delivered": 3407,
+     "shortfall": 498,
+     "months_reporting": 4
+    },
+    {
      "section": "MACHABOLLARAM (NEW)",
      "division": "71",
      "bookings": 3889,
      "delivered": 3887,
      "shortfall": 2,
-     "months_reporting": 3
-    },
-    {
-     "section": "AG COLONY",
-     "division": "86",
-     "bookings": 3861,
-     "delivered": 3505,
-     "shortfall": 356,
      "months_reporting": 3
     },
     {
@@ -3415,6 +3463,14 @@
      "months_reporting": 2
     },
     {
+     "section": "VIJAYANAGAR COLONY",
+     "division": "84",
+     "bookings": 3792,
+     "delivered": 3558,
+     "shortfall": 234,
+     "months_reporting": 4
+    },
+    {
      "section": "KPHB COLONY (NEW)",
      "division": "92",
      "bookings": 3782,
@@ -3423,20 +3479,44 @@
      "months_reporting": 3
     },
     {
-     "section": "MEHDIPATNAM",
-     "division": "84",
-     "bookings": 3714,
-     "delivered": 3454,
-     "shortfall": 260,
-     "months_reporting": 3
+     "section": "RK PURAM",
+     "division": "75",
+     "bookings": 3768,
+     "delivered": 3456,
+     "shortfall": 312,
+     "months_reporting": 4
     },
     {
-     "section": "MOTI NAGAR",
-     "division": "92",
-     "bookings": 3661,
-     "delivered": 2377,
-     "shortfall": 1284,
-     "months_reporting": 3
+     "section": "MAYURI NAGAR",
+     "division": "91",
+     "bookings": 3751,
+     "delivered": 3601,
+     "shortfall": 150,
+     "months_reporting": 4
+    },
+    {
+     "section": "GANESH NAGAR",
+     "division": "93",
+     "bookings": 3734,
+     "delivered": 3042,
+     "shortfall": 692,
+     "months_reporting": 4
+    },
+    {
+     "section": "OLD BOWENPALLY",
+     "division": "72",
+     "bookings": 3690,
+     "delivered": 3533,
+     "shortfall": 157,
+     "months_reporting": 4
+    },
+    {
+     "section": "QUTHBULLAPUR",
+     "division": "93",
+     "bookings": 3628,
+     "delivered": 3053,
+     "shortfall": 575,
+     "months_reporting": 4
     },
     {
      "section": "GANDHI NAGAR (NEW)",
@@ -3455,28 +3535,36 @@
      "months_reporting": 3
     },
     {
-     "section": "HYDER NAGAR",
-     "division": "91",
-     "bookings": 3470,
-     "delivered": 2991,
-     "shortfall": 479,
-     "months_reporting": 3
+     "section": "HIMAYATHNAGAR",
+     "division": "85",
+     "bookings": 3469,
+     "delivered": 3295,
+     "shortfall": 174,
+     "months_reporting": 4
     },
     {
-     "section": "YOUSUFGUDA",
+     "section": "METTUGUDA",
+     "division": "88",
+     "bookings": 3438,
+     "delivered": 3360,
+     "shortfall": 78,
+     "months_reporting": 4
+    },
+    {
+     "section": "SANATHNAGAR",
      "division": "86",
-     "bookings": 3448,
-     "delivered": 3123,
-     "shortfall": 325,
-     "months_reporting": 3
+     "bookings": 3406,
+     "delivered": 3230,
+     "shortfall": 176,
+     "months_reporting": 4
     },
     {
-     "section": "GADDIANNAARAM",
-     "division": "75",
-     "bookings": 3401,
-     "delivered": 3178,
-     "shortfall": 223,
-     "months_reporting": 3
+     "section": "NEREDMET",
+     "division": "72",
+     "bookings": 3372,
+     "delivered": 3181,
+     "shortfall": 191,
+     "months_reporting": 4
     },
     {
      "section": "YOUSUFGUDA (NEW)",
@@ -3487,12 +3575,20 @@
      "months_reporting": 3
     },
     {
-     "section": "RK PURAM",
-     "division": "75",
-     "bookings": 3253,
-     "delivered": 2958,
-     "shortfall": 295,
-     "months_reporting": 3
+     "section": "CHENGICHERLA",
+     "division": "74",
+     "bookings": 3292,
+     "delivered": 2430,
+     "shortfall": 862,
+     "months_reporting": 4
+    },
+    {
+     "section": "PADMARAO NAGAR",
+     "division": "87",
+     "bookings": 3257,
+     "delivered": 3154,
+     "shortfall": 103,
+     "months_reporting": 4
     },
     {
      "section": "MOTI NAGAR (NEW)",
@@ -3503,35 +3599,11 @@
      "months_reporting": 3
     },
     {
-     "section": "MAYURI NAGAR",
-     "division": "91",
-     "bookings": 3190,
-     "delivered": 3068,
-     "shortfall": 122,
-     "months_reporting": 3
-    },
-    {
-     "section": "SANATHNAGAR",
-     "division": "86",
-     "bookings": 3156,
-     "delivered": 2985,
-     "shortfall": 171,
-     "months_reporting": 3
-    },
-    {
      "section": "AG COLONY (NEW)",
      "division": "86",
      "bookings": 3138,
      "delivered": 3107,
      "shortfall": 31,
-     "months_reporting": 3
-    },
-    {
-     "section": "VIJAYANAGAR COLONY",
-     "division": "84",
-     "bookings": 3120,
-     "delivered": 2958,
-     "shortfall": 162,
      "months_reporting": 3
     },
     {
@@ -3551,14 +3623,6 @@
      "months_reporting": 2
     },
     {
-     "section": "OLD BOWENPALLY",
-     "division": "72",
-     "bookings": 3091,
-     "delivered": 2958,
-     "shortfall": 133,
-     "months_reporting": 3
-    },
-    {
      "section": "DEEPTHISRI NAGAR (NEW)",
      "division": "90",
      "bookings": 3090,
@@ -3567,20 +3631,12 @@
      "months_reporting": 3
     },
     {
-     "section": "GANESH NAGAR",
-     "division": "93",
-     "bookings": 3084,
-     "delivered": 2433,
-     "shortfall": 651,
-     "months_reporting": 3
-    },
-    {
-     "section": "PADMARAO NAGAR",
-     "division": "87",
-     "bookings": 3061,
-     "delivered": 2961,
-     "shortfall": 100,
-     "months_reporting": 3
+     "section": "SHAIKPET",
+     "division": "84",
+     "bookings": 3063,
+     "delivered": 2728,
+     "shortfall": 335,
+     "months_reporting": 4
     },
     {
      "section": "SHAIKPET (OLD)",
@@ -3589,14 +3645,6 @@
      "delivered": 3016,
      "shortfall": 4,
      "months_reporting": 7
-    },
-    {
-     "section": "NEREDMET",
-     "division": "72",
-     "bookings": 3004,
-     "delivered": 2833,
-     "shortfall": 171,
-     "months_reporting": 3
     },
     {
      "section": "NARSINGI (NEW)",
@@ -3621,30 +3669,6 @@
      "delivered": 2855,
      "shortfall": 5,
      "months_reporting": 2
-    },
-    {
-     "section": "METTUGUDA",
-     "division": "88",
-     "bookings": 2803,
-     "delivered": 2733,
-     "shortfall": 70,
-     "months_reporting": 3
-    },
-    {
-     "section": "HIMAYATHNAGAR",
-     "division": "85",
-     "bookings": 2783,
-     "delivered": 2649,
-     "shortfall": 134,
-     "months_reporting": 3
-    },
-    {
-     "section": "QUTHBULLAPUR",
-     "division": "93",
-     "bookings": 2764,
-     "delivered": 2243,
-     "shortfall": 521,
-     "months_reporting": 3
     },
     {
      "section": "HYDER NAGAR (NEW)",
@@ -3679,14 +3703,6 @@
      "months_reporting": 2
     },
     {
-     "section": "CHENGICHERLA",
-     "division": "74",
-     "bookings": 2697,
-     "delivered": 1888,
-     "shortfall": 809,
-     "months_reporting": 3
-    },
-    {
      "section": "SHAMSHIGUDA (NEW)",
      "division": "91",
      "bookings": 2638,
@@ -3703,19 +3719,19 @@
      "months_reporting": 3
     },
     {
+     "section": "GUNFOUNDRY",
+     "division": "85",
+     "bookings": 2604,
+     "delivered": 2334,
+     "shortfall": 270,
+     "months_reporting": 4
+    },
+    {
      "section": "SHAIKPET (NEW)",
      "division": "84",
      "bookings": 2603,
      "delivered": 2576,
      "shortfall": 27,
-     "months_reporting": 3
-    },
-    {
-     "section": "SHAIKPET",
-     "division": "84",
-     "bookings": 2523,
-     "delivered": 2229,
-     "shortfall": 294,
      "months_reporting": 3
     },
     {
@@ -3725,6 +3741,54 @@
      "delivered": 2521,
      "shortfall": 1,
      "months_reporting": 3
+    },
+    {
+     "section": "TARNAKA",
+     "division": "88",
+     "bookings": 2495,
+     "delivered": 2423,
+     "shortfall": 72,
+     "months_reporting": 4
+    },
+    {
+     "section": "RAJENDRA NAGAR",
+     "division": "79",
+     "bookings": 2474,
+     "delivered": 2293,
+     "shortfall": 181,
+     "months_reporting": 4
+    },
+    {
+     "section": "MALLAPUR",
+     "division": "74",
+     "bookings": 2453,
+     "delivered": 2264,
+     "shortfall": 189,
+     "months_reporting": 4
+    },
+    {
+     "section": "MIYAPUR",
+     "division": "90",
+     "bookings": 2422,
+     "delivered": 2154,
+     "shortfall": 268,
+     "months_reporting": 4
+    },
+    {
+     "section": "NTR NAGAR",
+     "division": "75",
+     "bookings": 2413,
+     "delivered": 2165,
+     "shortfall": 248,
+     "months_reporting": 4
+    },
+    {
+     "section": "RAJEEV NAGAR",
+     "division": "86",
+     "bookings": 2398,
+     "delivered": 2326,
+     "shortfall": 72,
+     "months_reporting": 4
     },
     {
      "section": "MANSOORABAD (NEW)",
@@ -3743,12 +3807,20 @@
      "months_reporting": 3
     },
     {
-     "section": "NTR NAGAR",
-     "division": "75",
-     "bookings": 2293,
-     "delivered": 2057,
-     "shortfall": 236,
-     "months_reporting": 3
+     "section": "MAKTHA MAHABUBPET",
+     "division": "90",
+     "bookings": 2316,
+     "delivered": 2168,
+     "shortfall": 148,
+     "months_reporting": 4
+    },
+    {
+     "section": "HASTHINAPURAM",
+     "division": "76",
+     "bookings": 2305,
+     "delivered": 2247,
+     "shortfall": 58,
+     "months_reporting": 4
     },
     {
      "section": "SANATHNAGAR (NEW)",
@@ -3775,20 +3847,20 @@
      "months_reporting": 3
     },
     {
+     "section": "BORABANDA",
+     "division": "86",
+     "bookings": 2243,
+     "delivered": 1913,
+     "shortfall": 330,
+     "months_reporting": 4
+    },
+    {
      "section": "FATHENAGAR (OLD)",
      "division": "6",
      "bookings": 2170,
      "delivered": 2169,
      "shortfall": 1,
      "months_reporting": 4
-    },
-    {
-     "section": "RAJENDRA NAGAR",
-     "division": "79",
-     "bookings": 2168,
-     "delivered": 2000,
-     "shortfall": 168,
-     "months_reporting": 3
     },
     {
      "section": "PADMA NAGAR (NEW)",
@@ -3799,52 +3871,20 @@
      "months_reporting": 2
     },
     {
-     "section": "MAKTHA MAHABUBPET",
-     "division": "90",
-     "bookings": 2128,
-     "delivered": 1989,
-     "shortfall": 139,
-     "months_reporting": 3
+     "section": "MOULALI",
+     "division": "72",
+     "bookings": 2120,
+     "delivered": 2001,
+     "shortfall": 119,
+     "months_reporting": 4
     },
     {
-     "section": "HASTHINAPURAM",
+     "section": "KARMANGHAT",
      "division": "76",
-     "bookings": 2114,
-     "delivered": 2062,
-     "shortfall": 52,
-     "months_reporting": 3
-    },
-    {
-     "section": "RAJEEV NAGAR",
-     "division": "86",
-     "bookings": 2113,
-     "delivered": 2048,
-     "shortfall": 65,
-     "months_reporting": 3
-    },
-    {
-     "section": "MIYAPUR",
-     "division": "90",
-     "bookings": 2092,
-     "delivered": 1867,
-     "shortfall": 225,
-     "months_reporting": 3
-    },
-    {
-     "section": "TARNAKA",
-     "division": "88",
-     "bookings": 2064,
-     "delivered": 2002,
-     "shortfall": 62,
-     "months_reporting": 3
-    },
-    {
-     "section": "GUNFOUNDRY",
-     "division": "85",
-     "bookings": 2053,
-     "delivered": 1817,
-     "shortfall": 236,
-     "months_reporting": 3
+     "bookings": 2073,
+     "delivered": 1962,
+     "shortfall": 111,
+     "months_reporting": 4
     },
     {
      "section": "MIYAPUR (NEW)",
@@ -3855,6 +3895,14 @@
      "months_reporting": 3
     },
     {
+     "section": "ERRAGADDA",
+     "division": "86",
+     "bookings": 2008,
+     "delivered": 1903,
+     "shortfall": 105,
+     "months_reporting": 4
+    },
+    {
      "section": "PADMARAO NAGAR (NEW)",
      "division": "87",
      "bookings": 2000,
@@ -3863,12 +3911,20 @@
      "months_reporting": 3
     },
     {
-     "section": "MALLAPUR",
-     "division": "74",
-     "bookings": 1963,
-     "delivered": 1826,
-     "shortfall": 137,
-     "months_reporting": 3
+     "section": "RAMNAGAR",
+     "division": "87",
+     "bookings": 1966,
+     "delivered": 1856,
+     "shortfall": 110,
+     "months_reporting": 4
+    },
+    {
+     "section": "SHAPUR NAGAR",
+     "division": "93",
+     "bookings": 1965,
+     "delivered": 1536,
+     "shortfall": 429,
+     "months_reporting": 4
     },
     {
      "section": "TOLI CHOWK (OLD)",
@@ -3879,20 +3935,44 @@
      "months_reporting": 3
     },
     {
-     "section": "BORABANDA",
+     "section": "RAHAMATH NAGAR",
      "division": "86",
-     "bookings": 1923,
-     "delivered": 1645,
-     "shortfall": 278,
-     "months_reporting": 3
+     "bookings": 1956,
+     "delivered": 1521,
+     "shortfall": 435,
+     "months_reporting": 4
     },
     {
-     "section": "KARMANGHAT",
-     "division": "76",
-     "bookings": 1903,
-     "delivered": 1801,
-     "shortfall": 102,
-     "months_reporting": 3
+     "section": "NANALNAGAR",
+     "division": "84",
+     "bookings": 1939,
+     "delivered": 1601,
+     "shortfall": 338,
+     "months_reporting": 4
+    },
+    {
+     "section": "CHANDA NAGAR",
+     "division": "90",
+     "bookings": 1914,
+     "delivered": 1807,
+     "shortfall": 107,
+     "months_reporting": 4
+    },
+    {
+     "section": "KAPRA",
+     "division": "73",
+     "bookings": 1906,
+     "delivered": 1823,
+     "shortfall": 83,
+     "months_reporting": 4
+    },
+    {
+     "section": "ATTAPUR",
+     "division": "79",
+     "bookings": 1906,
+     "delivered": 1699,
+     "shortfall": 207,
+     "months_reporting": 4
     },
     {
      "section": "MIYAPUR (OLD)",
@@ -3903,12 +3983,28 @@
      "months_reporting": 2
     },
     {
+     "section": "HAFEEZPET",
+     "division": "90",
+     "bookings": 1888,
+     "delivered": 1680,
+     "shortfall": 208,
+     "months_reporting": 4
+    },
+    {
      "section": "RAJENDRA NAGAR (NEW)",
      "division": "79",
      "bookings": 1858,
      "delivered": 1841,
      "shortfall": 17,
      "months_reporting": 3
+    },
+    {
+     "section": "ALLAPUR",
+     "division": "92",
+     "bookings": 1857,
+     "delivered": 1405,
+     "shortfall": 452,
+     "months_reporting": 4
     },
     {
      "section": "MEHIDIPATNAM (OLD)",
@@ -3935,12 +4031,20 @@
      "months_reporting": 3
     },
     {
-     "section": "MOULALI",
+     "section": "GOUTHAM NAGAR",
      "division": "72",
-     "bookings": 1814,
-     "delivered": 1704,
-     "shortfall": 110,
-     "months_reporting": 3
+     "bookings": 1813,
+     "delivered": 1717,
+     "shortfall": 96,
+     "months_reporting": 4
+    },
+    {
+     "section": "KAITHALAPUR",
+     "division": "92",
+     "bookings": 1808,
+     "delivered": 1701,
+     "shortfall": 107,
+     "months_reporting": 4
     },
     {
      "section": "DEEPTHISRI NAGAR (OLD)",
@@ -3983,14 +4087,6 @@
      "months_reporting": 3
     },
     {
-     "section": "RAHAMATH NAGAR",
-     "division": "86",
-     "bookings": 1759,
-     "delivered": 1358,
-     "shortfall": 401,
-     "months_reporting": 3
-    },
-    {
      "section": "OLD BOWENPALLY (NEW)",
      "division": "72",
      "bookings": 1742,
@@ -4007,43 +4103,11 @@
      "months_reporting": 3
     },
     {
-     "section": "ERRAGADDA",
-     "division": "86",
-     "bookings": 1730,
-     "delivered": 1635,
-     "shortfall": 95,
-     "months_reporting": 3
-    },
-    {
-     "section": "RAMNAGAR",
-     "division": "87",
-     "bookings": 1727,
-     "delivered": 1627,
-     "shortfall": 100,
-     "months_reporting": 3
-    },
-    {
      "section": "GANESH NAGAR (NEW)",
      "division": "93",
      "bookings": 1718,
      "delivered": 1717,
      "shortfall": 1,
-     "months_reporting": 3
-    },
-    {
-     "section": "SHAPUR NAGAR",
-     "division": "93",
-     "bookings": 1709,
-     "delivered": 1299,
-     "shortfall": 410,
-     "months_reporting": 3
-    },
-    {
-     "section": "ALLAPUR",
-     "division": "92",
-     "bookings": 1708,
-     "delivered": 1291,
-     "shortfall": 417,
      "months_reporting": 3
     },
     {
@@ -4063,6 +4127,14 @@
      "months_reporting": 3
     },
     {
+     "section": "ASMANGADH",
+     "division": "82",
+     "bookings": 1662,
+     "delivered": 1570,
+     "shortfall": 92,
+     "months_reporting": 4
+    },
+    {
      "section": "MOTI NAGAR (OLD)",
      "division": "9",
      "bookings": 1659,
@@ -4071,20 +4143,36 @@
      "months_reporting": 3
     },
     {
-     "section": "KAITHALAPUR",
-     "division": "92",
-     "bookings": 1614,
-     "delivered": 1517,
-     "shortfall": 97,
-     "months_reporting": 3
+     "section": "MIRJALGUDA",
+     "division": "72",
+     "bookings": 1659,
+     "delivered": 1549,
+     "shortfall": 110,
+     "months_reporting": 4
     },
     {
-     "section": "NANALNAGAR",
-     "division": "84",
-     "bookings": 1609,
-     "delivered": 1331,
-     "shortfall": 278,
-     "months_reporting": 3
+     "section": "SEETHAPHALMANDI",
+     "division": "88",
+     "bookings": 1646,
+     "delivered": 1539,
+     "shortfall": 107,
+     "months_reporting": 4
+    },
+    {
+     "section": "YAPRAL",
+     "division": "71",
+     "bookings": 1637,
+     "delivered": 1502,
+     "shortfall": 135,
+     "months_reporting": 4
+    },
+    {
+     "section": "KAKATIYA NAGAR",
+     "division": "72",
+     "bookings": 1613,
+     "delivered": 1536,
+     "shortfall": 77,
+     "months_reporting": 4
     },
     {
      "section": "FATHER BALAIAHNAGAR (DIV13) (OLD)",
@@ -4095,28 +4183,12 @@
      "months_reporting": 3
     },
     {
-     "section": "CHANDA NAGAR",
-     "division": "90",
-     "bookings": 1606,
-     "delivered": 1504,
-     "shortfall": 102,
-     "months_reporting": 3
-    },
-    {
-     "section": "ATTAPUR",
-     "division": "79",
-     "bookings": 1595,
-     "delivered": 1418,
-     "shortfall": 177,
-     "months_reporting": 3
-    },
-    {
-     "section": "HAFEEZPET",
-     "division": "90",
-     "bookings": 1588,
-     "delivered": 1399,
-     "shortfall": 189,
-     "months_reporting": 3
+     "section": "DR AS RAO NAGAR",
+     "division": "73",
+     "bookings": 1593,
+     "delivered": 1535,
+     "shortfall": 58,
+     "months_reporting": 4
     },
     {
      "section": "GUNFOUNDRY (NEW)",
@@ -4127,6 +4199,62 @@
      "months_reporting": 3
     },
     {
+     "section": "CHILKALGUDA",
+     "division": "88",
+     "bookings": 1571,
+     "delivered": 1432,
+     "shortfall": 139,
+     "months_reporting": 4
+    },
+    {
+     "section": "MUSHEERABAD",
+     "division": "87",
+     "bookings": 1568,
+     "delivered": 1500,
+     "shortfall": 68,
+     "months_reporting": 4
+    },
+    {
+     "section": "ALLWYN COLONY",
+     "division": "91",
+     "bookings": 1543,
+     "delivered": 931,
+     "shortfall": 612,
+     "months_reporting": 4
+    },
+    {
+     "section": "SHAKTHI SAI NAGAR",
+     "division": "74",
+     "bookings": 1539,
+     "delivered": 1431,
+     "shortfall": 108,
+     "months_reporting": 4
+    },
+    {
+     "section": "SAROORNAGAR",
+     "division": "75",
+     "bookings": 1535,
+     "delivered": 1438,
+     "shortfall": 97,
+     "months_reporting": 4
+    },
+    {
+     "section": "BARKATPURA",
+     "division": "87",
+     "bookings": 1535,
+     "delivered": 1460,
+     "shortfall": 75,
+     "months_reporting": 4
+    },
+    {
+     "section": "SUBHASH NAGAR",
+     "division": "93",
+     "bookings": 1531,
+     "delivered": 1349,
+     "shortfall": 182,
+     "months_reporting": 4
+    },
+    {
      "section": "RED HILLS (NEW)",
      "division": "85",
      "bookings": 1525,
@@ -4135,12 +4263,20 @@
      "months_reporting": 3
     },
     {
-     "section": "GOUTHAM NAGAR",
-     "division": "72",
-     "bookings": 1513,
-     "delivered": 1432,
-     "shortfall": 81,
-     "months_reporting": 3
+     "section": "CHINTAL",
+     "division": "93",
+     "bookings": 1517,
+     "delivered": 1200,
+     "shortfall": 317,
+     "months_reporting": 4
+    },
+    {
+     "section": "BACHUPALLY",
+     "division": "94",
+     "bookings": 1517,
+     "delivered": 1365,
+     "shortfall": 152,
+     "months_reporting": 4
     },
     {
      "section": "ATTAPUR (NEW)",
@@ -4151,12 +4287,12 @@
      "months_reporting": 3
     },
     {
-     "section": "SEETHAPHALMANDI",
-     "division": "88",
+     "section": "LINGOJIGUDA",
+     "division": "76",
      "bookings": 1481,
-     "delivered": 1385,
-     "shortfall": 96,
-     "months_reporting": 3
+     "delivered": 1394,
+     "shortfall": 87,
+     "months_reporting": 4
     },
     {
      "section": "BACHUPALLY (PD 7) (OLD)",
@@ -4167,20 +4303,12 @@
      "months_reporting": 3
     },
     {
-     "section": "KAPRA",
-     "division": "73",
-     "bookings": 1468,
-     "delivered": 1399,
-     "shortfall": 69,
-     "months_reporting": 3
-    },
-    {
-     "section": "CHILKALGUDA",
-     "division": "88",
-     "bookings": 1462,
-     "delivered": 1325,
-     "shortfall": 137,
-     "months_reporting": 3
+     "section": "KUKATPALLY",
+     "division": "92",
+     "bookings": 1466,
+     "delivered": 943,
+     "shortfall": 523,
+     "months_reporting": 4
     },
     {
      "section": "TOLICHOWKI (NEW)",
@@ -4215,6 +4343,14 @@
      "months_reporting": 3
     },
     {
+     "section": "MOOSAPET",
+     "division": "92",
+     "bookings": 1403,
+     "delivered": 1173,
+     "shortfall": 230,
+     "months_reporting": 4
+    },
+    {
      "section": "BORABANDA (NEW)",
      "division": "86",
      "bookings": 1388,
@@ -4223,36 +4359,36 @@
      "months_reporting": 3
     },
     {
-     "section": "DR AS RAO NAGAR",
-     "division": "73",
-     "bookings": 1387,
-     "delivered": 1334,
-     "shortfall": 53,
-     "months_reporting": 3
+     "section": "MEDIPALLY",
+     "division": "74",
+     "bookings": 1383,
+     "delivered": 1239,
+     "shortfall": 144,
+     "months_reporting": 4
     },
     {
-     "section": "ALLWYN COLONY",
-     "division": "91",
-     "bookings": 1367,
-     "delivered": 840,
-     "shortfall": 527,
-     "months_reporting": 3
+     "section": "NACHARAM",
+     "division": "74",
+     "bookings": 1358,
+     "delivered": 1304,
+     "shortfall": 54,
+     "months_reporting": 4
     },
     {
-     "section": "KAKATIYA NAGAR",
-     "division": "72",
-     "bookings": 1361,
-     "delivered": 1294,
-     "shortfall": 67,
-     "months_reporting": 3
-    },
-    {
-     "section": "YAPRAL",
+     "section": "TURKAPALLY",
      "division": "71",
-     "bookings": 1353,
-     "delivered": 1238,
-     "shortfall": 115,
-     "months_reporting": 3
+     "bookings": 1348,
+     "delivered": 1136,
+     "shortfall": 212,
+     "months_reporting": 4
+    },
+    {
+     "section": "MONDA MARKET",
+     "division": "72",
+     "bookings": 1348,
+     "delivered": 1329,
+     "shortfall": 19,
+     "months_reporting": 4
     },
     {
      "section": "METTUGUDA (NEW)",
@@ -4263,22 +4399,6 @@
      "months_reporting": 2
     },
     {
-     "section": "MUSHEERABAD",
-     "division": "87",
-     "bookings": 1334,
-     "delivered": 1268,
-     "shortfall": 66,
-     "months_reporting": 3
-    },
-    {
-     "section": "MIRJALGUDA",
-     "division": "72",
-     "bookings": 1330,
-     "delivered": 1232,
-     "shortfall": 98,
-     "months_reporting": 3
-    },
-    {
      "section": "HAFEEZPET (NEW)",
      "division": "90",
      "bookings": 1329,
@@ -4287,20 +4407,12 @@
      "months_reporting": 3
     },
     {
-     "section": "ASMANGADH",
-     "division": "82",
+     "section": "BOUDHA NAGAR",
+     "division": "88",
      "bookings": 1328,
-     "delivered": 1251,
-     "shortfall": 77,
-     "months_reporting": 3
-    },
-    {
-     "section": "LINGOJIGUDA",
-     "division": "76",
-     "bookings": 1299,
-     "delivered": 1222,
-     "shortfall": 77,
-     "months_reporting": 3
+     "delivered": 1123,
+     "shortfall": 205,
+     "months_reporting": 4
     },
     {
      "section": "RK PURAM (NEW)",
@@ -4311,20 +4423,12 @@
      "months_reporting": 3
     },
     {
-     "section": "KUKATPALLY",
-     "division": "92",
-     "bookings": 1278,
-     "delivered": 772,
-     "shortfall": 506,
-     "months_reporting": 3
-    },
-    {
-     "section": "CHINTAL",
-     "division": "93",
-     "bookings": 1271,
-     "delivered": 983,
-     "shortfall": 288,
-     "months_reporting": 3
+     "section": "BEGUM BAZAR",
+     "division": "83",
+     "bookings": 1283,
+     "delivered": 1158,
+     "shortfall": 125,
+     "months_reporting": 4
     },
     {
      "section": "BARKATPURA (NEW)",
@@ -4335,28 +4439,20 @@
      "months_reporting": 3
     },
     {
-     "section": "SAROORNAGAR",
-     "division": "75",
-     "bookings": 1265,
-     "delivered": 1179,
-     "shortfall": 86,
-     "months_reporting": 3
+     "section": "EAST ANANDBAGH",
+     "division": "72",
+     "bookings": 1259,
+     "delivered": 1185,
+     "shortfall": 74,
+     "months_reporting": 4
     },
     {
-     "section": "SUBHASH NAGAR",
-     "division": "93",
-     "bookings": 1230,
-     "delivered": 1065,
-     "shortfall": 165,
-     "months_reporting": 3
-    },
-    {
-     "section": "BARKATPURA",
-     "division": "87",
-     "bookings": 1227,
-     "delivered": 1164,
-     "shortfall": 63,
-     "months_reporting": 3
+     "section": "RED HILLS",
+     "division": "85",
+     "bookings": 1223,
+     "delivered": 1188,
+     "shortfall": 35,
+     "months_reporting": 4
     },
     {
      "section": "VIJAYNAGAR COLONY (OLD)",
@@ -4375,20 +4471,36 @@
      "months_reporting": 2
     },
     {
-     "section": "BACHUPALLY",
-     "division": "94",
-     "bookings": 1199,
-     "delivered": 1075,
-     "shortfall": 124,
-     "months_reporting": 3
+     "section": "SHANTI NAGAR",
+     "division": "84",
+     "bookings": 1208,
+     "delivered": 1001,
+     "shortfall": 207,
+     "months_reporting": 4
     },
     {
-     "section": "MOOSAPET",
-     "division": "92",
-     "bookings": 1197,
-     "delivered": 984,
-     "shortfall": 213,
-     "months_reporting": 3
+     "section": "RAMANTHAPUR",
+     "division": "74",
+     "bookings": 1180,
+     "delivered": 859,
+     "shortfall": 321,
+     "months_reporting": 4
+    },
+    {
+     "section": "MOOSARAMBAGH",
+     "division": "82",
+     "bookings": 1180,
+     "delivered": 1161,
+     "shortfall": 19,
+     "months_reporting": 4
+    },
+    {
+     "section": "TOLICHOWKI",
+     "division": "84",
+     "bookings": 1173,
+     "delivered": 1013,
+     "shortfall": 160,
+     "months_reporting": 4
     },
     {
      "section": "ALLAPUR (NEW)",
@@ -4399,20 +4511,12 @@
      "months_reporting": 2
     },
     {
-     "section": "BOUDHA NAGAR",
-     "division": "88",
-     "bookings": 1155,
-     "delivered": 969,
-     "shortfall": 186,
-     "months_reporting": 3
-    },
-    {
-     "section": "SHAKTHI SAI NAGAR",
-     "division": "74",
-     "bookings": 1152,
-     "delivered": 1059,
-     "shortfall": 93,
-     "months_reporting": 3
+     "section": "SULEMAN NAGAR",
+     "division": "79",
+     "bookings": 1163,
+     "delivered": 1078,
+     "shortfall": 85,
+     "months_reporting": 4
     },
     {
      "section": "BOATS CLUB (OLD)",
@@ -4423,12 +4527,28 @@
      "months_reporting": 3
     },
     {
-     "section": "MONDA MARKET",
-     "division": "72",
+     "section": "UPPAL",
+     "division": "74",
      "bookings": 1129,
-     "delivered": 1111,
-     "shortfall": 18,
-     "months_reporting": 3
+     "delivered": 824,
+     "shortfall": 305,
+     "months_reporting": 4
+    },
+    {
+     "section": "BAGH LINGAMPALLY",
+     "division": "87",
+     "bookings": 1117,
+     "delivered": 1083,
+     "shortfall": 34,
+     "months_reporting": 4
+    },
+    {
+     "section": "JAGATHGIRI GUTTA",
+     "division": "93",
+     "bookings": 1106,
+     "delivered": 900,
+     "shortfall": 206,
+     "months_reporting": 4
     },
     {
      "section": "PEERJADIGUDA (DIV 19) (OLD)",
@@ -4436,6 +4556,14 @@
      "bookings": 1105,
      "delivered": 1105,
      "shortfall": 0,
+     "months_reporting": 4
+    },
+    {
+     "section": "SAIBABA NAGAR",
+     "division": "93",
+     "bookings": 1103,
+     "delivered": 893,
+     "shortfall": 210,
      "months_reporting": 4
     },
     {
@@ -4447,14 +4575,6 @@
      "months_reporting": 3
     },
     {
-     "section": "NACHARAM",
-     "division": "74",
-     "bookings": 1085,
-     "delivered": 1036,
-     "shortfall": 49,
-     "months_reporting": 3
-    },
-    {
      "section": "MUSHEERABAD (NEW)",
      "division": "87",
      "bookings": 1080,
@@ -4463,27 +4583,11 @@
      "months_reporting": 2
     },
     {
-     "section": "BEGUM BAZAR",
-     "division": "83",
-     "bookings": 1072,
-     "delivered": 981,
-     "shortfall": 91,
-     "months_reporting": 3
-    },
-    {
      "section": "HASTHINAPURAM (NEW)",
      "division": "76",
      "bookings": 1071,
      "delivered": 1071,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "MOOSARAMBAGH",
-     "division": "82",
-     "bookings": 1064,
-     "delivered": 1047,
-     "shortfall": 17,
      "months_reporting": 3
     },
     {
@@ -4495,60 +4599,28 @@
      "months_reporting": 3
     },
     {
-     "section": "RAMANTHAPUR",
-     "division": "74",
-     "bookings": 1057,
-     "delivered": 744,
-     "shortfall": 313,
-     "months_reporting": 3
+     "section": "AKBERBAGH",
+     "division": "82",
+     "bookings": 1056,
+     "delivered": 1035,
+     "shortfall": 21,
+     "months_reporting": 4
     },
     {
-     "section": "RED HILLS",
-     "division": "85",
-     "bookings": 1046,
-     "delivered": 1016,
-     "shortfall": 30,
-     "months_reporting": 3
+     "section": "GOLCONDA",
+     "division": "84",
+     "bookings": 1014,
+     "delivered": 867,
+     "shortfall": 147,
+     "months_reporting": 4
     },
     {
-     "section": "MEDIPALLY",
-     "division": "74",
-     "bookings": 1030,
-     "delivered": 913,
-     "shortfall": 117,
-     "months_reporting": 3
-    },
-    {
-     "section": "EAST ANANDBAGH",
-     "division": "72",
-     "bookings": 1023,
-     "delivered": 968,
-     "shortfall": 55,
-     "months_reporting": 3
-    },
-    {
-     "section": "SULEMAN NAGAR",
-     "division": "79",
-     "bookings": 1016,
-     "delivered": 947,
-     "shortfall": 69,
-     "months_reporting": 3
-    },
-    {
-     "section": "JAGATHGIRI GUTTA",
-     "division": "93",
-     "bookings": 1011,
-     "delivered": 820,
-     "shortfall": 191,
-     "months_reporting": 3
-    },
-    {
-     "section": "TURKAPALLY",
-     "division": "71",
-     "bookings": 998,
-     "delivered": 810,
-     "shortfall": 188,
-     "months_reporting": 3
+     "section": "KARMIKA NAGAR",
+     "division": "86",
+     "bookings": 1007,
+     "delivered": 907,
+     "shortfall": 100,
+     "months_reporting": 4
     },
     {
      "section": "MOOSAPET (NEW)",
@@ -4559,6 +4631,22 @@
      "months_reporting": 3
     },
     {
+     "section": "VENKATESHWARA NAGAR",
+     "division": "91",
+     "bookings": 994,
+     "delivered": 547,
+     "shortfall": 447,
+     "months_reporting": 4
+    },
+    {
+     "section": "SURARAM",
+     "division": "93",
+     "bookings": 981,
+     "delivered": 749,
+     "shortfall": 232,
+     "months_reporting": 4
+    },
+    {
      "section": "SAROORNAGAR (NEW)",
      "division": "75",
      "bookings": 977,
@@ -4567,12 +4655,28 @@
      "months_reporting": 3
     },
     {
-     "section": "SHANTI NAGAR",
-     "division": "84",
-     "bookings": 953,
-     "delivered": 833,
-     "shortfall": 120,
-     "months_reporting": 3
+     "section": "BAKARAM",
+     "division": "87",
+     "bookings": 969,
+     "delivered": 880,
+     "shortfall": 89,
+     "months_reporting": 4
+    },
+    {
+     "section": "VENKAT REDDY NAGAR",
+     "division": "74",
+     "bookings": 956,
+     "delivered": 672,
+     "shortfall": 284,
+     "months_reporting": 4
+    },
+    {
+     "section": "PET BASHEERABAD",
+     "division": "93",
+     "bookings": 955,
+     "delivered": 858,
+     "shortfall": 97,
+     "months_reporting": 4
     },
     {
      "section": "RAMNAGAR (NEW)",
@@ -4591,12 +4695,20 @@
      "months_reporting": 3
     },
     {
-     "section": "SAIBABA NAGAR",
-     "division": "93",
-     "bookings": 947,
-     "delivered": 746,
-     "shortfall": 201,
-     "months_reporting": 3
+     "section": "BN REDDY NAGAR",
+     "division": "76",
+     "bookings": 941,
+     "delivered": 818,
+     "shortfall": 123,
+     "months_reporting": 4
+    },
+    {
+     "section": "ADIKMET",
+     "division": "87",
+     "bookings": 940,
+     "delivered": 878,
+     "shortfall": 62,
+     "months_reporting": 4
     },
     {
      "section": "NEREDMET (NEW)",
@@ -4607,36 +4719,28 @@
      "months_reporting": 3
     },
     {
-     "section": "UPPAL",
-     "division": "74",
-     "bookings": 916,
-     "delivered": 631,
-     "shortfall": 285,
-     "months_reporting": 3
+     "section": "DOCTORS COLONY",
+     "division": "75",
+     "bookings": 929,
+     "delivered": 834,
+     "shortfall": 95,
+     "months_reporting": 4
     },
     {
-     "section": "BAGH LINGAMPALLY",
-     "division": "87",
-     "bookings": 916,
-     "delivered": 884,
-     "shortfall": 32,
-     "months_reporting": 3
+     "section": "MALKAJGIRI",
+     "division": "72",
+     "bookings": 913,
+     "delivered": 824,
+     "shortfall": 89,
+     "months_reporting": 4
     },
     {
-     "section": "VENKATESHWARA NAGAR",
-     "division": "91",
-     "bookings": 915,
-     "delivered": 491,
-     "shortfall": 424,
-     "months_reporting": 3
-    },
-    {
-     "section": "TOLICHOWKI",
-     "division": "84",
-     "bookings": 914,
-     "delivered": 796,
-     "shortfall": 118,
-     "months_reporting": 3
+     "section": "HIGH COURT COLONY",
+     "division": "76",
+     "bookings": 911,
+     "delivered": 791,
+     "shortfall": 120,
+     "months_reporting": 4
     },
     {
      "section": "FILM NAGAR (OLD)",
@@ -4647,12 +4751,20 @@
      "months_reporting": 2
     },
     {
-     "section": "AKBERBAGH",
-     "division": "82",
-     "bookings": 902,
-     "delivered": 882,
-     "shortfall": 20,
-     "months_reporting": 3
+     "section": "VIVEKANANDA NAGAR COLONY",
+     "division": "91",
+     "bookings": 896,
+     "delivered": 631,
+     "shortfall": 265,
+     "months_reporting": 4
+    },
+    {
+     "section": "ADDAGUTTA",
+     "division": "88",
+     "bookings": 893,
+     "delivered": 875,
+     "shortfall": 18,
+     "months_reporting": 4
     },
     {
      "section": "SHAPUR NAGAR (NEW)",
@@ -4663,28 +4775,12 @@
      "months_reporting": 2
     },
     {
-     "section": "SURARAM",
-     "division": "93",
-     "bookings": 879,
-     "delivered": 650,
-     "shortfall": 229,
-     "months_reporting": 3
-    },
-    {
-     "section": "VENKAT REDDY NAGAR",
-     "division": "74",
-     "bookings": 872,
-     "delivered": 596,
-     "shortfall": 276,
-     "months_reporting": 3
-    },
-    {
-     "section": "KARMIKA NAGAR",
-     "division": "86",
-     "bookings": 862,
-     "delivered": 786,
-     "shortfall": 76,
-     "months_reporting": 3
+     "section": "KAVADIGUDA",
+     "division": "87",
+     "bookings": 860,
+     "delivered": 745,
+     "shortfall": 115,
+     "months_reporting": 4
     },
     {
      "section": "TARNAKA (OLD)",
@@ -4701,6 +4797,14 @@
      "delivered": 850,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "BOWRAMPET",
+     "division": "94",
+     "bookings": 847,
+     "delivered": 661,
+     "shortfall": 186,
+     "months_reporting": 4
     },
     {
      "section": "BODUPPAL (DIV 19) (OLD)",
@@ -4743,30 +4847,6 @@
      "months_reporting": 3
     },
     {
-     "section": "HIGH COURT COLONY",
-     "division": "76",
-     "bookings": 829,
-     "delivered": 715,
-     "shortfall": 114,
-     "months_reporting": 3
-    },
-    {
-     "section": "ADIKMET",
-     "division": "87",
-     "bookings": 822,
-     "delivered": 765,
-     "shortfall": 57,
-     "months_reporting": 3
-    },
-    {
-     "section": "GOLCONDA",
-     "division": "84",
-     "bookings": 820,
-     "delivered": 717,
-     "shortfall": 103,
-     "months_reporting": 3
-    },
-    {
      "section": "KARMANGHAT (NEW)",
      "division": "76",
      "bookings": 817,
@@ -4796,14 +4876,6 @@
      "bookings": 802,
      "delivered": 802,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "BAKARAM",
-     "division": "87",
-     "bookings": 802,
-     "delivered": 723,
-     "shortfall": 79,
      "months_reporting": 3
     },
     {
@@ -4847,20 +4919,12 @@
      "months_reporting": 3
     },
     {
-     "section": "DOCTORS COLONY",
-     "division": "75",
-     "bookings": 771,
-     "delivered": 688,
-     "shortfall": 83,
-     "months_reporting": 3
-    },
-    {
-     "section": "ADDAGUTTA",
-     "division": "88",
-     "bookings": 771,
+     "section": "PRASHANTHI HILLS",
+     "division": "77",
+     "bookings": 770,
      "delivered": 756,
-     "shortfall": 15,
-     "months_reporting": 3
+     "shortfall": 14,
+     "months_reporting": 4
     },
     {
      "section": "HASMATHPET (OLD)",
@@ -4879,12 +4943,12 @@
      "months_reporting": 3
     },
     {
-     "section": "BN REDDY NAGAR",
-     "division": "76",
-     "bookings": 765,
-     "delivered": 649,
-     "shortfall": 116,
-     "months_reporting": 3
+     "section": "KHAIRATABAD",
+     "division": "85",
+     "bookings": 768,
+     "delivered": 720,
+     "shortfall": 48,
+     "months_reporting": 4
     },
     {
      "section": "CHILKALGUDA (NEW)",
@@ -4895,20 +4959,20 @@
      "months_reporting": 2
     },
     {
-     "section": "MALKAJGIRI",
-     "division": "72",
-     "bookings": 751,
-     "delivered": 674,
-     "shortfall": 77,
-     "months_reporting": 3
-    },
-    {
      "section": "KARMIKA NAGAR (NEW)",
      "division": "86",
      "bookings": 748,
      "delivered": 743,
      "shortfall": 5,
      "months_reporting": 3
+    },
+    {
+     "section": "HASMATHPET",
+     "division": "72",
+     "bookings": 748,
+     "delivered": 691,
+     "shortfall": 57,
+     "months_reporting": 4
     },
     {
      "section": "KAKATIYA NAGAR (OLD)",
@@ -4927,12 +4991,12 @@
      "months_reporting": 2
     },
     {
-     "section": "KAVADIGUDA",
-     "division": "87",
-     "bookings": 730,
-     "delivered": 622,
-     "shortfall": 108,
-     "months_reporting": 3
+     "section": "EXHIBITION GROUNDS",
+     "division": "83",
+     "bookings": 732,
+     "delivered": 685,
+     "shortfall": 47,
+     "months_reporting": 4
     },
     {
      "section": "BALAPUR (OLD)",
@@ -4951,20 +5015,12 @@
      "months_reporting": 2
     },
     {
-     "section": "VIVEKANANDA NAGAR COLONY",
-     "division": "91",
-     "bookings": 719,
-     "delivered": 459,
-     "shortfall": 260,
-     "months_reporting": 3
-    },
-    {
-     "section": "HASMATHPET",
-     "division": "72",
-     "bookings": 704,
-     "delivered": 648,
-     "shortfall": 56,
-     "months_reporting": 3
+     "section": "CHAMPAPET",
+     "division": "76",
+     "bookings": 701,
+     "delivered": 652,
+     "shortfall": 49,
+     "months_reporting": 4
     },
     {
      "section": "ASMANGARH (OLD)",
@@ -4981,6 +5037,30 @@
      "delivered": 694,
      "shortfall": 6,
      "months_reporting": 2
+    },
+    {
+     "section": "HABSIGUDA",
+     "division": "74",
+     "bookings": 700,
+     "delivered": 637,
+     "shortfall": 63,
+     "months_reporting": 4
+    },
+    {
+     "section": "KOTHAPET",
+     "division": "75",
+     "bookings": 698,
+     "delivered": 598,
+     "shortfall": 100,
+     "months_reporting": 4
+    },
+    {
+     "section": "KUSHAIGUDA",
+     "division": "73",
+     "bookings": 695,
+     "delivered": 635,
+     "shortfall": 60,
+     "months_reporting": 4
     },
     {
      "section": "LINGOJIGUDA (NEW)",
@@ -5007,6 +5087,14 @@
      "months_reporting": 3
     },
     {
+     "section": "BEGUMPET",
+     "division": "86",
+     "bookings": 688,
+     "delivered": 655,
+     "shortfall": 33,
+     "months_reporting": 4
+    },
+    {
      "section": "BOIGUDA (OLD)",
      "division": "7",
      "bookings": 666,
@@ -5015,19 +5103,19 @@
      "months_reporting": 3
     },
     {
+     "section": "GOSHAMAHAL",
+     "division": "83",
+     "bookings": 666,
+     "delivered": 563,
+     "shortfall": 103,
+     "months_reporting": 4
+    },
+    {
      "section": "MARUTHINAGAR (DIV 10) (OLD)",
      "division": "10",
      "bookings": 661,
      "delivered": 660,
      "shortfall": 1,
-     "months_reporting": 3
-    },
-    {
-     "section": "BOWRAMPET",
-     "division": "94",
-     "bookings": 659,
-     "delivered": 517,
-     "shortfall": 142,
      "months_reporting": 3
     },
     {
@@ -5047,12 +5135,12 @@
      "months_reporting": 2
     },
     {
-     "section": "PRASHANTHI HILLS",
-     "division": "77",
-     "bookings": 641,
-     "delivered": 630,
-     "shortfall": 11,
-     "months_reporting": 3
+     "section": "PRASHANTH NAGAR",
+     "division": "92",
+     "bookings": 643,
+     "delivered": 360,
+     "shortfall": 283,
+     "months_reporting": 4
     },
     {
      "section": "SAROORNAGAR (OLD)",
@@ -5060,14 +5148,6 @@
      "bookings": 639,
      "delivered": 639,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "PET BASHEERABAD",
-     "division": "93",
-     "bookings": 636,
-     "delivered": 571,
-     "shortfall": 65,
      "months_reporting": 3
     },
     {
@@ -5111,14 +5191,6 @@
      "months_reporting": 3
     },
     {
-     "section": "EXHIBITION GROUNDS",
-     "division": "83",
-     "bookings": 625,
-     "delivered": 583,
-     "shortfall": 42,
-     "months_reporting": 3
-    },
-    {
      "section": "ATTAPUR (OLD)",
      "division": "16",
      "bookings": 624,
@@ -5127,12 +5199,12 @@
      "months_reporting": 4
     },
     {
-     "section": "CHAMPAPET",
-     "division": "76",
-     "bookings": 622,
-     "delivered": 578,
-     "shortfall": 44,
-     "months_reporting": 3
+     "section": "DABEERPURA",
+     "division": "81",
+     "bookings": 621,
+     "delivered": 616,
+     "shortfall": 5,
+     "months_reporting": 4
     },
     {
      "section": "GOUTHAM NAGAR (NEW)",
@@ -5143,12 +5215,12 @@
      "months_reporting": 3
     },
     {
-     "section": "KOTHAPET",
-     "division": "75",
-     "bookings": 619,
-     "delivered": 522,
-     "shortfall": 97,
-     "months_reporting": 3
+     "section": "NALLAKUNTA",
+     "division": "87",
+     "bookings": 614,
+     "delivered": 570,
+     "shortfall": 44,
+     "months_reporting": 4
     },
     {
      "section": "YAPRAL (NEW)",
@@ -5156,14 +5228,6 @@
      "bookings": 611,
      "delivered": 611,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "HABSIGUDA",
-     "division": "74",
-     "bookings": 609,
-     "delivered": 550,
-     "shortfall": 59,
      "months_reporting": 3
     },
     {
@@ -5215,12 +5279,12 @@
      "months_reporting": 3
     },
     {
-     "section": "KHAIRATABAD",
-     "division": "85",
-     "bookings": 589,
-     "delivered": 543,
-     "shortfall": 46,
-     "months_reporting": 3
+     "section": "ASIF NAGAR",
+     "division": "84",
+     "bookings": 590,
+     "delivered": 418,
+     "shortfall": 172,
+     "months_reporting": 4
     },
     {
      "section": "ADIKMET (NEW)",
@@ -5228,14 +5292,6 @@
      "bookings": 585,
      "delivered": 553,
      "shortfall": 32,
-     "months_reporting": 3
-    },
-    {
-     "section": "GOSHAMAHAL",
-     "division": "83",
-     "bookings": 585,
-     "delivered": 490,
-     "shortfall": 95,
      "months_reporting": 3
     },
     {
@@ -5247,27 +5303,11 @@
      "months_reporting": 4
     },
     {
-     "section": "PRASHANTH NAGAR",
-     "division": "92",
-     "bookings": 574,
-     "delivered": 299,
-     "shortfall": 275,
-     "months_reporting": 3
-    },
-    {
      "section": "MALLAPUR (NEW)",
      "division": "74",
      "bookings": 573,
      "delivered": 573,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "BEGUMPET",
-     "division": "86",
-     "bookings": 573,
-     "delivered": 541,
-     "shortfall": 32,
      "months_reporting": 3
     },
     {
@@ -5295,6 +5335,14 @@
      "months_reporting": 3
     },
     {
+     "section": "FATEH NAGAR",
+     "division": "72",
+     "bookings": 550,
+     "delivered": 497,
+     "shortfall": 53,
+     "months_reporting": 4
+    },
+    {
      "section": "DR AS RAO NAGAR (NEW)",
      "division": "73",
      "bookings": 549,
@@ -5303,12 +5351,20 @@
      "months_reporting": 3
     },
     {
-     "section": "DABEERPURA",
-     "division": "81",
+     "section": "BAPUJI NAGAR",
+     "division": "87",
      "bookings": 543,
-     "delivered": 538,
-     "shortfall": 5,
-     "months_reporting": 3
+     "delivered": 495,
+     "shortfall": 48,
+     "months_reporting": 4
+    },
+    {
+     "section": "GIRI NAGAR",
+     "division": "93",
+     "bookings": 542,
+     "delivered": 443,
+     "shortfall": 99,
+     "months_reporting": 4
     },
     {
      "section": "MOULALI (NEW)",
@@ -5327,12 +5383,28 @@
      "months_reporting": 3
     },
     {
-     "section": "NALLAKUNTA",
-     "division": "87",
-     "bookings": 536,
-     "delivered": 508,
-     "shortfall": 28,
-     "months_reporting": 3
+     "section": "HB COLONY",
+     "division": "74",
+     "bookings": 541,
+     "delivered": 505,
+     "shortfall": 36,
+     "months_reporting": 4
+    },
+    {
+     "section": "SERILINGAMPALLY",
+     "division": "90",
+     "bookings": 535,
+     "delivered": 484,
+     "shortfall": 51,
+     "months_reporting": 4
+    },
+    {
+     "section": "SYED NAGAR",
+     "division": "84",
+     "bookings": 532,
+     "delivered": 478,
+     "shortfall": 54,
+     "months_reporting": 4
     },
     {
      "section": "SUCHITRA (OLD)",
@@ -5340,14 +5412,6 @@
      "bookings": 530,
      "delivered": 530,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "KUSHAIGUDA",
-     "division": "73",
-     "bookings": 525,
-     "delivered": 484,
-     "shortfall": 41,
      "months_reporting": 3
     },
     {
@@ -5383,14 +5447,6 @@
      "months_reporting": 3
     },
     {
-     "section": "BAPUJI NAGAR",
-     "division": "87",
-     "bookings": 512,
-     "delivered": 465,
-     "shortfall": 47,
-     "months_reporting": 3
-    },
-    {
      "section": "ELECTRICAL AND MECHANICAL (OLD)",
      "division": "17",
      "bookings": 510,
@@ -5415,12 +5471,28 @@
      "months_reporting": 3
     },
     {
+     "section": "CHANDU LAL BARADARI",
+     "division": "80",
+     "bookings": 500,
+     "delivered": 402,
+     "shortfall": 98,
+     "months_reporting": 4
+    },
+    {
      "section": "GOSHAMAHAL (NEW)",
      "division": "84",
      "bookings": 498,
      "delivered": 490,
      "shortfall": 8,
      "months_reporting": 3
+    },
+    {
+     "section": "KANAJIGUDA",
+     "division": "71",
+     "bookings": 497,
+     "delivered": 415,
+     "shortfall": 82,
+     "months_reporting": 4
     },
     {
      "section": "CHENGICHERLA (NEW)",
@@ -5431,6 +5503,14 @@
      "months_reporting": 2
     },
     {
+     "section": "BAGH AMBERPET",
+     "division": "87",
+     "bookings": 495,
+     "delivered": 458,
+     "shortfall": 37,
+     "months_reporting": 4
+    },
+    {
      "section": "MUSHEERABAD (OLD)",
      "division": "5",
      "bookings": 494,
@@ -5439,20 +5519,20 @@
      "months_reporting": 4
     },
     {
-     "section": "GIRI NAGAR",
-     "division": "93",
-     "bookings": 488,
-     "delivered": 392,
-     "shortfall": 96,
-     "months_reporting": 3
+     "section": "SAIDABAD",
+     "division": "82",
+     "bookings": 489,
+     "delivered": 475,
+     "shortfall": 14,
+     "months_reporting": 4
     },
     {
-     "section": "FATEH NAGAR",
-     "division": "72",
-     "bookings": 485,
-     "delivered": 450,
-     "shortfall": 35,
-     "months_reporting": 3
+     "section": "LECTURERS COLONY",
+     "division": "75",
+     "bookings": 488,
+     "delivered": 410,
+     "shortfall": 78,
+     "months_reporting": 4
     },
     {
      "section": "VENKATESHWARA NAGAR (NEW)",
@@ -5463,20 +5543,28 @@
      "months_reporting": 2
     },
     {
+     "section": "BEERAPPAGADDA",
+     "division": "74",
+     "bookings": 478,
+     "delivered": 383,
+     "shortfall": 95,
+     "months_reporting": 4
+    },
+    {
+     "section": "RANGA REDDY NAGAR",
+     "division": "93",
+     "bookings": 478,
+     "delivered": 350,
+     "shortfall": 128,
+     "months_reporting": 4
+    },
+    {
      "section": "GUNFOUNDRY (OLD)",
      "division": "4",
      "bookings": 475,
      "delivered": 475,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "SERILINGAMPALLY",
-     "division": "90",
-     "bookings": 472,
-     "delivered": 426,
-     "shortfall": 46,
-     "months_reporting": 3
     },
     {
      "section": "MALLEPALLY (NEW)",
@@ -5487,12 +5575,12 @@
      "months_reporting": 2
     },
     {
-     "section": "SYED NAGAR",
+     "section": "AHMED NAGAR",
      "division": "84",
-     "bookings": 463,
-     "delivered": 419,
-     "shortfall": 44,
-     "months_reporting": 3
+     "bookings": 468,
+     "delivered": 362,
+     "shortfall": 106,
+     "months_reporting": 4
     },
     {
      "section": "KUKATPALLY (OLD)",
@@ -5500,14 +5588,6 @@
      "bookings": 462,
      "delivered": 462,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "BAGH AMBERPET",
-     "division": "87",
-     "bookings": 455,
-     "delivered": 423,
-     "shortfall": 32,
      "months_reporting": 3
     },
     {
@@ -5519,12 +5599,12 @@
      "months_reporting": 2
     },
     {
-     "section": "HB COLONY",
-     "division": "74",
-     "bookings": 453,
-     "delivered": 423,
-     "shortfall": 30,
-     "months_reporting": 3
+     "section": "RAMGOPALPET",
+     "division": "87",
+     "bookings": 452,
+     "delivered": 420,
+     "shortfall": 32,
+     "months_reporting": 4
     },
     {
      "section": "ALWAL (DIV13) (OLD)",
@@ -5543,20 +5623,20 @@
      "months_reporting": 2
     },
     {
-     "section": "RANGA REDDY NAGAR",
-     "division": "93",
-     "bookings": 448,
-     "delivered": 323,
-     "shortfall": 125,
-     "months_reporting": 3
-    },
-    {
      "section": "BEGUMPET (NEW)",
      "division": "86",
      "bookings": 447,
      "delivered": 447,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "CHINTALKUNTA",
+     "division": "76",
+     "bookings": 447,
+     "delivered": 338,
+     "shortfall": 109,
+     "months_reporting": 4
     },
     {
      "section": "KAPRA (NEW)",
@@ -5583,20 +5663,28 @@
      "months_reporting": 3
     },
     {
-     "section": "CHINTALKUNTA",
-     "division": "76",
-     "bookings": 423,
-     "delivered": 321,
-     "shortfall": 102,
-     "months_reporting": 3
+     "section": "PADMANABHA NAGAR",
+     "division": "84",
+     "bookings": 431,
+     "delivered": 377,
+     "shortfall": 54,
+     "months_reporting": 4
     },
     {
-     "section": "SAIDABAD",
-     "division": "82",
+     "section": "TEMPLE ALWAL",
+     "division": "71",
+     "bookings": 425,
+     "delivered": 377,
+     "shortfall": 48,
+     "months_reporting": 4
+    },
+    {
+     "section": "TILAK NAGAR",
+     "division": "87",
      "bookings": 422,
-     "delivered": 408,
-     "shortfall": 14,
-     "months_reporting": 3
+     "delivered": 387,
+     "shortfall": 35,
+     "months_reporting": 4
     },
     {
      "section": "BAKARAM (NEW)",
@@ -5607,20 +5695,12 @@
      "months_reporting": 2
     },
     {
-     "section": "AHMED NAGAR",
-     "division": "84",
-     "bookings": 414,
-     "delivered": 324,
-     "shortfall": 90,
-     "months_reporting": 3
-    },
-    {
-     "section": "ASIF NAGAR",
-     "division": "84",
-     "bookings": 414,
-     "delivered": 323,
-     "shortfall": 91,
-     "months_reporting": 3
+     "section": "OLD MALAKPET",
+     "division": "82",
+     "bookings": 415,
+     "delivered": 389,
+     "shortfall": 26,
+     "months_reporting": 4
     },
     {
      "section": "NACHARAM (OLD)",
@@ -5647,12 +5727,12 @@
      "months_reporting": 3
     },
     {
-     "section": "LECTURERS COLONY",
-     "division": "75",
-     "bookings": 409,
-     "delivered": 334,
-     "shortfall": 75,
-     "months_reporting": 3
+     "section": "CHERLAPALLY",
+     "division": "73",
+     "bookings": 410,
+     "delivered": 361,
+     "shortfall": 49,
+     "months_reporting": 4
     },
     {
      "section": "PADMANABHA NAGAR (NEW)",
@@ -5663,6 +5743,14 @@
      "months_reporting": 2
     },
     {
+     "section": "GUDIMALKAPUR",
+     "division": "83",
+     "bookings": 402,
+     "delivered": 321,
+     "shortfall": 81,
+     "months_reporting": 4
+    },
+    {
      "section": "BOUDHA NAGAR (NEW)",
      "division": "88",
      "bookings": 400,
@@ -5671,20 +5759,20 @@
      "months_reporting": 2
     },
     {
-     "section": "RAMGOPALPET",
+     "section": "BANSILALPET",
      "division": "87",
-     "bookings": 398,
-     "delivered": 369,
-     "shortfall": 29,
-     "months_reporting": 3
+     "bookings": 392,
+     "delivered": 361,
+     "shortfall": 31,
+     "months_reporting": 4
     },
     {
-     "section": "KANAJIGUDA",
-     "division": "71",
-     "bookings": 395,
-     "delivered": 333,
-     "shortfall": 62,
-     "months_reporting": 3
+     "section": "MALLEPALLY",
+     "division": "84",
+     "bookings": 390,
+     "delivered": 353,
+     "shortfall": 37,
+     "months_reporting": 4
     },
     {
      "section": "PRAKASHNAGAR (OLD)",
@@ -5709,6 +5797,14 @@
      "delivered": 378,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "BALANAGAR",
+     "division": "92",
+     "bookings": 378,
+     "delivered": 356,
+     "shortfall": 22,
+     "months_reporting": 4
     },
     {
      "section": "NACHARAM (NEW)",
@@ -5743,14 +5839,6 @@
      "months_reporting": 3
     },
     {
-     "section": "TILAK NAGAR",
-     "division": "87",
-     "bookings": 364,
-     "delivered": 346,
-     "shortfall": 18,
-     "months_reporting": 3
-    },
-    {
      "section": "GOLNAKA (NEW)",
      "division": "87",
      "bookings": 362,
@@ -5773,6 +5861,14 @@
      "delivered": 359,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "NIZAM COLONY",
+     "division": "84",
+     "bookings": 353,
+     "delivered": 259,
+     "shortfall": 94,
+     "months_reporting": 4
     },
     {
      "section": "CHAMPAPET (NEW)",
@@ -5799,28 +5895,12 @@
      "months_reporting": 2
     },
     {
-     "section": "GUDIMALKAPUR",
-     "division": "83",
-     "bookings": 344,
-     "delivered": 275,
-     "shortfall": 69,
-     "months_reporting": 3
-    },
-    {
-     "section": "MALLEPALLY",
-     "division": "84",
-     "bookings": 343,
-     "delivered": 311,
-     "shortfall": 32,
-     "months_reporting": 3
-    },
-    {
-     "section": "BALANAGAR",
-     "division": "92",
-     "bookings": 342,
-     "delivered": 327,
-     "shortfall": 15,
-     "months_reporting": 3
+     "section": "BAIRAMALGUDA",
+     "division": "76",
+     "bookings": 341,
+     "delivered": 312,
+     "shortfall": 29,
+     "months_reporting": 4
     },
     {
      "section": "RAMANTHAPUR(DIV 14) (OLD)",
@@ -5829,14 +5909,6 @@
      "delivered": 340,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "CHANDU LAL BARADARI",
-     "division": "80",
-     "bookings": 340,
-     "delivered": 265,
-     "shortfall": 75,
-     "months_reporting": 3
     },
     {
      "section": "S.P.R HILLS (OLD)",
@@ -5855,14 +5927,6 @@
      "months_reporting": 2
     },
     {
-     "section": "PADMANABHA NAGAR",
-     "division": "84",
-     "bookings": 332,
-     "delivered": 296,
-     "shortfall": 36,
-     "months_reporting": 3
-    },
-    {
      "section": "BAGH AMBERPET (NEW)",
      "division": "87",
      "bookings": 328,
@@ -5871,36 +5935,12 @@
      "months_reporting": 2
     },
     {
-     "section": "TEMPLE ALWAL",
-     "division": "71",
-     "bookings": 327,
-     "delivered": 296,
-     "shortfall": 31,
-     "months_reporting": 3
-    },
-    {
-     "section": "CHERLAPALLY",
-     "division": "73",
-     "bookings": 326,
-     "delivered": 293,
-     "shortfall": 33,
-     "months_reporting": 3
-    },
-    {
-     "section": "OLD MALAKPET",
-     "division": "82",
-     "bookings": 323,
-     "delivered": 301,
-     "shortfall": 22,
-     "months_reporting": 3
-    },
-    {
-     "section": "BANSILALPET",
+     "section": "GOLNAKA",
      "division": "87",
-     "bookings": 323,
-     "delivered": 295,
-     "shortfall": 28,
-     "months_reporting": 3
+     "bookings": 327,
+     "delivered": 303,
+     "shortfall": 24,
+     "months_reporting": 4
     },
     {
      "section": "RED HILLS HIGH LEVEL (OLD)",
@@ -5959,20 +5999,12 @@
      "months_reporting": 3
     },
     {
-     "section": "BAIRAMALGUDA",
+     "section": "HAYATHNAGAR",
      "division": "76",
-     "bookings": 307,
-     "delivered": 279,
-     "shortfall": 28,
-     "months_reporting": 3
-    },
-    {
-     "section": "BEERAPPAGADDA",
-     "division": "74",
-     "bookings": 305,
-     "delivered": 213,
-     "shortfall": 92,
-     "months_reporting": 3
+     "bookings": 303,
+     "delivered": 260,
+     "shortfall": 43,
+     "months_reporting": 4
     },
     {
      "section": "MACHABOLLARAM (OLD)",
@@ -6063,12 +6095,12 @@
      "months_reporting": 2
     },
     {
-     "section": "GOLNAKA",
-     "division": "87",
+     "section": "VAMPUGUDA",
+     "division": "73",
      "bookings": 273,
-     "delivered": 256,
-     "shortfall": 17,
-     "months_reporting": 3
+     "delivered": 237,
+     "shortfall": 36,
+     "months_reporting": 4
     },
     {
      "section": "CHERLAPALLY (OLD)",
@@ -6079,6 +6111,14 @@
      "months_reporting": 3
     },
     {
+     "section": "SHASTRIPURAM",
+     "division": "79",
+     "bookings": 271,
+     "delivered": 239,
+     "shortfall": 32,
+     "months_reporting": 4
+    },
+    {
      "section": "GIRI NAGAR (NEW)",
      "division": "93",
      "bookings": 270,
@@ -6087,12 +6127,12 @@
      "months_reporting": 2
     },
     {
-     "section": "NIZAM COLONY",
-     "division": "84",
-     "bookings": 270,
-     "delivered": 204,
-     "shortfall": 66,
-     "months_reporting": 3
+     "section": "CHILKANAGAR",
+     "division": "74",
+     "bookings": 265,
+     "delivered": 172,
+     "shortfall": 93,
+     "months_reporting": 4
     },
     {
      "section": "BARKATPURA (OLD)",
@@ -6101,6 +6141,14 @@
      "delivered": 264,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "VENKATAPURAM",
+     "division": "71",
+     "bookings": 263,
+     "delivered": 232,
+     "shortfall": 31,
+     "months_reporting": 4
     },
     {
      "section": "ZIAGUDA (NEW)",
@@ -6140,6 +6188,14 @@
      "bookings": 253,
      "delivered": 252,
      "shortfall": 1,
+     "months_reporting": 4
+    },
+    {
+     "section": "VINAYAK NAGAR",
+     "division": "72",
+     "bookings": 251,
+     "delivered": 224,
+     "shortfall": 27,
      "months_reporting": 4
     },
     {
@@ -6199,6 +6255,22 @@
      "months_reporting": 2
     },
     {
+     "section": "BHUDEVI NAGAR",
+     "division": "71",
+     "bookings": 245,
+     "delivered": 160,
+     "shortfall": 85,
+     "months_reporting": 4
+    },
+    {
+     "section": "ZIAGUDA",
+     "division": "83",
+     "bookings": 245,
+     "delivered": 199,
+     "shortfall": 46,
+     "months_reporting": 4
+    },
+    {
      "section": "CHANUKYAPURI (OLD)",
      "division": "13",
      "bookings": 240,
@@ -6223,12 +6295,12 @@
      "months_reporting": 2
     },
     {
-     "section": "HAYATHNAGAR",
-     "division": "76",
-     "bookings": 234,
-     "delivered": 194,
-     "shortfall": 40,
-     "months_reporting": 3
+     "section": "AZAMPURA",
+     "division": "82",
+     "bookings": 235,
+     "delivered": 228,
+     "shortfall": 7,
+     "months_reporting": 4
     },
     {
      "section": "ADDAGUTTA (NEW)",
@@ -6239,28 +6311,12 @@
      "months_reporting": 2
     },
     {
-     "section": "BHUDEVI NAGAR",
-     "division": "71",
+     "section": "HMT NAGAR",
+     "division": "74",
      "bookings": 229,
-     "delivered": 146,
-     "shortfall": 83,
-     "months_reporting": 3
-    },
-    {
-     "section": "SHASTRIPURAM",
-     "division": "79",
-     "bookings": 229,
-     "delivered": 206,
-     "shortfall": 23,
-     "months_reporting": 3
-    },
-    {
-     "section": "ZIAGUDA",
-     "division": "83",
-     "bookings": 227,
-     "delivered": 189,
-     "shortfall": 38,
-     "months_reporting": 3
+     "delivered": 216,
+     "shortfall": 13,
+     "months_reporting": 4
     },
     {
      "section": "KARWAN (OLD)",
@@ -6271,12 +6327,12 @@
      "months_reporting": 4
     },
     {
-     "section": "VAMPUGUDA",
-     "division": "73",
+     "section": "BANDLAGUDA",
+     "division": "80",
      "bookings": 219,
-     "delivered": 187,
-     "shortfall": 32,
-     "months_reporting": 3
+     "delivered": 195,
+     "shortfall": 24,
+     "months_reporting": 4
     },
     {
      "section": "SAIBABA NAGAR (OLD)",
@@ -6295,12 +6351,12 @@
      "months_reporting": 2
     },
     {
-     "section": "AZAMPURA",
-     "division": "82",
-     "bookings": 214,
-     "delivered": 207,
-     "shortfall": 7,
-     "months_reporting": 3
+     "section": "JILLELAGUDA",
+     "division": "77",
+     "bookings": 211,
+     "delivered": 182,
+     "shortfall": 29,
+     "months_reporting": 4
     },
     {
      "section": "SAIDABAD (NEW)",
@@ -6309,14 +6365,6 @@
      "delivered": 208,
      "shortfall": 2,
      "months_reporting": 2
-    },
-    {
-     "section": "CHILKANAGAR",
-     "division": "74",
-     "bookings": 210,
-     "delivered": 125,
-     "shortfall": 85,
-     "months_reporting": 3
     },
     {
      "section": "CHANDU LAL BARADARI (NEW)",
@@ -6335,20 +6383,36 @@
      "months_reporting": 3
     },
     {
-     "section": "VENKATAPURAM",
-     "division": "71",
-     "bookings": 200,
-     "delivered": 175,
-     "shortfall": 25,
-     "months_reporting": 3
+     "section": "RODAMESTRI NAGAR",
+     "division": "93",
+     "bookings": 205,
+     "delivered": 144,
+     "shortfall": 61,
+     "months_reporting": 4
     },
     {
-     "section": "VINAYAK NAGAR",
-     "division": "72",
+     "section": "IBRAHIMBAGH",
+     "division": "84",
+     "bookings": 204,
+     "delivered": 86,
+     "shortfall": 118,
+     "months_reporting": 4
+    },
+    {
+     "section": "NAGOLE",
+     "division": "75",
+     "bookings": 203,
+     "delivered": 133,
+     "shortfall": 70,
+     "months_reporting": 4
+    },
+    {
+     "section": "MAILARDEVPALLY",
+     "division": "79",
      "bookings": 199,
-     "delivered": 176,
-     "shortfall": 23,
-     "months_reporting": 3
+     "delivered": 178,
+     "shortfall": 21,
+     "months_reporting": 4
     },
     {
      "section": "SRINIVAS NAGAR (OLD)",
@@ -6391,6 +6455,14 @@
      "months_reporting": 2
     },
     {
+     "section": "BHARATHI NAGAR",
+     "division": "89",
+     "bookings": 190,
+     "delivered": 180,
+     "shortfall": 10,
+     "months_reporting": 4
+    },
+    {
      "section": "VENKATAPURAM (OLD)",
      "division": "13",
      "bookings": 188,
@@ -6404,14 +6476,6 @@
      "bookings": 188,
      "delivered": 188,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "RODAMESTRI NAGAR",
-     "division": "93",
-     "bookings": 187,
-     "delivered": 130,
-     "shortfall": 57,
      "months_reporting": 3
     },
     {
@@ -6429,14 +6493,6 @@
      "delivered": 185,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "NAGOLE",
-     "division": "75",
-     "bookings": 184,
-     "delivered": 121,
-     "shortfall": 63,
-     "months_reporting": 3
     },
     {
      "section": "MANSOORABAD (OLD)",
@@ -6495,28 +6551,12 @@
      "months_reporting": 2
     },
     {
-     "section": "HMT NAGAR",
-     "division": "74",
-     "bookings": 178,
-     "delivered": 167,
-     "shortfall": 11,
-     "months_reporting": 3
-    },
-    {
-     "section": "JILLELAGUDA",
-     "division": "77",
-     "bookings": 178,
-     "delivered": 155,
-     "shortfall": 23,
-     "months_reporting": 3
-    },
-    {
-     "section": "BANDLAGUDA",
-     "division": "80",
-     "bookings": 178,
-     "delivered": 165,
-     "shortfall": 13,
-     "months_reporting": 3
+     "section": "PRAKASH NAGAR",
+     "division": "72",
+     "bookings": 175,
+     "delivered": 158,
+     "shortfall": 17,
+     "months_reporting": 4
     },
     {
      "section": "IBRAHIMBAGH (NEW)",
@@ -6527,19 +6567,19 @@
      "months_reporting": 2
     },
     {
-     "section": "MAILARDEVPALLY",
-     "division": "79",
-     "bookings": 169,
-     "delivered": 150,
-     "shortfall": 19,
-     "months_reporting": 3
-    },
-    {
      "section": "LINGOJIGUDA (OLD)",
      "division": "10",
      "bookings": 166,
      "delivered": 166,
      "shortfall": 0,
+     "months_reporting": 4
+    },
+    {
+     "section": "BALRAM NAGAR",
+     "division": "72",
+     "bookings": 166,
+     "delivered": 147,
+     "shortfall": 19,
      "months_reporting": 4
     },
     {
@@ -6559,6 +6599,14 @@
      "months_reporting": 2
     },
     {
+     "section": "BHANU NAGAR",
+     "division": "82",
+     "bookings": 164,
+     "delivered": 164,
+     "shortfall": 0,
+     "months_reporting": 4
+    },
+    {
      "section": "NALLAGANDLA (DIV 15) (OLD)",
      "division": "15",
      "bookings": 163,
@@ -6567,20 +6615,20 @@
      "months_reporting": 2
     },
     {
-     "section": "IBRAHIMBAGH",
-     "division": "84",
-     "bookings": 163,
-     "delivered": 65,
-     "shortfall": 98,
-     "months_reporting": 3
-    },
-    {
      "section": "LECTURERS COLONY (NEW)",
      "division": "75",
      "bookings": 160,
      "delivered": 160,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "PURANI HAVELI",
+     "division": "81",
+     "bookings": 160,
+     "delivered": 155,
+     "shortfall": 5,
+     "months_reporting": 4
     },
     {
      "section": "REGIMENTAL BAZAR (OLD)",
@@ -6599,12 +6647,36 @@
      "months_reporting": 3
     },
     {
+     "section": "CHAWANI",
+     "division": "82",
+     "bookings": 159,
+     "delivered": 154,
+     "shortfall": 5,
+     "months_reporting": 4
+    },
+    {
+     "section": "KARWAN",
+     "division": "83",
+     "bookings": 158,
+     "delivered": 141,
+     "shortfall": 17,
+     "months_reporting": 4
+    },
+    {
      "section": "KATEDAN (NEW)",
      "division": "79",
      "bookings": 156,
      "delivered": 156,
      "shortfall": 0,
      "months_reporting": 3
+    },
+    {
+     "section": "KATEDAN",
+     "division": "79",
+     "bookings": 155,
+     "delivered": 139,
+     "shortfall": 16,
+     "months_reporting": 4
     },
     {
      "section": "GODE-KI-KABAR (OLD)",
@@ -6631,6 +6703,14 @@
      "months_reporting": 2
     },
     {
+     "section": "KOKAPET",
+     "division": "90",
+     "bookings": 144,
+     "delivered": 139,
+     "shortfall": 5,
+     "months_reporting": 4
+    },
+    {
      "section": "ADIKMET (OLD)",
      "division": "5",
      "bookings": 143,
@@ -6639,20 +6719,12 @@
      "months_reporting": 2
     },
     {
-     "section": "PURANI HAVELI",
-     "division": "81",
-     "bookings": 142,
-     "delivered": 137,
-     "shortfall": 5,
-     "months_reporting": 3
-    },
-    {
-     "section": "CHAWANI",
-     "division": "82",
-     "bookings": 142,
-     "delivered": 137,
-     "shortfall": 5,
-     "months_reporting": 3
+     "section": "JAMBAGH",
+     "division": "83",
+     "bookings": 143,
+     "delivered": 131,
+     "shortfall": 12,
+     "months_reporting": 4
     },
     {
      "section": "KACHIGUDA (NEW)",
@@ -6679,22 +6751,6 @@
      "months_reporting": 2
     },
     {
-     "section": "PRAKASH NAGAR",
-     "division": "72",
-     "bookings": 139,
-     "delivered": 124,
-     "shortfall": 15,
-     "months_reporting": 3
-    },
-    {
-     "section": "KARWAN",
-     "division": "83",
-     "bookings": 139,
-     "delivered": 125,
-     "shortfall": 14,
-     "months_reporting": 3
-    },
-    {
      "section": "USHODAYA (OLD)",
      "division": "12",
      "bookings": 138,
@@ -6719,12 +6775,12 @@
      "months_reporting": 2
     },
     {
-     "section": "BHARATHI NAGAR",
-     "division": "89",
-     "bookings": 137,
-     "delivered": 128,
-     "shortfall": 9,
-     "months_reporting": 3
+     "section": "LANGAR HOUZ",
+     "division": "83",
+     "bookings": 138,
+     "delivered": 62,
+     "shortfall": 76,
+     "months_reporting": 4
     },
     {
      "section": "PRAKASH NAGAR (NEW)",
@@ -6743,14 +6799,6 @@
      "months_reporting": 2
     },
     {
-     "section": "BHANU NAGAR",
-     "division": "82",
-     "bookings": 135,
-     "delivered": 135,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
      "section": "GOWLIGUDA (OLD)",
      "division": "4",
      "bookings": 134,
@@ -6759,20 +6807,12 @@
      "months_reporting": 2
     },
     {
-     "section": "BALRAM NAGAR",
-     "division": "72",
-     "bookings": 132,
-     "delivered": 114,
-     "shortfall": 18,
-     "months_reporting": 3
-    },
-    {
-     "section": "JAMBAGH",
-     "division": "83",
-     "bookings": 131,
-     "delivered": 119,
-     "shortfall": 12,
-     "months_reporting": 3
+     "section": "MCH COLONY",
+     "division": "82",
+     "bookings": 134,
+     "delivered": 126,
+     "shortfall": 8,
+     "months_reporting": 4
     },
     {
      "section": "JILLELAGUDA (NEW)",
@@ -6789,22 +6829,6 @@
      "delivered": 129,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "KATEDAN",
-     "division": "79",
-     "bookings": 127,
-     "delivered": 113,
-     "shortfall": 14,
-     "months_reporting": 3
-    },
-    {
-     "section": "KOKAPET",
-     "division": "90",
-     "bookings": 126,
-     "delivered": 122,
-     "shortfall": 4,
-     "months_reporting": 3
     },
     {
      "section": "LANGAR HOUZ (NEW)",
@@ -6855,12 +6879,12 @@
      "months_reporting": 3
     },
     {
-     "section": "LANGAR HOUZ",
-     "division": "83",
-     "bookings": 121,
-     "delivered": 60,
-     "shortfall": 61,
-     "months_reporting": 3
+     "section": "NORTH LALAGUDA",
+     "division": "88",
+     "bookings": 120,
+     "delivered": 104,
+     "shortfall": 16,
+     "months_reporting": 4
     },
     {
      "section": "HINDI NAGAR (OLD)",
@@ -6887,20 +6911,36 @@
      "months_reporting": 2
     },
     {
+     "section": "MEERPET",
+     "division": "77",
+     "bookings": 116,
+     "delivered": 98,
+     "shortfall": 18,
+     "months_reporting": 4
+    },
+    {
+     "section": "NADARGUL",
+     "division": "77",
+     "bookings": 116,
+     "delivered": 104,
+     "shortfall": 12,
+     "months_reporting": 4
+    },
+    {
+     "section": "KACHIGUDA",
+     "division": "87",
+     "bookings": 114,
+     "delivered": 89,
+     "shortfall": 25,
+     "months_reporting": 4
+    },
+    {
      "section": "DABEERPURA (NEW)",
      "division": "81",
      "bookings": 113,
      "delivered": 113,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "KACHIGUDA",
-     "division": "87",
-     "bookings": 111,
-     "delivered": 86,
-     "shortfall": 25,
-     "months_reporting": 3
     },
     {
      "section": "MAILERDEV PALLY (OLD)",
@@ -6917,14 +6957,6 @@
      "delivered": 107,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "MCH COLONY",
-     "division": "82",
-     "bookings": 107,
-     "delivered": 100,
-     "shortfall": 7,
-     "months_reporting": 3
     },
     {
      "section": "BEERAMGUDA (NEW)",
@@ -6951,20 +6983,20 @@
      "months_reporting": 4
     },
     {
-     "section": "NORTH LALAGUDA",
-     "division": "88",
+     "section": "BHOLAKPUR",
+     "division": "87",
      "bookings": 98,
-     "delivered": 83,
-     "shortfall": 15,
-     "months_reporting": 3
+     "delivered": 90,
+     "shortfall": 8,
+     "months_reporting": 4
     },
     {
-     "section": "NADARGUL",
-     "division": "77",
-     "bookings": 96,
-     "delivered": 86,
-     "shortfall": 10,
-     "months_reporting": 3
+     "section": "LALAPET",
+     "division": "88",
+     "bookings": 97,
+     "delivered": 84,
+     "shortfall": 13,
+     "months_reporting": 4
     },
     {
      "section": "BHUDEVI NAGAR (NEW)",
@@ -6983,12 +7015,12 @@
      "months_reporting": 4
     },
     {
-     "section": "MEERPET",
-     "division": "77",
-     "bookings": 89,
-     "delivered": 76,
-     "shortfall": 13,
-     "months_reporting": 3
+     "section": "AMBERPET",
+     "division": "87",
+     "bookings": 88,
+     "delivered": 73,
+     "shortfall": 15,
+     "months_reporting": 4
     },
     {
      "section": "HUSSAINSAGAR (OLD)",
@@ -7047,20 +7079,20 @@
      "months_reporting": 2
     },
     {
-     "section": "AMBERPET",
-     "division": "87",
+     "section": "AMEENPUR",
+     "division": "89",
      "bookings": 79,
-     "delivered": 67,
-     "shortfall": 12,
-     "months_reporting": 3
+     "delivered": 79,
+     "shortfall": 0,
+     "months_reporting": 4
     },
     {
-     "section": "BHOLAKPUR",
-     "division": "87",
-     "bookings": 79,
-     "delivered": 72,
-     "shortfall": 7,
-     "months_reporting": 3
+     "section": "NAGARAM",
+     "division": "73",
+     "bookings": 78,
+     "delivered": 23,
+     "shortfall": 55,
+     "months_reporting": 4
     },
     {
      "section": "B.N.REDDY NAGAR (OLD)",
@@ -7077,6 +7109,14 @@
      "delivered": 76,
      "shortfall": 1,
      "months_reporting": 2
+    },
+    {
+     "section": "BEERAMGUDA",
+     "division": "89",
+     "bookings": 77,
+     "delivered": 76,
+     "shortfall": 1,
+     "months_reporting": 4
     },
     {
      "section": "OLD MALLEPALLY (OLD)",
@@ -7101,14 +7141,6 @@
      "delivered": 76,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "LALAPET",
-     "division": "88",
-     "bookings": 76,
-     "delivered": 70,
-     "shortfall": 6,
-     "months_reporting": 3
     },
     {
      "section": "CHANCHALGUDA (OLD)",
@@ -7143,14 +7175,6 @@
      "months_reporting": 2
     },
     {
-     "section": "AMEENPUR",
-     "division": "89",
-     "bookings": 68,
-     "delivered": 68,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
      "section": "HMT NAGAR (NEW)",
      "division": "74",
      "bookings": 67,
@@ -7175,12 +7199,12 @@
      "months_reporting": 2
     },
     {
-     "section": "BEERAMGUDA",
-     "division": "89",
+     "section": "NOORI NAGAR",
+     "division": "80",
      "bookings": 67,
-     "delivered": 66,
-     "shortfall": 1,
-     "months_reporting": 3
+     "delivered": 60,
+     "shortfall": 7,
+     "months_reporting": 4
     },
     {
      "section": "BHOLAKPUR (NEW)",
@@ -7189,6 +7213,22 @@
      "delivered": 63,
      "shortfall": 3,
      "months_reporting": 2
+    },
+    {
+     "section": "GANDIPET",
+     "division": "90",
+     "bookings": 66,
+     "delivered": 60,
+     "shortfall": 6,
+     "months_reporting": 4
+    },
+    {
+     "section": "PATEL NAGAR",
+     "division": "87",
+     "bookings": 65,
+     "delivered": 40,
+     "shortfall": 25,
+     "months_reporting": 4
     },
     {
      "section": "GANDIPET (NEW)",
@@ -7215,12 +7255,12 @@
      "months_reporting": 2
     },
     {
-     "section": "PATEL NAGAR",
-     "division": "87",
-     "bookings": 60,
-     "delivered": 38,
-     "shortfall": 22,
-     "months_reporting": 3
+     "section": "HARI BOWLI",
+     "division": "81",
+     "bookings": 62,
+     "delivered": 57,
+     "shortfall": 5,
+     "months_reporting": 4
     },
     {
      "section": "MALAKPET (OLD)",
@@ -7239,12 +7279,20 @@
      "months_reporting": 3
     },
     {
-     "section": "NOORI NAGAR",
+     "section": "FALAKNUMA",
      "division": "80",
      "bookings": 57,
-     "delivered": 54,
-     "shortfall": 3,
-     "months_reporting": 3
+     "delivered": 52,
+     "shortfall": 5,
+     "months_reporting": 4
+    },
+    {
+     "section": "BAHADURPALLY",
+     "division": "94",
+     "bookings": 57,
+     "delivered": 57,
+     "shortfall": 0,
+     "months_reporting": 4
     },
     {
      "section": "AMEENPUR (PD 8) (OLD)",
@@ -7253,30 +7301,6 @@
      "delivered": 56,
      "shortfall": 0,
      "months_reporting": 4
-    },
-    {
-     "section": "HARI BOWLI",
-     "division": "81",
-     "bookings": 55,
-     "delivered": 52,
-     "shortfall": 3,
-     "months_reporting": 3
-    },
-    {
-     "section": "NAGARAM",
-     "division": "73",
-     "bookings": 54,
-     "delivered": 21,
-     "shortfall": 33,
-     "months_reporting": 3
-    },
-    {
-     "section": "FALAKNUMA",
-     "division": "80",
-     "bookings": 53,
-     "delivered": 50,
-     "shortfall": 3,
-     "months_reporting": 3
     },
     {
      "section": "MCH COLONY (NEW)",
@@ -7311,12 +7335,12 @@
      "months_reporting": 3
     },
     {
-     "section": "GANDIPET",
-     "division": "90",
+     "section": "QUADRI CHAMAN",
+     "division": "80",
      "bookings": 48,
-     "delivered": 43,
-     "shortfall": 5,
-     "months_reporting": 3
+     "delivered": 38,
+     "shortfall": 10,
+     "months_reporting": 4
     },
     {
      "section": "NALLAGUTTA (OLD)",
@@ -7335,19 +7359,19 @@
      "months_reporting": 2
     },
     {
+     "section": "PATHERGATTI",
+     "division": "81",
+     "bookings": 47,
+     "delivered": 45,
+     "shortfall": 2,
+     "months_reporting": 4
+    },
+    {
      "section": "BANDLAGUDA (OLD)",
      "division": "8",
      "bookings": 46,
      "delivered": 46,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "QUADRI CHAMAN",
-     "division": "80",
-     "bookings": 46,
-     "delivered": 37,
-     "shortfall": 9,
      "months_reporting": 3
     },
     {
@@ -7375,20 +7399,12 @@
      "months_reporting": 2
     },
     {
-     "section": "PATHERGATTI",
-     "division": "81",
+     "section": "TAPPACHABUTRA",
+     "division": "83",
      "bookings": 45,
-     "delivered": 43,
-     "shortfall": 2,
-     "months_reporting": 3
-    },
-    {
-     "section": "BAHADURPALLY",
-     "division": "94",
-     "bookings": 45,
-     "delivered": 45,
-     "shortfall": 0,
-     "months_reporting": 3
+     "delivered": 14,
+     "shortfall": 31,
+     "months_reporting": 4
     },
     {
      "section": "BADANGPET (NEW)",
@@ -7407,6 +7423,14 @@
      "months_reporting": 2
     },
     {
+     "section": "RAMNASTHPURA",
+     "division": "80",
+     "bookings": 41,
+     "delivered": 35,
+     "shortfall": 6,
+     "months_reporting": 4
+    },
+    {
      "section": "JAWAHARNAGAR (NEW)",
      "division": "71",
      "bookings": 40,
@@ -7415,12 +7439,28 @@
      "months_reporting": 2
     },
     {
-     "section": "TAPPACHABUTRA",
+     "section": "DATTATREYA NAGAR",
      "division": "83",
+     "bookings": 40,
+     "delivered": 10,
+     "shortfall": 30,
+     "months_reporting": 4
+    },
+    {
+     "section": "DAMMAIGUDA",
+     "division": "71",
      "bookings": 37,
-     "delivered": 13,
-     "shortfall": 24,
-     "months_reporting": 3
+     "delivered": 37,
+     "shortfall": 0,
+     "months_reporting": 4
+    },
+    {
+     "section": "JAWAHARNAGAR",
+     "division": "71",
+     "bookings": 37,
+     "delivered": 18,
+     "shortfall": 19,
+     "months_reporting": 4
     },
     {
      "section": "PATEL NAGAR (NEW)",
@@ -7463,14 +7503,6 @@
      "months_reporting": 2
     },
     {
-     "section": "DATTATREYA NAGAR",
-     "division": "83",
-     "bookings": 33,
-     "delivered": 10,
-     "shortfall": 23,
-     "months_reporting": 3
-    },
-    {
      "section": "TAPPA CHABUTRA (OLD)",
      "division": "3",
      "bookings": 32,
@@ -7487,36 +7519,12 @@
      "months_reporting": 3
     },
     {
-     "section": "JAWAHARNAGAR",
-     "division": "71",
-     "bookings": 32,
-     "delivered": 16,
-     "shortfall": 16,
-     "months_reporting": 3
-    },
-    {
      "section": "RIYASAT NAGAR (NEW)",
      "division": "80",
      "bookings": 31,
      "delivered": 31,
      "shortfall": 0,
      "months_reporting": 2
-    },
-    {
-     "section": "DAMMAIGUDA",
-     "division": "71",
-     "bookings": 31,
-     "delivered": 31,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "RAMNASTHPURA",
-     "division": "80",
-     "bookings": 31,
-     "delivered": 25,
-     "shortfall": 6,
-     "months_reporting": 3
     },
     {
      "section": "RAMACHANDRAPURAM (OLD)",
@@ -7527,12 +7535,44 @@
      "months_reporting": 3
     },
     {
+     "section": "EDULABAD",
+     "division": "73",
+     "bookings": 30,
+     "delivered": 23,
+     "shortfall": 7,
+     "months_reporting": 2
+    },
+    {
+     "section": "POCHARAM",
+     "division": "73",
+     "bookings": 30,
+     "delivered": 30,
+     "shortfall": 0,
+     "months_reporting": 4
+    },
+    {
      "section": "PATHERGATTI (NEW)",
      "division": "81",
      "bookings": 29,
      "delivered": 29,
      "shortfall": 0,
      "months_reporting": 2
+    },
+    {
+     "section": "KALA DERA",
+     "division": "82",
+     "bookings": 29,
+     "delivered": 26,
+     "shortfall": 3,
+     "months_reporting": 4
+    },
+    {
+     "section": "BADANGPET",
+     "division": "77",
+     "bookings": 28,
+     "delivered": 17,
+     "shortfall": 11,
+     "months_reporting": 4
     },
     {
      "section": "NAGOLE (OLD)",
@@ -7551,12 +7591,36 @@
      "months_reporting": 2
     },
     {
+     "section": "SAHEBNAGAR",
+     "division": "76",
+     "bookings": 27,
+     "delivered": 18,
+     "shortfall": 9,
+     "months_reporting": 4
+    },
+    {
+     "section": "IS SADAN",
+     "division": "82",
+     "bookings": 27,
+     "delivered": 27,
+     "shortfall": 0,
+     "months_reporting": 2
+    },
+    {
      "section": "NAWAB SAHEB KUNTA (NEW)",
      "division": "80",
      "bookings": 26,
      "delivered": 25,
      "shortfall": 1,
      "months_reporting": 3
+    },
+    {
+     "section": "KISHANBAGH",
+     "division": "80",
+     "bookings": 26,
+     "delivered": 16,
+     "shortfall": 10,
+     "months_reporting": 4
     },
     {
      "section": "GOWLIPURA (NEW)",
@@ -7567,27 +7631,11 @@
      "months_reporting": 2
     },
     {
-     "section": "POCHARAM",
-     "division": "73",
-     "bookings": 25,
-     "delivered": 25,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
      "section": "DARUL SHIFA (OLD)",
      "division": "1",
      "bookings": 24,
      "delivered": 24,
      "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "SAHEBNAGAR",
-     "division": "76",
-     "bookings": 24,
-     "delivered": 15,
-     "shortfall": 9,
      "months_reporting": 3
     },
     {
@@ -7615,14 +7663,6 @@
      "months_reporting": 2
     },
     {
-     "section": "KALA DERA",
-     "division": "82",
-     "bookings": 22,
-     "delivered": 19,
-     "shortfall": 3,
-     "months_reporting": 3
-    },
-    {
      "section": "BAHADURPALLY (NEW)",
      "division": "94",
      "bookings": 21,
@@ -7637,6 +7677,22 @@
      "delivered": 21,
      "shortfall": 0,
      "months_reporting": 1
+    },
+    {
+     "section": "MADANNAPET",
+     "division": "81",
+     "bookings": 21,
+     "delivered": 18,
+     "shortfall": 3,
+     "months_reporting": 4
+    },
+    {
+     "section": "SARASWATI NAGAR",
+     "division": "82",
+     "bookings": 21,
+     "delivered": 20,
+     "shortfall": 1,
+     "months_reporting": 4
     },
     {
      "section": "MANGHALHAT",
@@ -7671,22 +7727,6 @@
      "months_reporting": 2
     },
     {
-     "section": "EDULABAD",
-     "division": "73",
-     "bookings": 20,
-     "delivered": 13,
-     "shortfall": 7,
-     "months_reporting": 1
-    },
-    {
-     "section": "KISHANBAGH",
-     "division": "80",
-     "bookings": 20,
-     "delivered": 12,
-     "shortfall": 8,
-     "months_reporting": 3
-    },
-    {
      "section": "MADANNAPET (OLD)",
      "division": "2",
      "bookings": 19,
@@ -7711,19 +7751,11 @@
      "months_reporting": 2
     },
     {
-     "section": "BADANGPET",
-     "division": "77",
-     "bookings": 19,
-     "delivered": 12,
-     "shortfall": 7,
-     "months_reporting": 3
-    },
-    {
-     "section": "MADANNAPET",
+     "section": "GHANSI BAZAR",
      "division": "81",
      "bookings": 19,
-     "delivered": 16,
-     "shortfall": 3,
+     "delivered": 14,
+     "shortfall": 5,
      "months_reporting": 3
     },
     {
@@ -7743,20 +7775,20 @@
      "months_reporting": 2
     },
     {
-     "section": "GHANSI BAZAR",
-     "division": "81",
-     "bookings": 18,
-     "delivered": 14,
-     "shortfall": 4,
-     "months_reporting": 2
-    },
-    {
      "section": "RAMACHANDRAPURAM (RC PURAM) (NEW)",
      "division": "89",
      "bookings": 17,
      "delivered": 17,
      "shortfall": 0,
      "months_reporting": 2
+    },
+    {
+     "section": "PEDDA AMBERPET",
+     "division": "75",
+     "bookings": 17,
+     "delivered": 16,
+     "shortfall": 1,
+     "months_reporting": 4
     },
     {
      "section": "CHERLAPALLY (NEW)",
@@ -7767,12 +7799,12 @@
      "months_reporting": 2
     },
     {
-     "section": "PEDDA AMBERPET",
-     "division": "75",
+     "section": "SHAHEEN NAGAR",
+     "division": "78",
      "bookings": 16,
-     "delivered": 15,
-     "shortfall": 1,
-     "months_reporting": 3
+     "delivered": 16,
+     "shortfall": 0,
+     "months_reporting": 4
     },
     {
      "section": "CHANUDLAL BHARADARI (OLD)",
@@ -7783,11 +7815,11 @@
      "months_reporting": 2
     },
     {
-     "section": "SHAHEEN NAGAR",
-     "division": "78",
+     "section": "LALITHA BAGH",
+     "division": "80",
      "bookings": 15,
-     "delivered": 15,
-     "shortfall": 0,
+     "delivered": 4,
+     "shortfall": 11,
      "months_reporting": 3
     },
     {
@@ -7797,6 +7829,14 @@
      "delivered": 14,
      "shortfall": 0,
      "months_reporting": 2
+    },
+    {
+     "section": "THORRUR",
+     "division": "77",
+     "bookings": 14,
+     "delivered": 14,
+     "shortfall": 0,
+     "months_reporting": 4
     },
     {
      "section": "RIYASAT NAGAR",
@@ -7823,12 +7863,28 @@
      "months_reporting": 2
     },
     {
-     "section": "SARASWATI NAGAR",
+     "section": "SANTOSH NAGAR",
      "division": "82",
      "bookings": 13,
      "delivered": 13,
      "shortfall": 0,
-     "months_reporting": 3
+     "months_reporting": 4
+    },
+    {
+     "section": "BOLLARAM",
+     "division": "89",
+     "bookings": 13,
+     "delivered": 9,
+     "shortfall": 4,
+     "months_reporting": 4
+    },
+    {
+     "section": "RAMACHANDRAPURAM (RC PURAM)",
+     "division": "89",
+     "bookings": 13,
+     "delivered": 12,
+     "shortfall": 1,
+     "months_reporting": 4
     },
     {
      "section": "PEDDA AMBERPET (NEW)",
@@ -7845,14 +7901,6 @@
      "delivered": 7,
      "shortfall": 5,
      "months_reporting": 3
-    },
-    {
-     "section": "IS SADAN",
-     "division": "82",
-     "bookings": 12,
-     "delivered": 12,
-     "shortfall": 0,
-     "months_reporting": 1
     },
     {
      "section": "DAMMAIGUDA (NEW)",
@@ -7879,14 +7927,6 @@
      "months_reporting": 2
     },
     {
-     "section": "SANTOSH NAGAR",
-     "division": "82",
-     "bookings": 11,
-     "delivered": 11,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
      "section": "EDULABAD (NEW)",
      "division": "73",
      "bookings": 10,
@@ -7903,20 +7943,12 @@
      "months_reporting": 1
     },
     {
-     "section": "LALITHA BAGH",
-     "division": "80",
+     "section": "QAZIPURA",
+     "division": "81",
      "bookings": 10,
-     "delivered": 2,
-     "shortfall": 8,
-     "months_reporting": 2
-    },
-    {
-     "section": "BOLLARAM",
-     "division": "89",
-     "bookings": 10,
-     "delivered": 9,
-     "shortfall": 1,
-     "months_reporting": 3
+     "delivered": 10,
+     "shortfall": 0,
+     "months_reporting": 4
     },
     {
      "section": "PEDDA AMBERPET (PD 1) (OLD)",
@@ -7999,36 +8031,12 @@
      "months_reporting": 2
     },
     {
-     "section": "THORRUR",
-     "division": "77",
-     "bookings": 9,
-     "delivered": 9,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
      "section": "PHOOL BAGH",
      "division": "80",
      "bookings": 9,
      "delivered": 5,
      "shortfall": 4,
      "months_reporting": 2
-    },
-    {
-     "section": "QAZIPURA",
-     "division": "81",
-     "bookings": 9,
-     "delivered": 9,
-     "shortfall": 0,
-     "months_reporting": 3
-    },
-    {
-     "section": "RAMACHANDRAPURAM (RC PURAM)",
-     "division": "89",
-     "bookings": 9,
-     "delivered": 9,
-     "shortfall": 0,
-     "months_reporting": 3
     },
     {
      "section": "DATTATREYA NAGAR (NEW)",
@@ -8087,6 +8095,22 @@
      "months_reporting": 2
     },
     {
+     "section": "BARKAS",
+     "division": "80",
+     "bookings": 7,
+     "delivered": 6,
+     "shortfall": 1,
+     "months_reporting": 2
+    },
+    {
+     "section": "NAWAB SAHEB KUNTA",
+     "division": "80",
+     "bookings": 7,
+     "delivered": 5,
+     "shortfall": 2,
+     "months_reporting": 4
+    },
+    {
      "section": "TEEGAL KUNTA",
      "division": "80",
      "bookings": 7,
@@ -8143,12 +8167,12 @@
      "months_reporting": 2
     },
     {
-     "section": "BARKAS",
-     "division": "80",
+     "section": "SHAMIRPET",
+     "division": "71",
      "bookings": 6,
      "delivered": 6,
      "shortfall": 0,
-     "months_reporting": 1
+     "months_reporting": 3
     },
     {
      "section": "PURANA PUL (NEW)",
@@ -8173,14 +8197,6 @@
      "delivered": 4,
      "shortfall": 1,
      "months_reporting": 2
-    },
-    {
-     "section": "NAWAB SAHEB KUNTA",
-     "division": "80",
-     "bookings": 5,
-     "delivered": 5,
-     "shortfall": 0,
-     "months_reporting": 3
     },
     {
      "section": "YAKUTPURA",
@@ -8247,12 +8263,12 @@
      "months_reporting": 2
     },
     {
-     "section": "SHAMIRPET",
-     "division": "71",
+     "section": "PAHADI SHAREEF",
+     "division": "78",
      "bookings": 4,
      "delivered": 4,
      "shortfall": 0,
-     "months_reporting": 2
+     "months_reporting": 3
     },
     {
      "section": "THUKKUGUDA",
@@ -8261,6 +8277,30 @@
      "delivered": 4,
      "shortfall": 0,
      "months_reporting": 1
+    },
+    {
+     "section": "DOOLAPALLY",
+     "division": "93",
+     "bookings": 4,
+     "delivered": 4,
+     "shortfall": 0,
+     "months_reporting": 2
+    },
+    {
+     "section": "DOODH BOWLI",
+     "division": "80",
+     "bookings": 4,
+     "delivered": 3,
+     "shortfall": 1,
+     "months_reporting": 2
+    },
+    {
+     "section": "SHAH ALI BANDA",
+     "division": "80",
+     "bookings": 4,
+     "delivered": 0,
+     "shortfall": 4,
+     "months_reporting": 2
     },
     {
      "section": "JANGAMMET (OLD)",
@@ -8327,11 +8367,35 @@
      "months_reporting": 3
     },
     {
+     "section": "CHANDRAYANGUTTA",
+     "division": "80",
+     "bookings": 3,
+     "delivered": 2,
+     "shortfall": 1,
+     "months_reporting": 3
+    },
+    {
+     "section": "PURANA PUL",
+     "division": "81",
+     "bookings": 3,
+     "delivered": 2,
+     "shortfall": 1,
+     "months_reporting": 3
+    },
+    {
      "section": "KEESARA",
      "division": "71",
      "bookings": 3,
      "delivered": 2,
      "shortfall": 1,
+     "months_reporting": 1
+    },
+    {
+     "section": "KANCHANBAGH",
+     "division": "80",
+     "bookings": 3,
+     "delivered": 1,
+     "shortfall": 2,
      "months_reporting": 1
     },
     {
@@ -8380,54 +8444,6 @@
      "bookings": 2,
      "delivered": 2,
      "shortfall": 0,
-     "months_reporting": 1
-    },
-    {
-     "section": "PAHADI SHAREEF",
-     "division": "78",
-     "bookings": 2,
-     "delivered": 2,
-     "shortfall": 0,
-     "months_reporting": 2
-    },
-    {
-     "section": "CHANDRAYANGUTTA",
-     "division": "80",
-     "bookings": 2,
-     "delivered": 1,
-     "shortfall": 1,
-     "months_reporting": 2
-    },
-    {
-     "section": "PURANA PUL",
-     "division": "81",
-     "bookings": 2,
-     "delivered": 1,
-     "shortfall": 1,
-     "months_reporting": 2
-    },
-    {
-     "section": "DOOLAPALLY",
-     "division": "93",
-     "bookings": 2,
-     "delivered": 2,
-     "shortfall": 0,
-     "months_reporting": 1
-    },
-    {
-     "section": "DOODH BOWLI",
-     "division": "80",
-     "bookings": 2,
-     "delivered": 1,
-     "shortfall": 1,
-     "months_reporting": 1
-    },
-    {
-     "section": "SHAH ALI BANDA",
-     "division": "80",
-     "bookings": 2,
-     "delivered": 0,
-     "shortfall": 2,
      "months_reporting": 1
     },
     {
@@ -8581,62 +8597,76 @@
      "delivered": 1,
      "shortfall": 0,
      "months_reporting": 1
+    },
+    {
+     "section": "SHAMSHABAD",
+     "division": "78",
+     "bookings": 1,
+     "delivered": 1,
+     "shortfall": 0,
+     "months_reporting": 1
     }
    ],
    "divisions": [
     {
      "division": "90",
-     "bookings": 277820,
-     "delivered": 269997,
+     "bookings": 312276,
+     "delivered": 303063,
      "sections": 34
     },
     {
      "division": "91",
-     "bookings": 175684,
-     "delivered": 164690,
+     "bookings": 197924,
+     "delivered": 184763,
      "sections": 24
     },
     {
      "division": "86",
-     "bookings": 124134,
-     "delivered": 118011,
+     "bookings": 134987,
+     "delivered": 128326,
      "sections": 30
     },
     {
      "division": "92",
-     "bookings": 119322,
-     "delivered": 112457,
+     "bookings": 132258,
+     "delivered": 124729,
      "sections": 22
     },
     {
      "division": "85",
-     "bookings": 115388,
-     "delivered": 112445,
+     "bookings": 126621,
+     "delivered": 123245,
      "sections": 20
     },
     {
      "division": "15",
-     "bookings": 85770,
-     "delivered": 85001,
+     "bookings": 85773,
+     "delivered": 85003,
      "sections": 6
     },
     {
      "division": "94",
-     "bookings": 69092,
-     "delivered": 65930,
+     "bookings": 77521,
+     "delivered": 73597,
      "sections": 13
     },
     {
      "division": "79",
-     "bookings": 62780,
-     "delivered": 57805,
+     "bookings": 71607,
+     "delivered": 66041,
      "sections": 20
     },
     {
      "division": "93",
-     "bookings": 50909,
-     "delivered": 44533,
+     "bookings": 57620,
+     "delivered": 50755,
      "sections": 33
+    },
+    {
+     "division": "84",
+     "bookings": 54970,
+     "delivered": 51334,
+     "sections": 32
     },
     {
      "division": "6",
@@ -8645,22 +8675,16 @@
      "sections": 12
     },
     {
-     "division": "84",
-     "bookings": 48700,
-     "delivered": 45975,
-     "sections": 32
+     "division": "74",
+     "bookings": 47332,
+     "delivered": 41277,
+     "sections": 30
     },
     {
      "division": "75",
-     "bookings": 42786,
-     "delivered": 39693,
+     "bookings": 46259,
+     "delivered": 43030,
      "sections": 24
-    },
-    {
-     "division": "74",
-     "bookings": 39467,
-     "delivered": 33924,
-     "sections": 30
     },
     {
      "division": "9",
@@ -8670,8 +8694,8 @@
     },
     {
      "division": "87",
-     "bookings": 33058,
-     "delivered": 31239,
+     "bookings": 35770,
+     "delivered": 33789,
      "sections": 40
     },
     {
@@ -8682,9 +8706,21 @@
     },
     {
      "division": "72",
-     "bookings": 23173,
-     "delivered": 22206,
+     "bookings": 26175,
+     "delivered": 25060,
      "sections": 28
+    },
+    {
+     "division": "71",
+     "bookings": 21340,
+     "delivered": 19877,
+     "sections": 24
+    },
+    {
+     "division": "76",
+     "bookings": 20795,
+     "delivered": 19610,
+     "sections": 22
     },
     {
      "division": "17",
@@ -8693,27 +8729,15 @@
      "sections": 6
     },
     {
-     "division": "76",
-     "bookings": 19090,
-     "delivered": 18003,
-     "sections": 22
-    },
-    {
      "division": "22",
      "bookings": 19014,
      "delivered": 19010,
      "sections": 6
     },
     {
-     "division": "71",
-     "bookings": 17931,
-     "delivered": 16651,
-     "sections": 24
-    },
-    {
      "division": "88",
-     "bookings": 14106,
-     "delivered": 13493,
+     "bookings": 15784,
+     "delivered": 15110,
      "sections": 16
     },
     {
@@ -8724,8 +8748,8 @@
     },
     {
      "division": "82",
-     "bookings": 7772,
-     "delivered": 7584,
+     "bookings": 8661,
+     "delivered": 8449,
      "sections": 26
     },
     {
@@ -8736,14 +8760,14 @@
     },
     {
      "division": "83",
-     "bookings": 6176,
-     "delivered": 5624,
+     "bookings": 6714,
+     "delivered": 6063,
      "sections": 22
     },
     {
      "division": "73",
-     "bookings": 5343,
-     "delivered": 5073,
+     "bookings": 6334,
+     "delivered": 5984,
      "sections": 16
     },
     {
@@ -8796,14 +8820,14 @@
     },
     {
      "division": "80",
-     "bookings": 1646,
-     "delivered": 1481,
-     "sections": 37
+     "bookings": 1895,
+     "delivered": 1677,
+     "sections": 38
     },
     {
      "division": "77",
-     "bookings": 1643,
-     "delivered": 1578,
+     "bookings": 1866,
+     "delivered": 1781,
      "sections": 16
     },
     {
@@ -8813,16 +8837,16 @@
      "sections": 8
     },
     {
+     "division": "81",
+     "bookings": 1294,
+     "delivered": 1261,
+     "sections": 24
+    },
+    {
      "division": "2",
      "bookings": 1223,
      "delivered": 1191,
      "sections": 10
-    },
-    {
-     "division": "81",
-     "bookings": 1184,
-     "delivered": 1154,
-     "sections": 24
     },
     {
      "division": "8",
@@ -8832,8 +8856,8 @@
     },
     {
      "division": "89",
-     "bookings": 605,
-     "delivered": 593,
+     "bookings": 686,
+     "delivered": 669,
      "sections": 11
     },
     {
@@ -8850,9 +8874,9 @@
     },
     {
      "division": "78",
-     "bookings": 55,
-     "delivered": 55,
-     "sections": 8
+     "bookings": 59,
+     "delivered": 59,
+     "sections": 9
     },
     {
      "division": "21",

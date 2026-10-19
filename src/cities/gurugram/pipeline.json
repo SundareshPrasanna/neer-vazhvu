@@ -1,0 +1,46 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 28.5,
+      "lng": 77.0,
+      "note": "Gurugram grid point, the 0.25-deg intersection nearest the centroid of MCG's 36-ward extent (28.4360, 77.0560). NOT Delhi's cell: Delhi uses 28.5/77.25, one cell east, and the two series share no annual total in 56 years. SENSITIVITY IS HIGH HERE AND UNRESOLVED. This cell is a local maximum - it returns a 715.0 mm normal-period mean against 512.5 mm one cell west (28.5/76.75) and 534.9 mm one cell south (28.25/77.0), so the choice moves the number by about 40%. Pune resolved the same problem by validating against an IMD observatory normal (Climatological Tables 1991-2020, station index 43063); no equivalent published normal for Gurgaon has been located, so this point is the nearest-intersection default rather than a validated one. Revisit if an IMD Gurgaon normal turns up - the neighbours are already measured above.",
+      "sourceId": "imd-gridded-rainfall-gurugram"
+    },
+    "recent": {
+      "_note": "Gurugram, added 2026-08-20 together with its IMD base series - the condition the old comment here set, and the reason it was held out: this fetcher only fills provisional months AFTER an authoritative base, and `--all` is what the daily workflow runs, so adding a city without one would have turned that job red every day for every city. (28.50, 77.00) is the 0.25-deg grid intersection nearest the centroid of MCG's 36-ward extent (28.4360, 77.0560), and it is NOT Delhi's cell - Delhi uses (28.50, 77.25), one cell east, and the two share no annual total in 56 years. It must match generate_imd_rainfall.py's grid point or the provisional months would continue a different series from the one they are filling; see the CITY_DEFAULTS entry there for why this point is a nearest-intersection default rather than a validated one, and for the ~40% spread against its neighbours.",
+      "lat": 28.5,
+      "lng": 77.0
+    }
+  },
+  "ingres": {
+    "_notes": {
+      "districts": "IN-GRES still spells it GURGAON, the pre-2016 name. Third portal, third vocabulary: India-WRIS says GURUGRAM, LGD says Gurugram, this says GURGAON. Enumerate per portal, never share one spelling map. The neighbours are included because Gurugram's water problem does not stop at the district line: Mewat and Palwal sit on the same aquifer south-east, Rewari and Jhajjar west and north."
+    },
+    "state": "HARYANA",
+    "state_label": "Haryana",
+    "source_id": "ingres-groundwater-haryana",
+    "districts": {
+      "GURGAON": "Gurugram",
+      "MEWAT": "Nuh (Mewat)",
+      "PALWAL": "Palwal",
+      "REWARI": "Rewari",
+      "JHAJJAR": "Jhajjar",
+      "FARIDABAD": "Faridabad"
+    },
+    "notes": [
+      "Gurugram district extracts 194.59% of its annual recharge and is categorised over-exploited. That figure is the primary source for the '~195%' that circulates in secondary write-ups about the city without one.",
+      "Every one of the district's five assessment blocks is over-exploited, and the built city is the worst: GURGAON_URBAN stands at 326.26% of recharge, against PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39 and rural GURGAON 106.91. Haryana as a whole is at 136.75%.",
+      "The neighbouring districts are carried because the aquifer does not stop at the district line, and because Jhajjar being SAFE is what makes the rest legible as a local failure rather than a regional condition. Rewari and Faridabad are over-exploited, Palwal critical, Nuh (Mewat) semi-critical.",
+      "IN-GRES still spells the district GURGAON, the pre-2016 name, where India-WRIS and LGD both say GURUGRAM. Enumerate spellings per portal.",
+      "This assessment is the CURRENT groundwater picture for Gurugram. The measured LEVEL series is not: India-WRIS carries 37 Gurugram stations that stop in June 2020, and the Haryana telemetry network does not cover this district."
+    ]
+  },
+  "surfaceAudit": {
+    "adjudicated": {
+      "origins:Delhi": "Load-bearing and true. Chapter 6 is about Gurugram being upstream of Delhi: its outflow goes to the Najafgarh jheel, then the Najafgarh drain - the Sahibi under another name - and into the Yamuna in Delhi. Removing the word would remove the point.",
+      "about:Delhi": "Load-bearing and true, and the same fact the origins entry below adjudicates. The Origins subsection on the about page says Gurugram's runoff drains north into the Najafgarh jheel and then into Delhi's Najafgarh drain, the Sahibi under another name. Gurugram is upstream of somebody, and that is the point of the chapter - removing the word would remove the only place the page says where the water goes.",
+      "about:chennai": "No visible occurrence. The term appears in markup (a cross-city href) and never in rendered text - checked by printing every match's surrounding context and getting nothing back. Kept as an entry rather than silenced globally so the next reader sees it was adjudicated, not missed."
+    }
+  }
+}

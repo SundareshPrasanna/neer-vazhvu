@@ -147,7 +147,7 @@ export function WardSelector({ onSelect, selectedWard, cityId }: WardSelectorPro
   const wardLabel = useCallback(
     (wardNumber: number): string => {
       const w = wards.find((w) => w.wardNumber === wardNumber);
-      return w
+      return w && !w.zoneless
         ? `${t("ward.ward")} ${w.wardNumber} - ${getZoneLabel(w.zone, language)}`
         : `${t("ward.ward")} ${wardNumber}`;
     },

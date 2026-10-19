@@ -1,0 +1,15 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 17.5,
+      "lng": 78.5,
+      "note": "Hyderabad grid point on the Deccan plateau (city centre 17.43 N, 78.43 E). Landlocked, so none of the coastal ocean-cell trouble Chennai and Mumbai have; 17.5/78.5 is the nearest 0.25-deg intersection and sits inside the GHMC 2022 ward extent (17.29-17.56 N, 78.24-78.62 E)"
+    },
+    "recent": {
+      "_note": "Hyderabad's centroid is the GHMC 2022 ward extent's midpoint. Note that Hyderabad is the one city where this single point is a fallback rather than the best available signal: TGDPS runs 185 AWS rain gauges inside GHMC_CMC_MMC (values.jsp?s1=<awsId>, with lat/long per station), which would give a measured intra-city surface instead of one interpolated cell. Keep this entry as the daily backbone; layer TGDPS over it.",
+      "lat": 17.426,
+      "lng": 78.43
+    }
+  }
+}

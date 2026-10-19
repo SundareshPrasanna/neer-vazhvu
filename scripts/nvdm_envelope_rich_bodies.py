@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -23,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from registry_license import registry_license  # noqa: E402
+from city_manifest import configs  # noqa: E402
 
 # Overture publishes quarterly and the release id IS the evidence vintage, so
 # it is read from the artifact rather than pinned here.
@@ -158,22 +158,7 @@ def scope_kinds() -> dict[str, str]:
     {"mumbai": "region"} on the first pass, which is exactly the kind of
     guess-from-memory the gate exists to catch: Kolkata is a region too and
     twelve artifacts failed. Derive it instead."""
-    kinds: dict[str, str] = {}
-    for cfg in (ROOT / "src/lib/cities").glob("*.ts"):
-        # Strip comments first. hyderabad.ts contains a paragraph explaining why
-        # Hyderabad is NOT a region ("MMR needed placeKind:'region' because...")
-        # and a naive match reads that as the setting, which would mis-scope
-        # every Hyderabad artifact.
-        text = "\n".join(
-            line for line in cfg.read_text().splitlines()
-            if not line.lstrip().startswith("//")
-        )
-        m = re.search(r"cityId:\s*['\"]([a-z-]+)['\"]", text)
-        if not m:
-            continue
-        k = re.search(r"placeKind:\s*['\"]([a-z]+)['\"]", text)
-        kinds[m.group(1)] = k.group(1) if k else "city"
-    return kinds
+    return {cid: c.get("placeKind", "city") for cid, c in configs().items()}
 
 
 def registry_cities() -> dict[str, str]:
@@ -238,6 +223,13 @@ def apply(path: Path, slug: str, city: str, dataset: str, spec: dict, refresh: b
     if not isinstance(doc, dict):
         return False
     if "nvdm" in doc and not refresh:
+        return False
+    # A boundary from an official layer (TNSWA, MRSAC) carries its own envelope; never restamp it as OSM.
+    if (
+        "nvdm" in doc
+        and dataset.startswith("geojson-layers/")
+        and (doc.get("provenance", {}).get("sources") or [{}])[0].get("id") != OSM["id"]
+    ):
         return False
     env = envelope_for(slug, city, dataset, spec, doc)
     merged = {**env, **{k: v for k, v in doc.items() if k not in env}}

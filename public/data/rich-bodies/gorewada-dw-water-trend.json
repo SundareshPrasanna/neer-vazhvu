@@ -1,0 +1,138 @@
+{
+  "nvdm": "1.0",
+  "dataset": "rich-bodies/dw-water-trend",
+  "scope": {
+    "kind": "city",
+    "id": "nagpur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "google-dynamic-world",
+        "title": "Google Dynamic World built-up classification",
+        "publisher": "Google / World Resources Institute",
+        "license": "CC BY 4.0",
+        "role": "input"
+      }
+    ],
+    "method": "gee",
+    "produced_at": "2026-10-15",
+    "produced_by": "scripts/verify_rich_body_dw_water_trend.py",
+    "note": "Extends the JRC v1.4 water trend past its 2021 cutoff; spliced with JRC at 2021/2022 in the panel chart."
+  },
+  "body_id": "gorewada",
+  "computed_at": "2026-10-15T15:31:33.626527+00:00",
+  "data_source": {
+    "dataset": "GOOGLE/DYNAMICWORLD/V1",
+    "license": "CC BY 4.0",
+    "version": "Dynamic World V1",
+    "resolution_m": 10,
+    "revisit_days": "2-5 (Sentinel-2)",
+    "method": "Per-pixel annual MODE label across all DW scenes intersecting the zone; water = class 0",
+    "purpose": "Extends the JRC v1.4 water-trend series past its 2021 cutoff. Spliced with JRC at year 2021/2022 in the rich-body panel chart.",
+    "known_limitations": [
+      "Dynamic World started June 2015; this script covers 2022-present (the JRC gap)",
+      "Current-year is partial (through script run date) - see scene_count + check headline",
+      "Mode aggregation can be noisy in low-scene-count regions; check scene_count column",
+      "Water class includes seasonal flooding + permanent open water + flooded vegetation",
+      "DW is per-image per-pixel; methodology differs from JRC YearlyHistory (annual classifier). Expect small step at the splice year."
+    ]
+  },
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "by_zone": {
+    "Body (primary)": {
+      "2022": {
+        "year": 2022,
+        "scene_count": 87,
+        "water_pixels": 14511,
+        "valid_pixels": 14953,
+        "any_water_pct": 97.04,
+        "any_water_area_ha": 145.11
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 94,
+        "water_pixels": 14537,
+        "valid_pixels": 14953,
+        "any_water_pct": 97.22,
+        "any_water_area_ha": 145.38
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 88,
+        "water_pixels": 14508,
+        "valid_pixels": 14953,
+        "any_water_pct": 97.03,
+        "any_water_area_ha": 145.08
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 102,
+        "water_pixels": 14450,
+        "valid_pixels": 14953,
+        "any_water_pct": 96.64,
+        "any_water_area_ha": 144.5
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 90,
+        "water_pixels": 14524,
+        "valid_pixels": 14953,
+        "any_water_pct": 97.13,
+        "any_water_area_ha": 145.25
+      }
+    },
+    "Halo: 1km buffer - body": {
+      "2022": {
+        "year": 2022,
+        "scene_count": 87,
+        "water_pixels": 907,
+        "valid_pixels": 101827,
+        "any_water_pct": 0.89,
+        "any_water_area_ha": 9.07
+      },
+      "2023": {
+        "year": 2023,
+        "scene_count": 94,
+        "water_pixels": 959,
+        "valid_pixels": 101827,
+        "any_water_pct": 0.94,
+        "any_water_area_ha": 9.6
+      },
+      "2024": {
+        "year": 2024,
+        "scene_count": 88,
+        "water_pixels": 1191,
+        "valid_pixels": 101827,
+        "any_water_pct": 1.17,
+        "any_water_area_ha": 11.91
+      },
+      "2025": {
+        "year": 2025,
+        "scene_count": 102,
+        "water_pixels": 722,
+        "valid_pixels": 101827,
+        "any_water_pct": 0.71,
+        "any_water_area_ha": 7.22
+      },
+      "2026": {
+        "year": 2026,
+        "scene_count": 90,
+        "water_pixels": 1333,
+        "valid_pixels": 101827,
+        "any_water_pct": 1.31,
+        "any_water_area_ha": 13.34
+      }
+    }
+  },
+  "headline_for_v0": [
+    "Body (primary): any-water fraction 97.04% (2022) -> 97.13% (2026), delta +0.09 pp",
+    "Halo: 1km buffer - body: any-water fraction 0.89% (2022) -> 1.31% (2026), delta +0.42 pp"
+  ]
+}

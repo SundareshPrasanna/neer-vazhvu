@@ -1,0 +1,121 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 21.0,
+      "lng": 79.0,
+      "note": "Nagpur grid point: the 0.25-deg intersection nearest IMD's Nagpur (Sonegaon) observatory at 21.10 N, 79.05 E (about 12 km; 21.25/79.0 is about 17 km). The node sits just south of the NMC outline (21.05-21.23 N) and its cell covers the observatory and the south-western part of the city (about 28% of the NMC outline). Checked against the observatory's 1991-2020 normal of 1,151.2 mm (IMD Climatological Tables 1991-2020, station index 42867): see the registry entry imd-gridded-rainfall-nagpur for the cell's own 1991-2020 mean.",
+      "sourceId": "imd-gridded-rainfall-nagpur"
+    },
+    "recent": {
+      "_note": "Nagpur, added together with its IMD base series: generate_imd_rainfall.py's grid point (21.0, 79.0), the cell nearest IMD's Nagpur observatory, not the city centre, so the provisional months continue the same series.",
+      "lat": 21.0,
+      "lng": 79.0
+    }
+  },
+  "ingres": {
+    "_note": "Nagpur drills for the city's own unit, Nagpur (Urban), which IN-GRES publishes from 2023-2024. Every taluka is Safe, so the finding is the unit and its inputs, not a stressed taluka.",
+    "_notes": {
+      "drill.aliases": "Upper-cased spelling in any edition (or the 2021 WFS) -> the 2025-2026 spelling. The pre-2023 NAGPUR unit continues as Nagpur (Rural); see notes.",
+      "drill.wfs": "The 2019 vintage has no city unit: 88.1% of the NMC outline falls in no polygon (geodesic, NMCAdminBoundaries layer 3).",
+      "drill.published": "CGWB, National Compilation on Dynamic Ground Water Resources of India 2025 (cgwb.gov.in/GWRA/GWRA_2025.pdf), Maharashtra district table printed p.161 (PDF p.187) row 19, and printed p.310 (PDF p.336; recharge-worthy 7,990.42 sq km).",
+      "years": "2016-2017 is published for the district only; 2017-2018 and 2020-2021 return a lone empty total row.",
+      "block_caveats": "Per-unit caveats, keyed by display name: the only per-unit text the block panel renders (notes do not reach the page). Saoner and the seven talukas listed after it share one caveat: their only story between editions is the 2024-2025 revision.",
+      "availability_label": "availability_ham is the extractable resource here: the 2024-2025 district row equals CGWB's printed 140,292.87 ham (checked above)."
+    },
+    "state": "MAHARASHTRA",
+    "state_label": "Maharashtra",
+    "source_id": "ingres-groundwater-maharashtra",
+    "drill": {
+      "state": "MAHARASHTRA",
+      "district": "NAGPUR",
+      "district_uuid": "68d0f469-947f-404d-b7d7-dd38c93e6a77",
+      "unit_label": "taluka",
+      "keep_district_total": true,
+      "aliases": {
+        "HINGANA": "HINGNA",
+        "KAMTEE": "KAMPTEE",
+        "MOUDA": "MAUDA",
+        "NAGPUR": "NAGPUR (RURAL)",
+        "NAGPUR RURAL": "NAGPUR (RURAL)",
+        "NAGPUR URBAN": "NAGPUR (URBAN)",
+        "NAGPUR CITY": "NAGPUR (URBAN)"
+      },
+      "names": {
+        "HINGNA": "Hingna",
+        "KAMPTEE": "Kamptee",
+        "MAUDA": "Mauda",
+        "NAGPUR (RURAL)": "Nagpur (Rural)",
+        "NAGPUR (URBAN)": "Nagpur (Urban)"
+      },
+      "wfs": {
+        "layer": "gec:indgec_ver_mahar",
+        "year": 2021
+      },
+      "published": {
+        "2024-2025": {
+          "class": "Safe",
+          "development_pct": 45.68,
+          "availability_ham": 140292.9,
+          "draft_total_ham": 64092.8,
+          "recharge_worthy_area_ha": 799042.0
+        }
+      }
+    },
+    "years": [
+      "2019-2020",
+      "2021-2022",
+      "2022-2023",
+      "2023-2024",
+      "2024-2025",
+      "2025-2026"
+    ],
+    "provenance_note": "Assessment per taluka inside Nagpur district, across every published edition. Drilled below the district for the city's own assessment unit, Nagpur (Urban), published from 2023-2024; every taluka total is Safe. This is not depth to water, which IN-GRES does not carry; measured levels are a separate National Water Data Portal series.",
+    "block_caveats": {
+      "Nagpur (Urban)": "In IN-GRES's 2023-2024 area figures Nagpur (Urban) first appears with 22,457 ha, and three units' assessed areas fall by the same total: Nagpur (Rural) by 6,277 ha, Kamptee by 16,081 ha (all of it canal command area) and Hingna by 99 ha. The 2025-2026 row enters 206 ha of the unit's 22,457 ha as canal command area (16,081 ha the year before); its other figures repeat the 2024-2025 non-command values, so the stage, 54.62%, is in effect that of the non-command part alone (33.10% for the whole unit the year before). The category, Safe in all three editions, is the steadier comparison.",
+      "Nagpur (Rural)": "Published as Nagpur until 2022-2023. Its assessed area fell by 6,277 of 53,525 ha in 2023-2024, the edition in which Nagpur (Urban) first appears, and changed again slightly in 2025-2026 (by 10 ha), so editions before and after 2023-2024 cover different areas.",
+      "Kamptee": "Its assessed area fell by 16,081 of 53,604 ha, all of it canal command area, in 2023-2024, the edition in which Nagpur (Urban) first appears, and changed again slightly in 2025-2026 (by 110 ha), so editions before and after 2023-2024 cover different areas.",
+      "Hingna": "Its assessed area fell by 99 ha in 2023-2024, the edition in which Nagpur (Urban) first appears, and changed again slightly in 2025-2026 (by 409 ha). Its canal command area reads Semi Critical at 87.64% in 2025-2026, while the taluka as a whole is Safe.",
+      "Katol": "Semi Critical in 2019-2020, 2021-2022 and 2022-2023, Safe since. The fall to 47.61% in 2025-2026 comes from a larger extractable resource (12,956 ham to 17,124 ham) with extraction close to flat (7,983 ham to 8,153 ham).",
+      "Saoner": "The highest stage in the district. It moved from Semi Critical to Safe in 2022-2023, when the stage fell from 70.06% to 69.32%, just under the 70% line between the two. In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Narkhed": "The 2024-2025 edition roughly doubled both its extractable resource (9,517 ham to 18,920 ham) and its extraction (6,028 ham to 11,584 ham), so the stage moved little.",
+      "Bhiwapur": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Kalameshwar": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Kuhi": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Mauda": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Parshioni": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Ramtek": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60).",
+      "Umred": "In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%). The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60)."
+    },
+    "availability_label": "Annual extractable resource",
+    "notes": [
+      "Nagpur district is Safe in all six editions, its stage of extraction falling from 51.87% (2019-2020) to 45.30% (2025-2026). Every one of its 14 talukas is Safe on its total in 2025-2026; Saoner is highest at 67.53%. Inside Hingna the canal command area reads Semi Critical (87.64% in 2025-2026) while the taluka total is Safe at 45.05%.",
+      "Nagpur (Urban) is the city's own assessment unit, published from 2023-2024. In IN-GRES's 2023-2024 area figures it first appears with 22,457 ha, and three units' assessed areas fall by the same total between 2022-2023 and 2023-2024: Nagpur 53,525 to 47,248 ha (6,277 ha), Kamptee 53,604 to 37,523 ha (16,081 ha, all of it command area, 47,480 to 31,399 ha) and Hingna 63,414 to 63,315 ha (99 ha). 6,277 + 16,081 + 99 = 22,457. No IN-GRES text calls this a transfer, and IN-GRES's own KAMTEE polygon is unchanged between its 2019 and 2021 vintages (0.43% of the NMC outline lies in it), so the match is in the area figures, not in the mapped outlines. The district total stays at 799,042 ha across the change.",
+      "The 2025-2026 Nagpur (Urban) row is computed on different inputs for an unchanged 22,457 ha. Its command area is entered as 206 ha (16,081 ha in 2024-2025), while its non-command recharge, extractable resource and extraction repeat the 2024-2025 values. Recharge falls 84% (4,847.8 to 783.1 ham) and extraction 73% (1,524.3 to 406.3 ham), so the stage moves from 33.10% to 54.62%, in effect the stage of the non-command part alone. Its printed rainfall, 336.66 mm (1,146.98 mm the year before), is an average over the re-split areas; the non-command rainfall recharge is unchanged (560.69 ham). Quote the category, Safe in all three editions, as the steadier comparison, and do not quote 54.62% without this note. The taluka panel shows the three editions as bars with the unit's history_caveat beside them.",
+      "IN-GRES 2024-2025 equals CGWB's printed report to the decimal. The National Compilation on Dynamic Ground Water Resources of India 2025 (printed p.161, PDF p.187, Maharashtra row 19) gives Nagpur recharge 149,110.10, extractable 140,292.87 and extraction 64,092.79 ham, stage 45.68%, and printed p.208 (PDF p.234) puts all 14 units in Safe. The producer stops if the API stops matching it. A CGWB report for year YYYY covers IN-GRES edition (YYYY-1)-YYYY, so 2025-2026 is not yet in a CGWB report; IN-GRES serves it with the same approval level and verification status as the earlier editions.",
+      "Editions are partly carried-forward and revised inputs, not annual measurement. District domestic extraction is 10,252.49 ham in both 2023-2024 and 2024-2025, agricultural extraction 35,859.92 ham in both 2022-2023 and 2023-2024, and Bhiwapur's domestic extraction 421.00 ham in all six editions. In 2024-2025 IN-GRES raised both recharge and extraction across Nagpur district (recharge by 45%, most of it from recharge structures; extraction by 38%), so the stage barely moved. The State report attributes changes between assessments mainly to refined parameters and well census data, a changing groundwater regime and recharge schemes (Dynamic Ground Water Resources of Maharashtra State 2025, Chapter 7, printed p.60). Katol's fall to 47.61% in 2025-2026 is its extractable resource revised from 12,956 to 17,124 ham with extraction near flat.",
+      "Spellings change between editions and are joined here: HINGANA becomes Hingna, KAMTEE Kamptee, MOUDA Mauda, NAGPUR becomes Nagpur Rural and then Nagpur (Rural), and Nagpur Urban becomes Nagpur (Urban); the 2021 GeoServer layer names the city unit NAGPUR CITY. Carrying the pre-2023 NAGPUR unit on as Nagpur (Rural) is a judgement: its assessed area fell by 6,277 of 53,525 ha in 2023-2024, and Kamptee's by 16,081 of 53,604 ha under an unchanged name, so both series cross an area change in that edition.",
+      "Polygons are the 2021 vintage of IN-GRES's own GeoServer layer, the first with the city as a unit; in the 2019 vintage 88.1% of the NMC outline (NMC GIS, NMCAdminBoundaries layer 3) lies in no unit. The 2021 NAGPUR CITY polygon holds 93.3% of that outline, the rest falling in Nagpur (Rural) 5.5%, Hingna 0.8% and Kamptee 0.4%. They are revenue-taluka outlines (989,861 ha in all, geodesic), not the assessment's 799,042 ha (798,501 ha in 2025-2026), so polygon areas and assessed areas are not comparable.",
+      "Maharashtra assesses 1,538 watersheds and apportions them to talukas (GSDA and CGWB, Dynamic Ground Water Resources of Maharashtra State 2025, February 2026). The district's all-Safe total contains one Semi Critical watershed, WGKK-1 at 74.27%, and two Over Exploited command areas, WGKK-2 at 113.14% and WGM-1 at 141.27% (watershed annexure, printed p.206, PDF p.219). The city lies mostly in WGKN-4 (28.99%) and WGKN-1 (58.45%), both Safe. Watershed rows are not on the open API and are not carried in this artifact."
+    ]
+  },
+  "elevationBands": {
+    "_note": "Nagpur: the NMC outline's extent (NMC GIS NMCAdminBoundaries/MapServer/3, 21.053-21.231 N, 78.993-79.184 E) rounded outward. Inland, so there is no sea to mask. The Nag falls about 35 m across the city, from Ambazari (~317 m) to the Pardi-Punapur reach (~282 m) where WRD's flood-line sheets give 100-year levels near 283-284 m on a mean-sea-level datum. Edges sit on the FABDEM percentiles this script printed on 2026-10-15 (p0=269 p5=280 p20=288 p40=296 p60=306 p80=320 p95=345 p100=379).",
+    "bbox": [
+      78.99,
+      21.05,
+      79.19,
+      21.24
+    ],
+    "bands": [
+      265,
+      280,
+      288,
+      296,
+      306,
+      320,
+      345
+    ],
+    "sea_is_zero": false
+  }
+}

@@ -57,6 +57,10 @@ export interface ReservoirSummary {
    *  Defaults to true for back-compat - existing callers that build a
    *  summary from a live reading don't have to set it. */
   isLive?: boolean;
+  /** False when the source has no public daily feed (the config's
+   *  hasPublicFeed). With `isLive` false it tells "no daily reading"
+   *  apart from a fed source whose latest reading has not arrived. */
+  hasPublicFeed?: boolean;
   /** Optional human-readable note explaining the data gap when
    *  `isLive` is false (one short sentence, surfaced in the card). */
   noLiveDataReason?: string;

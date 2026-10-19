@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { tryGetPlaceConfig } from "@/lib/cities";
 import { CityStory } from "@/components/story/city-story";
-import { STORY_TAGLINES } from "@/content/story-taglines";
 
 interface PageProps {
   params: Promise<{ cityId: string }>;
@@ -13,7 +12,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const config = tryGetPlaceConfig(cityId);
   if (!config) return { title: "Origins | Neer Vazhvu" };
 
-  const tagline = STORY_TAGLINES[config.cityId];
+  const tagline = config.originsTagline;
 
   return {
     title: `${tagline} | Neer Vazhvu`,

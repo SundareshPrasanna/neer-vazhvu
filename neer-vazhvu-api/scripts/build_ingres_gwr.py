@@ -53,6 +53,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+from city_manifest import configs, section  # noqa: E402
 from registry_license import registry_license  # noqa: E402
 
 DATA_DIR = REPO_ROOT / "public" / "data"
@@ -94,500 +95,19 @@ STATE_UUIDS = {
 }
 
 # Scope kinds must agree with schemas/nvdm/scopes.json or the artifact fails
-# L2. Kolkata is a region (the KMA); Gurugram is a plain city.
-SCOPE_KIND = {"kolkata": "region"}
-
-CITIES = {
-    # Ahmedabad drills like Pune, and for the same reason: the district reads
-    # semi-critical while the unit under the city is over-exploited. Editions
-    # start at 2021-2022 because that is when IN-GRES carved AHMEDABAD URBAN out
-    # of CITY & DASKROI (95,627 ha became 47,359 + 49,642); a series reaching
-    # back past the redraw would show a jump that is a boundary, not a change.
-    "ahmedabad": {
-        "state": "GUJARAT",
-        "state_label": "Gujarat",
-        "source_id": "ingres-groundwater-gujarat",
-        "drill": {
-            "state": "GUJARAT",
-            "district": "AHMEDABAD",
-            "district_uuid": "630e391c-ba99-4599-b73c-003992dfdf7a",
-            "unit_label": "taluka",
-            "keep_district_total": True,
-            # IN-GRES truncates Daskroi to "DAS"; spelled out so the map does
-            # not label a taluka "Ahmedabad City & Das".
-            "names": {
-                "AHMEDABAD CITY & DAS": "Ahmedabad City & Daskroi",
-                "AHMEDABAD URBAN": "Ahmedabad Urban",
-            },
-            "wfs": {"layer": "gec:indgec_vers_gujarat", "year": 2021},
-        },
-        "years": [
-            "2021-2022",
-            "2022-2023",
-            "2023-2024",
-            "2024-2025",
-            "2025-2026",
-        ],
-        "notes": [
-            "THE DISTRICT HIDES THE CITY. Ahmedabad district reads 79.14% and "
-            "SEMI CRITICAL in 2025-2026, while the unit under the city, Ahmedabad "
-            "Urban, is OVER EXPLOITED at 128.85% and the rural ring around it, "
-            "Ahmedabad City & Daskroi, at 143.16%. The district figure is pulled "
-            "down by six safe talukas to the west and south.",
-            "AHMEDABAD URBAN IS THE CITY'S UNIT, not a revenue taluka. IN-GRES "
-            "carved it out of CITY & DASKROI in 2021-2022 (95,627 ha became "
-            "47,359 + 49,642). Its own polygon on the IN-GRES GeoServer holds "
-            "almost all of the AMC wards, which is why it is the one to quote for "
-            "the city; City & Daskroi is the peri-urban and rural belt around it, "
-            "and 82% of its 2025-2026 extraction is irrigation.",
-            "THE URBAN UNIT'S JUMP IS A RELABELLING, NOT A MEASUREMENT. Its "
-            "extractable resource is 1,919.4 ham in each of the last three "
-            "editions. Its extraction was filed entirely as industrial (1,784.4 "
-            "ham) in 2021-2022 and 2022-2023, as 1,055 ham irrigation plus 304 ham "
-            "industrial in 2023-2024 (70.80%, semi critical), and from 2024-2025 "
-            "with 1,606 ham of domestic draft added (127.18%, then 128.85%). "
-            "Quote the category in the latest edition; do not render the series "
-            "as a trend.",
-            "TWO TALUKAS ARE NOT ASSESSED ON EXTRACTION AT ALL. Dholera and "
-            "Dhandhuka are categorised 'salinity' in all five editions: CGWB does "
-            "not assess saline aquifers on extraction, so they carry no stage "
-            "percentage. They are listed under not_assessed_on_extraction and "
-            "drawn grey on the map rather than left out.",
-            "VOLUMES EXCLUDE THE SALINE TRACT, as CGWB publishes (see fresh_of). "
-            "The API's `total` key includes it and would more than double the "
-            "district's extraction figure.",
-            "EDITIONS START AT 2021-2022, the first in which the current units "
-            "exist. In 2019-2020 the city and Daskroi were one 95,627 ha unit at "
-            "82.58%, and joining that to either successor would show a jump that "
-            "is a boundary change. Rainfall and some draft inputs also repeat "
-            "across editions (City & Daskroi's 725.1 mm in three), so movement "
-            "between editions is partly the inputs being carried forward.",
-        ],
-    },
-    "surat": {
-        "state": "GUJARAT",
-        "state_label": "Gujarat",
-        "source_id": "ingres-groundwater-gujarat",
-        # District spellings are enumerated empirically per the playbook, not
-        # assumed to match India-WRIS. Surat's own district plus the coastal
-        # and industrial neighbours the city's water actually reaches: Tapi
-        # holds Ukai, Navsari and Bharuch share the estuarine belt.
-        "districts": {
-            "SURAT": "Surat",
-            "TAPI": "Tapi",
-            "NAVSARI": "Navsari",
-            "BHARUCH": "Bharuch",
-        },
-        "notes": [
-            "Surat's coastal talukas sit on the same saline belt that made Kolkata "
-            "district unassessable on extraction. Any unit returned as 'salinity' is a "
-            "poor-quality category rather than a stage-of-extraction band and carries no "
-            "extraction figures; that is a finding, not a missing file.",
-            "Tapi district is included because Ukai dam - the control on Surat's entire "
-            "supply and its flood risk - sits there, so the recharge picture upstream is "
-            "part of the city's story rather than a neighbouring curiosity.",
-        ],
-    },
-    "kolkata": {
-        "state": "WESTBENGAL",
-        "state_label": "West Bengal",
-        "source_id": "ingres-groundwater-westbengal",
-        # IN-GRES spells it KOLKATTA. Its district vocabulary also differs from
-        # India-WRIS's (HAORA vs HOWRAH, HUGLI vs HOOGHLY), which is exactly the
-        # trap the pan-India playbook records: enumerate spellings empirically,
-        # never assume two government portals agree on a district name.
-        "districts": {
-            "KOLKATTA": "Kolkata",
-            "NORTH 24 PARGANAS": "North 24 Parganas",
-            "SOUTH 24 PARGANAS": "South 24 Parganas",
-            "HAORA": "Howrah",
-            "HUGLI": "Hooghly",
-            "NADIA": "Nadia",
-        },
-        "notes": [
-            "Kolkata district and South 24 Parganas are categorised 'salinity' - a "
-            "POOR-QUALITY category, not a stage-of-extraction band. They carry no "
-            "availability, resource or extraction figures because CGWB does not assess "
-            "saline aquifers on extraction. This is why no exploitation choropleth is "
-            "drawn for Kolkata district: the framework classifies it on a different axis, "
-            "which is a finding rather than a missing file.",
-            "The surrounding KMA ring IS assessed on extraction, so the regional picture "
-            "is real even where the core district's is categorically absent.",
-            "IN-GRES district spellings differ from India-WRIS's (KOLKATTA / HAORA / "
-            "HUGLI). Two government portals do not agree on district names; enumerate "
-            "empirically rather than assuming.",
-        ],
-    },
-    "gurugram": {
-        "state": "HARYANA",
-        "state_label": "Haryana",
-        "source_id": "ingres-groundwater-haryana",
-        # IN-GRES still spells it GURGAON, the pre-2016 name. Third portal,
-        # third vocabulary: India-WRIS says GURUGRAM, LGD says Gurugram, this
-        # says GURGAON. Enumerate per portal, never share one spelling map.
-        #
-        # The neighbours are included because Gurugram's water problem does
-        # not stop at the district line: Mewat and Palwal sit on the same
-        # aquifer south-east, Rewari and Jhajjar west and north.
-        "districts": {
-            "GURGAON": "Gurugram",
-            "MEWAT": "Nuh (Mewat)",
-            "PALWAL": "Palwal",
-            "REWARI": "Rewari",
-            "JHAJJAR": "Jhajjar",
-            "FARIDABAD": "Faridabad",
-        },
-        "notes": [
-            "Gurugram district extracts 194.59% of its annual recharge and is categorised "
-            "over-exploited. That figure is the primary source for the '~195%' that "
-            "circulates in secondary write-ups about the city without one.",
-            "Every one of the district's five assessment blocks is over-exploited, and the "
-            "built city is the worst: GURGAON_URBAN stands at 326.26% of recharge, against "
-            "PATAUDI 168.48, SOHNA 156.86, FARRUKH NAGAR 143.39 and rural GURGAON 106.91. "
-            "Haryana as a whole is at 136.75%.",
-            "The neighbouring districts are carried because the aquifer does not stop at "
-            "the district line, and because Jhajjar being SAFE is what makes the rest "
-            "legible as a local failure rather than a regional condition. Rewari and "
-            "Faridabad are over-exploited, Palwal critical, Nuh (Mewat) semi-critical.",
-            "IN-GRES still spells the district GURGAON, the pre-2016 name, where "
-            "India-WRIS and LGD both say GURUGRAM. Enumerate spellings per portal.",
-            "This assessment is the CURRENT groundwater picture for Gurugram. The measured "
-            "LEVEL series is not: India-WRIS carries 37 Gurugram stations that stop in "
-            "June 2020, and the Haryana telemetry network does not cover this district.",
-        ],
-    },
-    # Pune is the first city on this builder to DRILL BELOW the district, and
-    # the reason is that its district figure says the opposite of its finding.
-    # See fetch_units() for the request shape and why the obvious one fails.
-    "pune": {
-        "state": "MAHARASHTRA",
-        "state_label": "Maharashtra",
-        "source_id": "ingres-groundwater-maharashtra",
-        "drill": {
-            "state": "MAHARASHTRA",
-            "district": "PUNE",
-            "district_uuid": "471dff0a-9b41-46f2-890d-179b2408ca4d",
-            "unit_label": "taluka",
-        },
-        # Seven editions are published for Pune, two more than the shared
-        # YEARS list carries, and they are not contiguous: 2020-2021 returns a
-        # single empty row. Years are per-city precisely so adding Pune's
-        # cannot silently re-cut Kolkata's and Gurugram's committed artifacts.
-        "years": [
-            "2019-2020",
-            "2021-2022",
-            "2022-2023",
-            "2023-2024",
-            "2024-2025",
-            "2025-2026",
-        ],
-        "notes": [
-            "SHIRUR IS THE FINDING. It is categorised CRITICAL in all six published "
-            "editions, standing at 95.71% of its extractable resource in 2025-2026 "
-            "and never below 94.24% since 2019-2020. 92.9% of that extraction is "
-            "agriculture (12,903.4 of 13,894.6 ham), so this is an irrigation story "
-            "rather than a city one - and agriculture is above 90% of extraction in "
-            "8 of the 14 talukas.",
-            "THE DISTRICT AGGREGATE HIDES IT. Pune district totals 63.73% and is "
-            "categorised SAFE. Publishing the district number alone would state the "
-            "opposite of what the talukas inside it show, which is why this city "
-            "drills to assessment-unit level and no other city on this builder does.",
-            "VOLUMES EXCLUDE POOR-QUALITY (SALINE) AREA, which is what CGWB "
-            "publishes; the API's `total` key does not, and using it would put the "
-            "district at 67.25% instead of 63.23% for 2024-2025. See fresh_of(). "
-            "With the correction this artifact reproduces the CGWB National "
-            "Compilation on Dynamic Ground Water Resources of India 2025 (p.161) "
-            "exactly: recharge 194,942.64, extractable 182,653.14, extraction "
-            "115,497.00 ham, stage 63.23%. The four talukas that carry saline area "
-            "here - Baramati, Daund, Indapur and Purandhar - are also exactly the "
-            "four CGWB names as salinity-affected (p.391), derived independently.",
-            "THE RAINFALL GRADIENT IS IN THE ASSESSMENT ITSELF, not inferred: "
-            "IN-GRES carries a per-taluka rainfall figure, and in 2025-2026 it runs "
-            "from Velhe at 2,182.3 mm to Indapur at 467.9 mm and Baramati at 473.6 "
-            "mm, in the same district and the same edition. A 4.7x spread inside one "
-            "district is the structural fact about Pune district water: the wet end "
-            "is where the city's dams sit and the dry end is where their canals go.",
-            "SIX EDITIONS ARE NOT SIX YEARS OF MEASUREMENT, and this is the most "
-            "important caveat on the series. IN-GRES recomputes the AVAILABILITY side "
-            "every edition - every taluka has a distinct stage percentage in every "
-            "edition, and a distinct availability figure in every edition bar one "
-            "repeat in Mulshi - while largely CARRYING FORWARD the rainfall and "
-            "extraction inputs. Seven of the 14 talukas carry a single rainfall "
-            "value across all six editions, no taluka has more than three distinct "
-            "values in six, and agricultural draft has only two to five distinct "
-            "values in six. Year-on-year movement in stage % is therefore mostly the "
-            "denominator moving, not measured extraction changing. Do not render this "
-            "as an annual extraction trend.",
-            "PUNE CITY BECAME ITS OWN ASSESSMENT UNIT IN 2023-2024. Before that "
-            "edition the built city was inside Haveli and cannot be separated. Its "
-            "series is therefore three editions long by construction, not truncated, "
-            "and its extractable resource (1,218-1,231 ham) is the smallest in the "
-            "district - urban Pune drinks surface water from the Khadakwasla chain, "
-            "so the aquifer under it is a minor resource rather than the main one.",
-            "PURANDHAR AND BARAMATI RECLASSIFIED WITHOUT RECOVERING, and the "
-            "arithmetic is unambiguous because the numerator did not move AT ALL. "
-            "Purandhar goes semi-critical 85.20% (2022-2023) to safe 51.27% "
-            "(2023-2024) on an extraction figure of 10,854.4 ham in BOTH editions, "
-            "while its extractable resource jumps 12,739.2 to 21,170.6 ham. Baramati "
-            "goes 80.40% to 66.59% on an extraction figure of 16,913.2 ham in both, "
-            "while extractable jumps 21,036.0 to 25,397.5 ham. Nothing was measured "
-            "to have changed; the denominator was revised. Reading either as an "
-            "aquifer recovering would be wrong.",
-            "Two spellings shift between editions and are normalised here: the "
-            "portal upper-cases every unit name before 2023-2024 and title-cases "
-            "after, and MAVAL is spelled Mawal in the 2025-2026 edition only.",
-        ],
-    },
-    # Bengaluru EXTENDS a series rather than owning it: IN-GRES does not serve
-    # 2011-2017 per unit, WRIS does (scripts/fetch-wris-groundwater-bangalore.ts), so IN-GRES editions
-    # are upserted into the blocks already there. See build_extended().
-    "bangalore": {
-        "state": "KARNATAKA",
-        "state_label": "Karnataka",
-        "source_id": "ingres-gw-assessment-ka",
-        "extend": {
-            "state": "KARNATAKA",
-            "district": "BENGALURU(URBAN)",
-            "district_uuid": "fc194628-dfa2-4026-b410-5535a5ceea8c",
-        },
-        # 2020-2021 is not published. The five editions 2019-20 to 2023-24
-        # equal the WRIS extract they replace, to the rounding.
-        "years": [
-            "2019-2020",
-            "2021-2022",
-            "2022-2023",
-            "2023-2024",
-            "2024-2025",
-            "2025-2026",
-        ],
-        # Substring -> the block name the WRIS series and polygons already use.
-        # IN-GRES spells them BENGALURU EAST / Bangalore City / Bangalore-City
-        # across editions.
-        "unit_names": {
-            "yelahanka": "Yelahanka",
-            "anekal": "Anekal",
-            "north": "Bangalore (North)",
-            "south": "Bangalore-South",
-            "east": "Bangalore-East",
-            "city": "Bangalore-City",
-        },
-    },
-    # Chennai extends the WRIS series in public/data/gwr-blocks.json. Its units
-    # are matched by AREA, never by name: in the 2022-23, 2023-24 and 2024-25
-    # editions IN-GRES labels Chennai's taluks one place down the alphabet from
-    # Madhavaram on (the 7,068 ha unit, Chennai's largest, is labelled
-    # PURASAIVAKKAM; 'KOLATHUR' stands in for Velachery), while 2025-26 labels
-    # the same areas by their true names. The WRIS series already carries the
-    # true names, so those editions re-run here with no change.
-    # 2025-26 is left out: it assesses 17 units (Kolathur, 700 ha, carved out of
-    # Ayanavaram; Thiruvottiyur 285 ha smaller) and the 16 polygons here are the
-    # old set.
-    "chennai": {
-        "state": "TAMILNADU",
-        "state_label": "Tamil Nadu",
-        "source_id": "ingres-gw-assessment-tn",
-        "blocks_file": "gwr-blocks.json",
-        # The WRIS years before it are labelled by end year (2020, 2022), so
-        # the IN-GRES editions are too; a mixed "2022, 2022-23" reads as a repeat.
-        "end_year_labels": True,
-        "extend": {
-            "state": "TAMILNADU",
-            "district": "CHENNAI",
-            "district_uuid": "8801b0c2-0a9b-4189-875a-de0be55f3c52",
-        },
-        "years": ["2022-2023", "2023-2024", "2024-2025"],
-        # area.total.totalArea (ha, rounded) -> the block name the series uses.
-        "unit_areas": {
-            1771: "Alandur",
-            5705: "Ambattur",
-            1555: "Aminjikarai",
-            1529: "Ayanavaram",
-            1767: "Egmore",
-            2138: "Guindy",
-            3613: "Madhavaram",
-            3268: "Maduravoyal",
-            1437: "Mambalam",
-            2228: "Mylapore",
-            1857: "Perambur",
-            1728: "Purasaivakkam",
-            7068: "Sholinganallur",
-            5588: "Thiruvottiyur",
-            1302: "Tondiarpet",
-            2077: "Velacheri",
-        },
-    },
-    # Visakhapatnam drills to mandal like Pune. Editions start at 2023-2024,
-    # the first in which all eleven current units exist; see the notes for
-    # the two redraws the earlier editions sit on.
-    "visakhapatnam": {
-        "state": "ANDHRAPRADESH",
-        "state_label": "Andhra Pradesh",
-        "source_id": "ingres-groundwater-andhra",
-        "drill": {
-            "state": "ANDHRAPRADESH",
-            # Title case so the IN-GRES GeoServer's parent_name matches too;
-            # the assessment API ignores the case of locname.
-            "district": "Visakhapatnam",
-            "district_uuid": "bd59c4fb-4627-4d06-ad11-bbce43af0063",
-            "unit_label": "mandal",
-            # Andhra Pradesh's totalGWAvailability adds the in-storage
-            # resource (Gopalapatnam 2024-2025: 72,849.24 = 383.53 + 72,465.71
-            # ham). CGWB's stage divides by the extractable figure, which is
-            # currentAvailabilityForAllPurposes.
-            "availability_key": "currentAvailabilityForAllPurposes",
-            # Unit polygons: AP's mandals live in gec:indgec_mandal_all (the
-            # per-state gec:indgec_vers_andhrapradesh layer holds villages
-            # only); the 2023 vintage matches the seven-mandal split.
-            "wfs": {"layer": "gec:indgec_mandal_all", "year": 2023},
-        },
-        "years": ["2023-2024", "2024-2025", "2025-2026"],
-        # Per-city text for the envelope note, the block panel's caveat and its
-        # availability label, in place of wording written for other cities.
-        # build_drilled reads these four keys only where a city sets them.
-        "provenance_note": (
-            "Assessment per mandal inside Visakhapatnam district, for the three "
-            "editions on today's eleven units (2023-2024 to 2025-2026). Drilled below "
-            "the district because IN-GRES classes Visakhapatnam district safe in all "
-            "three (43.85% in 2024-2025) while one mandal inside it, Visakhapatnam "
-            "Rural, was critical in 2024-2025 (95.06%). This is NOT depth-to-water - "
-            "IN-GRES does not carry it; measured levels are a separate series from "
-            "APWRIMS and the AP Ground Water Department."
-        ),
-        "history_caveat": (
-            "The editions shown start at 2023-2024, the first in which all eleven "
-            "current mandals are assessed: until 2022-2023 the city was assessed as one "
-            "GVMC unit and Bheemunipatnam had other boundaries. The 2025-2026 IN-GRES "
-            "edition is newer than CGWB's December 2025 report, and its rainfall input "
-            "repeats 2024-2025."
-        ),
-        "block_caveats": {
-            "Visakhapatnam Rural": (
-                "In 2025-2026 its extractable resource is revised from 225.3 to 437.1 "
-                "ham, with 223.88 ham of surface-irrigation recharge where 2024-2025 "
-                "had none, while extraction stays near 210 ham, so the move from "
-                "95.06% (critical in CGWB's 2025 report) to 47.87% comes from a "
-                "revised input, not measured change. IN-GRES assesses this unit over "
-                "39.0 km2; the AP Water Resources Department's mandal map gives "
-                "Visakhapatnam (Rural) 130.9 km2."
-            ),
-            "Gajuwaka": (
-                "In 2025-2026 its estimated industrial draft is revised from 5.4 to "
-                "97.0 ham and its surface-irrigation recharge is cut from 111.95 to "
-                "19.19 ham, which together take it from 60.47% to 89.39% (semi "
-                "critical); these are revised inputs, not measured change."
-            ),
-            "Maharanipeta": (
-                "In 2025-2026 its surface-irrigation recharge is revised from 171.18 "
-                "to 561.40 ham and its extractable resource from 1,058.35 to 1,411.17 "
-                "ham, while extraction stays near 720 ham, so the move from 67.26% to "
-                "51.34% comes from a revised input, not measured change. IN-GRES "
-                "assesses this unit over 123.0 km2; the AP Water Resources "
-                "Department's mandal map gives Maharanipeta 45.7 km2."
-            ),
-            "Seethammadhara": (
-                "In 2025-2026 its surface-irrigation recharge is revised from 103.69 "
-                "to 53.36 ham and its extractable resource from 205.65 to 156.98 ham, "
-                "while extraction stays near 103 ham, so the move from 49.78% to "
-                "66.40% comes from a revised input, not measured change."
-            ),
-            "Mulagada": (
-                "Most of the area IN-GRES calls Mulagada lies in the mandal the AP "
-                "Water Resources Department's map calls Pedagantyada, around Devada "
-                "and Palavalasa, so the wells here carry that name. CGWB's 2025 "
-                "aquifer plan for the Visakhapatnam and Anakapalli urban areas gives "
-                "Pedagantyada 100 km2 and Mulagada 30 km2, against the 98.8 km2 "
-                "IN-GRES assesses here, so the two names look transposed."
-            ),
-            "Peddagantyada": (
-                "IN-GRES assesses this unit over 15.3 km2, a strip around "
-                "Gollalapalem and Gopalapatnam. The AP Water Resources Department's "
-                "map puts those wells in Mulagada and Visakhapatnam (Rural) mandals, "
-                "and CGWB's 2025 aquifer plan gives Pedagantyada 100 km2, so the "
-                "names of this unit and Mulagada look transposed."
-            ),
-        },
-        "availability_label": "Annual extractable resource",
-        "notes": [
-            "VISAKHAPATNAM RURAL IS THE MANDAL TO WATCH. In 2024-2025, the edition "
-            "CGWB printed in 'Dynamic Ground Water Resources of Andhra Pradesh State "
-            "2025' (December 2025; district table PDF p.95, mandal table pp.108-109), "
-            "it extracted 214.2 of its 225.3 ham extractable resource, 95.06%, and "
-            "was the district's only CRITICAL unit, while Visakhapatnam district as a "
-            "whole stood at 43.85%, which IN-GRES classes safe. This artifact "
-            "reproduces that edition's eleven mandal figures to one decimal.",
-            "2025-2026 IS THE EDITION THE MAP COLOURS, AND IT IS NEWER THAN CGWB'S "
-            "DECEMBER 2025 REPORT, which carries 2024-2025. It is the newest edition "
-            "on IN-GRES, and every mandal's rainfall input repeats its 2024-2025 "
-            "figure. Its surface-irrigation recharge differs from 2024-2025 in every "
-            "mandal, and four urban mandals move by more than 15 points, all on "
-            "revised inputs rather than measured change: Visakhapatnam Rural's "
-            "extractable resource nearly doubles (225.3 to 437.1 ham, with 223.88 ham "
-            "of surface-irrigation recharge where 2024-2025 had none) while its "
-            "extraction slips from 214.2 to 209.2 ham, taking it from 95.06% critical "
-            "to 47.87% safe; Gajuwaka's estimated industrial draft goes from 5.4 to "
-            "97.0 ham while its surface-irrigation recharge is cut from 111.95 to 19.19 "
-            "ham (extractable resource 605.3 to 519.4 ham), taking it from 60.47% to "
-            "89.39% and semi critical; Maharanipeta's surface-irrigation recharge "
-            "rises from 171.18 to 561.40 ham (extractable resource 1,058.35 to "
-            "1,411.17 ham), taking it from 67.26% to 51.34%; and Seethammadhara's "
-            "falls from 103.69 to 53.36 ham (extractable resource 205.65 to 156.98 "
-            "ham), taking it from 49.78% to 66.40%. Each moved unit's panel carries "
-            "its own caveat.",
-            "EDITIONS START AT 2023-2024, the first with today's eleven units. IN-GRES "
-            "also publishes 2016-2017, 2019-2020, 2021-2022 and 2022-2023 under the same "
-            "district id, but on different units: until 2022-2023 the city was "
-            "assessed as one 'GVMC' unit of 513.8 km2, which became seven urban "
-            "mandals (430.2 km2 together) in 2023-2024, and Bheemunipatnam was redrawn "
-            "from 93.8 to 124.2 to 207.9 km2 (Pendurthi and Anandapuram also changed). "
-            "A series joined across those redraws would show jumps that are boundary "
-            "changes. For the record, the single GVMC unit stood at 50.84% "
-            "(2019-2020), 47.70% (2021-2022) and 56.78% (2022-2023), all safe.",
-            "ONE DISTRICT ID, TWO DISTRICTS. Andhra Pradesh divided Visakhapatnam "
-            "district in April 2022 and IN-GRES kept one id across the change: its "
-            "district rows cover 8,547.7 km2 in 2016-2017 and 11,050.6 km2 in "
-            "2019-2020, then 1,001.7 km2 from 2021-2022, the assessed area of the new "
-            "district (CGWB's 2025 report gives its geographical area as 1,049 km2). "
-            "The district "
-            "figure goes from 27.22% to 45.96% across that change, which is the "
-            "boundary, not the aquifer. No district series is published here, and no "
-            "district trend should be quoted across 2021.",
-            "IN THE CITY, GROUNDWATER IS DRAWN FOR HOMES. In 2024-2025, 1,676.9 of the "
-            "1,776.2 ham extracted across the seven urban mandals (94.4%, summed "
-            "before rounding) was for domestic use, while in Anandapuram, Padmanabham "
-            "and Pendurthi more than "
-            "95% of extraction is irrigation.",
-            "No unit in these three editions is categorised on the salinity axis and "
-            "none carries poor-quality area, so every figure covers the unit's whole "
-            "assessed area.",
-            "THE MAP OUTLINES ARE APPROXIMATE. They are IN-GRES's own unit polygons "
-            "(GeoServer layer gec:indgec_mandal_all, 2023 vintage, identical to the "
-            "active 2025 vintage), but their areas do not equal the areas the "
-            "assessment was computed over: together they cover 973.8 km2 against "
-            "1,001.7 km2 assessed, and Pendurthi's polygon is 77.2 km2 against 21.6 "
-            "km2 assessed. The colours carry each unit's assessed figures; the "
-            "outlines only place them.",
-            "IN-GRES'S URBAN UNITS DO NOT FOLLOW ANDHRA PRADESH'S MANDAL LINES. The "
-            "unit IN-GRES calls Mulagada (assessed over 98.8 km2) lies mostly inside "
-            "the mandal that the AP Water Resources Department's own boundary map "
-            "(APWRIMS GeoServer layer AP_MANDAL_V3) calls Pedagantyada, around Devada "
-            "and Palavalasa. The unit it calls Peddagantyada (15.3 km2) is a strip "
-            "around Gollalapalem and Gopalapatnam. CGWB's 2025 aquifer management plan "
-            "for the Visakhapatnam and Anakapalli urban agglomerations (Table 1.1) "
-            "gives Pedagantyada 100 km2 and Mulagada 30 km2, so the two names look "
-            "transposed. The other urban units differ in extent too: IN-GRES assesses "
-            "Maharanipeta over 123.0 km2 and Visakhapatnam Rural over 39.0 km2, where "
-            "the AP map has 45.7 and 130.9 km2. Figures are shown under IN-GRES's "
-            "names. Each well's panel and label on the groundwater map name the AP "
-            "mandal its coordinates fall in and, where it differs, the IN-GRES unit; "
-            "the Mulagada and Peddagantyada panels say the names look transposed.",
-            "availability_ham IS THE EXTRACTABLE RESOURCE (the API's "
-            "currentAvailabilityForAllPurposes). For Andhra Pradesh the API's "
-            "totalGWAvailability adds the in-storage resource below the zone of "
-            "water-level fluctuation, which is why Gopalapatnam would otherwise read "
-            "72,849.2 ham against an extractable 383.5 ham in 2024-2025.",
-        ],
-    },
+# L2; both follow each city's placeKind.
+SCOPE_KIND = {
+    city: c["placeKind"] for city, c in configs().items() if c.get("placeKind")
 }
+
+
+# Each city's IN-GRES settings: `ingres` in src/cities/<id>/pipeline.json, with
+# the reasoning for each choice in its _note/_notes. JSON keys are strings, so
+# unit_areas (hectares -> unit name) gets its integer keys back here.
+CITIES = section("ingres")
+for _cfg in CITIES.values():
+    if "unit_areas" in _cfg:
+        _cfg["unit_areas"] = {int(k): v for k, v in _cfg["unit_areas"].items()}
 
 YEARS = ["2024-2025", "2023-2024", "2022-2023", "2021-2022"]
 
@@ -719,6 +239,12 @@ def build_drilled(city: str, cfg: dict) -> int:
     and the drilled branch emits `blocks[]`.
     """
     drill = cfg["drill"]
+    # An alias target needs a display name, or the assessment and the WFS
+    # polygons would each fall back to a different edition's spelling.
+    unnamed = set(drill.get("aliases", {}).values()) - set(drill.get("names", {}))
+    if unnamed:
+        print(f"aliases with no display name: {sorted(unnamed)}", file=sys.stderr)
+        return 1
     units: dict[str, dict] = {}
     unassessed: dict[str, dict] = {}
     district_total: list[dict] = []
@@ -782,6 +308,9 @@ def build_drilled(city: str, cfg: dict) -> int:
             # Keyed on a normalised name, a single taluka would otherwise
             # split into two or three separate blocks with short histories.
             key = raw.strip().upper().replace("MAWAL", "MAVAL")
+            # Spellings that differ by more than case (Nagpur's HINGANA and
+            # Hingna) map to one key per unit. Absent map = identity.
+            key = drill.get("aliases", {}).get(key, key)
             display = drill.get("names", {}).get(key, raw.strip().title())
             cat = (r.get("category") or {}).get("total")
             # Served pre-computed on the fresh area - use as-is.
@@ -843,6 +372,14 @@ def build_drilled(city: str, cfg: dict) -> int:
     if not units:
         print("no assessment units returned - check the drill uuids", file=sys.stderr)
         return 1
+    # District figures CGWB has printed for an edition. A revision upstream
+    # stops the build before it writes, since the notes quote the match.
+    for year, printed in drill.get("published", {}).items():
+        row = next((d for d in district_total if d["year_label"] == year), {})
+        off = {k: (v, row.get(k)) for k, v in printed.items() if row.get(k) != v}
+        if off:
+            print(f"  ! {year} differs from the printed report: {off}", file=sys.stderr)
+            return 1
 
     blocks = []
     for entry in units.values():
@@ -860,18 +397,16 @@ def build_drilled(city: str, cfg: dict) -> int:
             },
             "detail": entry["_detail"],
         }
+        own = cfg.get("block_caveats", {}).get(entry["name"])
         if cfg.get("history_caveat"):
             # A city that states why its editions start where they do gets
             # that text on every unit, followed by the unit's own caveat.
             block["history_caveat"] = " ".join(
-                filter(
-                    None,
-                    [
-                        cfg["history_caveat"],
-                        cfg.get("block_caveats", {}).get(entry["name"]),
-                    ],
-                )
+                filter(None, [cfg["history_caveat"], own])
             )
+        elif own:
+            # The unit's own caveat in place of the generic short-series line.
+            block["history_caveat"] = own
         elif len(entry["history"]) < len(years_seen):
             first = entry["history"][0]["year_label"]
             block["history_caveat"] = (
@@ -881,6 +416,11 @@ def build_drilled(city: str, cfg: dict) -> int:
             )
         blocks.append(block)
     blocks.sort(key=lambda b: b["name"])
+    # Keyed by display name, so a misspelt key would drop its caveat silently.
+    stray = set(cfg.get("block_caveats", {})) - {b["name"] for b in blocks}
+    if stray:
+        print(f"block_caveats for no unit: {sorted(stray)}", file=sys.stderr)
+        return 1
 
     out = {
         "place_id": city,
@@ -997,7 +537,8 @@ def build_unit_geometry(city: str, cfg: dict, assessment: dict) -> int:
     feats, unmatched = [], []
     for f in fc.get("features", []):
         raw = ((f.get("properties") or {}).get("name") or "").strip()
-        name = names.get(raw.upper(), raw.title())
+        canon = drill.get("aliases", {}).get(raw.upper(), raw.upper())
+        name = names.get(canon, raw.title())
         blk, off = by_name.get(name), off_axis.get(name)
         if blk is None and off is None:
             unmatched.append(raw)
@@ -1070,6 +611,7 @@ def build_extended(city: str, cfg: dict) -> int:
     vintages, then move the block polygons' attributes to the latest edition
     (the ward profiles read them). Any change to an already-published value is
     printed, never applied silently."""
+    # Chennai keeps its legacy name, gwr-blocks.json, via blocks_file in its pipeline.json.
     path = DATA_DIR / cfg.get("blocks_file", f"gwr-blocks-{city}.json")
     geo_path = REPO_ROOT / "public" / "geojson" / f"{city}-gwr-blocks.geojson"
     doc = json.loads(path.read_text())

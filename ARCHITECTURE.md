@@ -95,7 +95,7 @@ graph TB
 
 ## Multi-city architecture
 
-Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune, Surat and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/lib/cities/{cityId}.ts` and that config drives:
+Every page that the user sees is keyed on a `cityId`. Chennai's pages live at the legacy flat routes (`/`, `/groundwater`, `/water-bodies` etc.) for back-compat; Madurai, Bengaluru, Mumbai, Delhi, Hyderabad, Kolkata, Gurugram, Pune, Surat and future cities live under `/[cityId]/...`. The `tryGetPlaceConfig(cityId)` resolver loads a `PlaceConfig` from `src/cities/{cityId}/config.ts` (indexed into `src/cities/generated/` by `npm run cities:gen`) and that config drives:
 
 - **`heroMode`** (`days-left` | `allocation` | `cauvery-pumping` | `drainage-capacity` | `flood-headroom` | `none`) — picks the dashboard hero variant.
     - Chennai (`days-left`): divides total CMWSSB-reservoir storage by urban demand. Works because Chennai's reservoirs ARE the urban supply.

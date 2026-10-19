@@ -292,153 +292,6 @@ def build_balance() -> dict:
     }
 
 
-def build_commitments() -> dict:
-    """Shape fixed by src/app/[cityId]/commitments/commitments-client.tsx.
-    `status` must be one of the six tracked values - there is no "unknown".
-    The honest value for these is `unverified`: the platform's rule is that a
-    status only changes with a dated citation, and we have none for what
-    happened after December 2021."""
-    commitments = []
-    for stp in UPCOMING_STPS:
-        if not stp["due"]:
-            continue
-        slug = (
-            stp["name"]
-            .lower()
-            .replace(" ", "-")
-            .replace(",", "")
-            .replace("(", "")
-            .replace(")", "")
-        )[:40].strip("-")
-        commitments.append(
-            {
-                "id": f"stp-{slug}",
-                "category": "Sewage treatment",
-                "title": f"Commission the {stp['capacity_mld']} MLD STP at {stp['name']}",
-                "committed_by": f"Kolkata Municipal Corporation / KEIIP ({stp['programme']})",
-                "what": (
-                    f"KMC's District Environment Plan 2021 records this plant at "
-                    f"{stp['completion_pct']}% completion with a stated timeline of "
-                    f"{stp['timeline_text']} - a deadline already less than four months away "
-                    f"when the plan was filed on 1 December 2021. No later public document "
-                    f"confirming completion or re-dating has been found."
-                ),
-                "due": stp["due"],
-                "revised_due": None,
-                "commitment_source": {
-                    "label": f"{SOURCE['publisher']}, {SOURCE['document']}, p.29",
-                    "url": SOURCE["url"],
-                    "date": SOURCE["document_date"],
-                },
-                "status": "unverified",
-                "status_history": [
-                    {
-                        "date": SOURCE["document_date"],
-                        "status": "on-track",
-                        "note": f"{stp['completion_pct']}% complete against a {stp['timeline_text']} timeline",
-                        "source_label": SOURCE["document"],
-                        "source_url": SOURCE["url"],
-                    },
-                    {
-                        "date": date.today().isoformat(),
-                        "status": "unverified",
-                        "note": (
-                            "Deadline is four years past. No KEIIP or KMC document confirming "
-                            "commissioning, slippage or a revised date has been located, so the "
-                            "status cannot move to delivered or overdue without inventing evidence."
-                        ),
-                        "source_label": None,
-                        "source_url": None,
-                    },
-                ],
-                "next_check": None,
-                "ledger_id": None,
-            }
-        )
-    # The Borough-XII plant carried no deadline in 2021 ("not yet finalized"),
-    # so it never became a tracked commitment. A February 2026 ADB-disclosed IEE
-    # gives it one - which is exactly the dated citation the register requires
-    # before a status can move.
-    u = next((s["update_2026"] for s in UPCOMING_STPS if s.get("update_2026")), None)
-    if u:
-        commitments.append(
-            {
-                "id": "stp-anandapur-borough-xii",
-                "category": "Sewage treatment",
-                "title": f"Commission the {u['capacity_mld']} MLD STP at Anandapur, Ward 108",
-                "committed_by": "Kolkata Municipal Corporation / KMC SHARP, financed by the Asian Development Bank",
-                "what": (
-                    f"KMC's 2021 Environment Plan listed a 70 MLD plant for Borough-XII with no "
-                    f"timeline, to be built 'based on implementation of future loan or from own "
-                    f"resources'. The loan arrived: this is now a {u['capacity_mld']} MLD "
-                    f"{u['technology']} plant under {u['programme']}, with {u['schedule'].lower()}. "
-                    f"{u['site_moved_from']} It is being built on {u['land'].split(';')[1].strip()}, "
-                    f"discharging to {u['effluent_to']}."
-                ),
-                # Bids March 2026 + a 3.5-year design-and-construction period.
-                "due": "2029-09-30",
-                "revised_due": None,
-                "commitment_source": {
-                    "label": u["source_label"],
-                    "url": u["source_url"],
-                    "date": u["as_of"],
-                },
-                "status": "on-track",
-                "status_history": [
-                    {
-                        "date": SOURCE["document_date"],
-                        "status": "unverified",
-                        "note": "Listed at 70 MLD for Borough-XII with no timeline and no committed funding",
-                        "source_label": SOURCE["document"],
-                        "source_url": SOURCE["url"],
-                    },
-                    {
-                        "date": u["as_of"],
-                        "status": "on-track",
-                        "note": (
-                            f"Financed and scheduled: {u['capacity_mld']} MLD at Anandapur, bids "
-                            f"March 2026, 3.5-year build. Capacity is 41 MLD, not the 70 MLD "
-                            f"proposed in 2021, and the site moved after litigation."
-                        ),
-                        "source_label": u["source_label"],
-                        "source_url": u["source_url"],
-                    },
-                ],
-                "next_check": "2026-10-01",
-                "ledger_id": None,
-            }
-        )
-
-    return {
-        "place_id": "kolkata",
-        "updated": date.today().isoformat(),
-        "headline": "Kolkata's sewage-treatment promises",
-        "intro": (
-            "Dated commitments from KMC's own statutory filings. Two KEIIP plants were recorded "
-            "at 17% and 14% completion against a March 2022 deadline in a document filed "
-            "December 2021. What happened next is not in any public record we have found, so "
-            "they read 'unverified' rather than a guess in either direction."
-        ),
-        "status_legend": {
-            "delivered": "Done, with a source confirming it",
-            "on-track": "Progressing with no known slippage",
-            "slipped": "Officially or credibly re-dated - both dates kept",
-            "overdue": "Past its promised date with no official word",
-            "stalled": "Years without movement",
-            "unverified": "A change may have happened; awaiting a citable confirmation",
-        },
-        "commitments": commitments,
-        "update_model": (
-            "Statuses change only with a dated citation; every change appends to the "
-            "commitment's history, and the slippage trail is the product. Kolkata's "
-            "verification route is KEIIP project documents and KMC budget statements - "
-            "neither publishes on a predictable calendar, which is itself why these sit at "
-            "unverified rather than overdue."
-        ),
-        "sources_note": f"{SOURCE['document']} ({SOURCE['document_date']}), {SOURCE['url']}",
-    }
-
-
 def main() -> int:
     errs = validate()
     if errs:
@@ -452,8 +305,6 @@ def main() -> int:
 
     bal = build_balance()
     write_artifact(DATA_DIR / "kolkata-sewage-balance.json", bal)
-    com = build_commitments()
-    write_artifact(DATA_DIR / "commitments-kolkata.json", com)
 
     with_coords = sum(1 for s in UPCOMING_STPS if s["lat"] is not None)
     print(
@@ -461,8 +312,7 @@ def main() -> int:
         f"({BALANCE['treated_ekw_fisheries_mld']} of {BALANCE['total_generated_mld']} MLD), "
         f"{bal['ekw_vs_stp_ratio']}x the 5 STPs combined; "
         f"{len(UPCOMING_STPS)} upcoming STPs = {STATED_UPCOMING_TOTAL_MLD} MLD "
-        f"({with_coords} mappable), residual gap {STATED_RESIDUAL_GAP_MLD} MLD; "
-        f"{len(com['commitments'])} dated commitments",
+        f"({with_coords} mappable), residual gap {STATED_RESIDUAL_GAP_MLD} MLD",
         file=sys.stderr,
     )
     return 0

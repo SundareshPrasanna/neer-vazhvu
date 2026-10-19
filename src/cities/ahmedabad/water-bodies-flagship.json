@@ -1,0 +1,232 @@
+{
+  "_doc": "Curated content for /ahmedabad/lake-restoration (the flagship lakes). Edit payload, then run: python3 neer-vazhvu-api/scripts/build_curated.py water-bodies-flagship --city ahmedabad. What the build block means and what is checked: that script's docstring.",
+  "build": {
+    "indent": 1,
+    "trailingNewline": false,
+    "envelope": {
+      "dataset": "data-root/water-bodies-flagship",
+      "scope": {
+        "kind": "city",
+        "id": "ahmedabad"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "id": "amc-budget",
+            "title": "AMC budgets 2019-20 to 2026-27: lake development, zone works, housing and climate annex sections",
+            "publisher": "Ahmedabad Municipal Corporation"
+          },
+          {
+            "id": "gujarat-hc-lake-orders",
+            "title": "Gujarat High Court orders on Ahmedabad's lakes (2002, 2025)",
+            "publisher": "High Court of Gujarat"
+          },
+          {
+            "id": "mojs-water-bodies-census-2023",
+            "title": "First Census of Water Bodies, Gujarat district tables (reference year 2017-18)",
+            "publisher": "Ministry of Jal Shakti"
+          },
+          {
+            "title": "Gazetteer of the Bombay Presidency, Vol. IV: Ahmedabad (1879), pp.17-18 and 50, read via the Internet Archive",
+            "publisher": "Government Central Press, Bombay",
+            "closed": true,
+            "as_of": "1879",
+            "url": "https://archive.org/details/dli.ministry.08145",
+            "license": "Public domain"
+          },
+          {
+            "title": "T.C. Hope and J. Fergusson, Architecture at Ahmedabad (1866), pp.50-51, read via the Internet Archive",
+            "publisher": "John Murray, London",
+            "closed": true,
+            "as_of": "1866",
+            "url": "https://archive.org/details/Ahmedabad_126468",
+            "license": "Public domain"
+          },
+          {
+            "title": "HUDCO Best Practice Awards compendium, p.34: Kankaria Lake redevelopment",
+            "publisher": "Housing and Urban Development Corporation (HUDCO)",
+            "closed": true,
+            "as_of": "2008-12",
+            "url": "https://hudco.org.in/writereaddata/EB/HUDCO-BPA/files/basic-html/page34.html",
+            "license": "HUDCO publication, cited with attribution"
+          },
+          {
+            "title": "Khari Cut Canal Report, committee in NGT OA 105/2019, pp.32-33, quoting Bombay High Court (1926) 28 Bom LR 614",
+            "publisher": "National Green Tribunal (committee report)",
+            "closed": true,
+            "as_of": "2020-08-19",
+            "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/REPORT%20BY%20COMMITTEE%20IN%20OA%20NO.%20105%20of%202019%20(AJITSINH%20BHURUBHA%20VAGHELA%20&%20INHABITANTS%20OF%20SEVERAL%20VILLAGE%20OF%20KHERA%20TALUKA,%20DISTT.%20KHEDA%20VS.%20STATE%20OF%20GUJARAT).pdf",
+            "license": "National Green Tribunal record, cited with attribution"
+          }
+        ],
+        "method": "manual",
+        "produced_by": "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py",
+        "note": "Curated flagship register. Each body carries its own document links; page numbers in the text are PDF pages unless marked printed."
+      }
+    }
+  },
+  "payload": {
+    "place_id": "ahmedabad",
+    "compiled_at": "2026-10-14",
+    "note": "Ahmedabad has no single public lake register. AMC's budgets carry the programme, Gujarat High Court orders carry the legal status, and the 1879 Bombay Gazetteer and Hope and Fergusson (1866) carry the history. Entries are graded V (verified against a primary document), N (single source) or C (claim only); every entry here is V. Areas are dated in each entry's text: Kankaria's 72 acres and Lal Bahadur Shastri's 71 acres are 1866 and 1879 measurements, Chandola's 299 acres is the 121 hectares the State Irrigation Department gave the High Court in 2000, and the Vastrapur and Isanpur figures are converted from AMC's and the revenue record's square metres.",
+    "context": {
+      "water_bodies_census": {
+        "source": "Ministry of Jal Shakti, First Census of Water Bodies (reference year 2017-18), Gujarat district tables",
+        "district": "Ahmedabad",
+        "total": 1964,
+        "rural": 1788,
+        "urban": 176,
+        "urban_ponds": 83,
+        "urban_tanks": 93,
+        "not_in_use": 63,
+        "not_in_use_note": "all 63 urban; reason given as construction for 1 and 'others' for 62 (table 8-B)",
+        "encroached": 19,
+        "encroached_note": "all 19 urban; 19 of Gujarat's 22 encroached water bodies are in Ahmedabad district (table 22-A)",
+        "tables": {
+          "1-B urban": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table1-B/GJ_6MIC_WBS1-B.xls",
+          "1-C all": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table1-C/GJ_6MIC_WBS1-C.xls",
+          "5 in use / not in use": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table5/GJ_6MIC_WBS5.xls",
+          "8-B reasons not in use": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table8-B/GJ_6MIC_WBS8-B.xls",
+          "22-A encroached": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table22-A/GJ_6MIC_WBS22-A.xls"
+        },
+        "comparison": "The census count of 176 urban water bodies across the district's 10 towns equals AMC's own count of 176 lakes in its 2026-27 budget; neither source shows whether they are the same set."
+      }
+    },
+    "bodies": [
+      {
+        "name": "Kankaria Lake",
+        "alternate_names": [
+          "Hauz-i-Qutb",
+          "Kankariya"
+        ],
+        "type": "lake",
+        "area_acres": 72,
+        "year_built": 1451,
+        "builder": "Sultan Qutb-ud-din, who completed it in 1451",
+        "feed": "in 1879, a stream rising west of the Bokh, turned towards Kankaria and Chandola by a dam near Kamod (Bombay Gazetteer, p.50)",
+        "status": "AMC began rebuilding the lakefront in 2006 at about Rs 36 crore and opened it to the public in January 2009, after the Kankaria Carnival of 25 to 31 December 2008 (AMC Budget 2026-27, PDF p.176). HUDCO's awards compendium gives completion as December 2008 at Rs 36.00 crore. The 72 acres is the 1866 measurement; the record we hold has no current official water-spread figure.",
+        "cultural_note": "A regular polygon of 34 sides, each 190 feet long, ringed with cut-stone steps, with a carved inlet sluice and an island garden, Nagina, reached by a viaduct (Hope and Fergusson 1866, pp.50-51). By 1781 it lay in ruin; the Collector, Mr Borradaile, began restoring it in 1872 (Bombay Gazetteer 1879, pp.17-18). AMC's 2020-21 budget calls the lakefront the model for lake development in other cities (PDF p.4).",
+        "confidence": "V",
+        "sources": [
+          "https://archive.org/details/Ahmedabad_126468",
+          "https://archive.org/details/dli.ministry.08145",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+          "https://hudco.org.in/writereaddata/EB/HUDCO-BPA/files/basic-html/page34.html"
+        ]
+      },
+      {
+        "name": "Chandola Lake",
+        "alternate_names": [
+          "Chandola Talav",
+          "Chandola Tank"
+        ],
+        "type": "tank",
+        "area_acres": 299,
+        "year_built": null,
+        "era": "Irrigation tank, recorded by 1879",
+        "builder": "Not named in the sources we hold; an irrigation tank handed to the Public Works Department by a Government of Bombay order of 3 April 1916",
+        "feed": "the Khari Cut canal from the Khari river at Raipur, built between 1878 and 1881 partly to fill this tank; AMC's 2023-24 budget says a branch of the canal still runs through Jashodanagar, Khokhra and Ghodasar to fill the lake (PDF p.149)",
+        "status": "Phase 1 beautification is under way at Rs 36.38 crore from AMC's own funds, and phase 2 is planned (AMC Budget 2026-27, PDF pp.102, 104 and 166). From April 2025 AMC cleared structures from the lake land; the Gujarat High Court refused to stay the clearance, holding that 'Chandola Lake is a water body and on a water body, no construction can be permitted' (R/SCA 6119/2025, order of 29 April 2025). Area: 121 hectares (about 299 acres) with a 525-hectare command area, per the State Irrigation Department's affidavit to the High Court in 2000.",
+        "cultural_note": "The 1879 Bombay Gazetteer describes an earth-embanked circular reservoir about two miles south of the city near Shah Alam's tomb, covering 181 acres, with 291 acres assessed as irrigable from it, though it 'seldom retains any depth of water long after the close of the rains' (p.17). In 2000 the Irrigation Department told the High Court that urban growth had ended its use for irrigation (Shailesh R. Shah v. State of Gujarat, 2002).",
+        "confidence": "V",
+        "sources": [
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+          "https://indiankanoon.org/doc/324892/",
+          "https://indiankanoon.org/doc/111321386/",
+          "https://indiankanoon.org/doc/46004928/",
+          "https://archive.org/details/dli.ministry.08145",
+          "https://www.greentribunal.gov.in/sites/default/files/news_updates/REPORT%20BY%20COMMITTEE%20IN%20OA%20NO.%20105%20of%202019%20(AJITSINH%20BHURUBHA%20VAGHELA%20&%20INHABITANTS%20OF%20SEVERAL%20VILLAGE%20OF%20KHERA%20TALUKA,%20DISTT.%20KHEDA%20VS.%20STATE%20OF%20GUJARAT).pdf"
+        ]
+      },
+      {
+        "name": "Lal Bahadur Shastri Lake",
+        "alternate_names": [
+          "Malik Shaban lake",
+          "Malek Saban talav"
+        ],
+        "type": "lake",
+        "area_acres": 71,
+        "year_built": null,
+        "era": "Stone-built, recorded by 1879",
+        "status": "AMC's 2026-27 budget records its development, with Sola, Shilaj and Gota (phase 1) lakes, as completed at a combined Rs 63.88 crore under the Swarnim budget head (PDF p.165). The 2019-20 budget had reported an earlier development of 'Lal Bahadur Shastri lake in Bapunagar' as complete (PDF pp.143-144). The 71 acres is the 1879 measurement.",
+        "cultural_note": "The 1879 Bombay Gazetteer describes the Malik Shaban lake, two and a quarter miles east of the city near Rakhial, as 'hardly inferior in size' to Kankaria: stone built, octagonal, 71 acres, its sides in good order but its bed 'so silted up as to hold no depth of water' (p.18). AMC's budgets give the lake both names.",
+        "confidence": "V",
+        "sources": [
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2206",
+          "https://archive.org/details/dli.ministry.08145"
+        ]
+      },
+      {
+        "name": "Vastrapur Lake",
+        "type": "lake",
+        "area_acres": 12.8,
+        "builder": "Ahmedabad Urban Development Authority, before 2003, per AMC's 2025-26 budget (PDF p.126)",
+        "status": "AMC's 2025-26 budget gives its renovation as under way at Rs 9.89 crore (PDF p.126) and, on another page, at Rs 7.3 crore (PDF p.196). The 2026-27 budget lists Vastrapur among lakes where development work has been carried out (PDF p.218) and, in its English climate annex, among lake works in progress (PDF p.323). Both readings are stated; the budgets do not reconcile them.",
+        "cultural_note": "Area 51,761 sq m on the west side of the Sabarmati. In 2023-24 AMC recorded structural damage to the retaining wall, walking path and amphitheatre steps and decided to renovate the lake (Budget 2023-24, PDF p.180); in 2022-23 it had listed its development at Rs 5.00 crore as work in progress (PDF p.138).",
+        "confidence": "V",
+        "sources": [
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2359",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2203",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2204"
+        ]
+      },
+      {
+        "name": "Isanpur Lake",
+        "type": "lake",
+        "area_acres": 23.6,
+        "status": "The Collector allotted the lake land to AMC on 20 June 2009 to develop and beautify the lake. AMC's notice of 8 September 2025 to vacate structures on the lake land was upheld by the Gujarat High Court on 14 November 2025 and on appeal on 2 December 2025. AMC's 2026-27 budget lists a lake garden here at Rs 2.00 crore (PDF p.181).",
+        "cultural_note": "The revenue record gives the survey number as 95,608 sq m with land use 'Talav'; the town-planning map shows 95,639 sq m as water body (Town Planning Scheme 53, final plots 160 to 162, as recorded in the High Court's orders).",
+        "confidence": "V",
+        "sources": [
+          "https://indiankanoon.org/doc/78249428/",
+          "https://indiankanoon.org/doc/153538851/",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583"
+        ]
+      },
+      {
+        "name": "Kamal Talav",
+        "alternate_names": [
+          "Umla Talavdi",
+          "Kamal Lake"
+        ],
+        "type": "pond",
+        "status": "On revenue survey no. 258 in Town Planning Scheme 97 (Naroda-North), Sardarnagar ward. AMC served notices on 6 November 2025 to vacate structures on the pond land, citing a State Government direction to develop and beautify the pond; the Gujarat High Court dismissed the challenge on 28 November 2025. AMC's 2026-27 budget lists it among 15 lakes planned for lakefront development (Rs 80.00 crore for the group, PDF p.166) and a lake garden at Rs 2.00 crore (PDF p.181).",
+        "confidence": "V",
+        "sources": [
+          "https://indiankanoon.org/doc/147325373/",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583"
+        ]
+      },
+      {
+        "name": "Shakri Lake",
+        "alternate_names": [
+          "Shakri Talav",
+          "Shakri Sarovar"
+        ],
+        "type": "lake",
+        "status": "AMC's 2026-27 budget records its development as complete at Rs 17.50 crore (PDF p.165). The 2025-26 budget had listed Shakri inside the Rs 63.88 crore Swarnim group with Sola, Shilaj, Lal Bahadur Shastri and Gota lakes, then in progress (PDF p.196).",
+        "cultural_note": "Two official areas: 6,263 sq m in AMC's 2022-23 budget (PDF pp.91 and 139) and 78,858.49 sq m in its 2023-24 budget (PDF p.180). Both are stated; neither budget explains the difference.",
+        "confidence": "V",
+        "sources": [
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2359",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2204",
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2203"
+        ]
+      },
+      {
+        "name": "Malav Talav, Vasna",
+        "type": "lake",
+        "status": "AMC's 2026-27 budget lists its renovation at Rs 6.00 crore among the West zone's works for the coming year (PDF p.95), names it in the seven-lake re-development and phase 2 group (Rs 40.00 crore for the group, PDF p.166), and includes it in the English climate annex's 21 planned lakefronts (PDF p.321).",
+        "cultural_note": "Not the Malav lake at Dholka, which the 1879 Bombay Gazetteer places in the regency of Minal Devi, mother of the Solanki king Siddhraj (1094-1148) (p.18). The record we hold gives no history or area for the Vasna lake.",
+        "confidence": "V",
+        "sources": [
+          "https://ahmedabadcity.gov.in/ViewFile/ViewFile?TYPE=FileRepository,2583",
+          "https://archive.org/details/dli.ministry.08145"
+        ]
+      }
+    ]
+  }
+}

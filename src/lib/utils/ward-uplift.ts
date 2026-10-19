@@ -8,7 +8,9 @@ import {
   percentileForValue,
   getSortedValues,
   computeCompositeScore,
+  countFactorsWithData,
   percentileFromRank,
+  rankOverall,
   type MetricComputation,
 } from "@/lib/utils/ward-rankings";
 import { INTERVENTIONS, type Intervention } from "@/lib/data/uplift-benchmarks";
@@ -67,10 +69,13 @@ export interface UpliftPlan {
   budgetRemainingCr: number;
   gapAnalysis: MetricGap[];
   allocations: InterventionAllocation[];
-  overallPercentileBefore: number;
-  overallPercentileAfter: number;
-  overallGradeBefore: Grade;
-  overallGradeAfter: Grade;
+  /** Factors with data for this ward; the overall fields are null below
+   *  MIN_FACTORS_FOR_OVERALL_GRADE. */
+  factorsWithData: number;
+  overallPercentileBefore: number | null;
+  overallPercentileAfter: number | null;
+  overallGradeBefore: Grade | null;
+  overallGradeAfter: Grade | null;
 }
 
 /* ── Precomputed city distributions ────────────────────────────────── */
@@ -83,7 +88,7 @@ export interface CityDistributions {
   thresholds: Map<string, { p20: number; p40: number; p60: number; p80: number }>;
   /** Real composite score per ward (same formula as report card). */
   compositeByWard: Map<number, number>;
-  /** Real overall percentile per ward (from report-card ranking). */
+  /** Real overall percentile per graded ward (from report-card ranking). */
   overallPercentileByWard: Map<number, number>;
   overallGradeByWard: Map<number, Grade>;
 }
@@ -120,23 +125,14 @@ export function buildCityDistributions(allProfiles: WardProfile[]): CityDistribu
     compositeByWard.set(p.ward_number, computeCompositeScore(p, metricComps));
   }
 
-  // Rank composites: higher is better, no tiebreaker (matches computeWardRankings)
-  const compositeEntries = allProfiles.map(p => ({
-    id: p.ward_number,
-    value: compositeByWard.get(p.ward_number)!,
-  }));
-  compositeEntries.sort((a, b) => b.value - a.value);
-
+  // Same ranking as computeWardRankings: graded wards only.
+  const overall = rankOverall(allProfiles, metricComps);
   const overallPercentileByWard = new Map<number, number>();
   const overallGradeByWard = new Map<number, Grade>();
-  let currentRank = 1;
-  for (let i = 0; i < compositeEntries.length; i++) {
-    if (i > 0 && compositeEntries[i].value !== compositeEntries[i - 1].value) {
-      currentRank = i + 1;
-    }
-    const pct = Math.round(percentileFromRank(currentRank, compositeEntries.length));
-    overallPercentileByWard.set(compositeEntries[i].id, pct);
-    overallGradeByWard.set(compositeEntries[i].id, percentileToGrade(pct));
+  for (const [id, { rank }] of overall.ranked) {
+    const pct = Math.round(percentileFromRank(rank, overall.total));
+    overallPercentileByWard.set(id, pct);
+    overallGradeByWard.set(id, percentileToGrade(pct));
   }
 
   return {
@@ -367,7 +363,7 @@ export function computeUpliftPlan(
   const allocated = new Map<string, number>();
 
   // Use real report-card percentile for the before state (exact parity)
-  const overallPercentileBefore = cityDist.overallPercentileByWard.get(wardNumber) ?? 50;
+  const overallPercentileBefore = cityDist.overallPercentileByWard.get(wardNumber) ?? null;
 
   let budgetRemaining = totalBudgetCr;
 
@@ -514,7 +510,8 @@ export function computeUpliftPlan(
   // Sort allocations by cost descending (biggest investment first)
   allocations.sort((a, b) => b.costCrMid - a.costCrMid);
 
-  const overallPercentileAfter = afterRankings?.overallPercentile ?? overallPercentileBefore;
+  const overallPercentileAfter =
+    overallPercentileBefore === null ? null : afterRankings?.overallPercentile ?? overallPercentileBefore;
 
   return {
     wardNumber,
@@ -523,9 +520,10 @@ export function computeUpliftPlan(
     budgetRemainingCr: Math.round(budgetRemaining * 10) / 10,
     gapAnalysis,
     allocations,
+    factorsWithData: countFactorsWithData(ward, cityDist.metricComps),
     overallPercentileBefore,
     overallPercentileAfter,
-    overallGradeBefore: percentileToGrade(overallPercentileBefore),
-    overallGradeAfter: percentileToGrade(overallPercentileAfter),
+    overallGradeBefore: overallPercentileBefore === null ? null : percentileToGrade(overallPercentileBefore),
+    overallGradeAfter: overallPercentileAfter === null ? null : percentileToGrade(overallPercentileAfter),
   };
 }

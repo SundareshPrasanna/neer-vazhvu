@@ -1,0 +1,36 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 19.0,
+      "lng": 73.0,
+      "note": "Nearest valid land grid point to Mumbai (coastal/island cells classified as ocean by IMD; city centre 19.08 N, 72.88 E)"
+    },
+    "recent": {
+      "_note": "The island city's centre, kept from before the config centre moved to the MMR (19.15, 72.99). Unlike the newer cities it is not the IMD grid point (19.0, 73.0), so the provisional months are read one cell away from the IMD series they fill.",
+      "lat": 19.076,
+      "lng": 72.8777
+    }
+  },
+  "elevationBands": {
+    "_notes": {
+      "bbox": "the urban MMR, all 9 corporations",
+      "bands": "band edges (metres); labels derive from consecutive pairs"
+    },
+    "bbox": [
+      72.75,
+      18.85,
+      73.35,
+      19.55
+    ],
+    "bands": [
+      0,
+      2,
+      5,
+      10,
+      20,
+      50,
+      100
+    ]
+  }
+}

@@ -1,0 +1,1275 @@
+{
+  "_doc": [
+    "Nagpur (NMC) upstream sources for Headwaters. Every artifact Nagpur ships names its upstreams by id, with the artifact in that id's dependsOn.",
+    "Order: supply (NMC Environment Status Report and budget, the MWRRA order on NMC's Pench water), reservoirs (the Pravah dam bulletin read for the Nagpur district block, and its dated Marathi archive), groundwater (NWDP telemetry), rivers (MPCB monthly polluted-stretch readings, NMC's river and STP tables, MPCB station list and progress reports), geography (NMC GIS outline and zones, MRSAC ward, water-body and drainage layers, the final ward notification), flood (IMD cell and observatory tables, Maharain circle gauges, the City Development Plan 2041), commitments and lakes (Government Resolutions, AMRUT 2.0, the court docket, NMC decks, JICA and ADB documents, the Smart City list, the gazetteers and CWC's dam register), story and civic copy (the Origins sources, the disaster plans, Orange City Water, Wikimedia Commons).",
+    "Maharashtra-wide and platform upstreams stay under their existing ids and carry Nagpur's paths in their dependsOn rather than being duplicated: IN-GRES (ingres-groundwater-maharashtra, pune.json); the WRD Government Resolutions (mahagr-wrd-resolutions), the WRD flood-line register (wrd-flood-line-maps), MPCB water-quality reports (mpcb-water-quality-reports) and the CWC reservoir bulletin (cwc-reservoir-bulletin-archive) in mumbai.json; CPCB NWMP (cpcb-nwmp, surat.json); OpenStreetMap, IMD gridded rain, Open-Meteo, FABDEM and the CPCB polluted-stretch report in platform.json. The Pravah bulletin is registered per city (mumbai.json wrd-pravah-dam-feed, pune.json wrd-pravah-pune-dams, wrd-pravah-nagpur-dams here) because scrape_pravah_dams.py names one source id per city in each artifact's envelope.",
+    "nmc-esr-river-stp-tables watches the same report as nmc-esr on purpose: the river and STP tables are refreshed by a different producer with different traps, so a new edition raises one actionable alert per producer.",
+    "wrd-pravah-nagpur-dams carries no ciBlocked field on purpose. mwrdpravah.in does not answer GitHub runners, but the entry is detection 'continuous', which the edition checker never fetches; a ciBlocked flag would make CI report it CHECK-FAILED every week. The runner block is recorded in refreshMethod and notes instead, as on the Mumbai and Pune entries.",
+    "Neither MRSAC's nor NMC's ArcGIS service states a licence (copyrightText empty, no terms page). Both are state and municipal publications cited with attribution; the absence of stated terms is recorded in each entry's notes, not in the licence string.",
+    "Five GRs cited by the commitments register were read from the orgpedia mahGRs archive copy because the official PDF path answered 404 on 15 Oct 2026 (both the Marathi and English folders): 202211021115299425 (Naik lake), 202211021157345625 (Lendi lake), 202303061239587125 (AMRUT 2.0 water supply), 202304061347581325 (AMRUT 1.0 pipeline replacement) and 202304201803571027 (Kolar-Kanhan barrage, WRD). Re-try the official path at each review; the register labels these rows.",
+    "The story and the civic copy (ACTIONS_BY_CITY.nagpur helplines, the nagpur lines in src/content/my-ward/sources.ts) are hand-written content with page citations in the file headers, not generated artifacts: refreshing means re-reading the cited page and editing the prose or the card, never a script."
+  ],
+  "sources": [
+    {
+      "id": "nmc-esr",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation (prepared by CSIR-NEERI)",
+      "url": "https://nmcnagpur.gov.in/public-notices",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/nagpur-supply-overview.json",
+        "public/data/allocations-nagpur.json",
+        "public/data/commitments-nagpur.json",
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/restoration-projects-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/cities/nagpur/story-en.tsx",
+        "src/content/my-ward/sources.ts",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual: transcribe the new edition's water-supply section into FIGURES, WTPS and the monthly table in neer-vazhvu-api/scripts/build_nagpur_supply.py, run it with --verify <dir of PDFs>, then rerun neer-vazhvu-api/scripts/build_nagpur_allocations.py",
+      "playbook": [
+        "Table 6.2's monthly 'pure water supply' rows are the SUPPLIED total (257.642 Mcum in 2023-24, 704 MLD over 366 days). The text's '410 MLD (pure water supply of 257.642 MCM)' invites calling 257.642 the billed volume; it is not. 410 MLD billed is about 150 Mcum a year.",
+        "The loss percentage is NMC's own figure. Recompute it from billed over supplied and carry both when they differ: 2023-24 prints 41.91% (410 of 706 gives 41.93%); 2022-23 prints 47% while its own table gives 45%.",
+        "Table 6.2 need not close: in 2022-23 the twelve rows add to 250.672 against a printed 250.679. The producer asserts rows and gap separately; change ROWS_2022_23 only after checking the page image.",
+        "Dark zones: the ESR says 'certain areas under 36 CAs'. That is some areas within 36 command areas, never 36 whole command areas, and the ESR's word 'still' stays inside the quote. No citywide hours-of-supply figure exists in any edition.",
+        "Printed page = PDF page - 1 in 2023-24 and 2022-23. The 2017-18 draft is +13 (printed p.23 = PDF p.36).",
+        "The tanker baseline of 346 is dated 2016 by the ESRs and 2018 by the budgets. Carry both; do not reconcile.",
+        "The ESR's population figure cites macrotrends.net, not a census or NMC count. Do not adopt it.",
+        "Edition series: Pench II is 133 MLD in the 2017-18 draft and 175 MLD from 2022-23; Old Gorewada (16 MLD) is in the 2017-18 list only. Carry both lists as printed."
+      ],
+      "notes": "The ESR's water-supply section (s.6.2.1 in 2022-23 and 2023-24) is NMC's only published water balance: plants and capacities, supply, billed volume, loss, command areas, dark zones, tankers, AMRUT pipeline progress and point-of-use test results. 2023-24: https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf (203 pp, posted Aug 2025). 2022-23: https://www.nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_final_Report_2022-2023.pdf. 2019-20: live URL 404, Wayback 20220806150918 works. The 2017-18 draft exists only on a third-party mirror (caknnagpur871784109.wordpress.com) and is the only edition with the raw-water reservation and billing table (Table 4.3). ESR 2024-25 was tabled at the NMC general body around 22 Apr 2026 according to the press but was not online on 15 Oct 2026. The public-notices page shows only recent uploads and keeps no ESR index, so a link-set watch would match nothing between editions: hence human-review. Upload paths follow /assets/300/<year>/<month>/Public-Notices/ (2026 uploads use -Public-Notices).",
+      "lastSeen": {
+        "edition": "ESR 2023-24 (CSIR-NEERI; ESR_Final_Report_2023-2024.pdf, posted Aug 2025, 203 pp.); ESR 2024-25 not online on 2026-10-15",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nmc-budget",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation",
+      "url": "https://nmcnagpur.gov.in/financial-statement",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly (May)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "mediafiles/.*budget.*\\.pdf"
+      },
+      "dependsOn": [
+        "public/data/nagpur-supply-overview.json",
+        "public/data/commitments-nagpur.json",
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/restoration-projects-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual: read the Commissioner's speech, section 'सार्वजनिक आरोग्य अभियांत्रिकी विभाग' (water), update the budget rows of FIGURES in neer-vazhvu-api/scripts/build_nagpur_supply.py and rerun it",
+      "playbook": [
+        "Budget 2026-27 (6a1d606eebca4_nmcbudget2026.pdf) is a Xerox scan with no text layer. OCR it (tesseract mar+eng, 200 dpi) and then read every figure again on the page image; the water section is printed pp.B-3 to B-4 = PDF pp.9-10. Record the method as 'OCR, checked on page image p.N'.",
+        "Budget 2025-26's speech pages carry Unicode text, but its account tables use the legacy Kruti Dev font that pdftotext cannot read as digits; decode those by hand.",
+        "Tankers: 'सध्या केवळ N टँकर कार्यरत' is the current count and 346 is the 2018 baseline; the stated reduction must equal 346 minus N (309 and 37 in 2026-27; 287 and 59 in 2025-26). The producer asserts it.",
+        "The speech counts '106 पाण्याच्या टाक्या' (water tanks); the ESR counts 73 command areas. Different units: never substitute one for the other.",
+        "The 2026-27 speech, dated May 2026, reports water revenue received 'जानेवारी 2027 पर्यंत'. Carry it as printed with [sic]; do not silently change the year.",
+        "Revenue lines are budget estimates and receipts to date, not audited accounts."
+      ],
+      "notes": "The Commissioner's budget speech is NMC's most current statement of its water network: connections, water tanks, distribution length, tankers in service, AMRUT progress and water revenue. 2026-27 (listed as 'NMC Budget 2025-26-27', 08/05/2026): https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf, 340 pp. 2025-26 (listed as 'NMC Budget 2024-25-26', 05/06/2025): https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf, 295 pp. The speech gives no supply volume, loss, per-capita or hours figure. The fund statement in Budget 2025-26 (printed pp.230-231) carries a Rs 28 crore line for the cost of drawing Pench water (head A23801931111), a money figure only.",
+      "lastSeen": {
+        "linksHash": "f4fc55211b8465fc",
+        "links": [
+          "https://nmcnagpur.gov.in/assets/300/2023/06/mediafiles/4-FINAL-EXPENDITURE1-ZonalBudget.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2024/05/mediafiles/Budget_Expense_24-25.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2024/05/mediafiles/Budget_Income_24-25.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2024/05/mediafiles/Tranport_Budget_Expense_24-25.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2024/05/mediafiles/Transport_Budget_Income_24-25.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_Budget_2022-2023-2024_(1).pdf",
+          "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/Final_budget_2024-_2025-2026_(1).pdf",
+          "https://nmcnagpur.gov.in/assets/300/2025/06/mediafiles/final_Budget_2021-2022-2023_(1).pdf",
+          "https://nmcnagpur.gov.in/assets/300/2026/05/mediafiles/69fdb907128d8_NMCANNUALBUDGET2023-2024_compressed.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2026/05/mediafiles/6a0d66a06ffaf_NMCFinalBudget232425.pdf",
+          "https://nmcnagpur.gov.in/assets/300/2026/06/mediafiles/6a1d606eebca4_nmcbudget2026.pdf"
+        ],
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "mwrra-case-8-2017",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Water Resources Regulatory Authority",
+      "url": "https://mwrra.maharashtra.gov.in/en/disposed-petitions/",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "Case-No"
+      },
+      "dependsOn": [
+        "public/data/nagpur-supply-overview.json",
+        "public/data/allocations-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/cities/nagpur/story-en.tsx"
+      ],
+      "refreshMethod": "manual: read any new order that concerns NMC or the Pench Project Complex and update the arrangements and events in neer-vazhvu-api/scripts/build_nagpur_allocations.py",
+      "playbook": [
+        "The final order (Order No. 13/2018, 12 Sep 2018, 52 pp printed 'Page n of 50') and the three interim orders are scans. OCR at 250 dpi, then check every figure on the page image.",
+        "Attribute every statement to its speaker. Paras 12-17 are the petitioner's account and print the 78 Mcum sanction as 31 Mar 1998; NMC (para 32(i)) and the Pench Project Officer (para 34(iii)) date it 21 Mar 1998. The Authority's own findings are in para 50 and its directions in para 52.",
+        "Para 50(v) prints NMC's 2017-18 quota as 139.03 Mcum, 'which includes 118.05 ... domestic and 21.01 ... industrial'; the parts add to 139.06. Carry as printed.",
+        "The order records three design utilisations for the Pench complex (965, 708 and 1,087 Mcum, para 50(v)) and directs a review (52(iii)). Do not compute a deficit-year cut from any of them.",
+        "Wrong host: mwrra.org answers 525. Orders live under https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-{Final-Order,Ist-Interim-Order,2nd-Interim-Order,3rd-Interim-Order}.pdf.",
+        "This watch fires on ANY newly disposed petition. Open the new order's first page and act only if it concerns Nagpur, NMC or the Pench Project Complex.",
+        "Direction 52(vii) asked NMC for a time-bound loss-reduction programme and annual reports to the Authority, also to be put in the public domain. Look for them before calling that gap closed."
+      ],
+      "notes": "Case No. 8 of 2017 asked the Authority to curtail NMC's use of Pench water in favour of irrigation. The final order holds the additional 78 Mcum reservation 'legal and intact as on today' under section 31B of the MWRRA (Amendment and Continuance) Act 2011, records the 1998 sanction, its 2008 conversion to permanent on conditions (an agreement within 90 days; Rs 8,445 lakh for 8,445 ha of irrigation command) and the 2010 and 2011 steps, NMC's 2017-18 water budget (197.33 Mcum from the Pench complex), the CADA entitlement table of 10 Apr 2018 and the Chief Auditor's audit (57.64% non-revenue water, Nov 2016-Oct 2017). NMC also told the Authority that a closed pipeline replaced the 48.4 km canal from April 2015 (para 32(v)). The Authority's bulk water tariff order for 2026-29 is at https://mwrra.maharashtra.gov.in/wp-content/uploads/2026/06/ and is not yet used here.",
+      "lastSeen": {
+        "linksHash": "566abb22dae8e721",
+        "links": [
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2008.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2013.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2014-Clarification-for-MWRRAs-Order-19092014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2014-Dt-19-September-2014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2014-Dt-28-May-2014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2014-State-Govt-Directions-for-MWRRAs-Order-19092014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2016.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-1-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-10-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-11-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-12-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-13-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-13-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-14-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-15-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-16-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-2-of-2008.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-2-of-2013.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-2-of-2014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-2-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-2-of-2016.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-2-of-2017.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-3-of-2010.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-3-of-2013.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-3-of-2014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-3-of-2016.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-3-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-4-of-2011.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-4-of-2013.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-4-of-2014.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-4-of-2016.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-5-6-of-2015-Dt-15092015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-5-6-of-2017-Corrigendum.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-5-6-of-2017.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-5-of-2011.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-7-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-7-of-2016.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-7-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2016.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-2nd-Interim-Order.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-3rd-Interim-Order.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-Final-Order.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-8-of-2017-Ist-Interim-Order.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-9-of-2015.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No-9-of-2017.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No.-13-of-2015-Revised.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Case-No.-6-of-2011.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-2-Case-No.-6-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-Case-No-16-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-Case-No.-11-of-2019.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-Case-No.-6-of-2018.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-Case-No.-6-of-2019.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-Case-No.-7-of-2017.pdf",
+          "https://mwrra.maharashtra.gov.in/wp-content/uploads/2022/08/Order-Case-No.-9-of-2019.pdf"
+        ],
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "wrd-pravah-nagpur-dams",
+      "scope": "nagpur",
+      "publisher": "Water Resources Department, Government of Maharashtra (Pravah dam-safety bulletin)",
+      "url": "https://mwrdpravah.in/damsafety/control/pdfLatestReportEng",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "file",
+      "cadence": "daily",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/nagpur-dam-storage.json",
+        "supabase:reservoir_daily_v2",
+        "src/cities/nagpur/config.ts",
+        "public/data/facts-nagpur.json",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_pravah_dams.py --city nagpur --out public/data/nagpur-dam-storage.json --supabase, daily from the local scheduled job (~/.local/neervazhvu-ops/refresh-blocked-feeds.sh, 12:00 IST, the step after Pune). mwrdpravah.in does not answer GitHub runners, and .github/workflows/pravah-dam-refresh.yml must not take a third city. History: backfilled once on 18 Oct 2026 from the dated Marathi archive by neer-vazhvu-api/scripts/backfill_pravah_marathi_archive.py (see the last playbook entry); a rerun is insert-only (--dry-run first; --supabase on the owner's word).",
+      "playbook": [
+        "Match the WHOLE label inside the 'Nagpur' district block of the Nagpur region, never a substring anywhere: 'Nand' and 'Wadgaon' are short and generic, and the Gondiya block has its own Dhapewada. The scraper does this for a city with a `district` key. With require_all it writes nothing if Totladoh or Kamthi Khairy (the db_filter dams) is missing; a missing context dam (Khindsi, Nand, Wadgaon) prints a WARNING and the other dams are still written to the artifact and the database.",
+        "Five rows, two of them NMC's: Totladoh -> totladoh and Kamthi Khairy -> navegaon_khairi feed NMC's Pench schemes; Khindsi (NRLD 'RAMTEK'), Nand and Wadgaon (Lower Wunna) are irrigation dams kept in the artifact for context and never written to reservoir_daily_v2 (db_filter: corporations).",
+        "No row is named 'Pench'. Three other publishers use that word for three different dams: CWC's weekly bulletin calls Totladoh 'PENCH' (older spelling 'PENCH (TOTALADOH)'), NWDP's 'Pench Dam' and 'Pench Project' sit at Kamthi Khairy's coordinates, and Madhya Pradesh's 'Pench Dam' is the Machagora structure upstream.",
+        "Storage is WHOLE-DAM live storage of a hydro-electric reservoir shared with Madhya Pradesh (Totladoh) and an irrigation dam (Kamthi Khairy). It is never NMC's share; NMC holds a reservation (190 Mcum a year in the first phase, WRD GR of 19 Mar 2020). No days-left runway is computed from it.",
+        "The percentage is of DESIGNED LIVE storage (the reservoir_daily_v2 column is called storage_pct_frl for historical reasons). The bulletin prints no FRL; Totladoh's FRL 490.00 m is from CWC's weekly bulletin, Kamthi Khairy's is not published in any source used here.",
+        "Designed (dead, live, gross) Mcum are fixed per dam: Totladoh 150.00/1016.93/1166.93, Kamthi Khairy 39.00/141.98/180.98, Khindsi 0.00/103.00/103.00, Nand 9.00/53.18/62.18, Wadgaon 16.60/134.90/151.50. They equal NRLD-2019 to the cubic metre for Totladoh (p.196) and Kamthikhairy (p.172); Nand (p.197) and Wadgaon (p.205) equal at the bulletin's 0.01 Mcum precision; Khindsi (NRLD RAMTEK p.151) matches on live storage only (NRLD gross 105.13 Mcum). The scraper warns if one changes; a resurvey means updating NAGPUR_DESIGNED, fullCapacityMcft in src/cities/nagpur/config.ts and the 061 migration together.",
+        "Never use CWC's weekly PENCH storage or percentage: its 1.091 BCM capacity is a different denominator (its own storage at FRL is 1.016 BCM, i.e. Pravah's 1,016.93 Mcum), and its storage figure stayed at 1.017 BCM (93.21 %) in every bulletin from 23.07.2026 to 08.10.2026 while the level it printed moved between 484.86 m and 481.80 m. Its level column is consistent with the state bulletin.",
+        "The header date flips at midnight and per-dam readings arrive through the morning (Kamthi Khairy 06:49 AM, Khindsi stamped 12:00 AM on 15/10/2026), so a run before about 09:00 IST can carry yesterday's values under today's header. reservoir_daily_v2 rows carry the REPORT date (newest reading); the per-dam date stays in the artifact.",
+        "MARATHI ARCHIVE. The same bulletin is kept per date at https://wrd.maharashtra.gov.in/Upload/PDF/Today%27s-Storage-ReportMarathi-DD-MM-YYYY.pdf (apostrophe URL-encoded; the English filename does not exist). Values equal the English PDF of the same day (checked 15-10-2026 for all five rows). Coverage: first copy found 25 Feb 2024 (1 Feb and 15-24 Feb 2024 return 404; 2-14 Feb not checked), with holes after it (15-03-2024 is 404). Every request takes about 50 s, a 404 included; never HEAD (it 404s), always GET. Digits are Devanagari, the time reads 'स.' for AM, and pdftotext breaks the dam names apart (vowel signs land on the neighbouring line), so match rows on the designed triple inside the नागपूर block, never on the name. Each dam row carries its own reading date (15-10-2025: Kamthi Khairy dated 14/10/2025, Totladoh 15/10/2025). The backfill stores the FILE (report) date, as the live scraper stores the report date (on the 25 files checked the file date equals the newest reading in the file); the per-dam reading date stays in the dry-run JSONL (reading_date), and a file whose newest reading is not the file date is reported.",
+        "Backfill is INSERT-ONLY: never overwrite a row the live feed wrote. A day missing from the archive stays missing; the live scraper's same-date-last-year rows are reconstructed (ly_% x live capacity) and also must not be overwritten by archive rows for the same date unless the owner decides otherwise. The reverse holds too: CITIES['nagpur']['ly_insert_only'] makes the live scraper send its same-date-last-year rows in a second upsert with ignore_duplicates, so a reading already stored for that date (live or archive) keeps its value, and a same-date-last-year row printed 0.0 is not sent (column 11 printed 0.0 for both Pench dams in the 01-04-2024 file; a real empty day then stays a gap). Today's rows are merge-upserted as before. Mumbai and Pune do not set the flag and are unchanged (byte-identical rows and calls on the 14 and 15 Oct 2026 bulletins); whether they adopt it is the owner's call.",
+        "mwrdpravah.in: TLS chain incomplete (verification off); dated URLs 404 and every date parameter on pdfLatestReportEng is ignored; the home page's 'District Wise Report' buttons return an OFBiz NullPointerException page. GitHub runners time out on the host.",
+        "Do not reach for NWDP to fill gaps: 'Reservoir Discharge, Pench Dam' is zero in every row of both files and sits at Kamthi Khairy, and the two Totladoh level datasets published 14 Oct 2026 carry an 'Other (Non-Commercial)' licence (not served, decision D14).",
+        "BACKFILL DONE 18 Oct 2026. Archive dates 15 Feb 2024 to 17 Oct 2026: 976 asked, 927 files, 49 never archived (first copy 25 Feb 2024). 1,745 Totladoh and Kamthi Khairy rows qualified and 1,743 were inserted (2 dates already held the live scraper's same-date-last-year rows), giving reservoir_daily_v2 887 Totladoh and 860 Kamthi Khairy days from 25 Feb 2024. 109 rows were NOT written because the file repeated an earlier reading for that dam (reading date before the file date; mark_rows in the script), so no reading sits under a date it was not taken on; 18 cases where a later file revised an earlier day's value keep each file's own value under its own date. A rerun over the same range inserts nothing; to extend, run --dry-run then --supabase over the new dates only."
+      ],
+      "notes": "Daily all-Maharashtra live-storage PDF; per-dam rows for MAJOR projects only (138 statewide on 15/10/2026), grouped Region -> District. The Nagpur district block lists exactly five: Kamthi Khairy, Khindsi, Nand, Totladoh, Wadgaon. Gorewada, Ambazari and the Kanhan intake are not in the bulletin (city config carries them as no-feed sources). A daily feed has no editions to watch - detection 'continuous'; liveness is owned by check-data-freshness.ts (one reservoir_daily_v2 check per waterSource with a public feed, 4 days). The live endpoint keeps no archive, but the WRD department's dated Marathi copy does, from early 2024 (see playbook); backfill_pravah_marathi_archive.py reads it."
+    },
+    {
+      "id": "nwic-nwdp-groundwater-maharashtra",
+      "scope": "nagpur",
+      "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+      "url": "https://nwdp.nwic.gov.in/",
+      "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+      "type": "api",
+      "cadence": "continuous (six-hourly telemetry)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/nagpur-cgwb-stations.json",
+        "public/data/facts-nagpur.json",
+        "public/data/nagpur-ward-profiles.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py --city nagpur (after build_ingres_gwr.py --city nagpur, whose unit polygons place the stations)",
+      "notes": "Maharashtra groundwater-level telemetry on the CKAN portal, Nagpur district tag: GSDA (Agency 'Maharashtra GW') six-hourly resources 5b0a8a48-83cf-4ffd-8cf2-5e299e51dc60 (2021-2025) and 7a821ef4-b73b-4243-9a42-4f1a6f300230 (2026-2030), and CGWB six-hourly 2da4e849-2249-4e15-a609-a6166e30a300 (2021-2025, package ground-water-level-telemetry-daily-cgwb-as-assam, sic) and 53d52a41-1853-449a-b54c-566054a5ad58 (2026-2030). The 91 GSDA stations are exactly the 20 National Hydrology Project and 71 Atal Bhujal DWLRs in GSDA's registers (Atal: Katol 60, Narkhed 11), which is why the network clusters in Katol; none stands in the city. Three CGWB piezometers stand inside the NMC outline (Bokhara_1, IMD Nagpur_1, Nara_3). TRAPS: CKAN datastore_search distinct=true under-returns (2 of 11 CGWB stations), so page the rows; the District filter is exact-match; telemetry is negative below ground; one Nagpur-tagged CGWB station (Khandala_2, 21.25701 N 79.98519 E) stands outside the district and is dropped by placement; nitrate and fluoride are empty in the CGWB chemistry resource for Maharashtra, so this portal is levels only. India-WRIS serves the same CGWB stations but its data stops at 2026-06-04.",
+      "playbook": [
+        "Run build_ingres_gwr.py --city nagpur first: this producer places stations in public/geojson/nagpur-gwr-blocks.geojson (properties.block) and exits 1 if none place.",
+        "Run build_nwdp_gw_stations.py --city nagpur. It pages about 400,000 rows (the GSDA 2021-2025 resource alone is about 299,000) at 32,000 per call, so it takes several minutes.",
+        "Read the printed summary against the last run (2026-10-15: 101 stations placed, 1 outside, Nagpur (Urban) 3, all CGWB). A fall in placed stations means a resource id or row shape changed, not that wells closed; probe the resource's fields and its distinct District values before trusting a count.",
+        "Freshness is per agency. On 2026-10-15 every CGWB station's last reading was 2026-06-02 to 2026-06-19 and the 20 National Hydrology Project GSDA stations stopped 31 May to 2 June 2026, while 62 Atal Bhujal stations reported raw readings into September 2026 (59 keep a September monthly mean after the quality rules). A station whose latest month stops advancing is an upstream pause; check the same station on India-WRIS before calling it a fault here.",
+        "The portal opens a new resource for each five-year block; the 2031-2035 resources will need adding to CITIES['nagpur'].resources.",
+        "GSDA's manual monthly resource bb185a88-c7c3-483f-b06e-784ce5322ff8 (two NMC dug wells, 1990-2025) has a different row shape (Well ID, District Name, Date of Monitoring dd-mm-YYYY, 'Water Level, m bgl' positive down). Do not add it to this producer; it needs its own adapter and its own layer.",
+        "Never average these wells (CGWB's ten piezometers in the district are semi-confined, 23.5 to 69.5 m deep per India-WRIS; 12 GSDA NHP stations are dug wells) into a ward or city depth; groundwaterViews.depth stays false."
+      ]
+    },
+    {
+      "id": "mpcb-prs-monthly-nagpur-rivers",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Pollution Control Board",
+      "url": "https://mpcb.gov.in/en/river-polluted-streches/water_quality_of_polluted_river_stretches",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "irregular (the 2017-2024 files were posted 2-5 May 2025)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/(Kanhan|Kolar|Wainganga)(%20|_| )river"
+      },
+      "dependsOn": [
+        "public/data/river-quality-nagpur.json",
+        "pipeline-inputs/nagpur/river-mpcb-monthly-2017-2024.csv",
+        "public/data/facts-nagpur.json"
+      ],
+      "refreshMethod": "manual: pdftotext -layout each river PDF, re-run the column-position parse into pipeline-inputs/nagpur/river-mpcb-monthly-2017-2024.csv (stations 2170, 2171, 1909, 1908, 1910 only), then python3 neer-vazhvu-api/scripts/build_nagpur_river_quality.py, which fails if the 2021-2024 months stop reproducing CPCB's yearly table",
+      "playbook": [
+        "The page lists one PDF per polluted river ('Latest Water Quality As per Assessment Targeted'); Nagpur's are Kanhan river.pdf (2170, 2171, 1909), Kolar river.pdf (1908) and Wainganga River.pdf (1910 plus Bhandara and Chandrapur stations 11, 2172, 2173, 2175, 2176, which are not used). Drupal appends _0, _1 to a re-uploaded name, which is what this link-set sees; if a file is overwritten in place, compare sha256 with the INVENTORY line.",
+        "Each station block is 12 months x 8 years with the month label printed after the fourth year. Parse by column position, not token order: blank FC/TC cells occur (2170 and 2171 March 2018, 2170 September 2018, 1909 and 1910 July 2021 TC), and in Wainganga River.pdf the 1910 February 2021 values are printed on the line BELOW the year. Reading that wrapped line is what makes 1910's 2021 DO maximum (7.1) agree with CPCB.",
+        "'Dry' and 'Stagnant water' are verdicts in the bathing-criteria column with no values: carry the month as a reading with that condition and nulls, never as zero. 1909 Agargaon was dry every June 2019-2024; 1908 Waregaon May-August 2019.",
+        "FC can be printed '<1.8' (1909 August 2021): keep it as below detection, not as 1.8. CPCB's yearly table rounds the same month to 2.",
+        "Cross-check before shipping: for 2021-2024 the yearly min and max of the months equal CPCB's NWMP yearly table for DO and BOD exactly, FC after rounding. 2018 and 2019 do NOT agree (CPCB 2018 prints Kolar 1908 BOD max 60.0 where MPCB's months peak at 18.1): record the disagreement, never headline the CPCB 2018 figure.",
+        "The bathing-criteria verdict is blank for 2171 April-December 2024 and 1908 July 2024 as printed; leave it blank."
+      ],
+      "notes": "Monthly pH, DO, BOD, faecal and total coliform at every NWMP station on Maharashtra's polluted stretches, 2017-2024, the finest-grained public record for the Kanhan below Nagpur (it adds 2020, which CPCB's yearly file omits for Nagpur). PDFs created 2-5 May 2025; re-downloaded 15 Oct 2026 with identical bytes (Kanhan d0be402c, Kolar 450fa59c, Wainganga 830ad972).",
+      "lastSeen": {
+        "linksHash": "010f1d0a7194315d",
+        "links": [
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/Kanhan%20river.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/Kolar%20river.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/Wainganga%20River.pdf"
+        ],
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nmc-esr-river-stp-tables",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation (prepared by CSIR-NEERI)",
+      "url": "https://nmcnagpur.gov.in/public-notices",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/river-quality-nagpur.json",
+        "public/geojson/nagpur-stps.geojson",
+        "pipeline-inputs/nagpur/river-nmc-esr-2023-24-sites.csv",
+        "pipeline-inputs/nagpur/river-stps-esr-2023-24.csv",
+        "public/data/facts-nagpur.json",
+        "public/data/nagpur-ward-profiles.json"
+      ],
+      "refreshMethod": "manual: transcribe the new edition's river tables (6.13-6.16 in 2023-24) into pipeline-inputs/nagpur/river-nmc-esr-<edition>-sites.csv and Table 6.3 into river-stps-esr-<edition>.csv, point neer-vazhvu-api/scripts/build_nagpur_river_quality.py at them and rerun; it fails unless the operating plants sum to the text's treated figure",
+      "playbook": [
+        "Printed page = PDF page - 1 in 2023-24. River tables: 6.13 sites and DMS coordinates (printed pp.161-162), 6.14 physico-chemical (pp.163-164), 6.15 coliforms (p.165), 6.16 DO, COD, TKN, phosphate (p.166). STPs: Table 6.3 (p.137); the sewage sentence (520 generated, 403.5 treated at 12 STPs) is on p.136.",
+        "There is no BOD column in the river tables. Do not derive one from COD.",
+        "Coliforms are CFU/100 ml, not MPN. Pilli-5 (FC 140,000 > TC 100,000) and Pilli-6 (FC 300,000 > TC 140,000) print more faecal than total coliforms: ship as printed with the note, do not swap.",
+        "EC is headed uS/cm but the values (0.464-0.854) are in the mS/cm range; nitrate is 'as N'. Neither is carried.",
+        "COD 'ND' at Nag-1 and Pora-2 is below detection, not zero. The text says the Nag starts at COD 30.95; Table 6.16 gives that value to Nag-2 and ND to Nag-1. The table is what ships.",
+        "The sampling season changes between editions (2023-24: monsoon, before the festive season; 2022-23: end of monsoon, after it). Do not chart editions against each other as a trend.",
+        "Pora-1 to Pora-4 have coordinates but no place names. Nag-7's printed description has an unbalanced parenthesis; place_as_printed keeps it.",
+        "Table 6.3 'utilisation' equals capacity on every row and 520 MLD is 73% of supply, not a measured flow; say so wherever either is shown. Narsala is 'WIP / Trial run' and is not in the 12.",
+        "The 2024-25 edition was reported tabled in April 2026 but was not online on 15 Oct 2026; check the public-notices page and NMC's Environment department page."
+      ],
+      "notes": "NMC's in-city river readings with coordinates (23 sites on the Nag, Pili and Pora; ESR 2022-23 Table 6.12 also gives coordinates for 21 sites) and its STP register with coordinates, capacity, technology, year and consent. 2023-24 edition: https://nmcnagpur.gov.in/assets/300/2025/08/Public-Notices/ESR_Final_Report_2023-2024.pdf (sha256 3db860ce...015e, 203 pp). The public-notices page is a rolling list that no longer links the 2023-24 PDF, so a link-set watch would fail with zero matches; human review instead.",
+      "lastSeen": {
+        "edition": "ESR 2023-24, Tables 6.3 and 6.13-6.16 (printed pp.137, 161-166); sha256 3db860ce",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "mpcb-nwmp-station-list",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Pollution Control Board",
+      "url": "https://www.mpcb.gov.in/sites/default/files/New%20NWMP%20%20Stations.pdf",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "file",
+      "cadence": "irregular (list modified 6 May 2025)",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/river-quality-nagpur.json"
+      ],
+      "refreshMethod": "manual: confirm the Nag and Pili codes 5979-5983 and any coordinates added, then edit pipeline-inputs/nagpur/river-mpcb-wqi-2022-2024.csv (new_nwmp_code) and rerun neer-vazhvu-api/scripts/build_nagpur_river_quality.py",
+      "playbook": [
+        "Rows 15-19 of 'NEW NWMP STATION DETAILS' promote MPCB's state stations 185-189 (Nag near Ambazari lake, Bhandewadi bridge, Asoli bridge; Pili near Wanjra layout, Mankapur) to national codes 5979-5983, monthly, with no coordinates. 5979 is typed 'Lake'.",
+        "When CPCB's NWMP river tables (cpcb-nwmp) first print 5979-5983, these become the Nag's and Pili's first national readings: add them as stations, one time resolution per station.",
+        "The 'Old NWMP' part of this list gives whole-arcminute coordinates that contradict CPCB's WQMN_list: 1909 about 40 km off, 1910 about 53 km off. Do not take station coordinates from it."
+      ],
+      "notes": "MPCB's list of national-programme (NWMP) stations in Maharashtra, 15 pp, modified 6 May 2025 (sha256 132d0746...7c2a). It is the only document that links the Nag and Pili state stations to national codes.",
+      "lastSeen": {
+        "edition": "New NWMP Stations list, 15 pp., modified 6 May 2025 (sha256 132d0746)",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "mpcb-ngt-monthly-progress-reports",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Pollution Control Board",
+      "url": "https://mpcb.gov.in/en/river-polluted-streches/monthly-progress-reports",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "monthly",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "/MPR_[A-Za-z]|Monthly%20Progress%20Report"
+      },
+      "dependsOn": [
+        "public/geojson/nagpur-stps.geojson",
+        "pipeline-inputs/nagpur/river-stps-esr-2023-24.csv"
+      ],
+      "refreshMethod": "manual: open the newest MPR_Merged PDF, read 'Details of ... existing STP in the State' for the Nagpur Municipal corporation rows, update the mpr_* columns of pipeline-inputs/nagpur/river-stps-esr-2023-24.csv, then rerun neer-vazhvu-api/scripts/build_nagpur_river_quality.py",
+      "playbook": [
+        "The cover line can carry the previous year: MPR_Merged_Jan_2026.pdf reads 'For the State of Maharashtra (Jan -2025)' while the December file reads '(Dec -2025)'. Date an edition by its file name and PDF metadata (ModDate 23 Feb 2026), not the cover line.",
+        "NMC's 12 plants are Sr. 151-162 in the January 2026 file (PDF pp.9-10), each 'Operational' with utilisation equal to capacity and 'Non-Comply-NN'. The trailing number is a running count across the state, not a plant attribute: strip it.",
+        "Match plants to ESR Table 6.3 by capacity and place: Sr. 151 Bhandewadi 200 and Sr. 152 Bhandewadi 130 are listed in the opposite order to the ESR. The 12 must sum to 403.5 MLD (the producer asserts it).",
+        "The report never names the failing parameter. State the status as printed, with no adjective and no inference about which norm.",
+        "State totals (January 2026, PDF p.2): 173 STPs, 7,214.75 MLD installed, 5,023.85 MLD used, 87 complying, 80 non-complying."
+      ],
+      "notes": "MPCB's monthly progress reports to the National Mission for Clean Ganga under NGT O.A. 673/2018. The STP annexure is the only public, plant-by-plant compliance status for NMC's sewage treatment plants; no plant-level outlet readings are published (MPCB's continuous-monitoring portal shows no public data). January 2026: https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Jan_2026.pdf (110 pp, sha256 ffd50242...1585).",
+      "lastSeen": {
+        "linksHash": "7517826a654948d5",
+        "links": [
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_April_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Aug_2022.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Aug_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Dec_2022.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Dec_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Feb_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Jan_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_July_2022.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_July_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_June_2022.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_June_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_March_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_May_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Merged_Apr_2025.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Nov_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Oct_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Sep_2023.pdf",
+          "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/MPR_Sep_Oct_%26_Nov_2022.pdf",
+          "https://mpcb.gov.in/sites/default/files/miscellaneous-topics/Monthly%20Reports/April%20Monthly%20Progress%20Report%2020220523_15161673.pdf",
+          "https://mpcb.gov.in/sites/default/files/miscellaneous-topics/Monthly%20Reports/Dec.%202021%20Monthly%20Progress%20Report%20of%20Mahrashtra%20State%20for%20Dec.-21%20to%20be%20submitted%20in%20Jan-22%20(1).pdf",
+          "https://mpcb.gov.in/sites/default/files/miscellaneous-topics/Monthly%20Reports/February%20Monthly%20Progress%20Report%20Feb-22%20(Revised%20MPR%20Format)%20for%20Maharashtra%20State.pdf",
+          "https://mpcb.gov.in/sites/default/files/miscellaneous-topics/Monthly%20Reports/Monthly%20progress%20report-January-2022.pdf",
+          "https://mpcb.gov.in/sites/default/files/miscellaneous-topics/Monthly%20Reports/November%202021%20%20%20%20%20Submission%20of%20Monthly%20Progress%20Report.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Aug_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Dec_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Jan_2026.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_July_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_June_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_May_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Nov_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Oct_2025.pdf",
+          "https://www.mpcb.gov.in/sites/default/files/MPR_Merged_Sept_2025.pdf"
+        ],
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nmc-gis-admin-boundaries",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation",
+      "url": "https://geocivicnmcgis.nmcptax.com/server/rest/services/NMC/NMCAdminBoundaries/MapServer/2/query?where=1%3D1&outFields=ZONEID%2CNAME%2CLASTUPDATE&orderByFields=ZONEID&returnGeometry=false&f=json",
+      "insecureTLS": true,
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "api",
+      "cadence": "irregular (edited when NMC redraws a zone or the city limit)",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "pipeline-inputs/nagpur/nmc-city-boundary.geojson",
+        "pipeline-inputs/nagpur/nmc-zones.geojson",
+        "public/geojson/nagpur-wards-2025.geojson",
+        "public/data/nagpur-ward-profiles.json",
+        "public/data/nagpur-localities.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nagpur_geography.py --layer boundary --live, then neer-vazhvu-api/scripts/build_nagpur_wards.py (which also freezes the ten zone outlines as pipeline-inputs/nagpur/nmc-zones.geojson), then build_ward_profiles.py --city nagpur and scripts/fetch-osm-layers.ts --city nagpur --layer localities",
+      "notes": "NMC's property-tax GIS (vendor CyberTech, 'GeoCivic'), linked from the NMC home page through the citizen tax portal; anonymous Map/Query on every layer, copyrightText empty, no terms of use. NMCAdminBoundaries: layer 2 = the 10 named zones (edited 2022-04-07 to 2024-09-30), layer 3 = the city boundary 'Nagapur' (sic), edited 2023-08-13, 222.33 km2 on a sphere (221.72 km2 on the WGS84 ellipsoid; the layer's own SHAPE.AREA is 221.76 km2); layer 1 = 80 property-tax wards, NOT the 38 electoral prabhags. The hashed URL lists the zone names and edit dates: a redrawn zone or city limit moves it. The certificate chain is incomplete (Python and Node TLS checks fail, curl passes), hence insecureTLS.",
+      "playbook": [
+        "Fetch with curl, never Python urllib: the TLS chain is incomplete on geocivicnmcgis.nmcptax.com.",
+        "The city outline is a pipeline input, not a served file: refresh it with --layer boundary --live and update its SHA line in pipeline-inputs/INVENTORY.md in the same commit.",
+        "Layer 1 'Ward Boundary' is the property-tax ward map (80 polygons, old peth names). Never use it as the electoral wards.",
+        "Zone polygons carry placeholder tax numbers (TAXDEMAND and friends); keep only NAME and ZONEID.",
+        "Wards do not nest in zones (18 of 38 wards have under 90% of their area in one zone, measured 15 Oct 2026), and NMC assigns wards to zone offices administratively. A ward's zone_name/zone_no are set only where one zone holds at least 90% of it (20 wards) and are null elsewhere; zone_share is the largest share. MRSAC's own ward labels (landmark) differ from the area-majority zone for wards 1, 8, 17, 22, 29, 32, 33 and 35 (asserted in build_nagpur_wards.py). Localities take the zone at their own point from the frozen pipeline-inputs/nagpur/nmc-zones.geojson; update its SHA line in pipeline-inputs/INVENTORY.md when it changes."
+      ],
+      "lastSeen": {
+        "contentHash": "8288982dda6a97b5",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "mrsac-gatishakti-dma-wards",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Remote Sensing Applications Centre (MRSAC), PM Gati Shakti state master plan",
+      "url": "https://gsc.mrsac.org.in/webadpgis1/rest/services/gatishakti/Gatishakti_DMA/MapServer/2/query?where=ulb_name%3D%27Municipal%20Corporation%20Nagpur%27&outFields=ward_no%2Ctot_member%2CSHAPE_Area&orderByFields=ward_no&returnGeometry=false&f=json",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "api",
+      "cadence": "per delimitation",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/nagpur-wards-2025.geojson",
+        "public/data/facts-nagpur.json",
+        "public/data/nagpur-ward-profiles.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nagpur_wards.py",
+      "notes": "Gatishakti_DMA layer 2 'Prabhag Ward Boundary' (6,177 polygons statewide), filtered to ulb_name 'Municipal Corporation Nagpur': 38 valid single-part polygons, 37 four-member wards and ward 38 with three, union 220.43 km2. The city record (layer 1) gives 38 wards, 151 members and population 2,447,494, equal to the final gazette's sum. Checked 15 Oct 2026: the five lakes the gazette names fall in the right wards and the edges that follow the Nag sit within 60 m of MRSAC's Nag line. But 10 of 38 population attributes differ from the final notification of 4 Oct 2025, and the layer's ward populations follow the August 2025 draft in 33 of 38: wards 6, 8, 9 and 19 carry the draft figures; wards 7, 17 and 37 have typing slips; and wards 23 and 26 differ from both draft and final by one 446-person block (total, SC and ST each conserved across the pair), a different 23/26 line older than the draft. So the outlines of wards 6, 7, 8, 9, 19, 23 and 26 (the 6-7, 7-9, 8-19 and 23-26 edges) are not verified against the final line. No licence or capture date is stated on the service. The hashed URL lists each ward's number, members and area: a redraw moves it.",
+      "playbook": [
+        "Never ship the layer's tot_pop, sc_pop, st_pop or landmark: populations come from the final gazette, and landmark is a zone label that matches the majority NMC zone in only 30 of 38 wards. build_nagpur_wards.py reads landmark only to assert which 8 wards differ (MRSAC_DIFFERS) and records the disagreement in the ward file's envelope note.",
+        "Assert 38 features and 37 x 4 + 1 x 3 members before writing; a different count means a new delimitation, so stop and find the new notification.",
+        "If the layer is re-captured, re-test wards 6, 7, 8, 9, 19, 23 and 26 against the final gazette's boundary text (the 8/19 line runs Kidwai Road, Sharda Chowk, near Nal Saheb Chowk) and drop their boundary_note only if the outline follows it.",
+        "The legal map is the one 'available for inspection in the office of the Municipal Corporation' (gazette note 2); an NMC or SEC vector release supersedes this layer."
+      ],
+      "lastSeen": {
+        "contentHash": "bd154ac80926b320",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "sec-maharashtra-nmc-ward-formation-2025",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation, with the approval of the State Election Commission, Maharashtra (Maharashtra Government Gazette)",
+      "url": "https://mahasecelec.in/Forms/Admin/DownloadGazetteMC.aspx",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "page",
+      "cadence": "per delimitation",
+      "tier": 0,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/geojson/nagpur-wards-2025.geojson",
+        "public/data/facts-nagpur.json"
+      ],
+      "refreshMethod": "manual transcription into neer-vazhvu-api/scripts/build_nagpur_wards.py POPULATION (ward: total, PDF page), checked against the schedule sum before anything is written",
+      "notes": "Final ward formation: Maharashtra Government Gazette Extraordinary, Part 1-A, Nagpur Divisional Supplement, 4 Oct 2025 (serial 550), notification No. 1600-E.D.-NMC-2025 under s.5(3) of the Maharashtra Municipal Corporation Act 1949, signed 3 Oct 2025 by the Commissioner and Administrator, NMC; 68 pp (Marathi schedule pp.1-34, English pp.35-68). 151 councillors in 37 four-member wards and one three-member ward (38). Each ward's total, SC and ST population is printed; the 38 totals sum to 2,447,494 (no grand total is printed, and the schedule does not name the census year). Boundaries are text only. It finalises the draft dated 22 Aug 2025 by NMC and gazetted 23 Aug 2025 (No. 418 in the Marathi text, 419 in the English). Downloaded through the page's ASP.NET postback (Nagpur, Delimitation); no stable direct PDF URL, so a page hash would move with every view-state change and this is reviewed by hand. Elections followed: SEC results gazette 19 Jan 2026 (No. 2027).",
+      "playbook": [
+        "The download is an ASP.NET __doPostBack button (ctl00$ContentPlaceHolder1$lnkbuttonNagpurdeli): GET the page, copy the hidden fields, POST with __EVENTTARGET.",
+        "In the PDF text layer the ward numbers of the English schedule after ward 9 are lost, while the totals survive in ward order; pair them by order and check the sum.",
+        "Quote the schedule's population as printed; do not call it Census 2011, the gazette does not say so."
+      ],
+      "lastSeen": {
+        "edition": "final ward notification No. 1600-E.D.-NMC-2025, Maharashtra Gazette of 4 Oct 2025, 68 pp.",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "mrsac-waterbodies-10k-2017-18",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Remote Sensing Applications Centre (MRSAC)",
+      "url": "https://gsc.mrsac.org.in/webadpgis1/rest/services/gatishakti/Water_Resources/MapServer/14/query?where=DISTCODE%3D%27505%27&outStatistics=%5B%7B%22statisticType%22%3A%22count%22%2C%22onStatisticField%22%3A%22OBJECTID%22%2C%22outStatisticFieldName%22%3A%22n%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22Area_ha%22%2C%22outStatisticFieldName%22%3A%22km2%22%7D%5D&f=json",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "api",
+      "cadence": "per survey edition",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/nagpur-water-bodies-current.geojson",
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "public/data/nagpur-ward-profiles.json",
+        "public/geojson/rich-bodies/futala.geojson",
+        "public/geojson/rich-bodies/futala-buffer-1000m.geojson",
+        "public/geojson/rich-bodies/ambazari.geojson",
+        "public/geojson/rich-bodies/ambazari-buffer-1000m.geojson",
+        "public/geojson/rich-bodies/gorewada.geojson",
+        "public/geojson/rich-bodies/gorewada-buffer-1000m.geojson",
+        "public/geojson/rich-bodies/gandhisagar.geojson",
+        "public/geojson/rich-bodies/gandhisagar-buffer-1000m.geojson",
+        "public/geojson/rich-bodies/sonegaon.geojson",
+        "public/geojson/rich-bodies/sonegaon-buffer-1000m.geojson",
+        "public/geojson/rich-bodies/totladoh.geojson",
+        "public/geojson/rich-bodies/totladoh-buffer-1000m.geojson",
+        "public/geojson/rich-bodies/navegaon-khairi.geojson",
+        "public/geojson/rich-bodies/navegaon-khairi-buffer-1000m.geojson",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nagpur_geography.py --layer water",
+      "notes": "Gati Shakti Water_Resources layer 14 'WaterBodies_MRSAC' = the layer titled 'Waterbodies_10k_2017-2018_MRSAC' at Major_Medium_Minor_Projects/32 (identical schema and counts): MRSAC's 1:10,000 water-body mapping of 2017-18. DISTCODE '505' is Nagpur (verified by extent and by neighbours 503 Amravati, 504 Wardha, 506 Bhandara, 509 Chandrapur): 2,719 polygons, 411.12 km2 summed. The hashed URL is the district's count and area sum. A newer 'Waterbodies_2019-2020_MRSAC' (Major_Medium_Minor_Projects/31) serves attributes only, no geometry. No licence or terms are stated on the service.",
+      "playbook": [
+        "Area_ha holds km2, not hectares: Area_ha x 1e6 equals SHAPE_Area (m2) for every feature. Multiply by 100; the producer asserts the identity.",
+        "Decode WB_TYPE from the layer's own domain at run time. Code 12 is spelt 'Malgnzari Tank' there (Malguzari); code 99 is an island and is dropped.",
+        "Totladoh Reservoir and Kamthikhairy (Pench Reservoir) are named by MRSAC; the build fails if either name disappears.",
+        "If the 2019-20 layer (Major_Medium_Minor_Projects/31) starts serving geometry, it supersedes this one: its Areaha is true hectares, and it carries turbidity and aquatic-vegetation codes."
+      ],
+      "lastSeen": {
+        "contentHash": "6f0662615d3ca489",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "mrsac-drainage-network",
+      "scope": "nagpur",
+      "publisher": "Maharashtra Remote Sensing Applications Centre (MRSAC)",
+      "url": "https://gsc.mrsac.org.in/webadpgis1/rest/services/gatishakti/Water_Resources/MapServer/12/query?where=River_Name%20IN%20%28%27Nag%20Nadi%27%2C%27Pili%20Nadi%27%2C%27Pora%20Nadi%27%2C%27Kanhan%20River%27%2C%27Kolar%20River%27%2C%27Wainganga%20River%27%29&outStatistics=%5B%7B%22statisticType%22%3A%22count%22%2C%22onStatisticField%22%3A%22OBJECTID%22%2C%22outStatisticFieldName%22%3A%22n%22%7D%2C%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22Shape_Length%22%2C%22outStatisticFieldName%22%3A%22m%22%7D%5D&f=json",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "api",
+      "cadence": "irregular",
+      "tier": 1,
+      "detection": {
+        "method": "content-hash"
+      },
+      "dependsOn": [
+        "public/geojson/nagpur-rivers.geojson"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nagpur_geography.py --layer rivers",
+      "notes": "Gati Shakti Water_Resources layer 12 'Drainages Network' (same as Major_Medium_Minor_Projects/30 'Drainage_Network_MRSAC'): polylines with River_Name, Drainage_Order and a perennial/dry class. It names the Pora ('Pora Nadi'), which OpenStreetMap leaves unnamed. The hashed URL is the statewide count and length of the six rivers' named segments. No licence or terms are stated on the service. Watershed and sub-watershed layers on the same server return attributes only.",
+      "playbook": [
+        "River names are exact strings: 'Nag Nadi', 'Pili Nadi', 'Pora Nadi', 'Kanhan River', 'Kolar River', 'Wainganga River'. A renamed segment drops out silently; the producer falls back to OSM for a river with no MRSAC segment and says so in the feature's source.",
+        "river_id values nag, pili, pora, kanhan, kolar, wainganga are join keys with river-quality-nagpur.json and src/cities/nagpur/rivers.ts; keep the Nag first in the file.",
+        "Lines are clipped to the map frame (east to 79.65 E), so length_km is the length inside it, not a river's full course; the Nag keeps only its main connected course (MRSAC also labels a separate 10.9 km Dry channel draining south toward Hingna 'Nag Nadi', left out); NMC's ESR states Nag 17 km and Pili 18 km within the city."
+      ],
+      "lastSeen": {
+        "contentHash": "a20bca8d19d545ab",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "imd-gridded-rainfall-nagpur",
+      "scope": "nagpur",
+      "publisher": "India Meteorological Department",
+      "url": "https://imdlib.readthedocs.io/en/latest/",
+      "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+      "type": "api",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-nagpur.json",
+        "public/data/rainfall-recent-nagpur.json",
+        "public/data/facts-nagpur.json"
+      ],
+      "refreshMethod": "cron .github/workflows/imd-rainfall-refresh.yml (neer-vazhvu-api/scripts/generate_imd_rainfall.py --city nagpur); first generated on the laptop with uv run --no-project --with imdlib --with xarray --with numpy --with pandas",
+      "notes": "Grid cell 21.0 N / 79.0 E, the 0.25-degree intersection nearest IMD's Nagpur observatory (21 deg 6' N, 79 deg 3' E; about 12 km away, against about 17 km for 21.25/79.0). The node sits just south of the NMC outline (21.05-21.23 N); its cell covers the observatory and the south-western part of the city (about 28% of the NMC outline). Checked against IMD's own Nagpur observatory normal of 1,151.2 mm (Climatological Tables 1991-2020, station index 42867, printed p.264): this cell returns 1,148.8 mm over 1991-2020 (-0.2%), generated 2026-10-15 with imdlib; June to September 190.9 / 352.0 / 293.7 / 178.4 mm against the observatory's 190.6 / 347.7 / 277.2 / 183.7. The other neighbouring cells were not regenerated (the 6 Sep 2026 build's figures for them are leads only). The artifact's own normals.annual_mean_mm is the 1970-2020 mean (1,126.4 mm), the producer's convention for every city.\n\nChecked on the 2026-10-15 run: 56 years 1970-2025, 12 months each, no zero year and no zero monsoon month. One year lies more than 2.5 standard deviations from the 1991-2020 mean: 1994, 1,744.2 mm. It is a real wet year, not a download fault: IMD's tables give the observatory its wettest July, 678.9 mm, in 1994, and its heaviest July day, 304.0 mm on 12 July 1994.\n\nrainfall-recent-nagpur.json is the PROVISIONAL fill on top of this base and must use the SAME grid point.",
+      "lastSeen": {
+        "edition": "IMD 0.25-degree gridded rainfall via imdlib, cell 21.0 N 79.0 E, 1970-2025 (run 2026-10-15)",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "imd-climatological-tables-1991-2020",
+      "scope": "nagpur",
+      "publisher": "India Meteorological Department",
+      "url": "https://www.imdpune.gov.in/library/public/Climatological%20Tables%201991-2020.pdf",
+      "license": "Government of India publication, cited with attribution",
+      "type": "file",
+      "cadence": "per normal period (1991-2020 edition published 2022; the next covers 2001-2030)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "lastSeen": {
+        "edition": "Climatological Tables of Observatories in India 1991-2020 (PDF created 26 Aug 2022, 844 pp.); NAGPUR 42867 on PDF pp.561-562, printed p.264",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/flood.ts"
+      ],
+      "refreshMethod": "manual: open the new edition's NAGPUR (42867) page and re-check the annual and July normals and the 24-hour records quoted in src/cities/nagpur/flood.ts, and the comparison in imd-gridded-rainfall-nagpur's notes",
+      "notes": "Station NAGPUR, index 42867, 21 deg 6' N, 79 deg 3' E, 310 m. Read 2026-10-15: annual mean 1,151.2 mm, 57.1 rainy days; June 190.6, July 347.7, August 277.2, September 183.7 mm; heaviest 24 h 315.0 mm on 12 June 1911; July heaviest 24 h 304.0 mm on 12 July 1994 and wettest July 678.9 mm (1994); September heaviest 24 h 184.4 mm on 19 September 1962; wettest year 1,931.4 mm (1911), driest 364.7 mm (1899).",
+      "playbook": [
+        "www.imdpune.gov.in is intermittent: download with curl --retry 5 (the bare host without www timed out on 15 Oct 2026). The file is 29.7 MB.",
+        "The station page is bilingual (Hindi then English) and pdftotext keeps the column layout: read the rainfall columns (monthly total, rainy days, wettest and driest month, heaviest 24 h with its day and year) and check every figure on the page image before printing it.",
+        "The tables carry no sub-daily extremes and no daily series: IMD's own reading for 23 Sep 2023 is not in them."
+      ]
+    },
+    {
+      "id": "maharain-circle-daily-rain",
+      "scope": "nagpur",
+      "publisher": "Agriculture Department, Government of Maharashtra (Maharain)",
+      "url": "https://maharain.maharashtra.gov.in/",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "page",
+      "cadence": "daily in the monsoon; past years by query from 1997",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "lastSeen": {
+        "edition": "circle-wise daily rain, Nagpur district (30), July 2013, July 2018, September 2023, July 2024, July 2025",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/flood.ts"
+      ],
+      "refreshMethod": "manual: re-query the month for a new event and add it to historical_events in src/cities/nagpur/flood.ts with the circle values as printed",
+      "notes": "Nagpur city taluka has three revenue circles: Nagpur City, Sitabardi and Pardi. Values read 2026-10-15 (mm, day of reading): 20 Jul 2013 144.6 / 145.0 / 147.0 (July total at Nagpur City 505.3, 166%); 7 Jul 2018 282.0 / 185.0 / 122.0 (558.9, 183.6%); 23 Sep 2023 166 / 166 / 103 (387.2, 202.6%); 20 Jul 2024 96.3 / 96.3 / 103.8 (456.9, 150.1%); 9 Jul 2025 179.0 / 179.0 / 153.5 (541.4, 177.9%). Monthly normals used: July 304.4 mm, September 191.1 mm. The 2023 values match the District Disaster Management Plan 2024, p.59.",
+      "playbook": [
+        "Machine path, no login: POST https://maharain.maharashtra.gov.in/test/maharain/rpt_past_queries_circle_wise_daily_rain.php with year=<YYYY>&stateCode=11&districtCode=30&month=<5..12>. https only; plain http has no connection. Downloads are untrusted HTML: parse with python3 -I.",
+        "From October 2022 the Nagpur City and Sitabardi columns are identical day for day (checked Oct-Dec 2022, May-Sep 2023, Jul 2024, Jul 2025; they differ in Jul-Sep 2022, 2013 and 2018). Never present them as two independent gauges.",
+        "The row for a day is the reading taken that morning: the DDMP's flood of 06.07.2018 is the 7 July 2018 value here. Name the reading day, not the storm day.",
+        "Never mix these circle values with IMD's observatory values as if they were one gauge."
+      ]
+    },
+    {
+      "id": "nagpur-cdp-2041",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation / Ministry of Urban Development (City Development Plan for Nagpur 2041, Final Report, March 2015)",
+      "url": "https://www.metrorailnagpur.com/assets/Final-CDP-Nagpur-Mar-15-of-NMC-D52xs05u.pdf",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "file",
+      "cadence": "one-off (history; a new CDP would be a new document)",
+      "tier": 3,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 730
+      },
+      "lastSeen": {
+        "edition": "Final Report, March 2015 (13.9 MB, 408 pp.)",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/flood.ts"
+      ],
+      "refreshMethod": "manual: if NMC publishes a storm-water network or a newer plan, replace the 917 km sentence in the flood page's data gaps",
+      "notes": "Section 7.4.1, printed p.109: NMC PWD lays and maintains storm drains; they cover approximately 40% of the city's area; total length approximately 917 km 'as surveyed for preparation of master plan in 2008', across three drainage zones; the Nag starts at Ambazari lake's overflow weir; storm water from the south drains to the Pora. Table 55: storm-water network coverage 35%. Hosted on the Maha Metro site, not NMC's.",
+      "playbook": [
+        "History, not a current reading: always date the 917 km to the 2008 survey and the 2015 report.",
+        "Section 10.6 refers to a figure of NMC waterlogging areas 'shown on side' that is absent from the published PDF."
+      ]
+    },
+    {
+      "id": "mahagr-nagpur-resolutions",
+      "scope": "nagpur",
+      "publisher": "Government of Maharashtra (Urban Development; Revenue and Forest, Disaster Management; Environment and Climate Change; Tourism and Cultural Affairs)",
+      "url": "https://gr.maharashtra.gov.in/1145/Government-Resolutions",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "page",
+      "cadence": "episodic (each sanction, release or corrigendum is a new GR)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json",
+        "public/data/restoration-projects-nagpur.json",
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual: neer-vazhvu-api/scripts/build_nagpur_commitments.py and build_nagpur_lakes.py (GR codes are constants; add a status_history entry citing the new GR, never overwrite)",
+      "notes": "GRs cited (code, date): AMRUT 1.0 water supply 201806251513514425 (25 Jun 2018, Rs 273.78 cr, 42 ESR + 1 GSR, 377.84 km) and 202304061347581325 (6 Apr 2023, Rs 37.17 cr pipeline replacement, MIRROR TEXT); AMRUT 2.0 water distribution 202303061239587125 (6 Mar 2023, Rs 381.85 cr, 24 months, MIRROR TEXT); Naik lake 202211021115299425 and Lendi lake 202211021157345625 (2 Nov 2022, Rs 12.95 and 14.13 cr, 12 months, MIRROR TEXT); Pohra sewerage 202311091254222925 (9 Nov 2023, Rs 957.01 cr) and its Rs 400 cr loan approval 202512141527210725 (14 Dec 2025); Nag NRCP implementation order 202503031716017604 (3 Mar 2025, Rs 1,926.99 cr, 8 years from GoI AA of 14 Mar 2023), central release to the SNA 202603231615583504 (23 Mar 2026, Rs 167.44 cr) and State share 202609041540478204 + corrigendum 202609111301511904 (Rs 69,76,07,367); Ambazari High Level Committee 202401051235518225 (5 Jan 2024); Sep-2023 flood package 202402221153440819 (22 Feb 2024, Rs 204.7162 cr) with releases 202403301649281019 (14.5108), 202412301756366919 (72.12) and 202603311426599719 (70.26); Nag widening at Crazy Castle (SDMF Rs 19,84,12,976) 202505071618095219 + corrigendum 202506231440028919; Sonegaon phase 2 (Tourism, Rs 24.96 cr; cites the 28 Feb 2019 phase-1 sanction of Rs 17.32 cr) 202311071447498623; Sakkardara lake Rs 20 cr via NIT 202607101202098425 (10 Jul 2026).\n\nACCESS TRAPS. The GR search page is captcha-gated; the direct PDF path https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/<code>.pdf works for most codes and is the citation. Some codes answer 404 on both the Marathi and English folders; for those the orgpedia mahGRs archive keeps the extracted text at https://github.com/orgpedia/mahGRs/blob/main/GRs/<Dept_Folder>/<code>.pdf.mr.txt (Urban_Development_Department, Water_Resources_Department, ...). Its GRs.json indexes per department are the practical way to find a Nagpur GR by English title. No GR was found for Futala, Gandhisagar or Ambazari lake restoration under any department index (searched 15 Oct 2026); their money sits in NMC's budget heads instead.\n\nWATCH: new GRs naming Nagpur lakes, the Nag River Pollution Abatement Project fund releases, Pohra (AMRUT 2.0) and the Sep-2023 package's final release (Rs 204.72 cr sanctioned, Rs 156.89 cr released to 31 Mar 2026).",
+      "lastSeen": {
+        "reviewedOn": "2026-10-15"
+      },
+      "playbook": [
+        "Cite the official address https://gr.maharashtra.gov.in/Site/Upload/Government%20Resolutions/Marathi/<code>.pdf even when it answers 404; for a 404 code link the archive copy https://github.com/orgpedia/mahGRs/blob/main/GRs/<Dept_Folder>/<code>.pdf.mr.txt beside it and keep the code in MIRROR_CODES in build_nagpur_commitments.py so the row stays labelled.",
+        "Read figures from the Marathi text (.mr.txt or pdftotext of the PDF), not the orgpedia English machine translation: the English garbles amounts (the Kolar-Kanhan GR's Rs 1,97,67,544 comes out as two different numbers).",
+        "A GR records a sanction or a release, not completion. A release adds a status_history entry with the same status unless a dated document says the work is done.",
+        "The Sep-2023 flood package (Rs 204.7162 cr) and its releases are asserted in the producer (parts 163.2331 + 41.4831; releases 14.5108 + 72.12 + 70.26 = 156.89). Add a new release to FLOOD_RELEASES and let the asserts re-run.",
+        "No GR names Futala, Gandhisagar or Ambazari lake restoration; do not infer one from press. Their money is in NMC budget heads (nmc-budget)."
+      ]
+    },
+    {
+      "id": "amrut2-portal-nagpur",
+      "scope": "nagpur",
+      "publisher": "Ministry of Housing and Urban Affairs (AMRUT 2.0 portal)",
+      "url": "https://amrut.mohua.gov.in/approvedProjects/list/TTN2eVhpdTRLYWVxbjFYdEllaWROQT09/UkJ0czN0UWJmNE9MemtZVEh0SC8rQT09",
+      "license": "Government of India publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular (milestones change as projects move)",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": "table"
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json",
+        "public/data/restoration-projects-nagpur.json",
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/facts-nagpur.json"
+      ],
+      "refreshMethod": "manual: re-read the five rows and update build_nagpur_commitments.py / build_nagpur_lakes.py (append a status_history entry dated the read)",
+      "notes": "Nagpur's AMRUT 2.0 approved-project list (state row 90 on the Maharashtra ULB page: 5 projects, Rs 2,427.23 cr). Read 15 Oct 2026: NMRDA sewerage for 2 urban sectors 756.9 'Contract Awarded'; NMRDA water supply for 2 urban sectors 245.52 'Contract Awarded'; Naik Lake Rejuvenation Project 15.95 'Project Completed'; Pollution abatement of Pohra River 987.01 'Contract Awarded'; water distribution in unauthorised and authorised layouts/slums 421.85 'Contract Awarded'. Rows sum to 2,427.23. The portal carries NO dates. Its costs differ from the State sanctions for the same projects (Naik 15.95 vs GR 12.95; Pohra 987.01 vs GR 957.01; water distribution 421.85 vs GR 381.85); both are shown. Lendi lake (GR 2 Nov 2022, Rs 14.13 cr) is not on the list. The two NMRDA rows are peri-urban sectors, not NMC. The encrypted path segments come from https://amrut.mohua.gov.in/approvedProjects/state; the old amrut.gov.in host times out.",
+      "playbook": [
+        "The portal shows milestones without dates. Date a status entry by the day the page was read, and say so in the note.",
+        "Portal costs differ from the State sanctions for the same project (Naik 15.95 vs 12.95; Pohra 987.01 vs 957.01; water distribution 421.85 vs 381.85). Show both; never replace the sanction figure.",
+        "Rows 1-2 are NMRDA (metropolitan) works for peri-urban sectors: not NMC, not on the city register.",
+        "A row that disappears (Lendi lake was never listed) is evidence only of the listing, not of the work."
+      ],
+      "lastSeen": {
+        "pageHash": "41292b803d2f419c",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nagpur-court-docket",
+      "scope": "nagpur",
+      "publisher": "Supreme Court of India; Bombay High Court (Nagpur Bench); National Green Tribunal (Principal and Western Zone Benches)",
+      "url": "https://indiankanoon.org/search/?formInput=Nagpur%20lake%20Futala%20Ambazari",
+      "license": "Indian court and tribunal records (Supreme Court of India, Bombay High Court, National Green Tribunal; Government of India judiciary), cited with attribution",
+      "type": "page",
+      "cadence": "per hearing",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 45
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json",
+        "public/data/restoration-projects-nagpur.json",
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/cities/nagpur/flood.ts",
+        "src/cities/nagpur/story-en.tsx",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual: search Indian Kanoon for 'Futala', 'Ambazari', 'Sonegaon', 'Nagpur lakes', 'Nag river', 'Orange City Water'; add the order as a dated status_history entry or court_orders row (court, case number and date are the citation; Indian Kanoon is the mirror)",
+      "notes": "Orders on record (Indian Kanoon doc ids): SC Civil Appeal arising from SLP(C) 1420/2024, Swacch Association v. State, 2025 INSC 1199, 7 Oct 2025 (85333771; IK's header names the wrong author: the judgment is by N.V. Anjaria J.); HC PIL 4/2023 Futala, 5 Jul 2023 and 30 Nov 2023 (32471407, 132579417); NGT OA 73/2025 (WZ) Futala, orders 5 Jun 2025 to 10 Sep 2026 (138178765, 31687987, 63433466, 34576620, 177467634, 140882342, 121444604, 144526823), NEXT LISTED 29 Oct 2026; HC PIL 56/2023 Ambazari flood, orders 17 Jan 2024 to 2 Jul 2025 (166629670/12720860, 120448446, 199189158, 127827981, 62849948, 73326839, 127050913, 51036572); HC SMPIL 24/2026 city lakes, 7 May 2026, action-taken report due in four months (185727412); HC SMPIL 13/2025 Sonegaon backwater, 26 Nov 2025 (18175966); HC PIL 23/2019 Ambazari, 26 Jun 2019 (192522868); HC WP 3517/2020 NMC v. State (MWRRA and Ambazari), 18 Dec 2020 (5339863); NGT OA 160/2024 (WZ) Ambazari high-rise, disposed 18 Jul 2025 (24711776, 35789393, 100278034); NGT OA 114/2014 (WZ), 5 Sep 2022 (96043262); 24x7 contract: HC MCA (ARBN) 329/2025, 30 Sep 2025 (143550834; contract dated 03.06.2011) and MCA (ARBN) 278/2026, oral judgment 8 May 2026, 2026:BHC-NAG:7281 (171236121). Nag river cases (HC SMPIL 1/2020, SMPIL 29/2026; NGT OA 212/2026) are river matters and are not cited here.\n\nTRAPS: the Bombay HC and NGT sites were unreachable or captcha-gated on 15 Oct 2026; read orders on Indian Kanoon. Orders that recite press reports (SMPIL 24/2026, SMPIL 29/2026) are not findings: carry the directions, not the recited figures. Keep personal names of petitioners and activists out of page text.",
+      "lastSeen": {
+        "reviewedOn": "2026-10-15"
+      },
+      "playbook": [
+        "The court, case number and order date are the citation; Indian Kanoon is the mirror. Its header can name the wrong author (the 2025 Futala judgment is by N.V. Anjaria J.).",
+        "Orders that recite press reports (SMPIL 24/2026's eleven lakes and RTI figures; SMPIL 29/2026's MLD figures) are not findings. Carry the directions only.",
+        "Keep petitioners', activists' and officers' personal names out of page text.",
+        "Write rulings in the court's own terms and neutrally: what the order records or directs, never who failed.",
+        "The NGT Futala case (OA 73/2025) is next listed on 29 Oct 2026; re-read after each listing and append, never overwrite."
+      ]
+    },
+    {
+      "id": "nmc-phe-projects-deck",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation, Public Health Engineering Department",
+      "url": "https://nmcnagpur.gov.in/219e052492f4008818b8adb6366c7ed6",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular (the department replaces the linked deck)",
+      "tier": 2,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "docs\\.google\\.com/presentation"
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json"
+      ],
+      "refreshMethod": "manual: export the linked deck to PDF (docs.google.com/presentation/d/<id>/export/pdf) and re-read the sewerage slides",
+      "notes": "The PHE department page links a Google Slides deck titled 'ongoing and proposed project 11.7.24' (deck id 1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA, 23 slides). Slide 9: 520 MLD generated, 403.5 MLD treatment, 320 MLD reused at Koradi and Khaperkheda; proposed STPs 92 (Nag, JICA) + 20 (Narsala, Smart City) + 45 (Chikhali, AMRUT 2.0) = 157 MLD. Slide 10: Bhandewadi 200 MLD DBFOT, work order 12.12.2014, project cost Rs 573.34 cr, commissioned 30.06.2018, O&M 1 Jul 2018 to 30 Jun 2048, reuse pipeline 05.06.2020. Slide 21: Pohra 'Project Estimated Cost - Rs. 1030.00 Crs', a third figure after the GR's 957.01 and the portal's 987.01.",
+      "playbook": [
+        "The deck is a Google Slides link; export with /export/pdf to read it. A changed link means a new deck: re-read the sewerage slides.",
+        "Its Pohra cost (Rs 1,030 cr) is a third figure beside the GR's 957.01 and the portal's 987.01; state all three."
+      ],
+      "lastSeen": {
+        "linksHash": "7aae601bfce8a5d2",
+        "links": [
+          "https://docs.google.com/presentation/d/1_1WsyYnmPgfk69zzPYR8EJRcW8vsGRhhT3OjjD32WCA/edit?slide=id.p1#slide=id.p1"
+        ],
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nmc-24x7-deck-2015",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation, Superintending Engineer (Water Works), presented at an ICRIER workshop",
+      "url": "https://icrier.org/Urbanisation/events/23-2-15/Nagpur%2024x7_23.02.15.pdf",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed (one presentation, 23 Feb 2015)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "'24X7 Water Initiative and Waste Water Reuse, Case Study Nagpur', ICRIER national workshop 'Urban Water Systems in India: A Way Forward', 23 Feb 2015, 41 slides. Slide 14 'Full City SLB Targets for PPP' is the only NMC document found that states the 24x7 contract's service targets (coverage, continuity, metering, complaint redressal, quality: 5 years; NRW 20% and 150 LPCD and 95% collection: 10 years; NRW under 40% in 5 years). The 'Targeted Year*' asterisk is not explained on the slide. Host answers 406 to a bare curl and 200 with browser headers; Last-Modified 31 Mar 2015.",
+      "playbook": [
+        "The SLB slide's 'Targeted Year*' asterisk is unexplained. The register counts years from the contract of 3 June 2011 (the High Court's record) and says so; do not present the years as dates the deck printed.",
+        "icrier.org answers 406 to a bare curl; send browser headers."
+      ],
+      "lastSeen": {
+        "lastModified": "Tue, 31 Mar 2015 10:49:55 GMT",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "adb-iee-nagpur-2010",
+      "scope": "nagpur",
+      "publisher": "Asian Development Bank (for Nagpur Municipal Corporation)",
+      "url": "https://www.adb.org/sites/default/files/project-documents//42907-01-ind-iee-draft.pdf",
+      "license": "ADB public project document, cited with attribution",
+      "type": "file",
+      "cadence": "closed (draft IEE, June 2010; PDF created 31 Aug 2010)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Draft Initial Environmental Examination, project 42907-01 (Nagpur water supply), PDF created 31 Aug 2010, 77 pp. Printed p.1 para 2: 'NMC intends to augment Nagpur City water supply by 115 MLD by implementing Pench Phase - III, Stage - II (Pench-IV)'; component I describes the 27.4 km pipeline to Mahadula and the Godhani WTP. Printed p.10: the Dharampeth 24x7 pilot (about 10,000 connections) 'envisages a reduction in the NRW level to 30% in three years' (not carried as a commitment: no start date and no published zone figures). HISTORY: describes 2010 plans.",
+      "playbook": [
+        "A 2010 draft describing plans: use it for what was intended (Pench-IV, 115 MLD), never as a current status.",
+        "The Dharampeth pilot NRW target (30% in three years, printed p.10) is left off the register: no start date and no published zone figures."
+      ],
+      "lastSeen": {
+        "lastModified": "Sat, 04 Feb 2023 23:06:15 GMT",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nsscdcl-projects",
+      "scope": "nagpur",
+      "publisher": "Nagpur Smart and Sustainable City Development Corporation Ltd (NSSCDCL)",
+      "url": "https://www.nsscdcl.org/Projects.jsp",
+      "license": "Nagpur Smart and Sustainable City Development Corporation (municipal company) web page, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "page-hash",
+        "selector": "#customers"
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Undated project table (footer (c) 2022). Water rows: MAH-NAG-024 Rainwater Harvesting 'Work Completed'; MAH-NAG-049 GIS mapping of drainage and water supply network 'Work Order Issued'; MAH-NAG-050 'STP (Sewage Treatment Plant - Pohra river)' 'Work Order Issued' (the 20 MLD Narsala plant). No costs or dates. The ABD sub-pages for 24x7 supply and integrated drainage link to '#'. smartcities.gov.in timed out on 15 Oct 2026.",
+      "playbook": [
+        "The page is undated (footer (c) 2022). Date any status by the read date and say the page is undated.",
+        "MAH-NAG-050 'STP (Pohra river)' is the 20 MLD Narsala plant. NMC's own documents disagree on its stage (ESR 2023-24: trial run; PHE deck July 2024: proposed); show all, resolve none."
+      ],
+      "lastSeen": {
+        "pageHash": "d3dbb073458403c7",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "jica-nag-river-loan",
+      "scope": "nagpur",
+      "publisher": "Japan International Cooperation Agency (JICA)",
+      "url": "https://www2.jica.go.jp/en/evaluation/pdf/2019_ID-P285_1_f.pdf",
+      "license": "JICA (Government of Japan) public project document, cited with attribution",
+      "type": "file",
+      "cadence": "closed (ex-ante evaluation 2019 and loan announcement 30 Mar 2020; JICA publishes an ex-post evaluation after completion)",
+      "tier": 1,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/commitments-nagpur.json",
+        "public/data/river-quality-nagpur.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Project for Pollution Abatement of Nag River in Nagpur (ID-P285). Ex-ante evaluation (9 pp): cost 37,637 million yen, loan 29,082 million yen; schedule March 2020 - October 2029 (116 months), completion when all packages are in service, July 2028; targets: river BOD 30-70 mg/L (2019) to 20 mg/L (2030) in the central and northern zones. Loan agreement signed 27 Mar 2020 (press release https://www2.jica.go.jp/yen_loan/pdf/en/7078/20200330_31_en.pdf, item 7). The Government of India's sanction of 14 Mar 2023 gives a longer period (8 years, to March 2031); both dates are shown on the register.",
+      "playbook": [
+        "JICA's completion (July 2028, all packages in service) and the Government of India's sanction period (8 years from 14 Mar 2023, to March 2031) are both shown; the register's due date is the sanction's, with JICA's stated beside it.",
+        "Loan figures are in yen (29,082 million); do not convert to rupees on the page.",
+        "Section 4(1) Targeted Outcomes (PDF p.7): river BOD 30-70 mg/L is the 2019 baseline for 'the BOD concentration of river water in central and northern zones' (target 20 mg/L in 2030). It is a zone range, not a station reading: never put it on the map or chart. river-quality-nagpur.json quotes it in the Nag notes."
+      ],
+      "lastSeen": {
+        "etag": "\"396c3-5bd253e680f80\"",
+        "lastModified": "Wed, 10 Mar 2021 02:15:42 GMT",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "imperial-gazetteer-1908-nagpur",
+      "scope": "nagpur",
+      "publisher": "Government of India (Imperial Gazetteer of India, new edition, vol. XVIII, Clarendon Press, Oxford)",
+      "url": "https://archive.org/details/imperialgazettee18greauoft",
+      "license": "Public domain",
+      "type": "file",
+      "cadence": "closed (published 1908)",
+      "tier": 3,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "dependsOn": [
+        "public/data/water-bodies-flagship-nagpur.json",
+        "src/cities/nagpur/story-en.tsx",
+        "public/images/story/nagpur/MANIFEST.json",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Nagpur City article, pp.318-320 (University of Toronto copy on the Internet Archive; p.319 is IIIF leaf 333). p.319: 'the two fine reservoirs of Ambajheri and Telinkheri to the west of the city, the Juma talao (tank) between the city and the railway station, and the Maharajbagh and Telinkheri gardens form worthy monuments of the best period of Bhonsla rule'; water-supply 'obtained from the Ambajheri reservoir ... The works were first constructed in 1873, the embankment of the old tank being raised 17 feet, and pipes laid ... by means of gravitation at a cost of 4 lakhs'; 1890 extension (Rs 3 lakhs); raised again by famine labour in 1900 to 1,033 yards long and 35 feet high; catchment 6.5 square miles; water surface 412 acres. Read from the djvu text and checked on the page image. Telinkheri is today's Futala (the Supreme Court, 2025, records Futala as 'also known as Telangkhedi Tank').",
+      "playbook": [
+        "Ambazari's 1873 is the waterworks on an older Bhonsle tank ('the embankment of the old tank being raised 17 feet'), not the tank's building; CWC's register gives 1870 for the dam. Show both, as different events.",
+        "Telinkheri in 1908 is Futala today (the Supreme Court, 2025: 'Futala Tank, also known as Telangkhedi Tank').",
+        "Read from the djvu text, then check every quoted figure on the page image (p.319 is IIIF leaf 333)."
+      ],
+      "lastSeen": {
+        "reviewedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "maharashtra-gazetteer-nagpur-1966",
+      "scope": "nagpur",
+      "publisher": "Government of Maharashtra, Gazetteers Department (Maharashtra State Gazetteers, Nagpur District, revised edition 1966)",
+      "url": "https://gazetteers.maharashtra.gov.in/cultural.maharashtra.gov.in/english/gazetteer/Nagpur/places.html",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "page",
+      "cadence": "closed edition (1966; the web edition was posted in 2005)",
+      "tier": 3,
+      "insecureTLS": true,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/cities/nagpur/story-en.tsx",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Web edition; chapter pages are framesets with the text in places.html, agri1.html, geo.html (cite chapter and subheading: the web edition has no page numbers). Places, Nagpur city: Ambazari 'oldest of its type in Nagpur, was built in the days of the Bhosle rule'; supply 'from Ambazari lake, first brought to the city in 1873 ... was inadequate ... hence the waters of the Gorevada tank and the Kanhan river had to be tapped'; Gorevada 'constructed in 1911', capacity 275.32 million cft above filter level, daily draw 18.20 million litres; Ambazari capacity 221.13 million cft above the siphon level, daily draw over 10.012 million litres; 'Jumma Talav, a large rectangular lake built by the Bhosles and improved in later years'; Telankhedi lake and garden. agri1.html: 'Telankhedi Tank: This is an old tank ... constructed at a cost of Rs. 2,54,400', main dam 725.595 m, irrigates 34.425 ha of the Government Agriculture College farm and Telankhedi garden. geo.html (fisheries) already lists 'Gandhi Sagar'. ACCESS: gazetteers.maharashtra.gov.in serves an incomplete certificate chain (curl -k); the old cultural.maharashtra.gov.in path is 404. ETag and Last-Modified (22 Jul 2005) present.",
+      "playbook": [
+        "The web edition has no page numbers: cite the chapter page (places.html, agri1.html, geo.html) and the subheading.",
+        "gazetteers.maharashtra.gov.in has an incomplete certificate chain: fetch with curl -k (insecureTLS on the entry).",
+        "Its capacities are 'above the siphon lifting level' (Ambazari) and 'above filter level' (Gorewada), not gross storage; never compare them with NRLD's gross storage as if like for like."
+      ],
+      "lastSeen": {
+        "etag": "\"9ebfe-561c4-3fc7a079be980\"",
+        "lastModified": "Fri, 22 Jul 2005 09:52:54 GMT",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "cwc-nrld-2019-nagpur",
+      "scope": "nagpur",
+      "publisher": "Central Water Commission, Government of India (National Register of Large Dams, 2019)",
+      "url": "https://cwc.gov.in/sites/default/files/nrld06042019.pdf",
+      "license": "Central Water Commission (Government of India) publication, cited with attribution",
+      "type": "file",
+      "cadence": "closed edition (NRLD 2019; a new register is a new file)",
+      "tier": 2,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "public/data/water-bodies-flagship-nagpur.json",
+        "public/data/facts-nagpur.json",
+        "src/cities/nagpur/config.ts",
+        "supabase/migrations/061_nagpur_water_sources.sql",
+        "src/cities/nagpur/story-en.tsx",
+        "src/lib/water-bodies/rich-bodies.json"
+      ],
+      "refreshMethod": "manual; watch cwc.gov.in for a newer register edition",
+      "notes": "Its own id, not Visakhapatnam's cwc-nrld-2019: that entry is the register's 6.2 MB file nrld-2019.pdf (Last-Modified 1 Feb 2022), whose page numbers differ from this 40.9 MB file, which every page reference below follows. 300 pp, created 26 Jun 2019 (ETag and Last-Modified 26 Jul 2019). Maharashtra pages: AMBAZARI MH09LH0006 (PDF p.150): completed 1870, O&M Maharashtra Water Resources Department, river 'Local Nalla', nearest city 'Hingana', earthfill, 13.71 m high, 952.51 m long, gross storage 8,370,000 and reservoir area 1,530,000 (units m3 and m2, consistent with the mapped 153-166 ha), purpose I. GOREWADA MH09MH0029 (PDF p.151): completed 1911, 'Poli River' (the Pili), 17.37 m, 710 m, gross 8,840,000 m3, area 1,920,000 m2, purpose I. TRAP: the register prints Ambazari at 21 2' 21\" N, 78 49' 42\" E, about 25 km west-south-west of the lake in the city: NEVER use NRLD coordinates for Ambazari (Gorewada's are right). 1870 is the register's completion year; both gazetteers date the piped waterworks on the older Bhonsle tank to 1873, and the register shows neither tank as a water-supply (S) dam.",
+      "playbook": [
+        "NEVER use NRLD's coordinates for Ambazari: they sit about 25 km west-south-west of the lake. Pin lakes from NMC ESR 2023-24 Table 6.4 sampling points or MRSAC polygon centroids.",
+        "Storage and area columns are printed without units; they read as m3 and m2 (Ambazari 8,370,000 m3 and 1,530,000 m2 = 153 ha, consistent with the mapped 153-166 ha).",
+        "Both city tanks are registered with purpose I (irrigation), not S (water supply); state it as registered, not as an error."
+      ],
+      "lastSeen": {
+        "etag": "\"270d72d-58e8fa6797b00\"",
+        "lastModified": "Fri, 26 Jul 2019 06:28:28 GMT",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "fitzclarence-1819-journal",
+      "scope": "nagpur",
+      "publisher": "Lt-Col. George FitzClarence, Journal of a Route Across India, through Egypt, to England (London: John Murray, 1819); University of California Libraries scan on the Internet Archive",
+      "url": "https://archive.org/details/journalofrouteac00munsrich",
+      "license": "Public domain",
+      "type": "file",
+      "cadence": "closed (published 1819)",
+      "tier": 3,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "lastSeen": {
+        "edition": "1819 edition; IA item journalofrouteac00munsrich, possible-copyright-status NOT_IN_COPYRIGHT; plan leaf 165, key leaf 164",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/story-en.tsx",
+        "public/images/story/nagpur/MANIFEST.json"
+      ],
+      "refreshMethod": "manual: nothing to refresh (closed edition); if the item moves, re-point the MANIFEST download_url and the story's source line",
+      "notes": "Eyewitness account of Nagpur in early 1818 and a public-domain plan of the city. Cited: pp.104-105 and 109-110 (the Jumma Talao, about three quarters of a mile long and four hundred yards broad), the key to the plan (5 the Jumma Talao, 6 its dam, 14 a small nullah from the Ambajeree tank four miles distant, 15 a small nullah from the Telinkoree tank cantonments) and the plan itself (the river's label ends 'Nuddee', the old English spelling of nadi, a river; the word before it reads 'Nudag' on the full-resolution IIIF scan, an earlier read gave 'Naug', and the story quotes only 'Nuddee'; imprint 'Published as the Act directs 1st Feb 1819 by John Murray'). Two story plates are made from leaf 165 (full plate and a hero detail).",
+      "playbook": [
+        "The plan is leaf 165 and is printed sideways: rotate 90 degrees counter-clockwise (PIL rotate(90)) to read it. The key is leaf 164. The item's _page_numbers.json maps printed pages to leaves.",
+        "IIIF full size: https://iiif.archive.org/iiif/journalofrouteac00munsrich$165/full/full/0/default.jpg (2300x3060). The details page sends no ETag or Last-Modified, which is why this is human-review.",
+        "Spellings: Ambajeree = Ambazari, Telinkoree = Telankhedi (Futala), Nuddee = nadi (a river), Jumma Talao = Gandhisagar, Seta Buldy = Sitabuldi. The '40,000l.' cost of the Jumma Talao is hearsay ('I was told') and is not used."
+      ]
+    },
+    {
+      "id": "maharashtra-gazetteer-bhandara-1979",
+      "scope": "nagpur",
+      "publisher": "Gazetteers Department, Government of Maharashtra (Maharashtra State Gazetteer, Bhandara District, 1979; web edition)",
+      "url": "https://gazetteers.maharashtra.gov.in/cultural.maharashtra.gov.in/english/gazetteer/BHANDARA/agri_irrigation.html",
+      "insecureTLS": true,
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "page",
+      "cadence": "closed edition (1979)",
+      "tier": 3,
+      "detection": {
+        "method": "http-meta"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/story-en.tsx"
+      ],
+      "refreshMethod": "manual: nothing to refresh (closed edition); an http-meta change means the web edition was re-posted, so re-read the Tanks section",
+      "notes": "Cited in the story's malguzari-tank paragraph: 'There are 14,202 tanks irrigating 78 per cent of the net irrigated area in the district', and the old (1908) Bhandara gazetteer quoted on the Nawegaon tank, 'said to have been constructed about 300 years ago by an ancestor of the present malguzar'. Checked 2026-10-15: HTTP 200 with Last-Modified Tue, 27 May 2014 and an ETag.",
+      "playbook": [
+        "The host's TLS chain is incomplete: curl -k / insecureTLS. The old cultural.maharashtra.gov.in/english/gazetteer/... path answers 404.",
+        "The web edition has no page numbers; cite the chapter and subheading (Agriculture > Irrigation > Tanks).",
+        "The Nawegaon passage is the 1979 edition QUOTING the old district gazetteer; the 14,202 count is the 1979 edition's own. Do not merge the two dates."
+      ],
+      "lastSeen": {
+        "etag": "\"3f4fc-e3334-4fa60fed4b580\"",
+        "lastModified": "Tue, 27 May 2014 12:40:06 GMT",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "census-2011-dchb-nagpur",
+      "scope": "nagpur",
+      "publisher": "Directorate of Census Operations, Maharashtra (Census of India 2011, Series 28, Part XII-B, District Census Handbook Nagpur, Primary Census Abstract)",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/809",
+      "license": "Government of India publication, cited with attribution",
+      "type": "page",
+      "cadence": "closed (Census 2011 release). The 2021 census did not take place; Census 2027 is the next.",
+      "tier": 1,
+      "detection": {
+        "method": "page-hash",
+        "selector": ".resource-downloads"
+      },
+      "insecureTLS": true,
+      "dependsOn": [
+        "src/cities/nagpur/story-en.tsx"
+      ],
+      "refreshMethod": "manual: when Census 2027 town tables appear, add the new count beside the 2011 one (never replace it in the story's then-and-now row without a date)",
+      "notes": "PCA table, PDF p.35: Nagpur (M Corp.), location code 802710, area 217.56 sq km, 5,27,634 households, 24,05,665 persons (12,25,405 male, 11,80,260 female). Highlights: 'the most populous having 2,405,665 persons'. The 1966 Gazetteer gives the same 217.56 sq km for the 1951 limits. censusindia.gov.in serves an incomplete certificate chain (Node fetch: UNABLE_TO_VERIFY_LEAF_SIGNATURE; curl with the system store succeeds), hence insecureTLS, as on atlas.json's census-2011-village-amenities entries.",
+      "playbook": [
+        "Pair 24,05,665 only with the Census area of 217.56 sq km, never with NMC's 227.29 sq km (ESR 2023-24); the two areas are from different dates and publishers and the reason for the difference is not stated anywhere.",
+        "NMC's disaster plan 2025-26 p.3 prints '2011 census 24,47,421'; it does not match the DCHB and its religion shares in the same paragraph sum to 126%. Do not use it.",
+        "The 136 census wards are not the 38 prabhags of the 2025 delimitation."
+      ],
+      "lastSeen": {
+        "pageHash": "77c1bb9da9c0df76",
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nmc-disaster-plan",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation (natural-disaster pre-emptive measures plan, 'Naisargik Apatti Purpratibandhak Upayojana Arakhada')",
+      "url": "https://nmcnagpur.gov.in/assets/300/2025/07/mediafiles/Apatti_Vyavsthapan_2025-26.pdf",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "file",
+      "cadence": "yearly (a new plan each pre-monsoon; 2025-2026 edition, PDF created 30 Jul 2025, 279 pp.)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "lastSeen": {
+        "edition": "2025-2026 (Apatti_Vyavsthapan_2025-26.pdf); p.2 contact block read on the page image",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/components/my-ward/ward-actions-card.tsx",
+        "src/cities/nagpur/flood.ts"
+      ],
+      "refreshMethod": "manual: open the new edition, read p.2 on the page image, and update ACTIONS_BY_CITY.nagpur and the dated comment above it",
+      "notes": "p.2 contact block (read on the page image 2026-10-15): Emergency Control Room 101, 0712-2567777, 0712-2567029; Disaster Management Cell 0712-2551866; NMC emergency mobile 7030972200; Collector's control room 1077, 0712-2564973, 2565976, 0712-2562668; zone control rooms on pp.2-3. The card ships 1800 266 9899 (OCW), 0712 255 1866, 101 / 0712 256 7777 and 1077.",
+      "playbook": [
+        "The text layer is a legacy Kruti Dev font: pdftotext gives garbage. Render pages with pdftoppm and read the images.",
+        "The same pages print officers' personal mobile numbers. Never ship them: they change with postings and are personal.",
+        "The upload path changes every year (assets/300/<yyyy>/<mm>/mediafiles/...). Find the new edition from nmcnagpur.gov.in deep links, not by scraping the home page, which carries injected third-party gambling links."
+      ]
+    },
+    {
+      "id": "nagpur-district-dm-plan",
+      "scope": "nagpur",
+      "publisher": "Collector and District Disaster Management Authority, Nagpur (Nagpur Jilha Apatti Vyavasthapan Arakhada 2024)",
+      "url": "https://nagpur.gov.in/disaster-management/",
+      "license": "Maharashtra government publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly (district plan revised before each monsoon)",
+      "tier": 1,
+      "detection": {
+        "method": "link-set",
+        "linkPattern": "s3waas\\.gov\\.in/.*/uploads/.*\\.pdf"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/story-en.tsx",
+        "src/cities/nagpur/flood.ts"
+      ],
+      "refreshMethod": "manual: open the new plan, re-read the city flood pages on the page images, and update the story's 23 September 2023 sentence only if the record changes",
+      "notes": "2024 plan: https://cdn.s3waas.gov.in/s3d1f491a404d6854880943e5c3cd9ca25/uploads/2025/01/2025010886.pdf. Story cites printed p.59 (read on the page image): on 23 Sep 2023, torrential rain between midnight and dawn made Ambazari lake, the Nag, the Pili, the Pohra nala and local nalas overflow, with water entering homes in many parts of the city, especially low-lying areas. The same page has the revenue-circle rain (166 / 166 / 103 mm, average 145), which the story leaves to the flood page.",
+      "playbook": [
+        "Marathi; read the page images, not the text layer, for figures.",
+        "The plan's flood-history table (p.45) gives 148 mm for 23 Sep 2023 while p.59 averages 145 mm: carry the circle values with their page, never one city figure.",
+        "The listing page also links older district documents (2022 upload); a new link-set entry is an edition only if it is a new DM plan."
+      ],
+      "lastSeen": {
+        "linksHash": "f7fc0957848a9f25",
+        "links": [
+          "https://cdn.s3waas.gov.in/s3d1f491a404d6854880943e5c3cd9ca25/uploads/2022/08/2022081741.pdf",
+          "https://cdn.s3waas.gov.in/s3d1f491a404d6854880943e5c3cd9ca25/uploads/2025/01/2025010886.pdf",
+          "https://cdn.s3waas.gov.in/s3d1f491a404d6854880943e5c3cd9ca25/uploads/2025/09/17587034895917.pdf"
+        ],
+        "acceptedOn": "2026-10-15"
+      }
+    },
+    {
+      "id": "nmc-administrator-resolutions",
+      "scope": "nagpur",
+      "publisher": "Nagpur Municipal Corporation (Administrator's resolutions, Prashasak Tharao, posted under public notices)",
+      "url": "https://nmcnagpur.gov.in/public-notices",
+      "license": "Nagpur Municipal Corporation publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "episodic (each resolution is a new PDF)",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "lastSeen": {
+        "edition": "resolutions 720 (22 Jan 2024) and 938 (27 Jul 2024) read",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/cities/nagpur/story-en.tsx"
+      ],
+      "refreshMethod": "manual: check whether a later resolution or work order supersedes 720 or 938 and adjust the story's sentence on Ambazari",
+      "notes": "720 (22 Jan 2024): administrative approval of a Rs 25,30,498 estimate, prepared and technically sanctioned by the Irrigation Department, for consultant design, drawings and survey for gates on the Ambazari dam spillway, for the dam's safety. https://nmcnagpur.gov.in/assets/300/2025/01/Public-Notices/720)_NMC_Prashasak_Tharao_22-01-2024.pdf. 938 (27 Jul 2024): 'Removal of Water Hyacinth with Bio Enzymes at Ambazari Lake', Rs 24,78,944 with GST, described as very necessary for the lake's safety. The story gives neither amount.",
+      "playbook": [
+        "Scanned or broken-font Marathi PDFs; the amounts read cleanly from the text layer but check them on the page image before printing one.",
+        "File names contain a closing parenthesis after the number (720)_NMC_Prashasak_Tharao_...); URL-encode it if a tool chokes.",
+        "An approval is not a completion: quote the resolution's own words (administrative approval, technical sanction) and never say the gates exist."
+      ]
+    },
+    {
+      "id": "ocw-nagpur",
+      "scope": "nagpur",
+      "publisher": "Orange City Water Pvt Ltd (the operator NMC contracts for water supply and billing)",
+      "url": "https://www.ocwindia.com/contact_us",
+      "license": "Orange City Water Pvt Ltd (the operator NMC contracts for water supply and billing) web page, cited with attribution",
+      "type": "page",
+      "cadence": "irregular (contact details change rarely)",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "lastSeen": {
+        "edition": "contact page and home page: 'Help Line: 1800-266-9899'",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "src/components/my-ward/ward-actions-card.tsx"
+      ],
+      "refreshMethod": "manual: re-read the helpline on ocwindia.com and update ACTIONS_BY_CITY.nagpur (quick action sub-label and the hl_water_complaint line together)",
+      "notes": "The only published water-supply complaint line for Nagpur; NMC's own site publishes no separate water number (its contact page gives a fax and email only). OCW asks callers to quote the 8-digit CAN (Karar Kramank) from the water bill.",
+      "playbook": [
+        "An operator's page, not NMC's. If the operating contract changes, the helpline may move to NMC; check NMC's Public Health Engineering page as well.",
+        "The number appears three times on the contact page and once on the home page; all four must agree before accepting a change."
+      ]
+    },
+    {
+      "id": "wikimedia-commons-nagpur-story",
+      "scope": "nagpur",
+      "publisher": "Wikimedia Commons (eight file pages: Ganesh Dhamodkar, Wiknowme, Azhar2311, Eco412)",
+      "url": "https://commons.wikimedia.org/wiki/Category:Nagpur",
+      "license": "CC BY-SA 4.0, CC BY-SA 3.0 and CC0, per file (see public/images/story/nagpur/MANIFEST.json); attribution as each file page requires",
+      "type": "page",
+      "cadence": "irregular (a file can be renamed, re-licensed going forward or deleted)",
+      "tier": 3,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "lastSeen": {
+        "edition": "eight files verified via the Commons API (extmetadata + wikitext), SHA-1 of each original matched",
+        "reviewedOn": "2026-10-15"
+      },
+      "dependsOn": [
+        "public/images/story/nagpur/MANIFEST.json",
+        "src/cities/nagpur/story-en.tsx"
+      ],
+      "refreshMethod": "manual: query each commons_title in MANIFEST.json through the Commons API (3 s apart) and confirm the file exists with the same licence; pull a plate if its file was deleted for copyright reasons",
+      "notes": "Files: Confluence_of_Nag_river_and_Pioli_river.jpg, Confluence_of_Kanhan_and_Pench_river_at_Bina.jpg, Nag_River_23.09.2023.jpg, Dried_Kanhan_riverbed_in_February_2023.jpg (Ganesh Dhamodkar, CC BY-SA 4.0); AmbazariLake.JPG (Wiknowme, CC BY-SA 3.0); Gorewada_lake_nagpur_maharashtra.jpg (Azhar2311, CC BY-SA 4.0); Water_Hyacinth_Ambazari_Lake.jpg (Eco412, CC0). The category URL is a landing page only; the per-file record is MANIFEST.json.",
+      "playbook": [
+        "The Commons API rate-limits (HTTP 429) after a few rapid calls: sleep 3 s per call and back off on 429.",
+        "Ganesh Dhamodkar's permission template (User:Shivashree/permission) asks for the credit 'Ganesh Dhamodkar/Wikimedia Commons' verbatim and a talk-page note when used outside Wikimedia.",
+        "Traps already found: 'Totladoh Dam And reservoir.jpg' is a gaur; 'City of Nagpur, asset ... .tiff' and 'Nagpore, asset ... .tif' are ships; 'GandhisagarLake.jpg' names no photographer and its subject is unconfirmed. All are in MANIFEST.json _rejected."
+      ]
+    }
+  ]
+}

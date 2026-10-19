@@ -40,13 +40,16 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # writer: a scheduled rewrite must not strip the NVDM envelope it finds.
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
+from city_manifest import configs  # noqa: E402
 
 DATA_DIR = REPO_ROOT / "public" / "data"
 
-# City centre coordinates - keep in lockstep with src/lib/cities/*.ts.
-# Only cities whose dashboard actually uses an intensity surface belong here.
+# Only cities whose dashboard uses an intensity surface (the drainage-capacity
+# hero), read at the city centre in their config.
 CITIES = {
-    "kolkata": (22.5726, 88.3639),
+    city: (c["center"]["lat"], c["center"]["lng"])
+    for city, c in configs().items()
+    if c["heroMode"] == "drainage-capacity"
 }
 
 # Thresholds the hero's slider can select, in mm/hour. Spans Kolkata's 6 mm/h

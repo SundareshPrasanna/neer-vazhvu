@@ -70,6 +70,9 @@ export interface RiverQualityReading {
    *  error). Rendered as a footnote under the FC tile - the number is
    *  shown as published, never silently corrected. */
   fecal_coliform_note?: string | null;
+  /** Unit of fecal_coliform_mpn when the source counts colonies, not MPN
+   *  (Nagpur's NMC ESR readings: "CFU"). Absent means MPN. */
+  fecal_coliform_unit?: string | null;
   tds_mgl: number | null; // Total dissolved solids mg/L
   nitrate_mgl: Measure; // Nitrate mg/L
   chromium_mgl: number | null; // Chromium mg/L (heavy metal)
@@ -159,6 +162,38 @@ export const QUALITY_LABELS: Record<RiverQualityStatus, string> = {
   healthy: "Healthy",
 };
 
+// ─── Reading order ───────────────────────────────────────────────────────────
+
+/** Oldest first: by year, then by month where the feed is monthly (Delhi,
+ *  Nagpur). Readings without a month keep their year-only order, so annual
+ *  cities sort exactly as they did before months existed. */
+export function compareReadingPeriod(
+  a: Pick<RiverQualityReading, "year" | "month">,
+  b: Pick<RiverQualityReading, "year" | "month">,
+): number {
+  if (a.year !== b.year) return a.year - b.year;
+  const ma = a.month ?? "";
+  const mb = b.month ?? "";
+  return ma < mb ? -1 : ma > mb ? 1 : 0;
+}
+
+/** The most recent reading: the last month of a monthly feed, the last year
+ *  of an annual one. Sorting on year alone picked January of a monthly year. */
+export function latestReadingOf<T extends Pick<RiverQualityReading, "year" | "month">>(
+  readings: T[],
+): T | undefined {
+  return [...readings].sort((a, b) => compareReadingPeriod(b, a))[0];
+}
+
+const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "Dec 2024" for a monthly reading, "2024" for an annual one. */
+export function readingPeriodLabel(r: Pick<RiverQualityReading, "year" | "month">): string {
+  if (!r.month) return String(r.year);
+  const m = MONTH_ABBR[Number(r.month.slice(5, 7)) - 1];
+  return m ? `${m} ${r.month.slice(0, 4)}` : r.month;
+}
+
 // ─── Trend types & computation ───────────────────────────────────────────────
 
 export type TrendDirection = "improving" | "worsening" | "stable" | "mixed";
@@ -171,6 +206,9 @@ export interface StationTrend {
   bod_delta: number | null;
   start_year: number;
   end_year: number;
+  /** "YYYY-MM" of the two readings compared, set only for a monthly feed. */
+  start_month?: string;
+  end_month?: string;
 }
 
 /**
@@ -185,6 +223,11 @@ export const TREND_BOD_THRESHOLD = 3;    // mg/L
 /**
  * Compute a trend from the last 3 annual readings of a monitoring station.
  * Returns null when fewer than 3 data points are available.
+ *
+ * A monthly feed compares the latest month with the same month three years
+ * earlier, and returns null when that month was not sampled. Its third-last
+ * reading is only two months back, and the seasons alone move DO and BOD by
+ * more than the thresholds below.
  *
  * Per-metric direction rules:
  *   DO  ↑ (delta ≥  DO_THRESHOLD)  → improving  (more oxygen = better)
@@ -204,12 +247,18 @@ export function computeStationTrend(
 ): StationTrend | null {
   const sorted = [...readings]
     .filter((r) => r.do_mgl !== null || r.bod_mgl !== null)
-    .sort((a, b) => a.year - b.year);
+    .sort(compareReadingPeriod);
 
   if (sorted.length < 3) return null;
 
   const latest = sorted[sorted.length - 1];
-  const twoYearsAgo = sorted[sorted.length - 3];
+  const sameMonth = latest.month
+    ? `${Number(latest.month.slice(0, 4)) - 3}${latest.month.slice(4)}`
+    : null;
+  const start = sameMonth
+    ? sorted.find((r) => r.month === sameMonth)
+    : sorted[sorted.length - 3];
+  if (!start) return null;
 
   // Trends compare the threshold-relevant end of each reading, so a city on
   // annual ranges (CPCB NWMP) trends on like-for-like rather than on a mix of
@@ -223,9 +272,9 @@ export function computeStationTrend(
     return k === "lower-is-worse" ? (lo ?? hi) : (hi ?? lo);
   };
   const dLatest = worst(latest.do_mgl, "lower-is-worse");
-  const dPrev = worst(twoYearsAgo.do_mgl, "lower-is-worse");
+  const dPrev = worst(start.do_mgl, "lower-is-worse");
   const bLatest = worst(latest.bod_mgl, "higher-is-worse");
-  const bPrev = worst(twoYearsAgo.bod_mgl, "higher-is-worse");
+  const bPrev = worst(start.bod_mgl, "higher-is-worse");
 
   const do_delta =
     dLatest !== null && dPrev !== null ? +(dLatest - dPrev).toFixed(2) : null;
@@ -263,7 +312,8 @@ export function computeStationTrend(
     direction,
     do_delta,
     bod_delta,
-    start_year: twoYearsAgo.year,
+    start_year: start.year,
     end_year: latest.year,
+    ...(start.month && latest.month ? { start_month: start.month, end_month: latest.month } : {}),
   };
 }

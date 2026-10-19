@@ -1,0 +1,49 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 18.5,
+      "lng": 74.0,
+      "note": "Pune grid point EAST of the city centre (18.52 N, 73.86 E), and the choice matters more here than anywhere else on the platform. Pune district carries a 4.7x west-east rainfall gradient - IN-GRES puts Velhe at 2,182 mm and Indapur at 468 mm in the same year - so a quarter-degree is not a rounding error. The nearer-looking cell at 18.5/73.75 sits 11 km west, up the gradient toward the Ghats, and returns a 1,099.8 mm long-term mean against IMD's OWN Pune (Shivajinagar) observatory normal of 841.2 mm - 31% high. This cell returns 805.3 mm, within 4.3% of the observatory. Validated against IMD Climatological Tables 1991-2020, station index 43063.",
+      "sourceId": "imd-gridded-rainfall-pune"
+    },
+    "recent": {
+      "_note": "Matches generate_imd_rainfall.py's grid point (18.5, 74.0), NOT the city centre - the provisional months have to continue the same series they fill. That cell is east of Pune on purpose: the district's 4.7x west-east rainfall gradient makes the western cell 31% high against IMD's own Shivajinagar observatory normal.",
+      "lat": 18.5,
+      "lng": 74.0
+    }
+  },
+  "ingres": {
+    "_note": "Pune is the first city on this builder to DRILL BELOW the district, and the reason is that its district figure says the opposite of its finding. See fetch_units() for the request shape and why the obvious one fails.",
+    "_notes": {
+      "years": "Seven editions are published for Pune, two more than the shared YEARS list carries, and they are not contiguous: 2020-2021 returns a single empty row. Years are per-city precisely so adding Pune's cannot silently re-cut Kolkata's and Gurugram's committed artifacts."
+    },
+    "state": "MAHARASHTRA",
+    "state_label": "Maharashtra",
+    "source_id": "ingres-groundwater-maharashtra",
+    "drill": {
+      "state": "MAHARASHTRA",
+      "district": "PUNE",
+      "district_uuid": "471dff0a-9b41-46f2-890d-179b2408ca4d",
+      "unit_label": "taluka"
+    },
+    "years": [
+      "2019-2020",
+      "2021-2022",
+      "2022-2023",
+      "2023-2024",
+      "2024-2025",
+      "2025-2026"
+    ],
+    "notes": [
+      "SHIRUR IS THE FINDING. It is categorised CRITICAL in all six published editions, standing at 95.71% of its extractable resource in 2025-2026 and never below 94.24% since 2019-2020. 92.9% of that extraction is agriculture (12,903.4 of 13,894.6 ham), so this is an irrigation story rather than a city one - and agriculture is above 90% of extraction in 8 of the 14 talukas.",
+      "THE DISTRICT AGGREGATE HIDES IT. Pune district totals 63.73% and is categorised SAFE. Publishing the district number alone would state the opposite of what the talukas inside it show, which is why this city drills to assessment-unit level and no other city on this builder does.",
+      "VOLUMES EXCLUDE POOR-QUALITY (SALINE) AREA, which is what CGWB publishes; the API's `total` key does not, and using it would put the district at 67.25% instead of 63.23% for 2024-2025. See fresh_of(). With the correction this artifact reproduces the CGWB National Compilation on Dynamic Ground Water Resources of India 2025 (p.161) exactly: recharge 194,942.64, extractable 182,653.14, extraction 115,497.00 ham, stage 63.23%. The four talukas that carry saline area here - Baramati, Daund, Indapur and Purandhar - are also exactly the four CGWB names as salinity-affected (p.391), derived independently.",
+      "THE RAINFALL GRADIENT IS IN THE ASSESSMENT ITSELF, not inferred: IN-GRES carries a per-taluka rainfall figure, and in 2025-2026 it runs from Velhe at 2,182.3 mm to Indapur at 467.9 mm and Baramati at 473.6 mm, in the same district and the same edition. A 4.7x spread inside one district is the structural fact about Pune district water: the wet end is where the city's dams sit and the dry end is where their canals go.",
+      "SIX EDITIONS ARE NOT SIX YEARS OF MEASUREMENT, and this is the most important caveat on the series. IN-GRES recomputes the AVAILABILITY side every edition - every taluka has a distinct stage percentage in every edition, and a distinct availability figure in every edition bar one repeat in Mulshi - while largely CARRYING FORWARD the rainfall and extraction inputs. Seven of the 14 talukas carry a single rainfall value across all six editions, no taluka has more than three distinct values in six, and agricultural draft has only two to five distinct values in six. Year-on-year movement in stage % is therefore mostly the denominator moving, not measured extraction changing. Do not render this as an annual extraction trend.",
+      "PUNE CITY BECAME ITS OWN ASSESSMENT UNIT IN 2023-2024. Before that edition the built city was inside Haveli and cannot be separated. Its series is therefore three editions long by construction, not truncated, and its extractable resource (1,218-1,231 ham) is the smallest in the district - urban Pune drinks surface water from the Khadakwasla chain, so the aquifer under it is a minor resource rather than the main one.",
+      "PURANDHAR AND BARAMATI RECLASSIFIED WITHOUT RECOVERING, and the arithmetic is unambiguous because the numerator did not move AT ALL. Purandhar goes semi-critical 85.20% (2022-2023) to safe 51.27% (2023-2024) on an extraction figure of 10,854.4 ham in BOTH editions, while its extractable resource jumps 12,739.2 to 21,170.6 ham. Baramati goes 80.40% to 66.59% on an extraction figure of 16,913.2 ham in both, while extractable jumps 21,036.0 to 25,397.5 ham. Nothing was measured to have changed; the denominator was revised. Reading either as an aquifer recovering would be wrong.",
+      "Two spellings shift between editions and are normalised here: the portal upper-cases every unit name before 2023-2024 and title-cases after, and MAVAL is spelled Mawal in the 2025-2026 edition only."
+    ]
+  }
+}

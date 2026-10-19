@@ -101,8 +101,6 @@ SECTOR_LOOKUP = ROOT / "pipeline-inputs/basins/krishnagiri-rivers/tnpcb-type-sec
 CETP_SCHEMES = None  # no common effluent treatment plant in the register; the one treatment unit is a sewage plant
 REGISTER_YEARS = "2015 to 2024"
 TNPCB_OFFICE = {"HSR": "DEE Hosur"}
-# all_water_bodies prints the basin in water_body_name on NRSC rows; both basins here.
-WB_NOT_A_NAME = {"", "none", "no", "cauvery", "pennaiyar"}
 # TN WRD sub-basin name -> shed key. The Cauvery-basin pair keep the keys cauvery-tn uses
 # (scripts/basin-sources/cauvery-tn.json); the Pennaiyar and Palar sub-basins take the WRD's own
 # numbering under a basin prefix, since no Pennaiyar basin build exists yet.

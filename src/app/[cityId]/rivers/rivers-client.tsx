@@ -37,9 +37,10 @@ interface CetpCompliance {
   total_exceedances: number;
   parameters_ever_breached: number;
 }
-import type { RiverQualityData, SelectedRiver } from "@/types/river-quality";
+import { compareReadingPeriod, type RiverQualityData } from "@/types/river-quality";
 
 import { RiverPanel } from "@/components/rivers/river-panel";
+import { StationMarkerKey } from "@/components/rivers/station-marker-key";
 import { BasinAtlasClient } from "@/components/basin/basin-atlas-client";
 import type { BasinFloor, BasinInventory, BasinManifest } from "@/lib/basins";
 import { basinDataUrl } from "@/lib/basins/paths";
@@ -72,6 +73,9 @@ interface ClientProps {
    *  label. Cities whose partner review asked for a cleaner header (Bengaluru)
    *  turn it off in the per-city header config. Default true. */
   showHeaderStats?: boolean;
+  /** What the tally calls the river-quality points (default "CPCB stations"),
+   *  for a city whose points are not all CPCB's. */
+  stationsLabel?: string;
   /** Label for the basin-atlas CTA button; defaults to the treatment-gaps
    *  framing used by the original Chennai-baseline surface. */
   atlasCtaLabel?: string;
@@ -81,6 +85,8 @@ interface ClientProps {
   hasTreatmentDischarge?: boolean;
   /** Per-river narrative metadata, keyed by river_id from the geojson. */
   riverInfo: Record<string, RiverInfo>;
+  /** river_id to pre-select when the city has no basin atlas. */
+  defaultRiverId?: string;
   /** Optional deep basin atlas: when a river on this map belongs to a basin,
    *  clicking it opens the layered basin view as an overlay. */
   basin?: { manifest: BasinManifest; inventory: BasinInventory | null } | null;
@@ -180,8 +186,10 @@ export default function RiversClient({
   mapZoom = 9,
   scopeLabel,
   showHeaderStats = true,
+  stationsLabel = "CPCB stations",
   atlasCtaLabel,
   riverInfo,
+  defaultRiverId,
   basin = null,
   overviewBasin = null,
 }: ClientProps) {
@@ -260,15 +268,13 @@ export default function RiversClient({
         // "click to drill into the basin" coach mark guides the user into the
         // atlas, and an auto-opened panel would compete with it.
         if (!basin) {
-          const mainstem = out.find((r) =>
-            ["vaigai", "cooum", "adyar", "vrishabhavathi", "yamuna", "sabarmati", "meghadrigedda"].includes(r.river_id)
-          );
+          const mainstem = out.find((r) => r.river_id === defaultRiverId);
           if (mainstem) setSelectedRiverId(mainstem.river_id);
           else if (out.length > 0) setSelectedRiverId(out[0].river_id);
         }
       })
       .catch(console.error);
-  }, [cityId, basin]);
+  }, [cityId, basin, defaultRiverId]);
 
   // Optional CPCB NWMP overlay - 404 (no file) is expected and silent.
   useEffect(() => {
@@ -461,7 +467,7 @@ export default function RiversClient({
         // crashed the whole map.
         .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
         .map((s) => {
-        const sorted = [...s.readings].sort((a, b) => b.year - a.year);
+        const sorted = [...s.readings].sort((a, b) => compareReadingPeriod(b, a));
         const latest = sorted[0] ?? null;
         return {
           id: s.id,
@@ -500,7 +506,7 @@ export default function RiversClient({
         {showHeaderStats && (
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {rivers.length} rivers
-            {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} CPCB stations`}
+            {cpcbStationMarkers.length > 0 && ` - ${cpcbStationMarkers.length} ${stationsLabel}`}
             {cpcbStationsWithoutCoords > 0 &&
               ` (+${cpcbStationsWithoutCoords} without a published coordinate)`}
             {industrialMarkers.length > 0 && ` - ${industrialMarkers.length} industrial sources`}
@@ -565,6 +571,7 @@ export default function RiversClient({
             industrialSources={industrialMarkers}
             drains={drainMarkers}
           />
+          <StationMarkerKey stations={cpcbStationMarkers} />
 
           {/* Drill-down hint: shown where at least one river opens a basin atlas. */}
           {drillableNames.length > 0 && !coachDismissed && !openBasinRiverId && (

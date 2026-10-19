@@ -7,7 +7,7 @@ import { loadBasinInventory } from "@/lib/basins/data";
 import { FeatureNotYetAvailable } from "@/components/layout/feature-not-yet-available";
 import { riversVariant } from "@/lib/cities/data-paths";
 import RiversClient from "./rivers-client";
-import { RIVERS_CONTENT } from "@/content/rivers";
+import { RIVERS_CONTENT } from "@/cities/generated/rivers";
 import ChennaiRiversClient from "./chennai-rivers-client";
 
 interface PageProps {
@@ -120,8 +120,10 @@ export default async function CityRiversPage({ params }: PageProps) {
       mapZoom={mapZoom}
       scopeLabel={header.scopeLabel}
       showHeaderStats={header.showStats ?? true}
+      stationsLabel={header.stationsLabel}
       atlasCtaLabel={header.atlasCtaLabel}
       riverInfo={riverInfo}
+      defaultRiverId={content?.defaultRiverId}
       basin={basinProp}
       overviewBasin={overviewBasinProp}
     />

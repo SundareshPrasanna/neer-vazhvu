@@ -15,7 +15,9 @@ Feed: a single daily, timestamped, all-Maharashtra PDF (139 dams by revenue
 region; the MMR dams sit in the Konkan section). There is NO JSON API and the
 dated URLs 404 - only the "latest" endpoint works, and it needs TLS verification
 disabled (the cert chain is incomplete). So: fetch the latest PDF with an
-unverified SSL context, extract text, and parse the dam rows.
+unverified SSL context, extract text, and parse the dam rows. (The same
+bulletin IS archived per date, in Marathi, on the WRD department site from
+early 2024 - backfill_pravah_marathi_archive.py reads that one.)
 
 Row layout (whitespace-delimited after the dam name), taken from the PDF's own
 column header rather than guessed:
@@ -51,8 +53,17 @@ Mcum vs CWC's 0.056 BCM, Panshet 301.61 vs 0.302, Bhama Askhed 217.10 vs 0.217,
 Chaskaman 214.50 vs 0.215, Nira Deoghar 332.13 vs 0.332, Dimbhe 353.75 vs
 0.354. Two independent government sources, agreeing.
 
+NAGPUR. The "Nagpur" district block of the Nagpur region holds five major
+dams: Totladoh (the Pench hydro-electric reservoir, shared with Madhya
+Pradesh), Kamthi Khairy (Navegaon Khairi, the Pench irrigation project's dam,
+from which NMC's draw goes to Mahadula), Khindsi, Nand and Wadgaon. Mumbai and
+Pune match a substring anywhere in the statewide PDF; "nand" and "wadgaon" are
+too short for that, so a city with a `district` matches the WHOLE label, and
+only inside that district's own block.
+
 Run:  cd neer-vazhvu-api && python3 scripts/scrape_pravah_dams.py --city mumbai
       cd neer-vazhvu-api && python3 scripts/scrape_pravah_dams.py --city pune
+      cd neer-vazhvu-api && python3 scripts/scrape_pravah_dams.py --city nagpur
 Emits JSON to stdout (and --out writes a file).
 """
 
@@ -111,6 +122,33 @@ PUNE_DAMS = {
     "mulshi tata": ("mulshi", []),  # context only, not a municipal source
 }
 
+# Nagpur. Keys are the WHOLE label as printed (lower-cased, serial stripped),
+# matched only inside the "Nagpur" district block - see the docstring. Only
+# Totladoh and Kamthi Khairy feed NMC's Pench schemes; Khindsi (Ramtek), Nand
+# and Wadgaon (Lower Wunna) are irrigation dams, carried for context.
+NAGPUR_DAMS = {
+    "totladoh": ("totladoh", ["nmc"]),
+    "kamthi khairy": ("navegaon_khairi", ["nmc"]),  # NMC and NRLD's name
+    "khindsi": ("khindsi", []),
+    "nand": ("nand", []),
+    "wadgaon": ("wadgaon", []),
+}
+
+# Designed (dead, live, gross) storage in Mcum as the bulletin prints it. It
+# equals CWC's NRLD-2019 to the cubic metre for Totladoh (p.196) and
+# Kamthikhairy (p.172); Nand (p.197) and Wadgaon (p.205) equal at the
+# bulletin's 0.01 Mcum precision; Khindsi (NRLD "RAMTEK" p.151) matches on
+# live storage only (NRLD gross 105.13 Mcum).
+# Fixed per dam, so it identifies a row where the name cannot: the Marathi
+# archive's dam names break apart in text extraction.
+NAGPUR_DESIGNED = {
+    "totladoh": (150.00, 1016.93, 1166.93),
+    "navegaon_khairi": (39.00, 141.98, 180.98),
+    "khindsi": (0.00, 103.00, 103.00),
+    "nand": (9.00, 53.18, 62.18),
+    "wadgaon": (16.60, 134.90, 151.50),
+}
+
 CITIES = {
     "mumbai": {
         "dams": MMR_DAMS,
@@ -140,6 +178,30 @@ CITIES = {
         "source_id": "wrd-pravah-pune-dams",
         "dataset_stem": "dam-storage",
     },
+    "nagpur": {
+        "dams": NAGPUR_DAMS,
+        "out_default": "public/data/nagpur-dam-storage.json",
+        "note": (
+            "Live storage for the five Nagpur-district dams in the Maharashtra "
+            "WRD daily bulletin. Totladoh (the Pench hydro-electric reservoir, "
+            "shared with Madhya Pradesh) and Kamthi Khairy (Navegaon Khairi, "
+            "the Pench irrigation project's dam) feed NMC's Pench schemes; "
+            "Khindsi, Nand and Wadgaon are irrigation dams carried for "
+            "context and excluded from any city total. Storage is whole-dam "
+            "live storage, not NMC's share."
+        ),
+        "db_filter": lambda r: bool(r["corporations"]),
+        "source_id": "wrd-pravah-nagpur-dams",
+        "dataset_stem": "dam-storage",
+        # Whole-label match inside this district block only. require_all:
+        # nothing is written if a db_filter dam (Totladoh, Kamthi Khairy) is
+        # missing; a missing context dam only warns.
+        "district": "nagpur",
+        "require_all": True,
+        # Same-date-last-year rows never overwrite a stored reading: they go
+        # in a second, insert-only upsert, and a printed 0.0 is skipped.
+        "ly_insert_only": True,
+    },
 }
 
 _NUM = r"-?\d+(?:\.\d+)?"
@@ -151,6 +213,10 @@ _ROW = re.compile(
     + r"(?P<cur>%s)\s+(?P<cur_gross>%s)\s+(?P<cur_pct>%s)\s*%%\s+(?P<ly_pct>%s)\s*%%"
     % (_NUM, _NUM, _NUM, _NUM)
 )
+# A region or district heading: letters only, at the left margin. Dam names
+# that wrap ("Barrage", "LB") sit indented under their row, page headers are
+# indented or carry punctuation, so neither resets the block.
+_HEADING = re.compile(r"^ ?[A-Za-z][A-Za-z ]*$")
 
 
 def _fetch_pdf(path: str) -> None:
@@ -178,46 +244,35 @@ def _pdf_to_text(pdf_path: str) -> str:
     return out.stdout
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--out", help="write JSON here (also prints summary)")
-    ap.add_argument(
-        "--pdf",
-        help="parse this already-downloaded Pravah PDF instead of fetching "
-        "(the gov feed is flaky; fetch separately, e.g. via curl -k, then parse)",
-    )
-    ap.add_argument(
-        "--supabase",
-        action="store_true",
-        help="upsert this city's municipal-source dams into reservoir_daily_v2. "
-        "For Mumbai that is the BMC lakes, for which Pravah is the OFFICIAL "
-        "daily source for 5 of 7 (~97%% of system capacity); Vihar + Tulsi are "
-        "BMC-owned in-city lakes with no public feed. For Pune it is the "
-        "Khadakwasla chain plus Pawana and Bhama Askhed. "
-        "Needs SUPABASE_URL + SUPABASE_SERVICE_KEY.",
-    )
-    ap.add_argument("--city", default="mumbai", choices=sorted(CITIES))
-    args = ap.parse_args()
-    city = CITIES[args.city]
+def _same_date_last_year(iso: str) -> str:
+    """ISO date one year back; 29 Feb maps to 28 Feb."""
+    d = date.fromisoformat(iso)
+    try:
+        return d.replace(year=d.year - 1).isoformat()
+    except ValueError:
+        return d.replace(year=d.year - 1, day=28).isoformat()
+
+
+def parse_readings(text: str, city: dict) -> list[dict]:
+    """The city's dam rows from the bulletin's text, first match per dam."""
     dams = city["dams"]
-
-    if args.pdf:
-        pdf_path = args.pdf
-    else:
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-            pdf_path = tmp.name
-        _fetch_pdf(pdf_path)
-    text = _pdf_to_text(pdf_path)
-
+    district = city.get("district")
+    block = None  # the district heading the current row sits under
     readings = []
     seen = set()
-    for line in text.splitlines():
-        line = line.strip()
+    for raw in text.splitlines():
+        line = raw.strip()
         m = _ROW.match(line)
         if not m:
+            if _HEADING.match(raw.replace("\f", "").rstrip()):
+                block = None if line.endswith("Region") else line.lower()
             continue
         label = re.sub(r"\s+", " ", m.group("name")).strip().lower()
-        match = next((k for k in dams if k in label), None)
+        if district:
+            whole = re.sub(r"^\d+\s+", "", label)
+            match = whole if block == district and whole in dams else None
+        else:
+            match = next((k for k in dams if k in label), None)
         if not match or match in seen:
             continue
         seen.add(match)
@@ -252,6 +307,159 @@ def main() -> int:
                 "last_year_pct_live": round(ly_pct, 1),
             }
         )
+    return readings
+
+
+def db_rows(city_id: str, city: dict, readings: list[dict]) -> list[dict]:
+    """reservoir_daily_v2 rows for the city's own municipal sources.
+
+    Rows use the reservoir_daily_v2 ReservoirReading shape (keyed city_id,
+    source_code, date). Only the city's own municipal sources go in, selected
+    by the per-city db_filter: for Mumbai the BMC lakes (the regional
+    Barvi/Surya/Kawdas dams are corporation-card data, not city-of-Mumbai
+    reservoir sources), for Pune the six PMC/PCMC dams (Mulshi is Tata's
+    hydro and is context only), for Nagpur the two Pench dams NMC draws on.
+
+    All rows carry the REPORT date (the newest reading in the bulletin), not
+    each dam's own timestamp: Pravah staggers per-dam readings by up to a day,
+    and the dashboard snapshot keys on one latest date per city - per-dam
+    dates would silently drop the older dams from the cards. Exact per-dam
+    timestamps stay in the JSON artifact.
+    """
+    if not readings:
+        return []
+    report_date = max(r["date"] for r in readings)
+    # The bulletin also gives each dam's storage on the SAME DATE LAST YEAR
+    # (as a percentage; see the docstring) - upsert that too, dated a year
+    # back. Every daily run therefore grows the history at both ends (today
+    # + today-minus-1-year), so after a year of cron the chart spans two
+    # full years from a feed with no queryable archive (Pravah's dated URLs
+    # 404).
+    ly_date = _same_date_last_year(report_date)
+    own = [r for r in readings if city["db_filter"](r)]
+    # ly_insert_only: column 11 has printed 0.0 for dams that held water, so
+    # a zero is not stored (a real empty day stays a gap, not a guess).
+    skip_zero = bool(city.get("ly_insert_only"))
+    return [
+        {
+            "city_id": city_id,
+            "source_code": r["source_code"],
+            "date": report_date,
+            "storage_tmc": r["storage_tmc"],
+            "storage_pct_frl": r["storage_pct_live"],
+            "level_ft": None,
+            "inflow_cusecs": None,
+            "outflow_cusecs": None,
+            "source": "Maharashtra WRD Pravah dam-safety feed",
+            "scraped_from": PRAVAH_URL,
+        }
+        for r in own
+    ] + [
+        {
+            "city_id": city_id,
+            "source_code": r["source_code"],
+            "date": ly_date,
+            "storage_tmc": round(r["last_year_storage_mcum"] / MCUM_PER_TMC, 3),
+            "storage_pct_frl": r["last_year_pct_live"],
+            "level_ft": None,
+            "inflow_cusecs": None,
+            "outflow_cusecs": None,
+            "source": "Maharashtra WRD Pravah dam-safety feed (same-date-last-year column)",
+            "scraped_from": PRAVAH_URL,
+        }
+        for r in own
+        if r.get("last_year_storage_mcum") is not None
+        and not (skip_zero and r["last_year_pct_live"] == 0)
+    ]
+
+
+def upsert_db_rows(sb, rows: list[dict]) -> tuple[int, int]:
+    """ly_insert_only write: (report-date rows, same-date-last-year rows sent).
+
+    Report-date rows are merge-upserted as for every city. Same-date-last-year
+    rows go in a second upsert with ignore_duplicates, so a date already in
+    reservoir_daily_v2 (a measured reading, live or from the archive backfill)
+    keeps its value instead of being replaced by one rebuilt from column 11.
+    """
+    report_date = max(r["date"] for r in rows)
+    today = [r for r in rows if r["date"] == report_date]
+    back = [r for r in rows if r["date"] != report_date]
+    key = "city_id,source_code,date"
+    sb.table("reservoir_daily_v2").upsert(today, on_conflict=key).execute()
+    if back:
+        sb.table("reservoir_daily_v2").upsert(
+            back, on_conflict=key, ignore_duplicates=True
+        ).execute()
+    return len(today), len(back)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", help="write JSON here (also prints summary)")
+    ap.add_argument(
+        "--pdf",
+        help="parse this already-downloaded Pravah PDF instead of fetching "
+        "(the gov feed is flaky; fetch separately, e.g. via curl -k, then parse)",
+    )
+    ap.add_argument(
+        "--supabase",
+        action="store_true",
+        help="upsert this city's municipal-source dams into reservoir_daily_v2. "
+        "For Mumbai that is the BMC lakes, for which Pravah is the OFFICIAL "
+        "daily source for 5 of 7 (~97%% of system capacity); Vihar + Tulsi are "
+        "BMC-owned in-city lakes with no public feed. For Pune it is the "
+        "Khadakwasla chain plus Pawana and Bhama Askhed. For Nagpur it is "
+        "Totladoh and Kamthi Khairy (navegaon_khairi). "
+        "Needs SUPABASE_URL + SUPABASE_SERVICE_KEY.",
+    )
+    ap.add_argument("--city", default="mumbai", choices=sorted(CITIES))
+    args = ap.parse_args()
+    city = CITIES[args.city]
+    dams = city["dams"]
+
+    if args.pdf:
+        pdf_path = args.pdf
+    else:
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+            pdf_path = tmp.name
+        _fetch_pdf(pdf_path)
+    text = _pdf_to_text(pdf_path)
+
+    readings = parse_readings(text, city)
+    found = {r["source_code"] for r in readings}
+    missing = {sc for sc, _ in dams.values()} - found
+    if missing and city.get("require_all"):
+        needed = {
+            sc
+            for sc, corps in dams.values()
+            if city["db_filter"]({"corporations": corps})
+        }
+        if missing & needed:
+            print(
+                f"Pravah: {args.city} MISSING {', '.join(sorted(missing))} - "
+                "nothing written (the district block or a dam name changed)",
+                file=sys.stderr,
+            )
+            return 1
+        print(
+            f"WARNING: {args.city} context dam(s) missing: "
+            f"{', '.join(sorted(missing))}; the other dams are still written",
+            file=sys.stderr,
+        )
+    if args.city == "nagpur":
+        for r in readings:
+            designed = (
+                r["dead_storage_mcum"],
+                r["live_capacity_mcum"],
+                r["gross_capacity_mcum"],
+            )
+            if designed != NAGPUR_DESIGNED[r["source_code"]]:
+                print(
+                    f"WARNING: {r['source_code']} designed storage {designed} "
+                    f"differs from {NAGPUR_DESIGNED[r['source_code']]}; check "
+                    "the config capacity and the archive backfill's row key",
+                    file=sys.stderr,
+                )
 
     # NVDM envelope. write_artifact is preserve-if-present, so Mumbai's
     # already-enveloped mmr-dam-storage.json keeps the envelope it has and
@@ -309,72 +517,27 @@ def main() -> int:
 
         from supabase import create_client
 
-        # Rows use the reservoir_daily_v2 ReservoirReading shape
-        # (keyed city_id, source_code, date). Only the city's own municipal
-        # sources go in, selected by the per-city db_filter: for Mumbai the
-        # BMC lakes (the regional Barvi/Surya/Kawdas dams are corporation-card
-        # data, not city-of-Mumbai reservoir sources), for Pune the six
-        # PMC/PCMC dams (Mulshi is Tata's hydro and is context only).
-        #
-        # All rows carry the REPORT date (the newest reading in the bulletin),
-        # not each dam's own timestamp: Pravah staggers per-dam readings by up
-        # to a day, and the dashboard snapshot keys on one latest date per
-        # city - per-dam dates would silently drop the older dams from the
-        # cards. Exact per-dam timestamps stay in the JSON artifact.
-        report_date = max(r["date"] for r in readings)
-        # The bulletin also gives each dam's storage on the SAME DATE LAST YEAR
-        # (as a percentage; see the docstring) - upsert that too, dated a year
-        # back. Every daily run therefore grows the history at both ends (today
-        # + today-minus-1-year), so after a year of cron the chart spans two
-        # full years from a feed with no queryable archive (Pravah's dated URLs
-        # 404).
-        y, mo, dd = report_date.split("-")
-        ly_date = f"{int(y) - 1}-{mo}-{dd}"
-        own = [r for r in readings if city["db_filter"](r)]
-        rows = [
-            {
-                "city_id": args.city,
-                "source_code": r["source_code"],
-                "date": report_date,
-                "storage_tmc": r["storage_tmc"],
-                "storage_pct_frl": r["storage_pct_live"],
-                "level_ft": None,
-                "inflow_cusecs": None,
-                "outflow_cusecs": None,
-                "source": "Maharashtra WRD Pravah dam-safety feed",
-                "scraped_from": PRAVAH_URL,
-            }
-            for r in own
-        ] + [
-            {
-                "city_id": args.city,
-                "source_code": r["source_code"],
-                "date": ly_date,
-                "storage_tmc": round(r["last_year_storage_mcum"] / MCUM_PER_TMC, 3),
-                "storage_pct_frl": r["last_year_pct_live"],
-                "level_ft": None,
-                "inflow_cusecs": None,
-                "outflow_cusecs": None,
-                "source": "Maharashtra WRD Pravah dam-safety feed (same-date-last-year column)",
-                "scraped_from": PRAVAH_URL,
-            }
-            for r in own
-            if r.get("last_year_storage_mcum") is not None
-        ]
+        rows = db_rows(args.city, city, readings)
         if rows:
             sb = create_client(
                 os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_KEY"]
             )
-            sb.table("reservoir_daily_v2").upsert(
-                rows, on_conflict="city_id,source_code,date"
-            ).execute()
-            print(
-                f"Upserted {len(rows)} {args.city} rows to reservoir_daily_v2",
-                file=sys.stderr,
-            )
+            if city.get("ly_insert_only"):
+                n_today, n_back = upsert_db_rows(sb, rows)
+                print(
+                    f"Upserted {n_today} {args.city} rows to reservoir_daily_v2; "
+                    f"sent {n_back} same-date-last-year rows insert-only",
+                    file=sys.stderr,
+                )
+            else:
+                sb.table("reservoir_daily_v2").upsert(
+                    rows, on_conflict="city_id,source_code,date"
+                ).execute()
+                print(
+                    f"Upserted {len(rows)} {args.city} rows to reservoir_daily_v2",
+                    file=sys.stderr,
+                )
 
-    found = {r["source_code"] for r in readings}
-    missing = {sc for sc, _ in dams.values()} - found
     print(
         f"Pravah: parsed {len(readings)} {args.city} dams "
         f"({', '.join(sorted(found))})"

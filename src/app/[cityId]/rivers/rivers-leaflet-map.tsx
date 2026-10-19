@@ -203,9 +203,15 @@ export function RiversLeafletMap({
 
       {cpcbStations.map((s) => {
         // Color reflects pollution severity: BOD > 6 = red, > 3 = amber,
-        // otherwise green. Stations without readings render as grey.
-        const fill = !s.has_readings || s.latest_bod === null
+        // otherwise green. A reading with DO but no BOD (Nagpur's NMC
+        // sites) falls back to DO < 4 red, < 5 amber, the classifyReading
+        // tiers. Grey only when neither is published.
+        const fill = !s.has_readings || (s.latest_bod === null && s.latest_do === null)
           ? "#94a3b8"
+          : s.latest_bod === null
+            ? (s.latest_do as number) < 4 ? "#dc2626"
+              : (s.latest_do as number) < 5 ? "#d97706"
+              : "#16a34a"
           : s.latest_bod > 6 ? "#dc2626"
           : s.latest_bod > 3 ? "#d97706"
           : "#16a34a";

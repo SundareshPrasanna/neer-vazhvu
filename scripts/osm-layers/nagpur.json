@@ -1,0 +1,20 @@
+{
+  "_doc": "Nagpur OSM layers for scripts/fetch-osm-layers.ts. Only the localities search index comes from OSM here: water bodies and rivers are MRSAC's official layers, built by neer-vazhvu-api/scripts/build_nagpur_geography.py, which joins OSM names onto them itself.",
+  "lang": "mr",
+  "layers": {
+    "localities": {
+      "method": "ward-join",
+      "_note": "Places joined to the 38 wards of the 2025 ward formation (MRSAC outlines, public/geojson/nagpur-wards-2025.geojson); anything outside them is dropped. The box is NMC's own city outline (21.053-21.231 N, 78.993-79.184 E) padded about 1 km. zone_name and zone_no are the NMC zone at the place's own point, from pipeline-inputs/nagpur/nmc-zones.geojson (NMC's ten GIS zone outlines, frozen by neer-vazhvu-api/scripts/build_nagpur_wards.py), not the ward's zone: wards cross zone lines, and 18 of the 38 carry no zone. A place outside every zone outline stops the run, so no row ships without a zone. Written as {localities: [...]} so the file keeps its NVDM envelope across refreshes. No Wikidata pull: the artifact cites OSM only.",
+      "bbox": "21.04,78.98,21.24,79.20",
+      "select": [
+        "node[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]",
+        "way[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]",
+        "relation[\"place\"~\"^(suburb|neighbourhood|quarter|village|hamlet)$\"]"
+      ],
+      "wards": "public/geojson/nagpur-wards-2025.geojson",
+      "profiles": "public/data/nagpur-ward-profiles.json",
+      "zones": "pipeline-inputs/nagpur/nmc-zones.geojson",
+      "wrapAs": "localities"
+    }
+  }
+}

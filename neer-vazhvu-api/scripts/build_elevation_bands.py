@@ -46,62 +46,13 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from app.cascade.catchments import FABDEM_ASSET, _FETCH_TILE_DEG  # noqa: E402
 from nvdm_write import merge_envelope  # noqa: E402
+from city_manifest import section  # noqa: E402
 
-CITIES = {
-    "mumbai": {
-        "bbox": (72.75, 18.85, 73.35, 19.55),  # the urban MMR, all 9 corporations
-        # band edges (metres); labels derive from consecutive pairs
-        "bands": [0, 2, 5, 10, 20, 50, 100],
-    },
-    # Chennai is a coastal alluvial plain - almost everything sits under
-    # 20 m, so the low bands are cut finer than Mumbai's.
-    "chennai": {
-        "bbox": (79.95, 12.75, 80.35, 13.35),  # GCC + flood-relevant fringe
-        "bands": [0, 2, 5, 10, 15, 25, 50],
-    },
-    # Inland cities: sea-level bands are meaningless; bands follow relief
-    # relative to the local terrain envelope instead.
-    "madurai": {
-        "bbox": (77.95, 9.80, 78.30, 10.10),  # city + Vaigai corridor
-        "bands": [60, 130, 145, 160, 180, 220, 300],
-    },
-    "bangalore": {
-        "bbox": (77.40, 12.80, 77.85, 13.20),  # BBMP + GBA fringe
-        "bands": [700, 840, 870, 900, 930, 960, 1000],
-    },
-    # Delhi is a very flat plain with one hard edge: 80% of the NCT sits
-    # between 203 m and 221 m, then the Ridge quartzite climbs to ~326 m.
-    # So the plain is cut finely and the Ridge is a single top band.
-    # FABDEM percentiles over the NCT bbox at 90 m:
-    #   p0=192.5 p5=203.5 p20=210.5 p50=214.5 p80=221.4 p90=240.5 p100=326.3
-    #
-    # NOTE: these are TERRAIN bands, not flood-stage bands. Delhi's flood
-    # ladder (204.50 m warning / 205.33 m danger / 206.00 m evacuation at the
-    # Old Railway Bridge) is on the gauge's own datum: FABDEM reads 212.15 m
-    # at that bridge, ~7 m off the gauge zero. The two must not be overlaid
-    # as if they shared a datum.
-    "delhi": {
-        "bbox": (76.84, 28.40, 77.35, 28.89),  # NCT + Najafgarh/Yamuna fringe
-        "bands": [192, 205, 210, 214, 218, 224, 330],
-    },
-    # Coastal and hilly: the flood story is the narrow strip under 10 m, and
-    # the Kailasa/Yarada ridges are one top band. FABDEM land percentiles:
-    #   p1=3 p5=7 p20=21 p50=48 p80=88 p95=186 p99=318 p100=587
-    "visakhapatnam": {
-        "bbox": (82.95, 17.50, 83.55, 18.00),  # GVMC + Meghadrigedda/Kondakarla
-        "bands": [0, 2, 5, 10, 20, 50, 100],
-        # FABDEM stores this sea as exact 0 m, not as masked pixels, so the
-        # NODATA sentinel alone would draw the Bay of Bengal as the 0-2 m band.
-        "sea_is_zero": True,
-        "provenance": (
-            "FABDEM V1-2 (Hawker et al., University of Bristol; satellite-derived "
-            "30 m DEM with buildings and forests removed) via Google Earth Engine, "
-            "classified into ground-height bands. The sea (FABDEM's exact 0 m) is "
-            "removed; there is no city-boundary clip, as we have not found published "
-            "GVMC boundary geometry. Read them as bands, not spot heights."
-        ),
-    },
-}
+# Each city's FABDEM bbox (west, south, east, north), band edges in metres and
+# options: elevationBands in src/cities/<id>/pipeline.json.
+CITIES = section("elevationBands")
+for _cfg in CITIES.values():
+    _cfg["bbox"] = tuple(_cfg["bbox"])
 
 # Basin-atlas terrain layers. bbox comes from the boundary file; pixels
 # outside the boundary polygon are masked to NODATA so bands stop at the

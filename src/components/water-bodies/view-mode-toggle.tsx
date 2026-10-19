@@ -7,18 +7,17 @@ export type ViewMode = "water-bodies" | "restoration" | "catchments";
 interface ViewModeToggleProps {
   value: ViewMode;
   onChange: (mode: ViewMode) => void;
+  /** Show the Restoration Priority mode (only where the city's restoration-priority file has rows). */
+  restorationAvailable: boolean;
   /** Show the Catchments mode (only where terrain-derived catchment data exists). */
   catchmentsAvailable?: boolean;
   /** Why catchments are unavailable. When present and catchments are off, the
    *  toggle renders a disclosure in place of the button rather than hiding it
    *  silently - a missing view mode should say why it is missing. */
   catchmentsGapNote?: string;
-  /** Show the Restoration mode. False once the city's restoration-priority
-   *  file is known to be absent, so the toggle never opens an empty view. */
-  restorationAvailable?: boolean;
 }
 
-export function ViewModeToggle({ value, onChange, catchmentsAvailable = false, catchmentsGapNote, restorationAvailable = true }: ViewModeToggleProps) {
+export function ViewModeToggle({ value, onChange, restorationAvailable, catchmentsAvailable = false, catchmentsGapNote }: ViewModeToggleProps) {
   const { t } = useLanguage();
 
   const btn = (mode: ViewMode, label: string) => (
@@ -36,11 +35,14 @@ export function ViewModeToggle({ value, onChange, catchmentsAvailable = false, c
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5">
-        {btn("water-bodies", t("nav.water_bodies"))}
-        {restorationAvailable && btn("restoration", t("wb.view_restoration"))}
-        {catchmentsAvailable && btn("catchments", t("wb.view_catchments"))}
-      </div>
+      {/* One mode is no choice: the switch shows only when there is a second (or a way back). */}
+      {(restorationAvailable || catchmentsAvailable || value !== "water-bodies") && (
+        <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5">
+          {btn("water-bodies", t("nav.water_bodies"))}
+          {restorationAvailable && btn("restoration", t("wb.view_restoration"))}
+          {catchmentsAvailable && btn("catchments", t("wb.view_catchments"))}
+        </div>
+      )}
       {/* Explained absence. A <details> rather than a tooltip so it works on
           touch, and so the reason is readable rather than hover-only. */}
       {!catchmentsAvailable && catchmentsGapNote && (
