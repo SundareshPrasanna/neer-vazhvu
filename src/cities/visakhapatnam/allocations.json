@@ -1,0 +1,714 @@
+{
+  "_doc": "Curated content for /visakhapatnam/allocations. Edit payload, then run: python3 neer-vazhvu-api/scripts/build_curated.py allocations --city visakhapatnam. What the build block means and what is checked: that script's docstring.",
+  "build": {
+    "indent": 1,
+    "trailingNewline": false,
+    "envelope": {
+      "dataset": "data-root/allocations",
+      "scope": {
+        "kind": "city",
+        "id": "visakhapatnam"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "id": "ngt-andhra-filings",
+            "title": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ) annexure); Government of Andhra Pradesh affidavit in NGT Principal Bench OA 606/2018 (Feb 2026)",
+            "publisher": "National Green Tribunal"
+          },
+          {
+            "id": "ppa-polavaram",
+            "title": "Polavaram Project Authority, About the Project",
+            "publisher": "Polavaram Project Authority"
+          },
+          {
+            "id": "industry-ec-compliance-visakhapatnam",
+            "title": "RINL, HPCL and Gangavaram Port environmental filings",
+            "publisher": "Operators' statutory environmental filings"
+          },
+          {
+            "id": "gvmc-adb-iee-24x7-nw-2019",
+            "as_of": "2019-01",
+            "title": "ADB IEE, 24x7 Water Supply in North-West sector (GVMC/02), Jan 2019",
+            "publisher": "Greater Visakhapatnam Municipal Corporation (ADB project)",
+            "url": "https://www.gvmc.gov.in/wss/image_uploads/24x7%20Water%20Supply%20in%20North-West%20sector%20(GVMC02)%20-%20IEE%20-%20Jan%202019.pdf"
+          },
+          {
+            "id": "seiaa-ap-clearances",
+            "title": "SEIAA Andhra Pradesh environmental clearances: three data-centre campuses (2026) and APIIC's data-centre park at Madhurawada (2024)",
+            "publisher": "State Environment Impact Assessment Authority, Andhra Pradesh"
+          }
+        ],
+        "method": "manual",
+        "produced_by": "neer-vazhvu-api/scripts/build_visakhapatnam_supply.py",
+        "note": "A register of documented claims, not a verified legal entitlement register: the operative orders for the Polavaram share (GO MS 96 of 2004), the Godavari 5 TMC, the Yeleru +2 TMC and the VIWSCO concession are cited by other documents but were not found."
+      }
+    }
+  },
+  "payload": {
+    "place_id": "visakhapatnam",
+    "updated": "2026-10-15",
+    "headline": "One canal, many claimants",
+    "intro": "Visakhapatnam's biggest source is the Godavari and Yeleru system, which CGWB lists at about 190 km from the city; the water reaches the city through the Yeleru canal. The same canal feeds the steel plant, NTPC, APIIC's industrial parks, rural water supply and the port. Each row below is a documented claim on that water or on the city's own reservoirs, with the instrument that sets it and the one dated record found of what was actually delivered. Where the instrument is cited but was not found, the row says so.",
+    "unit_note": "TMC is a thousand million cubic feet (28.32 million cubic metres). MGD in GVMC's records is imperial: one million imperial gallons is 4.546 million litres. LIGD is lakh imperial gallons a day. GVMC's sheet gives allocations 'per irrigation year' without defining it; the water year in the Government of India's May 2014 Polavaram Project Authority notification, as CAG quotes it, runs 1 June to 31 May. Received figures for the canal and reservoir rows are from a single day, 11 March 2021, the only day for which we have found GVMC's split: canal rows are raw water realised at the canal's tail end (the Kateru row gives use so far in the irrigation year); reservoir rows are GVMC's supply from that reservoir as the sheet's 'Treated WS, Present Supply' column records it. The HPCL recycled-water figure is from the Government of Andhra Pradesh's February 2026 affidavit in NGT Principal Bench OA 606/2018.",
+    "authorities": [
+      {
+        "id": "ap-wrd",
+        "name": "Water Resources Department, Government of Andhra Pradesh",
+        "role": "Operates Yeleru, Raiwada, Thatipudi, Meghadrigedda and Gambheeram reservoirs and the Polavaram project, and sets water allocations from them.",
+        "capacity": "Yeleru 24.11 TMC gross; Raiwada 3.60 TMC; Thatipudi 3.325 TMC; Meghadrigedda 1.169 TMC (APWRIMS); Gambheeram 3.18 million cubic metres, about 0.11 TMC (CWC NRLD 2019)",
+        "committed": "Publishes daily reservoir storage on APWRIMS.",
+        "tension": "The same reservoirs serve irrigation, the steel plant and the city.",
+        "source_refs": [
+          "apwrims",
+          "cwc-nrld-2019"
+        ]
+      },
+      {
+        "id": "viwsco",
+        "name": "Visakhapatnam Industrial Water Supply Company (VIWSCO)",
+        "role": "Carries Godavari and Yeleru water along the Yeleru canal to the city and industry under a concession from the state; commissioned December 2004 and restructured with GVMC and APIIC as promoters.",
+        "capacity": null,
+        "committed": "Concession agreement not found.",
+        "tension": "One conveyance serves the city and the steel plant; no order setting how its water is shared in a dry year was found.",
+        "source_refs": [
+          "apiic-viwsco",
+          "viwsco-site"
+        ]
+      },
+      {
+        "id": "gvmc",
+        "name": "Greater Visakhapatnam Municipal Corporation (GVMC)",
+        "role": "The city's water utility and a promoter of VIWSCO.",
+        "capacity": "About 380 MLD available from nine sources (GVMC's figures; CGWB's tables carry the same quantities unchanged since its June 2022 report, which said GVMC was able to draw 345.5 MLD)",
+        "committed": "No current source-by-source supply table of its own was found; one daily sheet (11-03-2021) was found in an NGT filing.",
+        "tension": "Shares its largest source with industry, and is contracted to supply 8.8 LIGD of clear water to HPCL; the smart-city company GVSCCL, which the state and GVMC jointly own, supplies the refinery's recycled water.",
+        "source_refs": [
+          "gvmc-2021-sheet",
+          "cgwb-2025",
+          "cgwb-2022"
+        ]
+      }
+    ],
+    "arrangements": [
+      {
+        "id": "polavaram-lmc-visakhapatnam",
+        "source": "Godavari, via the Polavaram Left Main Canal",
+        "authority_id": "ap-wrd",
+        "recipient": "Visakhapatnam city and its industries",
+        "entitled": {
+          "value": 23.44,
+          "unit": "TMC/yr",
+          "basis": "Polavaram project water-utilisation provision",
+          "year": null,
+          "note": "23.44 TMC in the Polavaram Project Authority's project page, the Ministry of Jal Shakti's 2024 note and CAG Report 4 of 2025. The ADB environmental review GVMC published (Jan 2019) cites GO MS No.96 of 10-09-2004 for 24 TMC (1,855 MLD); CGWB 2025 says 12 TMC for the urban area. The documents also describe the beneficiaries differently: the city's domestic and industrial needs, the steel plant, or 611 villages en route."
+        },
+        "received": {
+          "value": null,
+          "unit": "TMC/yr",
+          "basis": null,
+          "year": null,
+          "note": "The Purushottapatnam lift, completed by July 2018 (CAG), pumps Godavari flood water through part of this canal (km 1.8 to km 57.9) and on into Yeleru reservoir, which feeds the city (G.O.Ms.No.100 of 2016). No quantity reaching the city from it was found. We have not found an official record of a delivery to the city under the 23.44 TMC Polavaram share; CAG reported the canal at 76.05% physical progress in March 2023, the latest official figure we have found. Press reports of 2 Sep 2026 say Godavari water was released through the canal's regulator at Payakaraopeta that day, and that the state plans to take it to Visakhapatnam next year."
+        },
+        "instrument": {
+          "label": "Polavaram Project Authority, About the Project",
+          "url": "https://ppa.gov.in/WPSCore/Common/WebPages/Home/AboutProject.aspx"
+        },
+        "confidence": "medium"
+      },
+      {
+        "id": "yeleru-viwsco-gvmc",
+        "source": "Yeleru reservoir, via the Yeleru canal",
+        "authority_id": "ap-wrd",
+        "recipient": "GVMC (its share of a joint GVMC and VIWSCO entitlement)",
+        "entitled": {
+          "value": 7.0,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)', printed as 5.00 + 2.00",
+          "year": "2021",
+          "note": "An archived AP Water Resources Department Yeleru project page (Wayback capture of 30 Sep 2023; unchanged since at least Jan 2016, with a 2015-16 budget line; the live site no longer resolves) listed 'Water Allocation for Industries (for G.V.M.C or VIWSCo): 5.00 TMC', matching the 5.00 on GVMC's 2021 sheet. VIWSCO's own site gives Yeleru an allocated share of 7 TMC. The government order behind the additional 2.00 TMC was not found."
+        },
+        "received": {
+          "value": 41.641,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Realisation at Tail end (after 5 days release)'; no unit printed",
+          "year": "2021",
+          "note": "GVMC's share of the canal's tail-end water on 11 March 2021: raw canal water at its Narava, Gajuwaka and Aganampudi intakes (about 189.3 MLD at 4.546 litres to the imperial gallon). The sheet prints no unit for its tail-end split; it is read as million gallons a day, like the sheet's other columns. The whole tail-end realisation that day was 90.475, shared with the steel plant, the port, NTPC and APIIC (rows below) and 0.900 to Rural Water Supply, which has no row here. Used so far in the irrigation year, as at that date: 2.691 TMC of the 5.00 + 2.00 TMC Yeleru allocation, and 0.130 TMC of the 5.00 TMC Godavari allocation through Kateru."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium",
+        "note": "The received figure is GVMC's own share of the canal's tail-end water that day; the canal also carried the industrial shares listed below and 0.900 to Rural Water Supply."
+      },
+      {
+        "id": "godavari-kateru-viwsco",
+        "source": "Godavari, lifted at Kateru into the Yeleru canal",
+        "authority_id": "ap-wrd",
+        "recipient": "GVMC and VIWSCO",
+        "entitled": {
+          "value": 5.0,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)'",
+          "year": "2021",
+          "note": "APIIC's 2009 project note says VIWSCO 'envisage[s] drawals of 5 TMC of water from River Godavari & 5 TMC from Yeleru'. No government order for the Godavari 5 TMC was found."
+        },
+        "received": {
+          "value": 0.13,
+          "unit": "TMC",
+          "basis": "GVMC's supply sheet: 'Usage so far' (irrigation year to date)",
+          "year": "2021",
+          "note": "Used so far in the irrigation year as at 11 March 2021, against 2.691 TMC used from Yeleru. The same sheet records 0 cusecs released through the Kateru pump house the previous day. Its MGD columns do not split canal water by source."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "low"
+      },
+      {
+        "id": "raiwada-gvmc",
+        "source": "Raiwada reservoir (Sarada river)",
+        "authority_id": "ap-wrd",
+        "recipient": "GVMC",
+        "entitled": {
+          "value": 1.65,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)'",
+          "year": "2021",
+          "note": null
+        },
+        "received": {
+          "value": 13.657,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Treated WS (in MGD), Present Supply'",
+          "year": "2021",
+          "note": "GVMC's supply from Raiwada reservoir on one day, 11 March 2021, as the 'Treated WS, Present Supply' column of its daily sheet records it: 13.657 MGD that day (about 62.1 MLD at 4.546 litres to the imperial gallon). Used so far in the irrigation year, as at that date: 0.838 TMC of the 1.65 TMC allocation."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium"
+      },
+      {
+        "id": "meghadrigedda-gvmc",
+        "source": "Meghadrigedda reservoir",
+        "authority_id": "ap-wrd",
+        "recipient": "GVMC",
+        "entitled": {
+          "value": 1.0,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)'",
+          "year": "2021",
+          "note": null
+        },
+        "received": {
+          "value": 8.44,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Treated WS (in MGD), Present Supply'",
+          "year": "2021",
+          "note": "GVMC's supply from Meghadrigedda reservoir on one day, 11 March 2021, as the 'Treated WS, Present Supply' column of its daily sheet records it: 8.44 MGD that day (about 38.4 MLD at 4.546 litres to the imperial gallon). Of it, 5.40 MGD went to the Mindhi plant and 3.04 MGD was raw water passed on to the Naval Dockyard (DGNP) and MES. Used so far in the irrigation year, as at that date: 0.711 TMC of the 1.00 TMC allocation."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium",
+        "note": "CWC's National Register of Large Dams (2019, p59, as Mehadrigedda) lists the Water Resources Department as operating and maintaining the dam, and APWRIMS reports its storage daily; GVMC's 2018 floating-solar IEE describes the reservoir surface as owned by GVMC."
+      },
+      {
+        "id": "thatipudi-gvmc",
+        "source": "Thatipudi reservoir (Gosthani river)",
+        "authority_id": "ap-wrd",
+        "recipient": "GVMC",
+        "entitled": {
+          "value": 0.65,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)'",
+          "year": "2021",
+          "note": null
+        },
+        "received": {
+          "value": 9.87,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Treated WS (in MGD), Present Supply'",
+          "year": "2021",
+          "note": "GVMC's supply from Thatipudi reservoir on one day, 11 March 2021, as the 'Treated WS, Present Supply' column of its daily sheet records it: 9.87 MGD that day (about 44.9 MLD at 4.546 litres to the imperial gallon). Used so far in the irrigation year, as at that date: 0.459 TMC of the 0.65 TMC allocation."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium"
+      },
+      {
+        "id": "gambheeram-gvmc",
+        "source": "Gambheeram reservoir",
+        "authority_id": "ap-wrd",
+        "recipient": "GVMC",
+        "entitled": {
+          "value": 0.05,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)'",
+          "year": "2021",
+          "note": null
+        },
+        "received": {
+          "value": 0.0,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Treated WS (in MGD), Present Supply'",
+          "year": "2021",
+          "note": "GVMC's supply from Gambheeram reservoir on one day, 11 March 2021, as the 'Treated WS, Present Supply' column of its daily sheet records it: nothing that day, against a normal supply of 0.60 MGD. Used so far in the irrigation year, as at that date: 0.00 TMC of the 0.05 TMC allocation."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium",
+        "note": "CWC's National Register of Large Dams (2019, p58, as Gambhiramgedda Reservoir) lists the Water Resources Department as operating and maintaining the dam."
+      },
+      {
+        "id": "mudasarlova-gvmc",
+        "source": "Mudasarlova reservoir",
+        "recipient": "GVMC",
+        "entitled": {
+          "value": 0.06,
+          "unit": "TMC/yr",
+          "basis": "GVMC's supply sheet: 'Allocation (per Irrig. year)'",
+          "year": "2021",
+          "note": null
+        },
+        "received": {
+          "value": 0.0,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Treated WS (in MGD), Present Supply'",
+          "year": "2021",
+          "note": "GVMC's supply from Mudasarlova reservoir on one day, 11 March 2021, as the 'Treated WS, Present Supply' column of its daily sheet records it: nothing that day, against a normal supply of 0.50 MGD. Used so far in the irrigation year, as at that date: 0.00 TMC of the 0.06 TMC allocation."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium"
+      },
+      {
+        "id": "rinl-viwsco",
+        "source": "Yeleru canal (Godavari and Yeleru water)",
+        "authority_id": "viwsco",
+        "recipient": "RINL Visakhapatnam Steel Plant",
+        "entitled": {
+          "value": 45,
+          "unit": "MGD",
+          "basis": "VIWSCO Board item 43/7 (24.12.2009) schedule rising to 45 MGD from 2014-15; RINL's 2020 environmental clearance amendment gives 45 MGD as its total requirement at 7.3 MTPA",
+          "year": "2009",
+          "note": "The Board minute confirms this schedule 'subject to availability of required water in Godavari River and Yeleru Reservoir and subject to enhanced rate which will be negotiated and settled mutually' (VIWSCO Board item 43/7, 24.12.2009). So the shortfall shown is against a conditional schedule, not a fixed quota."
+        },
+        "received": {
+          "value": 35.64,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Realisation at Tail end (after 5 days release)'; no unit printed",
+          "year": "2021",
+          "note": "Raw canal water realised at the canal's tail end on one day, 11 March 2021, from GVMC's own supply sheet (about 162.0 MLD at 4.546 litres to the imperial gallon). The sheet prints no unit for its tail-end split; it is read as million gallons a day, like the sheet's other columns."
+        },
+        "instrument": {
+          "label": "RINL pre-feasibility report (2018), Appendix I: VIWSCO Board minute of 24.12.2009",
+          "url": "https://environmentclearance.nic.in/writereaddata/Online/TOR/29_Mar_2018_161925363K0QEK7UDUploadedPFR.pdf"
+        },
+        "confidence": "medium",
+        "note": "RINL's own environmental statements report total water use of 1,15,055 KLD (2022-23) and 1,20,428 KLD (2023-24); that is a consumption figure under a different definition, so it is not compared with the canal share."
+      },
+      {
+        "id": "apiic-viwsco",
+        "source": "Yeleru canal",
+        "authority_id": "viwsco",
+        "recipient": "APIIC industrial parks",
+        "entitled": {
+          "value": null,
+          "unit": "MGD",
+          "basis": null,
+          "year": null,
+          "note": "No overall entitlement found. Individual approvals appear in environmental clearances, for example 39 MLD for the Nakkapalli park (2024)."
+        },
+        "received": {
+          "value": 9.455,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Realisation at Tail end (after 5 days release)'; no unit printed",
+          "year": "2021",
+          "note": "Raw canal water realised at the canal's tail end on one day, 11 March 2021, from GVMC's own supply sheet (about 43.0 MLD at 4.546 litres to the imperial gallon). The sheet prints no unit for its tail-end split; it is read as million gallons a day, like the sheet's other columns."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "low"
+      },
+      {
+        "id": "ntpc-viwsco",
+        "source": "Yeleru canal",
+        "authority_id": "viwsco",
+        "recipient": "NTPC Simhadri",
+        "entitled": {
+          "value": null,
+          "unit": "MGD",
+          "basis": null,
+          "year": null,
+          "note": "No plant-level entitlement found."
+        },
+        "received": {
+          "value": 2.652,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Realisation at Tail end (after 5 days release)'; no unit printed",
+          "year": "2021",
+          "note": "Raw canal water realised at the canal's tail end on one day, 11 March 2021, from GVMC's own supply sheet (about 12.1 MLD at 4.546 litres to the imperial gallon). The sheet prints no unit for its tail-end split; it is read as million gallons a day, like the sheet's other columns."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "low"
+      },
+      {
+        "id": "gangavaram-port-viwsco",
+        "source": "Yeleru canal",
+        "authority_id": "viwsco",
+        "recipient": "Gangavaram Port",
+        "entitled": {
+          "value": 1200,
+          "unit": "KLD",
+          "basis": "'Permission for withdrawal of 1200 KLD from VISCOW is available' - the port's environmental clearance, 24.12.2021",
+          "year": "2021",
+          "note": null
+        },
+        "received": {
+          "value": 0.187,
+          "unit": "MGD",
+          "basis": "GVMC's supply sheet: 'Realisation at Tail end (after 5 days release)'; no unit printed",
+          "year": "2021",
+          "note": "Raw canal water realised at the canal's tail end on one day, 11 March 2021, from GVMC's own supply sheet (about 0.9 MLD at 4.546 litres to the imperial gallon). The sheet prints no unit for its tail-end split; it is read as million gallons a day, like the sheet's other columns."
+        },
+        "instrument": {
+          "label": "GVMC Daily Water Supply sheet, 11-03-2021 (NGT OA 14/2021 (SZ))",
+          "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+        },
+        "confidence": "medium"
+      },
+      {
+        "id": "hpcl-gvmc-fresh",
+        "source": "GVMC clear water (Raiwada, Meghadrigedda and Thatipudi under the 2020 agreements)",
+        "recipient": "HPCL Visakh Refinery",
+        "entitled": {
+          "value": 8.8,
+          "unit": "lakh imperial gallons/day",
+          "basis": "Tripartite GVMC-GVSCCL-HPCL agreement, renewed 10.06.2025, in force from 29.03.2024: the clear-water share of the 75 LIGD contract (1 LIGD of it to HPCL's Waltair Park housing)",
+          "year": "2024",
+          "note": "The three GVMC agreements of 01.06.2020 set 45 LIGD (20.46 MLD) of clear water. Under the tripartite agreement, 36.2 LIGD of that was replaced by recycled water and 'GVMC shall continue to supply only 8.8 LIGD (4 MLD) of clear water to HPCL'. The 2020 agreements 'have been subsumed into this tripartite agreement'."
+        },
+        "received": {
+          "value": null,
+          "unit": "MLD",
+          "basis": null,
+          "year": null,
+          "note": "No delivered figure found."
+        },
+        "instrument": {
+          "label": "HPCL Visakh Refinery EC compliance report, Oct 2025-Mar 2026, pp106-110",
+          "url": "https://www.hindustanpetroleum.com/documents/pdf/VRMP_EC_Compliance_Report_1st_October_2025_to_31st_March_2026.pdf"
+        },
+        "confidence": "high"
+      },
+      {
+        "id": "hpcl-gvsccl-recycled",
+        "source": "Recycled water from GVSCCL's treatment and RO plant at the Narava sewage plant",
+        "recipient": "HPCL Visakh Refinery",
+        "entitled": {
+          "value": 66.2,
+          "unit": "lakh imperial gallons/day",
+          "basis": "Tripartite agreement renewed 10.06.2025, in force from 29.03.2024: 36.2 LIGD replacing GVMC clear water plus 30 LIGD more; supply from 1 July 2023",
+          "year": "2024",
+          "note": "'The \"Contracted Quantity\" is 75 LIGD [34.10 Million Litres Per Day (MLD)]': 66.2 LIGD (30.10 MLD) of recycled water from GVSCCL, the smart-city company the state and GVMC jointly own, and 8.8 LIGD (4 MLD) of clear water from GVMC (row above)."
+        },
+        "received": {
+          "value": 25,
+          "unit": "MLD",
+          "basis": null,
+          "year": "2026",
+          "note": "The Government of Andhra Pradesh's affidavit in NGT Principal Bench OA 606/2018 (Feb 2026) reports 25 MLD of tertiary-treated water reused at the refinery."
+        },
+        "instrument": {
+          "label": "HPCL Visakh Refinery EC compliance report, Oct 2025-Mar 2026, pp106-110",
+          "url": "https://www.hindustanpetroleum.com/documents/pdf/VRMP_EC_Compliance_Report_1st_October_2025_to_31st_March_2026.pdf"
+        },
+        "confidence": "high"
+      }
+    ],
+    "events": [
+      {
+        "year": 1989,
+        "title": "City scheme to draw from the Yeleru and Raiwada canals cleared technically",
+        "note": "CPHEEO gave technical approval on 23 March 1989 to a city scheme to draw 16 MGD from the Yeleru and Raiwada canals, at an estimated cost of Rs 32.16 crore. The corporation, the state government and an LIC loan were to meet the cost.",
+        "source_refs": [
+          "ls-usq-6630-1992"
+        ]
+      },
+      {
+        "year": 1991,
+        "title": "Yeleru water reaches the steel plant",
+        "note": "The Yeleru water supply scheme was completed in June 1991 and water started reaching the steel plant in July.",
+        "source_refs": [
+          "rs-usq-7230-1994"
+        ]
+      },
+      {
+        "year": 2004,
+        "title": "VIWSCO project commissioned",
+        "note": "VIWSCO's project, including the Kateru pump house and a 56 km pipeline that carry Godavari water into the Yeleru Left Main Canal, was commissioned in December 2004; the state's Yeleru scheme had supplied the steel plant since July 1991.",
+        "source_refs": [
+          "apiic-viwsco",
+          "viwsco-site"
+        ]
+      },
+      {
+        "year": 2015,
+        "title": "Water rate fixed for RINL, NTPC and GVMC",
+        "note": "G.O.Ms.No.24 (25 Feb 2015) fixed Rs 11.80 per KL for 2012-13 with 5% a year escalation, and ordered VIWSCO to improve canal maintenance 'on priority'.",
+        "source_refs": [
+          "go-ms-24-2015"
+        ]
+      },
+      {
+        "year": 2018,
+        "title": "Purushottapatnam lift completed",
+        "note": "The lift that pumps Godavari water into the Polavaram Left Main Canal and on to Yeleru was completed by July 2018 (CAG).",
+        "source_refs": [
+          "cag-4-2025",
+          "go-ms-100-2016"
+        ]
+      },
+      {
+        "year": 2026,
+        "title": "Yeleru water allocated to Pampa reservoir (Rabi 2025-26)",
+        "note": "G.O.Rt.No.203 (17 Apr 2026) gave permission to allocate 0.518 TMC from Yeleru to the Pampa project, at 50 cusecs for 16 Jan to 15 May 2026, for the Rabi 2025-26 crop in 5,000 acres.",
+        "source_refs": [
+          "go-rt-203-2026"
+        ]
+      }
+    ],
+    "futures": [
+      {
+        "id": "polavaram-lmc",
+        "project": "Polavaram Left Main Canal water for Visakhapatnam",
+        "mld": 1818.0,
+        "earmarked_for": [
+          "Visakhapatnam city",
+          "Industry including the steel plant"
+        ],
+        "status": "CAG reported 76.05% physical progress on the canal works in March 2023, the latest official figure we have found. Press reports of 2 Sep 2026 say the regulator on the canal at Payakaraopeta, in Anakapalli district, was opened that day to release Godavari water towards north Andhra, with the water to fill the Yeleru canal and 110 tanks in the district, and that the state plans to take Godavari water to Visakhapatnam next year. We have not found an official record of the release. The figure is 23.44 TMC a year expressed per day.",
+        "source_refs": [
+          "ppa",
+          "cag-4-2025",
+          "pti-lmc-release-2026"
+        ]
+      },
+      {
+        "id": "data-centres-2026",
+        "project": "Three data-centre campuses (Tarluvada, Rambilli, Adavivaram)",
+        "mld": 0.69,
+        "earmarked_for": [
+          "Data centres"
+        ],
+        "status": "State environmental clearances of 18 Apr 2026 (Tarluvada, 1,000 MW, 267 KLD: 239 fresh, 28 recycled on site; Rambilli, 1,000 MW, 234 KLD: 207 fresh, 27 recycled on site) and 10 Jun 2026 (Adavivaram, 512 MW, 307 KLD: 246 fresh, 61 recycled on site; air-cooled chillers) name Rural Water Supply and Sanitation as the source of water. The recycled part is each campus's own treated wastewater, so the fresh water is the claim on Rural Water Supply and Sanitation; no cooling-water source is stated. 0.69 MLD is the three fresh-water figures added (0.81 MLD with the water recycled on site). Press reports of 19 Aug 2026 quoted the state IT minister as telling the Assembly that a 6.5 GW cluster would need about 3 TMC of water a year; we have not found the Assembly's own record.",
+        "source_refs": [
+          "seiaa-dc-2026"
+        ]
+      },
+      {
+        "id": "apiic-dc-park-madhurawada",
+        "project": "APIIC Integrated Data Centre Park and Technology/Business Park, Madhurawada",
+        "mld": 1.43,
+        "earmarked_for": [
+          "Data centres",
+          "Technology and business park"
+        ],
+        "status": "State environmental clearance of 24 Dec 2024 sets a total water requirement of 2,644 KLD, of which fresh water is not to exceed 1,429 KLD and is to be met from GVMC; the other 1,215 KLD is recycled water from the park's own sewage treatment plant. 1.43 MLD, the fresh-water cap, is the claim on GVMC's supply shown here. APIIC wrote to the Municipal Commissioner for the allotment on 31 Mar 2023; the clearance records the request as under process. No GVMC allotment order was found.",
+        "source_refs": [
+          "seiaa-apiic-dc-park-2024"
+        ]
+      },
+      {
+        "id": "amns-steel",
+        "project": "AM/NS steel plant, Anakapalli",
+        "mld": 104,
+        "earmarked_for": [
+          "AM/NS India"
+        ],
+        "status": "Its environmental clearance (20 Mar 2026, for an 8.2 MTPA plant) says 1,03,968 m3 a day 'will be obtained from the Polavaram Left Main Canal', subject to permission from the competent authority. The state's Industries order GO Ms 76 (26 Nov 2024) records the company's request for 6,600 m3 an hour from Polavaram (about 158 MLD, for plant, port and township). It approves industrial water at Rs 50 per KL for 10 years as an incentive and asks departments to facilitate water 'as per the requirements and the rules'. It names no quantity. No Water Resources Department allocation order was found.",
+        "source_refs": [
+          "amns-ec-2026",
+          "go-ms76-2024"
+        ]
+      }
+    ],
+    "gaps": [
+      "The text of GO MS No.96 (2004), cited for 24 TMC of Polavaram water for Visakhapatnam, was not found.",
+      "The VIWSCO concession agreement and the RINL bulk water supply agreement are cited in government orders but were not found.",
+      "No order setting priority between the city and industry on the Yeleru canal in a dry year was found. The state's Industrial Water Allotment Policy (G.O.Ms.No.202, 6 Dec 2014) says that in a drought, water released to industry from a reservoir is cut pro rata to what the reservoir holds; it does not say whether this covers VIWSCO's earlier allocation.",
+      "No plant-level entitlement for NTPC Simhadri was found.",
+      "No continuous record of what each user receives from the canal was found; the one day found is 11 March 2021, in GVMC's NGT filing of March 2021.",
+      "No Water Resources Department order fixing AM/NS India's quantity from the Polavaram Left Main Canal was found; GO Ms 76 (2024) sets only the price and asks departments to facilitate."
+    ],
+    "sources": {
+      "gvmc-2021-sheet": {
+        "title": "GVMC Daily Water Supply, status 11-03-2021 (annexure to GVMC's action-taken report, NGT OA 14/2021 (SZ))",
+        "publisher": "Greater Visakhapatnam Municipal Corporation",
+        "year": 2021,
+        "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/1421_0.pdf"
+      },
+      "cgwb-2025": {
+        "title": "Aquifer Management Plan of Visakhapatnam and Anakapalli Urban Agglomerations",
+        "publisher": "Central Ground Water Board",
+        "year": 2025,
+        "url": "https://cgwb.gov.in/cgwbpnm/public/uploads/documents/1750331736769645187file.pdf"
+      },
+      "cgwb-2022": {
+        "title": "Aquifer Mapping and Management of Ground Water Resources, Visakhapatnam District (AAP 2020-21), Table 5.1",
+        "publisher": "Central Ground Water Board",
+        "year": 2022,
+        "url": "https://cgwb.gov.in/sites/default/files/2022-10/visakhapatnam.pdf"
+      },
+      "ppa": {
+        "title": "About the Project",
+        "publisher": "Polavaram Project Authority",
+        "year": 2026,
+        "url": "https://ppa.gov.in/WPSCore/Common/WebPages/Home/AboutProject.aspx"
+      },
+      "cag-4-2025": {
+        "title": "Report No. 4 of 2025, performance audit of the Polavaram Irrigation Project",
+        "publisher": "Comptroller and Auditor General of India",
+        "year": 2025,
+        "url": "https://cag.gov.in/ag/andhra-pradesh/en/audit-report"
+      },
+      "pti-lmc-release-2026": {
+        "title": "Chandrababu Naidu releases Godavari water to North Andhra through Polavaram canal (PTI, 2 Sep 2026; press report)",
+        "publisher": "Telangana Today",
+        "year": 2026,
+        "url": "https://telanganatoday.com/chandrababu-naidu-releases-godavari-water-to-north-andhra-through-polavaram-canal"
+      },
+      "go-ms-100-2016": {
+        "title": "G.O.Ms.No.100, Water Resources (Projects-I A2), 14-10-2016: Purushothapatnam Lift Irrigation Scheme",
+        "publisher": "Government of Andhra Pradesh",
+        "year": 2016,
+        "url": "https://goir.ap.gov.in/dgo.ashx?gid=375571&fileType=E"
+      },
+      "apiic-viwsco": {
+        "title": "VIWSCO project note",
+        "publisher": "Andhra Pradesh Industrial Infrastructure Corporation",
+        "year": 2009,
+        "url": "https://apiic.in/wp-content/themes/custom-theme/assets/uploads/ppp/VIWSCO.pdf"
+      },
+      "viwsco-site": {
+        "title": "About VIWSCO and Project Infrastructure",
+        "publisher": "Visakhapatnam Industrial Water Supply Company",
+        "year": 2026,
+        "url": "https://viwsco.in/about/"
+      },
+      "wrd-yeleru-wayback": {
+        "title": "AP WRD, Yeleru Reservoir Project page (Wayback capture 2023-09-30; content c. 2015-16)",
+        "publisher": "Water Resources Department, Government of Andhra Pradesh (via Internet Archive)",
+        "year": 2016,
+        "url": "https://web.archive.org/web/20230930055240/https://irrigationap.cgg.gov.in/wrd/static/approjects/yeleru.html"
+      },
+      "apwrims": {
+        "title": "Reservoir storage",
+        "publisher": "Water Resources Department, Government of Andhra Pradesh (APWRIMS)",
+        "year": 2026,
+        "url": "https://apwrims.ap.gov.in/"
+      },
+      "go-ms-202-2014": {
+        "title": "G.O.Ms.No.202, Industries & Commerce (INF), 06-12-2014: Industrial Water Allotment Policy",
+        "publisher": "Government of Andhra Pradesh",
+        "year": 2014,
+        "url": "https://goir.ap.gov.in/dgo.ashx?gid=330362&fileType=E"
+      },
+      "go-ms-24-2015": {
+        "title": "G.O.Ms.No.24, I&CAD (Reforms), 25-02-2015",
+        "publisher": "Government of Andhra Pradesh",
+        "year": 2015,
+        "url": "https://goir.ap.gov.in/dgo.ashx?gid=335816&fileType=E"
+      },
+      "go-rt-203-2026": {
+        "title": "G.O.Rt.No.203, Water Resources, 17-04-2026",
+        "publisher": "Government of Andhra Pradesh",
+        "year": 2026,
+        "url": "https://goir.ap.gov.in/dgo.ashx?gid=573535&fileType=E"
+      },
+      "go-ms76-2024": {
+        "title": "G.O.Ms.No.76, Industries & Commerce (P&I) Department, 26 Nov 2024: AM/NS India integrated steel plant, Anakapalli",
+        "publisher": "Government of Andhra Pradesh, Industries & Commerce Department",
+        "year": 2024,
+        "url": "https://goir.ap.gov.in/dgo.ashx?gid=502354&fileType=E"
+      },
+      "ls-usq-6630-1992": {
+        "title": "Lok Sabha Unstarred Question 6630, 8 April 1992",
+        "publisher": "Lok Sabha",
+        "year": 1992,
+        "url": "https://archive.org/details/eparlib.nic.in.47958"
+      },
+      "rs-usq-7230-1994": {
+        "title": "Rajya Sabha Unstarred Question 7230, 13 May 1994",
+        "publisher": "Rajya Sabha",
+        "year": 1994,
+        "url": "https://archive.org/details/rsdebate.nic.in.197848"
+      },
+      "amns-ec-2026": {
+        "title": "Environmental clearance, AM/NS India integrated steel plant, Anakapalli (20 Mar 2026)",
+        "publisher": "Ministry of Environment, Forest and Climate Change",
+        "year": 2026,
+        "url": "https://parivesh.nic.in/"
+      },
+      "seiaa-dc-2026": {
+        "title": "SEIAA Andhra Pradesh environmental clearances SIA/AP/INFRA2/575243/2026, 575126/2026 and 576702/2026 (PARIVESH proposal numbers)",
+        "publisher": "State Environment Impact Assessment Authority, Andhra Pradesh (PARIVESH)",
+        "year": 2026,
+        "url": "https://parivesh.nic.in/"
+      },
+      "seiaa-apiic-dc-park-2024": {
+        "title": "SEIAA Andhra Pradesh environmental clearance, APIIC Integrated Data Centre Park and Technology/Business Park, Madhurawada (proposal SIA/AP/INFRA2/462835/2024, 24 Dec 2024)",
+        "publisher": "State Environment Impact Assessment Authority, Andhra Pradesh (PARIVESH)",
+        "year": 2024,
+        "url": "https://parivesh.nic.in/"
+      },
+      "ngt-oa606-ap-affidavit-2026": {
+        "title": "Government of Andhra Pradesh affidavit, NGT Principal Bench OA 606/2018 (Feb 2026)",
+        "publisher": "National Green Tribunal (filed by the Government of Andhra Pradesh)",
+        "year": 2026,
+        "url": "https://www.greentribunal.gov.in/sites/default/files/news_updates/AFFIDAVIT%20BY%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20606%20of%202018%20(COMPLIANCE%20OF%20MSW%20MGT%20RULES,%202016%20AND%20OTHER%20ENVIRONMENTAL%20ISSUES).pdf"
+      },
+      "hpcl-eccr-2026": {
+        "title": "HPCL Visakh Refinery EC compliance report, Oct 2025-Mar 2026 (GVMC-GVSCCL-HPCL tripartite agreement, pp106-110)",
+        "publisher": "Hindustan Petroleum Corporation Limited",
+        "year": 2026,
+        "url": "https://www.hindustanpetroleum.com/documents/pdf/VRMP_EC_Compliance_Report_1st_October_2025_to_31st_March_2026.pdf"
+      },
+      "cwc-nrld-2019": {
+        "title": "National Register of Large Dams 2019, Andhra Pradesh (Thatipudi and Gambhiramgedda p58, Mehadrigedda p59, Raiwada p60)",
+        "publisher": "Central Water Commission",
+        "year": 2019,
+        "url": "https://cwc.gov.in/sites/default/files/nrld-2019.pdf"
+      },
+      "gvmc-mgr-solar-iee-2018": {
+        "title": "IEE, 3 MWp floating solar park at Meghadrigedda (UCCRT04), Oct 2018",
+        "publisher": "Greater Visakhapatnam Municipal Corporation (ADB project)",
+        "year": 2018,
+        "url": "https://www.gvmc.gov.in/wss/image_uploads/Developing%203MWp%20Solar%20Energy%20Park%20at%20Meghadrigedda%20(UCCRT04)%20-%20IEE%20-%20Oct%202018.pdf"
+      },
+      "adb-iee-2019": {
+        "title": "IEE, 24x7 Water Supply in North-West sector (GVMC/02), Jan 2019",
+        "publisher": "Greater Visakhapatnam Municipal Corporation (ADB project)",
+        "year": 2019,
+        "url": "https://www.gvmc.gov.in/wss/image_uploads/24x7%20Water%20Supply%20in%20North-West%20sector%20(GVMC02)%20-%20IEE%20-%20Jan%202019.pdf"
+      }
+    }
+  }
+}

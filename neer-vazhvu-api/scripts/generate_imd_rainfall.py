@@ -34,145 +34,25 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
 from nvdm_write import write_artifact  # noqa: E402
 from registry_license import registry_license  # noqa: E402
+from city_manifest import section  # noqa: E402
 
 import numpy as np
 
-# Per-city NVDM envelope source ids. write_artifact is preserve-if-present, so
-# cities whose artifact was enveloped by a per-city injector keep what they
-# have; this only takes effect on a city writing the file for the first time.
-ENVELOPE_SOURCE_ID = {
-    "pune": "imd-gridded-rainfall-pune",
-    "nagpur": "imd-gridded-rainfall-nagpur",
-    "gurugram": "imd-gridded-rainfall-gurugram",
-    "ahmedabad": "imd-gridded-rainfall-ahmedabad",
-    "visakhapatnam": "imd-gridded-rainfall-visakhapatnam",
-}
 
 START_YEAR = 1970
 NORMAL_END = 2020  # long-term normal computed over START_YEAR-NORMAL_END
 
-# Per-city defaults shipped with the script. New cities can override
-# via --lat / --lng on the CLI without editing the script, but adding
-# a row here keeps invocations one flag.
+# Each city's IMD grid point, the note written into its artifact, and (for
+# cities enveloped on first write here) its registry source id: rainfall.imdGrid
+# in src/cities/<id>/pipeline.json. --lat / --lng override the point.
+_IMD_GRID = section("rainfall.imdGrid")
 CITY_DEFAULTS: dict[str, tuple[float, float, str]] = {
-    "chennai": (
-        13.0,
-        80.0,
-        "Nearest valid land grid point to Chennai (coastal cells classified as ocean by IMD)",
-    ),
-    "madurai": (9.9, 78.0, "Madurai-region grid point in upper Vaigai catchment"),
-    "bangalore": (
-        13.0,
-        77.5,
-        "Bangalore-region grid point on the Deccan plateau (city centre 12.97 N, 77.59 E)",
-    ),
-    "mumbai": (
-        19.0,
-        73.0,
-        "Nearest valid land grid point to Mumbai (coastal/island cells "
-        "classified as ocean by IMD; city centre 19.08 N, 72.88 E)",
-    ),
-    "kolkata": (
-        22.5,
-        88.25,
-        "Nearest valid land grid point to Kolkata. The city centre is 22.57 N, "
-        "88.36 E, but the Hooghly and the deltaic channels mean several nearby "
-        "0.25-deg cells are classified as water by IMD; 22.5/88.25 sits on land "
-        "west of the river and covers the KMC plain",
-    ),
-    "pune": (
-        18.5,
-        74.0,
-        "Pune grid point EAST of the city centre (18.52 N, 73.86 E), and the "
-        "choice matters more here than anywhere else on the platform. Pune "
-        "district carries a 4.7x west-east rainfall gradient - IN-GRES puts "
-        "Velhe at 2,182 mm and Indapur at 468 mm in the same year - so a "
-        "quarter-degree is not a rounding error. The nearer-looking cell at "
-        "18.5/73.75 sits 11 km west, up the gradient toward the Ghats, and "
-        "returns a 1,099.8 mm long-term mean against IMD's OWN Pune "
-        "(Shivajinagar) observatory normal of 841.2 mm - 31% high. This cell "
-        "returns 805.3 mm, within 4.3% of the observatory. Validated against "
-        "IMD Climatological Tables 1991-2020, station index 43063.",
-    ),
-    "nagpur": (
-        21.0,
-        79.0,
-        "Nagpur grid point: the 0.25-deg intersection nearest IMD's Nagpur "
-        "(Sonegaon) observatory at 21.10 N, 79.05 E (about 12 km; 21.25/79.0 is "
-        "about 17 km). The node sits just south of the NMC outline "
-        "(21.05-21.23 N) and its cell covers the observatory and the "
-        "south-western part of the city (about 28% of the NMC outline). Checked against the observatory's 1991-2020 normal "
-        "of 1,151.2 mm (IMD Climatological Tables 1991-2020, station index "
-        "42867): see the registry entry imd-gridded-rainfall-nagpur for the "
-        "cell's own 1991-2020 mean.",
-    ),
-    "gurugram": (
-        28.5,
-        77.0,
-        "Gurugram grid point, the 0.25-deg intersection nearest the centroid of "
-        "MCG's 36-ward extent (28.4360, 77.0560). NOT Delhi's cell: Delhi uses "
-        "28.5/77.25, one cell east, and the two series share no annual total in "
-        "56 years. "
-        "SENSITIVITY IS HIGH HERE AND UNRESOLVED. This cell is a local maximum - "
-        "it returns a 715.0 mm normal-period mean against 512.5 mm one cell west "
-        "(28.5/76.75) and 534.9 mm one cell south (28.25/77.0), so the choice "
-        "moves the number by about 40%. Pune resolved the same problem by "
-        "validating against an IMD observatory normal (Climatological Tables "
-        "1991-2020, station index 43063); no equivalent published normal for "
-        "Gurgaon has been located, so this point is the nearest-intersection "
-        "default rather than a validated one. Revisit if an IMD Gurgaon normal "
-        "turns up - the neighbours are already measured above.",
-    ),
-    "delhi": (
-        28.5,
-        77.25,
-        "NCT grid point (city centre 28.61 N, 77.21 E; 28.5/77.25 sits on "
-        "the urban plain south of the Ridge, inside the 0.25-deg cell "
-        "covering most of the MCD area)",
-    ),
-    "hyderabad": (
-        17.5,
-        78.5,
-        "Hyderabad grid point on the Deccan plateau (city centre 17.43 N, "
-        "78.43 E). Landlocked, so none of the coastal ocean-cell trouble "
-        "Chennai and Mumbai have; 17.5/78.5 is the nearest 0.25-deg "
-        "intersection and sits inside the GHMC 2022 ward extent "
-        "(17.29-17.56 N, 78.24-78.62 E)",
-    ),
-    "surat": (
-        21.25,
-        72.75,
-        "Surat grid point on the lower Tapi (city centre 21.17 N, 72.83 E). "
-        "The nearest 0.25-deg intersection is 21.25/72.75, which sits inside "
-        "the SMC extent (21.03-21.32 N, 72.68-72.97 E) and, importantly, on "
-        "land: Surat is 20 km from the Arabian Sea and the westward "
-        "intersections at 72.50 fall over water, which is the same coastal "
-        "ocean-cell trap Chennai and Mumbai had to avoid",
-    ),
-    "ahmedabad": (
-        23.0,
-        72.5,
-        "Ahmedabad grid point: the 0.25-deg intersection nearest the city centre "
-        "(23.02 N, 72.57 E), inside the AMC ward extent. Checked against IMD's "
-        "Ahmedabad observatory normal of 783.6 mm (Climatological Table 1991-2020, "
-        "station index 42647): this cell returns 800.4 mm over 1991-2020 (+2.1%), "
-        "while 23.0/72.75 returns 868.3 mm (+10.8%).",
-    ),
-    "visakhapatnam": (
-        17.75,
-        83.25,
-        "Visakhapatnam grid point inside GVMC on the Gopalapatnam/Simhachalam "
-        "side (city centre 17.69 N, 83.22 E). The coastal ocean-cell trap is "
-        "real here: 17.5/83.0, 17.5/83.25 and 17.75/83.5 are NaN in every IMD "
-        "year 1991-2025, so a seaward point would write zeros. This cell has "
-        "values in every year 1970-2025. Checked against IMD's Visakhapatnam "
-        "airport observatory normal, 'Visakhapatnam(AP)', of 1,054.5 mm "
-        "(Climatological Table 1991-2020, station index 43149): this cell "
-        "returns 1,053.4 mm over 1991-2020 (-0.1%). IMD's Visakhapatnam "
-        "observatory (station index 43150) has a 1991-2020 normal of 1,113.1 mm "
-        "(this cell -5.4%), and the AP planning department's district normal "
-        "is 1,117.7 mm (cited in CGWB's 2025 aquifer plan; this cell -5.8%).",
-    ),
+    city: (g["lat"], g["lng"], g["note"]) for city, g in _IMD_GRID.items()
+}
+# write_artifact is preserve-if-present, so a city whose artifact already
+# carries an envelope keeps it; sourceId only takes effect on a first write.
+ENVELOPE_SOURCE_ID = {
+    city: g["sourceId"] for city, g in _IMD_GRID.items() if "sourceId" in g
 }
 
 

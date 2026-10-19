@@ -53,4 +53,8 @@ export interface CityRiversContent {
   map?: { center?: [number, number]; zoom?: number };
   /** Absent for a city whose rivers page uses its own variant (Chennai). */
   riverInfo?: Record<string, RiverInfo>;
+  /** river_id whose panel opens on load (the mainstem). Ignored where the city
+   *  has a basin atlas, whose coach mark leads instead. Omit -> the first
+   *  river in the file. */
+  defaultRiverId?: string;
 }

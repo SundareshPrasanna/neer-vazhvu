@@ -24,7 +24,7 @@
         "supabase:reservoir_daily_v2",
         "public/data/water-bodies-flagship-visakhapatnam.json",
         "public/data/facts-visakhapatnam.json",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/scrape_apwrims_reservoirs.py --city visakhapatnam --supabase",
       "notes": "POST /api/reservoir/timeseries returns level (m), storage (TMC), inflow and outflow per reservoir per day, with no login. Daily archive near-complete for Yeleru from 2012 (short months in 2015-2017; Apr-Jun 2017 rows carry storage but no level). Raiwada is partial in 2012, has nothing in 2013, then runs from Oct 2014 (no usable values Nov 2015 to Jun 2016). Thatipudi runs from Oct 2014, Meghadrigedda from Nov 2015. GVMC's own Mudasarlova reservoir and the Water Resources Department's Gambhiramgedda reservoir are not in APWRIMS. Single-day requests for 2016-2019 return the next morning's reading under the requested key; range requests do not. Key on the IST date of levelStorageEventGenTS. The scraper checks each dam's design values (FRL, gross, dead storage) against reservoirAttrs on every run and exits 2 on a change. Certificate for apwrims.ap.gov.in expires 13 Dec 2026."
@@ -82,7 +82,7 @@
         "public/data/gwr-blocks-visakhapatnam.json",
         "public/geojson/visakhapatnam-gwr-blocks.geojson",
         "public/data/facts-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city visakhapatnam",
       "notes": "Assessed at mandal level. The 2024-2025 edition matches CGWB's 'Dynamic Ground Water Resources of Andhra Pradesh State 2025' (Dec 2025) for these mandals. TRAPS: the district id is reused across the April 2022 split (its district rows cover 8,547.7 km2 in 2016-2017 and 11,050.6 km2 in 2019-2020, then 1,001.7 km2, the assessed area of the new district, from 2021-2022) and the single 513.8 km2 GVMC unit became seven urban mandals in 2023-24, so no trend is quoted across either redraw. The 2025-2026 edition copies 2024-25 rainfall for every Vizag mandal and is newer than CGWB's December 2025 report. Use currentAvailabilityForAllPurposes (extractable): for Andhra Pradesh, totalGWAvailability adds the in-storage resource and is about 190 times larger. Unit polygons: GeoServer layer gec:indgec_mandal_all, year 2023, whose uuid is the assessment API's own.",
@@ -172,7 +172,7 @@
         "public/data/river-quality-visakhapatnam.json",
         "public/data/water-bodies-flagship-visakhapatnam.json",
         "public/data/facts-visakhapatnam.json",
-        "src/content/rivers/visakhapatnam.ts"
+        "src/cities/visakhapatnam/rivers.ts"
       ],
       "refreshMethod": "neer-vazhvu-api/scripts/build_visakhapatnam_water_quality.py",
       "notes": "CPCB's 2019-2024 tables have NO river-type station on any Vizag or Anakapalli river. The stations are coastal, one lake (Kondakarla Ava), one canal (Yeleru near Pharma City), two reservoirs (Meghadrigedda, Thatipudi) and a creek at the Naval Dockyard. TRAP: CPCB's 'Gostani' (4372/4373, and the polluted stretch) is in West Godavari at Vendra, not Vizag's Gosthani. 2024 split files must be read by word bounding box; plain text extraction attaches a neighbouring station's values. Also read for the facts: CPCB's polluted river stretch lists of September 2018, 2022 and October 2025 (the copy NMCG hosts). None of their Andhra Pradesh stretches is in Visakhapatnam; their 'Gostani' at Vendra is in West Godavari."
@@ -240,9 +240,9 @@
         "public/data/water-bodies-flagship-visakhapatnam.json",
         "public/data/allocations-visakhapatnam.json",
         "public/data/river-events-visakhapatnam.json",
-        "src/content/rivers/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/rivers.ts",
+        "src/cities/visakhapatnam/story-en.tsx",
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual",
       "notes": "Form-V statements and six-monthly EC compliance reports. Cover letters say 'within norms' while the attached tables show exceedances; both are carried. HPCL Visakh Refinery's Form V for 2023-24 is cited in river-events-visakhapatnam.json. Also read: RINL's brief write-up and pre-feasibility report filed with MoEFCC in March 2018 (environmentclearance.nic.in; the Kanithi balancing reservoir and VIWSCO's 45 MGD permission, with a VIWSCO Board minute of 24.12.2009 in its Appendix I), RINL's Form V statements for 2022-23 and 2023-24 (origins story), HPCL's EC compliance report for Oct 2025-Mar 2026 (pp106-110, the GVMC-GVSCCL-HPCL agreement) and NTPC Simhadri's half-yearly compliance report of Sept 2021 (its Yeleru draw, rivers page).",
@@ -274,9 +274,9 @@
         "public/data/facts-visakhapatnam.json",
         "public/data/industrial-sources-visakhapatnam.json",
         "public/data/river-events-visakhapatnam.json",
-        "src/content/rivers/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/rivers.ts",
+        "src/cities/visakhapatnam/story-en.tsx",
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual: read new affidavits in NGT OA 14/2021 (SZ), OA 40/2024 (SZ), OA 141/2023 (SZ), OA 130/2024 (SZ), OA 240/2025 (SZ) and NGT Principal Bench OA 606/2018 (AP compliance)",
       "notes": "The only source-by-source supply table from GVMC itself that we have found is one day (11-03-2021), annexed to its action-taken report in NGT OA 14/2021 (SZ). Its net total is a fixed 0.85 of the gross (a flat 15% deduction), and its LPCD is the domestic share (net minus a 13.88 MGD industrial figure, itself 70% of the metered supply to industrial bulk consumers, with the Naval Dockyard and MES raw water counted at 90%) over an assumed 2.30 million people; both are derived, not measured. GVMC's 334.03 MLD 'present water supply' is from the Chief Secretary's report to the NGT Principal Bench in OA 606/2018, dated 10.07.2024 (Annexure-VI, PDF p33; https://www.greentribunal.gov.in/sites/default/files/news_updates/REPORT%20BY%20CS,%20GOVT.%20OF%20ANDHRA%20PRADESH%20IN%20OA%20NO.%20606%20of%202018%20COMPLIANCE%20OF%20MSW%20MANAGEMENT%20RULES,2016.pdf). Also read: the joint committee's report of April 2021 to the NGT Principal Bench in OA 175/2018, PDF pp4-5, on the Purushottapatnam lift (origins story), and the state's monthly progress report for February 2024 in NGT Principal Bench OA 673/2018, annexed to APPCB's report of 11.05.2024 in OA 40/2024 (SZ) (commitments register).",
@@ -352,9 +352,9 @@
         "public/data/facts-visakhapatnam.json",
         "public/data/water-bodies-flagship-visakhapatnam.json",
         "public/data/allocations-visakhapatnam.json",
-        "src/content/rivers/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/rivers.ts",
+        "src/cities/visakhapatnam/story-en.tsx",
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual",
       "notes": "Aquifer Management Plan of the Visakhapatnam and Anakapalli urban agglomerations (NAQUIM 2.0, 2025) and the district aquifer report (Nov 2023). Table 9.1's nine quantities and 380 MLD total are unchanged from Table 5.1 of the June 2022 district report (AAP 2020-21, https://cgwb.gov.in/sites/default/files/2022-10/visakhapatnam.pdf), which says GVMC was able to draw 345.5 MLD of the 380; they are GVMC's figures, not a current measurement. The '490 MLD demand vs 391 MLD supply' row is CGWB's 2022 report's 2020 row carried forward unchanged; it is never presented as current. Use the bare host: www.cgwb.gov.in fails TLS.",
@@ -380,7 +380,7 @@
       "dependsOn": [
         "public/geojson/visakhapatnam-coastal-zones.geojson",
         "public/data/facts-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "python3 scripts/build-visakhapatnam-coastal-seed.py",
       "notes": "National Assessment of Shoreline Changes 1990-2016 (Kankara, Ramana Murthy and Rajeevan, 2018), Table 16, plus the stretch classes in MoES Lok Sabha USQ 2638 (11-12-2024). USQ 2638 states no analysis window, so the 1990-2018 window on zones II, IV, VII and VIII is our inference, taken from the PIB release of 31 Mar 2022 (PRID 1811914) and the MoES reply to Rajya Sabha USQ 498 (21 Jul 2022), which both say NCCR analysed the mainland coast from 1990 to 2018 and that the updated atlas was released on 25 Mar 2022; both were read from Wayback copies of MoES's files (https://www.moes.gov.in/sites/default/files/PIB1811914.pdf, https://www.moes.gov.in/sites/default/files/RS-in-English-498-21-07-2022.pdf). Never mix pre-2022 (undivided district, about 137 km) and post-2022 (about 65-68 km) coast lengths.",
@@ -405,7 +405,7 @@
       "dependsOn": [
         "public/data/allocations-visakhapatnam.json",
         "public/data/facts-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "States 23.44 TMC for 'in and around Visakhapatnam city including Vizag Steel Plant and drinking water facilities'. Other official figures disagree (24 TMC in GO MS 96 of 2004 via the ADB IEE; 12 TMC in CGWB 2025); all three are carried."
@@ -424,8 +424,8 @@
         "reviewEveryDays": 120
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/flood.ts",
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual: add the Visakhapatnam station rainfall from each new cyclone report to the flood event register",
       "notes": "Event figures only (date, track, 24-hour station rainfall, surge) are cited; no report is reproduced.",
@@ -451,7 +451,7 @@
       "dependsOn": [
         "public/data/allocations-visakhapatnam.json",
         "public/data/facts-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual: search PARIVESH for new Visakhapatnam and Anakapalli clearances (data centres, industrial parks) and read the water source and quantity",
       "notes": "Environmental clearances state each project's water quantity and source. They carry the proponent's contact person's name and email; only the project, date, quantity and source are used.",
@@ -478,9 +478,9 @@
         "public/data/allocations-visakhapatnam.json",
         "public/data/visakhapatnam-supply-overview.json",
         "public/data/visakhapatnam-dam-storage.json",
-        "src/content/rivers/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/rivers.ts",
+        "src/cities/visakhapatnam/story-en.tsx",
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual: re-read https://viwsco.in/about/ and https://viwsco.in/project-infrastructure/",
       "notes": "Two pages, read 15 Oct 2026. About: established 1999 by APIIC and IL&FS; the Godavari pipeline completed on 24 December 2004, commercial operations from 25 December 2004; present shareholding GVMC 51%, APIIC 49%. Project Infrastructure (https://viwsco.in/project-infrastructure/): Yeleru reservoir's allocated share 7 TMC; the Katheru (Kateru) pump house; a 56 km, 2600 mm pipeline from Katheru to the Yeleru Left Main Canal; 12 TMC total allocation and 152.3 km of conveyance network. The supply overview, the allocations page, the dam-storage note, the rivers page and the origins story carry the 56 km pipeline and its December 2004 start. A company website, so it is read as the company's own description, beside the government orders that bear on it.",
@@ -531,8 +531,8 @@
         "public/data/allocations-visakhapatnam.json",
         "public/data/visakhapatnam-supply-overview.json",
         "public/data/water-bodies-flagship-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/story-en.tsx",
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual: check cwc.gov.in for a newer edition of the register",
       "notes": "Andhra Pradesh rows used: Mehadrigedda (AP01MH0042, PDF p59: completed 1977, operated and maintained by the Water Resources Department, gross 33,102,000 m3, which is APWRIMS's 1.169 TMC); Gambhiramgedda (AP01LH0008, p58: completed 1957, the point used for its source card); Thatipudi (p58) and Raiwada (p60), whose capacities agree with APWRIMS; Yeleru (AP01HH0149, 508,300,000 m3 effective, APWRIMS's 17.95 TMC live). Cited for dam years and operators on the allocations page, the supply overview and the water-body cards, and in the origins story. The scraper's design-value comments cite the same rows.",
@@ -557,7 +557,7 @@
       },
       "dependsOn": [
         "public/data/allocations-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Three project pages on irrigationap.cgg.gov.in, which no longer resolves, read from Wayback captures: Yeleru (captured 30 Sep 2023; 'Water Allocation for Industries (for G.V.M.C or VIWSCo): 5.00 TMC', unchanged since at least Jan 2016), Thatipudi (https://web.archive.org/web/20230930054711/https://irrigationap.cgg.gov.in/wrd/static/approjects/thatipudi.html; dam 1968, city share 11 MGD) and Raiwada (https://web.archive.org/web/20240618144909/https://irrigationap.cgg.gov.in/wrd/static/approjects/raiwada.html; built 1981-82, 50 cusecs for the city). The allocations page uses the Yeleru page; the origins story uses all three for dam years and the city's shares.",
@@ -585,7 +585,7 @@
         "public/data/visakhapatnam-supply-overview.json",
         "public/data/facts-visakhapatnam.json",
         "public/data/visakhapatnam-dam-storage.json",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual: look for a newer Polavaram report on CAG's Andhra Pradesh audit-report listing",
       "notes": "Listed on CAG's Andhra Pradesh page as 'Report 4 of 2025 - Report of the Comptroller and Auditor General of India on Polavaram Irrigation Project pertaining to Government of Andhra Pradesh'. Read for: the Purushottapatnam lift, 'to discharge water of 140 cusecs from PIPLMC to Yeleru Reservoir', started January 2017 and completed by July 2018 at Rs 1,189.23 crore (PDF p50); the Left Main Canal's physical and financial progress, 76.05 and 72.62 per cent in March 2023 (PDF p46); and 23.44 TMC for Visakhapatnam (PDF p96 and Appendix 1.1). The allocations page, the supply overview and the facts card on the Polavaram share carry these; the dam-storage note and the city config carry the lift's July 2018 start.",
@@ -831,8 +831,8 @@
         "public/data/allocations-visakhapatnam.json",
         "public/data/visakhapatnam-supply-overview.json",
         "public/data/water-bodies-flagship-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/story-en.tsx",
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual",
       "notes": "IEE for a 3 MWp floating solar plant on the Meghadrigedda reservoir (ADB 48434-003), October 2018. Read for the reservoir's history: constructed 1977, commissioned 1979 (PDF p15), and 'the reservoir surface owned by the GVMC' (PDF p31), set beside CWC's register, which lists the Water Resources Department as operator. Served from GVMC's image_uploads folder, outside the What's New link pattern that gvmc-whats-new watches.",
@@ -857,7 +857,7 @@
       },
       "dependsOn": [
         "public/data/water-bodies-flagship-visakhapatnam.json",
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual",
       "notes": "IEE for the Mudasarlova lake development project (ADB 48434-003, grant 0495-IND), October 2018, and its land acquisition and resettlement due-diligence report, September 2018 (https://www.gvmc.gov.in/wss/image_uploads/Developing%20and%20Rejuvenation%20of%20Mudasarlova%20Catchment%20area%20(UCCRTF05)%20-%20DDR%20-%20Sep%202018.pdf). The IEE gives 1,500,000 m3 in its hydraulics table (PDF p15) and, in para 20 (PDF p18), calls that the original capacity and gives 0.75 Mcum at full tank level after siltation, with no survey or date behind it, so the city config leaves Mudasarlova's capacity blank. Read for the Mudasarlova water-body card. Served from GVMC's image_uploads folder, outside the link pattern gvmc-whats-new watches.",
@@ -884,8 +884,8 @@
         "public/data/allocations-visakhapatnam.json",
         "public/data/river-events-visakhapatnam.json",
         "public/data/water-bodies-flagship-visakhapatnam.json",
-        "src/content/rivers/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/rivers.ts",
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Final IEE, January 2019 (ADB 48434-003). Table 4, 'Water Source and Availability in GVMC Area', 'Drawl' column (PDF p20): the drawal figures APPCB repeated to the NGT in 2021 (Meghadrigedda 41.0 MLD, Thatipudi 26.05, Mudasarlova 1.82), which is why the rivers page and river events do not date them to 2021. PDF pp21-22 quote GO MS No.96 of 10-09-2004 for 24 TMC of Polavaram water (1,855 MLD); we have not found that order. The origins story also cites the March 2016 draft (ADB 48434), whose demand columns are for 2014. Served from GVMC's image_uploads folder, outside the link pattern gvmc-whats-new watches.",
@@ -934,7 +934,7 @@
       },
       "dependsOn": [
         "public/data/river-events-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "The committee's report on the May 2020 release at R.R. Venkatapuram. Read for: GVMC stopping releases from the Meghadrigedda reservoir on 8 May 2020 (PDF p145), the two sets of reservoir samples, NEERI's and NDRF's detecting styrene and GVMC's not (PDF p151, 284), alternative supply and borewells taken out of use (PDF p149, 285), and 12 deaths and 585 injured. Both sample results are carried on the river events and in the origins story, neither preferred.",
@@ -958,7 +958,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts"
+        "src/cities/visakhapatnam/flood.ts"
       ],
       "refreshMethod": "manual: a later memorandum is a new document; add it as a new flood event row",
       "notes": "The state's memorandum on the floods of 29 August to 3 September 2024 (PDF created 29 Sep 2024). The flood page's 2024 row is its Table 6 six-day cumulative district-average rainfall for Visakhapatnam district, 129.0 mm, not an IMD station reading, and its district impacts: 94 people affected, 4 houses fully damaged and 39.37 km of urban roads damaged. apsdma.ap.gov.in is intermittent from our network: it answered on 14 Oct 2026, did not answer for part of 15 Oct, and served this file again later that day.",
@@ -982,7 +982,7 @@
         "reviewEveryDays": 120
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts"
+        "src/cities/visakhapatnam/flood.ts"
       ],
       "refreshMethod": "manual: after each cyclone or flood, look for a new memorandum or event report",
       "notes": "Linked from the flood page's 'official channels to follow' for alerts and post-event memoranda. Also read: its disaster history page, which gives Hudhud's death toll as 61 (the flood page gives this beside the 46 in the state's table in IMD's report); the District Disaster Management Plan of Visakhapatnam (2018), which it hosts and whose Volume II (https://apsdma.ap.gov.in/files/10c45c58a011409fc563c9a8ff6bd6a6.pdf) copies the 2006 City Development Plan's flood-prone list; and its GIS portal (apsdmagis.ap.gov.in), whose drainage_network layer maps the drains of a 2019 survey covering GVMC with no names or capacities and no licence statement we have found, so the flood page mentions it and does not draw it. The memorandum of 2024 has its own entry, goap-flood-memorandum-2024, and the NRSC atlas it hosts has nrsc-flood-hazard-atlas-ap.",
@@ -1006,7 +1006,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts",
+        "src/cities/visakhapatnam/flood.ts",
         "public/data/water-bodies-flagship-visakhapatnam.json"
       ],
       "refreshMethod": "manual: check vmrda.ap.gov.in for a notified Master Plan 2041",
@@ -1031,7 +1031,7 @@
         "reviewEveryDays": 180
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts"
+        "src/cities/visakhapatnam/flood.ts"
       ],
       "refreshMethod": "manual: confirm the link still leads to the cyclone and storm-surge bulletins",
       "notes": "Linked from the flood page's external sources for ocean-state and storm-surge forecasts during a cyclone (the home page carries a 'Cyclone /Storm Surge Bulletin' link). No figure on any page is drawn from it. The root URL redirects to /site/index.jsp.",
@@ -1055,7 +1055,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts"
+        "src/cities/visakhapatnam/flood.ts"
       ],
       "refreshMethod": "manual: look for a final or revised GVMC disaster plan",
       "notes": "Two volumes. Volume I, the url ('Draft Final Report', 122 pages, PDF created 3 Feb 2015), Table 5-2, PDF p97: inundation-prone areas in 14 of GVMC's earlier 72 wards (13 rows across six zones; one row is wards 31 and 33). Volume II (https://www.gvmc.gov.in/wss/image_uploads/cdmp2.pdf, 36 pages, PDF created 26 Sep 2015), Figure 8: storm-water drainage in 14 zones at city scale, a picture with no geometry. Both answered 200 on 15 Oct 2026. The flood page names both and uses neither as a map: the ward numbers are no longer in use.",
@@ -1079,9 +1079,9 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts",
-        "src/lib/cities/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/flood.ts",
+        "src/cities/visakhapatnam/config.ts",
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Read for: section 4.4.2, 'Flood Prone Areas in GVMC', a prose list in an older division numbering, 22 major geddas and about 1,400 km of storm-water drains, and its proposal of a drainage master plan (flood page); Table 4.4 source distances measured from the town service reservoir, PDF p49 (city config); and supply, per-person and borewell chloride figures for the origins story (PDF pp47-56, 128, 142). The World Bank host answers GET and returns 404 to HEAD (checked 15 Oct 2026).",
@@ -1105,7 +1105,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts"
+        "src/cities/visakhapatnam/flood.ts"
       ],
       "refreshMethod": "manual: look for a later version of the atlas",
       "notes": "Flood Hazard Atlas for Andhra Pradesh State - A Geospatial Approach, Version 1 (2000-2020), NRSC-RSA-DMSG-DPERD-JUL 2021-TR-0001863-V1.0. The flood page cites it only to say that it maps river flooding seen from satellite and states that local and flash floods may not be captured. apsdma.ap.gov.in is intermittent from our network: it did not answer for part of 15 Oct 2026 and served this file again later that day.",
@@ -1129,8 +1129,8 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/flood/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/flood.ts",
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Project Appraisal Document PAD1408 (4 Jun 2015): Hudhud's death toll of 61, given on the flood page beside the 46 in the state's table in IMD's report, and the recovery project of US$370 million in the origins story. Implementation Completion and Results Report ICR00005670 (20 Oct 2022, https://documents1.worldbank.org/curated/en/099420110262237391/pdf/BOSIB032d0eac40430bcf409a5f1becaf74.pdf): 80,529 consumer accounts on the underground network, for the story. The host answers GET and returns 404 to HEAD.",
@@ -1154,7 +1154,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "'Cyclone Hudhud: Strategies and Lessons for Preparing Better & Strengthening Risk Resilience in Coastal Regions of India' (NDMA, August 2015; 58 pages, PDF created 24 Aug 2015). Read for the origins story's Hudhud chapter, with page numbers from NDMA's own copy (the url): 61 deaths in Andhra Pradesh ('61 human causalities') and 6.5 million water packets handed out over 15 days (PDF p13); power restored 'within two to seven days in the urban' areas (PDF p31); and generators 'put in place for lifting water in absence of power supply', also used at head water works (PDF p37).",
@@ -1228,7 +1228,7 @@
       },
       "dependsOn": [
         "public/data/water-bodies-flagship-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "The 1907 district gazetteer is the official record of the first water works, handed over in May 1903, 25 million cubic feet (pr.217), the reservoir known today as Mudasarlova; the water-body cards cite pp.8, 105 and 217 and the origins story many pages (its source spine lists them). The Imperial Gazetteer, Vol. XXIV (https://archive.org/details/imperialgazettee24greauoft), pr.337-338, gives the 1891 and 1901 population and the works' cost, for the story. The Mudasarlova name rests on local histories; the gazetteer does not use it. Read from the Internet Archive's scans and cited with attribution.",
@@ -1252,7 +1252,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual: a new census handbook would be a new edition",
       "notes": "District census handbooks read for the origins story's populations and amenities: 1951 (catalog 28416), 1971 (30142), 1981 (30140), 2001 (27687) and 2011 (122), all under https://censusindia.gov.in/nada/index.php/catalog/. Population figures are census figures only; CGWB's 1991-2011 series matches no census table and is not used.",
@@ -1277,7 +1277,7 @@
       },
       "dependsOn": [
         "public/data/allocations-visakhapatnam.json",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Lok Sabha USQ 6630, 8 Apr 1992, cols 601-602 (the url: the city scheme to draw from the Yeleru and Raiwada canals, approved 23 Mar 1989) and Rajya Sabha USQ 7230, 13 May 1994, pp.197-198 (https://archive.org/details/rsdebate.nic.in.197848: the Yeleru scheme completed in June 1991 and its water reaching the steel plant in July) are the allocations page's first two events. The origins story also cites Rajya Sabha USQ 3268 (5 Dec 1986), Rajya Sabha USQ 4980 (5 May 1995, https://archive.org/details/rsdebate.nic.in.163474), the Lok Sabha Estimates Committee's 1965 report (https://archive.org/details/eparlib.nic.in.4431) and its 1971 report, and the Committee on Public Undertakings report (eparlib.nic.in.64599).",
@@ -1301,7 +1301,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Madras Legislative Assembly, answer to question 975, 24 Jul 1953, pr.1186-1187: the military's 1946-47 offer of the Gosthani and Meghadrigadda water works. Andhra Pradesh Legislative Assembly, 21 Feb 1964, appendix: the Finance Minister's budget speech for 1964-65 on the Raiwada and Meghadri Gedda schemes for the steel plant, pr.41 (https://archive.org/details/apassembly-A-000131-21-02-1964). Both are quoted in the origins story.",
@@ -1325,8 +1325,8 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/rivers/visakhapatnam.ts",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/rivers.ts",
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Visakhapatnam Port Authority, Our History (the url): the inner harbour built at the mouth of the Meghadri Gedda in 1927-33, opened 1933, Port Trust 1964; cited on the rivers page and in the origins story. Also in the story: GVMC's Corporation Introduction page (https://www.gvmc.gov.in/wss/static_content/Introduction.jsp; corporation 1979, GVMC formed 21 Nov 2005); RINL's profile (https://www.vizagsteel.com/code/mktg_segment/PROFILE.asp); HPCL's refineries page (Visakh Refinery, commissioned 1957 by Caltex); Coromandel International's company history (1967 plant); and the Google and Adani releases of 28 Apr 2026, which state no cooling-water source. Statutory filings by the same operators are under industry-ec-compliance-visakhapatnam.",
@@ -1350,7 +1350,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "PRID 2179035, 14 Oct 2025: Google's AI hub at Visakhapatnam. The origins story says the release gives no water figure. The PIB release of 31 Mar 2022 on coastline erosion is read under nccr-shoreline-assessment.",
@@ -1376,7 +1376,7 @@
       "dependsOn": [
         "public/data/facts-visakhapatnam.json",
         "public/geojson/visakhapatnam-coastal-transects.geojson",
-        "src/content/story-visakhapatnam-en.tsx"
+        "src/cities/visakhapatnam/story-en.tsx"
       ],
       "refreshMethod": "manual",
       "notes": "Research, never presented as official monitoring. Khalid et al., npj Emerging Contaminants 2:28 (2026), the url: PFAS in Visakhapatnam's coastal water and sewage, June 2025 samples, for the facts card. Anagha, Singh and Frappart (2026), Environmental Challenges, Table 2: per-epoch shoreline-position errors from the Chennai coast, reused as relative regression weights for the transects. For the origins story: J Water Health 21(7):915-924 (2023), PMID 37515562 (seawater intrusion, two methods pointing different ways), and J Environ Sci Eng 52(3):245-254 (2010), PMID 21391399 (industrial-belt TDS), both read from their abstracts.",
@@ -1400,7 +1400,7 @@
         "reviewEveryDays": 180
       },
       "dependsOn": [
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual: look for official 120-ward boundaries; their publication closes the visakhapatnam:my-ward exemption",
       "notes": "GVMC's 98-ward map is an AutoCAD plot exported to PDF (8 Jan 2021) with no coordinates; the council elected in March 2021 sits on these wards. GVMC's list of elected council members by ward and zone (16 Mar 2023, https://www.gvmc.gov.in/wss/image_uploads/GVMC%20Corporators%20Ward%20wsie%20Area%20details.pdf) is what the circulating Esri India tracing's zone field disagrees with for 94 of 98 wards. The 2026 notice of 120 wards (DocMay_909) is on the What's New listing, watched by gvmc-whats-new. No ward artifact ships; these records explain why.",
@@ -1424,7 +1424,7 @@
         "reviewEveryDays": 365
       },
       "dependsOn": [
-        "src/lib/cities/visakhapatnam.ts"
+        "src/cities/visakhapatnam/config.ts"
       ],
       "refreshMethod": "manual",
       "notes": "The order that set GVMC's 98 wards, on which the council elected in March 2021 sits; cited in the city config for the ward count. The one-page order 'decided to fix the strength of elected members/wards of the Greater Visakhapatnam Municipal Corporation as Ninty Eight (98)'. The url is the register's own copy (200, application/pdf, on 15 Oct 2026). Fallback: the Internet Archive's copy (https://archive.org/details/in.gov.andhra.goir.2020-01-10.E-448205), where the order was first found because the register's search caps its results.",

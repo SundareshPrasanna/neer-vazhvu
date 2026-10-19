@@ -1,20 +1,9 @@
-/** Every registered place. Adding an id here makes every `Record<CityId, X>`
- *  (the registry included) a type error until the new city is filled in. */
-export const CITY_IDS = [
-  "chennai",
-  "madurai",
-  "bangalore",
-  "mumbai",
-  "delhi",
-  "hyderabad",
-  "kolkata",
-  "gurugram",
-  "pune",
-  "nagpur",
-  "surat",
-  "ahmedabad",
-  "visakhapatnam",
-] as const;
+import { CITY_IDS } from "../../cities/generated/ids";
+
+/** Every registered place, in list order: one per folder in src/cities/,
+ *  listed by scripts/gen-city-index.ts. A new folder makes every
+ *  `Record<CityId, X>` (the registry included) a type error until it is filled in. */
+export { CITY_IDS };
 
 export type CityId = (typeof CITY_IDS)[number];
 

@@ -59,7 +59,7 @@ CHENNAI_LEGACY = {
 # Chennai-era unprefixed names that predate the city-token convention.
 SCOPE_HINTS = {
     # BBMB = Bhakra Beas Management Board: Delhi's upstream storage (consumed
-    # by src/lib/cities/delhi.ts; the dams records carry city_id "delhi").
+    # by src/cities/delhi/config.ts; the dams records carry city_id "delhi").
     # Was mis-hinted "bangalore" until 2026-07-30.
     "bbmb-dam-storage.json": "delhi",
     "cag-djb-audit-2025.json": "delhi",
@@ -272,10 +272,12 @@ def scan_references(
                     "check-sample-corpus.py",
                     "check-generator-drift.py",
                     "check-mirrored-documents.py",
+                    "routes-off.ts",
                 )
             ):
                 continue  # tooling/governance files mention filenames without producing/consuming
-                # them - counting the coverage allowlist as a producer hid a known orphan
+                # them - counting the coverage allowlist as a producer hid a known orphan, and
+                # each city's routes-off.ts is prose for the exemptions register
             if "node_modules" in rel or path.stat().st_size > 2_000_000:
                 continue
             try:

@@ -32,7 +32,7 @@ Sources below are organised by feature. The Madurai documentation principle on a
 | **Sources** | BWSSB Stage V program documents; The Ken (Feb 2026) investigation; Karnataka Water Resources Department release schedule |
 | **Method** | Manual extraction; episodic press citations |
 | **Frequency** | Static (per Stage commissioning); cross-checked against media reporting |
-| **Output** | Hardcoded in `src/components/dashboard/cauvery-pumping-hero.tsx` callouts; constants in `src/lib/cities/bangalore.ts` |
+| **Output** | Hardcoded in `src/components/dashboard/cauvery-pumping-hero.tsx` callouts; constants in `src/cities/bangalore/config.ts` |
 
 Surfaces:
 - Headline: BWSSB lifts ~1,450 MLD against Stage V's 2,225 MLD design capacity (Stage I-IV ~1,450 + Stage V design +775)
@@ -185,7 +185,7 @@ Surfaces:
 | **Frequency** | Episodic (refresh after each major event) |
 | **Output** | `public/geojson/bangalore-flood-prone-zones.geojson`, `public/data/bangalore-flood-hotspots.json` |
 
-Surfaces on `/bangalore/flood-risk` via the shared flood map page (layers declared in `src/content/flood/bangalore.ts`). The Sep 2022 IT corridor flooding (Whitefield, Sarjapur Road) is annotated; KSNDMC ward-day rainfall layer pending.
+Surfaces on `/bangalore/flood-risk` via the shared flood map page (layers declared in `src/cities/bangalore/flood.ts`). The Sep 2022 IT corridor flooding (Whitefield, Sarjapur Road) is annotated; KSNDMC ward-day rainfall layer pending.
 
 **Compared to Chennai's CFLOWS:** narrower coverage and lower-resolution hazard tiers (KSNDMC doesn't publish a CFLOWS-equivalent probabilistic surface). The page leans on the BBMP hotspot inventory + corridor narrative rather than a hazard choropleth.
 
@@ -240,7 +240,7 @@ Powers locality-name search on `/bangalore/my-ward`. Kannada names captured via 
 | | |
 |---|---|
 | **Path** | `/bangalore/origins` (live for both EN and KN) |
-| **Source files** | `src/content/story-bangalore-en.tsx` (English), `src/content/story-bangalore-kn.tsx` (Kannada, ~4,000 words across 4 chapters); dispatcher in `src/content/story-bangalore.tsx` |
+| **Source files** | `src/cities/bangalore/story-en.tsx` (English), `src/cities/bangalore/story-kn.tsx` (Kannada, ~4,000 words across 4 chapters); dispatcher in `src/content/story-bangalore.tsx` |
 | **Images** | `public/images/story/bangalore/bangalore-1854-map.jpg`, `ulsoor-1834.jpg` with MANIFEST.json |
 
 4-chapter long-form covering tank-economy history → colonial pipe rotation → Cauvery scheme commissioning → present-day Cauvery Stage V + groundwater collapse. Native-speaker Kannada review pending; copy is AI-drafted and flagged "pending review" in the UI.

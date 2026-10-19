@@ -110,7 +110,7 @@ OVERPASS = "https://overpass-api.de/api/interpreter"
 # does not stop at the corporation boundary, and the dams the city drinks from
 # sit well west of it.
 #
-# THIS MUST STAY EQUAL TO pune.bbox IN src/lib/cities/pune.ts. It did not, and
+# THIS MUST STAY EQUAL TO pune.bbox IN src/cities/pune/config.ts. It did not, and
 # that was a defect rather than a tuning choice: the fetch box was
 # 18.38,73.65-18.72,74.05 while the map displays 18.3,73.4-18.95,74.05, so the
 # producer covered about a third of the frame the reader can pan over.

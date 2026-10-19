@@ -16,6 +16,7 @@ import {
   PARITY_VERDICTS,
   parityVerdictFor,
 } from "./parity-audits";
+import { CITY_IDS } from "./ids";
 
 const ROOT = process.cwd();
 const DOCS_DIR = join(ROOT, "docs", "cities");
@@ -49,9 +50,7 @@ test("every written parity audit is actually surfaced", () => {
 });
 
 test("verdicts are keyed on real cities and real routes", () => {
-  const cities = readdirSync(join(ROOT, "src", "lib", "cities"))
-    .filter((f) => f.endsWith(".ts") && !f.endsWith(".test.ts"))
-    .map((f) => f.replace(/\.ts$/, ""));
+  const cities: readonly string[] = CITY_IDS;
 
   const routes = readdirSync(join(ROOT, "src", "app", "[cityId]"), {
     withFileTypes: true,
@@ -62,7 +61,7 @@ test("verdicts are keyed on real cities and real routes", () => {
   for (const [city, byRoute] of Object.entries(PARITY_VERDICTS)) {
     assert.ok(
       cities.includes(city),
-      `${city} has parity verdicts but no src/lib/cities/${city}.ts`,
+      `${city} has parity verdicts but no src/cities/${city}/ folder`,
     );
     for (const route of Object.keys(byRoute)) {
       assert.ok(

@@ -10,7 +10,7 @@ landuse, cached under .cache/mumbai-rivers/):
   public/geojson/mumbai-rivers.geojson                rivers, PRS geometry
   public/geojson/mumbai-water-bodies-current.geojson  waterbodies-major/minor, lake centroids
   public/data/water-bodies-lost-mumbai.json           waterbodies-lost
-  public/data/mmr-dam-storage.json + src/lib/cities/mumbai.ts  reservoirs (capacities)
+  public/data/mmr-dam-storage.json + src/cities/mumbai/config.ts  reservoirs (capacities)
   public/data/river-quality-mumbai.json               monitoring-points + readings packs
   pipeline-inputs/atlas/prs/cpcb-2025.json            prs-stretches (CPCB Oct 2025)
   public/data/mumbai-cgwb-stations.json               groundwater-wells

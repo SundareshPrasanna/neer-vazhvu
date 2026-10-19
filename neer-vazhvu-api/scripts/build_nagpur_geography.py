@@ -85,7 +85,7 @@ OVERPASS = (
 UA = "neer-vazhvu (https://neervazhvu.org; civic water dashboard)"
 
 # south, west, north, east. FRAME MUST STAY EQUAL TO nagpur.bbox in
-# src/lib/cities/nagpur.ts (the Pune lesson: a fetch box smaller than the map
+# src/cities/nagpur/config.ts (the Pune lesson: a fetch box smaller than the map
 # frame lost every source reservoir but one).
 FRAME = (20.9, 78.75, 21.75, 79.45)
 RIVER_FRAME = (20.9, 78.75, 21.75, 79.65)
@@ -125,7 +125,7 @@ TYPE_LABEL_FIX = {
 NAME_FIX = {"Ash Pound": "Ash Pond"}
 
 # river_id is the join key with river-quality-nagpur.json and
-# src/content/rivers/nagpur.ts. ORDER IS LOAD-BEARING: the rivers page opens
+# src/cities/nagpur/rivers.ts. ORDER IS LOAD-BEARING: the rivers page opens
 # the first feature when no mainstem id of its own matches, so the Nag leads.
 RIVERS = (
     ("nag", "Nag", "Nag Nadi", ("nag river", "naag river", "nag nadi")),

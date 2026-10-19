@@ -366,8 +366,17 @@ export interface CorporationConfig {
 }
 
 interface PlaceConfigBase {
+  /** Must equal the city's folder name, src/cities/<cityId>/. */
   cityId: CityId;
+  /** Position in every city list (switcher, landing page, sitemap), lowest
+   *  first. Numbered in tens so a city can go between two others without
+   *  renumbering them; a city added at the end takes the last number + 10.
+   *  scripts/gen-city-index.ts rejects duplicates. */
+  listOrder: number;
   displayName: string;
+  /** One English line about the city's water. Heads the Origins page and its
+   *  story's hero, from this one value so the two cannot drift apart. */
+  originsTagline: string;
   /** Localized display names per language. Used wherever copy renders
    *  the city name in a specific regional script (e.g. `{ ta: 'சென்னை' }`
    *  for Chennai's Tamil rendering, `{ kn: 'ಬೆಂಗಳೂರು' }` for Bangalore).
@@ -561,8 +570,7 @@ interface PlaceConfigBase {
    * `src/lib/i18n/context.tsx`. Translating `src/lib/i18n/translations.ts`
    * to a new language is independent content work.
    *
-   * Defaults to ['en', 'ta'] when omitted (preserves current behaviour
-   * for any in-flight city configs that haven't been updated yet).
+   * Omitted -> English only (src/lib/i18n/available-languages.ts).
    */
   availableLanguages?: readonly LanguageCode[];
 

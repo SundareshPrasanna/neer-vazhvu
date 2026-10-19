@@ -57,7 +57,7 @@ Low Erosion.
 - **`climate-risk`.** Buildable but not built: the sub-basin risk layer comes from HydroBASINS,
   which covers the north Andhra coast. Backlog, not a refusal.
 
-## Off inside the routes that ship (`src/lib/cities/visakhapatnam.ts`)
+## Off inside the routes that ship (`src/cities/visakhapatnam/config.ts`)
 
 | Where | Off | Why |
 |---|---|---|

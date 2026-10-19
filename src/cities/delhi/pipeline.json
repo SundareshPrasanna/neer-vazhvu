@@ -1,0 +1,35 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 28.5,
+      "lng": 77.25,
+      "note": "NCT grid point (city centre 28.61 N, 77.21 E; 28.5/77.25 sits on the urban plain south of the Ridge, inside the 0.25-deg cell covering most of the MCD area)"
+    },
+    "recent": {
+      "lat": 28.61,
+      "lng": 77.21
+    }
+  },
+  "elevationBands": {
+    "_note": "Delhi is a very flat plain with one hard edge: 80% of the NCT sits between 203 m and 221 m, then the Ridge quartzite climbs to ~326 m. So the plain is cut finely and the Ridge is a single top band. FABDEM percentiles over the NCT bbox at 90 m: p0=192.5 p5=203.5 p20=210.5 p50=214.5 p80=221.4 p90=240.5 p100=326.3 NOTE: these are TERRAIN bands, not flood-stage bands. Delhi's flood ladder (204.50 m warning / 205.33 m danger / 206.00 m evacuation at the Old Railway Bridge) is on the gauge's own datum: FABDEM reads 212.15 m at that bridge, ~7 m off the gauge zero. The two must not be overlaid as if they shared a datum.",
+    "_notes": {
+      "bbox": "NCT + Najafgarh/Yamuna fringe"
+    },
+    "bbox": [
+      76.84,
+      28.4,
+      77.35,
+      28.89
+    ],
+    "bands": [
+      192,
+      205,
+      210,
+      214,
+      218,
+      224,
+      330
+    ]
+  }
+}

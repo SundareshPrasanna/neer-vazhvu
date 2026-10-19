@@ -1,0 +1,36 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 22.5,
+      "lng": 88.25,
+      "note": "Nearest valid land grid point to Kolkata. The city centre is 22.57 N, 88.36 E, but the Hooghly and the deltaic channels mean several nearby 0.25-deg cells are classified as water by IMD; 22.5/88.25 sits on land west of the river and covers the KMC plain"
+    },
+    "recent": {
+      "_note": "Matches the IMD gridded point in generate_imd_rainfall.py, not the city centre: the provisional months must continue the same series they fill.",
+      "lat": 22.5,
+      "lng": 88.25
+    }
+  },
+  "ingres": {
+    "_notes": {
+      "districts": "IN-GRES spells it KOLKATTA. Its district vocabulary also differs from India-WRIS's (HAORA vs HOWRAH, HUGLI vs HOOGHLY), which is exactly the trap the pan-India playbook records: enumerate spellings empirically, never assume two government portals agree on a district name."
+    },
+    "state": "WESTBENGAL",
+    "state_label": "West Bengal",
+    "source_id": "ingres-groundwater-westbengal",
+    "districts": {
+      "KOLKATTA": "Kolkata",
+      "NORTH 24 PARGANAS": "North 24 Parganas",
+      "SOUTH 24 PARGANAS": "South 24 Parganas",
+      "HAORA": "Howrah",
+      "HUGLI": "Hooghly",
+      "NADIA": "Nadia"
+    },
+    "notes": [
+      "Kolkata district and South 24 Parganas are categorised 'salinity' - a POOR-QUALITY category, not a stage-of-extraction band. They carry no availability, resource or extraction figures because CGWB does not assess saline aquifers on extraction. This is why no exploitation choropleth is drawn for Kolkata district: the framework classifies it on a different axis, which is a finding rather than a missing file.",
+      "The surrounding KMA ring IS assessed on extraction, so the regional picture is real even where the core district's is categorically absent.",
+      "IN-GRES district spellings differ from India-WRIS's (KOLKATTA / HAORA / HUGLI). Two government portals do not agree on district names; enumerate empirically rather than assuming."
+    ]
+  }
+}

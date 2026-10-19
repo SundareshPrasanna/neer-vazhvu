@@ -28,6 +28,11 @@
 import { listAllPlaces } from "../../src/lib/cities";
 import { FEATURE_AVAILABILITY } from "../../src/lib/cities/routing";
 import { UNWATCHED } from "./headwaters-coverage";
+import { UNRECORDED } from "../../src/content/routes-off";
+import { ROUTES_OFF_BY_CITY } from "../../src/cities/generated/routes-off";
+import type { RouteKey } from "../../src/lib/cities/ids";
+
+export { UNRECORDED };
 
 /* ── 1. Owned: exemptions that suppress a check ─────────────────────────── */
 
@@ -67,20 +72,6 @@ export type ExemptionKind =
   | "route-off"
   | "declared-absence";
 
-/**
- * Prefix for an omission that is real and deliberate but whose ORIGINAL
- * rationale was never written down.
- *
- * This exists so the register cannot be silenced with filler. The check below
- * fails on an EMPTY reason, and the obvious way to make that failure go away is
- * to invent a plausible-sounding justification for a decision someone else made
- * years ago - which would be worse than the empty string, because it reads as
- * authoritative. Marking it instead keeps the gap visible, counts it separately
- * in the generated register, and says what would resolve it.
- *
- * An entry marked this way is a TODO with a name on it, not a resolved item.
- */
-export const UNRECORDED = "UNRECORDED:";
 
 export interface Exemption {
   kind: ExemptionKind;
@@ -102,209 +93,6 @@ function allRoutes(): string[] {
   }
   return [...set].sort();
 }
-
-/**
- * Why each city omits each route. Derived omissions are only honest if the
- * reason is recorded; a route missing from a city's routes with no entry
- * here is reported as UNEXPLAINED and fails the register check, which is the
- * point - it is how a silently dropped page gets caught.
- *
- * Keyed "<cityId>:<route>". Cities predating this register carry a shared
- * "not built for this city" reason where the omission is simply unbuilt rather
- * than deliberate; those are honest too, just less interesting.
- */
-const ROUTE_OFF_REASONS: Record<string, string> = {
-  // Ahmedabad - preview-gated; each omission is a finding about what is public.
-  "ahmedabad:allocations":
-    "No public document states how much Narmada or Mahi water Ahmedabad is entitled to. The mechanism exists - Gujarat sanctions municipal raw water each year with a 25% band either side, under a 3 Feb 2007 resolution and its 9 Sep 2008 clarification - but AMC's sanctioned quantity is not published, and an entitled-versus-received ledger cannot be drawn without the entitled half. AMC's draw by source is on the dashboard instead.",
-  "ahmedabad:tanker":
-    "AMC publishes no tanker delivery register, booking ledger or price survey. The tanker documents in the research drop are AMC's own vehicle purchases (20 garden tankers of about 8,000 litres, and stainless-steel drinking-water bowsers), which say nothing about who receives water by tanker or at what price.",
-  "ahmedabad:shoreline":
-    "Ahmedabad is about 100 km inland from the Gulf of Khambhat; it has no coastline.",
-  "ahmedabad:climate-risk":
-    "Buildable but not built. The sub-basin risk surface Chennai uses rests on HydroBASINS, a global product that also covers the Sabarmati, so this is a backlog item rather than a refusal.",
-
-  // Surat - the analytical unit is the zone, not the ward, and several
-  // omissions follow directly from that.
-  "surat:my-ward":
-    "Ward surfaces are off because \"ward\" in Surat means three incompatible things and none of them has usable geometry. There are 30 electoral wards (120 corporators), about 134 census/administrative wards in SMC's own 1961-2011 area table, and a third scheme inside SMC's GIS ward_boundary layer. That GIS layer is the authoritative one and it serves WMS only - WFS is disabled, so its geometry cannot be downloaded, only rendered. The analytical unit is instead the zone, which does carry live data, an official 2024 population and the city's own supply breakdown. This closes when SMC enables WFS or publishes ward boundaries, not by a better join.",
-  "surat:shoreline":
-    "Surat is genuinely coastal - Dumas, Hazira, the Tapi estuary - so this is a backlog item rather than a refusal. The shoreline surface currently reads Chennai coastal data and has not been parametrised, and shipping a map of another city's coast would be worse than shipping none.",
-  "surat:tanker":
-    "No tanker economy established. SMC reports 95% piped coverage and the national open-data release records tanker-served properties as NA in every year. There is nothing to chart that would not be invented.",
-  "surat:allocations":
-    "Surat has no published drinking-water entitlement to render. The research pass found infrastructure and treatment capacities but no sanctioned allocation instrument from Ukai or the Tapi - the ledger's whole subject is entitled-versus-received, and the entitled half does not exist in public.",
-  "surat:lake-restoration":
-    "SMC restores lakes and says so - its reuse programme routes 2 MLD of treated water to lake rejuvenation - but publishes no restoration register: no project list, no dates, no budgets, no per-body status. A ranking surface needs a denominator the corporation has not published.",
-  "surat:climate-risk":
-    "Buildable but not built. Chennai's sub-basin risk comes from HydroBASINS level 12, a global product that covers the lower Tapi as well, so this is a backlog item rather than a refusal.",
-
-  // Visakhapatnam - three omissions, each a stated decision.
-  "visakhapatnam:my-ward":
-    "No ward geometry that can be published. The 98-ward boundaries in circulation are an Esri India tracing of a GVMC CAD drawing. We have not found a licence anywhere in the chain, and their zone field disagrees with GVMC's own ward list for 94 of 98 wards. The 98 wards are also superseded: GVMC notified 120 wards in 2026, and we have not found a published map of them. This closes when GVMC publishes official ward boundaries.",
-  "visakhapatnam:tanker":
-    "The only tanker figures from GVMC that we have found are for a single day (615 trips on 11 March 2021, in an NGT filing). GVMC runs a Dial-a-Tanker booking line, but we have not found a series by day, zone or ward. One day is not a tanker record.",
-  "visakhapatnam:climate-risk":
-    "Buildable but not built. The sub-basin risk layer comes from HydroBASINS, which covers the north Andhra coast, so this is a backlog item rather than a refusal.",
-
-  // Kolkata - every omission is a decision, and each has a reason on the page.
-  "kolkata:my-ward":
-    "Ward-keyed surfaces are off until KMC wards 142-144 exist as geometry. 141 of 144 are mapped; the missing three are 18.93 km2, 9.2% of the city. KMC publishes no ward geometry through either its own portal or the newer DIGIT one, and OSM has no Kolkata ward relations at any admin_level, so this closes when someone digitises the 2012 delimitation, not by a better endpoint.",
-  "kolkata:shoreline":
-    "Not a coastal city. Kolkata is a tidal river port roughly 130 km upstream of the Bay of Bengal; the riverbank/estuary variant of this surface is a different product and is unbuilt.",
-  "kolkata:tanker":
-    "KMC runs a municipal tanker service and publishes per-trip rates, but no volumes, trips or coverage - so there is nothing to chart that would not be invented.",
-  "kolkata:climate-risk":
-    "Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. It is genuinely buildable and simply not built yet, so this is a backlog item rather than a refusal.",
-
-  // Gurugram - preview-gated, city nine. The set is deliberately small: only
-  // the surfaces with data behind them are on, and the two most conspicuous
-  // absences are properties of the city rather than backlog.
-  "gurugram:rivers":
-    "Gurugram has no river. Its NWMP monitoring stations are all lakes and borewells, and its surface water leaves the city as drain flow into the Najafgarh jheel and then Delhi's Najafgarh drain. There is nothing to put on a rivers page that would not be an invention.",
-  // RETIRED 2026-08-15. The removal condition written into this entry was
-  // "closes on IN-GRES block assessment", and that is exactly what closed it:
-  // four assessment years to 2024-25, district and block level, all five
-  // Gurugram blocks over-exploited and GURGAON_URBAN at 326.26% of recharge.
-  // Kept as a comment rather than deleted because a retired exemption is the
-  // evidence that these removal conditions are real, which is how Kolkata's
-  // rainfall entry was handled above.
-  "gurugram:flood-risk":
-    "Gurugram floods by waterlogging on a paved catchment, not by river. The inputs exist on GMDA OneMap (117 GMUC waterlogging sites, the master storm-water network, natural flow direction) and only the drain legs are harvested so far, so this is a backlog item with a known path rather than a refusal.",
-  "gurugram:shoreline": "Landlocked.",
-  "gurugram:my-ward":
-    "TURNED OFF 2026-08-16 after a click-through found the page rendering 296 characters: a heading, a subtitle and a link, with no ward selector, no map and no data. The 36 MCG ward polygons ARE harvested, but nothing is joined to them - /api/wards and /api/localities both 404 for this city, and there is no gurugram-ward-profiles.json. A nav entry leading to an empty page is worse than an absent one. Closes when ward-level data exists to attach to the geometry; the geometry itself is already in the corpus.",
-  "gurugram:lake-restoration":
-    "Needs a restoration-priority-gurugram.json, which needs a scorer. The water-body register is harvested and carries ownership, area and GMDA's own cross-survey flags, so the inputs are present and the ranking is simply not built.",
-  // RETIRED 2026-08-15: written, on exactly the spine this entry named - the
-  // MCG limit at 1985/1996/2008/2010/2015/2020, paired with the 2008 dark-zone
-  // notification. Kept as a comment because a retired exemption is the evidence
-  // that these removal conditions are real.
-  "gurugram:allocations":
-    "No published entitlement instrument has been located. Gurugram's canal share of Yamuna water is governed by inter-state arrangements that GMDA does not publish, and the ledger's primitive is entitled-vs-received against a named instrument - without the paper there is no row to write.",
-  "gurugram:commitments":
-    "Buildable and not built. The dated commitments exist and are citable (the NGT's February 2026 orders on illegal extraction and rainwater harvesting, GMDA's Chandu Budhera fifth-unit target), but each needs primary-source verification before it goes in the register, and none has had it yet.",
-  "gurugram:facts":
-    "Needs a facts-gurugram.json, which needs the supply and demand numbers that are the very ones still unverified - every figure in circulation for this city is press-sourced, and GMDA's own GIS already contradicts two of them. Ships when the numbers do.",
-  "gurugram:climate-risk":
-    "Chennai's sub-basin climate risk comes from HydroBASINS level 12, a global product that would transfer here. Genuinely buildable and simply not built, so this is backlog rather than refusal.",
-
-  // Pune - preview-gated, city ten. The set is small on purpose: only the
-  // surfaces with real artifacts behind them are on. Two of the absences
-  // below are properties of what Maharashtra publishes rather than backlog.
-  // RETIRED 2026-08-17. The recorded reason was that Maharashtra WRD
-  // publishes Pune's statutory red and blue flood lines as 518 SCANNED PDF map
-  // sheets with no vector form, so the hazard layer does not exist
-  // machine-readable. That is still true and now ships as the first data gap
-  // ON the page - but it was an argument about the INTERACTIVE variant, and
-  // the route was being withheld on it. Pune now renders the NARRATIVE variant,
-  // which needs no hazard polygons: the event register (1961 Panshet with no
-  // official death toll by the state's own admission, the 2019 Ambil Odha
-  // cloudburst, 25 Jul and 4 Aug 2024, 21 Aug 2025) plus PMC's own nalla
-  // network, 3,075 open storm-water channels carrying 1,014 km, which was in
-  // the repo's reach and rendering nowhere.
-  // NARROWED 2026-08-17. The DATA now ships: public/data/pune-tankers.json,
-  // 57,370 delivery rows across 411 published registers, 7 filling points,
-  // 1,956 distinct vehicles, 84,886 trips. What is still missing is a
-  // RENDERER, and that is a deliberate hold rather than laziness.
-  //
-  // src/lib/cities/types.ts states the rule: "Adding a fourth kind is cheaper
-  // than bending one of these: forcing a city through the wrong panel means
-  // making its required fields optional and gutting its copy, which damages
-  // the city the panel was written for." Pune is exactly that case. The
-  // `utility-ledger` panel is HMWSSB-shaped - it renders bookings against
-  // deliveries, a fulfilment rate, and divisions and sections. Pune's register
-  // has none of those: every row IS a delivery so there is nothing to fulfil,
-  // and its units are filling point, prabhag and vehicle. Routing Pune through
-  // that panel would mean making bookings/delivered/fulfilment optional and
-  // rewriting Hyderabad's copy, which damages Hyderabad.
-  //
-  // So this needs a FIFTH kind, `utility-delivery-register`, with its own
-  // panel. Retire this entry when that lands.
-  // RETIRED 2026-08-17. It read "the data ships and the renderer does not ...
-  // retire this when that panel lands", and the panel landed:
-  // src/components/dashboard/tanker-delivery-register-panel.tsx behind the
-  // fourth tankerDataKind, `delivery-register`. Added rather than bending
-  // Hyderabad's utility-ledger panel, whose bookings-against-deliveries
-  // copy and fulfilment rate would have had to be deleted for a city whose
-  // register contains no bookings at all. The panel refuses three things on
-  // purpose: no daily series as the headline (two thirds of rows cannot be
-  // dated), no prabhag ranking (the ward column is filled on 52.8% of rows,
-  // so ordering it would read recording practice as need), and no
-  // recipients at all.
-  "pune:allocations":
-    "The instrument chain exists and is unusually well documented - MWRRA Orders 19/2018 and 01/2025, the 1 March 2013 PMC-WRD agreement, the 2 July 2021 Superintending Engineer letter for the merged villages - but the ledger's primitive is entitled-vs-RECEIVED, and no measured annual draw has been published since 2017-18. For that year the utility and the regulator disagree by 4.15 TMC (PMC's affidavit 14.56 TMC against WRD's 18.71). A ledger whose received column is eight years old and contested is worse than no ledger.",
-  "pune:commitments":
-    "Buildable and not built. The dated commitments are citable and sharp: JICA loan ID-P243 signed 13 January 2016 for a May 2023 completion now targeted August 2026, and the equitable-supply project's own slippage from December 2024 to December 2025 to May 2026 to 'twelve to fourteen months' as of the August 2026 ESR. Each needs primary-source verification of the attribution before it enters the register.",
-  // RETIRED 2026-08-17, same day it was written. It read "needs a
-  // facts-pune.json; the compilation is the work", and the compilation
-  // happened. public/data/facts-pune.json ships 22 facts across all four
-  // tiers, built by neer-vazhvu-api/scripts/build_pune_facts.py, which READS
-  // every figure out of the already-shipped artifacts rather than transcribing
-  // them a second time - so a quoted card cannot drift from the dashboard it
-  // came from. Two numbers a reader would expect are deliberately absent and
-  // ship as gap facts instead: litres-per-capita (PMC's own accounts exclude
-  // groundwater and tankers, so the denominator does not support the claim)
-  // and any measured annual draw (none published since 2017-18, and the two
-  // published figures for that year differ by 4.15 TMC).
-  //
-  // RETIRED 2026-08-17, same day it was written. The removal condition was
-  // "Origins is narrative work and gets its own pass", and the pass happened
-  // in the same PR rather than a later one. Kept as a comment rather than
-  // deleted because a retired exemption is the record that the gap closed
-  // rather than being quietly dropped. src/content/story-pune-en.tsx ships
-  // ten chapters on the sources listed in its header, with a CC0 Rijksmuseum
-  // hero and a 1911 survey plate; the 1961 Panshet death toll is stated as
-  // having no official figure, per the state's own current disaster plan,
-  // rather than substituting the number that circulates.
-  "pune:my-ward":
-    "The 41 prabhags of the 2025 delimitation ship as named geometry (public/geojson/pune-wards-2025.geojson, all 41 joined to PMC's own election results), but no ward rows exist in the database: /api/wards?city=pune and /api/localities?city=pune both 404, so the page renders a heading, a subtitle and nothing else. Turned OFF at cutover rather than shipped empty - a live page with no content is exactly issue #279, which this same onboarding filed against Gurugram's water-bodies page. Kolkata carries this exemption for the same reason. Retire it when ward + locality rows are seeded, which needs a producer that does not exist yet; the geometry is not the blocker.",
-  "pune:lake-restoration":
-    "No restoration-project register exists for Pune. There is also no official register of the city's LOST or encroached water bodies, which is the layer this surface leans on elsewhere.",
-  "pune:climate-risk": "Not built for this city.",
-  "pune:shoreline": "Landlocked.",
-
-  // Nagpur - preview-gated, city thirteen. Every other route is on; these
-  // three are off by decision.
-  "nagpur:tanker":
-    "NMC publishes how many tankers it runs (37 in the 2026-27 budget speech; 78 in 2024 in the Environment Status Report 2023-24) but no delivery register, booking ledger or price survey, so there is no record of who receives water by tanker or at what price. The operator's own fleet figures appear only in the press.",
-  "nagpur:shoreline":
-    "Landlocked: Nagpur is near the centre of the country and has no coastline.",
-  "nagpur:climate-risk":
-    "Buildable but not built. The sub-basin risk surface rests on HydroBASINS, a global product that also covers the Kanhan and Wainganga basins, so this is a backlog item rather than a refusal.",
-
-  // Hyderabad
-  "hyderabad:my-ward":
-    "The 300-ward delimitation gazetted 25 Dec 2025 has no public geometry, and with the corporations under a Special Officer there are no sitting councillors to attach to a ward either. Returns with the ward build, following the Mumbai precedent.",
-  "hyderabad:shoreline": "Landlocked.",
-  "hyderabad:climate-risk": "Not built for this city.",
-
-  // Delhi
-  "delhi:shoreline": "Landlocked.",
-  "delhi:climate-risk": "Not built for this city.",
-  "delhi:tanker": "Not built for this city.",
-
-  // Mumbai
-  // Deliberately describes the artifacts rather than naming their paths: the
-  // dataset catalogue scans scripts/ for artifact paths to infer which script
-  // PRODUCES a file, so a literal path in this prose made the catalogue credit
-  // this register as the producer of Mumbai's ward geometry. It produces nothing.
-  "mumbai:my-ward": `${UNRECORDED} Mumbai holds both a 2023 ward-boundary layer and ward-keyed data (a ward risk composite and the Praja per-ward water series), so this is a product decision rather than a data gap - but no rationale for it was ever recorded in the repo, and none is invented here. Resolve by writing down the real reason or by shipping the route.`,
-  "mumbai:climate-risk": "Not built for this city.",
-  "mumbai:tanker": "Not built for this city.",
-
-  // Bengaluru
-  "bangalore:shoreline": "Landlocked.",
-  "bangalore:climate-risk": "Not built for this city.",
-
-  // Madurai
-  "madurai:shoreline": "Landlocked.",
-  "madurai:climate-risk": "Not built for this city.",
-  "madurai:tanker": "Not built for this city.",
-
-  // Chennai - the origin city ships nearly everything.
-  "chennai:tanker": "Not built for this city.",
-};
 
 /** Assemble the whole register. */
 export function collectExemptions(): Exemption[] {
@@ -333,7 +121,7 @@ export function collectExemptions(): Exemption[] {
         kind: "route-off",
         scope: place.cityId,
         subject: route,
-        reason: ROUTE_OFF_REASONS[`${place.cityId}:${route}`] ?? "",
+        reason: ROUTES_OFF_BY_CITY[place.cityId]?.[route as RouteKey] ?? "",
       });
     }
 

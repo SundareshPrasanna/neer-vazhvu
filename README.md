@@ -65,9 +65,8 @@ Per-city deep-dives:
 │  • / (Chennai legacy flat routes)         │
 │  • /[cityId]/* (Madurai, Bangalore,      │
 │    future cities)                         │
-│  • src/lib/cities/{chennai,madurai,      │
-│    bangalore,mumbai}.ts drives heroMode, │
-│    water sources, ward count,            │
+│  • src/cities/<id>/config.ts drives      │
+│    heroMode, water sources, ward count,  │
 │    allocation config, placeKind          │
 │    ('city' | 'region' - Mumbai is the    │
 │    MMR: 9 corporations)                  │
@@ -77,7 +76,7 @@ Per-city deep-dives:
 └──────────────────────────────────────────┘
 ```
 
-**Place-config-driven multi-city.** Adding a city = adding a `CityConfig` in `src/lib/cities/`. The routes at `src/app/[cityId]/...` resolve it via `tryGetPlaceConfig(cityId)`. `heroMode` (`days-left` | `allocation` | `cauvery-pumping` | `none`) picks the dashboard hero variant. Per-city water sources, ward counts, `urbanSupply` allocation context, capability flags (`hasCommitments`, `hasAllocationLedger`, `hasShoreline`, ...), language state (`availableLanguages` + `upcomingLanguages` for greyed coming-soon toggles), and region structure (`placeKind: 'region'` + `corporations[]` for the MMR) all flow from the same config. See [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-city) for the full walkthrough.
+**Place-config-driven multi-city.** A city is a folder, `src/cities/<id>/` (its `config.ts`, About and Origins content, per-route modules and pipeline settings); `npm run cities:gen` indexes the folders. The routes at `src/app/[cityId]/...` resolve it via `tryGetPlaceConfig(cityId)`. `heroMode` (`days-left` | `allocation` | `cauvery-pumping` | `none`) picks the dashboard hero variant. Per-city water sources, ward counts, `urbanSupply` allocation context, capability flags (`hasCommitments`, `hasAllocationLedger`, `hasShoreline`, ...), language state (`availableLanguages` + `upcomingLanguages` for greyed coming-soon toggles), and region structure (`placeKind: 'region'` + `corporations[]` for the MMR) all flow from the same config. See [docs/cities/ADDING-A-CITY.md](docs/cities/ADDING-A-CITY.md) for the full walkthrough.
 
 **Corpus-pinned serving.** `public/data` + `public/geojson` are developed in this repo but production does not read them from the checkout: `npm run build` starts with `scripts/fetch-corpus.sh`, and with `CORPUS_SOURCE=remote` (Vercel, the locked-corpus CI job) it replaces both roots wholesale with the private data repo (`neer-vazhvu-data`) at the exact commit pinned in [corpus.lock](corpus.lock). Deploys are reproducible and rolling back the site rolls back the data - and a data change only reaches production through a release: a data-repo PR, an immutable `corpus-YYYY-MM-DD-<slug>` tag, and a pin PR here moving `corpus.lock` (helper: `scripts/release_corpus.py`). Locally the default `CORPUS_SOURCE=repo` is a no-op and the checkout serves as-is.
 
@@ -361,7 +360,8 @@ neer-vazhvu/
 ├── src/                # Next.js frontend (App Router)
 │   ├── app/            # / (Chennai legacy flat routes), /[cityId]/* (Madurai, Bangalore, future cities)
 │   ├── components/     # City-agnostic where possible; per-city forks live in dashboard/, my-ward/, water-bodies/
-│   ├── lib/cities/     # Place-config registry (chennai.ts, madurai.ts, bangalore.ts, mumbai.ts, types.ts)
+│   ├── cities/         # One folder per city (config.ts, content, pipeline.json); see src/cities/README.md
+│   ├── lib/cities/     # Config types, lookups and routing
 │   ├── lib/i18n/       # ~1,500 EN/TA/KN translation keys (MR declared as upcoming)
 │   └── lib/utils/      # Shared utilities incl. river-classification.ts (CPCB Best-Use)
 ├── neer-vazhvu-api/    # Python FastAPI service: scrapers, ETL, intelligence, GEE
@@ -403,7 +403,7 @@ Areas where help is needed:
 - **Data quality** -Improving scraper resilience, handling CMWSSB / BWSSB / TN Agriculture page format changes
 - **Models** -Better forecasting (Prophet, LSTM), improved evaporation integration
 - **Water bodies data** -Adding more documented lost water bodies with verified coordinates and sources
-- **Localization** -Translating the UI for local accessibility. Today: ~1,500 keys covering EN + TA (Chennai/Madurai) + KN (Bangalore). **Marathi (Mumbai) is the biggest open item** - declared as coming-soon in the UI, 0 of ~1,509 keys translated. Native-speaker review wanted for TA prose review and KN long-form story (`src/content/story-bangalore-kn.tsx`)
+- **Localization** -Translating the UI for local accessibility. Today: ~1,500 keys covering EN + TA (Chennai/Madurai) + KN (Bangalore). **Marathi (Mumbai) is the biggest open item** - declared as coming-soon in the UI, 0 of ~1,509 keys translated. Native-speaker review wanted for TA prose review and KN long-form story (`src/cities/bangalore/story-kn.tsx`)
 - **Testing** -Unit tests for scrapers, calculator, and intelligence modules
 
 Please open an issue first to discuss significant changes.

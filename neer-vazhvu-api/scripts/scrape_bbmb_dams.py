@@ -4,7 +4,7 @@ Scrape the BBMB daily reservoir bulletin (Bhakra + Pong) for Delhi.
 
 WHY THIS EXISTS
 Delhi is the only live city with no raw-water feed at all: all six of its
-sources ship `hasPublicFeed: false` (see src/lib/cities/delhi.ts), so its one
+sources ship `hasPublicFeed: false` (see src/cities/delhi/config.ts), so its one
 daily layer is rainfall. Bhakra is upstream storage behind Delhi's own BBMB
 allocation, and BBMB publishes it daily again - which is new. The city config
 and delhi-cgwb-stations.json both said BBMB's page "has not updated since

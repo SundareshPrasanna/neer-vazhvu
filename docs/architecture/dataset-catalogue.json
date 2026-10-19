@@ -69,7 +69,7 @@
     ]
    },
    "consumers": [
-    "src/content/story-ahmedabad-en.tsx"
+    "src/cities/ahmedabad/story-en.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
@@ -145,11 +145,11 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/ahmedabad/config.ts",
+    "src/cities/ahmedabad/story-en.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/content/story-ahmedabad-en.tsx",
-    "src/lib/cities/ahmedabad.ts",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -185,9 +185,9 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -196,8 +196,7 @@
     "neer-vazhvu-api/scripts/build_ward_profiles.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "amc-citymap-wards",
@@ -245,9 +244,11 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/bangalore.ts"
+    "src/cities/bangalore/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -282,9 +283,11 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/chennai.ts"
+    "src/cities/chennai/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "cmwssb-system-pages"
    ],
@@ -323,9 +326,11 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/delhi.ts"
+    "src/cities/delhi/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "cag-djb-audit",
     "delhi-economic-survey-water",
@@ -367,9 +372,11 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/hyderabad.ts"
+    "src/cities/hyderabad/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "hmwssb-daily-reservoir-statement"
    ],
@@ -408,10 +415,10 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/kolkata.ts"
+    "src/cities/kolkata/config.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py"
+    "neer-vazhvu-api/scripts/build_curated.py"
    ],
    "headwaters_sources": [
     "kmc-water-distribution-page"
@@ -451,9 +458,11 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/madurai.ts"
+    "src/cities/madurai/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "adb-tnufip-iee",
     "wrd-policy-note-tn"
@@ -494,9 +503,11 @@
    },
    "consumers": [
     "src/app/[cityId]/allocations/allocations-client.tsx",
-    "src/lib/cities/mumbai.ts"
+    "src/cities/mumbai/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "bmc-esr-annual",
     "bmc-rti-manuals",
@@ -540,6 +551,7 @@
     "src/app/[cityId]/allocations/allocations-client.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_nagpur_allocations.py",
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
     "neer-vazhvu-api/tests/test_nagpur_commitments_lakes.py",
@@ -589,8 +601,8 @@
     "src/app/[cityId]/allocations/allocations-client.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
-    "neer-vazhvu-api/scripts/build_visakhapatnam_supply.py"
+    "neer-vazhvu-api/scripts/build_curated.py",
+    "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py"
    ],
    "headwaters_sources": [
     "ap-wrd-project-pages-wayback",
@@ -48868,7 +48880,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/bangalore.ts"
+    "src/cities/bangalore/flood.ts"
    ],
    "producer_refs": [
     "scripts/compute-bangalore-ward-profiles.ts",
@@ -48995,11 +49007,11 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/bangalore/about-pages.tsx",
+    "src/cities/bangalore/about.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/content/about/bangalore-pages.tsx",
-    "src/content/about/bangalore.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts",
     "src/lib/insights/bangalore-briefing.ts"
    ],
@@ -49144,9 +49156,9 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -49157,8 +49169,7 @@
     "scripts/compute-bangalore-ward-risk.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "ingres-gw-assessment-ka",
@@ -63091,7 +63102,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/delhi.ts"
+    "src/cities/delhi/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/scrape_bbmb_dams.py",
@@ -65727,9 +65738,9 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -65749,7 +65760,7 @@
    "family": "data-root",
    "scope": "ahmedabad",
    "dataset": "commitments",
-   "bytes": 24164,
+   "bytes": 24791,
    "schema": {
     "kind": "object",
     "keys": [
@@ -65772,7 +65783,8 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ahmedabad_commitments.py",
-    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py"
+    "neer-vazhvu-api/scripts/build_ahmedabad_facts.py",
+    "neer-vazhvu-api/scripts/build_curated.py"
    ],
    "headwaters_sources": [
     "amc-budget",
@@ -65819,9 +65831,11 @@
    },
    "consumers": [
     "src/app/[cityId]/commitments/commitments-client.tsx",
-    "src/lib/cities/bangalore.ts"
+    "src/cities/bangalore/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "bcap-commitments-calendar"
    ],
@@ -65857,9 +65871,11 @@
    },
    "consumers": [
     "src/app/[cityId]/commitments/commitments-client.tsx",
-    "src/lib/cities/chennai.ts"
+    "src/cities/chennai/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "maws-policy-note"
    ],
@@ -65895,9 +65911,11 @@
    },
    "consumers": [
     "src/app/[cityId]/commitments/commitments-client.tsx",
-    "src/lib/cities/delhi.ts"
+    "src/cities/delhi/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "cag-djb-audit",
     "delhi-economic-survey-water",
@@ -65917,7 +65935,7 @@
    "family": "data-root",
    "scope": "hyderabad",
    "dataset": "commitments",
-   "bytes": 12566,
+   "bytes": 12460,
    "schema": {
     "kind": "object",
     "keys": [
@@ -65937,9 +65955,11 @@
    },
    "consumers": [
     "src/app/[cityId]/commitments/commitments-client.tsx",
-    "src/lib/cities/hyderabad.ts"
+    "src/cities/hyderabad/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -65971,11 +65991,11 @@
    },
    "consumers": [
     "src/app/[cityId]/commitments/commitments-client.tsx",
-    "src/lib/cities/kolkata.ts"
+    "src/cities/kolkata/config.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_kolkata_kmcsharp_commitments.py",
-    "neer-vazhvu-api/scripts/build_kolkata_sewage_balance.py"
+    "neer-vazhvu-api/scripts/build_curated.py",
+    "neer-vazhvu-api/scripts/build_kolkata_kmcsharp_commitments.py"
    ],
    "headwaters_sources": [
     "keiip-kmcsharp-reports",
@@ -66014,9 +66034,11 @@
    },
    "consumers": [
     "src/app/[cityId]/commitments/commitments-client.tsx",
-    "src/lib/cities/madurai.ts"
+    "src/cities/madurai/config.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [
     "madurai-corp-projects",
     "wrd-policy-note-tn"
@@ -66055,6 +66077,7 @@
     "src/app/[cityId]/commitments/commitments-client.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "scripts/build_mumbai_rivers_basin.py",
     "scripts/nvdm_envelope_mumbai_rivers.py"
    ],
@@ -66097,6 +66120,7 @@
     "src/app/[cityId]/commitments/commitments-client.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_nagpur_commitments.py",
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
     "neer-vazhvu-api/tests/test_nagpur_commitments_lakes.py"
@@ -66155,7 +66179,7 @@
     "src/app/[cityId]/commitments/commitments-client.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_surat_artifacts.py"
+    "neer-vazhvu-api/scripts/build_curated.py"
    ],
    "headwaters_sources": [
     "smc-reuse-programme"
@@ -66194,6 +66218,7 @@
     "src/app/[cityId]/commitments/commitments-client.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_visakhapatnam_commitments.py"
    ],
    "headwaters_sources": [
@@ -66608,10 +66633,10 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/delhi/config.ts",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/delhi.ts",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -66645,9 +66670,9 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -66658,8 +66683,7 @@
     "scripts/compute-delhi-ward-risk.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "cgwb-dynamic-gwr-delhi",
@@ -66743,7 +66767,7 @@
     ]
    },
    "consumers": [
-    "src/content/rivers/hyderabad.ts"
+    "src/cities/hyderabad/rivers.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/extract_delhi_drain_quality.py",
@@ -66991,8 +67015,8 @@
     ]
    },
    "consumers": [
-    "src/components/map/elevation-bands.ts",
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts",
+    "src/components/map/elevation-bands.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_elevation_bands.py"
@@ -67047,7 +67071,7 @@
    "family": "data-root",
    "scope": "ahmedabad",
    "dataset": "facts",
-   "bytes": 15412,
+   "bytes": 15527,
    "schema": {
     "kind": "object",
     "keys": [
@@ -67359,7 +67383,7 @@
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx",
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -67425,11 +67449,10 @@
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
     "src/app/[cityId]/facts/page.tsx",
-    "src/lib/cities/pune.ts"
+    "src/cities/pune/config.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_pune_facts.py",
-    "scripts/lib/exemptions.ts"
+    "neer-vazhvu-api/scripts/build_pune_facts.py"
    ],
    "headwaters_sources": [
     "cpcb-polluted-river-stretches",
@@ -67618,9 +67641,9 @@
     ]
    },
    "consumers": [
-    "src/components/flood/flood-lines-section.tsx",
-    "src/content/flood/nagpur.ts",
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts",
+    "src/cities/nagpur/flood.ts",
+    "src/components/flood/flood-lines-section.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -67728,9 +67751,9 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -67777,7 +67800,7 @@
    },
    "consumers": [
     "src/app/[cityId]/tanker/page.tsx",
-    "src/content/story-gurugram-en.tsx",
+    "src/cities/gurugram/story-en.tsx",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -67936,7 +67959,7 @@
     ]
    },
    "consumers": [
-    "src/content/story-ahmedabad-en.tsx",
+    "src/cities/ahmedabad/story-en.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -68058,9 +68081,9 @@
     ]
    },
    "consumers": [
-    "src/content/story-gurugram-en.tsx",
-    "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts"
+    "src/cities/gurugram/config.ts",
+    "src/cities/gurugram/story-en.tsx",
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
@@ -68274,7 +68297,7 @@
     ]
    },
    "consumers": [
-    "src/content/story-pune-en.tsx",
+    "src/cities/pune/story-en.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -68319,8 +68342,8 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/data-paths.ts",
-    "src/lib/cities/surat.ts"
+    "src/cities/surat/config.ts",
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_ingres_gwr.py"
@@ -68449,7 +68472,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/hyderabad.ts"
+    "src/cities/hyderabad/flood.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/fetch_tgdps_stations.py"
@@ -68545,7 +68568,7 @@
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/app/api/groundwater/wards-interpolated/route.ts",
-    "src/lib/cities/hyderabad.ts",
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/types.ts",
     "src/types/groundwater.ts"
    ],
@@ -68631,8 +68654,8 @@
     ]
    },
    "consumers": [
+    "src/cities/hyderabad/config.ts",
     "src/components/water-bodies/lake-register-panel.tsx",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -69724,7 +69747,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/kolkata.ts"
+    "src/cities/kolkata/flood.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_kolkata_facts_allocations.py",
@@ -69854,10 +69877,10 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
+    "src/cities/madurai/about.tsx",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/content/about/madurai.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -69890,9 +69913,9 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -69904,8 +69927,7 @@
     "scripts/compute-ward-profiles.ts",
     "scripts/convert-madurai-wards-kml.py",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "cgwb-yearbook-tn",
@@ -70071,7 +70093,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/mumbai.tsx"
+    "src/cities/mumbai/flood.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/scrape_bmc_flood_spots.py",
@@ -70116,9 +70138,9 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -70318,10 +70340,10 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
+    "src/cities/nagpur/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/nagpur.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -70359,10 +70381,10 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
+    "src/cities/nagpur/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
-    "src/lib/cities/nagpur.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -70373,8 +70395,7 @@
     "neer-vazhvu-api/tests/test_nagpur_facts.py",
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "ingres-groundwater-maharashtra",
@@ -70417,7 +70438,7 @@
     ]
    },
    "consumers": [
-    "src/content/story-pune-en.tsx"
+    "src/cities/pune/story-en.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
@@ -70467,11 +70488,11 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
+    "src/cities/pune/config.ts",
+    "src/cities/pune/story-en.tsx",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/content/story-pune-en.tsx",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/pune.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -70523,8 +70544,7 @@
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_facts.py",
-    "neer-vazhvu-api/scripts/build_pune_tankers.py",
-    "scripts/lib/exemptions.ts"
+    "neer-vazhvu-api/scripts/build_pune_tankers.py"
    ],
    "headwaters_sources": [
     "pmc-tanker-register"
@@ -71249,8 +71269,8 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/data-paths.ts",
-    "src/lib/cities/hyderabad.ts"
+    "src/cities/hyderabad/config.ts",
+    "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
     "scripts/compute-restoration-priority-hyderabad.ts"
@@ -71453,7 +71473,8 @@
     "src/lib/data/restoration-projects.ts"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py"
+    "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py",
+    "neer-vazhvu-api/scripts/build_curated.py"
    ],
    "headwaters_sources": [
     "amc-budget",
@@ -71496,7 +71517,9 @@
     "src/components/rivers/river-panel.tsx",
     "src/lib/data/restoration-projects.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -71529,7 +71552,9 @@
     "src/components/rivers/river-panel.tsx",
     "src/lib/data/restoration-projects.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -71562,6 +71587,7 @@
     "src/lib/data/restoration-projects.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_kolkata_restoration.py"
    ],
    "headwaters_sources": [],
@@ -71595,7 +71621,9 @@
     "src/components/rivers/river-panel.tsx",
     "src/lib/data/restoration-projects.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -71627,7 +71655,9 @@
     "src/components/rivers/river-panel.tsx",
     "src/lib/data/restoration-projects.ts"
    ],
-   "producer_refs": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
    "headwaters_sources": [],
    "licenses": [],
    "accountability": "allowlisted",
@@ -71660,6 +71690,7 @@
     "src/lib/data/restoration-projects.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_nagpur_lakes.py"
    ],
    "headwaters_sources": [
@@ -71706,6 +71737,7 @@
     "src/lib/data/restoration-projects.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_visakhapatnam_facts.py",
     "neer-vazhvu-api/scripts/build_visakhapatnam_restoration.py"
    ],
@@ -86341,6 +86373,7 @@
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_kolkata_restoration.py",
     "neer-vazhvu-api/scripts/scrape_wbpcb_emis.py",
     "scripts/snap-river-stations.py"
@@ -86466,8 +86499,8 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/nagpur/rivers.ts",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/content/rivers/nagpur.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -86526,9 +86559,9 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/pune/rivers.ts",
+    "src/cities/pune/story-en.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/content/rivers/pune.ts",
-    "src/content/story-pune-en.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -86570,8 +86603,8 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/surat/story-en.tsx",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/content/story-surat-en.tsx",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -86613,8 +86646,8 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/visakhapatnam/rivers.ts",
     "src/components/rivers/treatment-discharge-panel.tsx",
-    "src/content/rivers/visakhapatnam.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -86778,9 +86811,9 @@
     ]
    },
    "consumers": [
+    "src/cities/surat/flood.ts",
+    "src/cities/surat/story-en.tsx",
     "src/components/dashboard/flood-headroom-hero.tsx",
-    "src/content/flood/surat.ts",
-    "src/content/story-surat-en.tsx",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -86827,9 +86860,9 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -86868,7 +86901,7 @@
     ]
    },
    "consumers": [
-    "src/content/story-surat-en.tsx"
+    "src/cities/surat/story-en.tsx"
    ],
    "producer_refs": [],
    "headwaters_sources": [
@@ -86915,8 +86948,8 @@
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/cities/visakhapatnam/config.ts",
     "src/lib/cities/types.ts",
-    "src/lib/cities/visakhapatnam.ts",
     "src/types/groundwater.ts"
    ],
    "producer_refs": [
@@ -87010,9 +87043,9 @@
    },
    "consumers": [
     "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
     "src/components/dashboard/cauvery-pumping-hero.tsx",
     "src/components/dashboard/urban-supply-overview.tsx",
-    "src/lib/cities/gurugram.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -87092,9 +87125,9 @@
     ]
    },
    "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/gurugram.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts",
     "src/lib/utils/ward-uplift.test.ts",
     "src/lib/ward-rankings/load-rankings.ts"
@@ -87102,8 +87135,7 @@
    "producer_refs": [
     "scripts/compute-ward-profiles.ts",
     "scripts/fetch-localities-osm.ts",
-    "scripts/generate-narratives.ts",
-    "scripts/lib/exemptions.ts"
+    "scripts/generate-narratives.ts"
    ],
    "headwaters_sources": [
     "opencity-chennai-flood",
@@ -87175,7 +87207,7 @@
    "consumers": [
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
     "src/app/[cityId]/my-ward/report/city-ward-report-card.tsx",
-    "src/lib/cities/bangalore.ts",
+    "src/cities/bangalore/config.ts",
     "src/lib/ward-rankings/load-rankings.test.ts",
     "src/lib/ward-rankings/load-rankings.ts",
     "src/lib/ward-rankings/specs.ts"
@@ -87348,7 +87380,8 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
-    "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py"
+    "neer-vazhvu-api/scripts/build_ahmedabad_lakes.py",
+    "neer-vazhvu-api/scripts/build_curated.py"
    ],
    "headwaters_sources": [
     "amc-budget",
@@ -87388,6 +87421,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "scripts/compute-restoration-priority-delhi.ts"
    ],
    "headwaters_sources": [],
@@ -87419,6 +87453,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "scripts/compute-restoration-priority-hyderabad.ts"
    ],
    "headwaters_sources": [
@@ -87454,6 +87489,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_kolkata_restoration.py"
    ],
    "headwaters_sources": [
@@ -87489,6 +87525,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "scripts/compute-madurai-ward-risk.ts",
     "scripts/compute-restoration-priority-madurai.ts"
    ],
@@ -87521,6 +87558,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "scripts/compute-restoration-priority-mumbai.ts"
    ],
    "headwaters_sources": [],
@@ -87552,6 +87590,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
     "neer-vazhvu-api/scripts/build_nagpur_lakes.py"
    ],
@@ -87601,6 +87640,7 @@
     "src/app/[cityId]/lake-restoration/page.tsx"
    ],
    "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py",
     "neer-vazhvu-api/scripts/build_visakhapatnam_restoration.py"
    ],
    "headwaters_sources": [
@@ -88747,7 +88787,7 @@
     "property_keys": []
    },
    "consumers": [
-    "src/content/flood/bangalore.ts"
+    "src/cities/bangalore/flood.ts"
    ],
    "producer_refs": [
     "scripts/compute-bangalore-ward-profiles.ts"
@@ -88777,7 +88817,7 @@
     "property_keys": []
    },
    "consumers": [
-    "src/content/flood/bangalore.ts"
+    "src/cities/bangalore/flood.ts"
    ],
    "producer_refs": [
     "scripts/compute-bangalore-ward-profiles.ts"
@@ -89663,8 +89703,8 @@
     ]
    },
    "consumers": [
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -89784,9 +89824,9 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/hyderabad/rivers.ts",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/rivers/hyderabad.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -90030,7 +90070,7 @@
    "consumers": [
     "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
     "src/app/[cityId]/groundwater/groundwater-client.tsx",
-    "src/lib/cities/gurugram.ts",
+    "src/cities/gurugram/config.ts",
     "src/lib/groundwater/districts-as-blocks.ts"
    ],
    "producer_refs": [
@@ -90068,7 +90108,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/gurugram.ts"
+    "src/cities/gurugram/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/harvest_arcgis_rest.py"
@@ -90241,7 +90281,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/hyderabad.ts"
+    "src/cities/hyderabad/flood.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
@@ -90280,9 +90320,9 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/hyderabad/rivers.ts",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/rivers/hyderabad.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -90474,7 +90514,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/hyderabad.ts"
+    "src/cities/hyderabad/flood.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_hyderabad_opencity_layers.py"
@@ -90922,8 +90962,8 @@
     ]
    },
    "consumers": [
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [
@@ -91052,7 +91092,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/mumbai.ts"
+    "src/cities/mumbai/config.ts"
    ],
    "producer_refs": [
     "scripts/build-mmr-corporations.py",
@@ -91090,8 +91130,8 @@
     ]
    },
    "consumers": [
-    "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/flood/mumbai.tsx"
+    "src/cities/mumbai/flood.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx"
    ],
    "producer_refs": [
     "scripts/build-mumbai-drainage.py",
@@ -91132,7 +91172,7 @@
     ]
    },
    "consumers": [
-    "src/content/flood/mumbai.tsx"
+    "src/cities/mumbai/flood.tsx"
    ],
    "producer_refs": [],
    "headwaters_sources": [],
@@ -91300,8 +91340,8 @@
     ]
    },
    "consumers": [
+    "src/cities/hyderabad/config.ts",
     "src/lib/cities/data-paths.ts",
-    "src/lib/cities/hyderabad.ts",
     "src/lib/cities/types.ts"
    ],
    "producer_refs": [],
@@ -91379,9 +91419,9 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/nagpur/rivers.ts",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/rivers/nagpur.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -91438,7 +91478,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -91481,7 +91521,7 @@
     ]
    },
    "consumers": [
-    "src/lib/cities/nagpur.ts"
+    "src/cities/nagpur/config.ts"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_nagpur_facts.py",
@@ -91571,8 +91611,8 @@
     ]
    },
    "consumers": [
-    "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/flood/pune.ts"
+    "src/cities/pune/flood.ts",
+    "src/components/flood-risk/flood-risk-map.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_geography.py",
@@ -91657,9 +91697,9 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/pune/flood.ts",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/flood/pune.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -91709,7 +91749,7 @@
     ]
    },
    "consumers": [
-    "src/content/story-pune-en.tsx"
+    "src/cities/pune/story-en.tsx"
    ],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_geography.py",
@@ -91746,8 +91786,7 @@
    "consumers": [],
    "producer_refs": [
     "neer-vazhvu-api/scripts/build_pune_geography.py",
-    "neer-vazhvu-api/scripts/build_pune_gw_stations.py",
-    "scripts/lib/exemptions.ts"
+    "neer-vazhvu-api/scripts/build_pune_gw_stations.py"
    ],
    "headwaters_sources": [
     "opencity-pune-wards"
@@ -96500,10 +96539,10 @@
    },
    "consumers": [
     "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/visakhapatnam/flood.ts",
+    "src/cities/visakhapatnam/rivers.ts",
     "src/components/basin/basin-overview.tsx",
     "src/components/flood-risk/flood-risk-map.tsx",
-    "src/content/flood/visakhapatnam.ts",
-    "src/content/rivers/visakhapatnam.ts",
     "src/lib/cities/data-paths.ts"
    ],
    "producer_refs": [
@@ -98281,7 +98320,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 324708,
+   "bytes": 325229,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -98384,7 +98423,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 282961,
+   "bytes": 283076,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true

@@ -31,64 +31,14 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from registry_license import registry_license  # noqa: E402
+from city_manifest import section  # noqa: E402
 
 DATA_DIR = REPO_ROOT / "public" / "data"
 
-# City centre coordinates - keep in lockstep with src/lib/cities/*.ts.
-CITIES = {
-    "chennai": (13.0827, 80.2707),
-    "madurai": (9.9252, 78.1198),
-    "bangalore": (12.9716, 77.5946),
-    "mumbai": (19.0760, 72.8777),
-    "delhi": (28.6100, 77.2100),
-    # Hyderabad's centroid is the GHMC 2022 ward extent's midpoint. Note that
-    # Hyderabad is the one city where this single point is a fallback rather
-    # than the best available signal: TGDPS runs 185 AWS rain gauges inside
-    # GHMC_CMC_MMC (values.jsp?s1=<awsId>, with lat/long per station), which
-    # would give a measured intra-city surface instead of one interpolated
-    # cell. Keep this entry as the daily backbone; layer TGDPS over it.
-    "hyderabad": (17.4260, 78.4300),
-    # Matches the IMD gridded point in generate_imd_rainfall.py, not the city
-    # centre: the provisional months must continue the same series they fill.
-    "kolkata": (22.5000, 88.2500),
-    # Matches generate_imd_rainfall.py's grid point (18.5, 74.0), NOT the city
-    # centre - the provisional months have to continue the same series they
-    # fill. That cell is east of Pune on purpose: the district's 4.7x
-    # west-east rainfall gradient makes the western cell 31% high against
-    # IMD's own Shivajinagar observatory normal.
-    "pune": (18.5000, 74.0000),
-    # Nagpur, added together with its IMD base series: generate_imd_rainfall.py's
-    # grid point (21.0, 79.0), the cell nearest IMD's Nagpur observatory, not
-    # the city centre, so the provisional months continue the same series.
-    "nagpur": (21.0000, 79.0000),
-    # Matches the IMD gridded point in generate_imd_rainfall.py for the same
-    # reason as Kolkata and Pune: the provisional months have to continue the
-    # series they are filling, not start a parallel one at the city centre.
-    "surat": (21.2500, 72.7500),
-    # Gurugram, added 2026-08-20 together with its IMD base series - the
-    # condition the old comment here set, and the reason it was held out: this
-    # fetcher only fills provisional months AFTER an authoritative base, and
-    # `--all` is what the daily workflow runs, so adding a city without one
-    # would have turned that job red every day for every city.
-    #
-    # (28.50, 77.00) is the 0.25-deg grid intersection nearest the centroid of
-    # MCG's 36-ward extent (28.4360, 77.0560), and it is NOT Delhi's cell -
-    # Delhi uses (28.50, 77.25), one cell east, and the two share no annual
-    # total in 56 years. It must match generate_imd_rainfall.py's grid point or
-    # the provisional months would continue a different series from the one
-    # they are filling; see the CITY_DEFAULTS entry there for why this point is
-    # a nearest-intersection default rather than a validated one, and for the
-    # ~40% spread against its neighbours.
-    "gurugram": (28.5000, 77.0000),
-    # Matches generate_imd_rainfall.py's grid point (23.0, 72.5), the cell
-    # validated against IMD's Ahmedabad observatory normal; the provisional
-    # months must continue that series, not start one at the city centre.
-    "ahmedabad": (23.0000, 72.5000),
-    # Matches generate_imd_rainfall.py's grid point, not the city centre, for
-    # the Kolkata/Pune reason. Also the coastal one: the nearer seaward cells
-    # are ocean in IMD's grid.
-    "visakhapatnam": (17.7500, 83.2500),
-}
+# The point each city's provisional months are read at: rainfall.recent in
+# src/cities/<id>/pipeline.json. Use the city's IMD grid point, so the
+# provisional months continue the series they fill.
+CITIES = {city: (p["lat"], p["lng"]) for city, p in section("rainfall.recent").items()}
 
 API = (
     "https://archive-api.open-meteo.com/v1/archive"
