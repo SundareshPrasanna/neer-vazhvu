@@ -14,7 +14,7 @@ export function nodFor(r: { caseStatus: CaseStatus | null; category: string }): 
 
 /** Places one person may follow. */
 export const MAX_FOLLOWS = 50;
-/** The table's CHECK says the same (migration 063). */
+/** The table's CHECK says the same (migration 064). */
 export const MAX_FOLLOW_CHARS = 120;
 
 const PLACE = "[a-z0-9-]{2,40}";

@@ -145,7 +145,7 @@ async function nod(admin: SupabaseClient, row: SightingRow, event: NodEvent, key
 
   const ins = await admin.from("sighting_events").insert({ sighting_id: row.id, actor_key: key, actor_role: own ? "reporter" : "resident", event });
   if (ins.error) {
-    // Two taps at once: the unique index (migration 063) kept one.
+    // Two taps at once: the unique index (migration 064) kept one.
     if (ins.error.code === "23505") return await unchanged();
     throw ins.error;
   }

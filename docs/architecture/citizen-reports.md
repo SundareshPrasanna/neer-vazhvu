@@ -1,6 +1,6 @@
 # Citizen reports (sightings)
 
-Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications, department channel, nods, follows, groups and clean-ups (migration 063).
+Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications, department channel, nods, follows, groups and clean-ups (migration 064).
 
 ## 1. What it is
 
@@ -179,9 +179,9 @@ Review alert
 
 User-facing text in this module uses no em dashes and no middle dots as separators.
 
-## Updates after publishing: residents, departments, notifications (migration 063)
+## Updates after publishing: residents, departments, notifications (migration 064)
 
-`supabase/migrations/063_citizen_reports_updates.sql` must be applied before switch-on. It widens `sighting_events.actor_role` to `resident` and `department`, adds the events `fix_submitted`, `fix_rejected`, `action_taken`, `not_ours`, `seen_too` and `thanks`, creates `sighting_push_subscriptions` (endpoint, reporter_key, keys; RLS on, no policies), adds `sightings.nudged_at`, `sightings.test_meta` and `sightings.group_id`, and creates `sighting_follows`, `sighting_groups`, `sighting_group_members`, `sighting_fixits` and `sighting_fixit_rsvps` (all RLS on, no policies).
+`supabase/migrations/064_citizen_reports_updates.sql` must be applied before switch-on. It widens `sighting_events.actor_role` to `resident` and `department`, adds the events `fix_submitted`, `fix_rejected`, `action_taken`, `not_ours`, `seen_too` and `thanks`, creates `sighting_push_subscriptions` (endpoint, reporter_key, keys; RLS on, no policies), adds `sightings.nudged_at`, `sightings.test_meta` and `sightings.group_id`, and creates `sighting_follows`, `sighting_groups`, `sighting_group_members`, `sighting_fixits` and `sighting_fixit_rsvps` (all RLS on, no policies).
 
 **Who can move a report** (`POST /api/sightings/[id]/events`, `POST /api/sightings/department`):
 
@@ -198,7 +198,7 @@ A fixed claim from anyone but a reviewer is recorded as `fix_submitted` and does
 
 **Department channel** (`src/lib/sightings/departments.ts`, `/department/[token]`, `department-app.tsx`): one department per handling body, keyed by a hash of state code and body name. Its link is `<origin>/department/<key>.<sig>` (HMAC under `SIGHTINGS_DEPARTMENT_LINK_SECRET`); the page is unlisted, noindex, no-referrer, and disallowed in `robots.ts`. It lists that body's checked reports (open first) with photos, type, place text, India date, status and history, never anything about the reporter; the same rounded point as public pages, with an "Open in map" link; each item can be marked, and the page prints as a summary to hand over. The reviewer copies each department's link from the Departments section at `/admin/sightings` (`GET /api/sightings/department/links`). One link cannot be revoked on its own; rotating the secret replaces them all. Matching loads approved rows and resolves each in memory (fine to about 20,000 rows; store the key on the row before then).
 
-## Taking part: nods, follows, groups and clean-ups (migration 063)
+## Taking part: nods, follows, groups and clean-ups (migration 064)
 
 Reasons to come back without turning reports into a feed: no likes, comments, names or ranks. Everything here needs sign-in, and nothing here applies to a home report (tap water, water tests; `isCommunityReport` in `taxonomy.ts`), in the UI or on the server.
 
@@ -242,7 +242,7 @@ Place pages show "Issues here" rather than a list of reports: reports about the 
 
 ## How a water test was done (`test_meta`)
 
-A water test (`water_test`, the only type that takes readings) also asks two things, both required: what it was tested with (digital meter, test kit or strips, lab report) and whether the water was filtered (straight from the source, after a filter or RO, don't know). Under a closed "More about this test" it optionally asks when the meter was calibrated, and, for a borewell or open well, whether the pump ran a few minutes first and the well's depth in feet, plus the meter's brand and model. Options and the public line are in `src/lib/sightings/test-meta.ts`; `parseSubmit` validates them; the submit route stores them in `sightings.test_meta` (JSONB, added in migration 063) after the row is created, so `create_sighting` is unchanged.
+A water test (`water_test`, the only type that takes readings) also asks two things, both required: what it was tested with (digital meter, test kit or strips, lab report) and whether the water was filtered (straight from the source, after a filter or RO, don't know). Under a closed "More about this test" it optionally asks when the meter was calibrated, and, for a borewell or open well, whether the pump ran a few minutes first and the well's depth in feet, plus the meter's brand and model. Options and the public line are in `src/lib/sightings/test-meta.ts`; `parseSubmit` validates them; the submit route stores them in `sightings.test_meta` (JSONB, added in migration 064) after the row is created, so `create_sighting` is unchanged.
 
 Public pages show only the instrument and the filtering, as one line under the readings (`testLabel`, e.g. "Home test with a digital meter, water straight from the borewell"; a kit reading says it is approximate; a filtered reading says it does not describe the source). Calibration, pump run, depth and model stay with the reporter (My reports, the download) and the reviewer, for analysis. Rule for any area figure later: use only readings from water straight from the source, and weigh meters, kits and lab reports differently.
 
