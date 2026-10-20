@@ -149,12 +149,13 @@ def check_commitments(city: str, spec: dict, today: str) -> Report:
                 f"{rid}: ledger_id {r['ledger_id']!r} is not an id in allocations-{city}.json"
             )
 
-        for key in ("due", "revised_due", "next_check"):
-            value = r.get(key)
-            if value is not None and not DATE.match(str(value)):
-                warnings.append(
-                    f"{rid}: {key} {value!r} is not a date (YYYY, YYYY-MM or YYYY-MM-DD)"
-                )
+        # due and revised_due are shown as written ("Mar 2027", "delivered 24 Feb
+        # 2024", "FY 2028-29"); only next_check must be a date the checks can read.
+        nxt_raw = r.get("next_check")
+        if nxt_raw is not None and not DATE.match(str(nxt_raw)):
+            warnings.append(
+                f"{rid}: next_check {nxt_raw!r} is not a date (YYYY, YYYY-MM or YYYY-MM-DD)"
+            )
         if not history:
             warnings.append(f"{rid}: no status history")
         for e in history:

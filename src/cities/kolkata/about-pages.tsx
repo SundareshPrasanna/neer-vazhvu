@@ -251,7 +251,8 @@ export function KolkataPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </p>
         <p className={P}>
           The commitments register has a real verification calendar for the first time. Alongside
-          two 2021 promises with no follow-up, it now tracks the KMC-SHARP sewerage packages
+          two plants from the 2021 Environment Plan, which KMC re-dated to 31 March 2026 and carries
+          into KMC-SHARP as spill-over packages, it now tracks the KMC-SHARP sewerage packages
           financed under ADB Loan 4584-IND - named contractors, contractual completion dates, and a
           percentage-progress figure refreshed every six months by a disclosure obligation rather
           than at the implementing agency&apos;s discretion. As of 31 December 2025, five packages
