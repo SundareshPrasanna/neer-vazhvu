@@ -16,5 +16,5 @@ jobs:
       - name: Send the nudges
         run: |
           curl -X POST "${{ secrets.APP_URL }}/api/cron/sightings-nudges" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Authorization: Bearer ${{ secrets.SIGHTINGS_CRON_SECRET }}" \
             --fail --silent --show-error --max-time 120

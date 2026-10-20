@@ -31,10 +31,10 @@ async function all<T>(page: (from: number, to: number) => PromiseLike<{ data: un
   }
 }
 
-/** The same Bearer CRON_SECRET check the scheduled jobs use. */
+/** Bearer SIGHTINGS_CRON_SECRET, its own secret: the repository CRON_SECRET belongs to the Python API pipeline. */
 function cronAuth(request: NextRequest): NextResponse | null {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return NextResponse.json({ error: "Server misconfigured: CRON_SECRET is missing" }, { status: 500 });
+  const secret = process.env.SIGHTINGS_CRON_SECRET;
+  if (!secret) return NextResponse.json({ error: "Server misconfigured: SIGHTINGS_CRON_SECRET is missing" }, { status: 500 });
   const got = Buffer.from(request.headers.get("authorization") ?? "");
   const want = Buffer.from(`Bearer ${secret}`);
   return got.length === want.length && timingSafeEqual(got, want) ? null : NextResponse.json({ error: "Unauthorized" }, { status: 401 });
