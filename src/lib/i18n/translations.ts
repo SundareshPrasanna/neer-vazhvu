@@ -1542,6 +1542,7 @@ export const translations: Record<string, TranslationEntry> = {
   "supply_overview.subtitle": { en: "Structural numbers from MMC and the ADB Tamil Nadu Urban Flagship Investment Program. Refreshed when new engineering documents are published.", ta: "MMC மற்றும் ADB தமிழ்நாடு நகர்ப்புற முதலீட்டுத் திட்டத்திலிருந்து கட்டமைப்பு எண்கள். புதிய பொறியியல் ஆவணங்கள் வெளியாகும்போது புதுப்பிக்கப்படும்.", kn: "MMC ಮತ್ತು ADB ತಮಿಳುನಾಡು ನಗರ ಫ್ಲಾಗ್‌ಶಿಪ್ ಹೂಡಿಕೆ ಕಾರ್ಯಕ್ರಮದ ಕಟ್ಟಡ ಸಂಖ್ಯೆಗಳು. ಹೊಸ ಎಂಜಿನಿಯರಿಂಗ್ ದಾಖಲೆಗಳು ಪ್ರಕಟವಾದಾಗ ರಿಫ್ರೆಶ್ ಆಗುತ್ತದೆ." },
   "supply_overview.source_mix_label": { en: "Existing supply mix - {total} MLD total", ta: "தற்போதைய வழங்கல் கலவை - மொத்தம் {total} MLD", kn: "ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪೂರೈಕೆ ಮಿಶ್ರಣ - ಒಟ್ಟು {total} MLD" },
   "supply_overview.wtp_label": { en: "Pannaipatty WTP capacity", ta: "பன்னைப்பட்டி WTP திறன்", kn: "ಪನ್ನೈಪಟ್ಟಿ WTP ಸಾಮರ್ಥ್ಯ" },
+  "supply_overview.wtp_label_default": { en: "Treatment plant capacity", ta: "சுத்திகரிப்பு நிலையத் திறன்", kn: "ಸಂಸ್ಕರಣಾ ಸ್ಥಾವರ ಸಾಮರ್ಥ್ಯ" },
   "supply_overview.ohts_label": { en: "OHTs",                    ta: "OHTகள்", kn: "OHT ಗಳು" },
   "supply_overview.zones_label": { en: "Zones / DMAs",            ta: "மண்டலங்கள் / DMA-கள்", kn: "ವಲಯಗಳು / DMA ಗಳು" },
   "supply_overview.zones_sub": { en: "distribution / district-metering",  ta: "விநியோகம் / DMA", kn: "ವಿತರಣೆ / ಜಿಲ್ಲಾ-ಮಾಪನ" },
