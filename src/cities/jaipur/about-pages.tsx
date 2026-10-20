@@ -59,7 +59,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </p>
         <Gap title="What is not published: the city's share, its losses and its plant capacity">
           <p>
-            <strong>No allocation order.</strong> Bisalpur also supplies Ajmer,
+            <strong>No allocation order.</strong>{" "}Bisalpur also supplies Ajmer,
             Tonk and the villages along both pipelines, and irrigates the land
             below it. A Water Resources Department study of February 2020,
             published by the World Bank, describes 11.1 TMC (thousand million
@@ -68,7 +68,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
             not an order, and no order fixing Jaipur&apos;s share has been found.
           </p>
           <p>
-            <strong>No city-wide loss figure.</strong> The last published figure
+            <strong>No city-wide loss figure.</strong>{" "}The last published figure
             for water lost between source and tap is 37% in 2015, on PHED&apos;s
             figures in JICA&apos;s evaluation of the Bisalpur project, which
             warned it was likely unreliable because a 2014-15 study had found 45
@@ -79,7 +79,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
             non-revenue water figure for the city.
           </p>
           <p>
-            <strong>No treatment-capacity figure.</strong> PHED&apos;s project
+            <strong>No treatment-capacity figure.</strong>{" "}PHED&apos;s project
             list names a 200 MLD plant at Surajpura, but that is one stage, and
             no primary source we have found gives the capacity of the whole
             works. So the dashboard shows what PHED produces, not what its plants
@@ -101,10 +101,10 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
         <p className={P}>
           The dashboard carries two dams: Bisalpur, the city&apos;s main source,
           and Ramgarh, its old one.{" "}
-          <strong>Bisalpur is not the city&apos;s own storage.</strong> Its water
+          <strong>Bisalpur is not the city&apos;s own storage.</strong>{" "}Its water
           is shared by Jaipur, Ajmer, Tonk and irrigation, and no order says how
           much of it is Jaipur&apos;s. Dividing the dam by the city&apos;s draw
-          would credit {cityName} with water that belongs to other towns and to
+          would credit {cityName}{" "}with water that belongs to other towns and to
           farmers, so no days-left figure is computed and Bisalpur&apos;s card is
           labelled shared.
         </p>
@@ -168,7 +168,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
           year is pumped out.
         </p>
         <p className={P}>
-          In 2021-2022 IN-GRES carved a <strong>Jaipur Urban</strong> unit out of
+          In 2021-2022 IN-GRES carved a <strong>Jaipur Urban</strong>{" "}unit out of
           the Sanganer, Amber and Jhotwara blocks, and about 96% of the
           city&apos;s outline lies inside it. In 2025-2026 it stands at{" "}
           <strong>349.88%, over-exploited</strong>: the city draws about three
@@ -224,7 +224,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
           </p>
         </Gap>
         <p className={P}>
-          <strong>The rules that apply here.</strong> Groundwater in Rajasthan
+          <strong>The rules that apply here.</strong>{" "}Groundwater in Rajasthan
           is still regulated by the Central Ground Water Authority: the 2023
           amendment to its guidelines (S.O. 1509(E), 29 March 2023) lists
           Rajasthan among the states it regulates. Because every unit in the
@@ -370,7 +370,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
           <Link href={`/${cityId}/water-bodies`} className={A}>
             The water-bodies map
           </Link>{" "}
-          draws <strong>36 lakes, ponds and reservoirs</strong> from
+          draws <strong>36 lakes, ponds and reservoirs</strong>{" "}from
           OpenStreetMap, in a box wider than the corporation, because the
           city&apos;s main dams (Ramgarh, Kanota, Nevta and Chandlai) lie outside
           it. Rivers are drawn on the rivers page instead. We have not found a
@@ -518,7 +518,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
           progress report, a National Water Development Agency note, or a court
           order. <strong>Four are delivered</strong>: two later than the date
           PHED or JDA had set, one ahead of it, and one that never had a
-          published date. <strong>Four are past their date</strong> with no
+          published date. <strong>Four are past their date</strong>{" "}with no
           completion on record: Stage II Phase I of the Bisalpur-Jaipur project
           (due 31 March 2025, then 31 March 2026), the second stage of the
           Prithviraj Nagar works (due 12 August 2025, then March 2026), the
@@ -624,7 +624,7 @@ export function JaipurPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </Gap>
         <Gap title="No shoreline or climate-risk page">
           <p>
-            {cityName} is landlocked, so there is no coastline. The climate-risk
+            {cityName}{" "}is landlocked, so there is no coastline. The climate-risk
             page is not built: the state&apos;s only climate plan (2014) gives
             state-wide projections, and the sub-basin risk surface the page needs
             has not been run for the Banas or the Banganga.
