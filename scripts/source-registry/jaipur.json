@@ -101,7 +101,8 @@
         "reviewEveryDays": 180
       },
       "dependsOn": [
-        "public/data/commitments-jaipur.json"
+        "public/data/commitments-jaipur.json",
+        "public/data/restoration-projects-jaipur.json"
       ],
       "refreshMethod": "manual",
       "notes": "Dravyavati River Project: JDA EIA/EMP (2017, environmentclearance.nic.in), April 2018 project sheet (target 15 Aug 2018; 47.5 km; five STPs, 170 MLD; Rs 1,676.93 crore with 10 years of O&M). JDA's own pages render by JavaScript; jda.urban.rajasthan.gov.in has an expired certificate (2026-10-20)."
@@ -120,7 +121,9 @@
         "reviewEveryDays": 60
       },
       "dependsOn": [
-        "public/data/commitments-jaipur.json"
+        "public/data/commitments-jaipur.json",
+        "public/data/restoration-projects-jaipur.json",
+        "public/data/water-bodies-flagship-jaipur.json"
       ],
       "refreshMethod": "manual: new orders in D.B. Civil Writ Petition 11153/2011 (Suo Motu, Ramgarh catchment) and D.B. CWP 2905/2024 (Dravyavati), read from the court-signed PDFs (LiveLaw and Verdictum mirror them; the court's case status is search-gated)",
       "notes": "Ramgarh catchment: Supreme Court judgment of 9 Nov 2017 (NIMS, SLP (C) 38040-41/2012, hosted on hcraj.nic.in) recounts the 2011 directions; High Court orders of 30 Jul 2026 and 13 Aug 2026; next hearing 15 Sep 2026 (order not found by 2026-10-20). Dravyavati: High Court orders of 19 Dec 2024 (2024:RJ-JP:51492) and 23 Jul 2026. Mirrors: cite the court and case number."
@@ -199,7 +202,8 @@
         "reviewEveryDays": 180
       },
       "dependsOn": [
-        "public/data/jaipur-ward-profiles.json"
+        "public/data/jaipur-ward-profiles.json",
+        "public/data/facts-jaipur.json"
       ],
       "refreshMethod": "manual: a new ward notification for Nagar Nigam Jaipur; update pipeline-inputs/jaipur/wards-2025.csv, then python3 neer-vazhvu-api/scripts/build_jaipur_ward_table.py",
       "notes": "LSG notification P.10(N.Pa.)(Gathan)(Chunav)DLB/25/19631 of 16 Sep 2025 (Rajasthan Municipalities Act 2009 ss.3, 10), Rajasthan Gazette Extraordinary Part 6(A), 20 Sep 2025: 150 wards with population (sum 3,197,135; census basis not stated). PDF on jankalyanfile.rajasthan.gov.in, byte-identical on jaipurmc.org as FinalParisimanGazette2025.pdf. LSG page is an Angular app; list via webapi/PublicPortal/DepartmentPages/GetDepartmentPageDetail?deptCode=371474&lookupCode=0&pageCode=2380. Devanagari text layer broken: ward 116 (24,725) read from page image p.52. Text boundaries only, no geometry."

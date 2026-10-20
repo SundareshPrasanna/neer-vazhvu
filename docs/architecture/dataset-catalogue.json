@@ -66015,6 +66015,52 @@
    "flags": []
   },
   {
+   "path": "public/data/commitments-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "commitments",
+   "bytes": 48349,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "commitments",
+     "dataset",
+     "headline",
+     "intro",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "sources_note",
+     "status_legend",
+     "update_model",
+     "updated"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/commitments/commitments-client.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
+   "headwaters_sources": [
+    "jaipur-court-docket",
+    "jda-dravyavati",
+    "mohua-amrut-status",
+    "nwda-mpkc-note",
+    "phed-rajasthan-progress-reports",
+    "rajasthan-budget-speeches"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Government of Rajasthan publication, cited with attribution",
+    "Rajasthan High Court judicial record (Government of India judiciary), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/commitments-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -67288,6 +67334,53 @@
    "flags": []
   },
   {
+   "path": "public/data/facts-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "facts",
+   "bytes": 16858,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "facts",
+     "generated_at",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/app/[cityId]/facts/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_jaipur_facts.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp-annual",
+    "imd-climatological-tables-1991-2020",
+    "ingres-groundwater-rajasthan",
+    "jica-bisalpur-evaluation",
+    "lsg-rajasthan-ward-gazette-2025",
+    "phed-rajasthan-progress-reports",
+    "rajasthan-wrd-dam-storage"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Government of Rajasthan gazette, cited with attribution",
+    "Government of Rajasthan publication, cited with attribution",
+    "JICA (Government of Japan) public project document, cited with attribution",
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/facts-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -68187,6 +68280,52 @@
    "flags": []
   },
   {
+   "path": "public/data/gwr-blocks-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "gwr-blocks",
+   "bytes": 43213,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "acquired_via",
+     "assessment_unit",
+     "assessment_years",
+     "blocks",
+     "dataset",
+     "district",
+     "district_total",
+     "generated_at",
+     "notes",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope",
+     "source",
+     "source_url",
+     "state",
+     "unit_note",
+     "years"
+    ]
+   },
+   "consumers": [
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_jaipur_facts.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-rajasthan"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/gwr-blocks-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -69015,6 +69154,47 @@
    "flags": []
   },
   {
+   "path": "public/data/imd-rainfall-monthly-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "imd-rainfall-monthly",
+   "bytes": 32358,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "annual_totals",
+     "dataset",
+     "generated_at",
+     "grid_point",
+     "monthly",
+     "normal_period",
+     "normals",
+     "note",
+     "nvdm",
+     "provenance",
+     "scope",
+     "source",
+     "year_range"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "neer-vazhvu-api/scripts/generate_imd_rainfall.py"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rainfall-jaipur"
+   ],
+   "licenses": [
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/imd-rainfall-monthly-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -69633,6 +69813,186 @@
    ],
    "licenses": [
     "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/jaipur-cgwb-stations.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "cgwb-stations",
+   "bytes": 198510,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "aquifer",
+     "cadence_note",
+     "dataset",
+     "depth_unit",
+     "district",
+     "ext",
+     "nvdm",
+     "provenance",
+     "reading_kind",
+     "scope",
+     "series_label",
+     "source_label",
+     "source_url",
+     "unit_label",
+     "well_type",
+     "wells"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/app/api/groundwater/wards-interpolated/route.ts",
+    "src/lib/cities/types.ts",
+    "src/types/groundwater.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_cgwb_stations.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
+   ],
+   "headwaters_sources": [
+    "nwic-nwdp-groundwater-rajasthan"
+   ],
+   "licenses": [
+    "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/jaipur-dam-storage.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "dam-storage",
+   "bytes": 7208,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dams",
+     "dataset",
+     "nvdm",
+     "provenance",
+     "report_date",
+     "report_title",
+     "report_url",
+     "scope",
+     "storage_note"
+    ]
+   },
+   "consumers": [],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_jaipur_facts.py",
+    "neer-vazhvu-api/scripts/scrape_rajasthan_wrd_dams.py",
+    "scripts/release_corpus.py"
+   ],
+   "headwaters_sources": [
+    "rajasthan-wrd-dam-storage"
+   ],
+   "licenses": [
+    "Government of Rajasthan publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/jaipur-supply-overview.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "supply-overview",
+   "bytes": 6507,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_sources",
+     "_supply_total_note",
+     "_view_overrides",
+     "allocation_context",
+     "current_supply_mix_mld",
+     "current_supply_total_mld",
+     "dataset",
+     "distribution",
+     "groundwater",
+     "hero_copy",
+     "nvdm",
+     "provenance",
+     "scope",
+     "supply_chain",
+     "tankers"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/city-dashboard.tsx",
+    "src/cities/gurugram/config.ts",
+    "src/cities/jaipur/config.ts",
+    "src/components/dashboard/cauvery-pumping-hero.tsx",
+    "src/components/dashboard/urban-supply-overview.tsx",
+    "src/lib/cities/types.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_jaipur_facts.py",
+    "neer-vazhvu-api/scripts/build_jaipur_supply.py"
+   ],
+   "headwaters_sources": [
+    "jica-bisalpur-evaluation",
+    "phed-rajasthan-progress-reports",
+    "wrd-rajasthan-drip2-esia-2020"
+   ],
+   "licenses": [
+    "Government of Rajasthan publication, cited with attribution",
+    "JICA (Government of Japan) public project document, cited with attribution",
+    "World Bank project documents, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/jaipur-ward-profiles.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "ward-profiles",
+   "bytes": 34779,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "dataset",
+     "nvdm",
+     "provenance",
+     "scope",
+     "wards"
+    ]
+   },
+   "consumers": [
+    "src/cities/gurugram/config.ts",
+    "src/cities/hyderabad/config.ts",
+    "src/cities/jaipur/my-ward.ts",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/cities/types.ts",
+    "src/lib/utils/ward-uplift.test.ts",
+    "src/lib/ward-rankings/load-rankings.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_jaipur_facts.py",
+    "neer-vazhvu-api/scripts/build_jaipur_ward_table.py",
+    "neer-vazhvu-api/scripts/build_ward_profiles.py",
+    "scripts/compute-ward-profiles.ts",
+    "scripts/fetch-localities-osm.ts",
+    "scripts/generate-narratives.ts"
+   ],
+   "headwaters_sources": [
+    "jmc-jaipur-directory",
+    "lsg-rajasthan-ward-gazette-2025"
+   ],
+   "licenses": [
+    "Government of Rajasthan gazette, cited with attribution",
+    "Nagar Nigam Jaipur municipal publication, cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -70916,6 +71276,51 @@
    "flags": []
   },
   {
+   "path": "public/data/rainfall-recent-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "rainfall-recent",
+   "bytes": 19135,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "attribution",
+     "daily",
+     "dataset",
+     "generated_at",
+     "imd_covers_through",
+     "monthly",
+     "nvdm",
+     "provenance",
+     "provisional_note",
+     "scope",
+     "source",
+     "through",
+     "url"
+    ]
+   },
+   "consumers": [
+    "src/components/dashboard/rainfall-trends.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/fetch_recent_rainfall.py",
+    "scripts/check-data-freshness.ts"
+   ],
+   "headwaters_sources": [
+    "imd-gridded-rain",
+    "imd-gridded-rainfall-jaipur",
+    "open-meteo-archive"
+   ],
+   "licenses": [
+    "CC BY 4.0",
+    "GoI publication, cited with attribution",
+    "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/rainfall-recent-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -71611,6 +72016,46 @@
    "licenses": [],
    "accountability": "allowlisted",
    "accountability_reason": "curated compilation (HYDRAA, HMDA, MRDCL, dated press); per-record citations; no watchable listing",
+   "flags": []
+  },
+  {
+   "path": "public/data/restoration-projects-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "restoration-projects",
+   "bytes": 17509,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "compiled_at",
+     "court_orders",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "projects",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx",
+    "src/components/rivers/river-panel.tsx",
+    "src/lib/data/restoration-projects.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
+   "headwaters_sources": [
+    "jaipur-court-docket",
+    "jda-dravyavati"
+   ],
+   "licenses": [
+    "Government of Rajasthan publication, cited with attribution",
+    "Rajasthan High Court judicial record (Government of India judiciary), cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
    "flags": []
   },
   {
@@ -86393,6 +86838,52 @@
    "flags": []
   },
   {
+   "path": "public/data/river-quality-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "river-quality",
+   "bytes": 18336,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "_excluded",
+     "_headline",
+     "data_year_range",
+     "dataset",
+     "last_updated",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "rivers",
+     "scope",
+     "source",
+     "source_label",
+     "source_url"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/jaipur/rivers.ts",
+    "src/components/rivers/treatment-discharge-panel.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_jaipur_facts.py",
+    "neer-vazhvu-api/scripts/build_jaipur_river_quality.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "cpcb-nwmp-annual",
+    "cpcb-prs-report"
+   ],
+   "licenses": [
+    "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
    "path": "public/data/river-quality-kolkata.json",
    "family": "data-root",
    "scope": "kolkata",
@@ -87514,6 +88005,46 @@
    ],
    "licenses": [
     "Telangana government publication, cited with attribution"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/data/water-bodies-flagship-jaipur.json",
+   "family": "data-root",
+   "scope": "jaipur",
+   "dataset": "water-bodies-flagship",
+   "bytes": 13211,
+   "schema": {
+    "kind": "object",
+    "keys": [
+     "bodies",
+     "compiled_at",
+     "context",
+     "dataset",
+     "note",
+     "nvdm",
+     "place_id",
+     "provenance",
+     "scope"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/lake-restoration/page.tsx"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_curated.py"
+   ],
+   "headwaters_sources": [
+    "jaipur-court-docket",
+    "mojs-water-bodies-census-2023",
+    "rajasthan-wrd-dam-storage"
+   ],
+   "licenses": [
+    "Government of India publication, cited with attribution",
+    "Government of Rajasthan publication, cited with attribution",
+    "Rajasthan High Court judicial record (Government of India judiciary), cited with attribution"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -90577,6 +91108,142 @@
    ],
    "licenses": [
     "open (per OpenCity dataset page); underlying layers are GHMC's"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/jaipur-gwr-blocks.geojson",
+   "family": "geojson-layers",
+   "scope": "jaipur",
+   "dataset": "gwr-blocks",
+   "bytes": 673371,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 16,
+    "geometries": [
+     "MultiPolygon"
+    ],
+    "property_keys": [
+     "agwd_tot",
+     "block",
+     "class",
+     "editions",
+     "ext_id",
+     "na_gwa",
+     "sgw_dev_pe"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/groundwater/chennai-groundwater-client.tsx",
+    "src/app/[cityId]/groundwater/groundwater-client.tsx",
+    "src/lib/groundwater/districts-as-blocks.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_gurugram_gwr_geojson.py",
+    "neer-vazhvu-api/scripts/build_ingres_gwr.py",
+    "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py"
+   ],
+   "headwaters_sources": [
+    "ingres-groundwater-rajasthan"
+   ],
+   "licenses": [
+    "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/jaipur-rivers.geojson",
+   "family": "geojson-layers",
+   "scope": "jaipur",
+   "dataset": "rivers",
+   "bytes": 177218,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 4,
+    "geometries": [
+     "LineString",
+     "MultiLineString"
+    ],
+    "property_keys": [
+     "length_km",
+     "name",
+     "name_hi",
+     "osm_ids",
+     "river_id",
+     "waterway"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/rivers/rivers-client.tsx",
+    "src/cities/jaipur/rivers.ts",
+    "src/components/basin/basin-overview.tsx",
+    "src/components/flood-risk/flood-risk-map.tsx",
+    "src/lib/cities/data-paths.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/app/cascade/enrich_names.py",
+    "neer-vazhvu-api/scripts/build_jaipur_river_quality.py",
+    "neer-vazhvu-api/scripts/build_nagpur_geography.py",
+    "scripts/build-mumbai-rivers.py",
+    "scripts/build_basin_gpkg_layers.py",
+    "scripts/build_kabini_sources.py",
+    "scripts/fetch-osm-layers.ts",
+    "scripts/lib/tn_district_basin.py",
+    "scripts/nvdm_envelope_cauvery_snapshot.py",
+    "scripts/nvdm_envelope_kabini.py",
+    "scripts/nvdm_envelope_mumbai_rivers.py",
+    "scripts/snap-river-stations.py"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
+   ],
+   "accountability": "watched",
+   "accountability_reason": null,
+   "flags": []
+  },
+  {
+   "path": "public/geojson/jaipur-water-bodies-current.geojson",
+   "family": "geojson-layers",
+   "scope": "jaipur",
+   "dataset": "water-bodies-current",
+   "bytes": 183504,
+   "schema": {
+    "kind": "FeatureCollection",
+    "features": 36,
+    "geometries": [
+     "Polygon"
+    ],
+    "property_keys": [
+     "area_ha",
+     "name",
+     "name_hi",
+     "osm_id",
+     "osm_type",
+     "water_type"
+    ]
+   },
+   "consumers": [
+    "src/app/[cityId]/water-bodies/page.tsx",
+    "src/lib/cities/data-paths.ts",
+    "src/lib/sightings/locate-server.ts"
+   ],
+   "producer_refs": [
+    "neer-vazhvu-api/scripts/build_nagpur_geography.py",
+    "scripts/convert-bangalore-water-bodies-census-kml.py",
+    "scripts/fetch-osm-layers.ts"
+   ],
+   "headwaters_sources": [
+    "osm-overpass"
+   ],
+   "licenses": [
+    "ODbL 1.0"
    ],
    "accountability": "watched",
    "accountability_reason": null,
@@ -98338,12 +99005,13 @@
   {
    "family": "data-root",
    "dataset": "cgwb-stations",
-   "files": 10,
+   "files": 11,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -98351,7 +99019,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 5020852,
+   "bytes": 5219362,
    "schema_variants": 9,
    "registered": true,
    "has_consumer": true
@@ -98359,13 +99027,14 @@
   {
    "family": "data-root",
    "dataset": "commitments",
-   "files": 11,
+   "files": 12,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -98373,7 +99042,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 374610,
+   "bytes": 422959,
    "schema_variants": 2,
    "registered": true,
    "has_consumer": true
@@ -98393,15 +99062,16 @@
   {
    "family": "data-root",
    "dataset": "dam-storage",
-   "files": 4,
+   "files": 5,
    "scopes": [
     "ahmedabad",
+    "jaipur",
     "nagpur",
     "pune",
     "visakhapatnam"
    ],
-   "bytes": 47596,
-   "schema_variants": 3,
+   "bytes": 54804,
+   "schema_variants": 4,
    "registered": true,
    "has_consumer": true
   },
@@ -98462,12 +99132,13 @@
   {
    "family": "data-root",
    "dataset": "facts",
-   "files": 11,
+   "files": 12,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -98476,7 +99147,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 283076,
+   "bytes": 299934,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -98562,7 +99233,7 @@
   {
    "family": "data-root",
    "dataset": "gwr-blocks",
-   "files": 12,
+   "files": 13,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -98570,6 +99241,7 @@
     "delhi",
     "gurugram",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "nagpur",
@@ -98577,8 +99249,8 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 337033,
-   "schema_variants": 9,
+   "bytes": 380246,
+   "schema_variants": 10,
    "registered": true,
    "has_consumer": true
   },
@@ -98597,7 +99269,7 @@
   {
    "family": "data-root",
    "dataset": "imd-rainfall-monthly",
-   "files": 13,
+   "files": 14,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -98605,6 +99277,7 @@
     "delhi",
     "gurugram",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -98613,7 +99286,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 612999,
+   "bytes": 645357,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -98729,7 +99402,7 @@
   {
    "family": "data-root",
    "dataset": "rainfall-recent",
-   "files": 13,
+   "files": 14,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -98737,6 +99410,7 @@
     "delhi",
     "gurugram",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -98745,7 +99419,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 248139,
+   "bytes": 267274,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -98782,19 +99456,20 @@
   {
    "family": "data-root",
    "dataset": "restoration-projects",
-   "files": 9,
+   "files": 10,
    "scopes": [
     "ahmedabad",
     "chennai",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
     "nagpur",
     "visakhapatnam"
    ],
-   "bytes": 96888,
+   "bytes": 114397,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -98817,13 +99492,14 @@
   {
    "family": "data-root",
    "dataset": "river-quality",
-   "files": 12,
+   "files": 13,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -98832,7 +99508,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 1852062,
+   "bytes": 1870398,
    "schema_variants": 11,
    "registered": true,
    "has_consumer": true
@@ -98864,13 +99540,14 @@
   {
    "family": "data-root",
    "dataset": "supply-overview",
-   "files": 11,
+   "files": 12,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
     "gurugram",
+    "jaipur",
     "madurai",
     "mumbai",
     "nagpur",
@@ -98878,8 +99555,8 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 172954,
-   "schema_variants": 11,
+   "bytes": 179461,
+   "schema_variants": 12,
    "registered": true,
    "has_consumer": true
   },
@@ -98959,16 +99636,17 @@
   {
    "family": "data-root",
    "dataset": "ward-profiles",
-   "files": 6,
+   "files": 7,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
+    "jaipur",
     "madurai",
     "nagpur"
    ],
-   "bytes": 1922620,
+   "bytes": 1957399,
    "schema_variants": 1,
    "registered": true,
    "has_consumer": true
@@ -99016,18 +99694,19 @@
   {
    "family": "data-root",
    "dataset": "water-bodies-flagship",
-   "files": 8,
+   "files": 9,
    "scopes": [
     "ahmedabad",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
     "nagpur",
     "visakhapatnam"
    ],
-   "bytes": 112111,
+   "bytes": 125322,
    "schema_variants": 3,
    "registered": true,
    "has_consumer": true
@@ -99262,7 +99941,7 @@
   {
    "family": "geojson-layers",
    "dataset": "gwr-blocks",
-   "files": 10,
+   "files": 11,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -99270,12 +99949,13 @@
     "delhi",
     "gurugram",
     "hyderabad",
+    "jaipur",
     "madurai",
     "nagpur",
     "pune",
     "visakhapatnam"
    ],
-   "bytes": 10991568,
+   "bytes": 11664939,
    "schema_variants": 4,
    "registered": true,
    "has_consumer": true
@@ -99340,13 +100020,14 @@
   {
    "family": "geojson-layers",
    "dataset": "rivers",
-   "files": 12,
+   "files": 13,
    "scopes": [
     "ahmedabad",
     "bangalore",
     "chennai",
     "delhi",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -99355,7 +100036,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 3583291,
+   "bytes": 3760509,
    "schema_variants": 10,
    "registered": true,
    "has_consumer": true
@@ -99552,7 +100233,7 @@
   {
    "family": "geojson-layers",
    "dataset": "water-bodies-current",
-   "files": 13,
+   "files": 14,
    "scopes": [
     "ahmedabad",
     "bangalore",
@@ -99560,6 +100241,7 @@
     "delhi",
     "gurugram",
     "hyderabad",
+    "jaipur",
     "kolkata",
     "madurai",
     "mumbai",
@@ -99568,7 +100250,7 @@
     "surat",
     "visakhapatnam"
    ],
-   "bytes": 40815193,
+   "bytes": 40998697,
    "schema_variants": 12,
    "registered": true,
    "has_consumer": true
