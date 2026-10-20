@@ -69,6 +69,8 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
       </div>
 
       <div className="flex flex-wrap items-center gap-2 print:hidden">
+        {/* Report Card, Compare and Export score the joined layers; a ward table has none. */}
+        {profile.water_bodies != null && (<>
         {/* Report Card */}
         <Link
           href={`${cityPrefix}/my-ward/report?ward=${wardNumber}`}
@@ -90,6 +92,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
           </svg>
           {t("compare.button")}
         </Link>
+        </>)}
 
         {/* Share */}
         <ShareMenu
@@ -100,6 +103,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
         />
 
         {/* Export CSV */}
+        {profile.water_bodies != null && (
         <button
           onClick={handleExport}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
@@ -109,6 +113,7 @@ export function WardHeader({ wardNumber, zoneName, profile, groundwater, represe
           </svg>
           {t("my_ward.export_csv")}
         </button>
+        )}
 
         {/* Print */}
         <button

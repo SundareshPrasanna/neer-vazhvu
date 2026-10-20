@@ -18,6 +18,15 @@ import { WardNarrative } from "@/components/insights/ward-narrative";
 import { NewsContext } from "@/components/insights/news-context";
 import { MyWardCityProvider } from "./city-context";
 import { PlaceReports } from "@/components/sightings/place-reports";
+import { tryGetPlaceConfig } from "@/lib/cities";
+import { wardSources } from "@/content/my-ward/sources";
+
+const CITY_VIEWS = [
+  ["groundwater", "nav.groundwater"],
+  ["water-bodies", "nav.water_bodies"],
+  ["rivers", "nav.rivers"],
+  ["flood-risk", "nav.flood_risk"],
+] as const;
 
 interface MyWardPageProps {
   /** City id of the /[cityId]/my-ward route. */
@@ -92,49 +101,64 @@ export function MyWardPage({ cityId }: MyWardPageProps) {
               under their ward number. */}
           <WardNarrative wardNumber={wardNumber} />
 
-          {/* Fallback for a profile with no per-ward analytical joins (no city ships one today): say so and link to the city-level views. */}
-          {profile.water_bodies == null && (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 p-5 space-y-3">
-              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                Ward-level analytical layers are not yet compiled for this city
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                The profile above is administrative only (corporation,
-                zone, population, voter range, centroid, area).
-                Per-ward water-bodies, flood, drainage, sewerage,
-                groundwater-depth, and river-quality joins are produced
-                by a build-time spatial join that has not been run on
-                this ward layer yet. Tracked as an open gap at{" "}
-                <Link
-                  href={`${cityPrefix}/about`}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  /bangalore/about
-                </Link>
-                .
-              </p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                In the meantime, the city-level surfaces carry the
-                analytical content with sharper data:{" "}
-                <Link href={`${cityPrefix}/groundwater`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/groundwater
-                </Link>{" "}
-                (IISc 80-ward stress overlay, IN-GRES 2025-26 blocks),{" "}
-                <Link href={`${cityPrefix}/water-bodies`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/water-bodies
-                </Link>{" "}
-                (13 flagship deep-zoom lakes),{" "}
-                <Link href={`${cityPrefix}/tanker`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/tanker
-                </Link>{" "}
-                (OpenCity longitudinal survey), and{" "}
-                <Link href={`${cityPrefix}/flood-risk`} className="text-blue-600 dark:text-blue-400 hover:underline">
-                  /bangalore/flood-risk
-                </Link>{" "}
-                (KSNDMC + BBMP Sep 2022 hotspots).
-              </p>
-            </div>
-          )}
+          {/* Ward table, for a profile with no per-ward joins (a city without
+              ward geometry): what is published per ward, then this city's own
+              city-wide views. Never another city's routes or facts. */}
+          {profile.water_bodies == null && (() => {
+            const place = tryGetPlaceConfig(cityId);
+            const views = CITY_VIEWS.filter(([r]) => place?.routes.includes(r));
+            const office = profile.zone_office;
+            const tableSource = wardSources(cityId).table;
+            return (
+              <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 p-5 space-y-3">
+                <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
+                  {profile.assembly_constituency && (
+                    <>
+                      <dt className="text-slate-500 dark:text-slate-400">Assembly seat</dt>
+                      <dd className="text-slate-800 dark:text-slate-200">{profile.assembly_constituency}</dd>
+                    </>
+                  )}
+                  {profile.population != null && (
+                    <>
+                      <dt className="text-slate-500 dark:text-slate-400">Population</dt>
+                      <dd className="text-slate-800 dark:text-slate-200">{profile.population.toLocaleString("en-IN")}</dd>
+                    </>
+                  )}
+                  {office && (office.phones?.length || office.email) && (
+                    <>
+                      <dt className="text-slate-500 dark:text-slate-400">Zone office</dt>
+                      <dd className="text-slate-800 dark:text-slate-200 flex flex-wrap gap-x-3">
+                        {office.phones?.map((ph) => (
+                          <a key={ph} href={`tel:${ph.replace(/\D/g, "")}`} className="text-blue-600 dark:text-blue-400 hover:underline">{ph}</a>
+                        ))}
+                        {office.email && (
+                          <a href={`mailto:${office.email}`} className="text-blue-600 dark:text-blue-400 hover:underline break-all">{office.email}</a>
+                        )}
+                      </dd>
+                    </>
+                  )}
+                </dl>
+                {tableSource && <p className="text-[10px] text-slate-400 dark:text-slate-500">{t(tableSource)}</p>}
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  {place?.wardsVintage
+                    ? "Lakes, flooding, drains and groundwater have not been matched to these wards yet."
+                    : "Lakes, flooding, drains and groundwater cannot be shown ward by ward yet, because there is no digital map of the wards."}
+                  {views.length > 0 && (
+                    <>
+                      {" "}For the whole city:{" "}
+                      {views.map(([r, key], i) => (
+                        <span key={r}>
+                          {i > 0 && ", "}
+                          <Link href={`${cityPrefix}/${r}`} className="text-blue-600 dark:text-blue-400 hover:underline">{t(key)}</Link>
+                        </span>
+                      ))}
+                      .
+                    </>
+                  )}
+                </p>
+              </div>
+            );
+          })()}
 
           {/* Analytical section cards. Gated on `profile.water_bodies` as
               the sentinel: cities whose profile compute has joined the

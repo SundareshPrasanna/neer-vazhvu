@@ -75,7 +75,7 @@ export const METRICS: MetricDef[] = [
     extract: (p) => p.water_bodies.avg_restoration_score ?? 0,
     higherIsBetter: false,
     weight: 0.15,
-    applicable: (p) => p.water_bodies.avg_restoration_score != null,
+    applicable: (p) => p.water_bodies?.avg_restoration_score != null,
     tiebreaker: (p) => p.water_bodies.current_count,
   },
   {

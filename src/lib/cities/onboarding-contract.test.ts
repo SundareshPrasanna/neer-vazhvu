@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { scopeCountry, scopeIds, scopeKind } from "../scopes";
 import { CITY_IDS, tryGetPlaceConfig, type PlaceConfig } from "./index";
-import { riversVariant } from "./data-paths";
+import { riversVariant, wardProfilesFile } from "./data-paths";
 import { RIVERS_CONTENT } from "../../cities/generated/rivers";
 import { FLOOD_CONTENT } from "../../cities/generated/flood";
 import { listPublishedAtlasDistricts } from "../atlas/registry";
@@ -63,9 +63,13 @@ test("a flood-risk route has a renderer: the interactive variant, a flood map or
   }
 });
 
-test("a my-ward route has ward geometry", () => {
+// Without geometry (Jaipur: the 2025 ward map is a raster) the page is a ward table from the profiles file.
+test("a my-ward route has ward geometry or a ward table", () => {
   for (const p of places.filter((p) => p.routes.includes("my-ward"))) {
-    assert.ok(p.wardsVintage, `${p.cityId}: "my-ward" is in routes but wardsVintage is null`);
+    assert.ok(
+      p.wardsVintage || existsSync(join(process.cwd(), "public", "data", wardProfilesFile(p.cityId))),
+      `${p.cityId}: "my-ward" is in routes but it has neither ward geometry (wardsVintage) nor a ward-profiles file`,
+    );
   }
 });
 
