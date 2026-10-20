@@ -92,6 +92,8 @@ STATE_UUIDS = {
     "TAMILNADU": "e98cd5b7-6556-4c0f-a778-3429e1c14a6b",
     # From the COUNTRY-level call ("ANDHRA PRADESH" there; locname has no space).
     "ANDHRAPRADESH": "609c5df4-6414-4bbd-a22d-ff5fbdad6836",
+    # From the COUNTRY-level call; state calls with it return 33 districts.
+    "RAJASTHAN": "785cc6f0-e9d0-4961-9578-08ed2f24377a",
 }
 
 # Scope kinds must agree with schemas/nvdm/scopes.json or the artifact fails

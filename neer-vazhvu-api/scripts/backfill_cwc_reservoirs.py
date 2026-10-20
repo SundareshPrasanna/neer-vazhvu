@@ -113,12 +113,22 @@ DAMS_BY_CITY = {
         "khadakvasla": ("khadakwasla", 582.47),
         "panshet": ("panshet", 636.27),
     },
+    # Bisalpur (Banas, Tonk): FRL 315.50 m. From early 2025 the bulletin prints
+    # 352.810 (Rana Pratap Sagar's FRL) on Bisalpur's row beside its own level
+    # and 1.076 BCM (08.05.2025 p14), so the misprint is a second anchor.
+    "jaipur": {"bisalpur": ("bisalpur", (315.50, 352.81))},
 }
+
+# Cities whose daily rows give % on a different base from CWC's % of live
+# capacity: their CWC rows keep the volume and leave the percentage empty, so
+# the two bases never meet on one card. Jaipur's WRD report gives % of
+# designed gross capacity.
+PCT_ON_OTHER_BASE = {"jaipur"}
 
 # Set from --city in main(). Module-level because the row parser is a pure
 # function over it and threading a dict through every call site would be a
 # larger change than this backfill warrants.
-DAMS: dict[str, tuple[str, float]] = DAMS_BY_CITY["mumbai"]
+DAMS: dict[str, tuple[str, float | tuple[float, ...]]] = DAMS_BY_CITY["mumbai"]
 
 _NUM = r"\d+(?:\.\d+)?"
 # numeric signature: FRL, level, cap_frl_bcm, live_bcm, date, current_pct ...
@@ -252,7 +262,8 @@ def parse_pdf(pdf_path: str, hint: str | None):
             continue
         source_code, frl_anchor = DAMS[hit]
         frl = float(m.group("frl"))
-        if abs(frl - frl_anchor) > 1.0:
+        anchors = frl_anchor if isinstance(frl_anchor, tuple) else (frl_anchor,)
+        if min(abs(frl - a) for a in anchors) > 1.0:
             continue  # numeric signature matched some other table/dam
         cap = float(m.group("cap"))
         live = float(m.group("live"))
@@ -399,7 +410,9 @@ def main() -> int:
                 "source_code": r["source_code"],
                 "date": r["date"],
                 "storage_tmc": r["storage_tmc"],
-                "storage_pct_frl": r["storage_pct_frl"],
+                "storage_pct_frl": None
+                if args.city in PCT_ON_OTHER_BASE
+                else r["storage_pct_frl"],
                 "level_ft": None,
                 "inflow_cusecs": None,
                 "outflow_cusecs": None,
