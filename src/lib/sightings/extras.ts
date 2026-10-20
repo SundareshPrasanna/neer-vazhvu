@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { CLEANUPS_ON } from "./groups";
 import type { PublicExtras } from "./serialize";
 import type { SightingRow } from "./types";
 
@@ -21,9 +22,11 @@ export async function loadExtras(admin: SupabaseClient, rows: SightingRow[]): Pr
   const out = new Map<string, PublicExtras>();
   if (rows.length === 0) return out;
   const since = new Date(Date.now() - 3 * 3_600_000).toISOString();
-  const fixits = await batched<Fixit>(rows.map((r) => r.id), (b) =>
-    admin.from("sighting_fixits").select("id, sighting_id, group_id, starts_at, meeting_point, note").in("sighting_id", b).eq("status", "planned").gte("starts_at", since).order("starts_at"),
-  );
+  const fixits = CLEANUPS_ON
+    ? await batched<Fixit>(rows.map((r) => r.id), (b) =>
+        admin.from("sighting_fixits").select("id, sighting_id, group_id, starts_at, meeting_point, note").in("sighting_id", b).eq("status", "planned").gte("starts_at", since).order("starts_at"),
+      )
+    : [];
   const groupIds = [...new Set([...rows.map((r) => r.group_id), ...fixits.map((f) => f.group_id)].filter((g): g is string => !!g))];
   const groups = await batched<{ id: string; name: string; status: string }>(groupIds, (b) => admin.from("sighting_groups").select("id, name, status").in("id", b));
   const named = new Map(groups.filter((g) => g.status === "approved").map((g) => [g.id, g.name]));

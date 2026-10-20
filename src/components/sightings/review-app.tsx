@@ -7,6 +7,7 @@ import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, day } from "./report-card";
 import { appSection, appTitle, btn, enter, field, muted, rule } from "./ui";
 import { useCitizen } from "./use-citizen";
+import { CLEANUPS_ON } from "@/lib/sightings/groups";
 import { OTHER_KEY, REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 import type { OwnReport } from "@/lib/sightings/types";
 
@@ -289,8 +290,8 @@ function PendingGroups({ authFetch, tick }: { authFetch: ReturnType<typeof useCi
         Groups waiting for review
       </h2>
       <p className={`mt-2 max-w-[75ch] text-sm ${muted}`}>
-        An approved group&rsquo;s name shows on reports its members send with it, and its hosts can plan clean-ups. Reject a name that
-        names a person, misleads, or is not a real group.
+        {`An approved group’s name shows on reports its members send with it${CLEANUPS_ON ? ", and its hosts can plan clean-ups" : ""}.`} Reject
+        a name that names a person, misleads, or is not a real group.
       </p>
       {error && (
         <p role="alert" className="mt-6 text-sm font-medium text-red-700 dark:text-red-400">

@@ -2,8 +2,12 @@ import { strict as assert } from "node:assert";
 import { randomBytes } from "node:crypto";
 import { test } from "node:test";
 
+import { LIMITS } from "./limits";
+
 import {
   FIXIT_LABELS,
+  GROUP_DAILY_MESSAGE,
+  GROUP_LIMITS,
   JOIN_CODE_RE,
   academicYearStart,
   canHost,
@@ -300,4 +304,9 @@ test("an empty pack still has every status, at zero", () => {
   assert.equal(pack.totals.byStatus.length, 5);
   assert.ok(pack.totals.byStatus.every((s) => s.count === 0));
   assert.deepEqual([pack.reports, pack.cleanups, pack.totals.byType], [[], [], []]);
+});
+
+test("one group's daily cap leaves most of the new-account allowance to everyone else", () => {
+  assert.ok(GROUP_LIMITS.reportsDaily * 4 <= LIMITS.newSiteDaily);
+  assert.match(GROUP_DAILY_MESSAGE, new RegExp(`${GROUP_LIMITS.reportsDaily} reports`));
 });

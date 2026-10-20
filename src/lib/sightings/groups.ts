@@ -42,7 +42,26 @@ export const GROUP_LIMITS = {
   aheadDays: 60,
   /** Upcoming clean-ups one group may have planned at once. */
   plannedPerGroup: 10,
+  /**
+   * Reports one group may send in a rolling day, so one college drive cannot use up the site-wide allowance for new
+   * accounts (LIMITS.newSiteDaily). Checked before sending, outside create_sighting's lock: parallel sends can pass it by a few.
+   */
+  reportsDaily: 100,
 } as const;
+
+export const GROUP_DAILY_MESSAGE = `Your group has sent ${GROUP_LIMITS.reportsDaily} reports in the last day, the most one group can send. Please send the rest tomorrow.`;
+
+/** Clean-ups stay off until a partner organisation runs the first one: they are the one feature with physical risk. */
+export const CLEANUPS_ON = process.env.NEXT_PUBLIC_CITIZEN_CLEANUPS === "on";
+
+/** Reports sent with a group in the last day, leaving out `except`: the count GROUP_LIMITS.reportsDaily caps. */
+export async function groupSentToday(admin: SupabaseClient, groupId: string, except?: string): Promise<number> {
+  let q = admin.from("sightings").select("id", { count: "exact", head: true }).eq("group_id", groupId).gte("created_at", new Date(Date.now() - 86_400_000).toISOString());
+  if (except) q = q.neq("id", except);
+  const { count, error } = await q;
+  if (error) throw error;
+  return count ?? 0;
+}
 
 /** How long a clean-up is taken to last; after this it is over (extras.ts stops showing it as next). */
 export const FIXIT_HOURS = 3;

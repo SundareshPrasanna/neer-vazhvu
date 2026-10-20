@@ -32,6 +32,7 @@ Developer reference for the module behind `/for-citizens`. Code name in paths an
 | Variable | Read in | Secret | Purpose |
 |---|---|---|---|
 | `NEXT_PUBLIC_CITIZEN_REPORTS` | header, both pages, `place-reports.tsx`, `auth.ts` | no | `on` turns the module on |
+| `NEXT_PUBLIC_CITIZEN_CLEANUPS` | `groups.ts` `CLEANUPS_ON` | no | `on` opens clean-ups. Off by default until a partner organisation runs the first one: the fixits route answers 404, no clean-up is offered, mentioned, queried or reminded, and groups, the evidence pack and the guide speak of reports only |
 | `NEXT_PUBLIC_SUPABASE_URL` | `auth.ts`, `photos.ts` (`publicPhotoUrl`), `use-citizen.ts` | no | Supabase project URL. Must be the host listed in the CSP |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `use-citizen.ts` | no (public by design) | Browser sign-in only. Without it the page shows "Reporting is unavailable right now." |
 | `SUPABASE_SERVICE_ROLE_KEY` | `auth.ts` `adminClient()` (the only reader under `src/`) | yes | Every table, RPC and storage call, plus `auth.getUser` and `auth.admin.deleteUser` |
@@ -222,7 +223,7 @@ Reasons to come back without turning reports into a feed: no likes, comments, na
 
 **Evidence pack** (`/api/sightings/groups/pack`, `group-pack.tsx`, "Evidence pack" on each approved group in the Groups tab): the group's own record, for a college's NSS or NAAC file or a residents' association's letter. Any member opens it for a period (Last 30 days, Last 3 months, Since 1 June, All time = the last 2 years, or other dates; India dates, at most 2 years). It counts approved community reports sent with the group and published (`reviewed_at`) in the period, and the group's clean-ups marked done that started in it. Totals: reports, places, status now, types, members who sent one, members now, clean-ups done, people who said they would come, seen too and thanks. Lists: reports and clean-ups with India dates, labels, photos (reported and fixed) and public links. Counts only: no names, tags, exact points, notes or times. It prints black on white (only the pack) and downloads as CSV (formula-safe). The footer says reports were checked before publishing and that we hold no names, so an institution adds its own list of participants.
 
-**Clean-ups** (`/api/sightings/fixits`, `fixit-actions.tsx`, table `sighting_fixits` and `sighting_fixit_rsvps`):
+**Clean-ups** (`/api/sightings/fixits`, `fixit-actions.tsx`, table `sighting_fixits` and `sighting_fixit_rsvps`). Off unless `NEXT_PUBLIC_CITIZEN_CLEANUPS=on` (section 2):
 
 - Only a host of an approved group, only on an approved community report of a `FIXIT_TYPES` type (litter, floating trash, plastic, ritual waste) whose status is open (`OPEN_STATUSES`). Never sewage, drains, hazardous, medical or burning waste, dead animals or debris: unsafe for volunteers, and manual scavenging is illegal.
 - Start 2 hours to 60 days ahead, entered and shown in India time. One active clean-up per report (one that started over 3 hours ago no longer counts; two hosts at once, the earlier stands); 10 upcoming per group. The planner is counted as coming.
@@ -493,6 +494,7 @@ Other limits:
 | Authority body, reference | 160, 80 characters | `validate.ts` truncates | none |
 | Status updates per report per reporter | 5 per day; the `submitted` event counts | events route | 429, the `daily_cap` text |
 | Fixed photos per report | 3 | events route | 429 "This report already has its fixed photos." |
+| Reports sent with one group | 100 per rolling day (`GROUP_LIMITS.reportsDaily`), a fifth of the new-account allowance, so one college drive cannot pause new accounts site-wide | submit route before `create_sighting`; `[id]/group` when adding a report sent that day | 429 "Your group has sent 100 reports in the last day, the most one group can send. Please send the rest tomorrow." Checked outside the intake lock, so parallel sends can pass it by a few |
 | Suspended account updating status | | events route | 403, the `suspended` text |
 | Place search | signed in; query 3 to 120 characters; 5 results, India only; one Nominatim request a second per server instance, queued; 8 s timeout | search route | under 3 characters: empty list; Nominatim failure: 502 "Search is not working right now. Tap the map instead." |
 

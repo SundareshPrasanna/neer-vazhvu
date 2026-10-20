@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reporterKey, requireUser } from "@/lib/sightings/auth";
-import { tagProblem, type GroupStatus, type TagTarget } from "@/lib/sightings/groups";
+import { GROUP_DAILY_MESSAGE, GROUP_LIMITS, groupSentToday, tagProblem, type GroupStatus, type TagTarget } from "@/lib/sightings/groups";
 
 export const runtime = "nodejs";
 
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   try {
     const admin = adminClient();
     const key = reporterKey(user.id);
-    const { data: row, error } = await admin.from("sightings").select("reporter_key, category, review_status").eq("id", id).maybeSingle();
+    const { data: row, error } = await admin.from("sightings").select("reporter_key, category, review_status, created_at").eq("id", id).maybeSingle();
     if (error) throw error;
     if (!row) return fail("Not found", 404);
     let group: { status: GroupStatus; name: string } | null = null;
@@ -41,6 +41,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
     const problem = tagProblem(row as TagTarget, key, groupId ? group : "clear");
     if (problem) return fail(problem.error, problem.status);
+    // Adding a report sent today counts towards the group's daily cap, as sending it with the group would have.
+    const today = Date.now() - Date.parse(row.created_at as string) < 86_400_000;
+    if (groupId && today && (await groupSentToday(admin, groupId, id)) >= GROUP_LIMITS.reportsDaily) return fail(GROUP_DAILY_MESSAGE, 429);
     const up = await admin.from("sightings").update({ group_id: groupId }).eq("id", id).eq("reporter_key", key);
     if (up.error) throw up.error;
     return NextResponse.json({ data: { groupName: group?.name ?? null } }, { headers: PRIVATE });

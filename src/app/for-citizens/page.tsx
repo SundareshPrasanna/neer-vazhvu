@@ -11,7 +11,7 @@ import { listBasins } from "@/lib/basins";
 import { listEnabledPlaces } from "@/lib/cities";
 import { logRouteError } from "@/lib/api-error";
 import { adminClient, reportsEnabled } from "@/lib/sightings/auth";
-import { FIXIT_LABELS, SAFETY_LINE, loadPublicGroups, type PublicGroup } from "@/lib/sightings/groups";
+import { CLEANUPS_ON, FIXIT_LABELS, SAFETY_LINE, loadPublicGroups, type PublicGroup } from "@/lib/sightings/groups";
 import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 
@@ -121,7 +121,7 @@ const GUIDE: [string, React.ReactNode][] = [
     </p>,
   ],
   [
-    "Groups and clean-ups",
+    CLEANUPS_ON ? "Groups and clean-ups" : "Groups",
     <>
       <p>
         Colleges, schools, residents&rsquo; associations, lake groups and NGOs can take part together. Once signed in, open Groups to start
@@ -131,17 +131,21 @@ const GUIDE: [string, React.ReactNode][] = [
         A report sent with a group shows the group&rsquo;s name, never the sender&rsquo;s, and counts towards what the group has done. Members
         are never listed.
       </p>
-      <p>A checked group&rsquo;s hosts can plan a clean-up at a reported spot, and anyone signed in can say they will come. Clean-ups are only for:</p>
-      <ul className="list-disc space-y-1 pl-5">
-        {FIXIT_LABELS.map((l) => (
-          <li key={l}>{l}</li>
-        ))}
-      </ul>
-      <p>
-        Never sewage, drains, debris, burning, hazardous or medical waste, or dead animals: those need the department&rsquo;s trained staff and
-        equipment, and clearing sewage by hand is against the law. A clean-up adds hands to the department&rsquo;s work; the report stays open
-        until it is fixed. {SAFETY_LINE}
-      </p>
+      {CLEANUPS_ON && (
+        <>
+          <p>A checked group&rsquo;s hosts can plan a clean-up at a reported spot, and anyone signed in can say they will come. Clean-ups are only for:</p>
+          <ul className="list-disc space-y-1 pl-5">
+            {FIXIT_LABELS.map((l) => (
+              <li key={l}>{l}</li>
+            ))}
+          </ul>
+          <p>
+            Never sewage, drains, debris, burning, hazardous or medical waste, or dead animals: those need the department&rsquo;s trained staff and
+            equipment, and clearing sewage by hand is against the law. A clean-up adds hands to the department&rsquo;s work; the report stays open
+            until it is fixed. {SAFETY_LINE}
+          </p>
+        </>
+      )}
     </>,
   ],
   [
@@ -290,7 +294,7 @@ export default async function ForCitizensPage() {
         <Section
           id="groups"
           title="Groups taking part"
-          intro="Colleges, schools, residents' associations, lake groups and NGOs that report together and hold clean-ups. Each group is checked before its name appears."
+          intro={`Colleges, schools, residents' associations, lake groups and NGOs that report together${CLEANUPS_ON ? " and hold clean-ups" : ""}. Each group is checked before its name appears.`}
         >
           {groups.length ? (
             <div>
@@ -302,7 +306,7 @@ export default async function ForCitizensPage() {
                       <p className={`text-sm ${muted}`}>{[g.kindLabel, g.placeName].filter(Boolean).join(", ")}</p>
                     </div>
                     <p className={`text-sm tabular-nums ${muted}`}>
-                      {plural(g.reports, "report", "reports")}, {g.fixed} fixed, {plural(g.cleanups, "clean-up", "clean-ups")}
+                      {[plural(g.reports, "report", "reports"), `${g.fixed} fixed`, CLEANUPS_ON && plural(g.cleanups, "clean-up", "clean-ups")].filter(Boolean).join(", ")}
                     </p>
                   </li>
                 ))}

@@ -3,7 +3,7 @@ import { NextResponse, after, type NextRequest } from "next/server";
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reporterKey, requireUser } from "@/lib/sightings/auth";
 import { notifyFollowers } from "@/lib/sightings/follows";
-import { FIXIT_HOURS, GROUP_LIMITS, canHost, cleanText, fixitAllowed, fixitDay, fixitWhen, isFixitOver, startsAtProblem, type GroupRole, type GroupStatus } from "@/lib/sightings/groups";
+import { CLEANUPS_ON, FIXIT_HOURS, GROUP_LIMITS, canHost, cleanText, fixitAllowed, fixitDay, fixitWhen, isFixitOver, startsAtProblem, type GroupRole, type GroupStatus } from "@/lib/sightings/groups";
 import { CAP_MESSAGES } from "@/lib/sightings/limits";
 import { notifyReporter } from "@/lib/sightings/notify";
 import { placeUrl } from "@/lib/sightings/place-url";
@@ -64,6 +64,7 @@ interface Input {
  * `cancel` / `done`: the group's hosts.
  */
 export async function POST(request: NextRequest) {
+  if (!CLEANUPS_ON) return fail("Clean-ups are not open yet.", 404);
   const user = await requireUser(request);
   if (user instanceof NextResponse) return user;
   const input = (await request.json().catch(() => null)) as Input | null;

@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { ArrowLeft, Download, ImageIcon, Printer, RotateCw } from "lucide-react";
 
-import { PACK_PRESETS, istDate, packDate, presetPeriod, type GroupPack as Pack, type MyGroup, type PackPreset } from "@/lib/sightings/groups";
+import { CLEANUPS_ON, PACK_PRESETS, istDate, packDate, presetPeriod, type GroupPack as Pack, type MyGroup, type PackPreset } from "@/lib/sightings/groups";
 import { Status } from "./report-card";
 import { appLink, appSection, appTitle, btn, fieldBox, muted, rule } from "./ui";
 
@@ -84,8 +84,12 @@ function Sheet({ pack }: { pack: Pack }) {
     [t.places, t.places === 1 ? "Place" : "Places"],
     [t.senders, "Members who sent them"],
     [t.members, "Members now"],
-    [t.cleanups, t.cleanups === 1 ? "Clean-up done" : "Clean-ups done"],
-    [t.coming, "People who said they would come"],
+    ...(CLEANUPS_ON
+      ? ([
+          [t.cleanups, t.cleanups === 1 ? "Clean-up done" : "Clean-ups done"],
+          [t.coming, "People who said they would come"],
+        ] as [number, string][])
+      : []),
     [t.seen, "Seen too, by other residents"],
     [t.thanks, "Thanks, once fixed"],
   ];
@@ -141,40 +145,42 @@ function Sheet({ pack }: { pack: Pack }) {
         </div>
       )}
 
-      <section aria-labelledby="pack-cleanups" className="mt-12 print:mt-8">
-        <h2 id="pack-cleanups" className={appSection}>
-          Clean-ups
-        </h2>
-        {pack.cleanups.length === 0 ? (
-          <p className={`mt-3 text-sm ${muted}`}>No clean-ups by the group were marked done in this period.</p>
-        ) : (
-          <ul className={`mt-4 divide-y border-y ${rule}`}>
-            {pack.cleanups.map((c, i) => (
-              <li key={i} className="flex flex-col gap-4 py-5 break-inside-avoid sm:flex-row print:flex-row print:py-3">
-                <div className="flex gap-3">
-                  <Photo src={c.photo} caption="Reported" />
-                  {c.fixedPhoto && <Photo src={c.fixedPhoto} caption="Fixed" />}
-                </div>
-                <div className="min-w-0 space-y-1">
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">{packDate(c.date)}</p>
-                  <p className="text-sm text-slate-800 dark:text-slate-200">
-                    {c.type}, {c.place}
-                  </p>
-                  <p className={`text-sm ${muted}`}>
-                    {c.coming === 1 ? "1 person said they would come." : `${c.coming} people said they would come.`}
-                  </p>
-                  {c.caseStatus && (
-                    <p className={`flex flex-wrap items-center gap-x-2 text-sm ${muted}`}>
-                      The report now: <Status status={c.caseStatus} />
+      {CLEANUPS_ON && (
+        <section aria-labelledby="pack-cleanups" className="mt-12 print:mt-8">
+          <h2 id="pack-cleanups" className={appSection}>
+            Clean-ups
+          </h2>
+          {pack.cleanups.length === 0 ? (
+            <p className={`mt-3 text-sm ${muted}`}>No clean-ups by the group were marked done in this period.</p>
+          ) : (
+            <ul className={`mt-4 divide-y border-y ${rule}`}>
+              {pack.cleanups.map((c, i) => (
+                <li key={i} className="flex flex-col gap-4 py-5 break-inside-avoid sm:flex-row print:flex-row print:py-3">
+                  <div className="flex gap-3">
+                    <Photo src={c.photo} caption="Reported" />
+                    {c.fixedPhoto && <Photo src={c.fixedPhoto} caption="Fixed" />}
+                  </div>
+                  <div className="min-w-0 space-y-1">
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{packDate(c.date)}</p>
+                    <p className="text-sm text-slate-800 dark:text-slate-200">
+                      {c.type}, {c.place}
                     </p>
-                  )}
-                  <PageLink href={c.href} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+                    <p className={`text-sm ${muted}`}>
+                      {c.coming === 1 ? "1 person said they would come." : `${c.coming} people said they would come.`}
+                    </p>
+                    {c.caseStatus && (
+                      <p className={`flex flex-wrap items-center gap-x-2 text-sm ${muted}`}>
+                        The report now: <Status status={c.caseStatus} />
+                      </p>
+                    )}
+                    <PageLink href={c.href} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <section aria-labelledby="pack-reports" className="mt-12 print:mt-8">
         <h2 id="pack-reports" className={appSection}>

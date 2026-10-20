@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reportsEnabled } from "@/lib/sightings/auth";
-import { REMIND_AHEAD_HOURS, fixitWhen, reminderDue, type ReminderRow } from "@/lib/sightings/groups";
+import { CLEANUPS_ON, REMIND_AHEAD_HOURS, fixitWhen, reminderDue, type ReminderRow } from "@/lib/sightings/groups";
 import { sendNotice } from "@/lib/sightings/notify";
 import { placeUrl } from "@/lib/sightings/place-url";
 import { NUDGE_DAYS, dueByReporter, nudgeNotice, type NudgeRow } from "@/lib/sightings/push";
@@ -181,10 +181,12 @@ export async function POST(request: NextRequest) {
       );
     }
     // A failure here must not lose the nudge counts above.
-    const cleanups = await remindFixits(admin, now).catch((err) => {
-      logRouteError("cron/sightings-nudges fixits", err);
-      return null;
-    });
+    const cleanups = CLEANUPS_ON
+      ? await remindFixits(admin, now).catch((err) => {
+          logRouteError("cron/sightings-nudges fixits", err);
+          return null;
+        })
+      : null;
     return NextResponse.json({ data: { due: due.length, notified, reports, cleanups } });
   } catch (err) {
     logRouteError("cron/sightings-nudges", err);

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Bell, Camera, Check, ChevronDown, Loader2 } from "lucide-react";
 
 import { nodFor, seenText, thanksText } from "@/lib/sightings/community";
+import { CLEANUPS_ON } from "@/lib/sightings/groups";
 import type { NodEvent } from "@/lib/sightings/status";
 import type { PublicReport } from "@/lib/sightings/types";
 import { ActionButton } from "./action-feedback";
@@ -152,7 +153,7 @@ function HelpPanel({ id, report, citizen }: { id: string; report: PublicReport; 
         </p>
         <Problem error={error} />
       </div>
-      <FixitActions report={report} citizen={citizen} />
+      {CLEANUPS_ON && <FixitActions report={report} citizen={citizen} />}
     </div>
   );
 }

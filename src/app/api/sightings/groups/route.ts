@@ -4,6 +4,7 @@ import { NextResponse, after, type NextRequest } from "next/server";
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, isReviewer, reporterKey, reportsEnabled, requireReviewer, requireUser } from "@/lib/sightings/auth";
 import {
+  CLEANUPS_ON,
   GROUP_LIMITS,
   canHost,
   cleanName,
@@ -260,7 +261,7 @@ export async function POST(request: NextRequest) {
             admin,
             groupId,
             status === "approved"
-              ? { title: "Your group is active", body: `${name} was checked. Reports sent with it now show its name, and its hosts can plan clean-ups.` }
+              ? { title: "Your group is active", body: `${name} was checked. Reports sent with it now show its name${CLEANUPS_ON ? ", and its hosts can plan clean-ups" : ""}.` }
               : { title: "Your group was not approved", body: `${name} was not approved. You can still send reports on your own.` },
           ),
         );

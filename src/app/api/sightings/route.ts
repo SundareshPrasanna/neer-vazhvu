@@ -7,6 +7,7 @@ import { CAP_MESSAGES, LIMITS, type CapReason } from "@/lib/sightings/limits";
 import { placePoint } from "@/lib/sightings/locate-server";
 import { publicPhotoUrl, storePhotos } from "@/lib/sightings/photos";
 import { assess, getParameter, valueText } from "@/lib/sightings/parameters";
+import { GROUP_DAILY_MESSAGE, GROUP_LIMITS, groupSentToday } from "@/lib/sightings/groups";
 import { placeUrl } from "@/lib/sightings/place-url";
 import { resolveAuthority } from "@/lib/sightings/routing";
 import { loadExtras } from "@/lib/sightings/extras";
@@ -40,6 +41,9 @@ export async function POST(request: NextRequest) {
     // Caps first, so a capped or suspended account costs no image processing.
     const admin = adminClient();
     const key = reporterKey(user.id);
+    if (v.groupId && isCommunityReport(v.category) && (await groupSentToday(admin, v.groupId)) >= GROUP_LIMITS.reportsDaily) {
+      return NextResponse.json({ error: GROUP_DAILY_MESSAGE }, { status: 429 });
+    }
     const { data: created, error } = await admin.rpc("create_sighting", {
       p_row: {
         reporter_key: key,

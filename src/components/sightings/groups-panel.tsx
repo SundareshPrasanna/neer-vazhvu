@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Check, Copy, FileText, RotateCw, Users } from "lucide-react";
 
-import { GROUP_KINDS, GROUP_LIMITS, SAFETY_LINE, normalizeJoinCode, type GroupKind, type MyGroup, type MyGroups } from "@/lib/sightings/groups";
+import { CLEANUPS_ON, GROUP_KINDS, GROUP_LIMITS, SAFETY_LINE, normalizeJoinCode, type GroupKind, type MyGroup, type MyGroups } from "@/lib/sightings/groups";
 import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { ActionButton, useFlash } from "./action-feedback";
 import { GroupPack } from "./group-pack";
@@ -167,7 +167,7 @@ function GroupItem({ group, authFetch, onChange }: { group: MyGroup; authFetch: 
       {group.status === "pending" && (
         <p className={`text-sm ${muted}`}>
           Members can join now. Once our reviewer checks it, usually within {REVIEW_WITHIN_DAYS} days, reports sent with it show its name
-          {group.role === "host" ? " and you can plan clean-ups." : "."}
+          {group.role === "host" && CLEANUPS_ON ? " and you can plan clean-ups." : "."}
         </p>
       )}
       {group.status === "rejected" && <p className={`text-sm ${muted}`}>Reports cannot be sent with this group. You can still send them on your own.</p>}
@@ -177,7 +177,7 @@ function GroupItem({ group, authFetch, onChange }: { group: MyGroup; authFetch: 
             <FileText className="h-4 w-4" aria-hidden="true" />
             Evidence pack
           </button>
-          <span className={`text-xs ${muted}`}>The group&rsquo;s reports and clean-ups, to print or download. Counts only, never names.</span>
+          <span className={`text-xs ${muted}`}>{`The group’s reports${CLEANUPS_ON ? " and clean-ups" : ""}, to print or download. Counts only, never names.`}</span>
         </div>
       )}
       {pack && <GroupPack group={group} authFetch={authFetch} onClose={closePack} />}
@@ -299,7 +299,8 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
           </h2>
           <p className={`max-w-[60ch] ${muted}`}>
             Take part with your college, school, residents&rsquo; association, lake group or NGO. A report sent with a group shows the
-            group&rsquo;s name, never yours or any member&rsquo;s. Once checked by our reviewer, a group can plan clean-ups at reported spots.
+            group&rsquo;s name, never yours or any member&rsquo;s.{" "}
+            {CLEANUPS_ON && "Once checked by our reviewer, a group can plan clean-ups at reported spots."}
           </p>
           {joined && (
             <p role="status" className={`flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400 ${enter}`}>
@@ -403,11 +404,15 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
         <ul className={`space-y-3 text-sm leading-relaxed ${muted}`}>
           <li>When you send a report, choose to send it with your group. The report shows the group&rsquo;s name, never yours.</li>
           <li>Members are never listed. A host sees how many members a group has, not who they are.</li>
-          <li>Once a group is checked, its hosts can plan a clean-up at a reported spot with litter, floating trash, plastic or ritual waste.</li>
-          <li>
-            Never sewage, drains, debris, burning, hazardous or medical waste, or dead animals: those need the department&rsquo;s trained staff
-            and equipment. {SAFETY_LINE}
-          </li>
+          {CLEANUPS_ON && (
+            <>
+              <li>Once a group is checked, its hosts can plan a clean-up at a reported spot with litter, floating trash, plastic or ritual waste.</li>
+              <li>
+                Never sewage, drains, debris, burning, hazardous or medical waste, or dead animals: those need the department&rsquo;s trained staff
+                and equipment. {SAFETY_LINE}
+              </li>
+            </>
+          )}
         </ul>
       </aside>
     </div>
