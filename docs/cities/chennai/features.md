@@ -85,7 +85,7 @@ A full-screen overlay layered on top of `/water-bodies` for flagship Chennai bod
 - **GCC Storm Water Drain Network** - 10,308 official drain segments from Greater Chennai Corporation survey (2023), showing street-level detail with drain type, depth, width, material, and condition status
 - **Macro and Micro Drains** - 52 major drainage channels from Chennai Basin Drainage Maps
 - **Drain Detail Panel** - Click any drain for street name, ward/zone, dimensions, open/closed status, condition (Good/Bad), and material type
-- **CMWSSB Sewerage Network** - 13 operational sewage treatment plants totalling 745 MLD installed capacity (CMWSSB 2026) shown as 8 campus points, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
+- **CMWSSB Sewerage Network** - citywide installed treatment capacity of 1,031.80 MLD (MAWS Policy Note 2026-27) leads the bar; then the 13 plants on CMWSSB's sewerage page, 745 MLD (CMWSSB sewerage page; its review date, 18-03-2024, sits in the tooltip), shown as 8 campus points, 348 pumping stations (SPS) with STP linkage, and 3,834 pumping main segments with pipe material and size
 - **Return Period Maps** - 5/10/25/50/100/200-year flood extent polygons
 - **Ward Boundary Overlay** - 200 GCC wards with zone names on hover across all view modes
 - **Ward Context + AI Analysis** - Detail panels show ward-level cross-domain context and AI narrative for any clicked feature
@@ -126,7 +126,7 @@ A journalist-ready snapshot page at `/facts` that surfaces Chennai's water state
 - **Live tier** (Tier 1) - Reservoir storage today, Day Zero comparison to 2019, last-30-day rainfall, and year-over-year water body area change for 12+ tracked water bodies. Computed at request time from `reservoir_daily`, `weather_daily`, and `water_body_satellite_summary` tables with hourly ISR.
 - **Annual tier** (Tier 2) - Latest published government data: CGWB over-exploited blocks (13 of 16 in 2024), peak river pollution records (Cooum DO 0.0 mg/L in 2022, Buckingham Canal DO 0.3 mg/L in 2024), ward-level groundwater crisis count, and a Data Transparency Watch meta-card flagging how long it has been since authorities published.
 - **Historical tier** (Tier 3) - Documented events and peak records: 2019 Day Zero (~19 MCFT usable storage), 2015 Chennai floods (77-494 mm station rainfall range per WWA), CFLOWS 1.0 model vintage (Nov 2019), Pallikaranai Marsh decline (~6,000 to ~593 ha per 2016 research).
-- **Infrastructure tier** (Tier 4) - Structural capacity facts: 13 STPs / 745 MLD installed, 200 MLD desalination installed, 13,222 MCFT total reservoir capacity, piped supply vs demand gap.
+- **Infrastructure tier** (Tier 4) - Structural capacity facts: 1,031.80 MLD sewage treatment installed, 350 MLD desalination installed, 13,222 MCFT total reservoir capacity, piped supply vs demand gap.
 - **Copy-quote buttons** produce paste-ready attribution including the canonical fact URL (`neervazhvu.org/facts#id`).
 - **JSON-LD Dataset + Observation** structured data for search engines.
 - **Public JSON API** at `/api/facts` for RSS, embeds, and partner integrations.

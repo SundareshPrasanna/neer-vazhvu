@@ -355,7 +355,7 @@ The view also returns `recent_count` and `recent_range_m` so downstream UIs can 
 
 **STP capacity and plant-unit reconciliation (updated 2026-04-19):**
 
-CMWSSB officially reports 13 operational sewage treatment plants totalling 745 MLD installed capacity. These are distributed across 6 campus locations, many of which host multiple plant units commissioned in different years. Our geojson stores one point per campus (8 points including 2 auxiliary units not on CMWSSB's current list). Capacity values in the geojson represent the sum of plant units at each campus, per CMWSSB.
+CMWSSB's sewerage page (last reviewed 18-03-2024) lists 13 operational sewage treatment plants totalling 745 MLD installed capacity. These are distributed across 6 campus locations, many of which host multiple plant units commissioned in different years. Our geojson stores one point per campus (8 points including 2 auxiliary units not on CMWSSB's current list). Capacity values in the geojson represent the sum of plant units at each campus, per CMWSSB. Citywide installed sewage treatment capacity is 1,031.80 MLD (MAWS Policy Note 2026-27, Table 5.4).
 
 | Campus | Plant units | Capacity (MLD) | Source |
 |---|---|---|---|
@@ -369,7 +369,7 @@ CMWSSB officially reports 13 operational sewage treatment plants totalling 745 M
 | Langs Garden | 1 | 10 | Geojson only (not on CMWSSB page) |
 | Thiruvottiyur | 1 | null | Geojson only (capacity unknown) |
 
-Total CMWSSB-listed capacity: 745 MLD across 13 plants. Total geojson capacity (campus sums): 743.6 MLD (Alandur missing; auxiliary units Kotturpuram and Langs Garden included).
+Total CMWSSB-listed capacity: 745 MLD across 13 plants (sewerage page, last reviewed 18-03-2024). Total geojson capacity (campus sums): 743.6 MLD (Alandur missing; auxiliary units Kotturpuram and Langs Garden included).
 
 **Why this source?**
 - Official CMWSSB infrastructure data - the only source for sewerage network geometry in Chennai
