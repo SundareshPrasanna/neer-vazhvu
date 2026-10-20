@@ -12,6 +12,7 @@ import { MY_WARD as gurugram } from "../gurugram/my-ward";
 import { MY_WARD as pune } from "../pune/my-ward";
 import { MY_WARD as nagpur } from "../nagpur/my-ward";
 import { MY_WARD as ahmedabad } from "../ahmedabad/my-ward";
+import { MY_WARD as jaipur } from "../jaipur/my-ward";
 
 /** My Ward source lines, quick actions and helplines (my-ward.ts). */
 export const MY_WARD_CONTENT: Partial<Record<CityId, CityMyWardContent>> = {
@@ -24,4 +25,5 @@ export const MY_WARD_CONTENT: Partial<Record<CityId, CityMyWardContent>> = {
   pune: pune,
   nagpur: nagpur,
   ahmedabad: ahmedabad,
+  jaipur: jaipur,
 };

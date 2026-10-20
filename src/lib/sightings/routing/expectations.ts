@@ -18,6 +18,25 @@ export interface Expectation {
 
 export const EXPECTATIONS: Expectation[] = [
   {
+    system: "Rajasthan Sampark 2.0",
+    keys: [
+      "https://sampark.rajasthan.gov.in/",
+      "tel:181",
+      "https://play.google.com/store/apps/details?id=com.rajsampark.versiontwo",
+      "https://wa.me/919461067924",
+    ],
+    expect: "You get an SMS when your grievance is registered, as it progresses and when it is disposed of. You can track it in the Raj Sampark 2.0 app, on its WhatsApp account, or by calling 181.",
+    needsPhone: true,
+    source: "https://sampark.rajasthan.gov.in/",
+  },
+  {
+    system: "Jaipur Samadhan (Nagar Nigam Jaipur)",
+    keys: ["https://samadhan.jaipurmc.org", "https://play.google.com/store/apps/details?id=com.oispl.citizen_app"],
+    expect: "You verify your mobile number with a one-time code, then choose a category, your ward and zone, and can attach a photo. You can look the complaint up later under Track Complain Status.",
+    needsPhone: true,
+    source: "https://samadhan.jaipurmc.org/ComplaintRegistrationByWebsite/AddComplaintRegistrationByWebsite",
+  },
+  {
     system: "Swachhata-MoHUA",
     keys: ["https://play.google.com/store/apps/details?id=com.ichangemycity.swachhbharat"],
     expect: "Your complaint goes to your city corporation and is assigned to the ward's sanitary inspector or engineer. You get push updates and a 'Resolved' photo, and can reopen it if not satisfied.",

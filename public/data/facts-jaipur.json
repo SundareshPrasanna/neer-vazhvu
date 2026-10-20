@@ -1,0 +1,280 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/facts",
+  "scope": {
+    "kind": "city",
+    "id": "jaipur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "phed-rajasthan-progress-reports",
+        "title": "PHED Annual Progress Reports 2024-25 and 2025-26",
+        "publisher": "Public Health Engineering Department, Government of Rajasthan",
+        "license": "Government of Rajasthan publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "rajasthan-wrd-dam-storage",
+        "title": "WRD Rajasthan daily dam storage report",
+        "publisher": "Water Resources Department, Government of Rajasthan",
+        "license": "Government of Rajasthan publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "ingres-groundwater-rajasthan",
+        "title": "IN-GRES assessment, Jaipur district",
+        "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input"
+      },
+      {
+        "id": "cpcb-nwmp-annual",
+        "title": "CPCB NWMP river tables",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input"
+      },
+      {
+        "id": "imd-climatological-tables-1991-2020",
+        "title": "IMD Climatological Tables 1991-2020 (Jaipur, 42348)",
+        "publisher": "India Meteorological Department",
+        "license": "Government of India publication, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "jica-bisalpur-evaluation",
+        "title": "JICA ex-post evaluation, Bisalpur-Jaipur Water Supply Project (2016)",
+        "publisher": "Japan International Cooperation Agency",
+        "license": "JICA (Government of Japan) public project document, cited with attribution",
+        "role": "input"
+      },
+      {
+        "id": "lsg-rajasthan-ward-gazette-2025",
+        "title": "LSG ward formation notification, 16 Sep 2025",
+        "publisher": "Local Self Government Department, Government of Rajasthan",
+        "license": "Government of Rajasthan gazette, cited with attribution",
+        "role": "input"
+      },
+      {
+        "title": "CPCB National Inventory of Sewage Treatment Plants (March 2021)",
+        "publisher": "Central Pollution Control Board",
+        "closed": true,
+        "as_of": "2021-03",
+        "url": "https://cpcb.nic.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTIyOF8xNjE1MTk2MzIyX21lZGlhcGhvdG85NTY0LnBkZg==",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-21",
+    "produced_by": "neer-vazhvu-api/scripts/build_jaipur_facts.py",
+    "internal_inputs": [
+      "public/data/jaipur-supply-overview.json",
+      "public/data/jaipur-dam-storage.json",
+      "public/data/gwr-blocks-jaipur.json",
+      "public/data/river-quality-jaipur.json",
+      "public/data/jaipur-ward-profiles.json"
+    ],
+    "note": "Every figure with a page behind it is read from that page's artifact; the rest carry their own citation."
+  },
+  "place_id": "jaipur",
+  "generated_at": "2026-10-21",
+  "note": "Each card's number comes from the artifact behind the page it summarises, or from the document it cites.",
+  "facts": [
+    {
+      "id": "bisalpur-on-snapshot-day",
+      "tier": 1,
+      "category": "Reservoirs",
+      "title": "Bisalpur on the latest report",
+      "value": "71.31",
+      "unit": "% of Bisalpur's designed capacity on 8 October 2026 (781.41 of 1,095.84 million cubic metres)",
+      "interpretation": "The Rajasthan Water Resources Department's dam report of 8 October 2026 puts Bisalpur at 313.9 m and 781.41 million cubic metres, 71.31% of what it was built to hold; on the same date a year earlier it held 1,095.84. The dam is shared by Jaipur, Ajmer, Tonk and irrigation, so this is the whole dam, not the city's share.",
+      "data_date": "2026-10-08",
+      "source_url": "https://jankalyanfile.rajasthan.gov.in/Files//Content/UploadFolder/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf",
+      "source_label": "WRD Rajasthan, Water Storage Data- 08.10.2026"
+    },
+    {
+      "id": "bisalpur-share-of-supply",
+      "tier": 2,
+      "featured": true,
+      "category": "Supply",
+      "title": "Three quarters of the city's water comes from one dam",
+      "value": "77",
+      "unit": "% of PHED's 766.73 MLD for Jaipur city from Bisalpur dam (31 Dec 2025)",
+      "interpretation": "The Public Health Engineering Department, not the municipal corporation, supplies Jaipur's water. Its table for 31 December 2025 puts the city's production at 766.73 MLD: 590 MLD from Bisalpur dam and 176 MLD from its tube wells. A year earlier Bisalpur gave 492.08 MLD; the tube-well figure is the same in both years' tables, so the rise is the dam's.",
+      "data_date": "2025-12",
+      "source_url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/Pdf2026/PHED%20ALL%20page.pdf",
+      "source_label": "PHED Annual Progress Report 2025-26, urban schemes table, printed p.85"
+    },
+    {
+      "id": "groundwater-city-unit",
+      "tier": 2,
+      "featured": true,
+      "category": "Groundwater",
+      "title": "The city pumps three and a half times what can safely be drawn",
+      "value": "349.88",
+      "unit": "% of extractable groundwater drawn in the Jaipur Urban unit (2025-2026)",
+      "interpretation": "IN-GRES assesses the city as its own unit, Jaipur Urban, since 2021-2022. In 2025-2026 it draws 349.88% of what can be extracted each year without depleting the aquifer, the highest of the district's units. Almost all of the city's draw is domestic. Several inputs are carried forward between editions, so read the category, not a trend.",
+      "data_date": "2025",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES dynamic groundwater assessment, 2025-2026"
+    },
+    {
+      "id": "district-units-all-over-exploited",
+      "tier": 2,
+      "category": "Groundwater",
+      "title": "Every assessment unit in the district draws more than can safely be drawn",
+      "value": "16 of 16",
+      "unit": "IN-GRES units of Jaipur district over-exploited in 2025-2026; district at 210.41%",
+      "interpretation": "All 16 units IN-GRES assesses in Jaipur district are over-exploited in 2025-2026. IN-GRES still draws the district as it was before 2023, so the total includes Kotputli, Viratnagar, Paota and Dudu.",
+      "data_date": "2025",
+      "source_url": "https://ingres.iith.ac.in/",
+      "source_label": "IN-GRES dynamic groundwater assessment, 2025-2026"
+    },
+    {
+      "id": "ramgarh-empty",
+      "tier": 2,
+      "category": "Reservoirs",
+      "title": "The city's old reservoir stands empty",
+      "value": "0",
+      "unit": "million cubic metres in Ramgarh of its 75.04 on 8 October 2026, and 0 on the same date a year earlier",
+      "interpretation": "Ramgarh dam on the Banganga was a source of the city's drinking water from 1978 (Supreme Court, 2017). The Water Resources Department reported it empty on every date read from June 2023, including October 2025, when the state's dams were 90% full. The Rajasthan High Court has heard a case on its catchment since 2011.",
+      "data_date": "2026-10-08",
+      "source_url": "https://jankalyanfile.rajasthan.gov.in/Files//Content/UploadFolder/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf",
+      "source_label": "WRD Rajasthan, Water Storage Data- 08.10.2026"
+    },
+    {
+      "id": "tankers-summer-2025",
+      "tier": 2,
+      "featured": true,
+      "category": "Supply",
+      "title": "About a third of the state's urban water tankers ran in Jaipur",
+      "value": "230",
+      "unit": "tankers a day making 1,283 trips in Jaipur city at the 2025 summer peak (24 Jun 2025)",
+      "interpretation": "PHED's summer table for urban areas lists the most water carried by road on 24 June 2025: 230 tankers a day and 1,283 trips in Jaipur city, out of 714 tankers and 4,435 trips across every listed town in Rajasthan.",
+      "data_date": "2025-06",
+      "source_url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/Pdf2026/PHED%20ALL%20page.pdf",
+      "source_label": "PHED Annual Progress Report 2025-26, Appendix 7, printed pp.41-42"
+    },
+    {
+      "id": "dravyavati-newta-bod",
+      "tier": 2,
+      "category": "Rivers",
+      "title": "Clean at the source, polluted where the city's river collects",
+      "value": "36.5",
+      "unit": "mg/L BOD, highest reading at Newta dam (fed from the Dravyavati) in 2024, against 1.6 at Bisalpur",
+      "interpretation": "CPCB's national monitoring has no station on the Dravyavati channel. Its nearest station, at Newta dam, takes water diverted from the river and has failed the 3 mg/L bathing criterion every year since 2018; Bisalpur, where Jaipur's water comes from, stays under it (1.6 mg/L in 2024).",
+      "data_date": "2024",
+      "source_url": "https://cpcb.gov.in/water-quality-data/",
+      "source_label": "CPCB NWMP river data, 2024"
+    },
+    {
+      "id": "monsoon-2025",
+      "tier": 2,
+      "category": "Rainfall",
+      "title": "Last monsoon: three quarters more rain than normal",
+      "value": "918.5",
+      "unit": "mm in Jaipur district, 1 June to 30 September 2025, against a normal of 524.3 (+75%)",
+      "interpretation": "IMD's Jaipur centre classes Jaipur district's 2025 monsoon as large excess: 918.5 mm against 524.3. The State as a whole had 164% of its long-period average.",
+      "data_date": "2025-09",
+      "source_url": "https://mausam.imd.gov.in/jaipur/mcdata/monsoon2025.pdf",
+      "source_label": "IMD Meteorological Centre Jaipur, Rajasthan Monsoon Report 2025, Table 1, p.5"
+    },
+    {
+      "id": "trial-24x7-three-areas",
+      "tier": 2,
+      "category": "Supply",
+      "title": "Round-the-clock water on trial in three neighbourhoods",
+      "value": "3 of 5",
+      "unit": "identified areas (Bajaj Nagar, Bani Park, Chitrakoot) on trial 24x7 supply since November 2024",
+      "interpretation": "Under a 19 May 2023 memorandum with Denmark, PHED picked five areas of Jaipur for district-metered 24x7 supply to cut non-revenue water. Bajaj Nagar, Bani Park and Chitrakoot have had trial 24x7 supply since November 2024, with a target of 20% non-revenue water there; surveys were under way in the other two.",
+      "data_date": "2026-01",
+      "source_url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/Pdf2026/PHED%20ALL%20page.pdf",
+      "source_label": "PHED Annual Progress Report 2025-26, non-revenue water, printed p.13"
+    },
+    {
+      "id": "water-connections",
+      "tier": 2,
+      "category": "Supply",
+      "title": "Seventy thousand more connections in a year",
+      "value": "590,385",
+      "unit": "water connections in Jaipur city on 31 Dec 2025, against 519,165 a year earlier",
+      "interpretation": "PHED counts 590,385 water connections in the city at the end of 2025, up from 519,165 a year earlier.",
+      "data_date": "2025-12",
+      "source_url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/Pdf2026/PHED%20ALL%20page.pdf",
+      "source_label": "PHED Annual Progress Reports 2025-26 (printed p.85) and 2024-25 (printed p.84)"
+    },
+    {
+      "id": "groundwater-share-before-bisalpur",
+      "tier": 3,
+      "category": "Supply",
+      "title": "Before Bisalpur, almost all of the city's water came from the ground",
+      "value": "97",
+      "unit": "% of supply from groundwater in 2003, before the Bisalpur transfer; 18.8% in 2015",
+      "interpretation": "JICA's ex-post evaluation of the Bisalpur Jaipur project, on PHED's figures, gives the city's dependence on groundwater as 97% at appraisal in 2003 and 18.8% in 2015. PHED's own table for 31 December 2025 puts tube wells at 176 of 766.73 MLD; the two are different documents, so they are not a trend.",
+      "data_date": "2015",
+      "source_url": "https://www2.jica.go.jp/en/evaluation/pdf/2015_ID-P157_4_f.pdf",
+      "source_label": "JICA FY2015 ex-post evaluation, Bisalpur Jaipur Water Supply Project (Transfer System), p.19"
+    },
+    {
+      "id": "water-lost-last-figure",
+      "tier": 3,
+      "category": "Supply",
+      "title": "Water lost between source and tap: the last published figure is from 2015",
+      "value": "37",
+      "unit": "% non-revenue water in 2015, on PHED's figures, when 45-81% of consumer meters in the study zones were out of order",
+      "interpretation": "JICA's evaluation reports PHED's non-revenue water as 37% in 2015 and warns the figure is likely unreliable, because a 2014-15 study found 45 to 81% of consumer meters out of order in four zones. PHED's 2025-26 report sets a 20% target for its 24x7 trial areas but prints no current city figure.",
+      "data_date": "2015",
+      "source_url": "https://www2.jica.go.jp/en/evaluation/pdf/2015_ID-P157_4_f.pdf",
+      "source_label": "JICA FY2015 ex-post evaluation, Table 6, p.18"
+    },
+    {
+      "id": "heaviest-day-1981",
+      "tier": 3,
+      "category": "Flood",
+      "title": "The heaviest day on record: 19 July 1981",
+      "value": "326.0",
+      "unit": "mm in 24 hours at the Jaipur observatory on 19 July 1981",
+      "interpretation": "IMD's tables record 326.0 mm on 19 July 1981, more than half the city's normal year in one day. July 1981 is the wettest month on record at the observatory, 956.9 mm.",
+      "data_date": "1981-07-19",
+      "source_url": "https://www.imdpune.gov.in/library/public/Climatological%20Tables%201991-2020.pdf",
+      "source_label": "IMD Climatological Tables 1991-2020, JAIPUR 42348, printed p.166"
+    },
+    {
+      "id": "normal-rainfall",
+      "tier": 4,
+      "category": "Rainfall",
+      "title": "A normal year's rain, nearly all of it in four months",
+      "value": "600.3",
+      "unit": "mm a year at IMD's Jaipur observatory (1991-2020 normal); 89% falls June to September",
+      "interpretation": "IMD's 1991-2020 tables give the Jaipur observatory (index 42348) a normal of 600.3 mm on 34.3 rainy days. June to September bring 61.9, 190.5, 203.4 and 79.6 mm, 535.4 mm together.",
+      "data_date": "2020",
+      "source_url": "https://www.imdpune.gov.in/library/public/Climatological%20Tables%201991-2020.pdf",
+      "source_label": "IMD Climatological Tables 1991-2020, JAIPUR 42348, printed p.166"
+    },
+    {
+      "id": "wards-150",
+      "tier": 4,
+      "category": "Governance",
+      "title": "150 wards in one municipal corporation",
+      "value": "150",
+      "unit": "wards of Nagar Nigam Jaipur in the ward formation approved on 16 Sep 2025",
+      "interpretation": "Jaipur's Greater and Heritage corporations were merged back into one, Nagar Nigam Jaipur, with 150 wards in 13 zones; its council was elected in September 2026. Water is supplied by the state's PHED, not the corporation.",
+      "data_date": "2025-09-16",
+      "source_url": "https://jaipurmc.org/",
+      "source_label": "Rajasthan Gazette Extraordinary, 20 Sep 2025, LSG notification No. P.10(N.Pa.)(Gathan)(Chunav)DLB/25/19631"
+    },
+    {
+      "id": "gap-sewage-generated",
+      "tier": 3,
+      "category": "Gap",
+      "title": "How much sewage the city makes",
+      "value": "Not published",
+      "unit": "no city figure for sewage generated found; CPCB's 2020 inventory lists Jaipur's plants but no city total",
+      "interpretation": "CPCB's national inventory (data of June 2020) lists Jaipur's sewage plants one by one, with several marked under construction or proposed, and gives a state figure, but no Jaipur total; nothing newer was found.",
+      "data_date": "2020-06",
+      "source_url": "https://cpcb.nic.in/openpdffile.php?id=UmVwb3J0RmlsZXMvMTIyOF8xNjE1MTk2MzIyX21lZGlhcGhvdG85NTY0LnBkZg==",
+      "source_label": "CPCB National Inventory of Sewage Treatment Plants (March 2021), Rajasthan pages"
+    }
+  ]
+}

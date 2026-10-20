@@ -6,9 +6,10 @@ import { HR } from "./hr";
 import { KA } from "./ka";
 import { KL } from "./kl";
 import { MH } from "./mh";
+import { RJ } from "./rj";
 import { TG } from "./tg";
 import { TN } from "./tn";
 import { WB } from "./wb";
 
 /** Keyed by ISO 3166-2 subdivision code, matching PlaceConfig.stateCode. */
-export const STATE_ROUTING: Record<string, StateRouting> = { AP, DL, GJ, HR, KA, KL, MH, TG, TN, WB };
+export const STATE_ROUTING: Record<string, StateRouting> = { AP, DL, GJ, HR, KA, KL, MH, RJ, TG, TN, WB };

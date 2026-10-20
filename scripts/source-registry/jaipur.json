@@ -1,0 +1,270 @@
+{
+  "_doc": [
+    "Jaipur (Nagar Nigam Jaipur) upstream sources for Headwaters. Every artifact Jaipur ships names its upstreams by id, with the artifact in that id's dependsOn.",
+    "Platform-wide upstreams stay under their existing ids and carry Jaipur's paths in their dependsOn rather than being duplicated: OpenStreetMap, Open-Meteo, FABDEM and the CPCB reports in platform.json."
+  ],
+  "sources": [
+    {
+      "id": "imd-gridded-rainfall-jaipur",
+      "scope": "jaipur",
+      "publisher": "India Meteorological Department",
+      "url": "https://imdlib.readthedocs.io/en/latest/",
+      "license": "IMD data policy; gridded rainfall retrieved programmatically via imdlib, cited with attribution",
+      "type": "api",
+      "cadence": "monthly",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/imd-rainfall-monthly-jaipur.json",
+        "public/data/rainfall-recent-jaipur.json"
+      ],
+      "refreshMethod": "cron .github/workflows/imd-rainfall-refresh.yml (neer-vazhvu-api/scripts/generate_imd_rainfall.py --city jaipur); first generated on the laptop with uv run --no-project --with imdlib --with xarray --with numpy --with pandas",
+      "notes": "Cell 26.75 N / 75.75 E contains IMD's Jaipur (Sanganer) observatory, station 42348. Checked 2026-10-20: the cell's 1991-2020 mean is 591.9 mm against the observatory's 1991-2020 normal of 600.3 mm (IMD Climatological Tables 1991-2020, printed p.166), -1.4%; every year 1991-2020 within 0.75-1.27x of the Rajasthan SW manual gauge at Sanganer (NWDP, one value per day). No zero or missing year 1970-2025.",
+      "lastSeen": {
+        "edition": "1970-2025",
+        "acceptedOn": "2026-10-20"
+      }
+    },
+    {
+      "id": "phed-rajasthan-progress-reports",
+      "scope": "jaipur",
+      "publisher": "Public Health Engineering Department, Government of Rajasthan",
+      "url": "https://phedwater.rajasthan.gov.in/",
+      "license": "Government of Rajasthan publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly (January)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/commitments-jaipur.json",
+        "public/data/jaipur-supply-overview.json",
+        "public/data/facts-jaipur.json"
+      ],
+      "refreshMethod": "manual: each January's Annual Progress Report (pragati vivaranika); update src/cities/jaipur/commitments.json and the supply and facts builders' figures with their pages",
+      "notes": "PHED runs Jaipur's water supply (Bisalpur transmission, Surajpura treatment, city distribution, 3,633 tube wells). The Annual Progress Reports 2024-25 (January 2025) and 2025-26 (January 2026) give, per city project, sanction, work order, spend, percent done and target date; the 2025-26 report's Jaipur city row (status 31.12.2025, printed p.85 / PDF p.89) gives 766.73 MLD, 590 from Bisalpur. Hindi in the legacy Kruti Dev font: the text layer is unreadable, read figures from page images. Site copyright page: 'Material featured on this site may be reproduced free of charge in any format or media without requiring specific permission ... the source must be prominently acknowledged.'"
+    },
+    {
+      "id": "rajasthan-budget-speeches",
+      "scope": "jaipur",
+      "publisher": "Finance Department, Government of Rajasthan",
+      "url": "https://finance.rajasthan.gov.in/",
+      "license": "Government of Rajasthan publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "yearly (February)",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/commitments-jaipur.json"
+      ],
+      "refreshMethod": "manual: each February's budget speech and the reply-to-debate announcements",
+      "notes": "Budget speeches 2023-24 to 2026-27: Bisalpur-Jaipur Stage II Phase II (Rs 1,986.68 crore, 2025-26 para 6), Brahmani-Bisalpur diversion (Rs 6,100 crore, 2025-26 para 101), Jaipur drainage master plan (2026-27), Dravyavati items. Website policy: reproduction free of charge with the source acknowledged."
+    },
+    {
+      "id": "nwda-mpkc-note",
+      "scope": "jaipur",
+      "publisher": "National Water Development Agency, Ministry of Jal Shakti",
+      "url": "https://nwda.gov.in/",
+      "license": "Government of India publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/commitments-jaipur.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "NWDA note on the Modified Parbati-Kalisindh-Chambal-ERCP (Ram Jal Setu) link: MoA 5 Dec 2024; about 1,744 MCM of drinking water for 21 districts including 'Jaipur Urban' and 'Jaipur Rural'; DPRs with CWC for appraisal (file of 13 Aug 2025). Jaipur's own share is not stated anywhere found."
+    },
+    {
+      "id": "jda-dravyavati",
+      "scope": "jaipur",
+      "publisher": "Jaipur Development Authority",
+      "url": "https://jda.rajasthan.gov.in/",
+      "license": "Government of Rajasthan publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/commitments-jaipur.json"
+      ],
+      "refreshMethod": "manual",
+      "notes": "Dravyavati River Project: JDA EIA/EMP (2017, environmentclearance.nic.in), April 2018 project sheet (target 15 Aug 2018; 47.5 km; five STPs, 170 MLD; Rs 1,676.93 crore with 10 years of O&M). JDA's own pages render by JavaScript; jda.urban.rajasthan.gov.in has an expired certificate (2026-10-20)."
+    },
+    {
+      "id": "jaipur-court-docket",
+      "scope": "jaipur",
+      "publisher": "Rajasthan High Court and Supreme Court of India",
+      "url": "https://hcraj.nic.in/",
+      "license": "Rajasthan High Court judicial record (Government of India judiciary), cited with attribution",
+      "type": "page",
+      "cadence": "per order",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 60
+      },
+      "dependsOn": [
+        "public/data/commitments-jaipur.json"
+      ],
+      "refreshMethod": "manual: new orders in D.B. Civil Writ Petition 11153/2011 (Suo Motu, Ramgarh catchment) and D.B. CWP 2905/2024 (Dravyavati), read from the court-signed PDFs (LiveLaw and Verdictum mirror them; the court's case status is search-gated)",
+      "notes": "Ramgarh catchment: Supreme Court judgment of 9 Nov 2017 (NIMS, SLP (C) 38040-41/2012, hosted on hcraj.nic.in) recounts the 2011 directions; High Court orders of 30 Jul 2026 and 13 Aug 2026; next hearing 15 Sep 2026 (order not found by 2026-10-20). Dravyavati: High Court orders of 19 Dec 2024 (2024:RJ-JP:51492) and 23 Jul 2026. Mirrors: cite the court and case number."
+    },
+    {
+      "id": "rajasthan-wrd-dam-storage",
+      "scope": "jaipur",
+      "publisher": "Water Resources Department, Government of Rajasthan",
+      "url": "https://water.rajasthan.gov.in/wr/#/",
+      "license": "Government of Rajasthan publication, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "daily (mid-June to mid-October); 1st and 16th of the month otherwise, posted late",
+      "tier": 1,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/jaipur-dam-storage.json",
+        "public/data/water-bodies-flagship-jaipur.json",
+        "public/data/facts-jaipur.json",
+        "supabase:reservoir_daily_v2"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/scrape_rajasthan_wrd_dams.py --cache <dir> --artifact --supabase, then --backfill-from 7 days back (local scheduled job; the list API and PDFs are on the Rajasthan state data centre). History: --backfill-from 2023-06-16, 2026-10-21.",
+      "notes": "'Water Storage Data' PDFs (Details of Large, Medium & Small Dams of Rajasthan State), listed by the portal's own POST API on medicalportal.rajasthan.gov.in and served from jankalyanfile.rajasthan.gov.in. % is present gross volume over designed (gross) capacity, not live storage: never splice with CWC's live-storage %. Terms & Conditions: 'Though all efforts have been made to ensure the accuracy and currency of the content on this website, the same should not be construed as a statement of law or used for any legal purposes.' No reuse licence stated; wrd.rajasthan.gov.in does not resolve (2026-10-20). The 05.08.2025 storage file answers 404 (read from that day's bulletin); 2023 bulletins print the dam tables in Kruti Dev; the Chhaparwara row of 18.06.2026 misprints Kalakhsagar's figures and is withheld; Ramsagar Newta prints gauge 0.00 from June 2025 to June 2026; the Jaipur-row Chandlai storage never leaves 1.99-2.04 Mcum."
+    },
+    {
+      "id": "ingres-groundwater-rajasthan",
+      "scope": "jaipur",
+      "publisher": "CGWB / IIT-Hyderabad (IN-GRES)",
+      "url": "https://ingres.iith.ac.in/",
+      "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+      "type": "page",
+      "cadence": "yearly (GEC assessment)",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 120
+      },
+      "dependsOn": [
+        "public/data/gwr-blocks-jaipur.json",
+        "public/geojson/jaipur-gwr-blocks.geojson",
+        "public/data/facts-jaipur.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_ingres_gwr.py --city jaipur (also writes the unit polygons from the IN-GRES GeoServer)",
+      "notes": "Dynamic Ground Water Resources for Jaipur district drilled to its 16 assessment units, five editions from 2021-2022. IN-GRES is ONE upstream serving every state; this entry is the Rajasthan cut. Rajasthan's state UUID came from the COUNTRY-level API call. IN-GRES still serves the 33 pre-2023 districts. The 2024-2025 district figures equal Rajasthan's printed Dynamic Ground Water Resources 2025 (printed p.168). Jaipur Urban's 2022-2023 row equals the state's GWRA 2023 report (printed p.49)."
+    },
+    {
+      "id": "nwic-nwdp-groundwater-rajasthan",
+      "scope": "jaipur",
+      "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+      "url": "https://nwdp.nwic.gov.in/",
+      "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+      "type": "api",
+      "cadence": "continuous (six-hourly telemetry)",
+      "tier": 2,
+      "detection": {
+        "method": "continuous"
+      },
+      "dependsOn": [
+        "public/data/jaipur-cgwb-stations.json"
+      ],
+      "refreshMethod": "neer-vazhvu-api/scripts/build_nwdp_gw_stations.py --city jaipur",
+      "notes": "Rajasthan groundwater-level telemetry on the CKAN portal: Rajasthan Ground Water Department six-hourly resources 2fe60c40-217d-43da-8927-d881c80d17d4 (2021-2025) and f33c4e60-7dbf-4b15-802a-ec8737cdd319 (2026-2030), and CGWB telemetry 467fe983-e1f0-4428-91b7-0ade87b39f6d and 931ff862-f13e-4754-83f9-55e0dc894f2d. TRAPS: the District tag is upper case ('JAIPUR') and follows pre-2023 lines; 999.0 is the state series' placeholder; zeros and sign flips occur; Durgapura_1 (about 8 m) is not CGWB's 100 m Durgapura piezometer; Jaisingpur Khor_1 steps from about 56 m to 3 m; about 70 state wells report only from 27 Jul to 3 Sep 2026. Shallow and deep piezometers stand side by side (Durgapura about 8 m, Mansarovar about 42 m)."
+    },
+    {
+      "id": "lsg-rajasthan-ward-gazette-2025",
+      "scope": "jaipur",
+      "publisher": "Local Self Government Department, Government of Rajasthan",
+      "url": "https://lsg.rajasthan.gov.in/lsg/#/pages/sm/department-page/371474/2380",
+      "license": "Government of Rajasthan gazette, cited with attribution",
+      "type": "pdf-listing",
+      "cadence": "per delimitation",
+      "tier": 1,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 180
+      },
+      "dependsOn": [
+        "public/data/jaipur-ward-profiles.json"
+      ],
+      "refreshMethod": "manual: a new ward notification for Nagar Nigam Jaipur; update pipeline-inputs/jaipur/wards-2025.csv, then python3 neer-vazhvu-api/scripts/build_jaipur_ward_table.py",
+      "notes": "LSG notification P.10(N.Pa.)(Gathan)(Chunav)DLB/25/19631 of 16 Sep 2025 (Rajasthan Municipalities Act 2009 ss.3, 10), Rajasthan Gazette Extraordinary Part 6(A), 20 Sep 2025: 150 wards with population (sum 3,197,135; census basis not stated). PDF on jankalyanfile.rajasthan.gov.in, byte-identical on jaipurmc.org as FinalParisimanGazette2025.pdf. LSG page is an Angular app; list via webapi/PublicPortal/DepartmentPages/GetDepartmentPageDetail?deptCode=371474&lookupCode=0&pageCode=2380. Devanagari text layer broken: ward 116 (24,725) read from page image p.52. Text boundaries only, no geometry."
+    },
+    {
+      "id": "jmc-jaipur-directory",
+      "scope": "jaipur",
+      "publisher": "Nagar Nigam Jaipur (Jaipur Municipal Corporation)",
+      "url": "https://jaipurmc.org/",
+      "license": "Nagar Nigam Jaipur municipal publication, cited with attribution",
+      "type": "page",
+      "cadence": "irregular",
+      "tier": 2,
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 90
+      },
+      "dependsOn": [
+        "public/data/jaipur-ward-profiles.json"
+      ],
+      "refreshMethod": "manual: re-read the corporators list (zone per ward, assembly ranges) and Administrative Directory p.2; update pipeline-inputs/jaipur/wards-2025.csv and ZONE_OFFICES in neer-vazhvu-api/scripts/build_jaipur_ward_table.py; rerun",
+      "notes": "Corporators list https://jaipurmc.org/PDF/Others/ParshadList_Jaiupr.pdf (6 Oct 2026): zone of each ward and assembly ranges, matching the raster ward map https://jaipurmc.org/PDF/wardmap.pdf. Administrative Directory https://jaipurmc.org/PDF/Others/jp_AdminContList.pdf (Kruti Dev; read from page images): zone office lines and emails. Zone spellings from the Jaipur Samadhan zone list. Officer mobiles, councillor names and parties never used. Terms: 'may be reproduced free of charge ... the source must be prominently acknowledged.'"
+    },
+    {
+      "id": "jica-bisalpur-evaluation",
+      "scope": "jaipur",
+      "publisher": "Japan International Cooperation Agency",
+      "url": "https://www2.jica.go.jp/en/evaluation/pdf/2015_ID-P157_4_f.pdf",
+      "license": "JICA (Government of Japan) public project document, cited with attribution",
+      "type": "file",
+      "cadence": "closed (FY2015 evaluation, published 2016)",
+      "tier": 2,
+      "closed": true,
+      "as_of": "2016",
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "dependsOn": [
+        "public/data/jaipur-supply-overview.json",
+        "public/data/facts-jaipur.json"
+      ],
+      "refreshMethod": "none: a one-time evaluation",
+      "notes": "Ex-post evaluation of the Bisalpur-Jaipur Water Supply Project (Transfer System): 120 km from Jaipur (p.3); 97% groundwater of 345,000 m3/day at appraisal in 2003, 18.8% in 2015 (pp.2, 18-19); intake 396,000 m3/day in 2015 (Table 6, p.18); NRW 37% in 2015 with 45-81% of meters out of order in four zones (p.18); built March 2004 - May 2013 (Table 4, p.15)."
+    },
+    {
+      "id": "wrd-rajasthan-drip2-esia-2020",
+      "scope": "jaipur",
+      "publisher": "Water Resources Department, Government of Rajasthan (published by the World Bank)",
+      "url": "https://documents1.worldbank.org/curated/en/432001582439812232/pdf/Revised-Environmental-and-Social-Impact-Assessment-Dam-Rehabilitation-and-Improvement-Project-2-P170873.pdf",
+      "license": "World Bank project documents, cited with attribution",
+      "type": "file",
+      "cadence": "closed (February 2020)",
+      "tier": 2,
+      "closed": true,
+      "as_of": "2020-02",
+      "detection": {
+        "method": "human-review",
+        "reviewEveryDays": 365
+      },
+      "dependsOn": [
+        "public/data/jaipur-supply-overview.json"
+      ],
+      "refreshMethod": "none: a one-time study",
+      "notes": "Revised ESIA, Dam Rehabilitation and Improvement Project 2 (P170873), Bisalpur section (PDF p.7): 11.1 TMC a year to Jaipur and villages on its pipeline, 5.1 TMC to Ajmer and villages, about 8 TMC for irrigation; 'Annual water supply' 458.72 MCM (16.2 TMC). A description, not an allocation order; no order has been found."
+    }
+  ]
+}

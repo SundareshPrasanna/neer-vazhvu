@@ -1,0 +1,67 @@
+{
+  "_doc": "Settings only the data pipeline reads (Python scripts and workflows); the app never imports this file. See src/cities/README.md.",
+  "rainfall": {
+    "imdGrid": {
+      "lat": 26.75,
+      "lng": 75.75,
+      "note": "Jaipur grid point: the 0.25-deg intersection nearest IMD's Jaipur (Sanganer) observatory (26 deg 49' N, 75 deg 48' E, station index 42348, about 8.9 km); its cell contains the observatory and about 36% of the corporation outline (the cell to the north, 27.0/75.75, holds about 55%). Checked 2026-10-20 against the observatory's 1991-2020 normal of 600.3 mm (IMD Climatological Tables 1991-2020, printed p.166): this cell's 1991-2020 mean is 591.9 mm (-1.4%), the northern cell's 612.7 mm (+2.1%). Every year 1991-2020 is within 0.75-1.27x of the Rajasthan SW manual gauge at Sanganer (NWDP resource 8b73ccfb, one value per day; its 2016-2018 rows are duplicated at 08:00 and 08:30), and the northern cell tracks the Amer gauge within 0.92-1.11x. No zero or missing years 1970-2025.",
+      "sourceId": "imd-gridded-rainfall-jaipur"
+    },
+    "recent": {
+      "_note": "generate_imd_rainfall.py's grid point (26.75, 75.75), so the provisional months continue the IMD series.",
+      "lat": 26.75,
+      "lng": 75.75
+    }
+  },
+  "ingres": {
+    "_note": "Jaipur drills like Ahmedabad: IN-GRES carved JAIPUR_URBAN (38,141 ha, isUrban) out of the Sanganer, Amber and Jhotwara blocks in 2021-2022 (167,376 ha before and after: Sanganer 65,754 + Amber 44,743 + Jhotwara 56,879 became Sanganer Rural 54,989 + Amber Rural 43,718 + Jhotwara Rural 30,528 + Jaipur Urban 38,141). Editions start at 2021-2022 so no series crosses the redraw. About 96% of the corporation outline lies inside Jaipur Urban (overlay of the OSM outline on IN-GRES's 2021 polygons, 2026-10-20).",
+    "_notes": {
+      "drill.published": "District figures printed in Rajasthan's Dynamic Ground Water Resources 2025 (printed p.168 / PDF p.194), read twice; they equal IN-GRES 2024-2025.",
+      "drill.district": "IN-GRES still serves the 33 pre-2023 districts: its JAIPUR is the undivided district (Kotputli, Viratnagar, Paota, Dudu included). Label district totals 'Jaipur district as assessed (undivided)'."
+    },
+    "state": "RAJASTHAN",
+    "state_label": "Rajasthan",
+    "source_id": "ingres-groundwater-rajasthan",
+    "provenance_note": "Assessment per block inside Jaipur district (as IN-GRES draws it, the undivided pre-2023 district), five editions from 2021-2022. Drilled below the district because the city has its own unit, Jaipur Urban, which IN-GRES carved out in 2021-2022; every one of the district's 16 units is over-exploited. This is NOT depth-to-water - IN-GRES does not carry it; measured levels are the NWDP telemetry wells.",
+    "drill": {
+      "state": "RAJASTHAN",
+      "district": "JAIPUR",
+      "district_uuid": "f92cddfd-fe96-49e4-8bc7-54ea9f93657a",
+      "unit_label": "block",
+      "keep_district_total": true,
+      "names": {
+        "JAIPUR_URBAN": "Jaipur Urban",
+        "SANGANER_RURAL": "Sanganer Rural",
+        "AMBER_RURAL": "Amber Rural",
+        "JHOTWARA_RURAL": "Jhotwara Rural"
+      },
+      "wfs": {
+        "layer": "gec:indgec_versi_block",
+        "year": 2021
+      },
+      "published": {
+        "2024-2025": {
+          "class": "Over Exploited",
+          "development_pct": 217.01,
+          "availability_ham": 71377.8,
+          "draft_total_ham": 154900.2,
+          "recharge_worthy_area_ha": 1033472.0
+        }
+      }
+    },
+    "years": [
+      "2021-2022",
+      "2022-2023",
+      "2023-2024",
+      "2024-2025",
+      "2025-2026"
+    ],
+    "notes": [
+      "THE CITY HAS ITS OWN UNIT, AND IT IS THE WORST IN THE DISTRICT. Jaipur Urban stands at 349.88% in 2025-2026 (328.41% in 2024-2025, the edition Rajasthan's 2025 report prints): the city pumps more than three times what rain puts back. Every one of the district's 16 units is over-exploited; the undivided district reads 210.41%.",
+      "THE CITY'S DRAW IS DOMESTIC. In Jaipur Urban 94% of extraction is domestic and none is irrigation; across the district 71% is irrigation.",
+      "INPUTS ARE CARRIED FORWARD, so the edition-to-edition movement is not a measurement. Industrial draft is 244.81 ham in four editions (826.39 in 2025-2026), domestic 3,662.09 ham in two; recharge is credited from rainfall only, and Jaipur Urban's rainfall is copied from Jhotwara Rural. Quote the category and the latest stage; do not render the series as a trend.",
+      "THE 2021 REDRAW HALVED DOMESTIC DRAFT (21,170 to 10,507 ham across the old blocks) by a change of estimation, not of use.",
+      "FUTURE AVAILABILITY IS ZERO in every fresh-water unit. The district's only 'future availability' sits in Phagi's 34,006 ha saline zone; never quote the API's total for it."
+    ]
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "nvdm": "1.0",
+  "dataset": "data-root/supply-overview",
+  "scope": {
+    "kind": "city",
+    "id": "jaipur"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "phed-rajasthan-progress-reports",
+        "title": "PHED Rajasthan Annual Progress Reports 2025-26 and 2024-25, Parishisht-21 (Jaipur city row); summer tanker table; zone-wise supply schedule",
+        "publisher": "Public Health Engineering Department, Government of Rajasthan",
+        "license": "Government of Rajasthan publication, cited with attribution"
+      },
+      {
+        "id": "jica-bisalpur-evaluation",
+        "title": "JICA ex-post evaluation, Bisalpur-Jaipur Water Supply Project (Transfer System) (2016)",
+        "publisher": "Japan International Cooperation Agency",
+        "license": "JICA (Government of Japan) public project document, cited with attribution"
+      },
+      {
+        "id": "wrd-rajasthan-drip2-esia-2020",
+        "title": "Water Resources Department, Rajasthan: revised environmental and social impact assessment, Dam Rehabilitation and Improvement Project 2 (February 2020), Bisalpur description",
+        "publisher": "Water Resources Department, Government of Rajasthan (published by the World Bank)",
+        "license": "World Bank project documents, cited with attribution"
+      }
+    ],
+    "method": "manual",
+    "produced_at": "2026-10-21",
+    "produced_by": "neer-vazhvu-api/scripts/build_jaipur_supply.py",
+    "note": "Transcribed from PHED's progress reports (Kruti Dev Hindi, read from page images); every figure is listed in FIGURES with its page."
+  },
+  "hero_copy": {
+    "headline": "77% of Jaipur's piped water comes from a dam about {km} km away",
+    "body": "The Public Health Engineering Department (PHED), the state's water department, produced 766.73 MLD a day for {city} at the end of 2025. 590 MLD came from Bisalpur dam on the Banas and 176 MLD from 3,633 PHED tube wells. A year earlier Bisalpur gave 492 MLD: the whole rise of about 98 MLD came from the dam. Bisalpur is shared: a Water Resources Department study (2020) describes 11.1 TMC a year for Jaipur and the villages on its pipeline, 5.1 TMC for Ajmer, and the rest for irrigation. PHED's zone schedule (April 2024) gives most colonies about an hour of water a day.",
+    "wtp_label": "PHED water production",
+    "wtp_sub": "590 MLD from Bisalpur and 176 MLD from 3,633 tube wells, 31 December 2025",
+    "uphill_label": "From Bisalpur dam",
+    "uphill_sub": "Distance JICA gives for the transfer system (2016)",
+    "footer": "Figures from PHED Rajasthan's Annual Progress Reports 2025-26 (status 31 December 2025, p.85) and 2024-25 (p.84), and PHED's zone schedule of 15 April 2024. PHED publishes no city-wide non-revenue water and no order fixing Jaipur's share of Bisalpur; both are named gaps on the About page."
+  },
+  "supply_chain": [
+    "Bisalpur dam on the Banas, Tonk district",
+    "The transfer system to Surajpura (treatment) and Balawala pumping station at the city's edge",
+    "PHED's city pumping stations and reservoirs (City Circles North and South)",
+    "590,385 PHED water connections",
+    "3,633 PHED tube wells pumping into the same network"
+  ],
+  "_view_overrides": {
+    "subtitle": "Jaipur's water by source, from PHED Rajasthan's progress report (status 31 December 2025). Refreshed when PHED publishes its next report.",
+    "wtp_label": "PHED water production"
+  },
+  "current_supply_mix_mld": [
+    {
+      "source": "Bisalpur dam (Banas)",
+      "scheme": "Bisalpur-Jaipur transfer system",
+      "mld": 590.0,
+      "capacity_mld": null,
+      "annual_mcft": null,
+      "note": "492.08 MLD a year earlier (31 December 2024). The dam also supplies Ajmer and Tonk and irrigates farms below it."
+    },
+    {
+      "source": "PHED tube wells (3,633)",
+      "scheme": "Pumped into the city network",
+      "mld": 176.0,
+      "capacity_mld": null,
+      "annual_mcft": null,
+      "note": "The same count and output in PHED's 2024-25 and 2025-26 reports. Private borewells are not in any PHED figure."
+    }
+  ],
+  "current_supply_total_mld": 766.73,
+  "_supply_total_note": "PHED's production for Jaipur city; water delivered after losses is not published.",
+  "distribution": {
+    "population_served": null,
+    "connections": {
+      "total": 590385
+    },
+    "_connections_note": "PHED's count, 31 December 2025. Population left out: PHED's figure is the same in its 2024-25 and 2025-26 reports."
+  },
+  "allocation_context": {
+    "transmission_distance_km": 120
+  },
+  "groundwater": {
+    "official_mld": 176.0,
+    "estimate_mld": null,
+    "_note": "PHED's own tube-well draw. For the aquifer under the city, see the groundwater page: IN-GRES assesses the Jaipur Urban unit as over-exploited."
+  },
+  "tankers": {
+    "peak_tankers_per_day": 230,
+    "peak_trips_per_day": 1283,
+    "as_of": "2025-06-24",
+    "_note": "PHED's summer contingency tankers in Jaipur city at the 2025 peak."
+  },
+  "_sources": [
+    {
+      "name": "PHED Rajasthan, Annual Progress Report 2025-26, p.85 (Jaipur city) and p.41 (tankers)",
+      "url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/Pdf2026/PHED%20ALL%20page.pdf",
+      "date": "2026-01",
+      "extracted": "2026-10-20"
+    },
+    {
+      "name": "PHED Rajasthan, Annual Progress Report 2024-25, p.84 (Jaipur city)",
+      "url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/PDF2025/Annual%20Report%202024-25.pdf",
+      "date": "2025-01",
+      "extracted": "2026-10-20"
+    },
+    {
+      "name": "PHED Jaipur zone-wise water supply schedule (status 15.04.2024)",
+      "url": "https://phedwater.rajasthan.gov.in/content/dam/doitassets/water/Public-Health-Engineering-Department/WATER-_SUPPLY_TIME/Jaipur(U).pdf",
+      "date": "2024-04-15",
+      "extracted": "2026-10-20"
+    },
+    {
+      "name": "JICA ex-post evaluation, Bisalpur-Jaipur Water Supply Project (2016)",
+      "url": "https://www2.jica.go.jp/en/evaluation/pdf/2015_ID-P157_4_f.pdf",
+      "date": "2016",
+      "extracted": "2026-10-20"
+    },
+    {
+      "name": "WRD Rajasthan, revised ESIA, Dam Rehabilitation and Improvement Project 2 (Feb 2020), p.7",
+      "url": "https://documents1.worldbank.org/curated/en/432001582439812232/pdf/Revised-Environmental-and-Social-Impact-Assessment-Dam-Rehabilitation-and-Improvement-Project-2-P170873.pdf",
+      "date": "2020-02",
+      "extracted": "2026-10-20"
+    }
+  ]
+}

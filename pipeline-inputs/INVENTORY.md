@@ -30,6 +30,16 @@ Inputs of `scripts/build_erode_rivers_basin.py` (the Erode district map, `public
 
 Consumer: the builder above and `.github/workflows/district-basins-refresh.yml` (weekly, one job per district basin). Public exposure: downloadable via the public repo.
 
+## jaipur/
+
+Inputs of `neer-vazhvu-api/scripts/build_jaipur_river_quality.py` (`public/data/river-quality-jaipur.json`) and `neer-vazhvu-api/scripts/build_jaipur_ward_table.py` (`public/data/jaipur-ward-profiles.json`).
+
+| File | Purpose | SHA-256 (first 16) | Provenance | Licence status |
+|---|---|---|---|---|
+| cpcb-nwmp-jaipur-2018-2024.csv | CPCB's yearly min and max for stations 2951 (Bisalpur dam) and 2952 (Newta dam, fed from the Dravyavati) 2018-2024, 4781 (Kanota) 2021 and the lake station 2944 (Jal Mahal) 2021-2024: 19 station-years with page and table on each row | `a2d601efcecfd303` | Transcribed 2026-10-20 from CPCB `WQuality_River-Data-<year>.pdf` and `Water_pond_tanks_<year>.pdf`; text layer and page image agree; 2944 is for the water-bodies page | As `cpcb-nwmp-annual` |
+| jaipur-wq-stations.csv | Coordinates of 2951, 4781 and 2944; 2952 left blank with the reason (CPCB's point sits at Kanota, not Newta) | `1e03475b15d2349c` | CPCB `WQMN_list.pdf` (Oct 2020) pp.103 and 107; NRLD 2019 for the distance checks | As `cpcb-nwmp-annual` |
+| wards-2025.csv | 150 wards: gazette population, assembly seat, JMC zone; party column dropped | `890e4f4e29be8fa3` | LSG DLB/25/19631 (16 Sep 2025) transcribed 2026-10-20, ward 116 from the page image; zone and seat from JMC's corporators list (6 Oct 2026) | As `lsg-rajasthan-ward-gazette-2025` and `jmc-jaipur-directory` (jaipur.json) |
+
 Log:
 - 2026-07-30: directory created (#210); inventory added after governance
   review found the orphan hidden rather than governed, and the README
@@ -85,3 +95,4 @@ Consumer: the two builders above; the outline is also available to the groundwat
 
 Log:
 - 2026-10-15: directory created with the Nagpur onboarding (frozen NMC outline; seven river and STP transcriptions).
+- 2026-10-21: jaipur/ added with the Jaipur onboarding (CPCB river and lake transcriptions, station list, 2025 ward table).

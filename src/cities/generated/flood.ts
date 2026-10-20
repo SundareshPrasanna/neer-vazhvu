@@ -15,6 +15,7 @@ import { FLOOD as nagpur } from "../nagpur/flood";
 import { FLOOD as surat } from "../surat/flood";
 import { FLOOD as ahmedabad } from "../ahmedabad/flood";
 import { FLOOD as visakhapatnam } from "../visakhapatnam/flood";
+import { FLOOD as jaipur } from "../jaipur/flood";
 
 /** /[cityId]/flood-risk content (flood.ts or flood.tsx). */
 export const FLOOD_CONTENT: Partial<Record<CityId, CityFloodContent>> = {
@@ -30,4 +31,5 @@ export const FLOOD_CONTENT: Partial<Record<CityId, CityFloodContent>> = {
   surat: surat,
   ahmedabad: ahmedabad,
   visakhapatnam: visakhapatnam,
+  jaipur: jaipur,
 };

@@ -1,0 +1,232 @@
+{
+  "_doc": "Jaipur water-bodies-flagship for /jaipur/lake-restoration. Edit rows under payload and set its date field, then run: python3 neer-vazhvu-api/scripts/build_curated.py water-bodies-flagship --city jaipur. Rows and citations were researched from primary sources in October 2026.",
+  "build": {
+    "indent": 1,
+    "trailingNewline": false,
+    "envelope": {
+      "dataset": "data-root/water-bodies-flagship",
+      "scope": {
+        "kind": "city",
+        "id": "jaipur"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "id": "rajasthan-wrd-dam-storage",
+            "title": "Details of Large, Medium & Small Dams of Rajasthan State (daily water storage report)",
+            "publisher": "Water Resources Department, Government of Rajasthan"
+          },
+          {
+            "title": "National Register of Large Dams 2019, Rajasthan section, PDF pp.259 and 263",
+            "publisher": "Central Water Commission",
+            "closed": true,
+            "as_of": "2019",
+            "url": "https://cwc.gov.in/sites/default/files/nrld-2019.pdf",
+            "license": "Government of India (CWC) publication, cited with attribution"
+          },
+          {
+            "id": "mojs-water-bodies-census-2023",
+            "title": "First Census of Water Bodies, Rajasthan district tables and unit-level rows (reference year 2017-18)",
+            "publisher": "Ministry of Jal Shakti"
+          },
+          {
+            "title": "Supreme Court of India, Jal Mahal Resorts P. Ltd v. K.P. Sharma, Civil Appeal 4912 of 2014, judgment of 25 April 2014",
+            "publisher": "Supreme Court of India",
+            "closed": true,
+            "as_of": "2014-04-25",
+            "url": "https://api.sci.gov.in/jonew/judis/41512.pdf",
+            "license": "Supreme Court of India judicial record (Government of India judiciary), cited with attribution"
+          },
+          {
+            "title": "Supreme Court of India, National Institute of Medical Science University v. State of Rajasthan, SLP (C) 38040-38041 of 2012, judgment of 9 November 2017",
+            "publisher": "Supreme Court of India",
+            "closed": true,
+            "as_of": "2017-11-09",
+            "url": "https://hcraj.nic.in/sci/2012/1-38041-2012_2017-11-09.pdf",
+            "license": "Supreme Court of India judicial record (Government of India judiciary), cited with attribution"
+          },
+          {
+            "title": "Supreme Court of India, Nagar Nigam Heritage Jaipur v. Rajendra Tiwari, Civil Appeal 6469/2024, record of proceedings of 28 February 2025",
+            "publisher": "Supreme Court of India",
+            "closed": true,
+            "as_of": "2025-02-28",
+            "url": "https://www.livelaw.in/pdf_upload/917120242025-02-28-589786.pdf",
+            "license": "Supreme Court of India judicial record (Government of India judiciary), cited with attribution"
+          },
+          {
+            "title": "Rajasthan High Court, Suo Motu v. State of Rajasthan, D.B. Civil Writ Petition 11153/2011, orders of 30 July and 13 August 2026",
+            "publisher": "High Court of Judicature for Rajasthan, Jaipur Bench",
+            "closed": true,
+            "as_of": "2026-08-13",
+            "url": "https://www.livelaw.in/pdf_upload/2026/08/31/12-3-697191.pdf",
+            "license": "Rajasthan High Court judicial record (Government of India judiciary), cited with attribution"
+          },
+          {
+            "title": "Nagar Nigam Jaipur, Notice Inviting Tender NIB 05/2016-17, sewerage works under AMRUT",
+            "publisher": "Nagar Nigam Jaipur",
+            "closed": true,
+            "as_of": "2017-02-07",
+            "url": "https://www.hcipretoria.gov.in/content/Scan_Doc0334.pdf",
+            "license": "Government tender notice, cited with attribution"
+          }
+        ],
+        "method": "manual",
+        "produced_by": "manual research draft (no builder yet)",
+        "note": "Curated flagship register. Each body carries its own document links; page numbers in the text are PDF pages unless marked printed."
+      }
+    }
+  },
+  "payload": {
+    "place_id": "jaipur",
+    "compiled_at": "2026-10-20",
+    "note": "Jaipur has no public lake register of its own. The state Water Resources Department lists the dams it gauges, with a daily storage report; the Central Water Commission's register gives the large dams' design; the Supreme Court and the Rajasthan High Court carry the legal record of Mansagar and Ramgarh; and the first Census of Water Bodies reached only Amer among the tehsils around the city. Entries are graded V (verified against a primary document), N (single source) or C (claim only). Storage figures are from WRD's report of 8 October 2026; the census rows are its 2017-18 reference year.",
+    "context": {
+      "water_bodies_census": {
+        "source": "Ministry of Jal Shakti, First Census of Water Bodies (reference year 2017-18), Rajasthan district tables",
+        "district": "Jaipur",
+        "total": 82,
+        "rural": 82,
+        "urban": 0,
+        "ponds": 26,
+        "tanks": 53,
+        "lakes": 1,
+        "reservoirs": 1,
+        "conservation_structures": 1,
+        "not_in_use": 52,
+        "encroached": 0,
+        "tables": {
+          "1-C all": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table1-C/RJ_6MIC_WBS1-C.xls",
+          "5 in use / not in use": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table5/RJ_6MIC_WBS5.xls",
+          "22-A encroached": "https://mowr.nic.in/irrigationcensus/Reports/6MIC/WBS/table22-A/RJ_6MIC_WBS22-A.xls"
+        },
+        "comparison": "The census found no urban water body anywhere in Jaipur district, and its 82 rural rows sit almost all in Shahpura and Phulera tehsils; Amer is the only tehsil near the city it reached. It did not enumerate the city. The second census (reference year 2023-24) counts 14,400 water bodies in Rajasthan, 1,081 of them urban, but its district tables were not yet on the Ministry's table page on 20 October 2026."
+      },
+      "wrd_jaipur_district": {
+        "source": "Water Resources Department, daily storage report of 8 October 2026",
+        "dams_listed": 27,
+        "design_capacity_mcum": 208.747,
+        "stored_mcum": 33.978,
+        "stored_pct": 16.3,
+        "state_stored_pct": 61.8,
+        "note": "Count and sums worked out from the 27 rows the report marks district Jaipur; eleven held nothing. Ramgarh alone is 75.040 of the 208.747 Mcum."
+      }
+    },
+    "bodies": [
+      {
+        "name": "Mansagar Lake (Jal Mahal)",
+        "alternate_names": [
+          "Man Sagar",
+          "Jalmahal lake"
+        ],
+        "type": "lake",
+        "area_acres": 321,
+        "era": "late 16th or early 17th century",
+        "builder": "Maharaja Man Singh of Amer (ruled 1589 to 1614), by damming the Darbhawati river, as the lessee told the Supreme Court in 2014 (PDF p.100)",
+        "feed": "the Darbhawati river; from 1962 also the walled city's Nagtalai and Brahmapuri sewage drains (Supreme Court 2014, PDF p.8), later diverted, with treated water from the Brahmapuri STP let in to make up evaporation (PDF p.25)",
+        "status": "WRD gauges it as a dam of 1.136 Mcum; on 8 October 2026 it held 0.906 Mcum (79.75%). JDA restored it under the National Lake Conservation Plan (Rs 24.72 crore, approved 2002). On 28 February 2025 the Supreme Court recorded a forest officer's finding that the lake 'has been completely damaged' by sewage and waste from Nagar Nigam Heritage, ordered NEERI appointed, stopped the State's planned development until NEERI reports, and barred vending near the lake. The record we hold has nothing after the hearing of 24 March 2025. The 321 acres is the 130 hectares the restoration DPR gave as the full spread (Supreme Court 2014, PDF p.103).",
+        "cultural_note": "Jal Mahal, a pleasure pavilion built in the 18th century, stands in the lake (Supreme Court 2014, PDF p.8). Since 2005 a 100-acre precinct on its shore has been leased to Jal Mahal Resorts; in 2014 the Supreme Court cut the lease from 99 years to 30 and returned 8.65 acres to the lake.",
+        "confidence": "V",
+        "sources": [
+          "https://api.sci.gov.in/jonew/judis/41512.pdf",
+          "https://www.livelaw.in/pdf_upload/917120242025-02-28-589786.pdf",
+          "https://indiankanoon.org/doc/83169565/",
+          "https://jankalyanfile.rajasthan.gov.in/WebMyWayFiles/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf"
+        ]
+      },
+      {
+        "name": "Ramgarh Dam (Jamwa Ramgarh)",
+        "alternate_names": [
+          "Ramgarh Lake",
+          "Jamwaramgarh"
+        ],
+        "type": "reservoir",
+        "area_acres": 2558,
+        "era": "1901 by the national dam register, 1903 by the Supreme Court",
+        "feed": "the Banganga (NRLD 2019); the High Court names the Banganga, Madhoveni, Roda, Gomti and Tala as the rivers that should reach it. Its catchment is about 769.20 sq km across Jamvaramgarh, Amer, Shahpura and Viratnagar tehsils (Supreme Court 2017, PDF p.2)",
+        "status": "Design storage 75.040 Mcum (WRD); on 8 October 2026 it held nothing, and on the same date in 2025, when the state's dams were 90% full, it also held nothing. It irrigated until 1978 and then supplied Jaipur's drinking water (Supreme Court 2017). The Rajasthan High Court has been hearing the catchment encroachments since 2011: on 30 July 2026 it told WRD to remove the anicuts blocking the flow, and on 13 August 2026 it ordered the list of encroachers published in two newspapers. The record we hold has nothing after the hearing of 15 September 2026. The 2,558 acres is the reservoir area in the national dam register (10,350,000 square metres); OSM maps only about 112 hectares.",
+        "cultural_note": "Water sports events of the 1982 Asian Games were held on the lake (Supreme Court 2017, PDF p.3).",
+        "confidence": "V",
+        "sources": [
+          "https://hcraj.nic.in/sci/2012/1-38041-2012_2017-11-09.pdf",
+          "https://www.livelaw.in/pdf_upload/2026/08/05/20520011153201154-691916.pdf",
+          "https://www.livelaw.in/pdf_upload/2026/08/31/12-3-697191.pdf",
+          "https://cwc.gov.in/sites/default/files/nrld-2019.pdf",
+          "https://jankalyanfile.rajasthan.gov.in/WebMyWayFiles/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf"
+        ]
+      },
+      {
+        "name": "Kanota Dam",
+        "type": "reservoir",
+        "feed": "the Dhoond river (NRLD 2019)",
+        "status": "Design storage 14.130 Mcum; full on 8 October 2026 (WRD). The national dam register gives an earth dam 18.75 m high and 2,499 m long, completed in 2001; the record we hold does not say whether 2001 is the first build or a rebuild.",
+        "confidence": "V",
+        "sources": [
+          "https://cwc.gov.in/sites/default/files/nrld-2019.pdf",
+          "https://jankalyanfile.rajasthan.gov.in/WebMyWayFiles/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf"
+        ]
+      },
+      {
+        "name": "Nevta Dam (Ramsagar)",
+        "alternate_names": [
+          "Ramsagar Newta",
+          "Nevta Lake"
+        ],
+        "type": "reservoir",
+        "status": "Design storage 6.703 Mcum; 3.770 Mcum (56.24%) on 8 October 2026, against 5.06 Mcum a year earlier (WRD). Not in the 2019 national register of large dams. The record we hold gives no history.",
+        "confidence": "N",
+        "sources": [
+          "https://jankalyanfile.rajasthan.gov.in/WebMyWayFiles/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf"
+        ]
+      },
+      {
+        "name": "Chandlai",
+        "type": "reservoir",
+        "status": "WRD lists a Chandlai dam in Jaipur district of 2.040 Mcum, full on 8 October 2026. The same report lists a second Chandlai in Tonk district (4.530 Mcum); which one is the 122-hectare 'Chandlai Lake' OSM maps south of the city is not settled.",
+        "confidence": "N",
+        "sources": [
+          "https://jankalyanfile.rajasthan.gov.in/WebMyWayFiles/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf"
+        ]
+      },
+      {
+        "name": "Talkatora",
+        "alternate_names": [
+          "Tal Katora"
+        ],
+        "type": "lake",
+        "status": "In February 2017 Nagar Nigam Jaipur tendered a 1 MLD sewage plant at Tal Katora and the desilting of the lake under AMRUT, in one Rs 30.82 crore package with an 8 MLD plant at Brahmapuri, to be done in 24 months. The record we hold has no award or completion. OSM maps about 6 hectares.",
+        "confidence": "N",
+        "sources": [
+          "https://www.hcipretoria.gov.in/content/Scan_Doc0334.pdf"
+        ]
+      },
+      {
+        "name": "Maota Lake, Amer",
+        "alternate_names": [
+          "Mavtha",
+          "Maotha"
+        ],
+        "type": "lake",
+        "status": "The first Census of Water Bodies records it as 'Mavtha Amer Mahal ke niche' (Maota, below Amer palace): 10.89 hectares of water spread, owned by another government agency, not in use, dried up and filled to a quarter, in its 2017-18 reference year. WRD does not gauge it. The record we hold has no custodian's own account.",
+        "confidence": "N",
+        "sources": [
+          "https://api.data.gov.in/resource/76783971-9801-416c-b8b5-2f52d781756a"
+        ]
+      },
+      {
+        "name": "Kukas Bandh",
+        "alternate_names": [
+          "Kookas"
+        ],
+        "type": "tank",
+        "era": "1901 (NRLD 2019)",
+        "status": "WRD gauges it at 1.926 Mcum; it was empty on 8 October 2026. The census recorded 10.92 hectares, dried up and not in use, in 2017-18. The national dam register gives 43.75 million cubic metres gross but 4.375 million effective, which cannot both be right; neither figure should be published.",
+        "confidence": "V",
+        "sources": [
+          "https://jankalyanfile.rajasthan.gov.in/WebMyWayFiles/OrderEntry/WR/2026/Departmental_Activities/O_081026_4498992a-9256-4cb1-a97b-61b0bdd88c7c.pdf",
+          "https://cwc.gov.in/sites/default/files/nrld-2019.pdf",
+          "https://api.data.gov.in/resource/76783971-9801-416c-b8b5-2f52d781756a"
+        ]
+      }
+    ]
+  }
+}

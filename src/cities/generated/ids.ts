@@ -16,4 +16,5 @@ export const CITY_IDS = [
   "surat",
   "ahmedabad",
   "visakhapatnam",
+  "jaipur",
 ] as const;
