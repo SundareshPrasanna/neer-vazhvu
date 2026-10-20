@@ -26,7 +26,7 @@ export async function sendNotice(reporterKey: string, notice: Notice): Promise<n
     const { data, error } = await admin.from("sighting_push_subscriptions").select("endpoint, p256dh, auth").eq("reporter_key", reporterKey);
     if (error) throw error;
     const options = { vapidDetails: { subject: process.env.VAPID_SUBJECT || DEFAULT_SUBJECT, publicKey, privateKey }, TTL: TTL_SECONDS, timeout: 10_000 };
-    const payload = JSON.stringify({ title: notice.title, body: notice.body, url: notice.url ?? "/for-citizens" });
+    const payload = JSON.stringify({ title: notice.title, body: notice.body, url: notice.url ?? "/mitra" });
     const gone: string[] = [];
     const sent = await Promise.all(
       ((data ?? []) as { endpoint: string; p256dh: string; auth: string }[]).map(async (s) => {

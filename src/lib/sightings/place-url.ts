@@ -45,7 +45,8 @@ export function placeUrl(p: PlaceFields): PlaceLink | null {
     const has = (route: string) => isFeatureSupportedForCity(`/${route}`, city.cityId);
     const map = `/${city.cityId}/water-bodies?${REPORTS_LAYER}`;
     if (mapped && p.water_body_id && has("water-bodies")) {
-      return { href: map, label: p.water_body_name ? `${p.water_body_name}, ${city.displayName}` : city.displayName };
+      // body= opens that lake's panel, where its reports are listed.
+      return { href: `${map}&body=${encodeURIComponent(p.water_body_id)}`, label: p.water_body_name ? `${p.water_body_name}, ${city.displayName}` : city.displayName };
     }
     if (p.ward_id && has("my-ward")) {
       return { href: `/${city.cityId}/my-ward?ward=${encodeURIComponent(p.ward_id)}`, label: `Ward ${p.ward_id}, ${city.displayName}` };

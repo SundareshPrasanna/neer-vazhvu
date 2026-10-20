@@ -60,7 +60,7 @@ export function PlaceReports({ place, ward, body, panchayat }: { place: string; 
   const { reports, issues, issueReports } = loaded;
   // The report page opens its map at this place.
   const report = (
-    <Link href={`/for-citizens?${query}`} className={`inline-flex shrink-0 items-center gap-1.5 text-sm ${appLink}`}>
+    <Link href={`/mitra?${query}`} className={`inline-flex shrink-0 items-center gap-1.5 text-sm ${appLink}`}>
       <Camera className="h-4 w-4" aria-hidden="true" />
       {reports.length ? "Report something" : "Seen something here? Report it"}
     </Link>

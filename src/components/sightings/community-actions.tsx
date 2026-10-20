@@ -17,7 +17,7 @@ type Citizen = ReturnType<typeof useCitizen>;
 type Counts = { seenCount: number; thanksCount: number };
 type Result = { ok: true; data: unknown } | { ok: false; error: string };
 
-/** Signed out: remember this page and start Google sign-in; /for-citizens sends the person back. True when the tap stops here. */
+/** Signed out: remember this page and start Google sign-in; /mitra sends the person back. True when the tap stops here. */
 function signInFirst(citizen: Citizen): boolean {
   if (citizen.session) return false;
   // Still reading the saved session: a signed-in person is not sent to Google.
@@ -146,7 +146,7 @@ function HelpPanel({ id, report, citizen }: { id: string; report: PublicReport; 
         />
         <p className={`text-xs ${muted}`}>
           {following ? "You get a notice when something here is reported or fixed. Tap Following to stop." : "Get a notice when something here is reported or fixed."} Notices need notifications on in{" "}
-          <Link href="/for-citizens" className={appLink}>
+          <Link href="/mitra" className={appLink}>
             My reports
           </Link>
           .

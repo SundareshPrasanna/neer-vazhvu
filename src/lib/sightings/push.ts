@@ -71,6 +71,6 @@ export function nudgeNotice(n: number): Notice {
       n === 1
         ? "You have one report with no update for two weeks. Is it still there, or fixed?"
         : `You have ${n} reports with no update for two weeks. Are they still there, or fixed?`,
-    url: "/for-citizens",
+    url: "/mitra",
   };
 }

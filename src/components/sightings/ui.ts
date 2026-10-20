@@ -1,7 +1,7 @@
-/** One look for every citizen-report surface: the For organisations serif, one button voice, one field. */
+/** One look for every citizen-report surface, matching the home page: bold sans headings, one button voice, one field. */
 
-/** Newsreader, loaded as --font-display by the pages that host these components. */
-export const serif = "font-[family-name:var(--font-display)] font-light tracking-[-0.015em] text-slate-900 dark:text-slate-100";
+/** The home page's heading voice (Geist, bold, tight); callers add the size. */
+export const headingCls = "font-bold tracking-tight text-slate-900 dark:text-slate-100";
 
 const BASE =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-semibold transition-[background-color,border-color,color,transform] duration-200 ease-out " +
@@ -39,7 +39,7 @@ export const rule = "border-slate-200 divide-slate-200 dark:border-slate-800 dar
 /** Fades and lifts a freshly shown block in; still under reduced motion. */
 export const enter = "transition duration-300 ease-out starting:translate-y-1 starting:opacity-0 motion-reduce:transition-none";
 
-/** The rest of the app's look, for screens inside it or for officials: sans headings and blue links. The serif stays on the For citizens page. */
+/** In-app screens and officials' pages: the same headings at app sizes, and blue links. */
 export const appTitle = "text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-slate-100";
 export const appSection = "text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100";
 export const appLink = "font-medium text-blue-600 hover:underline dark:text-blue-400";

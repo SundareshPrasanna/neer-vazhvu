@@ -8,7 +8,7 @@ import { followTargets } from "./follows";
 import { placeUrl } from "./place-url";
 import { resolveAuthority } from "./routing";
 import { assess, getParameter, valueText } from "./parameters";
-import { WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
+import { EXTENTS, WATER_SOURCES, isPrivateCategory, labelFor, type AuthorityRole } from "./taxonomy";
 import { testLabel } from "./test-meta";
 import type { EventRow, OwnReport, PhotoRow, PublicFixit, PublicReport, SightingRow } from "./types";
 
@@ -49,6 +49,11 @@ function readings(row: SightingRow): PublicReport["readings"] {
   });
 }
 
+/** Photos in the order a card shows them: the report's own, then "still there" updates, then fixed, each set as sent. */
+const PHOTO_ORDER: Record<PhotoRow["kind"], number> = { report: 0, update: 1, fixed: 2 };
+const byShown = (a: PhotoRow, b: PhotoRow) =>
+  PHOTO_ORDER[a.kind] - PHOTO_ORDER[b.kind] || (a.created_at ?? "").localeCompare(b.created_at ?? "") || a.ordinal - b.ordinal;
+
 /** About 100 m: enough to find a stretch of bank, not a person. */
 const roundPoint = (v: number) => Math.round(v * 1000) / 1000;
 
@@ -71,13 +76,14 @@ export function toPublic(row: SightingRow, photos: PhotoRow[], events: EventRow[
     category: row.category,
     subcategory: row.subcategory,
     label: labelFor(row.category, row.subcategory),
+    extent: hidePoint ? null : (EXTENTS.find((e) => e.key === row.extent)?.label ?? null),
     caseStatus: row.case_status,
     readings: readings(row),
     waterSource: WATER_SOURCES.find((w) => w.key === row.water_source)?.label ?? null,
     test: row.test_meta ? testLabel(row.test_meta, WATER_SOURCES.find((w) => w.key === row.water_source)?.label ?? null) : null,
     photoUrls: photos
       .filter((p) => p.public_path)
-      .sort((a, b) => (a.kind === b.kind ? a.ordinal - b.ordinal : a.kind === "report" ? -1 : 1))
+      .sort(byShown)
       .map((p) => publicPhotoUrl(p.public_path!)),
     events: events
       .filter((e) => PUBLIC_EVENTS.has(e.event))

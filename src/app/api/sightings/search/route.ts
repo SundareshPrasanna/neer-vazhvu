@@ -9,7 +9,7 @@ type Hit = { name: string; lat: number; lng: number };
 
 // Nominatim's policy: an identifying user agent, no autocomplete, light use. Proxied, so it sees our server, never the reporter's device.
 const NOMINATIM = "https://nominatim.openstreetmap.org/search";
-const AGENT = "NeerVazhvu/1.0 (+https://neervazhvu.org/for-citizens)";
+const AGENT = "NeerVazhvu/1.0 (+https://neervazhvu.org/mitra)";
 const cache = new Map<string, Hit[]>();
 // One request a second from this instance; queued callers wait their turn.
 let next = 0;

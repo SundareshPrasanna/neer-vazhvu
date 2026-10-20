@@ -71,7 +71,7 @@ test("the reminder carries a count only, in plain words", () => {
   assert.match(nudgeNotice(3).body, /^You have 3 reports .* Are they still there, or fixed\?$/);
   for (const n of [1, 3]) {
     const { title, body, url } = nudgeNotice(n);
-    assert.equal(url, "/for-citizens");
+    assert.equal(url, "/mitra");
     assert.ok(!/[—–·]/.test(title + body));
   }
 });

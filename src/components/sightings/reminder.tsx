@@ -11,7 +11,7 @@ function download(days: number) {
   const at = new Date(Date.now() + days * 86_400_000);
   at.setUTCHours(4, 30, 0, 0); // 10:00 in India
   const end = new Date(at.getTime() + 15 * 60_000);
-  const url = `${window.location.origin}/for-citizens`;
+  const url = `${window.location.origin}/mitra`;
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",

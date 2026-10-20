@@ -4,6 +4,7 @@ import { test } from "node:test";
 import {
   CARDS_PER_ISSUE,
   buildIssues,
+  issuePhotos,
   homesText,
   issueLine,
   issueNotes,
@@ -12,6 +13,7 @@ import {
   openText,
   peopleText,
   type IssueEvent,
+  type IssuePhoto,
   type IssueSource,
 } from "./issues";
 import type { CaseStatus } from "./status";
@@ -37,6 +39,7 @@ function src(o: {
   events?: IssueEvent[];
   photo?: string | null;
   fixedPhoto?: string | null;
+  photos?: IssuePhoto[];
   group?: string | null;
   fixit?: boolean;
   where?: string | null;
@@ -52,7 +55,7 @@ function src(o: {
     where: o.where === undefined ? "Puzhal lake, Ward 12" : o.where,
     category: cat,
     subcategory: o.sub === undefined ? "garbage_on_bank" : o.sub,
-    label: cat === "drinking" ? "Muddy or coloured tap water" : "Garbage on the bank or in the water",
+    label: cat === "drinking" ? "Muddy or coloured tap water" : `Label of ${o.sub === undefined ? "garbage_on_bank" : o.sub}`,
     point: cat === "drinking" ? null : [Math.round(lat * 1000) / 1000, Math.round(lng * 1000) / 1000],
     groupName: o.group ?? null,
     fixit: o.fixit ? { id: "f1", groupName: "Lake Friends", startsAt: "2026-10-25T03:30:00Z", meetingPoint: "Gate 2", note: null, going: 3 } : null,
@@ -76,8 +79,7 @@ function src(o: {
     },
     report,
     events: o.events ?? [],
-    reportPhoto: o.photo === undefined ? `https://x/${id}.webp` : o.photo,
-    fixedPhoto: o.fixedPhoto ?? null,
+    ...(o.photos ? { photos: o.photos } : { reportPhoto: o.photo === undefined ? `https://x/${id}.webp` : o.photo, fixedPhoto: o.fixedPhoto ?? null }),
   };
 }
 
@@ -116,11 +118,47 @@ test("reports of one type within 150 m of any report in an open issue are one is
 
 test("a different type, a spot over 150 m away, another water body or an 'other' report is a separate issue", () => {
   const base = { at: "2026-09-01T04:00:00Z" };
-  assert.equal(buildIssues([src(base), src({ ...base, sub: "floating_trash" })], NOW).length, 2);
+  assert.equal(buildIssues([src(base), src({ ...base, sub: "cd_debris" })], NOW).length, 2);
   assert.equal(buildIssues([src(base), src({ ...base, lat: 13.0 + M100 * 1.8 })], NOW).length, 2);
   assert.equal(buildIssues([src(base), src({ ...base, body: "chembarambakkam" })], NOW).length, 2);
   // "Other" has no status today; were it to take one, two still never merge.
   assert.equal(buildIssues([src({ ...base, cat: "other", sub: null }), src({ ...base, cat: "other", sub: null })], NOW).length, 2);
+});
+
+test("types residents mix up at one spot are one issue, named by the type most of its reports name", () => {
+  const at = (d: number) => `2026-09-0${d}T04:00:00Z`;
+  const drain = { cat: "flooding", body: null };
+  const i = one([
+    src({ ...drain, at: at(1), cat: "sewage", sub: "manhole_overflow" }),
+    src({ ...drain, at: at(2), sub: "drain_overflow", lat: 13.0 + M100 }),
+    src({ ...drain, at: at(3), sub: "drain_overflow" }),
+  ]);
+  assert.equal(i.reports, 3);
+  assert.equal(i.category, "flooding");
+  assert.equal(i.subcategory, "drain_overflow");
+  assert.equal(i.label, "Label of drain_overflow");
+  // A tie goes to the earliest; unrelated types at the spot stay apart.
+  assert.equal(one([src({ at: at(1), sub: "floating_trash" }), src({ at: at(2), sub: "plastic_buildup" })]).subcategory, "floating_trash");
+  assert.equal(buildIssues([src({ at: at(1), cat: "surface", sub: "dead_fish" }), src({ at: at(2), sub: "carcass_waste" })], NOW).length, 2);
+});
+
+test("the issue photo is the newest published one: a report's, a still-there update's, or a fix once all is fixed", () => {
+  const p = (url: string, kind: IssuePhoto["kind"], at: string, ordinal = 0): IssuePhoto => ({ url, kind, at, ordinal });
+  const a = src({ at: "2026-09-01T04:00:00Z", photos: [p("a1", "report", "2026-09-01T04:00:00Z"), p("a0", "report", "2026-09-01T04:00:00Z", 1)] });
+  const b = src({ at: "2026-09-05T04:00:00Z", photos: [p("b1", "report", "2026-09-05T04:00:00Z"), p("b-update", "update", "2026-10-02T04:00:00Z")] });
+  assert.equal(one([a, b]).photoUrl, "b-update");
+  assert.equal(one([a]).photoUrl, "a1");
+  // One report fixed while another is open: the fix does not stand for the issue.
+  const fixedA = src({ at: "2026-09-01T04:00:00Z", status: "fixed", events: [ev("fixed", "2026-10-05T04:00:00Z", "reviewer")], photos: [p("a1", "report", "2026-09-01T04:00:00Z"), p("a-fixed", "fixed", "2026-10-05T04:00:00Z")] });
+  const openB = src({ at: "2026-09-05T04:00:00Z", photos: [p("b1", "report", "2026-09-05T04:00:00Z")] });
+  assert.equal(one([fixedA, openB]).photoUrl, "b1");
+  assert.equal(one([fixedA]).photoUrl, "a-fixed");
+  // Only published photos are passed on: an update photo waiting for review is not one.
+  const rows = [
+    { id: "1", sighting_id: "s", kind: "report" as const, storage_path: "x/1", public_path: "x/1", ordinal: 0, created_at: "2026-09-01T04:00:00Z" },
+    { id: "2", sighting_id: "s", kind: "update" as const, storage_path: "x/2", public_path: null, ordinal: 0, created_at: "2026-10-01T04:00:00Z" },
+  ];
+  assert.deepEqual(issuePhotos(rows, (path) => `https://cdn/${path}`), [{ url: "https://cdn/x/1", kind: "report", at: "2026-09-01T04:00:00Z", ordinal: 0 }]);
 });
 
 test("good news and 'other' have no status, so they are no issue; old home reports drop out of the window", () => {

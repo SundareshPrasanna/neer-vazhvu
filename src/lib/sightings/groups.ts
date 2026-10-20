@@ -96,7 +96,7 @@ export function normalizeJoinCode(input: unknown): string | null {
   return `${s.slice(0, 4)}-${s.slice(4, 8)}-${s.slice(8)}`;
 }
 
-export const joinPath = (code: string) => `/for-citizens?join=${code}`;
+export const joinPath = (code: string) => `/mitra?join=${code}`;
 
 /** Spaces collapsed; null unless 3 to 80 characters with at least one letter. */
 export function cleanName(input: unknown): string | null {
@@ -228,7 +228,7 @@ export interface PublicGroup {
 
 const CHUNK = 150;
 
-/** Every reviewed group with its counts, most active first. Used by GET /api/sightings/groups and the For citizens page. */
+/** Every reviewed group with its counts, most active first. Used by GET /api/sightings/groups and the Neer Mitra page. */
 export async function loadPublicGroups(admin: SupabaseClient): Promise<PublicGroup[]> {
   const { data, error } = await admin.from("sighting_groups").select("id, name, kind, place_id").eq("status", "approved").limit(500);
   if (error) throw error;

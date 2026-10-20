@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Newsreader } from "next/font/google";
 
 import { loadCitySnapshot, loadCityWaterEstimate } from "@/app/[cityId]/data";
 import { getPlaceConfig } from "@/lib/cities";
@@ -26,8 +25,6 @@ export const metadata: Metadata = {
     "The open record is free. For a place of your own: water readings, a registry for your water data, seasonal re-reads and high-resolution imagery, kept private.",
   alternates: { canonical: "/for-organisations" },
 };
-
-const display = Newsreader({ subsets: ["latin"], weight: ["300", "500"], variable: "--font-display", display: "swap" });
 
 const CONTACT = "contact@neervazhvu.org";
 const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
@@ -219,7 +216,7 @@ export default async function ForOrganisationsPage() {
 
 
   return (
-    <div className={`${s.root} ${display.variable}`}>
+    <div className={s.root}>
       <div className={s.page}>
         <section className={`${s.split} ${s.hero}`} aria-labelledby="h-hero">
           <div className={s.splitText}>

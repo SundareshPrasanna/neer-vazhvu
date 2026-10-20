@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       await admin.from("sighting_fixit_rsvps").insert({ fixit_id: ins.data.id, reporter_key: key });
 
       const when = fixitWhen(startsAt.toISOString());
-      const url = placeUrl(row)?.href ?? "/for-citizens";
+      const url = placeUrl(row)?.href ?? "/mitra";
       if (row.reporter_key !== "deleted" && row.reporter_key !== key)
         after(() => notifyReporter(row.reporter_key, { title: "A group has planned a clean-up at your report", body: `${m!.name} plans a clean-up on ${when}.`, url }));
       after(() => notifyFollowers(admin, row, { title: "A clean-up is planned at a place you follow", body: `${m!.name} plans a clean-up on ${when}.`, url }, [row.reporter_key, key]));
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
         if (!up.data?.length) return fail("This clean-up changed a moment ago. Please reload the page.", 409);
         if (status === "cancelled") {
           const { data: coming } = await admin.from("sighting_fixit_rsvps").select("reporter_key").eq("fixit_id", fixitId);
-          const notice = { title: "Clean-up cancelled", body: `${m!.name} has cancelled the clean-up on ${fixitDay(f.starts_at)}.`, url: "/for-citizens" };
+          const notice = { title: "Clean-up cancelled", body: `${m!.name} has cancelled the clean-up on ${fixitDay(f.starts_at)}.`, url: "/mitra" };
           after(() => Promise.all((coming ?? []).filter((r) => r.reporter_key !== key).map((r) => notifyReporter(r.reporter_key as string, notice))));
         }
         return NextResponse.json({ data: { status } }, { headers: PRIVATE });

@@ -4,8 +4,8 @@
  * points and people's tags come in; only counts, India dates and the rounded point go out.
  */
 import { CASE_LABELS, OPEN_STATUSES, type CaseStatus } from "./status";
-import { OTHER_KEY, isCommunityReport } from "./taxonomy";
-import type { EventRow, PublicIssue, PublicReport, SightingRow } from "./types";
+import { OTHER_KEY, isCommunityReport, relatedKey } from "./taxonomy";
+import type { EventRow, PhotoRow, PublicIssue, PublicReport, SightingRow } from "./types";
 
 /** A report of the same type this close (metres) to any report in an open issue joins it. */
 export const ISSUE_RADIUS_M = 150;
@@ -24,15 +24,30 @@ type IssueRow = Pick<
 /** An event as loaded with `select("*")`: it carries the actor's tag, which EventRow leaves out. */
 export type IssueEvent = Pick<EventRow, "event" | "created_at" | "actor_role"> & { actor_key?: string | null };
 
+/** A published photo of a report: the report's own, a "still there" update or a fixed photo, with when it was added. */
+export interface IssuePhoto {
+  url: string;
+  kind: PhotoRow["kind"];
+  at: string;
+  ordinal: number;
+}
+
 /** One published report as the grouping needs it. Server side only: the row has the exact point and the reporter's tag. */
 export interface IssueSource {
   row: IssueRow;
   /** The report as served: label, place text, rounded point, page link, group and clean-up. */
   report: PublicReport;
   events: IssueEvent[];
-  /** The first published photo of each kind, as a public URL. */
-  reportPhoto: string | null;
-  fixedPhoto: string | null;
+  /** Its published photos of every kind (issuePhotos). */
+  photos?: IssuePhoto[];
+  /** Older callers: the first published photo of each kind, as a public URL. Ignored when `photos` is given. */
+  reportPhoto?: string | null;
+  fixedPhoto?: string | null;
+}
+
+/** A report's published photos as an issue weighs them; unpublished ones (update and fixed photos waiting) never count. */
+export function issuePhotos(photos: PhotoRow[], url: (publicPath: string) => string): IssuePhoto[] {
+  return photos.flatMap((p) => (p.public_path ? [{ url: url(p.public_path), kind: p.kind, at: p.created_at ?? "", ordinal: p.ordinal }] : []));
 }
 
 /**
@@ -108,21 +123,49 @@ function statusOf(members: IssueSource[]): CaseStatus | null {
   return members.some((m) => m.row.case_status === "fixed") ? "fixed" : "closed";
 }
 
+/** A source's photos; an older caller's first report and fixed photo date from the report and from its fix. */
+function photosOf(s: IssueSource): IssuePhoto[] {
+  if (s.photos) return s.photos;
+  const fixedAt = resolvedAt(s);
+  return [
+    ...(s.reportPhoto ? [{ url: s.reportPhoto, kind: "report" as const, at: s.row.created_at, ordinal: 0 }] : []),
+    ...(s.fixedPhoto ? [{ url: s.fixedPhoto, kind: "fixed" as const, at: fixedAt !== null ? new Date(fixedAt).toISOString() : s.row.updated_at, ordinal: 0 }] : []),
+  ];
+}
+
+/**
+ * The newest published photo: a report's own or a "still there" update, and a fixed photo once the whole issue is fixed
+ * or closed (one report's fix beside others still open would read as done). Ties go to the first photo of a set.
+ */
+function issuePhoto(members: IssueSource[], resolved: boolean): string | null {
+  const all = members.flatMap(photosOf).filter((p) => p.kind !== "fixed" || resolved);
+  all.sort((a, b) => (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0) || a.ordinal - b.ordinal);
+  return all[0]?.url ?? null;
+}
+
+const typeKey = (s: IssueSource) => `${s.row.category}|${s.row.subcategory}`;
+
+/** The type most of its reports name (easily confused types share an issue); ties go to the earliest. */
+function mainType(asc: IssueSource[]): IssueSource {
+  const n = new Map<string, number>();
+  for (const m of asc) n.set(typeKey(m), (n.get(typeKey(m)) ?? 0) + 1);
+  return asc.reduce((best, m) => (n.get(typeKey(m))! > n.get(typeKey(best))! ? m : best), asc[0]);
+}
+
 function toIssue(members: IssueSource[], home: boolean, earlierFixes: number, today: string): PublicIssue {
   const asc = [...members].sort(byAge);
-  const [first, newest] = [asc[0], asc.at(-1)!];
+  const [first, newest, main] = [asc[0], asc.at(-1)!, mainType(asc)];
   const status = statusOf(asc);
   const done = issueResolvedAt(asc);
   const seen = asc.flatMap((m) => [at(m), ...m.events.filter((e) => SEEN.has(e.event)).map((e) => Date.parse(e.created_at))]);
   const firstOn = istDate(at(first));
-  const photo = (kind: "reportPhoto" | "fixedPhoto") => asc.findLast((m) => m[kind])?.[kind] ?? null;
   // A ward or panchayat by name; a home report keyed on the whole place is named by the place.
   const homeWhere = newest.row.ward_id || newest.row.panchayat_code ? newest.report.where : newest.report.placeName;
   return {
     id: first.row.id,
-    category: first.row.category,
-    subcategory: first.row.subcategory,
-    label: first.report.label,
+    category: main.row.category,
+    subcategory: main.row.subcategory,
+    label: main.report.label,
     where: home ? homeWhere : first.report.where,
     firstOn,
     lastSeenOn: istDate(Math.max(...seen)),
@@ -131,7 +174,7 @@ function toIssue(members: IssueSource[], home: boolean, earlierFixes: number, to
     reports: asc.length,
     people: peopleOf(asc),
     status,
-    photoUrl: home ? null : ((done !== null ? photo("fixedPhoto") : null) ?? photo("reportPhoto")),
+    photoUrl: home ? null : issuePhoto(asc, done !== null),
     reportIds: asc.map((m) => m.row.id).reverse(),
     groups: [...new Set(asc.flatMap((m) => (m.report.groupName ? [m.report.groupName] : [])))],
     fixitPlanned: asc.some((m) => !!m.report.fixit),
@@ -144,10 +187,12 @@ function toIssue(members: IssueSource[], home: boolean, earlierFixes: number, to
 /**
  * The issues at a place, from its published reports.
  *
- * A report about a shared place with a status joins an earlier one's issue when it is the same type (an "other" report
- * never joins), under the same place key, within 150 m of any report already in it, and the issue was still open when
- * it was sent. Once every report in an issue is fixed or closed, a later report there starts a new one, which counts
- * the fixed issues before it at that spot and type. Good news and "other" have no status, so they are no issue.
+ * A report about a shared place with a status joins an earlier one's issue when it is the same type or one residents
+ * easily mix it up with (RELATED_TYPES: an overflowing manhole and an overflowing drain; an "other" report never joins),
+ * under the same place key, within 150 m of any report already in it, and the issue was still open when it was sent. The
+ * issue is named by the type most of its reports name. Once every report in an issue is fixed or closed, a later report
+ * there starts a new one, which counts the fixed issues before it at that spot and type. Good news and "other" have no
+ * status, so they are no issue.
  *
  * Tap water and water tests from the last 30 days count by ward or panchayat and type, in homes: no point, no photo.
  *
@@ -158,7 +203,7 @@ export function buildIssues(sources: IssueSource[], now = new Date()): PublicIss
   const community = sources.filter((s) => s.row.case_status && isCommunityReport(s.row.category)).sort(byAge);
   const drafts: { key: string; members: IssueSource[] }[] = [];
   for (const s of community) {
-    const key = `${issuePlaceKey(s.row)}|${s.row.category}|${s.row.subcategory}`;
+    const key = `${issuePlaceKey(s.row)}|${relatedKey(s.row.category, s.row.subcategory)}`;
     const into =
       s.row.category === OTHER_KEY ? undefined : drafts.find((d) => d.key === key && openAt(d.members, at(s)) && near(d.members, [s]));
     if (into) into.members.push(s);

@@ -18,12 +18,12 @@ const at = (p: Partial<PlaceFields> & Pick<PlaceFields, "place_kind" | "place_id
 
 test("a city report links to its water body's map, else its ward page, else the city map", () => {
   assert.deepEqual(placeUrl(at({ place_kind: "city", place_id: "chennai", ward_id: "151", water_body_id: "123", water_body_name: "Puzhal Lake" })), {
-    href: "/chennai/water-bodies?layer=reports",
+    href: "/chennai/water-bodies?layer=reports&body=123",
     label: "Puzhal Lake, Chennai",
   });
   assert.deepEqual(placeUrl(at({ place_kind: "city", place_id: "chennai", ward_id: "151" })), { href: "/chennai/my-ward?ward=151", label: "Ward 151, Chennai" });
   assert.deepEqual(placeUrl(at({ place_kind: "city", place_id: "chennai" })), { href: "/chennai/water-bodies?layer=reports", label: "Chennai" });
-  assert.deepEqual(placeUrl(at({ place_kind: "city", place_id: "chennai", water_body_id: "123" })), { href: "/chennai/water-bodies?layer=reports", label: "Chennai" });
+  assert.deepEqual(placeUrl(at({ place_kind: "city", place_id: "chennai", water_body_id: "123" })), { href: "/chennai/water-bodies?layer=reports&body=123", label: "Chennai" });
 });
 
 test("a city without a ward page sends a ward report to its map", () => {

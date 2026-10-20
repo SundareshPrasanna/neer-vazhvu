@@ -1,21 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, ArrowLeft, Check, CheckCircle2, Copy, RotateCw, XCircle } from "lucide-react";
 
 import { ActionButton, useFlash } from "./action-feedback";
 import { Readings, day } from "./report-card";
-import { appSection, appTitle, btn, enter, field, muted, rule } from "./ui";
+import { REVIEW_KEYS, reviewCommand } from "./review-keys";
+import { appLink, appSection, appTitle, btn, enter, field, muted, rule } from "./ui";
 import { useCitizen } from "./use-citizen";
 import { CLEANUPS_ON } from "@/lib/sightings/groups";
+import { issueHref } from "@/lib/sightings/issue-share";
 import { OTHER_KEY, REPORT_GROUPS } from "@/lib/sightings/taxonomy";
-import type { OwnReport } from "@/lib/sightings/types";
+import type { NearbyIssue, OwnReport, PhotoRow } from "@/lib/sightings/types";
 
 interface QueueItem extends OwnReport {
   note: string | null;
   candidateLabel: string | null;
   exif: { capturedAt: string | null; lat: number | null; lng: number | null };
-  photos: { kind: "report" | "fixed"; published: boolean; url: string | null }[];
+  photos: { kind: PhotoRow["kind"]; published: boolean; url: string | null }[];
+  /** Open issues near a received report that it may duplicate; empty otherwise. */
+  possibleSame: NearbyIssue[];
   reporter: { key: string; trusted: boolean; suspended: boolean; total: number; rejected: number };
 }
 
@@ -26,15 +30,37 @@ const FAR_KM = 1;
 type Result = { ok: boolean; rejected?: number; error?: string };
 /** What became of a report in this session: shown in its place until the queue is refreshed. */
 type Outcome = { text: string; ok: boolean };
+/** A decision waiting for its second step. */
+type Ask = { kind: "reject" } | { kind: "suspend" } | { kind: "merge"; to: NearbyIssue };
+/** Photos sent after publishing that wait for a check: "It's gone" (fixed) and "still there" (update). */
+type Later = "fixed" | "update";
 
-function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => Promise<Result>; onDone: (key: string, o: Outcome, r: Result) => void }) {
+const PHOTO_LABELS: Record<PhotoRow["kind"], [string, string]> = {
+  report: ["Report", "Report"],
+  fixed: ["Fixed, published", "Fixed, waiting"],
+  update: ["Still there, published", "Still there, waiting"],
+};
+const LATER: Record<Later, { question: string; publish: string; published: string; discarded: string }> = {
+  fixed: { question: "The reporter says it is fixed. Publish their new photo?", publish: "Publish fixed photo", published: "Fixed photo published.", discarded: "Fixed photo discarded." },
+  update: { question: "Someone sent a photo showing it is still there. Publish it?", publish: "Publish photo", published: "Still there photo published.", discarded: "Still there photo discarded." },
+};
+
+const people = (n: number) => (n === 1 ? "1 person" : `${n} people`);
+const whereOf = (n: NearbyIssue) => [n.issue.label, n.issue.where].filter(Boolean).join(", ");
+
+/** One report to decide. While it is the active item, the queue's keys act on it (review-keys.ts). */
+function Item({ item, active, act, onDone }: { item: QueueItem; active: boolean; act: (body: object) => Promise<Result>; onDone: (key: string, o: Outcome, r: Result) => void }) {
   const [pending, setPending] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<"reject" | "suspend" | null>(null);
+  const [ask, setAsk] = useState<Ask | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [type, setType] = useState(item.subcategory ? `${item.category}:${item.subcategory}` : item.category);
   const [candidate, setCandidate] = useState(item.candidateLabel ?? "");
   const [reason, setReason] = useState("");
-  const pendingFixed = item.photos.some((p) => p.kind === "fixed" && !p.published);
+  const reasonField = useRef<HTMLInputElement>(null);
+  const mergeBox = useRef<HTMLDivElement>(null);
+  const received = item.reviewStatus === "received";
+  const waiting = (kind: Later) => item.photos.some((p) => p.kind === kind && !p.published);
+  const later: Later | null = waiting("fixed") ? "fixed" : waiting("update") ? "update" : null;
   const [category, subcategory] = type.split(":");
 
   const run = async (key: string, body: object, outcome: (r: Result) => Outcome) => {
@@ -45,6 +71,43 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
     if (!r.ok) return setError(r.error ?? "That did not work. Please try again.");
     onDone(key, outcome(r), r);
   };
+  const approve = () =>
+    run("approve", { action: "approve", id: item.id, category, subcategory: subcategory ?? null, candidateLabel: candidate }, () => ({
+      text: `Approved. It is now on the ${item.placeName} pages.`,
+      ok: true,
+    }));
+  const reject = () => run("reject", { action: "reject", id: item.id, reason }, () => ({ text: "Rejected. Its photos and note are deleted.", ok: false }));
+  const publish = (kind: Later) => run(`publish_${kind}`, { action: `publish_${kind}`, id: item.id }, () => ({ text: LATER[kind].published, ok: true }));
+  const discard = (kind: Later) => run(`discard_${kind}`, { action: `discard_${kind}`, id: item.id }, () => ({ text: LATER[kind].discarded, ok: false }));
+  const merge = (to: NearbyIssue) =>
+    run("merge", { action: "merge", id: item.id, targetReportId: to.reportId }, () => ({ text: `Added to the existing report: ${whereOf(to)}.`, ok: true }));
+
+  // R puts the cursor in the reason; M puts it on "Add to it". Enter then confirms either.
+  useEffect(() => {
+    if (ask?.kind === "reject") reasonField.current?.focus();
+    if (ask?.kind === "merge") mergeBox.current?.querySelector("button")?.focus();
+  }, [ask]);
+
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      const c = reviewCommand(e);
+      if (!c || c === "next" || c === "previous" || pending) return;
+      if (c === "cancel") {
+        if (!ask) return;
+        setAsk(null);
+      } else if (ask) return;
+      else if (c === "approve" && received) approve();
+      else if (c === "reject" && received) setAsk({ kind: "reject" });
+      else if (c === "publish" && later) publish(later);
+      else if (c === "discard" && later) discard(later);
+      else if (c === "same" && received && item.possibleSame[0]) setAsk({ kind: "merge", to: item.possibleSame[0] });
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   const exifGap =
     item.exif.lat != null && item.lat != null ? Math.hypot((item.exif.lat - item.lat) * 111, (item.exif.lng! - item.lng!) * 111 * Math.cos((item.lat * Math.PI) / 180)) : null;
@@ -85,7 +148,7 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
               <a key={i} href={p.url!} target="_blank" rel="noopener noreferrer" className="block">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.url!} alt={p.kind} className="aspect-square w-full rounded-lg object-cover" />
-                <span className={`text-xs ${muted}`}>{p.kind === "fixed" ? (p.published ? "Fixed, published" : "Fixed, waiting") : "Report"}</span>
+                <span className={`text-xs ${muted}`}>{PHOTO_LABELS[p.kind][p.published ? 0 : 1]}</span>
               </a>
             ))}
           </div>
@@ -119,8 +182,32 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
         </dl>
         {item.readings.length > 0 && <Readings readings={item.readings} source={item.waterSource} test={item.test} />}
 
-        {item.reviewStatus === "received" && (
+        {received && (
           <div className={`space-y-3 border-t pt-5 ${rule}`}>
+            {item.possibleSame.length > 0 && (
+              <div className="space-y-2 pb-1">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Possibly the same as:</p>
+                <ul className="space-y-2">
+                  {item.possibleSame.map((n) => (
+                    <li key={n.reportId} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 text-sm text-slate-800 dark:text-slate-200">
+                      <span className="min-w-0">
+                        {n.issue.placeHref ? (
+                          <a href={issueHref(n.issue.placeHref, n.issue.id)} target="_blank" rel="noopener noreferrer" className={appLink}>
+                            {n.issue.label}
+                          </a>
+                        ) : (
+                          n.issue.label
+                        )}
+                        , {Math.round(n.distanceM)} m away, {people(n.issue.people)}
+                      </span>
+                      <button type="button" onClick={() => setAsk({ kind: "merge", to: n })} disabled={pending != null} className={btn("secondary", "sm")}>
+                        Same as this
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
               Type
               <select value={type} onChange={(e) => setType(e.target.value)} className={`${field} mt-1.5`}>
@@ -144,33 +231,58 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
             )}
             <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
               Reason <span className={`font-normal ${muted}`}>Shown to the reporter if not published</span>
-              <input value={reason} onChange={(e) => setReason(e.target.value)} className={`${field} mt-1.5`} />
+              <input
+                ref={reasonField}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && ask?.kind === "reject" && !pending) {
+                    e.preventDefault();
+                    reject();
+                  }
+                }}
+                className={`${field} mt-1.5`}
+              />
             </label>
-            {confirm ? (
+            {ask?.kind === "merge" ? (
+              <div ref={mergeBox} role="alertdialog" aria-label="Add to the existing report" className={`rounded-xl border bg-slate-50 p-4 dark:bg-slate-900 ${rule} ${enter}`}>
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Add this to the existing report?</p>
+                <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                  {whereOf(ask.to)}. Its first photo goes on that report, published, and the person who sent it counts as having seen it. This report is
+                  not published on its own, and its sender is told where it went.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <ActionButton label="Add to it" busyLabel="Adding…" busy={pending === "merge"} onClick={() => merge(ask.to)} className={btn("approve", "md")} />
+                  <button type="button" onClick={() => setAsk(null)} disabled={pending != null} className={btn("quiet", "md")}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : ask ? (
               <div
                 role="alertdialog"
-                aria-label={confirm === "reject" ? "Reject this report" : "Suspend this account"}
-                className={`rounded-xl border p-4 ${confirm === "suspend" ? "border-red-200 bg-red-50/70 dark:border-red-900/60 dark:bg-red-950/30" : `bg-slate-50 dark:bg-slate-900 ${rule}`} ${enter}`}
+                aria-label={ask.kind === "reject" ? "Reject this report" : "Suspend this account"}
+                className={`rounded-xl border p-4 ${ask.kind === "suspend" ? "border-red-200 bg-red-50/70 dark:border-red-900/60 dark:bg-red-950/30" : `bg-slate-50 dark:bg-slate-900 ${rule}`} ${enter}`}
               >
-                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{confirm === "reject" ? "Reject this report?" : "Suspend this account?"}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{ask.kind === "reject" ? "Reject this report?" : "Suspend this account?"}</p>
                 <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-                  {confirm === "reject"
+                  {ask.kind === "reject"
                     ? "Its photos and note are deleted. The reason above is shown to the reporter."
                     : "Every report it has waiting is rejected, and it cannot send more."}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <ActionButton
-                    label={confirm === "reject" ? "Reject" : "Suspend account"}
-                    busyLabel={confirm === "reject" ? "Rejecting…" : "Suspending…"}
-                    busy={pending === confirm}
+                    label={ask.kind === "reject" ? "Reject" : "Suspend account"}
+                    busyLabel={ask.kind === "reject" ? "Rejecting…" : "Suspending…"}
+                    busy={pending === ask.kind}
                     onClick={() =>
-                      confirm === "reject"
-                        ? run("reject", { action: "reject", id: item.id, reason }, () => ({ text: "Rejected. Its photos and note are deleted.", ok: false }))
+                      ask.kind === "reject"
+                        ? reject()
                         : run("suspend", { action: "suspend", reporterKey: item.reporter.key, reason }, () => ({ text: "Rejected, and the account is suspended.", ok: false }))
                     }
                     className={btn("danger", "md")}
                   />
-                  <button type="button" onClick={() => setConfirm(null)} disabled={pending != null} className={btn("quiet", "md")}>
+                  <button type="button" onClick={() => setAsk(null)} disabled={pending != null} className={btn("quiet", "md")}>
                     Cancel
                   </button>
                 </div>
@@ -184,45 +296,43 @@ function Item({ item, act, onDone }: { item: QueueItem; act: (body: object) => P
                   disabled={pending != null}
                   icon={<Check className="h-4 w-4" aria-hidden="true" />}
                   className={btn("approve", "md")}
-                  onClick={() =>
-                    run("approve", { action: "approve", id: item.id, category, subcategory: subcategory ?? null, candidateLabel: candidate }, () => ({
-                      text: `Approved. It is now on the ${item.placeName} pages.`,
-                      ok: true,
-                    }))
-                  }
+                  onClick={approve}
                 />
-                <button type="button" onClick={() => setConfirm("reject")} disabled={pending != null} className={btn("secondary", "md")}>
+                <button type="button" onClick={() => setAsk({ kind: "reject" })} disabled={pending != null} className={btn("secondary", "md")}>
                   Reject
                 </button>
-                <button type="button" onClick={() => setConfirm("suspend")} disabled={pending != null} className={`${btn("dangerQuiet", "md")} ml-auto`}>
+                <button type="button" onClick={() => setAsk({ kind: "suspend" })} disabled={pending != null} className={`${btn("dangerQuiet", "md")} ml-auto`}>
                   Suspend account
                 </button>
               </div>
             )}
           </div>
         )}
-        {pendingFixed && (
-          <div className={`space-y-3 border-t pt-5 ${rule}`}>
-            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">The reporter says it is fixed. Publish their new photo?</p>
-            <div className="flex flex-wrap gap-2">
-              <ActionButton
-                label="Publish fixed photo"
-                busyLabel="Publishing…"
-                busy={pending === "publish_fixed"}
-                disabled={pending != null}
-                className={btn("approve", "md")}
-                onClick={() => run("publish_fixed", { action: "publish_fixed", id: item.id }, () => ({ text: "Fixed photo published.", ok: true }))}
-              />
-              <ActionButton
-                label="Discard it"
-                busyLabel="Discarding…"
-                busy={pending === "discard_fixed"}
-                disabled={pending != null}
-                className={btn("secondary", "md")}
-                onClick={() => run("discard_fixed", { action: "discard_fixed", id: item.id }, () => ({ text: "Fixed photo discarded.", ok: false }))}
-              />
-            </div>
-          </div>
+        {(["fixed", "update"] as const).map(
+          (kind) =>
+            waiting(kind) && (
+              <div key={kind} className={`space-y-3 border-t pt-5 ${rule}`}>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{LATER[kind].question}</p>
+                <div className="flex flex-wrap gap-2">
+                  <ActionButton
+                    label={LATER[kind].publish}
+                    busyLabel="Publishing…"
+                    busy={pending === `publish_${kind}`}
+                    disabled={pending != null}
+                    className={btn("approve", "md")}
+                    onClick={() => publish(kind)}
+                  />
+                  <ActionButton
+                    label="Discard it"
+                    busyLabel="Discarding…"
+                    busy={pending === `discard_${kind}`}
+                    disabled={pending != null}
+                    className={btn("secondary", "md")}
+                    onClick={() => discard(kind)}
+                  />
+                </div>
+              </div>
+            ),
         )}
         {error && (
           <p role="alert" className="flex items-start gap-2 text-sm font-medium text-red-700 dark:text-red-400">
@@ -466,6 +576,10 @@ export function ReviewApp() {
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const [loaded, setLoaded] = useState(-1);
+  /** The item the keys act on: the one chosen with J and K or last touched, else the first still waiting. */
+  const [activeId, setActiveId] = useState<string | null>(null);
+  /** An item to bring into view once the list has re-rendered (a new object each time, so the same item can be shown again). */
+  const [reveal, setReveal] = useState<{ id: string } | null>(null);
 
   useEffect(() => {
     if (!session) return;
@@ -485,29 +599,62 @@ export function ReviewApp() {
     };
   }, [session, authFetch, tick]);
 
+  useEffect(() => {
+    if (!reveal) return;
+    const el = document.getElementById(`review-${reveal.id}`);
+    el?.focus({ preventScroll: true });
+    el?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }, [reveal]);
+
+  const open = (items ?? []).filter((i) => !done[i.id]);
+  const active = open.some((i) => i.id === activeId) ? activeId : (open[0]?.id ?? null);
+  const go = (id: string | undefined) => {
+    if (!id) return;
+    setActiveId(id);
+    setReveal({ id });
+  };
+
+  // J and K move between the items still waiting; the active item handles its own keys.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const c = reviewCommand(e);
+      if (c !== "next" && c !== "previous") return;
+      const at = open.findIndex((i) => i.id === active);
+      const to = open[c === "next" ? at + 1 : at - 1];
+      if (!to) return;
+      e.preventDefault();
+      go(to.id);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   const act = async (body: object): Promise<Result> => {
     const res = await authFetch("/api/sightings/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => null);
     const json = res ? await res.json().catch(() => ({})) : {};
     return res?.ok ? { ok: true, rejected: json.data?.rejected } : { ok: false, error: json.error ?? (res ? undefined : "No connection. Please try again.") };
   };
 
-  const settle = (item: QueueItem, key: string, outcome: Outcome) =>
+  const settle = (item: QueueItem, key: string, outcome: Outcome) => {
+    // Suspending rejects everything else that account has waiting.
+    const swept = (o: QueueItem) => key === "suspend" && o.id !== item.id && o.reporter.key === item.reporter.key && o.reviewStatus === "received";
     setDone((d) => {
       const next = { ...d, [item.id]: outcome };
-      // Suspending rejects everything else that account has waiting.
-      if (key === "suspend")
-        for (const o of items ?? []) if (o.id !== item.id && o.reporter.key === item.reporter.key && o.reviewStatus === "received") next[o.id] = { text: "Rejected: the account is suspended.", ok: false };
+      for (const o of items ?? []) if (swept(o)) next[o.id] = { text: "Rejected: the account is suspended.", ok: false };
       return next;
     });
+    // On to the next one still waiting below it.
+    go(open.slice(open.findIndex((o) => o.id === item.id) + 1).find((o) => !swept(o))?.id);
+  };
 
   const loading = !!session && loaded !== tick;
-  const waiting = (items ?? []).filter((i) => !done[i.id]).length;
+  const waiting = open.length;
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-      {/* Back to wherever the reviewer came from; straight to /for-citizens when the page was opened directly. */}
+      {/* Back to wherever the reviewer came from; straight to /mitra when the page was opened directly. */}
       <button
         type="button"
-        onClick={() => (window.history.length > 1 && document.referrer.startsWith(window.location.origin) ? window.history.back() : window.location.assign("/for-citizens"))}
+        onClick={() => (window.history.length > 1 && document.referrer.startsWith(window.location.origin) ? window.history.back() : window.location.assign("/mitra"))}
         className={`${btn("quiet", "sm")} -ml-3 mb-4`}
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -531,10 +678,21 @@ export function ReviewApp() {
         </button>
       ) : (
         <>
-          <p className={`max-w-[75ch] border-b py-4 text-sm ${muted} ${rule}`}>
-            Reject a photo that shows a face, a vehicle number plate, or a house name or number, and any note or reading that names a
-            person. For a water test, check the values against the meter or kit in the photo.
-          </p>
+          <div className={`border-b py-4 text-sm ${muted} ${rule}`}>
+            <p className="max-w-[75ch]">
+              Reject a photo that shows a face, a vehicle number plate, or a house name or number, and any note or reading that names a
+              person. For a water test, check the values against the meter or kit in the photo.
+            </p>
+            <p className="mt-2 hidden text-xs sm:block">
+              Keys:{" "}
+              {REVIEW_KEYS.map((k) => (
+                <span key={k.key}>
+                  <kbd className="font-mono font-semibold text-slate-800 dark:text-slate-200">{k.key}</kbd> {k.label},{" "}
+                </span>
+              ))}
+              <kbd className="font-mono font-semibold text-slate-800 dark:text-slate-200">Esc</kbd> cancel.
+            </p>
+          </div>
           {error && (
             <p role="alert" className="mt-6 text-sm font-medium text-red-700 dark:text-red-400">
               {error}
@@ -544,8 +702,18 @@ export function ReviewApp() {
           <ul className={`divide-y ${rule}`}>
             {items?.map((item) => {
               const o = done[item.id];
+              const isActive = !o && item.id === active;
               return (
-                <li key={item.id}>
+                <li
+                  key={item.id}
+                  id={`review-${item.id}`}
+                  tabIndex={-1}
+                  aria-current={isActive || undefined}
+                  onFocusCapture={() => !o && setActiveId(item.id)}
+                  onPointerDown={() => !o && setActiveId(item.id)}
+                  className="relative scroll-mt-20 outline-none"
+                >
+                  {isActive && <span className="absolute inset-y-8 -left-3 w-0.5 rounded-full bg-cyan-700 sm:-left-4 dark:bg-cyan-400" aria-hidden="true" />}
                   {o ? (
                     <div className={`flex items-start gap-3 py-5 text-sm ${enter}`} role="status">
                       {o.ok ? (
@@ -561,7 +729,7 @@ export function ReviewApp() {
                       </div>
                     </div>
                   ) : (
-                    <Item item={item} act={act} onDone={(key, outcome) => settle(item, key, outcome)} />
+                    <Item item={item} active={isActive} act={act} onDone={(key, outcome) => settle(item, key, outcome)} />
                   )}
                 </li>
               );

@@ -46,24 +46,25 @@ jobs:
             }
             const REPORTS = 'review_status=eq.received';
             const FIXED = 'kind=eq.fixed&public_path=is.null';
+            const UPDATES = 'kind=eq.update&public_path=is.null';
             const GROUPS = 'status=eq.pending';
 
             const open = await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', labels: 'citizen-reports', per_page: 100 });
             const existing = open.find((i) => i.title === TITLE);
 
-            const [reports, fixed, groups] = await Promise.all([count('sightings', REPORTS), count('sighting_photos', FIXED), count('sighting_groups', GROUPS)]);
-            const total = reports.n + fixed.n + groups.n;
-            core.info(`waiting: ${reports.n} reports, ${fixed.n} fixed photos, ${groups.n} groups`);
+            const [reports, fixed, updates, groups] = await Promise.all([count('sightings', REPORTS), count('sighting_photos', FIXED), count('sighting_photos', UPDATES), count('sighting_groups', GROUPS)]);
+            const total = reports.n + fixed.n + updates.n + groups.n;
+            core.info(`waiting: ${reports.n} reports, ${fixed.n} fixed photos, ${updates.n} still-there photos, ${groups.n} groups`);
 
             if (total === 0) {
               if (existing) await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: 'closed', state_reason: 'completed' });
               return;
             }
 
-            const oldest = [reports.oldest, fixed.oldest, groups.oldest].filter(Boolean).sort()[0];
+            const oldest = [reports.oldest, fixed.oldest, updates.oldest, groups.oldest].filter(Boolean).sort()[0];
             const days = Math.floor((Date.now() - new Date(oldest).getTime()) / 86_400_000);
             const waited = days === 0 ? 'The oldest arrived in the last day.' : `The oldest has waited ${days} day${days === 1 ? '' : 's'}.`;
-            const parts = [reports.n && `${reports.n} report${reports.n === 1 ? '' : 's'}`, fixed.n && `${fixed.n} fixed photo${fixed.n === 1 ? '' : 's'}`, groups.n && `${groups.n} group${groups.n === 1 ? '' : 's'}`].filter(Boolean);
+            const parts = [reports.n && `${reports.n} report${reports.n === 1 ? '' : 's'}`, fixed.n && `${fixed.n} fixed photo${fixed.n === 1 ? '' : 's'}`, updates.n && `${updates.n} still-there photo${updates.n === 1 ? '' : 's'}`, groups.n && `${groups.n} group${groups.n === 1 ? '' : 's'}`].filter(Boolean);
             const body = [
               `**${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}` : parts[0]}** waiting for review. ${waited}`,
               '',
@@ -80,9 +81,9 @@ jobs:
             }
             // New since the last run: the body is rewritten every run (its date line changes daily), so its update time marks the last check.
             const since = existing.updated_at;
-            const [newReports, newFixed, newGroups] = await Promise.all([count('sightings', REPORTS, since), count('sighting_photos', FIXED, since), count('sighting_groups', GROUPS, since)]);
+            const [newReports, newFixed, newUpdates, newGroups] = await Promise.all([count('sightings', REPORTS, since), count('sighting_photos', FIXED, since), count('sighting_photos', UPDATES, since), count('sighting_groups', GROUPS, since)]);
             await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
-            const fresh = newReports.n + newFixed.n + newGroups.n;
+            const fresh = newReports.n + newFixed.n + newUpdates.n + newGroups.n;
             if (fresh > 0) {
               await github.rest.issues.createComment({
                 owner, repo, issue_number: existing.number,

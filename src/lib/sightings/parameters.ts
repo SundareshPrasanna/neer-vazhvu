@@ -55,22 +55,23 @@ export function valueText(p: Parameter, v: number): string {
   return `${p.name} ${fmt(v)}${p.unit ? ` ${p.unit}` : ""}`;
 }
 
-/** How a value sits against the BIS limits, in words; null when within the acceptable limit. */
+/** How a value sits against the BIS limits, as plain sentences; null when within the acceptable limit. */
 export function assess(p: Parameter, v: number): string | null {
   const l = p.limit;
   switch (l.kind) {
     case "max":
       if (v <= l.acceptable) return null;
-      if (l.permissible == null) return `above the BIS limit of ${fmt(l.acceptable)}`;
+      if (l.permissible == null) return `Above the national standard's limit of ${fmt(l.acceptable)}.`;
+      // BIS's "permissible limit in the absence of alternate source".
       return v <= l.permissible
-        ? `above the BIS acceptable limit of ${fmt(l.acceptable)}, within the ${fmt(l.permissible)} allowed where no other source exists`
-        : `above the BIS limit of ${fmt(l.permissible)} even where no other source exists`;
+        ? `Above the ${fmt(l.acceptable)} the national standard recommends. Up to ${fmt(l.permissible)} is allowed only if no better water source is available.`
+        : `Above ${fmt(l.permissible)}, the most the national standard allows even when no better source is available.`;
     case "range":
-      return v >= l.min && v <= l.max ? null : `outside the BIS range of ${fmt(l.min)} to ${fmt(l.max)}`;
+      return v >= l.min && v <= l.max ? null : `Outside the national standard's range of ${fmt(l.min)} to ${fmt(l.max)}.`;
     case "min":
-      if (v < l.min) return `below the BIS minimum of ${fmt(l.min)} for chlorinated supply`;
-      return v > l.max ? `above the BIS limit of ${fmt(l.max)}` : null;
+      if (v < l.min) return `Below the national standard's minimum of ${fmt(l.min)} for chlorinated supply.`;
+      return v > l.max ? `Above the national standard's limit of ${fmt(l.max)}.` : null;
     case "absent":
-      return v ? "BIS requires none in any 100 ml sample" : null;
+      return v ? "The national standard allows none in any 100 ml sample." : null;
   }
 }

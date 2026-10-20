@@ -15,6 +15,8 @@ import { parseEvent } from "@/lib/sightings/validate";
 export const runtime = "nodejs";
 
 const DAY_MS = 86_400_000;
+/** "Still there" photos waiting for a reviewer, per report: more wait until some are checked. */
+const UPDATE_PHOTOS_WAITING = 3;
 const NODS = `(${NOD_EVENTS.join(",")})`;
 const isNod = (event: string): event is NodEvent => (NOD_EVENTS as readonly string[]).includes(event);
 
@@ -25,7 +27,11 @@ const isNod = (event: string): event is NodEvent => (NOD_EVENTS as readonly stri
 const residentToday = (admin: SupabaseClient, key: string, since: string) =>
   admin.from("sighting_events").select("id", { count: "exact", head: true }).eq("actor_key", key).eq("actor_role", "resident").neq("event", "seen_too").gte("created_at", since);
 
-/** A status update on a published report: by its reporter, a reviewer, or anyone nearby saying it is still there or sending a fixed photo. */
+/**
+ * A status update on a published report: by its reporter, a reviewer, or anyone nearby saying it is still there or
+ * sending a fixed photo. "Still there" from the reporter or someone nearby may carry one photo, kept as an update photo
+ * that is published only once a reviewer checks it.
+ */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await requireUser(request);
   if (user instanceof NextResponse) return user;
@@ -45,7 +51,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const { event } = parsed.value;
     if (isNod(event)) return await nod(admin, row, event, key, own, reviewer);
-    const v = { ...parsed.value, event };
+    // A reviewer's own "still there" on someone else's report needs no photo of theirs.
+    const v = { ...parsed.value, event, photo: event === "still_there" && reviewer && !own ? null : parsed.value.photo };
+    const photoKind = v.photo ? (v.event === "fixed" ? "fixed" : "update") : null;
 
     // Anyone else nearby: only on a published report that is still open, and only these two updates.
     const resident = !own && !reviewer;
@@ -76,15 +84,22 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         return NextResponse.json({ error: CAP_MESSAGES.daily_cap }, { status: 429 });
       }
       const photos = fixedPhotos.data ?? [];
-      if (v.photo && photos.length >= LIMITS.photosPerReport) return NextResponse.json({ error: "This report already has its fixed photos." }, { status: 429 });
-      if (v.photo && photos.some((p) => !p.public_path)) return NextResponse.json({ error: "A fixed photo for this report is already waiting to be checked." }, { status: 409 });
+      if (photoKind === "fixed" && photos.length >= LIMITS.photosPerReport) return NextResponse.json({ error: "This report already has its fixed photos." }, { status: 429 });
+      if (photoKind === "fixed" && photos.some((p) => !p.public_path)) return NextResponse.json({ error: "A fixed photo for this report is already waiting to be checked." }, { status: 409 });
+    }
+    if (photoKind === "update") {
+      const waiting = await admin.from("sighting_photos").select("id", { count: "exact", head: true }).eq("sighting_id", id).eq("kind", "update").is("public_path", null);
+      if (waiting.error) throw waiting.error;
+      if ((waiting.count ?? 0) >= UPDATE_PHOTOS_WAITING) {
+        return NextResponse.json({ error: "Photos for this report are waiting to be checked. Send it without a photo, or try again in a few days." }, { status: 429 });
+      }
     }
     // A fixed claim from anyone but a reviewer waits for its photo to be checked; the review publishes it and moves the status.
     const held = v.event === "fixed" && !reviewer;
 
-    // The fixed photo waits for review like any other photo.
-    if (v.photo) {
-      const stored = await storePhotos(id, key, row.place_id, "fixed", [v.photo]);
+    // A fixed or "still there" photo waits for review like any other photo: stored with no public path.
+    if (v.photo && photoKind) {
+      const stored = await storePhotos(id, key, row.place_id, photoKind, [v.photo]);
       if ("error" in stored) return NextResponse.json({ error: stored.error }, { status: stored.status });
     }
     const ev = await admin.from("sighting_events").insert({
@@ -101,7 +116,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const up = await admin.from("sightings").update({ ...(moved && { case_status: moved }), updated_at: new Date().toISOString() }).eq("id", id);
     if (up.error) throw up.error;
     if (resident && v.event === "still_there") {
-      after(() => notifyReporter(row.reporter_key, { title: "Someone nearby checked your report", body: "They say it is still there.", url: "/for-citizens" }));
+      const body = photoKind ? "They say it is still there, with a photo that shows once it is checked." : "They say it is still there.";
+      after(() => notifyReporter(row.reporter_key, { title: "Someone nearby checked your report", body, url: "/mitra" }));
     }
     return NextResponse.json({ data: { caseStatus: moved ?? row.case_status, held } });
   } catch (err) {
@@ -170,6 +186,6 @@ async function nod(admin: SupabaseClient, row: SightingRow, event: NodEvent, key
 
   const c = await counts();
   const notice = event === "seen_too" ? seenNotice(c.seenCount) : null;
-  if (notice) after(() => notifyReporter(row.reporter_key, { ...notice, url: "/for-citizens" }));
+  if (notice) after(() => notifyReporter(row.reporter_key, { ...notice, url: "/mitra" }));
   return NextResponse.json({ data: c });
 }

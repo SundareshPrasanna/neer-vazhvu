@@ -5,6 +5,29 @@ import type { TestMeta } from "./test-meta";
 export type PlaceKind = "city" | "district" | "basin";
 
 /** Mirrors supabase/migrations/062_citizen_reports.sql. */
+/** The kind of place the reporter chose on the What step (migration 065); not place_kind. */
+export type SeenAt = "home" | "lake" | "river" | "drain" | "street" | "other";
+/** Optional "How much?": a small patch, along a stretch, or across most of the place. */
+export type Extent = "spot" | "stretch" | "widespread";
+
+/** A mapped water feature near a point, from the location lookup. */
+export interface NearbyWater {
+  kind: "lake" | "river" | "canal" | "stream" | "drain";
+  name: string | null;
+  /** Water body id where the feature has one (lake panels key on it). */
+  id: string | null;
+  /** 0 when the point is inside a lake outline. */
+  distanceM: number;
+}
+
+/** An open issue near a new report that may be the same thing (GET /api/sightings/nearby). */
+export interface NearbyIssue {
+  issue: PublicIssue;
+  distanceM: number;
+  /** The newest report in the issue, which "still there" and "seen it too" are recorded against. */
+  reportId: string;
+}
+
 export interface SightingRow {
   id: string;
   created_at: string;
@@ -33,6 +56,8 @@ export interface SightingRow {
   water_source: string | null;
   test_meta: TestMeta | null;
   group_id: string | null;
+  seen_at: SeenAt | null;
+  extent: Extent | null;
   candidate_label: string | null;
   authority_role: string | null;
   review_status: ReviewStatus;
@@ -46,10 +71,14 @@ export interface SightingRow {
 export interface PhotoRow {
   id: string;
   sighting_id: string;
-  kind: "report" | "fixed";
+  kind: "report" | "fixed" | "update";
+  /** Who sent the photo; present when loaded with `select("*")`. */
+  reporter_key?: string;
   storage_path: string;
   public_path: string | null;
   ordinal: number;
+  /** Present when loaded with `select("*")`; issues pick the newest published photo by it. */
+  created_at?: string;
 }
 
 export interface EventRow {
@@ -91,6 +120,8 @@ export interface PublicReport {
   category: string;
   subcategory: string | null;
   label: string;
+  /** "How much?" in words ("Along a stretch"), when the reporter said; never on a home report. */
+  extent: string | null;
   caseStatus: CaseStatus | null;
   /** Resident's own test results, each with how it sits against BIS limits. */
   readings: { text: string; assessment: string | null }[];

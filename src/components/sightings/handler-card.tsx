@@ -2,7 +2,7 @@ import { Globe, Mail, MessageCircle, Phone, Smartphone, type LucideIcon } from "
 
 import type { Channel } from "@/lib/sightings/routing/types";
 import type { Handler } from "@/lib/sightings/types";
-import { link, muted, rule, serif } from "./ui";
+import { link, muted, rule, headingCls } from "./ui";
 
 const KIND_ICON: Record<Channel["kind"], LucideIcon> = { app: Smartphone, portal: Globe, helpline: Phone, whatsapp: MessageCircle, email: Mail };
 
@@ -74,7 +74,7 @@ export function HandlerCard({ handler, national = [] }: { handler: Handler; nati
     <section className="space-y-3">
       <div>
         <p className={`text-sm font-medium ${muted}`}>Who handles this</p>
-        <h3 className={`${serif} mt-1 text-2xl leading-tight`}>
+        <h3 className={`${headingCls} mt-1 text-xl leading-tight`}>
           {handler.body}
           {handler.acronym && <span className="text-slate-500 dark:text-slate-400"> ({handler.acronym})</span>}
         </h3>

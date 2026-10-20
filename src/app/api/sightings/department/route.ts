@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
     const caseStatus = move.next ?? row.case_status!;
     if (event !== "not_ours" && caseStatus !== row.case_status && row.reporter_key !== "deleted") {
       const word = NOTICE[event];
-      after(() => notifyReporter(row.reporter_key, { title: "Update on your report", body: `The department marked one of your reports: ${word}.`, url: "/for-citizens" }));
-      after(() => notifyFollowers(admin, row, { title: "Update at a place you follow", body: `The department marked a report: ${word}.`, url: "/for-citizens" }, [row.reporter_key]));
+      after(() => notifyReporter(row.reporter_key, { title: "Update on your report", body: `The department marked one of your reports: ${word}.`, url: "/mitra" }));
+      after(() => notifyFollowers(admin, row, { title: "Update at a place you follow", body: `The department marked a report: ${word}.`, url: "/mitra" }, [row.reporter_key]));
     }
     return NextResponse.json({ data: { caseStatus, actions: actionsFor(caseStatus), at: istDate(Date.now()) } }, { headers: PRIVATE });
   } catch (err) {

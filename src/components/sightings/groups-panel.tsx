@@ -7,7 +7,7 @@ import { CLEANUPS_ON, GROUP_KINDS, GROUP_LIMITS, SAFETY_LINE, normalizeJoinCode,
 import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { ActionButton, useFlash } from "./action-feedback";
 import { GroupPack } from "./group-pack";
-import { btn, enter, field, muted, rule, serif } from "./ui";
+import { btn, enter, field, muted, rule, headingCls } from "./ui";
 import type { useCitizen } from "./use-citizen";
 
 type Citizen = Pick<ReturnType<typeof useCitizen>, "session" | "authFetch">;
@@ -54,7 +54,7 @@ export function useMyGroups(citizen: Citizen, enabled = true) {
   return { data: own.data, failed: own.failed, refresh };
 }
 
-/* An invite link (/for-citizens?join=CODE) survives the Google sign-in round trip in sessionStorage. */
+/* An invite link (/mitra?join=CODE) survives the Google sign-in round trip in sessionStorage. */
 
 const JOIN_KEY = "nv-join";
 
@@ -97,7 +97,7 @@ function takeJoin(): string | null {
 }
 
 const STATUS: Record<MyGroup["status"], { text: string; tone: string }> = {
-  pending: { text: "Waiting for review", tone: "bg-amber-50 text-amber-900 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-200 dark:ring-amber-900" },
+  pending: { text: "Name being checked", tone: "bg-amber-50 text-amber-900 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-200 dark:ring-amber-900" },
   approved: { text: "Active", tone: "bg-emerald-50 text-emerald-900 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-200 dark:ring-emerald-900" },
   rejected: { text: "Not approved", tone: "bg-slate-100 text-slate-700 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700" },
 };
@@ -166,8 +166,9 @@ function GroupItem({ group, authFetch, onChange }: { group: MyGroup; authFetch: 
       </div>
       {group.status === "pending" && (
         <p className={`text-sm ${muted}`}>
-          Members can join now. Once our reviewer checks it, usually within {REVIEW_WITHIN_DAYS} days, reports sent with it show its name
-          {group.role === "host" && CLEANUPS_ON ? " and you can plan clean-ups." : "."}
+          People can join with the invite link now. Before the group&rsquo;s name can appear on reports, we check it is a real group, so
+          no one can pose as a college or association. This usually takes up to {REVIEW_WITHIN_DAYS} days. Then members can send reports
+          with its name{group.role === "host" && CLEANUPS_ON ? " and you can plan clean-ups" : ""}, and add earlier reports to it from My reports.
         </p>
       )}
       {group.status === "rejected" && <p className={`text-sm ${muted}`}>Reports cannot be sent with this group. You can still send them on your own.</p>}
@@ -294,7 +295,7 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
     <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-16">
       <div className="min-w-0 space-y-12">
         <section aria-labelledby="my-groups" className="space-y-3">
-          <h2 id="my-groups" className={`${serif} text-[1.75rem] leading-tight sm:text-3xl`}>
+          <h2 id="my-groups" className={`${headingCls} text-2xl leading-tight sm:text-3xl`}>
             Your groups
           </h2>
           <p className={`max-w-[60ch] ${muted}`}>
@@ -328,7 +329,7 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
         </section>
 
         <section aria-labelledby="join-group" className="space-y-3">
-          <h2 id="join-group" className={`${serif} text-2xl leading-tight`}>
+          <h2 id="join-group" className={`${headingCls} text-xl leading-tight`}>
             Join a group
           </h2>
           <form
@@ -358,7 +359,7 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
         </section>
 
         <section aria-labelledby="start-group" className="space-y-5">
-          <h2 id="start-group" className={`${serif} text-2xl leading-tight`}>
+          <h2 id="start-group" className={`${headingCls} text-xl leading-tight`}>
             Start a group
           </h2>
           <label className="block">
@@ -392,7 +393,8 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
           {created && (
             <p role="status" className={`flex items-start gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400 ${enter}`}>
               <Check className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-              Started. Share its invite link above. Our reviewer checks new groups, usually within {REVIEW_WITHIN_DAYS} days.
+              Started. Share the invite link above: people can join right away. We check the group&rsquo;s name before it appears on any
+              report, usually within {REVIEW_WITHIN_DAYS} days.
             </p>
           )}
           <Alert text={createError} />
@@ -403,10 +405,11 @@ export function GroupsPanel({ citizen }: { citizen: Citizen }) {
         <h2 className="font-semibold text-slate-900 dark:text-slate-100">How Neer Mitra groups work</h2>
         <ul className={`space-y-3 text-sm leading-relaxed ${muted}`}>
           <li>When you send a report, choose to send it with your group. The report shows the group&rsquo;s name, never yours.</li>
+          <li>Anyone with the invite link can join at once. Before a group&rsquo;s name appears on any report, we check it is a real group, so no one can pose as a college or association.</li>
           <li>Members are never listed. A host sees how many members a group has, not who they are.</li>
           {CLEANUPS_ON && (
             <>
-              <li>Once a group is checked, its hosts can plan a clean-up at a reported spot with litter, floating trash, plastic or ritual waste.</li>
+              <li>Once its name is checked, a group&rsquo;s hosts can plan a clean-up at a reported spot with litter, floating trash, plastic or ritual waste.</li>
               <li>
                 Never sewage, drains, debris, burning, hazardous or medical waste, or dead animals: those need the department&rsquo;s trained staff
                 and equipment. {SAFETY_LINE}

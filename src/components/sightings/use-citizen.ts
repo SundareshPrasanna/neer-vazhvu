@@ -34,7 +34,7 @@ export function useCitizen() {
   const signIn = useCallback(() => {
     void browserClient().auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/for-citizens` },
+      options: { redirectTo: `${window.location.origin}/mitra` },
     });
   }, []);
 

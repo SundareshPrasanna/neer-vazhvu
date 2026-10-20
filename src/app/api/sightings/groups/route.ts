@@ -155,7 +155,7 @@ interface Input {
 /** Tells a group's hosts something about it. Never throws. */
 async function notifyHosts(admin: Admin, groupId: string, notice: { title: string; body: string }) {
   const { data } = await admin.from("sighting_group_members").select("reporter_key").eq("group_id", groupId).eq("role", "host");
-  await Promise.all((data ?? []).map((m) => notifyReporter(m.reporter_key as string, { ...notice, url: "/for-citizens" })));
+  await Promise.all((data ?? []).map((m) => notifyReporter(m.reporter_key as string, { ...notice, url: "/mitra" })));
 }
 
 /** Start, join, leave or re-key a group; reviewers approve or reject one. */

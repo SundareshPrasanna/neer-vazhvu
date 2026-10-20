@@ -9,7 +9,21 @@ import type { DistrictDirectoryArtifact } from "@/lib/atlas/artifacts";
 import { listPublishedAtlasDistricts, type AtlasDistrict } from "@/lib/atlas/registry";
 import { listBasins, type BasinManifest } from "@/lib/basins";
 import { wardNumberOf } from "@/lib/utils/ward-number";
-import { containing, distanceKm, inBBox, indexPolygons, nearest, type BBox, type IndexedPolygon } from "./locate";
+import { listWaterways } from "@/lib/waterways";
+import {
+  containing,
+  distanceKm,
+  inBBox,
+  indexLines,
+  indexPolygons,
+  linesNear,
+  nearest,
+  polygonsNear,
+  type BBox,
+  type IndexedLine,
+  type IndexedPolygon,
+} from "./locate";
+import type { NearbyWater } from "./types";
 
 /** Where a report lands. Resolved on the server from GPS only. */
 export interface Placement {
@@ -43,20 +57,44 @@ type Panchayat = { code: string; name: string; blockCode: string; centroid: [num
 const cache = new Map<string, Promise<unknown>>();
 
 /** Towns and reservoirs in onboarded districts lie 2-5 km from a panchayat centre; neighbouring districts 12 km and more. */
-const DISTRICT_REACH_KM = 5;
+export const DISTRICT_REACH_KM = 5;
+
+/** A static file of this deployment; `missing` when it has none (404), which holds for the deployment's life. */
+export async function load(url: string): Promise<{ json: unknown; missing: boolean }> {
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  try {
+    const r = await fetch(url, { cache: "no-store", headers: bypass ? { "x-vercel-protection-bypass": bypass } : {} });
+    return r.ok ? { json: await r.json(), missing: false } : { json: null, missing: r.status === 404 };
+  } catch {
+    return { json: null, missing: false };
+  }
+}
+
+/** Once per instance: a failed fetch is tried again next time, a file the deployment does not have is not. */
+function once<T>(store: Map<string, Promise<T | null>>, url: string, make: (json: unknown) => T): Promise<T | null> {
+  if (!store.has(url)) {
+    const p = load(url).then(({ json, missing }) => {
+      if (json == null && !missing) store.delete(url);
+      return json == null ? null : make(json);
+    });
+    store.set(url, p);
+  }
+  return store.get(url)!;
+}
+
+/** A file an earlier lookup already holds, for readers that must not keep whole files themselves (suggest-server.ts). */
+export const held = (url: string): Promise<unknown> | null => cache.get(url) ?? null;
 
 function getJson<T>(origin: string, path: string | null): Promise<T | null> {
-  if (!path) return Promise.resolve(null);
-  const key = `${origin}${path}`;
-  if (!cache.has(key)) {
-    const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
-    const p = fetch(key, { cache: "no-store", headers: bypass ? { "x-vercel-protection-bypass": bypass } : {} })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null);
-    p.then((v) => v ?? cache.delete(key));
-    cache.set(key, p);
-  }
-  return cache.get(key) as Promise<T | null>;
+  return path ? (once(cache, `${origin}${path}`, (json) => json) as Promise<T | null>) : Promise.resolve(null);
+}
+
+/** A loaded file's polygons with their boxes, indexed once per file rather than on every lookup. */
+const indexes = new WeakMap<FeatureCollection, IndexedPolygon[]>();
+function indexed(fc: FeatureCollection | null): IndexedPolygon[] {
+  if (!fc) return [];
+  if (!indexes.has(fc)) indexes.set(fc, indexPolygons(fc));
+  return indexes.get(fc)!;
 }
 
 async function geoFor(origin: string, cityId: string): Promise<CityGeo> {
@@ -65,7 +103,7 @@ async function geoFor(origin: string, cityId: string): Promise<CityGeo> {
     getJson<FeatureCollection>(origin, `/geojson/${cityId}-water-bodies-current.geojson`),
     getJson<FeatureCollection>(origin, corporationsGeoJsonPathFor(cityId)),
   ]);
-  return { wards: indexPolygons(wards), bodies: indexPolygons(bodies), corporations: indexPolygons(corporations) };
+  return { wards: indexed(wards), bodies: indexed(bodies), corporations: indexed(corporations) };
 }
 
 async function panchayatsOf(origin: string, d: AtlasDistrict): Promise<Panchayat[]> {
@@ -173,16 +211,16 @@ async function placeByRecord(origin: string, lng: number, lat: number): Promise<
   return i >= 0 ? cityPlacement(cities[i], geos[i], null, lng, lat) : null;
 }
 
-const basinUrl = (b: BasinManifest, file: string) => `/data/basins/${b.basinId}/${file}.geojson`;
+export const basinUrl = (b: BasinManifest, file: string) => `/data/basins/${b.basinId}/${file}.geojson`;
 
 /** The smallest onboarded basin whose boundary holds the point, with the town or district and major water body its own map names. */
 async function basinPlacement(origin: string, lng: number, lat: number): Promise<Placement | null> {
   const basins = [...listBasins()].sort((a, b) => (a.areaKm2 ?? Infinity) - (b.areaKm2 ?? Infinity));
   for (const b of basins) {
-    const boundary = indexPolygons(await getJson<FeatureCollection>(origin, basinUrl(b, "boundary")));
+    const boundary = indexed(await getJson<FeatureCollection>(origin, basinUrl(b, "boundary")));
     if (!containing(boundary, lng, lat)) continue;
     const [towns, districts, bodies] = await Promise.all(
-      ["admin-town", "admin-district", "waterbodies-major"].map(async (f) => indexPolygons(await getJson<FeatureCollection>(origin, basinUrl(b, f)))),
+      ["admin-town", "admin-district", "waterbodies-major"].map(async (f) => indexed(await getJson<FeatureCollection>(origin, basinUrl(b, f)))),
     );
     const body = containing(bodies, lng, lat)?.properties;
     const place = containing(towns, lng, lat)?.properties ?? containing(districts, lng, lat)?.properties;
@@ -227,6 +265,124 @@ export async function viewOf(
     return district.bbox ? mid(district.bbox, 10) : null;
   }
   const basin = listBasins().find((b) => b.basinId === q.place);
-  const boundary = basin ? indexPolygons(await getJson<FeatureCollection>(origin, basinUrl(basin, "boundary")))[0] : null;
+  const boundary = basin ? indexed(await getJson<FeatureCollection>(origin, basinUrl(basin, "boundary")))[0] : null;
   return boundary ? mid(boundary.bbox, 9) : null;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Water near a point, so the What step can ask "Are you at Puzhal lake?" instead of a list.
+
+type LineData = { kind: NearbyWater["kind"]; name: string | null };
+
+/** Line layers kept as small indexes only (locate.ts IndexedLine), never as the parsed file. */
+const lineCache = new Map<string, Promise<IndexedLine<LineData>[] | null>>();
+
+/** A lake outline this close counts, growing with the phone's reported accuracy. */
+const LAKE_MARGIN_M: [number, number] = [30, 75];
+/** A river, stream, canal or drain centreline this close counts. */
+const LINE_MARGIN_M = 60;
+const NEARBY_MAX = 3;
+
+const named = (p: GeoJsonProperties): string | null => (typeof p?.name === "string" && p.name.trim() ? p.name.trim() : null);
+
+/** City and basin water-body files map rivers, canals and drains as polygons too (OSM water=river and the like). */
+export function polygonKind(p: GeoJsonProperties): NearbyWater["kind"] {
+  const t = String(p?.water_type ?? p?.water ?? "");
+  return t === "river" || t === "canal" || t === "stream" || t === "drain" ? t : "lake";
+}
+
+/**
+ * A basin line layer's features as nearby water. `drainage` is three kinds of data: OSM waterways (Mumbai: nullahs and
+ * drains, by `waterway`), a corporation's drain register (Chennai, GCC: `drain_type`; only open and macro drains count,
+ * the rest are covered roadside drains that sit within 60 m of nearly every street) and a stream network with no tags
+ * (Arkavathi, Kabini: India-WRIS).
+ */
+function lineKind(family: string, p: GeoJsonProperties): NearbyWater["kind"] | null {
+  if (family === "streams") return "stream";
+  if (family === "canals") return "canal";
+  const w = typeof p?.waterway === "string" ? p.waterway : null;
+  if (family === "rivers") return w === "canal" ? "canal" : "river";
+  if (w) return w === "drain" || w === "ditch" ? "drain" : w === "stream" || w === "river" || w === "canal" ? w : null;
+  if (p?.drain_type != null) return /open|macro/i.test(String(p.drain_type)) ? "drain" : null;
+  return "stream";
+}
+
+function getLines(origin: string, path: string, pick: (p: GeoJsonProperties) => LineData | null): Promise<IndexedLine<LineData>[] | null> {
+  return once(lineCache, `${origin}${path}`, (json) => indexLines(json as FeatureCollection, pick));
+}
+
+const BASIN_LINES = ["rivers", "streams", "canals", "drainage"] as const;
+
+/** A basin's footprint: its boundary, or for an overview basin with none, its sub-basins. */
+async function footprintOf(origin: string, b: BasinManifest): Promise<IndexedPolygon[]> {
+  const boundary = await getJson<FeatureCollection>(origin, basinUrl(b, "boundary"));
+  return indexed(boundary ?? (await getJson<FeatureCollection>(origin, basinUrl(b, "sub-basins"))));
+}
+
+/**
+ * One entry per thing: "Cooum River (Satharai origin to mouth)" and "Cooum" are one river, the segments of an unnamed
+ * stream network at a point are one stream, and unnamed ponds stay apart.
+ */
+const sameKey = (w: NearbyWater, i: number) => {
+  if (w.name) return `${w.kind === "lake" ? "lake" : "flow"}:${w.name.toLowerCase().replace(/\(.*\)/g, "").replace(/\b(the|river|nadi|lake|tank|eri)\b/g, "").replace(/[^a-z0-9]/g, "")}`;
+  return w.kind === "lake" || w.id ? `#${w.id ?? i}` : `line:${w.kind}`;
+};
+
+/**
+ * Mapped water at or near a point, nearest first, at most three: lakes (and river polygons) whose outline holds the point
+ * or lies within 30 to 75 m, more when the phone reports a wider accuracy; rivers, streams, canals and drains whose line
+ * lies within 60 m. From each covering city's water-body file, and each covering basin's major water bodies and line
+ * layers, plus the waterway centrelines. Files load once per instance; line layers are kept only as small indexes.
+ */
+export async function nearbyWater(origin: string, lng: number, lat: number, accuracyM?: number | null): Promise<NearbyWater[]> {
+  const lakeM = Math.min(LAKE_MARGIN_M[1], Math.max(LAKE_MARGIN_M[0], accuracyM ?? 0));
+  const found: NearbyWater[] = [];
+  const add = (w: NearbyWater) => found.push({ ...w, distanceM: Math.round(w.distanceM) });
+  const polygonHits = (index: IndexedPolygon[], idOf: (p: GeoJsonProperties) => unknown) => {
+    for (const h of polygonsNear(index, lng, lat, lakeM)) {
+      const id = idOf(h.feature.properties);
+      add({ kind: polygonKind(h.feature.properties), name: named(h.feature.properties), id: id != null ? String(id) : null, distanceM: h.distanceM });
+    }
+  };
+  const lineHits = (index: IndexedLine<LineData>[] | null) => {
+    for (const h of linesNear(index ?? [], lng, lat, LINE_MARGIN_M)) add({ ...h.data, id: null, distanceM: h.distanceM });
+  };
+
+  const cities = listEnabledPlaces().filter((c) => inBBox(lng, lat, box(c.bbox)));
+  const basins = listBasins();
+  const [geos, footprints, waterways] = await Promise.all([
+    Promise.all(cities.map((c) => geoFor(origin, c.cityId))),
+    Promise.all(basins.map((b) => footprintOf(origin, b))),
+    Promise.all(
+      listWaterways().map((w) =>
+        getLines(origin, `/data/waterways/${w.waterwayId}/centerline.geojson`, () => ({ kind: /canal/i.test(w.shortName) ? "canal" : "river", name: w.shortName })),
+      ),
+    ),
+  ]);
+  for (const geo of geos) polygonHits(geo.bodies, (p) => p?.osm_id);
+  const inBasins = basins.filter((_, i) => polygonsNear(footprints[i], lng, lat, LINE_MARGIN_M).length > 0);
+  const layers = await Promise.all(
+    inBasins.map(async (b) => {
+      const [bodies, ...lines] = await Promise.all([
+        getJson<FeatureCollection>(origin, basinUrl(b, "waterbodies-major")),
+        ...BASIN_LINES.map((f) => getLines(origin, basinUrl(b, f), (p) => {
+          const kind = lineKind(f, p);
+          return kind ? { kind, name: named(p) } : null;
+        })),
+      ]);
+      return { bodies: indexed(bodies), lines };
+    }),
+  );
+  for (const l of layers) {
+    polygonHits(l.bodies, (p) => p?.tankId ?? p?.osm_id);
+    l.lines.forEach(lineHits);
+  }
+  waterways.forEach(lineHits);
+
+  // Nearest first (a stable sort keeps file order on ties). An unnamed river polygon (a city file maps the water area)
+  // takes the name of the nearest river line; then a named lake or river found in two files counts once, with its id.
+  found.sort((a, b) => a.distanceM - b.distanceM || Number(!a.id) - Number(!b.id));
+  for (const w of found) if (!w.name && w.kind !== "lake") w.name = found.find((x) => x.name && x.kind === w.kind && !x.id)?.name ?? null;
+  const seen = new Set<string>();
+  return found.filter((w, i) => !seen.has(sameKey(w, i)) && !!seen.add(sameKey(w, i))).slice(0, NEARBY_MAX);
 }

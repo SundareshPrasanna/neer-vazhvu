@@ -18,9 +18,9 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  let url = new URL("/for-citizens", self.location.origin);
+  let url = new URL("/mitra", self.location.origin);
   try {
-    const asked = new URL(event.notification.data?.url || "/for-citizens", self.location.origin);
+    const asked = new URL(event.notification.data?.url || "/mitra", self.location.origin);
     // Only pages on this site.
     if (asked.origin === self.location.origin) url = asked;
   } catch {}

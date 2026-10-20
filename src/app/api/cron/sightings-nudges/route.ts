@@ -89,7 +89,7 @@ async function remindFixits(admin: ReturnType<typeof adminClient>, now: Date): P
       const notice = {
         title: "Clean-up coming up",
         body: `${nameOf.get(f.group_id) ?? "A group"}: ${fixitWhen(f.starts_at)}, meet at ${f.meeting_point}. Bring gloves and a bag, and stay on the bank.`,
-        url: "/for-citizens",
+        url: "/mitra",
       };
       await Promise.all([...keys].map((k) => sendNotice(k, notice)));
       reminded += 1;
@@ -100,7 +100,7 @@ async function remindFixits(admin: ReturnType<typeof adminClient>, now: Date): P
         const notice = {
           title: "How did the clean-up go?",
           body: "If the spot is clear now, open the report and tap It's gone to send a photo. It is checked before the report changes.",
-          url: placeUrl(row)?.href ?? "/for-citizens",
+          url: placeUrl(row)?.href ?? "/mitra",
         };
         await Promise.all(hostsOf(f.group_id).map((k) => sendNotice(k, notice)));
         asked += 1;

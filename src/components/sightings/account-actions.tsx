@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LogOut, Trash2 } from "lucide-react";
 
 import { ActionButton } from "./action-feedback";
+import { forgetOwner } from "./draft-store";
 import { stopNotices } from "./notify-toggle";
 import { btn } from "./ui";
 
@@ -13,7 +14,7 @@ type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
  * Sign out and Delete account, always at the top right and kept apart: a neutral button, a divider, then a red one;
  * deleting always asks first. On phones they take the first row, above the view switch.
  */
-export function AccountActions({ authFetch, signOut }: { authFetch: Fetch; signOut: () => void }) {
+export function AccountActions({ authFetch, signOut, ownerId }: { authFetch: Fetch; signOut: () => void; ownerId?: string }) {
   const [confirming, setConfirming] = useState(false);
   const [removeAll, setRemoveAll] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -25,6 +26,8 @@ export function AccountActions({ authFetch, signOut }: { authFetch: Fetch; signO
     const res = await authFetch(`/api/sightings/mine${removeAll ? "?published=remove" : ""}`, { method: "DELETE" }).catch(() => null);
     setBusy(false);
     if (!res?.ok) return setError("Could not delete. Please try again.");
+    // Reports still waiting on this phone go too.
+    if (ownerId) await forgetOwner(ownerId).catch(() => {});
     signOut();
   };
 

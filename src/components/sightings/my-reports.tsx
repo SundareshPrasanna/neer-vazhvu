@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Camera, Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
+import { Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
 
 import { impactLine } from "@/lib/sightings/community";
 import type { MyGroup } from "@/lib/sightings/groups";
@@ -13,9 +13,10 @@ import { ActionButton, useFlash } from "./action-feedback";
 import { useMyGroups } from "./groups-panel";
 import { HandlerCard, NationalOnly } from "./handler-card";
 import { NotifyToggle } from "./notify-toggle";
+import { OutboxBlock } from "./outbox-block";
 import { ReminderLink } from "./reminder";
 import { History, Readings, Status, day } from "./report-card";
-import { btn, enter, field, fieldBox, fileFocus, link, muted, rule, serif } from "./ui";
+import { btn, enter, field, fieldBox, fileFocus, link, muted, rule, headingCls } from "./ui";
 import { shrinkPhoto, useCitizen } from "./use-citizen";
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
@@ -161,7 +162,6 @@ function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: 
               <img src={photo.url} alt="The spot now" className="h-20 w-20 rounded-lg object-cover" />
             )}
             <label className={`${btn("secondary", "md")} ${fileFocus}`}>
-              <Camera className="h-4 w-4" aria-hidden="true" />
               {photo ? "Change photo" : "Add the photo"}
               <input
                 type="file"
@@ -428,7 +428,7 @@ function Download({ reports }: { reports: OwnReport[] }) {
         <button type="button" onClick={() => save("csv")} className={link}>
           CSV
         </button>{" "}
-        ·{" "}
+        or{" "}
         <button type="button" onClick={() => save("json")} className={link}>
           JSON
         </button>
@@ -498,14 +498,23 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
   const citizen = useCitizen();
   const { data: myGroups } = useMyGroups(citizen);
   const groups = myGroups?.groups.filter((g) => g.status === "approved") ?? [];
-  if (!reports) return <div className="h-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />;
+  // Reports saved on this phone while offline, above everything else.
+  const outbox = <OutboxBlock owner={citizen.session?.user.id ?? null} authFetch={authFetch} onChange={onChange} />;
+  if (!reports) {
+    return (
+      <div className="space-y-6">
+        {outbox}
+        <div className="h-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+      </div>
+    );
+  }
   if (reports.length === 0) {
     return (
       <div className="max-w-md space-y-4 py-4">
-        <h2 className={`${serif} text-3xl`}>Nothing sent yet</h2>
+        {outbox}
+        <h2 className={`${headingCls} text-2xl sm:text-3xl`}>Nothing sent yet</h2>
         <p className={muted}>Your reports will show here, with what happened to each one.</p>
         <button type="button" onClick={onNew} className={btn("primary")}>
-          <Camera className="h-4 w-4" aria-hidden="true" />
           Make a report
         </button>
         <FollowedPlaces authFetch={authFetch} className="pt-4" />
@@ -532,7 +541,7 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
           {figures.map(([n, label]) => (
             <div key={label} className="flex flex-col-reverse lg:flex-row lg:items-baseline lg:justify-between lg:py-3">
               <dt className={`text-sm ${muted}`}>{label}</dt>
-              <dd className={`${serif} text-3xl tabular-nums lg:text-2xl`}>{n}</dd>
+              <dd className={`${headingCls} text-3xl tabular-nums lg:text-2xl`}>{n}</dd>
             </div>
           ))}
         </dl>
@@ -549,7 +558,8 @@ export function MyReports({ reports, authFetch, onChange, onNew }: { reports: Ow
           <Download reports={reports} />
         </div>
       </aside>
-      <div>
+      <div className="space-y-6">
+        {outbox}
         <ul className={`divide-y border-y ${rule}`}>
           {sorted.map((r) => (
             <Row

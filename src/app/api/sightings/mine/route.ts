@@ -16,10 +16,11 @@ export async function GET(request: NextRequest) {
   if (user instanceof NextResponse) return user;
   try {
     const admin = adminClient();
+    const key = reporterKey(user.id);
     const { data, error } = await admin
       .from("sightings")
       .select("*")
-      .eq("reporter_key", reporterKey(user.id))
+      .eq("reporter_key", key)
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw error;
@@ -35,8 +36,9 @@ export async function GET(request: NextRequest) {
     const extras = await loadExtras(admin, rows);
     const eventMap = byId(events.data as EventRow[]);
 
-    // Unpublished photos: short-lived links, for the reporter's eyes only.
-    const pending = ((photos.data ?? []) as PhotoRow[]).filter((p) => !p.public_path);
+    // Unpublished photos: short-lived links, for the reporter's eyes only, and only the reporter's own (a neighbour's
+    // "still there" or "fixed" photo is not shown to anyone before it is checked).
+    const pending = ((photos.data ?? []) as PhotoRow[]).filter((p) => !p.public_path && p.reporter_key === key);
     const signed = pending.length
       ? (await admin.storage.from(INTAKE_BUCKET).createSignedUrls(pending.map((p) => p.storage_path), 3600)).data ?? []
       : [];

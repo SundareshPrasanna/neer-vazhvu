@@ -94,12 +94,12 @@ test("every routing link is https, mailto or a phone, and every body cites an ht
 test("water-test results read against BIS IS 10500:2012 as amended in 2015", () => {
   const p = (k: string) => getParameter(k)!;
   assert.equal(assess(p("tds"), 400), null);
-  assert.match(assess(p("tds"), 640)!, /acceptable limit of 500, within the 2,000/);
-  assert.match(assess(p("fluoride"), 1.6)!, /limit of 1.5 even where/);
+  assert.match(assess(p("tds"), 640)!, /Above the 500 the national standard recommends\. Up to 2,000 is allowed only if no better water source is available\./);
+  assert.match(assess(p("fluoride"), 1.6)!, /Above 1\.5, the most the national standard allows/);
   assert.equal(assess(p("iron"), 0.8), null, "Amendment 1 (2015): iron acceptable 1.0");
-  assert.match(assess(p("arsenic"), 0.02)!, /BIS limit of 0.01$/, "Amendment 1 (2015): arsenic no relaxation");
-  assert.match(assess(p("ph"), 9)!, /outside/);
-  assert.match(assess(p("chlorine"), 0.1)!, /below/);
+  assert.match(assess(p("arsenic"), 0.02)!, /standard's limit of 0\.01\.$/, "Amendment 1 (2015): arsenic no relaxation");
+  assert.match(assess(p("ph"), 9)!, /^Outside/);
+  assert.match(assess(p("chlorine"), 0.1)!, /^Below/);
   assert.ok(assess(p("bacteria"), 1) && assess(p("bacteria"), 0) === null);
   assert.equal(new Set(PARAMETERS.map((x) => x.key)).size, PARAMETERS.length);
 });

@@ -11,7 +11,7 @@ const TEXT = "Become a Neer Mitra: report trash, sewage or unsafe water near you
 export function ShareGuide() {
   const [copied, flash] = useFlash<true>(2500);
   const share = async () => {
-    const url = `${window.location.origin}/for-citizens#how-it-works`;
+    const url = `${window.location.origin}/mitra#how-it-works`;
     if (navigator.share) return navigator.share({ title: "Neer Mitra, on Neer Vazhvu", text: TEXT, url }).catch(() => {});
     await navigator.clipboard?.writeText(url).catch(() => {});
     flash(true);
@@ -26,7 +26,7 @@ export function ShareGuide() {
         className={btn("secondary", "md")}
         target="_blank"
         rel="noopener noreferrer"
-        href={`https://wa.me/?text=${encodeURIComponent(`${TEXT} https://neervazhvu.org/for-citizens#how-it-works`)}`}
+        href={`https://wa.me/?text=${encodeURIComponent(`${TEXT} https://neervazhvu.org/mitra#how-it-works`)}`}
       >
         <MessageCircle className="h-4 w-4" aria-hidden="true" />
         Send on WhatsApp

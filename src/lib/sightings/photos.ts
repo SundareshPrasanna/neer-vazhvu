@@ -6,6 +6,7 @@ import sharp from "sharp";
 
 import { adminClient } from "./auth";
 import { LIMITS } from "./limits";
+import type { PhotoRow } from "./types";
 
 export const INTAKE_BUCKET = "sightings-intake";
 export const PUBLIC_BUCKET = "sightings-public";
@@ -66,12 +67,12 @@ export async function processPhoto(file: File): Promise<ProcessedPhoto | { error
 
 type Stored = { exif: ProcessedPhoto["exif"] | null } | { error: string; status: number };
 
-/** Re-encode, upload to the private bucket and record each photo; all or nothing. */
+/** Re-encode, upload to the private bucket and record each photo, unpublished; all or nothing. */
 export async function storePhotos(
   sightingId: string,
   reporterKey: string,
   placeId: string,
-  kind: "report" | "fixed",
+  kind: PhotoRow["kind"],
   files: File[],
 ): Promise<Stored> {
   const processed: ProcessedPhoto[] = [];

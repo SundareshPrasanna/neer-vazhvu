@@ -365,6 +365,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
           scoredData={restorationData?.water_bodies ?? []}
           censusData={censusData}
           onSelectCurrent={setSelected}
+          openBodyId={searchParams.get("body")}
           onSelectLost={setSelected}
           onLostLayer={setLostLayer}
           focusCenter={focusCenter}

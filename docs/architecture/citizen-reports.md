@@ -1,10 +1,10 @@
 # Citizen reports (sightings)
 
-Developer reference for the module behind `/for-citizens`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications, department channel, nods, follows, groups and clean-ups (migration 064).
+Developer reference for the module behind `/mitra`. Code name in paths and tables: `sightings`. Introduced in #465; `create_sighting` reworked for the Supabase CLI in #469; reporting flow, place search, early filing and the review alert in #471. Checked against the code on 17 Oct 2026, including the updates, notifications, department channel, nods, follows, groups and clean-ups (migration 064).
 
 ## 1. What it is
 
-- Public name: **Neer Mitra** ("water friend"), for the feature and for the people who take part (page eyebrow and title, share text, thank-you screen, Neer Mitra groups, Neer Mitra evidence pack). It is a feature name inside Neer Vazhvu, never a separate site or app: neermitra.com and two student projects already use the name, and Nal Jal Mitra is a Jal Jeevan Mission role. The header button stays "For citizens"; department-facing text says "reports from residents".
+- Public name: **Neer Mitra** ("water friend"), for the feature and for the people who take part (page eyebrow and title, share text, thank-you screen, Neer Mitra groups, Neer Mitra evidence pack). It is a feature name inside Neer Vazhvu, never a separate site or app: neermitra.com and two student projects already use the name, and Nal Jal Mitra is a Jal Jeevan Mission role. The header button reads "Neer Mitra" (words only, no icon) and the page lives at `/mitra`; `/for-citizens` redirects there. Department-facing text says "reports from residents".
 - A signed-in citizen sends a photo-backed observation about water at a place: trash or sewage in a lake, unsafe tap water, a burst pipe, an encroachment, a home water-test result, or good news.
 - The server binds the GPS point to a covered place (city ward, district Gram Panchayat, or river basin). A reviewer approves or rejects it.
 - Approved reports appear on that place's public pages: ward page, water-body panel, district and GP pages, basin atlas.
@@ -19,8 +19,8 @@ Developer reference for the module behind `/for-citizens`. Code name in paths an
 
 | Surface | Flag off |
 |---|---|
-| "For citizens" nav link, `src/components/layout/header.tsx` | hidden |
-| `/for-citizens`, `src/app/for-citizens/page.tsx` | 404 |
+| "Neer Mitra" nav link (`MitraLink`), `src/components/layout/header.tsx` | hidden |
+| `/mitra`, `src/app/mitra/page.tsx` | 404 |
 | `/admin/sightings`, `src/app/admin/sightings/page.tsx` | 404 |
 | `PlaceReports` on place pages | renders nothing, sends no request |
 | API routes | gated by `reportsEnabled()` in `src/lib/sightings/auth.ts` (below) |
@@ -64,9 +64,9 @@ If the secret leaks, anyone holding it and the auth user list can link reports t
 
 1. Apply `supabase/migrations/062_citizen_reports.sql` (one file at a time: `supabase db query --linked -f <file>`, see `docs/architecture/database-reconciliation-2026-08-20.md`). Then reload the PostgREST schema cache (`notify pgrst, 'reload schema';`), or the API sees neither the tables nor the RPC.
 2. Check both buckets exist: `sightings-intake` (private) and `sightings-public` (public), 2 MB limit, `image/webp` only. 062 inserts them with `ON CONFLICT DO NOTHING`, so a bucket that already existed keeps its old settings.
-3. Auth, Providers: enable Google. Auth, URL configuration: add `<origin>/for-citizens` for every origin in use (production, `http://localhost:3000`, any preview), because `signInWithOAuth` redirects there (`use-citizen.ts`).
+3. Auth, Providers: enable Google. Auth, URL configuration: add `<origin>/mitra` for every origin in use (production, `http://localhost:3000`, any preview), because `signInWithOAuth` redirects there (`use-citizen.ts`).
 4. Turn anonymous sign-ins off, and any other provider not meant for citizens (email, phone). `requireUser` accepts any valid Supabase access token and never checks the provider, so each anonymous or email account would get its own tag and a fresh set of caps.
-5. Reviewer: sign in once at `/for-citizens`, copy the user id from Auth, Users, add it to `SIGHTINGS_REVIEWER_IDS`, redeploy.
+5. Reviewer: sign in once at `/mitra`, copy the user id from Auth, Users, add it to `SIGHTINGS_REVIEWER_IDS`, redeploy.
 6. Set the variables in Vercel (Production, and Preview if previews should take reports) and redeploy with the flag on.
 
 `.env.local` points at the same Supabase project as production (the CSP host). Reports sent from local dev land in the production tables and count toward the site-wide caps.
@@ -80,7 +80,7 @@ If the secret leaks, anyone holding it and the auth user list can link reports t
 - every run: the body is rewritten with the counts and how many whole days the oldest has waited;
 - queue empty: the issue closes.
 
-The repository is public, so the issue carries counts and whole days only, never an id, place, type, photo or hour. That is also why it runs once a day: an hourly public signal would date a report to its hour, and `/for-citizens` promises the time of day is never shown.
+The repository is public, so the issue carries counts and whole days only, never an id, place, type, photo or hour. That is also why it runs once a day: an hourly public signal would date a report to its hour, and `/mitra` promises the time of day is never shown.
 
 ### Headers that matter (`next.config.ts`)
 
@@ -97,7 +97,7 @@ The Supabase host is hard-coded in the CSP. Pointing the app at another project 
 ## 3. Architecture at a glance
 
 ```
-Browser: /for-citizens, /admin/sightings
+Browser: /mitra, /admin/sightings
   |  Google sign-in through Supabase Auth (anon key, PKCE) ------> Supabase Auth
   |  every API call: Authorization: Bearer <access token>
   v
@@ -120,7 +120,7 @@ Public read path
   place page -> PlaceReports -> GET /api/sightings?place=..  -> toPublic() -> ReportCard
   ReportCard <img> -> sightings-public object URL (no API hop)
   handler -> resolveAuthority() over src/lib/sightings/routing (static TS, no DB)
-  PlaceReports link -> /for-citizens?place=..  (query kept in sessionStorage across sign-in)
+  PlaceReports link -> /mitra?place=..  (query kept in sessionStorage across sign-in)
                     -> GET /api/sightings/locate?place=..  -> map opens there
 
 Review alert
@@ -138,9 +138,12 @@ Review alert
 
 | File | Renders or does |
 |---|---|
-| `src/app/for-citizens/page.tsx` | Page shell (404 unless flag), header copy, "How it works" (`GUIDE`), "Where you can report" (built from the same city, district and basin lists `placePoint` uses) and "How we protect you" (`PROMISES`); mounts `CitizenApp`. `PROMISES` is the public privacy text: keep it in step with section 5. `GUIDE` quotes `REVIEW_WITHIN_DAYS` |
+| `src/app/mitra/page.tsx` | Page shell (404 unless flag), header copy, "How it works" (`GUIDE`), "Where you can report" (built from the same city, district and basin lists `placePoint` uses) and "How we protect you" (`PROMISES`); mounts `CitizenApp`. `PROMISES` is the public privacy text: keep it in step with section 5. `GUIDE` quotes `REVIEW_WITHIN_DAYS` |
 | `src/components/sightings/citizen-app.tsx` | Signed-out vs signed-in; "New report", "My reports" and "Groups" views (keeps `?join=` across sign-in); review-queue link for reviewers; loads `/api/sightings/mine`; keeps a place page's `?place=` query across sign-in and asks `/locate?place=` where to open the map |
-| `src/components/sightings/report-flow.tsx` | The capture flow: photos, type tiles (`ICONS` maps group icon names), location (GPS, map, place search), readings, submit; after sending, shows the handler and lets the reporter record filing at once |
+| `src/components/sightings/report-flow.tsx` | The capture flow: photos, location (GPS, map, place search), Send (same-issue card, sign-in at Send, outbox), submit; after sending, the handler, early filing and "Report another one here" |
+| `src/components/sightings/what-step.tsx`, `water-test.tsx`, `choice.tsx` | The What step drill-down (place, then home water and problem, or the place's types and "How much?"), the water-test fields, the shared chip choice |
+| `src/components/sightings/same-issue.tsx` | "Is this the same one?": `/api/sightings/nearby` and its card |
+| `src/components/sightings/draft-store.ts`, `outbox-block.tsx`, `google-button.tsx` | The IndexedDB draft and outbox, the outbox block in My reports, Google's sign-in button |
 | `src/components/sightings/photo-blur.tsx` | Pixelates faces, plates or house names on the phone before upload |
 | `src/components/sightings/reminder.tsx` | Builds an `.ics` reminder in the browser; nothing is sent |
 | `src/components/sightings/location-map.tsx` | Leaflet map with a draggable pin (import with `ssr: false`) |
@@ -148,31 +151,38 @@ Review alert
 | `src/components/sightings/my-reports.tsx` | Reporter's own list, status updates, two-week stale prompt, CSV/JSON download |
 | `src/components/sightings/groups-panel.tsx` | Start, join, leave a group; the host's invite link; `useMyGroups` (also used by the Send step and `FixitActions`) |
 | `src/components/sightings/account-actions.tsx` | Sign out; delete account (optionally with published reports) |
-| `src/components/sightings/review-app.tsx` | Review queue at `/admin/sightings`: approve (with reclassify and candidate label), reject, suspend, publish or discard fixed photos. Flags a photo taken over 30 days before sending or over 1 km from the pin |
-| `src/components/sightings/place-reports.tsx`, `issue-list.tsx` | `PlaceReports`: "Issues here" for a place (each expands to its cards), fixed lately, good news and more reports, plus a "Report something" link to `/for-citizens` with the same query (call sites in section 6) |
+| `src/components/sightings/review-app.tsx`, `review-keys.ts` | Review queue at `/admin/sightings`: approve (with reclassify and candidate label), reject, suspend, publish or discard fixed and "still there" photos, "Same as this" merge beside possible duplicates; keys J/K next and previous, A approve, R reject, P publish photo, D discard photo, M same as, Esc cancel (never while typing). Flags a photo taken over 30 days before sending or over 1 km from the pin |
+| `src/app/mitra/i/[id]/page.tsx`, `opengraph-image.tsx`, `load.ts`; `src/lib/sightings/issue-share.ts` | An issue's share link: link-preview metadata (noindex) and a 1200x630 JPEG card for crawlers, then on to the place page with `?issue=<id>` open; the share text and Share action on each issue row |
+| `src/components/sightings/place-reports.tsx`, `issue-list.tsx` | `PlaceReports`: "Issues here" for a place (each expands to its cards), fixed lately, good news and more reports, plus a "Report something" link to `/mitra` with the same query (call sites in section 6) |
 | `src/components/sightings/report-card.tsx` | `ReportCard`, `Status`, `Readings`, `History`, `day()`; a quiet line with the group and the counts |
 | `src/components/sightings/community-actions.tsx` | `CommunityActions` on every public card: "I've seen it too", "It's gone", "I want to help" (follow, clean-up) on open reports; "Thank you" on fixed ones; nothing on home reports |
 | `src/components/sightings/fixit-actions.tsx` | A planned clean-up with "I'll come", or "Plan a clean-up" for a host of a reviewed group |
 | `src/components/sightings/share-guide.tsx` | Share sheet, WhatsApp, copy link |
 | `src/components/sightings/use-citizen.ts` | Browser Supabase client (storage key `nv-citizen-auth`), Google sign-in, `authFetch`, `readPhotoMeta`, `shrinkPhoto` |
-| `src/components/sightings/action-feedback.tsx`, `ui.ts`, `display-font.ts` | Busy buttons and "Saved" flashes, shared classes, Newsreader as `--font-display` |
+| `src/components/sightings/action-feedback.tsx`, `ui.ts` | Busy buttons and "Saved" flashes, shared classes (`headingCls`: the home page's bold sans headings, used on the Neer Mitra page and in the app) |
 
 ### The reporting flow
 
-**Signed out** (`citizen-app.tsx`): the headline, Google's own sign-in button (Google's branding rules fix its mark and wording), one privacy line, how many cities, districts and basins are covered with a link to the list, and three steps. "How it works" and "How we protect you" are closed lists below.
+**Front door** (`/mitra`, `citizen-app.tsx`; `/for-citizens` redirects there): the headline, "Start a report" first, one privacy line ("You sign in with Google only to send, and your name and email never appear with a report"), the coverage line and three steps; below, "Sent reports before, or joining a group? Sign in to see them." with Google's own button. Anyone can start a report signed out; sign-in comes at Send.
 
-**Signed in**: New report or My reports; a Review queue link for reviewers; Sign out and Delete account at the top right.
+**Signed in**: New report, My reports (its count includes reports waiting on the phone) and Groups; a Review queue link for reviewers; Sign out and Delete account at the top right.
 
-**New report** (`report-flow.tsx`): one decision per screen. `blockers` names why a screen cannot move on; it shows beside Next on wide screens and inside the sticky bottom bar on phones.
+**New report** (`report-flow.tsx`, `what-step.tsx`, `water-test.tsx`, `same-issue.tsx`): one decision per screen. `blockers` names why a screen cannot move on; it shows beside Next on wide screens and inside the sticky bottom bar on phones.
 
 | Step | What happens |
 |---|---|
-| Photo | Phones: Take a photo (camera) or Choose from gallery. Desktops: choose or drop. Up to 3, each removable and each can be blurred (`photo-blur.tsx`). The pin comes from the photo's GPS; else from the phone's location, but only for a camera photo, since a gallery photo may be from anywhere; else the reporter chooses "I am at the spot: use my location" or places it on the map in step 3. The place is named from `/locate` as soon as there is a pin. A point outside coverage blocks Next, with "The location is wrong" to clear the pin. A photo over 30 days old gets a warning |
-| What | Eight group tiles plus Something else, and a "Have water test results? Add them" shortcut to Tap & drinking water, Water test results. Then the closest type; water source for tap water; for a test, the readings, each checked against BIS IS 10500 as it is typed |
-| Where | Place search, then a tap-or-drag map. The map opens on a search result, else the place page the report started from, else the pin, else India. Photo's location and My location buttons. Tap-water reports say they show at ward or village level only |
-| Send | The summary (built live beside the steps on wide screens), an optional note for the reviewer (never published), one privacy line |
+| Photo | Phones: Take a photo or Choose from gallery. Desktops: choose or drop. Up to 3, each removable and each can be blurred (`photo-blur.tsx`). The pin comes from the photo's GPS; else from the phone's location, but only for a camera photo; else the reporter chooses "I am at the spot" or places it in step 3. `/locate` (public) names the place and returns `nearby` water as soon as there is a pin; outside coverage blocks Next |
+| What, "Where are you?" | At home (only the ward is shown, never your house), or a public place: Lake, pond or tank; River, stream or canal; Drain or nala; Street, public tap or pipe; Somewhere else (`SEEN_AT`). With `nearby`, it opens on "Looks like you're at <name>. Right?" [Yes] [Somewhere else], or both names when two lie within 40 m |
+| What, home | "Which water?" (the water source, or Not sure), then "What's wrong?": Looks dirty or coloured; Smells or tastes bad (then `HOME_SMELLS`; `homeSmellType` stores sewage smells as `sewage_in_supply`, salty borewell water as `borewell_quality`); People fell ill after drinking it; Add a water test (readings checked against BIS as typed). No "Something else" at home, since `other` is a community category |
+| What, public place | "What do you see?": that place's types from `typesFor` (common first, then More), Good news, and Something else (note required). Then "How much? Optional" (`EXTENTS`). Labels say what a resident can see, never a cause they cannot confirm |
+| Where | "Mark the exact spot": as-you-type suggestions from our own place names ("Lake, ward, village or street"; `/api/sightings/suggest`, works signed out), with a last row "Search for a street or address" that runs the Nominatim search (signed in only, on submit, since Nominatim forbids autocomplete); then a tap-or-drag map |
+| Send | "Is this the same one?" when `/api/sightings/nearby` finds an open issue of the same or a related type within about 100 m: [Yes, it's still there] records `still_there` with the first photo (checked before it shows), then `seen_too`, on the issue's newest report, and ends on "Added to the existing report"; [No, this is new] carries on. Then the summary, an optional note for the reviewer, and Send; signed out, "Last step: sign in to send" with the Google button |
 
-**After sending**: the review time (`REVIEW_WITHIN_DAYS`), any readings, who handles it and their channels, "Filed it already? Save the reference number" (an early `reported` event), and "Remind me in two weeks" (`reminder.tsx`, a calendar file built in the browser).
+**Draft across sign-in** (`draft-store.ts`, IndexedDB `nv-citizen`, store `draft`): when a signed-out person taps Continue with Google at Send (or Yes on the same-issue card), the whole form and the shrunk photos are kept on the phone, tied to the tab by `sessionStorage` `nv-draft` (or restored if under 30 minutes old), dropped after 24 hours, and cleared once sent. Back from Google: "Your report is as you left it. Check it, then tap Send report." It never sends by itself. Blocked storage falls back to signing in first.
+
+**Outbox** (same store, `outbox`): offline, or a request that fails outright, saves the report on the phone ("Saved on this phone. It will send when you are back online."), at most 10 per phone, each tied to the account that made it. It retries while signed in, on load and on `online`, oldest first; a 4xx keeps the server's message and waits for Send now. My reports lists them with Send now and Remove. Delete account clears that account's entries (`forgetOwner`).
+
+**After sending**: the review time (`REVIEW_WITHIN_DAYS`), any readings, who handles it and their channels, "Filed it already? Save the reference number" (an early `reported` event), "Remind me in two weeks" (`reminder.tsx`), and "Report another one here", which keeps the pin and the place choice and goes straight to the photo step.
 
 **My reports** (`my-reports.tsx`): counts (being checked, open, fixed); reports with no update for 14 days first. Each opens to its updates: I reported it (body and reference), Department says it's done, It is fixed (a new photo, reviewed before it is published), Still there. The two one-tap updates wait 5 seconds (`UNDO_MS`) with an Undo, and save at once if the report closes meanwhile (closing the browser tab in those 5 seconds drops the update). A report being checked offers only I reported it. Each report also offers the two-week reminder; the list downloads as CSV or JSON.
 
@@ -215,9 +225,9 @@ Reasons to come back without turning reports into a feed: no likes, comments, na
 **Groups** (`/api/sightings/groups`, `groups.ts`, `groups-panel.tsx`, the "Groups" tab): colleges, schools, residents' associations, lake groups, NGOs. A group is a name; its members are tags.
 
 - Start: name 3 to 80 characters with a letter, one of six kinds, optional city or district. At most 3 started (rejected ones count) and 10 joined per person; suspended accounts cannot start one. The starter hosts. A group waits for a reviewer (review queue, "Groups waiting for review"; the daily review alert counts them); hosts are told the outcome.
-- Join: by invite link `/for-citizens?join=XXXX-XXXX-XXXX` (12 characters from crypto random bytes, no I, O, 0 or 1), which survives the Google sign-in. Pending and approved groups can be joined; rejected ones cannot. Hosts can make a new link.
+- Join: by invite link `/mitra?join=XXXX-XXXX-XXXX` (12 characters from crypto random bytes, no I, O, 0 or 1), which survives the Google sign-in. Pending and approved groups can be joined; rejected ones cannot. Hosts can make a new link.
 - Leave (and account deletion, via `settleGroup`): an empty group never reviewed is deleted; a reviewed one stays so its reports keep its name; a group left without a host gets its longest-standing member as host. Account deletion also sets `created_by` on groups and clean-ups to `deleted`.
-- "Send with": on the Send step, for members of an approved group, community reports only (a group name beside a ward-level home report would narrow down who sent it). The submit route checks membership, approval and the category again. Public cards show "Sent with <group>"; `/for-citizens` lists "Groups taking part" with reports sent, how many are fixed and clean-ups done (no members), revalidated every 5 minutes, empty on a database error.
+- "Send with": on the Send step, for members of an approved group, community reports only (a group name beside a ward-level home report would narrow down who sent it). The submit route checks membership, approval and the category again. Public cards show "Sent with <group>"; `/mitra` lists "Groups taking part" with reports sent, how many are fixed and clean-ups done (no members), revalidated every 5 minutes, empty on a database error.
 
 - Adding afterwards: in My reports, the sender of a community report (received or approved) can add it to one of their approved groups or remove it (`POST /api/sightings/[id]/group`). This covers reports sent as "Just me" or before the group was approved.
 
@@ -235,7 +245,7 @@ Reasons to come back without turning reports into a feed: no likes, comments, na
 
 Place pages show "Issues here" rather than a list of reports: reports about the same problem at the same spot become one issue, which reads as evidence ("First reported 12 Mar 2026. Last seen 2 Oct 2026. 14 people have reported or seen it. Open 47 days.") rather than scattered complaints. `buildIssues` is pure and tested; `GET /api/sightings` (place mode) loads up to 500 approved reports for it and returns `issues` beside the unchanged `data` (newest 50), plus `issueReports` (up to 10 newest cards per issue that fall outside those 50, so older issues can expand).
 
-- **Joining.** Community reports join one issue when they share the type (`other` never joins), the most specific place key (water body, else panchayat, else ward, else place; the same rule as `followTargets(row).at(-1)`), lie within 150 m of a report already in it (exact stored points, server side), and the issue was still open when the new one was sent. A report matching several open issues joins the oldest.
+- **Joining.** Community reports join one issue when they share the type or a related one (`RELATED_TYPES` in `taxonomy.ts`: types residents confuse at one spot, e.g. manhole and open-drain overflow, debris and filling in; the issue takes the label most of its reports use; `other` never joins), the most specific place key (water body, else panchayat, else ward, else place; the same rule as `followTargets(row).at(-1)`), lie within 150 m of a report already in it (exact stored points, server side), and the issue was still open when the new one was sent. A report matching several open issues joins the oldest.
 - **Resolved and recurring.** An issue is resolved when every report in it is fixed or closed; a later report at the spot starts a new issue, and `earlierFixes` counts earlier issues there that ended fixed ("Fixed once before."). Closed-only endings are not counted.
 - **Status and counts.** Status is the most advanced among open reports (department says done, reported, open). `people` counts each person once across reporters and residents who said still there or seen it too (`reporter_key`, `actor_key`); departments and reviewers never count; only the number leaves the server. Dates are India dates; `daysOpen` only while open.
 - **Home reports.** Tap-water reports from the last 30 days group by ward or panchayat and type, never by water body or point, with no photo ("5 homes in Ward 12 in the last 30 days."). Water tests are never issues: a home's own measurement is not a problem; they stay under "More reports here".
@@ -253,7 +263,7 @@ Public pages show only the instrument and the filtering, as one line under the r
 
 | Placement | Page | Map layer |
 |---|---|---|
-| City, in a water body | `/<city>/water-bodies?layer=reports` | yes |
+| City, in a water body | `/<city>/water-bodies?layer=reports&body=<osm_id>` (opens that lake's panel) | yes |
 | City, in a ward (cities with a ward page) | `/<city>/my-ward?ward=<n>` | no (list) |
 | District, in a gram panchayat | `/atlas/<state>/<district>/panchayats/<lgd>` | no (list) |
 | District, elsewhere | `/atlas/<state>/<district>` | no (list) |
@@ -264,7 +274,7 @@ Public pages show only the instrument and the filtering, as one line under the r
 
 ## 4. Data model
 
-All in `supabase/migrations/062_citizen_reports.sql`; TypeScript mirror in `src/lib/sightings/types.ts`. No later migration touches these tables. No table references `auth.users`.
+Created in `supabase/migrations/062_citizen_reports.sql`; 064 (updates, notifications, community) and 065 (`065_citizen_reports_flow.sql`: photo kind `update` for "still there" photos; `sightings.seen_at`, the kind of place the reporter chose, `home`, `lake`, `river`, `drain`, `street` or `other`, apart from `place_kind`; `sightings.extent`, `spot`, `stretch` or `widespread`) extend them. TypeScript mirror in `src/lib/sightings/types.ts`. No table references `auth.users`.
 
 | Table | Purpose | Key columns |
 |---|---|---|
@@ -353,9 +363,11 @@ The reporter cannot see their own note; `OwnReport` has no note field.
 2. In what remains, `sightings.reporter_key`, `sighting_photos.reporter_key`, `sighting_events.actor_key`, `sighting_groups.created_by` and `sighting_fixits.created_by` become `deleted`.
 3. The `sighting_reporters` row is deleted, with push subscriptions, follows, group memberships (each group then settles: a new host, or gone if never reviewed and empty) and clean-up sign-ups; then the Supabase auth user.
 
-**Around the report.** Blurring (`photo-blur.tsx`) happens on the phone, so the unblurred image is never uploaded. Place search goes through `/api/sightings/search`, so Nominatim sees the server, never the device; queries are cached in memory per instance (cleared past 500) and not logged by the module. The calendar reminder is built in the browser. The review-queue workflow posts counts and the oldest item's wait in whole days to a public GitHub issue once a day, never an id, place, type, photo or hour.
+**Around the report.** Blurring (`photo-blur.tsx`) happens on the phone, so the unblurred image is never uploaded. Place suggestions are answered from our own index and never leave our server. Address search goes through `/api/sightings/search`, so Nominatim sees the server, never the device; queries are cached in memory per instance (cleared past 500) and not logged by the module. The calendar reminder is built in the browser. The review-queue workflow posts counts and the oldest item's wait in whole days to a public GitHub issue once a day, never an id, place, type, photo or hour.
 
 **Public output omits** the tag, the exact point and its accuracy, the note, the time of day, reference numbers, the reporter-typed authority body, EXIF, the candidate label, and every report not approved. Public output carries the point rounded to 3 decimals (about 100 m), so reports can sit on a map; a private category (`private: true` in `taxonomy.ts`, today only "Tap & drinking water") gets no point at all and also drops the water body name from `where`, leaving the ward, GP or basin locality, or nothing.
+
+**Before review, and on the phone.** A "still there" photo is stored unpublished and shown to nobody, the report's own reporter included, until a reviewer publishes it; My reports signs only the reporter's own unpublished photos. `/api/sightings/nearby` is public, so its distances use the public rounded points and come back to the nearest 10 m (exact distances would reveal a report's exact point); the reviewer's duplicate check uses exact points. The draft and outbox live in the browser's IndexedDB on that phone only, tied to the account that made them, and go with Delete account.
 
 **Groups and nods.** A report sent with a group shows the group's name, never the sender's; groups show no members anywhere public; a group tag is accepted only on community reports. Nod and follow counts are totals, never who. Home reports take no nods, follows, group tag or clean-up, and are never announced to followers.
 
@@ -376,7 +388,7 @@ After a district or basin match with no water body, the point is tested against 
 
 GP matching uses bounding boxes, not GP polygons. Where boxes overlap, the GP with the nearer centre wins, which can credit a point near a boundary to the neighbouring GP.
 
-**Outside** means no step matched. `POST /api/sightings` returns 422 "This location is outside the cities, districts and river basins we cover so far."; `GET /api/sightings/locate` returns `{ data: null }`. The 5 km reach is deliberately short: a point beyond it is a district not yet onboarded and is never credited to its neighbour. `/for-citizens` lists the covered places from the same three registries.
+**Outside** means no step matched. `POST /api/sightings` returns 422 "This location is outside the cities, districts and river basins we cover so far."; `GET /api/sightings/locate` returns `{ data: null }`. The 5 km reach is deliberately short: a point beyond it is a district not yet onboarded and is never credited to its neighbour. `/mitra` lists the covered places from the same three registries.
 
 **Starting from a place page.** `viewOf()` in `locate-server.ts` turns `place` plus an optional `body`, `ward` or `panchayat` into `{ lat, lng, zoom }`: water body box centre (zoom 16), ward box centre (15), city centre (12); GP centroid (14), district box centre (10); basin boundary box centre (9). Unknown places return null and the map opens on its default view. This only positions the map; the report is still placed from its final point.
 
@@ -391,6 +403,14 @@ GP matching uses bounding boxes, not GP polygons. Where boxes overlap, the GP wi
 | District page | `src/app/atlas/[state]/[district]/page.tsx` | `place=<scopeId>` |
 | GP page | `src/app/atlas/[state]/[district]/panchayats/[gpCode]/page.tsx` | `place=<scopeId>&panchayat=<lgdCode>` |
 | Basin atlas | `src/components/basin/atlas/basin-atlas.tsx` | `place=<basinId>`, when a river or PRS is selected |
+
+### Place suggestions (`suggest.ts`, `suggest-server.ts`)
+
+One in-memory index per server instance (about 12,200 entries: 2,818 lakes and tanks, 1,247 wards, 8,139 village panchayats, 24 basin towns; 6 to 7 MB; built in 1 to 3 s on first use, which the search box triggers on focus). Only places that placement accepts are kept: about 1,100 named city lakes lie outside coverage (Madurai, Bengaluru) and are dropped. `coverOf` repeats `placePoint`'s coverage rules on temporary indexes rather than calling it (which would keep about 124 MB of geometry cached), so **a change to placement's coverage rules must be made in `coverOf` too**. Matching ignores case, accents and lake words (lake, eri, kere, tank, kulam, cheruvu, talab and others), tolerates common spelling folds (Thiruvallur/Tiruvallur) and ranks whole-word, then word-start, then substring matches, then nearer to the map centre. Rivers, canals and drains are left out, since picking one would wrongly answer "lake". Queries never leave our server.
+
+### Nearby water (`nearbyWater` in `locate-server.ts`, helpers in `locate.ts`)
+
+For the "Looks like you're at X" question, point mode of `/locate` returns up to 3 mapped water features, nearest first. Lake outlines count when they hold the point (0 m) or lie within a margin of the phone's accuracy, held between 30 m and 75 m (30 m without accuracy): a reporter usually stands on the bank, outside the outline. Rivers, streams, canals and drains count within 60 m of the line (a wide river's bank can be further). Sources: the 13 enabled cities' water-body layers (Gurugram's carry no names or ids, Surat's no ids) and their river, canal and drain polygons; basin major water bodies (Arkavathi, Chennai rivers, Erode, Kabini, Krishnagiri, Mumbai rivers); basin `rivers` (8 basins), `streams` (Cauvery KA and TN; Cauvery TN uses its sub-basins as its area) and `canals` (Erode, Krishnagiri, Palakkad); the Cooum and Buckingham Canal centrelines; drains only where a layer exists (Mumbai's OSM drains and nullahs; Chennai's 77 open and macro drains from the corporation register, since its roadside drains sit near every street). Districts outside a basin get only lakes inside a city's box. Line layers are kept as compact indexes; a missing file is cached as missing. Detection only suggests: the reporter confirms or picks somewhere else.
 
 ## 7. Routing: who handles this
 
@@ -494,11 +514,13 @@ Other limits:
 | Authority body, reference | 160, 80 characters | `validate.ts` truncates | none |
 | Status updates per report per reporter | 5 per day; the `submitted` event counts | events route | 429, the `daily_cap` text |
 | Fixed photos per report | 3 | events route | 429 "This report already has its fixed photos." |
+| "Still there" photos waiting per report | 3 | events route | 429 |
+| Reports waiting on one phone (outbox) | 10 | `draft-store.ts` | "This phone already has 10 reports waiting to send." |
 | Reports sent with one group | 100 per rolling day (`GROUP_LIMITS.reportsDaily`), a fifth of the new-account allowance, so one college drive cannot pause new accounts site-wide | submit route before `create_sighting`; `[id]/group` when adding a report sent that day | 429 "Your group has sent 100 reports in the last day, the most one group can send. Please send the rest tomorrow." Checked outside the intake lock, so parallel sends can pass it by a few |
 | Suspended account updating status | | events route | 403, the `suspended` text |
 | Place search | signed in; query 3 to 120 characters; 5 results, India only; one Nominatim request a second per server instance, queued; 8 s timeout | search route | under 3 characters: empty list; Nominatim failure: 502 "Search is not working right now. Tap the map instead." |
 
-`REVIEW_WITHIN_DAYS` (3) in `limits.ts` is not a cap but a promise: `/for-citizens` tells reporters reports are usually checked within that many days. Change it when the real review pace changes.
+`REVIEW_WITHIN_DAYS` (3) in `limits.ts` is not a cap but a promise: `/mitra` tells reporters reports are usually checked within that many days. Change it when the real review pace changes.
 
 Reviewers skip the events-route caps and the suspension check. Suspension (`action: "suspend"`) sets `suspended_at`, rejects the account's `received` reports and deletes their photos; approved reports stay. Un-suspending is manual SQL. Suspension binds the tag, not the person: deleting the account and signing in again with the same Google account yields a new auth user id, a new tag, and new-account caps.
 
@@ -510,11 +532,13 @@ All routes run on the Node runtime. "User" means a valid Supabase bearer token; 
 |---|---|---|---|---|---|
 | `/api/sightings` | POST | user | multipart: `photos` (1-3), `lat`, `lng`, `accuracy?`, `category`, `subcategory` (none for `other`), `note` (required for `other`), `waterSource` (drinking only; required with readings), `reading.<key>` (`water_test`: at least one), `takenAt?`, `photoLat?`, `photoLng?` | `{ data: { id, placeName, role, handler, national, readings } }` | 400 validation or photo; 409 duplicate photo; 422 outside; 429 caps |
 | `/api/sightings` | GET | none | `place` (`[a-z0-9-]{2,40}`) with `body?`, `ward?`, `panchayat?`; or `bbox=w,s,e,n` (inside India, at most 12 degrees a side; private categories left out) | `{ data: PublicReport[] }`: newest 50 approved; place mode also `issues: PublicIssue[]` and `issueReports: PublicReport[]` (section "Issues at a place"); `Cache-Control: public, s-maxage=60, stale-while-revalidate=300`; `{ data: [] }` when off | 400 invalid place |
-| `/api/sightings/locate` | GET | user | `lat`, `lng`; or `place` with optional `ward`, `body`, `panchayat` | point: `{ data: { placeName, where } }` or `{ data: null }` (outside); place: `{ data: { lat, lng, zoom } }` or `{ data: null }` | 400 invalid location (point mode) |
+| `/api/sightings/locate` | GET | none (flag on), never cached | `lat`, `lng`, `accuracy?`; or `place` with optional `ward`, `body`, `panchayat` | point: `{ data: { placeName, where, nearby: NearbyWater[] } }` or `{ data: null }` (outside); place: `{ data: { lat, lng, zoom } }` or `{ data: null }` | 400 invalid location (point mode) |
+| `/api/sightings/suggest` | GET | none (flag on) | `q` (2+ characters), `lat?`, `lng?` (the map centre, ranks nearer first) | `{ data: { label, kind, lat, lng, waterBodyId? }[] }`, at most 8: lakes and tanks, wards, village panchayats and basin towns that placement accepts; `public, s-maxage=300` without a point, `private, max-age=60` with one | 400 point outside India |
+| `/api/sightings/nearby` | GET | none, cached 30 s | `lat`, `lng`, `category`, `subcategory`, `accuracy?` | `{ data: NearbyIssue[] }`: open community issues of the same or a related type within 100 m (accuracy plus 50 m, at most 150 m), nearest first, at most 3; distances to the nearest 10 m from rounded points | `{ data: [] }` when off or a home type |
 | `/api/sightings/search` | GET | user | `q` (trimmed, at most 120 characters) | `{ data: [{ name, lat, lng }] }`, at most 5; empty under 3 characters | 502 search failed |
 | `/api/sightings/mine` | GET | user | none | `{ data: OwnReport[] (newest 100), reviewer: boolean }` | |
 | `/api/sightings/mine` | DELETE | user | `?published=remove` (optional) | `{ data: { deleted: <count> } }` | |
-| `/api/sightings/[id]/events` | POST | owner or reviewer | multipart: `event`, `authorityBody` (required for `reported`), `reference?`, `reason?`, `photos` (`fixed` only: one file, required; ignored on other events) | `{ data: { caseStatus } }` (unchanged, so null, for an early `reported`) | 400 validation or photo; 403 reviewer-only event or suspended; 404 bad id or not owner; 409 not published (except the owner's early `reported`), transition not allowed, duplicate photo; 429 caps |
+| `/api/sightings/[id]/events` | POST | owner or reviewer | multipart: `event`, `authorityBody` (required for `reported`), `reference?`, `reason?`, `photos` (`fixed`: one file, required; `still_there`: one optional file from the reporter or a resident, stored unpublished as kind `update`; ignored on other events) | `{ data: { caseStatus } }` (unchanged, so null, for an early `reported`) | 400 validation or photo; 403 reviewer-only event or suspended; 404 bad id or not owner; 409 not published (except the owner's early `reported`), transition not allowed, duplicate photo; 429 caps |
 | `/api/sightings/[id]/events` (nods) | POST | user | `event` `seen_too` or `thanks` | `{ data: { seenCount, thanksCount } }` | 403 home report, own report (`seen_too`), suspended; 409 not open (`seen_too`) or not fixed (`thanks`); 429 caps |
 | `/api/sightings/follows` | GET, POST, DELETE | user | JSON `{ target }` (POST, DELETE) | GET the person's follows with a name and page link each; POST, DELETE `{ data: { ok } }` | 400 bad target; 429 over 50 |
 | `/api/sightings/groups` | GET | none; `?scope=mine` user; `?scope=pending` reviewer | | public: approved groups with counts, cached 5 minutes; mine: groups with role, status, members, the host's invite link, and clean-ups; pending: groups waiting | 403 not reviewer |
@@ -534,6 +558,9 @@ Review action details:
 - `approve`: optional `category` and `subcategory` reclassify the report (a `reclassified` event records the new type); `candidateLabel` is kept only for `other`. Publishes report photos, sets `authority_role` and `case_status` (section 4), clears EXIF, marks the reporter trusted.
 - `reject`: `reason` becomes the reporter's `rejectReason`. Deletes photos, nulls the note, clears EXIF.
 - `publish_fixed`, `discard_fixed`: act on the report's unpublished `fixed` photos only.
+- `publish_update`, `discard_update`: the same for unpublished `update` ("still there") photos; publishing tells the sender "Your photo is on the record".
+- `merge` `{ id, targetReportId }`: a received community report that repeats an open one. Its first photo becomes a published `update` photo on the target; its sender's `seen_too` and `still_there` are recorded there (once per person; as the reporter if it is their own report); it is rejected with "Already on the record: added to the existing report at <place>."; its sender is marked trusted and told. 409 if either side is not eligible or the target is no longer open.
+- GET also returns `possibleSame: NearbyIssue[]` for each received community report (exact points).
 - `suspend`: takes `reporterKey` (64 hex) and `reason`.
 - An update on one's own report by a reviewer is recorded with `actor_role: reporter`.
 
@@ -598,9 +625,9 @@ Not covered by any test: the API routes, `create_sighting`, photo processing, `l
 
 ### Manual end-to-end (local, flag on)
 
-Setup: `.env.local` with every variable in section 2, the tester's auth user id in `SIGHTINGS_REVIEWER_IDS`, `http://localhost:3000/for-citizens` allowed as a redirect, `npm run dev`. This writes to production tables: clean up afterwards.
+Setup: `.env.local` with every variable in section 2, the tester's auth user id in `SIGHTINGS_REVIEWER_IDS`, `http://localhost:3000/mitra` allowed as a redirect, `npm run dev`. This writes to production tables: clean up afterwards.
 
-1. `/for-citizens`: the nav link shows; Google sign-in returns to the page signed in.
+1. `/mitra`: the nav link shows; Google sign-in returns to the page signed in.
 2. Drop the pin in a covered ward: the place name shows. Drop it at sea: "outside". Search for a place name: up to 5 hits move the map.
 3. Send a report with a phone photo that has GPS, blurring part of it first: the handler card and national channels appear. Record filing with a reference straight away; after approval the report starts as `reported`.
 4. My reports: the report shows as being checked, with its photo (signed URL).
@@ -623,7 +650,7 @@ Setup: `.env.local` with every variable in section 2, the tester's auth user id 
 | Every point "outside" on a preview | Geometry fetch blocked by Deployment Protection: set `VERCEL_AUTOMATION_BYPASS_SECRET` |
 | Every point "outside" locally | `public/geojson` or `public/data` files missing from the checkout |
 | 500 on submit right after the migration | PostgREST schema cache not reloaded |
-| Sign-in fails or lands on an error | `<origin>/for-citizens` missing from Supabase redirect URLs |
+| Sign-in fails or lands on an error | `<origin>/mitra` missing from Supabase redirect URLs |
 | Public photo broken | CSP host differs from `NEXT_PUBLIC_SUPABASE_URL`, or `publishPhotos` failed between copy and update (it is not transactional) |
 | A routing fix disappeared | `states/*.ts` regenerated over a hand edit |
 | Place search always fails (502) | Nominatim down or refusing the server; the route logs `sightings/search` |

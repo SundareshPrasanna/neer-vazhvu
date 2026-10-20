@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { internalServerError, logRouteError } from "@/lib/api-error";
 import { adminClient, reporterKey, reportsEnabled, requireUser } from "@/lib/sightings/auth";
-import { CARDS_PER_ISSUE, buildIssues, type IssueEvent } from "@/lib/sightings/issues";
+import { CARDS_PER_ISSUE, buildIssues, issuePhotos, type IssueEvent } from "@/lib/sightings/issues";
 import { CAP_MESSAGES, LIMITS, type CapReason } from "@/lib/sightings/limits";
 import { placePoint } from "@/lib/sightings/locate-server";
 import { publicPhotoUrl, storePhotos } from "@/lib/sightings/photos";
@@ -92,6 +92,8 @@ export async function POST(request: NextRequest) {
     const exif = stored.exif ?? (v.photoMeta.capturedAt || v.photoMeta.lat != null ? v.photoMeta : null);
     if (exif) await admin.from("sightings").update({ exif_captured_at: exif.capturedAt, exif_lat: exif.lat, exif_lng: exif.lng }).eq("id", id);
     if (v.testMeta) await admin.from("sightings").update({ test_meta: v.testMeta }).eq("id", id);
+    // Kept apart from the test details: a database without migration 065 loses only these two.
+    if (v.seenAt || v.extent) await admin.from("sightings").update({ seen_at: v.seenAt, extent: v.extent }).eq("id", id);
     // A group name beside a home report would narrow down who sent it.
     if (v.groupId && isCommunityReport(v.category)) {
       const [member, group] = await Promise.all([
@@ -135,11 +137,6 @@ function parseBbox(raw: string | null): [number, number, number, number] | null 
 
 /** Newest published reports a place page lists as cards; its issues are built from up to 500. */
 const PLACE_CARDS = 50;
-
-const firstPhoto = (photos: PhotoRow[], kind: PhotoRow["kind"]) => {
-  const p = photos.filter((x) => x.kind === kind && x.public_path).sort((a, b) => a.ordinal - b.ordinal)[0];
-  return p ? publicPhotoUrl(p.public_path!) : null;
-};
 
 /**
  * Published reports on one place, optionally narrowed to a ward, water body or panchayat, with the issues they make
@@ -194,10 +191,7 @@ export async function GET(request: NextRequest) {
 
     const cards = all.slice(0, PLACE_CARDS);
     const issues = buildIssues(
-      rows.map((r, i) => {
-        const p = photoMap.get(r.id) ?? [];
-        return { row: r, report: all[i], events: eventMap.get(r.id) ?? [], reportPhoto: firstPhoto(p, "report"), fixedPhoto: firstPhoto(p, "fixed") };
-      }),
+      rows.map((r, i) => ({ row: r, report: all[i], events: eventMap.get(r.id) ?? [], photos: issuePhotos(photoMap.get(r.id) ?? [], publicPhotoUrl) })),
     );
     const listed = new Set(cards.map((r) => r.id));
     const opens = new Set(issues.flatMap((i) => i.reportIds.slice(0, CARDS_PER_ISSUE)));

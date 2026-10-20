@@ -3,9 +3,8 @@ import { notFound } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { CitizenApp } from "@/components/sightings/citizen-app";
-import { displayFont } from "@/components/sightings/display-font";
 import { ShareGuide } from "@/components/sightings/share-guide";
-import { muted, rule, serif } from "@/components/sightings/ui";
+import { muted, rule, headingCls } from "@/components/sightings/ui";
 import { listPublishedAtlasDistricts } from "@/lib/atlas/registry";
 import { listBasins } from "@/lib/basins";
 import { listEnabledPlaces } from "@/lib/cities";
@@ -16,10 +15,10 @@ import { REVIEW_WITHIN_DAYS } from "@/lib/sightings/limits";
 import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 
 export const metadata: Metadata = {
-  title: "Neer Mitra: for citizens | Neer Vazhvu",
+  title: "Neer Mitra | Neer Vazhvu",
   description:
     "Become a Neer Mitra. Report trash, sewage, unsafe tap water or encroachment on a lake, river or drain near you, or add your own water test results. We check it, put it on the public record and tell you who handles it. Nothing on the record identifies you.",
-  alternates: { canonical: "/for-citizens" },
+  alternates: { canonical: "/mitra" },
 };
 
 /** The groups list is read from the database; refreshed every few minutes. */
@@ -74,9 +73,11 @@ const GUIDE: [string, React.ReactNode][] = [
         Take one clear photo of the problem itself. Keep faces, vehicle number plates and house names or numbers out of the frame, or blur them
         before sending.
       </li>
-      <li>Pick the closest type. If nothing fits, choose Something else and describe it in a line.</li>
-      <li>For a water test, photograph the meter or kit showing the result, choose where the water came from and enter the values you have. TDS alone is fine.</li>
+      <li>Say where you are, at home or at a lake, river, drain or street, then pick what you see. At a public place, if nothing fits, choose Something else and describe it in a line.</li>
+      <li>For a water test, choose At home, then Add a water test. Photograph the meter or kit showing the result and enter the values you have. TDS alone is fine.</li>
       <li>One problem per report. Two problems at the same place make two reports.</li>
+      <li>If someone has already reported the same thing there, we ask whether yours is the same. If it is, your photo goes on that report instead.</li>
+      <li>No signal? The report waits on your phone and sends itself when you are back online.</li>
     </ul>,
   ],
   [
@@ -86,7 +87,7 @@ const GUIDE: [string, React.ReactNode][] = [
         {REPORT_GROUPS.map((g) => g.label).join(", ")}, or anything else about water at a place, anywhere in the cities, districts and river
         basins we cover.
       </p>
-      <p>Have a TDS meter or a water test kit? Add your results under Tap &amp; drinking water.</p>
+      <p>Have a TDS meter or a water test kit? Choose At home, then Add a water test.</p>
       <p>Water bills, tanker prices and supply timings belong with your water board.</p>
     </>,
   ],
@@ -164,9 +165,9 @@ const GUIDE: [string, React.ReactNode][] = [
   [
     "Why we ask you to sign in",
     <p key="why">
-      So one person cannot flood the record with fake or repeated reports: each account has a daily limit, and an account that misuses it can
-      be stopped. And so you can follow your own reports and keep their status up to date. Google confirms you are a real person; we never ask
-      for your phone number or address.
+      You can start a report without signing in; you sign in when you send it. We ask so one person cannot flood the record with fake or
+      repeated reports: each account has a daily limit, and an account that misuses it can be stopped. And so you can follow your own reports
+      and keep their status up to date. Google confirms you are a real person; we never ask for your phone number or address.
     </p>,
   ],
 ];
@@ -193,7 +194,7 @@ function Section({ id, title, intro, extra, children }: { id: string; title: str
     <section id={id} className={`scroll-mt-20 border-t py-14 sm:py-20 ${rule}`}>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
         <div className="space-y-4">
-          <h2 className={`${serif} text-3xl leading-tight sm:text-4xl`}>{title}</h2>
+          <h2 className={`${headingCls} text-2xl leading-tight sm:text-3xl`}>{title}</h2>
           <p className={`max-w-[42ch] ${muted}`}>{intro}</p>
           {extra}
         </div>
@@ -211,7 +212,7 @@ async function groupsTakingPart(): Promise<PublicGroup[]> {
   try {
     return await loadPublicGroups(adminClient());
   } catch (err) {
-    logRouteError("for-citizens groups", err);
+    logRouteError("mitra groups", err);
     return [];
   }
 }
@@ -250,18 +251,18 @@ export default async function ForCitizensPage() {
     ["River basins", where.basins],
   ];
   return (
-    <main className={`${displayFont.variable} mx-auto max-w-7xl px-4 sm:px-6 lg:px-8`}>
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <CitizenApp
         coverage={{ cities: where.cities.length, districts: where.districts.length, basins: where.basins.length }}
         header={
-          <header className="max-w-3xl pt-10 pb-10 sm:pt-16 sm:pb-14 group-data-[signed-in]/citizen:pb-6 sm:group-data-[signed-in]/citizen:pt-12 sm:group-data-[signed-in]/citizen:pb-8">
-            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Neer Mitra</p>
+          <header className="max-w-3xl pt-10 pb-10 sm:pt-16 sm:pb-14 group-data-[compact]/citizen:pb-6 sm:group-data-[compact]/citizen:pt-12 sm:group-data-[compact]/citizen:pb-8">
+            <p className="text-sm font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">Neer Mitra</p>
             <h1
-              className={`mt-3 ${serif} text-[2.5rem] leading-[1.04] sm:text-6xl group-data-[signed-in]/citizen:text-[2rem] sm:group-data-[signed-in]/citizen:text-5xl`}
+              className="mt-3 text-4xl leading-[1.05] font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl dark:text-slate-50 group-data-[compact]/citizen:text-3xl sm:group-data-[compact]/citizen:text-4xl lg:group-data-[compact]/citizen:text-4xl"
             >
               Report trash, sewage or dirty water near you
             </h1>
-            <p className={`mt-4 max-w-[52ch] text-lg leading-relaxed group-data-[signed-in]/citizen:hidden ${muted}`}>
+            <p className={`mt-4 max-w-[52ch] text-lg leading-relaxed group-data-[compact]/citizen:hidden ${muted}`}>
               Send a photo from a lake, river, drain or tap. We check it, add it to the public record for that place and show you which
               public body handles it. Everyone who does is a Neer Mitra, a friend of the water near them.
             </p>
