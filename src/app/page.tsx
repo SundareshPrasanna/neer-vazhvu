@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { listAllPlaces } from "@/lib/cities";
+import { listAllPlaces, type PlaceConfig } from "@/lib/cities";
 import { liveCityPhrase } from "@/lib/cities/roster";
 import { CityBadge, CityLandmark, type CityStatus } from "@/components/landing/city-landmark";
-import { PlaceBoard } from "@/components/landing/place-board";
+import { PlaceBoard, type PlaceSearchEntry } from "@/components/landing/place-board";
 import {
+  DistrictCard,
   StateCard,
   buildDistrictBoard,
   buildStateBoard,
 } from "@/components/atlas/district-card";
+import { cityTerms, districtTerms, stateTerms } from "@/lib/places/terms";
+import { CONTACT_EMAIL, contactMailto } from "@/lib/contact";
 
 // The landing page kept its OWN three copies of the city roster, so it was
 // still advertising three live cities on the day the sixth launched - the same
@@ -42,10 +45,10 @@ export const metadata: Metadata = {
 };
 
 const GITHUB_URL = "https://github.com/SundareshPrasanna/neer-vazhvu";
-const CONTACT_EMAIL = "contact@neervazhvu.org";
-const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Neer Vazhvu")}`;
+const CONTACT_MAILTO = contactMailto("Neer Vazhvu");
 
 type BoardCity = {
+  config: PlaceConfig;
   cityId: string;
   displayName: string;
   authorityAcronym: string;
@@ -69,6 +72,7 @@ const STATUS_ORDER: Record<CityStatus, number> = { live: 0, preview: 1, onboardi
  */
 function buildCityBoard(): BoardCity[] {
   const fromRegistry: BoardCity[] = listAllPlaces().map((config): BoardCity => ({
+    config,
     cityId: config.cityId,
     displayName: config.displayName,
     authorityAcronym: config.primaryAuthority.acronym,
@@ -208,6 +212,12 @@ export default function Page() {
   const cities = buildCityBoard();
   const districts = buildDistrictBoard();
   const states = buildStateBoard();
+  // Every card the search can show, from the same boards the tabs render.
+  const places: PlaceSearchEntry[] = [
+    ...cities.map((c) => ({ ...cityTerms(c.config), card: <CityCard city={c} /> })),
+    ...districts.map((d) => ({ ...districtTerms(d.district), card: <DistrictCard {...d} /> })),
+    ...states.map((s) => ({ ...stateTerms(s.state), card: <StateCard {...s} /> })),
+  ];
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
@@ -265,6 +275,7 @@ export default function Page() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
           <PlaceBoard
             counts={{ cities: cities.length, districts: districts.length }}
+            places={places}
             cities={
               <>
                 <h3 className="mt-10 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">

@@ -79,6 +79,7 @@ const config: PlaceConfig = {
     hook:
       "Four dams on the Mutha, a water budget where the leak is bigger than the shortfall, groundwater drilled to taluka, and the corporation's own record of every tanker it sent.",
     accent: "bg-sky-700",
+    aliases: ["Poona"],
   },
   footerSources: [
     { label: "PMC", href: "https://webadmin.pmc.gov.in/en/jsonapi/node/reports_and_dpr" },

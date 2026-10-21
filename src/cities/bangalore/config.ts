@@ -33,6 +33,7 @@ const config: PlaceConfig = {
     hook:
       "Cauvery pumped 100 km uphill, ward groundwater stress, the tanker market, and lake restoration.",
     accent: "bg-emerald-700",
+    aliases: ["Bangalore"],
   },
   footerSources: [
     { label: "BWSSB", href: "https://bwssb.karnataka.gov.in/" },
