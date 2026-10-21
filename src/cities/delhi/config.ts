@@ -90,6 +90,7 @@ const config: PlaceConfig = {
     hook:
       "The Yamuna, 237 groundwater wells, 250 MCD wards, and the five-state paper trail behind the city's taps.",
     accent: "bg-rose-600",
+    aliases: ["New Delhi"],
   },
   footerSources: [
     { label: "DJB", href: "https://delhijalboard.delhi.gov.in/" },

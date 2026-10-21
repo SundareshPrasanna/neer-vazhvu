@@ -123,7 +123,10 @@ The required config fields are the decisions:
   leave out needs a reason in `routes-off.ts` (`npm run data:check` fails
   otherwise). A reason is a fact about what is published, not "not built yet"
   unless that is the truth.
-- **`landing`** (the card's hook and accent), **`footerSources`** (the core live
+- **`landing`** (the card's hook and accent, and `aliases`: former or common
+  spellings the landing search should find it by, such as "Madras"; a district
+  takes the same `aliases` in `src/lib/atlas/registry.ts`. Its name, local-script
+  name and state are found without them), **`footerSources`** (the core live
   sources), **`wardsVintage`** (`null` until the city has ward geometry),
   **`originsTagline`** (one line, heads the Origins page).
 - **`heroMode`** and its payload: step 2.

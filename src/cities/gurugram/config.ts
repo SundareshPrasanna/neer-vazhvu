@@ -64,6 +64,7 @@ const config: PlaceConfig = {
     hook:
       "No river, no reservoir, and a dark zone since 2008 - plus GMDA's own ledger of every tanker load it sold, naming who bought it and at what price.",
     accent: "bg-lime-700",
+    aliases: ["Gurgaon"],
   },
   footerSources: [
     { label: "GMDA", href: "https://www.gmda.gov.in/" },
