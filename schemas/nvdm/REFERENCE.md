@@ -119,7 +119,7 @@ An audited, artifact-level judgement that a NAMED restricted input does not encu
 | `method` | no | one of `geometry`, `published`, `crosswalk`, `manual` | How the relation was established (spec 4.5). Required, with evidence, on every intersects (enforced by scripts/validate_nvdm.py). geometry: the system's geometry in the repo was tested against the place's polygon. published: the source's publisher states it. crosswalk: joined through an identifier. manual: a reviewed mapping. |
 | `evidence` | no | string, min length 1 | A repo path or URL that lets the relation be re-checked: for geometry, the boundary or centerline that was tested. |
 
-## Registered scopes (62)
+## Registered scopes (65)
 
 Country is derived from the relations, never stored.
 
@@ -130,6 +130,7 @@ Country is derived from the relations, never stored.
 | `cauvery-ka` | basin | Cauvery (Karnataka) | - | `india` | - | projection-of cauvery; intersects karnataka (geometry); intersects bangalore (geometry) |
 | `cauvery-tn` | basin | Cauvery (Tamil Nadu) | - | `india` | - | projection-of cauvery; intersects tamil-nadu (geometry); intersects tn-erode (geometry); intersects tn-krishnagiri (geometry) |
 | `chennai-rivers` | basin | Cooum, Adyar and Kosasthalaiyar | - | `india` | - | intersects chennai (geometry); intersects tn-tiruvallur (geometry); intersects tn-chengalpattu (geometry) |
+| `dindigul-rivers` | basin | Dindigul district rivers | - | `india` | - | intersects tn-dindigul (geometry) |
 | `erode-rivers` | basin | Erode district rivers | - | `india` | - | intersects tn-erode (geometry) |
 | `kabini` | basin | Kabini | - | `india` | - | intersects karnataka (geometry); intersects kerala (geometry) |
 | `karur-rivers` | basin | Karur district rivers | - | `india` | - | intersects tn-karur (geometry) |
@@ -137,8 +138,10 @@ Country is derived from the relations, never stored.
 | `mumbai-rivers` | basin | Mumbai rivers and lakes | - | `india` | - | intersects mumbai (geometry) |
 | `namakkal-rivers` | basin | Namakkal district rivers | - | `india` | - | intersects tn-namakkal (geometry) |
 | `palakkad-rivers` | basin | Palakkad district rivers | - | `india` | - | intersects kl-palakkad (geometry) |
+| `salem-rivers` | basin | Salem district rivers | - | `india` | - | intersects tn-salem (geometry) |
 | `thanjavur-rivers` | basin | Thanjavur district rivers | - | `india` | - | intersects tn-thanjavur (geometry) |
 | `tiruchirappalli-rivers` | basin | Tiruchirappalli district rivers | - | `india` | - | intersects tn-tiruchirappalli (geometry) |
+| `tiruppur-rivers` | basin | Tiruppur district rivers | - | `india` | - | intersects tn-tiruppur (geometry) |
 | `ahmedabad` | city | Ahmedabad | `gujarat` | `india` | - | - |
 | `bangalore` | city | Bengaluru | `karnataka` | `india` | - | - |
 | `chennai` | city | Chennai | `tamil-nadu` | `india` | - | - |

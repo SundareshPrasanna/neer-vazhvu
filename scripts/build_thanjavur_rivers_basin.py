@@ -94,7 +94,7 @@ PRS_OUTFALLS = (
      "Domestic sewage from Thiruvaiyaru town panchayat into the Cauvery behind the ARK Complex, 15th Madapam Street, as TNPCB's 2019 Cauvery action plan records it. The plan gives no flow or BOD for it."),
 )
 
-STEPS = ("waterways", "cauvery-prs", "repo-families", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells", "canals",
+STEPS = ("waterways", "prs", "repo-families", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells", "canals",
          "gauging-stations")
 
 # Envelopes (scripts/nvdm_envelope_district_basin.py): the shared TN families.

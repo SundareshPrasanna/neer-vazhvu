@@ -1,0 +1,569 @@
+{
+  "nvdm": "1.0",
+  "dataset": "basins/inventory",
+  "scope": {
+    "kind": "basin",
+    "id": "salem-rivers"
+  },
+  "provenance": {
+    "sources": [
+      {
+        "id": "tngis-open-geoserver",
+        "title": "TNGIS open GeoServer (WFS): district, taluk, block and village panchayat boundaries, TN WRD sub-basins and reservoirs, micro-watershed atlas, all-water-bodies and all-tanks registers, mine leases, industry register matched to land parcels",
+        "publisher": "Tamil Nadu e-Governance Agency (TNGIS)",
+        "license": "Tamil Nadu government data on an open GeoServer (WFS, no login); published with TNGIS's permission and with attribution.",
+        "role": "input",
+        "url": "https://tngis.tn.gov.in/tngismaps/ows"
+      },
+      {
+        "id": "osm-overpass",
+        "title": "OpenStreetMap (Overpass API extract: named river courses)",
+        "publisher": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "role": "input"
+      },
+      {
+        "id": "sipcot-gis-geoserver",
+        "title": "SIPCOT GIS (WFS): industrial complex outlines, Salem",
+        "publisher": "State Industries Promotion Corporation of Tamil Nadu (SIPCOT)",
+        "license": "LICENCE UNVERIFIED - see notes. Open SIPCOT GeoServer (WFS, no login); the site footer reads 'All Rights Reserved' and states no data terms; the reuse question sent for the Sriperumbudur corridor has no reply. Estate outlines only, published with attribution.",
+        "role": "input",
+        "url": "https://sipcotgis.tn.gov.in/"
+      },
+      {
+        "id": "ingres-gw-assessment-tn",
+        "title": "IN-GRES dynamic groundwater assessment 2024-2025, stage of extraction by taluk",
+        "publisher": "CGWB with IIT Hyderabad (IN-GRES)",
+        "license": "no explicit licence: the IN-GRES portal publishes no terms of use, no disclaimer and no copyright or licence statement anywhere; nothing has been established about who may redistribute this material or on what terms",
+        "role": "input",
+        "url": "https://ingres.iith.ac.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-groundwater-level",
+        "title": "National Water Data Portal: Ground Water Level datasets for Tamil Nadu (CGWB telemetry 2026-2030, Tamil Nadu SW GW telemetry 2026-2030, CGWB manual quarterly 2021-2025)",
+        "publisher": "National Water Informatics Centre (NWIC), Ministry of Jal Shakti",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "nwic-nwdp-cwc-canal-network",
+        "title": "CWC canal network and water resource project (command area) layers, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/",
+        "as_of": "2025"
+      },
+      {
+        "id": "nwic-nwdp-cwc-river-data",
+        "title": "CWC river discharge (manual daily) and surface water quality for Tamil Nadu, National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/"
+      },
+      {
+        "id": "tnsmart-rimes-reservoirs",
+        "title": "Tamil Nadu reservoir dashboard (TN-SMART): the day's storage, depth and percentage of capacity per reservoir",
+        "publisher": "RIMES, relaying Tamil Nadu's daily reservoir storage",
+        "license": "LICENCE UNVERIFIED - see notes. The dashboard states no terms of use, no copyright policy and no licence anywhere on the page; nothing has been established about who may redistribute this material. Storage readings are served as current facts with the dashboard named.",
+        "role": "input",
+        "url": "https://beta-tnsmart.rimes.int/index.php/Reservoir"
+      },
+      {
+        "id": "tnpcb-prs-cauvery",
+        "title": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published)",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://tnpcb.gov.in/pollutedriverstretches.php",
+        "as_of": "2023-12"
+      },
+      {
+        "id": "nwic-nwdp-cwc-river-network",
+        "title": "CWC river network (River_Network), National Water Data Portal",
+        "publisher": "Central Water Commission, via the National Water Informatics Centre (NWIC)",
+        "license": "Government of India open data portal: its copyright policy permits reproduction free of charge in any format without specific permission, reproduced accurately and with the source prominently acknowledged; cited with attribution",
+        "role": "input",
+        "url": "https://nwdp.nwic.gov.in/",
+        "as_of": "2025-11"
+      },
+      {
+        "id": "cpcb-prs-report",
+        "title": "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018 and October 2025 (updated version)",
+        "publisher": "Central Pollution Control Board",
+        "license": "restrictive, permission required: the CPCB website policy permits material to be 'downloaded to file or printer without requiring specific prior permission', and 'Any other proposed use of the material is subject to the approval of competent authority of CPCB' - no redistribution without approval",
+        "role": "input",
+        "url": "https://cpcb.gov.in/polluted-river-stretches/",
+        "as_of": "2025-10"
+      },
+      {
+        "id": "tnpcb-prs-cauvery",
+        "title": "TNPCB, action plans for the Cauvery (Mettur to Mayiladuthurai), Sarabanga, Thirumanimutharu and Vasista stretches (Priority I), 2019",
+        "publisher": "Tamil Nadu Pollution Control Board",
+        "license": "TN government publication, cited with attribution",
+        "role": "input",
+        "url": "https://tnpcb.gov.in/pollutedriverstretches.php",
+        "as_of": "2019"
+      }
+    ],
+    "method": "derived",
+    "produced_at": "2026-10-21",
+    "produced_by": "scripts/build_salem_rivers_basin.py",
+    "note": "Salem district's rivers, groundwater and industry (scope salem-rivers; the district's own scope id is tn-salem). The district boundary is the frame and TN WRD's sub-basins, clipped to it, are the catchments (shedId). The industry register holds only units TNGIS matched to a land parcel, so every count is a lower bound; sector comes from the reviewed TNPCB type-code lookup pipeline-inputs/basins/tn-tnpcb-type-sectors.json."
+  },
+  "basinId": "salem-rivers",
+  "generatedFrom": "build_salem_rivers_basin.py",
+  "generatedOn": "2026-10-21",
+  "families": {
+    "boundary": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_district",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: district boundary, LGD code 584"
+        }
+      ],
+      "bytes": 21617,
+      "sliced": false
+    },
+    "sub-hydrosheds": {
+      "featureCount": 9,
+      "sources": [
+        {
+          "file": "generic_viewer:sub_basin",
+          "kind": null,
+          "count": 9,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD sub-basins, clipped to the district boundary"
+        }
+      ],
+      "bytes": 31490,
+      "sliced": false
+    },
+    "rivers": {
+      "featureCount": 8,
+      "sources": [
+        {
+          "file": "osm-waterways.json + cwc-rivers-salem.geojson",
+          "kind": null,
+          "count": 8,
+          "provenance": "Rivers: the Cauvery from OpenStreetMap waterway courses (Overpass); the Sarabanga, Thirumanimuthar, Thoppaiyar, Vasishta, Swetha Nadhi, Anaimaduvu and Vaniyar from CWC's river network (National Water Data Portal), which OSM does not name in full inside the district; all clipped to the district plus 1.6 km so boundary rivers stay"
+        }
+      ],
+      "bytes": 102742,
+      "sliced": false
+    },
+    "reservoirs": {
+      "featureCount": 5,
+      "sources": [
+        {
+          "file": "generic_viewer:reservoir",
+          "kind": null,
+          "count": 5,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: TN WRD reservoir register, waterspread polygons shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 2297,
+      "sliced": false
+    },
+    "tanks": {
+      "featureCount": 121,
+      "sources": [
+        {
+          "file": "generic_viewer:all_tanks",
+          "kind": null,
+          "count": 121,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all-tanks register (generic_viewer:all_tanks), Salem district, the tanks the register names, shown at a point inside each; waterspread area computed from the polygon"
+        }
+      ],
+      "bytes": 30808,
+      "sliced": false
+    },
+    "industries": {
+      "featureCount": 1057,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "green-white",
+          "count": 285,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "orange",
+          "count": 607,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-chemicals",
+          "count": 6,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-other",
+          "count": 37,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-paper",
+          "count": 1,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-quarry-mining",
+          "count": 100,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        },
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "red-textile",
+          "count": 21,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 590994,
+      "sliced": false
+    },
+    "treatment-plants": {
+      "featureCount": 3,
+      "sources": [
+        {
+          "file": "generic_viewer:industry_cad_matched",
+          "kind": "stp",
+          "count": 3,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: industry register matched to land parcels (generic_viewer:industry_cad_matched), Salem district; unit ids follow TNPCB's consent-register format, registrations 2015 to 2024; one point per unit at the mean of its parcel centres; sector from the reviewed TNPCB type-code lookup"
+        }
+      ],
+      "bytes": 1670,
+      "sliced": false
+    },
+    "industrial-estates": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "cite:industrial_complex_boundary-*",
+          "kind": null,
+          "count": 1,
+          "provenance": "SIPCOT GIS (sipcotgis.tn.gov.in): industrial complex outlines, Salem; area as SIPCOT states it"
+        }
+      ],
+      "bytes": 577,
+      "sliced": false
+    },
+    "quarries": {
+      "featureCount": 97,
+      "sources": [
+        {
+          "file": "generic_viewer:mines",
+          "kind": null,
+          "count": 97,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: mines and quarry lease areas"
+        }
+      ],
+      "bytes": 40903,
+      "sliced": false
+    },
+    "admin-taluk": {
+      "featureCount": 14,
+      "sources": [
+        {
+          "file": "admin_master:administrative_boundary_taluk",
+          "kind": null,
+          "count": 14,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: taluk boundaries, LGD district 584"
+        }
+      ],
+      "bytes": 54942,
+      "sliced": false
+    },
+    "groundwater-taluks": {
+      "featureCount": 14,
+      "sources": [
+        {
+          "file": "atlas/tn/salem/groundwater-taluks.json",
+          "kind": "over-exploited",
+          "count": 13,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Salem district page; taluk polygons from TNGIS"
+        },
+        {
+          "file": "atlas/tn/salem/groundwater-taluks.json",
+          "kind": "safe",
+          "count": 1,
+          "provenance": "IN-GRES (CGWB / IIT Hyderabad) dynamic groundwater assessment 2024-2025, stage of extraction by taluk, as served on the Salem district page; taluk polygons from TNGIS"
+        }
+      ],
+      "bytes": 56810,
+      "sliced": false
+    },
+    "admin-block": {
+      "featureCount": 20,
+      "sources": [
+        {
+          "file": "generic_viewer:block_boundary",
+          "kind": null,
+          "count": 20,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: rural development block boundaries"
+        }
+      ],
+      "bytes": 84978,
+      "sliced": false
+    },
+    "admin-gp": {
+      "featureCount": 385,
+      "sources": [
+        {
+          "file": "tnrd:panchayat_boundary",
+          "kind": null,
+          "count": 385,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: village panchayat boundaries (tnrd:panchayat_boundary). Town panchayats, municipalities, the corporation and reserve forest are not village panchayats and are not in this layer"
+        }
+      ],
+      "bytes": 533341,
+      "sliced": true,
+      "shedKeys": [
+        "SB123",
+        "SB129",
+        "SB24",
+        "SB42",
+        "SB43",
+        "SB45",
+        "SB46"
+      ]
+    },
+    "waterbodies-major": {
+      "featureCount": 424,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 424,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Salem district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 288736,
+      "sliced": false
+    },
+    "waterbodies-minor": {
+      "featureCount": 1125,
+      "sources": [
+        {
+          "file": "generic_viewer:all_water_bodies",
+          "kind": null,
+          "count": 1125,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: all water bodies register (generic_viewer:all_water_bodies), Salem district; area computed from the polygon; a name is kept only where the register prints one rather than a class (Kuttai, Kulam, Odai, Stream) or the basin"
+        }
+      ],
+      "bytes": 385509,
+      "sliced": true,
+      "shedKeys": [
+        "SB112",
+        "SB123",
+        "SB129",
+        "SB24",
+        "SB42",
+        "SB43",
+        "SB45",
+        "SB46"
+      ]
+    },
+    "watersheds": {
+      "featureCount": 14,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 14,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'watershed' code column and cut to the district"
+        }
+      ],
+      "bytes": 78739,
+      "sliced": false
+    },
+    "sub-watersheds": {
+      "featureCount": 47,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 47,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'subwatersh' code column and cut to the district"
+        }
+      ],
+      "bytes": 148410,
+      "sliced": false
+    },
+    "mini-watersheds": {
+      "featureCount": 188,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 188,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'mini' code column and cut to the district"
+        }
+      ],
+      "bytes": 262371,
+      "sliced": false
+    },
+    "micro-watersheds": {
+      "featureCount": 743,
+      "sources": [
+        {
+          "file": "generic_viewer:microwatersheds",
+          "kind": null,
+          "count": 743,
+          "provenance": "TNGIS open GeoServer (tngis.tn.gov.in), Tamil Nadu e-Governance Agency / Survey & Settlement: micro-watershed atlas (generic_viewer:microwatersheds), dissolved on its 'microwater' code column and cut to the district"
+        }
+      ],
+      "bytes": 519218,
+      "sliced": true,
+      "shedKeys": [
+        "SB112",
+        "SB123",
+        "SB129",
+        "SB24",
+        "SB42",
+        "SB43",
+        "SB45",
+        "SB46",
+        "SB82"
+      ]
+    },
+    "groundwater-wells": {
+      "featureCount": 129,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-manual",
+          "count": 70,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Salem-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "cgwb-telemetry",
+          "count": 17,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Salem-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        },
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": "state-telemetry",
+          "count": 42,
+          "provenance": "National Water Data Portal (NWIC, nwdp.nwic.gov.in): groundwater level datasets for Tamil Nadu, Salem-tagged stations placed by their coordinates; depth in metres below ground level, sign convention read per station from its own median, sentinel values and readings outside the physical envelope dropped"
+        }
+      ],
+      "bytes": 49327,
+      "sliced": false
+    },
+    "canals": {
+      "featureCount": 6,
+      "sources": [
+        {
+          "file": "canal_network.zip",
+          "kind": "distributary",
+          "count": 2,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "main",
+          "count": 2,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        },
+        {
+          "file": "canal_network.zip",
+          "kind": "minor",
+          "count": 2,
+          "provenance": "CWC canal network (National Water Data Portal, 2025), cut to the district"
+        }
+      ],
+      "bytes": 30043,
+      "sliced": false
+    },
+    "command-areas": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "command_area.zip",
+          "kind": "mettur-canal-system",
+          "count": 1,
+          "provenance": "CWC 'Water Resource Project' command areas (National Water Data Portal, 2025), cut to the district; culturable command area and potential created are CWC's figures in thousand hectares, mapped areas are computed from the polygons"
+        }
+      ],
+      "bytes": 6520,
+      "sliced": false
+    },
+    "gauging-stations": {
+      "featureCount": 2,
+      "sources": [
+        {
+          "file": "nwdp.nwic.gov.in datastore",
+          "kind": null,
+          "count": 2,
+          "provenance": "Central Water Commission gauge, discharge and water quality sites, from the National Water Data Portal (NWIC): positions as printed; flow and water quality series in readings/"
+        }
+      ],
+      "bytes": 1064,
+      "sliced": false
+    },
+    "monitoring-points": {
+      "featureCount": 3,
+      "sources": [
+        {
+          "file": "cauvery-tn/wq-stations.geojson",
+          "kind": null,
+          "count": 3,
+          "provenance": "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin"
+        }
+      ],
+      "bytes": 1040,
+      "sliced": false
+    },
+    "prs": {
+      "featureCount": 4,
+      "sources": [
+        {
+          "file": "cpcb-2018 + osm-waterways.json + cwc-rivers-salem.geojson",
+          "kind": null,
+          "count": 4,
+          "provenance": "CPCB, Polluted River Stretches for Restoration of Water Quality, 2018, drawn on the mapped courses of the Cauvery, Sarabanga, Thirumanimuthar, Vasishta Nadhi inside the district"
+        }
+      ],
+      "bytes": 17341,
+      "sliced": false
+    },
+    "prs-drains": {
+      "featureCount": 18,
+      "sources": [
+        {
+          "file": "PrsCauvery24919.pdf + PrsSarabanga24919.pdf + PrsThirumanimru24919.pdf + PrsVasista24919.pdf",
+          "kind": null,
+          "count": 18,
+          "provenance": "TNPCB, action plans for the Cauvery (Mettur to Mayiladuthurai), Sarabanga, Thirumanimutharu and Vasista stretches (2019): outfall names and GPS coordinates as printed"
+        }
+      ],
+      "bytes": 10096,
+      "sliced": false
+    },
+    "cepi-area": {
+      "featureCount": 1,
+      "sources": [
+        {
+          "file": "CEPI_MttrRpt4920.pdf",
+          "kind": null,
+          "count": 1,
+          "provenance": "TNPCB, Evaluation of CEPI score and action plan for CEPI area of Mettur, Salem district (January 2020), section 1.1: the four core-zone reference points, joined North, East, South, West"
+        }
+      ],
+      "bytes": 1085,
+      "sliced": false
+    }
+  }
+}

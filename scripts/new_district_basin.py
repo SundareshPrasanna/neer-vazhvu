@@ -298,7 +298,7 @@ def render_config(a: dict, p: dict) -> str:
         lines += ["if RESERVOIR_STORAGE:",
                   '    ENVELOPE_SOURCES["tnsmart"] = ("tnsmart-rimes-reservoirs", "Tamil Nadu reservoir dashboard (TN-SMART): the day\'s storage, depth and percentage of capacity per reservoir",',
                   '                                   "RIMES, relaying Tamil Nadu\'s daily reservoir storage", {"url": TNSMART})',
-                  '    ENVELOPE_ARTIFACTS["reservoirs"] = ["tngis", "tnsmart"]', '    ENVELOPE_ARTIFACTS["inventory"] += ["tnsmart"]']
+                  '    ENVELOPE_ARTIFACTS["reservoirs"] = ["tngis", "tnsmart"] + (["cwc-river"] if RESERVOIR_LEVELS else [])', '    ENVELOPE_ARTIFACTS["inventory"] += ["tnsmart"]']
     lines += ["ENVELOPE_READINGS = TN_ENVELOPE_READINGS", "", "", 'if __name__ == "__main__":', "    raise SystemExit(DistrictBasinBuild(sys.modules[__name__]).main(sys.argv[1:]))", ""]
     return "\n".join(lines)
 
@@ -314,9 +314,11 @@ def render_manifest(a: dict, p: dict) -> str:
     reds = [row(f"red-{s}", f"Red: {lookup['sectors'][s][0].lower()}{lookup['sectors'][s][1:]}", RED_COLORS[i % len(RED_COLORS)]) for i, s in enumerate(red)]
     plants = [row(s, lookup["sectors"][s], PLANT_COLORS[i % len(PLANT_COLORS)]) for i, s in enumerate(treat)]
     gauges, sites = "CWC gauge" + "s" * (len(p["stations"]) > 1), "sensor station" + "s" * (len(p["rt"]) > 1)
+    # A filled dot is a reservoir with a chart (hasReadings); the day's storage rides on the ring's card.
+    ring = "Reservoir with no level chart" + (" (its card gives the day's storage where the state dashboard reports it)" if p["storage"] else "")
     layers = [
         "    // Structural context", f'    ...districtFrame({json.dumps(n)}, TN_WRD_CATCHMENTS, "Rivers"),', "    CWC_CANALS,",
-        *([f'    reservoirs("Reservoirs (TN WRD register)", "Reservoir with {"a storage reading from the state dashboard" if p["storage"] else "a public reading"}", "Reservoir with no public reading"),'
+        *([f'    reservoirs("Reservoirs (TN WRD register)", "Reservoir with a CWC level chart (tap)", "{ring}"),'
            + (f" // TODO: the storage wording once RESERVOIR_STORAGE names {', '.join(p['dash_near'])}" if p["dash_near"] and not p["storage"] else "")] if p["reservoirs"] else []),
         "    ...TNGIS_WATER_BODIES,", "    ...TNGIS_WATERSHEDS,", "", "    // Monitoring & evidence",
         *([f'    cwcGauges("River flow and water quality ({gauges})", "CWC gauge: river flow and water quality (tap for charts)"),'] if p["stations"] else []),

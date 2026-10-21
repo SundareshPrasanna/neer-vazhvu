@@ -91,7 +91,7 @@ REPO_FAMILIES = (
 PRS_EDITIONS = (CAUVERY_PRS_2018, CAUVERY_PRS_2025)
 PRS_OUTFALLS = ()  # (name, lat, lon, river_id, page, the plan's description), from TNPCB's 2019 Cauvery action plan
 
-STEPS = ("waterways", "cauvery-prs", "repo-families", "reservoirs", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells",
+STEPS = ("waterways", "prs", "repo-families", "reservoirs", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells",
          "canals", "gauging-stations")
 
 # Envelopes (scripts/nvdm_envelope_district_basin.py): the shared TN families.
