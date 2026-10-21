@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - Python 3.11+ (3.12 recommended; used in CI)
 - npm
 
@@ -23,11 +23,9 @@ npm run dev
 ### Python API (FastAPI)
 
 ```bash
-cd neer-vazhvu
+cd neer-vazhvu/neer-vazhvu-api
 # setup a python virtual environment
-python3 -m venv venv
-source venv/bin/activate
-cd neer-vazhvu-api
+uv venv
 # install dependencies
 uv pip install -e ".[dev]"
 uvicorn app.main:app --reload --port 8000
