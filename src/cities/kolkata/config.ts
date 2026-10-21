@@ -89,6 +89,7 @@ const config: PlaceConfig = {
     hook:
       "Victorian sewers rated for 6 mm of rain an hour, KMC's own weekly waterlogging register, the wetlands that treat two-thirds of the city's sewage, and the Adi Ganga at zero dissolved oxygen.",
     accent: "bg-fuchsia-700",
+    aliases: ["Calcutta"],
   },
   footerSources: [
     { label: "KMC", href: "https://www.kmcgov.in/" },

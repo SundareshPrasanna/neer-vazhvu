@@ -72,6 +72,7 @@ const config: PlaceConfig = {
     hook:
       "Seven BMC lakes, the Mithi river, and the parallel water systems behind the city's taps.",
     accent: "bg-indigo-600",
+    aliases: ["Bombay"],
   },
   footerSources: [
     { label: "WRD Pravah", href: "https://mwrdpravah.in/damsafety/control/main" },

@@ -394,8 +394,10 @@ interface PlaceConfigBase {
    *  when the city has no ward geometry yet (a stated gap, not a default). */
   wardsVintage: string | null;
   /** Landing-page card: one-line hook and the banner's Tailwind background
-   *  class. */
-  landing: { hook: string; accent: string };
+   *  class. `aliases` are other names the landing search finds the city by,
+   *  former or common spellings only ("Madras", "Vizag"), never a town
+   *  inside it. */
+  landing: { hook: string; accent: string; aliases?: string[] };
   /** The core live sources the footer names on this city's pages. */
   footerSources: { label: string; href: string }[];
   /** The /[cityId] routes this city ships ("" is the dashboard). Nav,

@@ -14,6 +14,7 @@ const config: PlaceConfig = {
     hook:
       "Reservoir days-left, groundwater by ward, river health, flood risk, lost water bodies, and a satellite shoreline-change map. The origin city.",
     accent: "bg-cyan-700",
+    aliases: ["Madras"],
   },
   footerSources: [
     { label: "CMWSSB", href: "https://cmwssb.tn.gov.in/lake-level" },

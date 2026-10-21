@@ -54,6 +54,7 @@ const config: PlaceConfig = {
     hook:
       "Eighty-four per cent of its water comes down the Narmada canal; the Sabarmati below the city is a Priority I stretch; the aquifer under it is over-exploited.",
     accent: "bg-orange-700",
+    aliases: ["Amdavad"],
   },
   footerSources: [
     { label: "Ahmedabad Municipal Corporation", href: "https://ahmedabadcity.gov.in/" },

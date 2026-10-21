@@ -85,6 +85,7 @@ const config: PlaceConfig = {
     hook:
       "A port with no large river: the Godavari and Yeleru drawn from up to 190 km away through a canal shared with the steel plant, daily reservoir storage from the state's public feed, and a coast measured from satellite.",
     accent: "bg-teal-700",
+    aliases: ["Vizag", "Vishakhapatnam", "Waltair"],
   },
   footerSources: [
     { label: "APWRIMS", href: "https://apwrims.ap.gov.in/" },

@@ -28,6 +28,9 @@ export interface AtlasDistrict {
   stateCode: string;
   stateName: string;
   name: string;
+  /** Other names the landing search finds the district by, as a city's
+   *  landing.aliases: former or common spellings only ("Tanjore"). */
+  aliases?: string[];
   /** One line for the landing card, in the same register as a city's landing.hook. */
   hook: string;
   /** Basin id + sub-basin key this district sits in, for the basin link
@@ -108,6 +111,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "thanjavur",
     scopeId: "tn-thanjavur",
     name: "Thanjavur",
+    aliases: ["Tanjore"],
     hook: "The rice bowl: 80% of irrigation is canal water released at Mettur, so the district's water year is decided upstream.",
     basin: { basinId: "cauvery-tn", subBasinKey: "116", subBasinName: "Cauvery Delta" },
     deepDive: { basinId: "thanjavur-rivers", label: "Rivers, groundwater and industry on one map" },
@@ -120,6 +124,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "tiruchirappalli",
     scopeId: "tn-tiruchirappalli",
     name: "Tiruchirappalli",
+    aliases: ["Trichy", "Tiruchi"],
     hook: "Thanjavur's inverse: 60% of irrigation is from wells, so its water security is a groundwater question.",
     basin: { basinId: "cauvery-tn", subBasinKey: "123", subBasinName: "Mettur Reservoir to Noyyal confluence" },
     deepDive: { basinId: "tiruchirappalli-rivers", label: "Rivers, groundwater and industry on one map" },
@@ -143,6 +148,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "tirupathur",
     scopeId: "tn-tirupathur",
     name: "Tirupathur",
+    aliases: ["Tirupattur"],
     hook: "The Palar tannery belt without a canal: every taluk is over-exploited and all irrigation is from wells.",
     hasCuratedBriefs: false,
     published: true,
@@ -189,6 +195,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "tiruppur",
     scopeId: "tn-tiruppur",
     name: "Tiruppur",
+    aliases: ["Tirupur"],
     hook: "The Noyyal's dyeing belt: 22% of irrigation is canal water and 77% wells, and Palladam taluk pumps 121% of its recharge.",
     basin: { basinId: "cauvery-tn", subBasinKey: "126", subBasinName: "Noyyal" },
     hasCuratedBriefs: false,
@@ -230,6 +237,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "tiruvallur",
     scopeId: "tn-tiruvallur",
     name: "Tiruvallur",
+    aliases: ["Thiruvallur"],
     hook: "The district north of Chennai has no canal irrigation: 80% of its irrigated land is on tube and bore wells and 11.5% on tanks, 6 of 9 taluks read safe and Avadi is the highest at 83% of its recharge.",
     hasCuratedBriefs: false,
     published: true,
@@ -267,6 +275,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "ahilyanagar",
     scopeId: "mh-ahilyanagar",
     name: "Ahilyanagar",
+    aliases: ["Ahmednagar"],
     hook: "The tanker district: 97 tankers were running in monsoon August 2026 while the assessment still reads semi-critical - the scarcity register sees what the annual number cannot.",
     hasCuratedBriefs: false,
     published: true,
@@ -299,6 +308,7 @@ export const ATLAS_DISTRICTS: AtlasDistrict[] = ([
     slug: "palakkad",
     scopeId: "kl-palakkad",
     name: "Palakkad",
+    aliases: ["Palghat"],
     hook: "Kerala's rain-shadow district, behind the Palakkad Gap: the state's only two critical groundwater blocks, Chittur and Malampuzha, and 97 state wells read monthly since 2000.",
     hasCuratedBriefs: false,
     published: false,

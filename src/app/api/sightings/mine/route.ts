@@ -83,6 +83,9 @@ export async function DELETE(request: NextRequest) {
       const up = await admin.from(table).update({ [column]: "deleted" }).eq(column, key);
       if (up.error) throw up.error;
     }
+    // Requests keep what was asked for, and lose who asked.
+    const req = await admin.from("requests").update({ requester_key: "deleted", requester_name: null, contact_email: null }).eq("requester_key", key);
+    if (req.error) throw req.error;
     await admin.from("sighting_reporters").delete().eq("reporter_key", key);
     await admin.from("sighting_push_subscriptions").delete().eq("reporter_key", key);
     await admin.from("sighting_follows").delete().eq("reporter_key", key);
