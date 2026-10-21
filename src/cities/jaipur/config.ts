@@ -167,7 +167,14 @@ const config: PlaceConfig = {
   // Jaipur. "Not built yet", not a reasoned absence (the Pune/Vizag pattern).
   hasCatchments: false,
 
-  enabled: false,
+  // This flag is the ONLY functional gate on the city: [cityId]/layout.tsx reads
+  // it, and the `enabled` column on the cities row is read by no code
+  // (071_jaipur_enable.sql flips it anyway, for consistency). At cutover: dam
+  // history from 16 Jun 2022 is in reservoir_daily_v2 and refreshes from the
+  // local job (step 7b); the browser sweep against Bengaluru was clean apart
+  // from My Ward's empty state before a ward is picked; every commitment status
+  // rests on a dated citation or ships labelled unverified.
+  enabled: true,
 };
 
 export default config;
