@@ -270,9 +270,9 @@ export function DelhiPageDescriptions({ cityId, cityName }: CityPagesProps) {
         </p>
         <p className="text-slate-600 dark:text-slate-400">
           The{" "}<Link href={`/${cityId}/commitments`} className="text-blue-600 dark:text-blue-400 hover:underline">Commitments Register</Link>
-          {" "}holds eight dated promises with their original citations, and never overwrites a
+          {" "}holds eight promises with their original citations, and never overwrites a
           date. The lead entry is already overdue: the government&apos;s target to trap all 39 major
-          drains by 30 June 2026 passed without a public completion statement. DPCC&apos;s monthly
+          drains by 30 June 2026 has passed, and we have not found a completion statement. DPCC&apos;s monthly
           drain readings are the instrument that will confirm or refute it - a trapped drain shows
           up as &quot;no flow&quot;.
         </p>

@@ -57,7 +57,7 @@ const BROWSER_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 const FETCH_TIMEOUT_MS = 30_000;
-const MAX_STORED_LINKS = 500;
+const MAX_STORED_LINKS = 2000;  // the WRD flood-line register alone lists 516
 const LOCAL_CHECK_MAX_AGE_DAYS = 90;
 // Methods whose "ok" proves nothing was observed, so --check-blocked must never re-accept them.
 const NOT_FETCHED = ["human-review", "term-expiry", "continuous"];

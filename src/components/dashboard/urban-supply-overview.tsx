@@ -188,13 +188,22 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
   const currentMetPct = Math.min(100, currentMetPctRaw);
   const designPopulation = demand?.population_2034_design ?? demand?.population_design ?? 0;
 
-  // The supply_overview.subtitle string names MMC and the ADB Tamil Nadu
-  // programme - Madurai's facts - so it comes from Madurai's content entry,
-  // never as a default: a city without its own subtitle shows none.
-  const subtitleKey = data._view_overrides?.subtitle ?? SUPPLY_TILE_COPY[cityId as CityId]?.subtitle;
+  // The supply_overview.subtitle, wtp_label and demand_gap_caption strings
+  // name MMC, the ADB Tamil Nadu programme, Pannaipatty and Mullai Periyar -
+  // Madurai's facts - so they come from Madurai's content entry, never as a
+  // default: a city without its own subtitle or caption shows none, and an
+  // unlabelled WTP figure gets the neutral label.
+  const copy = SUPPLY_TILE_COPY[cityId as CityId];
+  const subtitleKey = data._view_overrides?.subtitle ?? copy?.subtitle;
   const overrideSubtitle = subtitleKey ? t(subtitleKey) : null;
-  const overrideWtpLabel = data._view_overrides?.wtp_label;
-  const overrideDemandCaption = data._view_overrides?.demand_caption;
+  const wtpLabel = t(data._view_overrides?.wtp_label ?? copy?.wtp_label ?? "supply_overview.wtp_label_default");
+  const demandCaption =
+    data._view_overrides?.demand_caption ??
+    (copy?.demand_caption && demand
+      ? t(copy.demand_caption)
+          .replace("{gap}", String(demand.demand_gap_2034_mld))
+          .replace("{pct}", String(supplyGapPct))
+      : null);
 
   return (
     <Card className="border-slate-200 dark:border-slate-700">
@@ -279,7 +288,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             {primaryWtp && (
               <div>
                 <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">
-                  {overrideWtpLabel ?? t("supply_overview.wtp_label")}
+                  {wtpLabel}
                 </h3>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
@@ -302,7 +311,7 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
             {!primaryWtp && wtpsSummary && (
               <div>
                 <h3 className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">
-                  {overrideWtpLabel ?? t("supply_overview.wtp_label")}
+                  {wtpLabel}
                 </h3>
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-2xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
@@ -451,13 +460,11 @@ export function UrbanSupplyOverview({ cityId, cityDisplayName }: UrbanSupplyOver
               />
             )}
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 leading-snug">
-            {overrideDemandCaption
-              ? overrideDemandCaption
-              : t("supply_overview.demand_gap_caption")
-                  .replace("{gap}", String(demand.demand_gap_2034_mld))
-                  .replace("{pct}", String(supplyGapPct))}
-          </p>
+          {demandCaption && (
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 leading-snug">
+              {demandCaption}
+            </p>
+          )}
         </div>
         )}
 

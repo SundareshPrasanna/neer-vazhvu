@@ -70,8 +70,8 @@ underlying data source and what keeps each one fresh.
 
 | Card | What it references | When to update |
 |---|---|---|
-| `stp-capacity-vs-demand` | 13 STPs / 745 MLD + ~1,073 MLD generated | When CMWSSB commissions new STP or updates the sewerage-system page |
-| `desalination-capacity-status` | Minjur + Nemmeli 200 MLD + TNIE context | When new desal plant commissioned or operating status materially changes |
+| `stp-capacity-vs-demand` | 1,031.80 MLD installed (MAWS Policy Note 2026-27, CMWSSB Contingency Plan 2026) + ~1,073 MLD generated | Each MAWS Policy Note, or when CMWSSB commissions a new STP (its sewerage-system page, last reviewed 18-03-2024, gives 745 MLD) |
+| `desalination-capacity-status` | Minjur 100 + Nemmeli I 100 + Nemmeli II 150 = 350 MLD (CMWSSB and MAWS count Nemmeli I at 110, 360 in all) + Minjur and TNIE operating context | When Perur (400 MLD) is commissioned or operating status materially changes |
 | `reservoir-total-capacity` | 13,222 MCFT (6 reservoirs) | When CMWSSB updates reservoir capacities (also update constants.ts) |
 | `piped-supply-demand` | 1,040 vs 2,232 MLD estimate | When CMWSSB publishes an updated water supply figure |
 

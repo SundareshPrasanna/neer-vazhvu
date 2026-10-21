@@ -73,7 +73,7 @@ export function groundwaterWells(rows: ClassRow[]): BasinLayer {
 export const TN_GROUNDWATER_WELLS = groundwaterWells([
   { value: "cgwb-telemetry", label: "CGWB telemetry, six-hourly", color: "#0369a1" },
   { value: "state-telemetry", label: "Tamil Nadu state telemetry, six-hourly", color: "#0e7490" },
-  { value: "cgwb-manual", label: "CGWB manual wells, readings 2021 to 2024", color: "#64748b", defaultOff: true },
+  { value: "cgwb-manual", label: "CGWB manual wells, quarterly readings since 2021", color: "#64748b", defaultOff: true },
 ]);
 
 /** The TNPCB register by category and sector: the district's leading red sectors, then the shared rows. */

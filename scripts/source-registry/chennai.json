@@ -252,7 +252,15 @@
         "public/data/basins/erode-rivers/groundwater-taluks.geojson",
         "public/data/basins/erode-rivers/inventory.json",
         "public/data/basins/krishnagiri-rivers/groundwater-taluks.geojson",
-        "public/data/basins/krishnagiri-rivers/inventory.json"
+        "public/data/basins/krishnagiri-rivers/inventory.json",
+        "public/data/basins/karur-rivers/groundwater-taluks.geojson",
+        "public/data/basins/karur-rivers/inventory.json",
+        "public/data/basins/tiruchirappalli-rivers/groundwater-taluks.geojson",
+        "public/data/basins/tiruchirappalli-rivers/inventory.json",
+        "public/data/basins/thanjavur-rivers/groundwater-taluks.geojson",
+        "public/data/basins/thanjavur-rivers/inventory.json",
+        "public/data/basins/namakkal-rivers/groundwater-taluks.geojson",
+        "public/data/basins/namakkal-rivers/inventory.json"
       ],
       "refreshMethod": "manual (scripts/fetch-wris-groundwater.ts for the WRIS side; IN-GRES payload capture still open)",
       "notes": "IN-GRES is ONE upstream serving every state, and there are six of these entries all pointing at the same ingres.iith.ac.in front page. Watched with http-meta they fired together on a single homepage Last-Modified bump and reported six identical non-events. The ids are kept per-city on purpose: they carry lineage and are cited by name in 12 shipped artifact envelopes and 7 producers, so collapsing them is a DATA change needing a corpus release, not a registry tidy-up. Follow-up, on its own PR. What changes here is the method. The edition is an ASSESSMENT YEAR and the year list is not in the served markup (Angular bundle), so no page watch can see it. It IS machine-answerable via the solved open API: POST /api/gec/getBusinessDataForUserOpen with lowercase keys, locname with no spaces, view 'admin', parentuuid REQUIRED (INDIA = ffce954d-24e1-494b-ba7e-0931d8ad6085), varying `year`. A year that exists returns the state's districts; one that does not returns a single empty 'total' row. BASELINE 2026-08-15, verified against Tamil Nadu: 2024-2025 returns 38 districts, 2025-2026 returns the empty total. 2024-2025 is current; there is no newer edition. When 2025-2026 starts returning districts it re-bases groundwater for every city at once. Dynamic Ground Water Resources assessment - block-level Safe/Semi-Critical/Critical/Over-Exploited classes and stage-of-extraction %, 16 Chennai-area blocks 2011-2024. IN-GRES is the canonical GW-assessment source for every city by user directive (see memory reference_ingres_groundwater); it is non-NICNET and reachable. CAVEAT: http-meta here watches the SPA build (Last-Modified 30 Jun 2026 + ETag, both verified 2026-07-26), NOT the assessment data itself - a redeploy will false-positive and a data-only update could be missed. Replace with an api-date watch once the IN-GRES payload capture lands. India-WRIS itself is a JS app with no watchable static endpoint, which is why it is not the url here. LICENCE: verified by fetching ingres.iith.ac.in and grepping the full Angular app bundle (main.*.js, 2.0 MB): zero occurrences of a copyright policy, terms of use, disclaimer or licence statement - the only 'Policy' matches are Leaflet's referrerPolicy option and the only 'terms' match is an FAQ sentence about years of data (verified 2026-07-31). This entry previously ended '- GoI publication, cited with attribution', which made the classifier read the suffix and return gov-attribution: a clean result the evidence never earned. CGWB is the assessment's upstream authority in the scientific sense, but NO evidence establishes that CGWB's website policy legally governs material delivered by an IIT-Hyderabad-hosted portal, so that is not asserted. Fails closed as vague until somebody reads terms that actually exist. ATLAS (2026-08-29): the Onboarding Atlas district producers cite this entry too - scripts/atlas-groundwater-tn-district.ts reads the same getBusinessDataForUserOpen endpoint at TALUK level for tn-thanjavur and tn-tiruchirappalli (a third IN-GRES client, recorded as debt in docs/specs/atlas-district-restart-plan.md 2.5); dependsOn names the atlas paths so an edition alert reaches them.",
@@ -293,7 +301,7 @@
           "https://crrt.tn.gov.in/download-ticket",
           "https://crrt.tn.gov.in/ennore_creek_eco_restoration"
         ],
-        "acceptedOn": "2026-07-26"
+        "acceptedOn": "2026-10-20"
       },
       "ciBlocked": "Blocks GitHub runner IPs (TypeError: fetch failed from CI on 2026-07-26 while working from a residential India IP the same day). Confirmed by the pre-merge dry run of upstream-editions.yml."
     },
@@ -301,7 +309,7 @@
       "id": "maws-policy-note",
       "scope": "chennai",
       "publisher": "TN Municipal Administration and Water Supply Department",
-      "url": "https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2025_26.pdf",
+      "url": "https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2026_27.pdf",
       "license": "government publication, cited with attribution",
       "type": "file",
       "cadence": "yearly (April, budget session)",
@@ -313,13 +321,21 @@
       },
       "dependsOn": [
         "public/data/commitments-chennai.json",
-        "public/data/chennai-supply-overview.json"
+        "public/data/chennai-supply-overview.json",
+        "src/cities/chennai/commitments.json",
+        "public/data/allocations-chennai.json",
+        "src/cities/chennai/allocations.json",
+        "src/lib/facts/static-facts.ts",
+        "src/cities/chennai/story-en.tsx",
+        "src/cities/chennai/story-ta.tsx",
+        "src/app/[cityId]/flood-risk/interactive-flood-content.tsx"
       ],
       "refreshMethod": "manual - the commitments register names this as its primary re-check document",
-      "notes": "The MAWS Policy Note is the single richest annual statement of what TN says it is doing on urban water, and commitments-chennai.json names it in update_model as the April re-check document. KNOWN LIMIT: this watch catches a REVISION of the current note only. The filename is year-templated (maws_e_pn_{YYYY}_{YY}.pdf) and there is no TN policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404 (verified 2026-07-26) - so next April's edition needs the url-template detection method (P5-9 in the coverage audit). Until then, bump this url by hand each April. The WRD note (wrd_e_pn_{YYYY}_{YY}.pdf) sits on the same path pattern and is the Madurai analogue. MIGRATED to url-template 2026-07-26 (P5-9 shipped): the entry now probes maws_e_pn_{YYYY}_{YY}.pdf forward each run, so NEXT April's note is detected on publication instead of needing a hand bump. This supersedes the http-meta limitation described above.",
+      "notes": "The MAWS Policy Note is the single richest annual statement of what TN says it is doing on urban water, and commitments-chennai.json names it in update_model as its re-check document (the 2026-27 note's PDF is dated 21 Aug 2026, so not always April). KNOWN LIMIT: this watch catches a REVISION of the current note only. The filename is year-templated (maws_e_pn_{YYYY}_{YY}.pdf) and there is no TN policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404 (verified 2026-07-26) - so next April's edition needs the url-template detection method (P5-9 in the coverage audit). Until then, bump this url by hand each April. The WRD note (wrd_e_pn_{YYYY}_{YY}.pdf) sits on the same path pattern and is the Madurai analogue. MIGRATED to url-template 2026-07-26 (P5-9 shipped): the entry now probes maws_e_pn_{YYYY}_{YY}.pdf forward each run, so NEXT April's note is detected on publication instead of needing a hand bump. This supersedes the http-meta limitation described above.",
       "lastSeen": {
-        "apiDate": "2025 https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2025_26.pdf",
-        "acceptedOn": "2026-07-26"
+        "apiDate": "2026 https://cms.tn.gov.in/cms_migrated/document/docfiles/maws_e_pn_2026_27.pdf",
+        "edition": "MAWS Policy Note 2026-27 (PDF dated 21 Aug 2026)",
+        "acceptedOn": "2026-10-20"
       },
       "ciBlocked": "Blocks GitHub runner IPs - every url-template year probe failed from CI on 2026-07-26 while all of them resolve from a residential India IP. Confirmed by the pre-merge dry run."
     },
@@ -339,12 +355,18 @@
       "dependsOn": [
         "public/data/allocations-chennai.json",
         "public/data/chennai-supply-overview.json",
-        "src/lib/facts/static-facts.ts"
+        "src/lib/facts/static-facts.ts",
+        "src/cities/chennai/allocations.json",
+        "public/data/commitments-chennai.json",
+        "src/cities/chennai/commitments.json",
+        "src/cities/chennai/story-en.tsx",
+        "src/cities/chennai/story-ta.tsx",
+        "src/app/[cityId]/flood-risk/interactive-flood-content.tsx"
       ],
       "refreshMethod": "manual",
-      "notes": "CMWSSB's own system pages back the allocation ledger (1976 and 1983 Krishna instruments, Veeranam, the desal contracts), several supply-overview figures, and the 745 MLD / 200 MLD desal / 13,222 Mcft static facts. Upload filenames are date-stamped (e.g. 14Jul2026102630_TNUFIP-T1-UpdatedIEEReport...pdf), so a new board document appears as a new link - a strong, low-noise signal. Verified 2026-07-26: page 200, no ETag/Last-Modified, 12+ upload PDFs matched. The sibling page /sewerage-system carries the 745 MLD installed-treatment figure and should get its own entry if the two diverge. NOTE the host: cmwssb.tn.gov.in is live; chennaimetrowater.tn.gov.in is NOT reachable and was swept out of the citations on 2026-07-26.",
+      "notes": "CMWSSB's own system pages back the allocation ledger (1976 and 1983 Krishna instruments, Veeranam, the desal contracts), several supply-overview figures, and the 13,222 Mcft static fact. Since 2026-10-20 the sewage card serves 1,031.80 MLD (MAWS Policy Note 2026-27 Table 5.4 and CMWSSB's Contingency Plan 2026) with the sewerage page's 745 MLD named beside it, and the desalination card serves 350 MLD as our sum (Minjur 100 + Nemmeli I 100 + Nemmeli II 150; both 2026 documents count Nemmeli I at 110). Board publications such as the Contingency Plan list officials' names and phone numbers: link to them, never mirror them. Upload filenames are date-stamped (e.g. 14Jul2026102630_TNUFIP-T1-UpdatedIEEReport...pdf), so a new board document appears as a new link - a strong, low-noise signal. Verified 2026-07-26: page 200, no ETag/Last-Modified, 12+ upload PDFs matched. The sibling page /sewerage-system carries the 745 MLD installed-treatment figure and should get its own entry if the two diverge. NOTE the host: cmwssb.tn.gov.in is live; chennaimetrowater.tn.gov.in is NOT reachable and was swept out of the citations on 2026-07-26.",
       "lastSeen": {
-        "linksHash": "c81d18652d24db3f",
+        "linksHash": "0d767cab19cfed8a",
         "links": [
           "https://cmwssb.tn.gov.in/sites/default/files/upload/04Jan2023143529_CMWSSBMeteringPolicy21-12-2022r1_0.pdf",
           "https://cmwssb.tn.gov.in/sites/default/files/upload/05Apr2022152455_CMWSSBUGSSDraftIEE.pdf",
@@ -353,13 +375,16 @@
           "https://cmwssb.tn.gov.in/sites/default/files/upload/10Mar2022124948_LifeCertificate.pdf",
           "https://cmwssb.tn.gov.in/sites/default/files/upload/13Dec2021130507_fin_e_164_2021.pdf",
           "https://cmwssb.tn.gov.in/sites/default/files/upload/14Jul2026102630_TNUFIP-T1-UpdatedIEEReportforCMWSSBUGSS%284addedareas%29.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/16Oct2026143857_ContingencyPlan2026Booklet.pdf",
           "https://cmwssb.tn.gov.in/sites/default/files/upload/17Dec2024123401_Hospital_2022.pdf",
+          "https://cmwssb.tn.gov.in/sites/default/files/upload/19Aug2026100416_TNUFIP-T1-Updated_IEE_Report_for_CMWSSB_WS%284addedareas%29.pdf",
           "https://cmwssb.tn.gov.in/sites/default/files/upload/20Sep2021133744_NEW-CITYWSS.pdf",
           "https://cmwssb.tn.gov.in/sites/default/files/upload/23Dec2021120851_45MLD_TTRO_Kodungaiyur-EIA%26EMP_Report_0.pdf",
           "https://www.cmwssb.tn.gov.in/sites/default/files/upload/18Feb2026211644_SOP-In_Principle_Approval.pdf",
           "https://www.cmwssb.tn.gov.in/sites/default/files/upload/23Dec2021131416_TTRO-CRZ%26AmendmentinCRZ.pdf"
         ],
-        "acceptedOn": "2026-07-26"
+        "edition": "CMWSSB uploads to 16 Oct 2026 (Contingency Plan 2026, WS IEE 19 Aug 2026)",
+        "acceptedOn": "2026-10-20"
       },
       "ciBlocked": "Blocks GitHub runner IPs (TypeError: fetch failed from CI on 2026-07-26 while working from a residential India IP the same day). Confirmed by the pre-merge dry run of upstream-editions.yml."
     },

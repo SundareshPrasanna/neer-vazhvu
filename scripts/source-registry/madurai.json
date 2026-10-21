@@ -12,17 +12,16 @@
       "tier": 1,
       "detection": {
         "method": "link-set",
-        "linkPattern": "\\.pdf"
+        "linkPattern": "PR-Stretches/.*\\.pdf"
       },
       "dependsOn": [
         "public/data/river-quality-madurai.json"
       ],
       "refreshMethod": "manual",
-      "notes": "TNPCB Polluted River Stretches programme page. 2026-07-21 audit: the page covers the six 2019-programme rivers (Bhavani, Cauvery, Sarabanga, Thamirabarani, Thirumanimutharu, Vasista) - NO Vaigai documents today. Watch fires if TNPCB adds Vaigai to the programme or resumes the series; Vaigai's current river-quality numbers come from CPCB NWMP (cpcb-nwmp-annual), and PRS priority is historical context in the Madurai panel.",
+      "notes": "TNPCB Polluted River Stretches programme page. 2026-07-21 audit: the page covers the six 2019-programme rivers (Bhavani, Cauvery, Sarabanga, Thamirabarani, Thirumanimutharu, Vasista) - NO Vaigai documents today. Watch fires if TNPCB adds Vaigai to the programme or resumes the series; Vaigai's current river-quality numbers come from CPCB NWMP (cpcb-nwmp-annual), and PRS priority is historical context in the Madurai panel. 2026-10-20: linkPattern narrowed from '\\.pdf' to the PR-Stretches table; the site-wide menu raised a false alert.",
       "lastSeen": {
-        "linksHash": "4b136d7b316d8b74",
+        "linksHash": "97904c4ccb09e71b",
         "links": [
-          "https://tnpcb.gov.in/.PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/",
           "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Preambleprs17519.pdf",
           "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/RRCMembers24919.pdf",
           "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/Water-QA-MN-report/BhavaniRiverWQS_AprtoMay1119.pdf",
@@ -83,12 +82,10 @@
           "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/water_QA_An_report/WQWTamirabarani2015to18_17519.pdf",
           "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/water_QA_An_report/WQWThirumanimuthuaru2015to18_17519.pdf",
           "https://tnpcb.gov.in/PDF/About_Us/projects/PR-Stretches/water_QA_An_report/WQWVaista2015to18_17519.pdf",
-          "https://tnpcb.gov.in/PDF/About_Us/projects/TN_Fishnet_Initiatives/TNFishnet2025.pdf",
-          "https://tnpcb.gov.in/PDF/Consent_Mngt/Powerdelegation/PowerDelegationTNPCB.pdf",
-          "https://tnpcb.gov.in/PDF/Updates/Whats_New/Recyclers_Directory_2025.pdf",
           "https://tnpcb.gov.in/pdf/About_Us/projects/PR-Stretches/Water-QA-MN-report/WQWSarabangaJan19toMar19_17519.pdf"
         ],
-        "acceptedOn": "2026-07-21"
+        "edition": "Stretch reports to 2023 (PR-Stretches table, checked 2026-10-20)",
+        "acceptedOn": "2026-10-20"
       },
       "ciBlocked": "Blocks GitHub runner IPs (fetch failed from CI 2026-07-21); works from residential IP."
     },
@@ -337,7 +334,7 @@
       "notes": "The WRD Policy Note is the Madurai analogue of maws-policy-note (Chennai): commitments-madurai.json names 'the MAWS and WRD Policy Notes each budget session' as its re-check calendar, and the allocation ledger's 2018 PWD entitlement letter sits in this document family. Verified 2026-07-26: 200 with Last-Modified 24 Mar 2025. SAME LIMIT as the MAWS entry: catches a revision of the current note only. Filename is year-templated (wrd_e_pn_{YYYY}_{YY}.pdf) and TN publishes no policy-note listing page - /en/policy-notes, /policy-notes and tn.gov.in/documents/policy_notes all 404. Bump by hand each budget session until P5-9 lands. MIGRATED to url-template 2026-07-26 (P5-9 shipped): probes wrd_e_pn_{YYYY}_{YY}.pdf forward, so the next budget-session note is detected on publication. Supersedes the http-meta limitation above.",
       "lastSeen": {
         "apiDate": "2025 https://cms.tn.gov.in/cms_migrated/document/docfiles/wrd_e_pn_2025_26.pdf",
-        "acceptedOn": "2026-07-26"
+        "acceptedOn": "2026-10-20"
       },
       "ciBlocked": "Blocks GitHub runner IPs - every url-template year probe failed from CI on 2026-07-26 while all of them resolve from a residential India IP. Confirmed by the pre-merge dry run."
     },
