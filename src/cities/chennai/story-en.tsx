@@ -462,7 +462,7 @@ export function ChennaiStoryEn() {
             {
               metric: "Imported water dependence",
               then: "City drank from its own tanks and wells until the late 19th century",
-              now: "Krishna water (15 TMC, Telugu Ganga, since 1996); Veeranam (180 MLD, since 2004); 200 MLD installed desalination (Minjur 100 MLD since 2010, Nemmeli 100 MLD since 2013); Nemmeli expansion under construction. Storage now spans 6 reservoirs totalling 13,222 MCFT.",
+              now: "Krishna water (15 TMC, Telugu Ganga, since 1996); Veeranam (180 MLD, since 2004); 350 MLD installed desalination (Minjur 100 MLD since 2010, Nemmeli 100 MLD since 2013, Nemmeli II 150 MLD since February 2024). CMWSSB's Contingency Plan 2026 and the MAWS Policy Note 2026-27 count the 2013 Nemmeli plant at 110 MLD, 360 MLD in all. Storage now spans 6 reservoirs totalling 13,222 MCFT.",
               verdict: "worse",
             },
             {
