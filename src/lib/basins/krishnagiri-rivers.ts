@@ -148,7 +148,7 @@ export const KRISHNAGIRI_RIVERS: BasinManifest = {
     // Structural context
     ...districtFrame("Krishnagiri", TN_WRD_CATCHMENTS, "Rivers"),
     CWC_CANALS,
-    reservoirs("Reservoirs (TN WRD register)", "Reservoir with a storage reading from the state dashboard", "Reservoir with no public reading"),
+    reservoirs("Reservoirs (TN WRD register)", "Reservoir with a CWC level chart (tap)", "Reservoir with no level chart (its card gives the day's storage where the state dashboard reports it)"),
     ...TNGIS_WATER_BODIES,
     ...TNGIS_WATERSHEDS,
 
