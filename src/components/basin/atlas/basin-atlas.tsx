@@ -32,8 +32,9 @@ import {
   GAP_BADGE_MIN_AREA, type MapHighlight, adminTip, drawRank, fillStyle, lineStyle, matchesHighlight, pointStyle, polygonOuterRings,
   pressurePointStyle, shedStyle, tipLabel, treatmentIcon,
 } from "./map-style";
-import type { AccountabilityData, DepData, GapUnit, MapMatch, PrsData } from "@/lib/basins/panel-types";
+import type { AccountabilityData, DepData, GapUnit, LegendItem, MapMatch, PrsData } from "@/lib/basins/panel-types";
 import { PlaceReports } from "@/components/sightings/place-reports";
+import { CitizenReportsLayer, REPORTS_SWATCH, type ReportsInView } from "@/components/sightings/citizen-reports-layer";
 
 // Station-readings panel (contract v1): loaded on demand so recharts only
 // ships when a readings-enabled station is actually clicked.
@@ -79,6 +80,11 @@ const FLOORS: { id: BasinFloor; label: string; sub: string }[] = [
 ];
 
 const COACH_KEY = "basin-atlas-coach-dismissed";
+
+// Citizen reports: a toggle beside the manifest layers on every basin, not a manifest layer.
+const REPORTS_ON = process.env.NEXT_PUBLIC_CITIZEN_REPORTS === "on";
+const REPORTS_SOURCE =
+  "Citizen reports: photos sent by residents and checked by Neer Vazhvu before publishing, placed to about 100 m. Tap water and water tests are not mapped.";
 
 type FC = FeatureCollection;
 
@@ -148,6 +154,26 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
   const [gapFromPrs, setGapFromPrs] = useState(false);
   // Reveal the 2020 stretch alongside 2025 to show how the polluted reach grew.
   const [showGrowth, setShowGrowth] = useState(false);
+  // Off unless the link asks for it (?layer=reports, from a report's "where it appears" link).
+  const [showReports, setShowReports] = useState(
+    () => REPORTS_ON && typeof window !== "undefined" && new URLSearchParams(window.location.search).get("layer") === "reports",
+  );
+  // What the reports layer drew last: undefined until it loads, null while the view is too wide to ask for.
+  const [reportsView, setReportsView] = useState<ReportsInView | null | undefined>(undefined);
+  const toggleReports = (on: boolean) => {
+    setShowReports(on);
+    setReportsView(undefined);
+    // In the address bar in every context, so a shared link or the return from signing in keeps it on.
+    const p = new URLSearchParams(window.location.search);
+    if (on) p.set("layer", "reports");
+    else p.delete("layer");
+    const qs = p.toString();
+    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+  };
+  const reportLegend = useMemo<LegendItem[]>(
+    () => (showReports && reportsView ? reportsView.groups.map((g) => ({ sym: "dot", color: g.color, label: `Citizen report: ${g.label}` })) : []),
+    [showReports, reportsView],
+  );
   const [data, setData] = useState<Record<string, FC | null>>({});
   // Live storage for features that join the daily reservoir feed (liveCode),
   // read at view time through the same route the overview strip uses - a
@@ -688,6 +714,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
       for (const row of prsLegend) {
         items.push({ sym: "line", color: row.color, label: row.label.replace(/^./, (c) => c.toUpperCase()) });
       }
+      items.push(...reportLegend);
       // Share URL: the ON set spelled out explicitly (not the defaults-elided
       // form the address bar uses), so the embed page restores this exact view
       // whatever its own entry-floor defaults are.
@@ -708,6 +735,17 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         return [{ label: l.label, count }];
       });
       const prsOnMap = visibleLayers.some((l) => l.prs);
+      const shareUrl = new URL(
+        buildAtlasShareUrl({
+          origin: window.location.origin,
+          basinId: manifest.basinId,
+          riverId: selectedRiverId,
+          floor: focusedFloor,
+          layersParam: layersParam || null,
+          growth: showGrowth,
+        }),
+      );
+      if (showReports) shareUrl.searchParams.set("layer", "reports");
       await exportBasinAtlasPdf({
         mapEl,
         manifest,
@@ -723,14 +761,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         gapUnits: Object.values(gapData),
         gapNote,
         includeGaps: visibleLayers.some((l) => l.gap),
-        shareUrl: buildAtlasShareUrl({
-          origin: window.location.origin,
-          basinId: manifest.basinId,
-          riverId: selectedRiverId,
-          floor: focusedFloor,
-          layersParam: layersParam || null,
-          growth: showGrowth,
-        }),
+        shareUrl: shareUrl.toString(),
       });
     } catch (err) {
       console.error("Basin atlas PDF export failed", err);
@@ -934,11 +965,24 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
                 </div>
               );
             })}
+            {REPORTS_ON && (
+              <label className="flex items-start gap-2 text-xs cursor-pointer group">
+                <input type="checkbox" checked={showReports} onChange={(e) => toggleReports(e.target.checked)} className="mt-0.5 accent-blue-600" />
+                <span className="flex items-center gap-1.5 leading-tight">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ background: REPORTS_SWATCH }} />
+                  <span className="text-slate-600 dark:text-slate-300">
+                    Citizen reports
+                    {showReports && reportsView && <span className="text-slate-400"> ({reportsView.count} in view)</span>}
+                    {showReports && reportsView === null && <span className="block text-[10px] text-slate-400">zoom in to see them</span>}
+                  </span>
+                </span>
+              </label>
+            )}
           </div>
         </div>
 
         {/* Data on this map */}
-        <DataOnThisMap manifest={manifest} inventory={inventory} />
+        <DataOnThisMap manifest={manifest} inventory={inventory} extraSources={REPORTS_ON ? [REPORTS_SOURCE] : undefined} />
       </div>
       )}
 
@@ -1195,6 +1239,8 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
             });
           })}
 
+          {showReports && <CitizenReportsLayer onView={setReportsView} />}
+
           <HighlightFlyer bounds={highlightBounds} />
           <HighlightFlyer key={flyFamily?.n ?? 0} bounds={flyFamilyBounds} />
 
@@ -1355,7 +1401,7 @@ export function BasinAtlas({ cityDisplayName, manifest, inventory, initialRiverI
         )}
         {/* Legend - reflects what's currently visible. Raised above the mobile
             bottom sheet when a detail panel is open so it isn't covered. */}
-        <MapLegend layers={visibleLayers} elevation={elevationLegend} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver || selectedPrs)} />
+        <MapLegend layers={visibleLayers} elevation={elevationLegend} extra={reportLegend} notes={legendNotes} raised={!!(selectedGapUnit || selectedFeature || selectedRiver || selectedPrs)} />
       </div>
 
       {/* ── Detail panel: draggable bottom sheet on mobile, sidebar on desktop

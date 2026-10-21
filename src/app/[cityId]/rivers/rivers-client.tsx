@@ -209,6 +209,14 @@ export default function RiversClient({
   const [basinRiverGeom, setBasinRiverGeom] = useState<Record<string, LineString | MultiLineString>>({});
   const [coachDismissed, setCoachDismissed] = useState(true);
 
+  // A link with ?basin=<id> (e.g. from a citizen report) opens this page's basin atlas straight away.
+  useEffect(() => {
+    if (!basin) return;
+    if (new URLSearchParams(window.location.search).get("basin") === basin.manifest.basinId) {
+      setOpenBasinRiverId(basin.manifest.rivers[0]?.riverId ?? basin.manifest.basinId);
+    }
+  }, [basin]);
+
   // basin riverId -> rivers-page river_id (reverse of the spelling alias).
   const reverseAlias = useMemo(
     () => Object.fromEntries(Object.entries(BASIN_RIVER_ALIAS).map(([k, v]) => [v, k])),

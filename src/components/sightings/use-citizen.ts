@@ -34,7 +34,7 @@ export function useCitizen() {
   const signIn = useCallback(() => {
     void browserClient().auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/for-citizens` },
+      options: { redirectTo: `${window.location.origin}/mitra` },
     });
   }, []);
 
@@ -55,7 +55,8 @@ export function useCitizen() {
 export async function readPhotoMeta(file: File): Promise<{ takenAt: string | null; lat: number | null; lng: number | null }> {
   try {
     const exifr = (await import("exifr")).default;
-    const t = await exifr.parse(file, { gps: true, pick: ["DateTimeOriginal", "CreateDate", "latitude", "longitude"] });
+    // No `pick`: exifr derives latitude/longitude only when it reads the whole GPS block.
+    const t = await exifr.parse(file, { gps: true });
     const when = t?.DateTimeOriginal ?? t?.CreateDate;
     return {
       takenAt: when instanceof Date && !Number.isNaN(when.getTime()) ? when.toISOString() : null,

@@ -147,6 +147,8 @@ const nextConfig: NextConfig = {
       { source: "/cascades", destination: "/chennai/water-bodies?mode=catchments", permanent: true },
       { source: "/:cityId/cascades", destination: "/:cityId/water-bodies?mode=catchments", permanent: true },
       // Legacy lake-restoration -> Chennai water bodies (was -> /water-bodies).
+      // The citizen page's first address; Google sign-in may still return there.
+      { source: "/for-citizens", destination: "/mitra", permanent: true },
       { source: "/lake-restoration", destination: "/chennai/water-bodies", permanent: true },
       { source: "/lake-restoration/:path*", destination: "/chennai/water-bodies", permanent: true },
       // my-ward has sub-routes (compare / rankings / report).

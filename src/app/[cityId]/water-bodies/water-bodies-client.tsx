@@ -16,12 +16,14 @@ import { MapLoading } from "@/components/map/map-loading";
 import { WardSearch } from "@/components/map/ward-search";
 import { useElevationBands } from "@/components/map/elevation-bands";
 import { ElevationBandsControl } from "@/components/map/elevation-bands-control";
+import type { ReportsInView } from "@/components/sightings/citizen-reports-layer";
 import { getPlaceConfig } from "@/lib/cities";
 import { restorationPriorityUrl, riversUrl, waterBodiesCurrentUrl, waterBodiesLostUrl } from "@/lib/cities/data-paths";
 import { fetchJson, fetchJsonOrNull } from "@/lib/data/fetch-json";
 import { loadProfiles, type WardProfile } from "@/lib/hooks/use-ward-profile";
 import { useLockBodyScroll } from "@/lib/hooks/use-lock-body-scroll";
 import { useLanguage } from "@/lib/i18n/context";
+import { REPORT_GROUPS } from "@/lib/sightings/taxonomy";
 import type { CensusWaterBodyProperties, LostWaterBodyProperties, SelectedWaterBody } from "@/types/water-bodies";
 import { getPriorityColor, type RestorationPriorityData, type ScoredWaterBody } from "@/types/restoration";
 import { RestorationRankingTable } from "./restoration-ranking-table";
@@ -39,6 +41,17 @@ const CorporationBoundaries = dynamic(
   () => import("@/components/map/corporation-boundaries").then((m) => m.CorporationBoundaries),
   { ssr: false },
 );
+const CitizenReportsLayer = dynamic(
+  () => import("@/components/sightings/citizen-reports-layer").then((m) => m.CitizenReportsLayer),
+  { ssr: false },
+);
+
+const ELEVATION_NOTE =
+  "Ground height above sea level from satellite (FABDEM 30 m, buildings and forests removed) - the terrain each water body drains. Read as bands, not spot heights (~2 m vertical accuracy).";
+
+// Citizen reports share the elevation toggle's card. The swatch matches REPORTS_SWATCH in the layer, which needs Leaflet and so cannot load here.
+const REPORTS_ON = process.env.NEXT_PUBLIC_CITIZEN_REPORTS === "on";
+const REPORTS_SWATCH = `conic-gradient(${REPORT_GROUPS.filter((g) => !g.private).map((g) => g.color).join(",")})`;
 
 /** A water-bodies-lost-<city>.json entry, matched by name to a clicked body for its history note. */
 export interface LostNarrative {
@@ -118,6 +131,18 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
   const [statsOpen, setStatsOpen] = useState(false);
   // Ground-elevation bands (FABDEM); the control hides itself where the city has no bands file.
   const elevation = useElevationBands(wb?.elevationBands === false ? null : cityId);
+  // Off unless the link asks for it (?layer=reports, from a report's "where it appears" link).
+  const [showReports, setShowReports] = useState(() => REPORTS_ON && searchParams.get("layer") === "reports");
+  // What the reports layer drew last: undefined until it loads, null while the view is too wide to ask for.
+  const [reportsView, setReportsView] = useState<ReportsInView | null | undefined>(undefined);
+  const toggleReports = () => {
+    setShowReports(!showReports);
+    setReportsView(undefined);
+    const params = new URLSearchParams(searchParams.toString());
+    if (showReports) params.delete("layer");
+    else params.set("layer", "reports");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // Persist the mode to the URL so refreshes and shared links open in it.
   const changeMode = (mode: ViewMode) => {
@@ -340,6 +365,7 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
           scoredData={restorationData?.water_bodies ?? []}
           censusData={censusData}
           onSelectCurrent={setSelected}
+          openBodyId={searchParams.get("body")}
           onSelectLost={setSelected}
           onLostLayer={setLostLayer}
           focusCenter={focusCenter}
@@ -352,11 +378,43 @@ export function WaterBodiesClient({ cityId, existingCount, lostSummary, lostNarr
         >
           <ElevationBandsLayer data={elevation.data} />
           {config.placeKind === "region" && <CorporationBoundaries cityId={cityId} />}
+          {showReports && <CitizenReportsLayer onView={setReportsView} />}
         </UnifiedMap>
-        <ElevationBandsControl
-          elevation={elevation}
-          note="Ground height above sea level from satellite (FABDEM 30 m, buildings and forests removed) - the terrain each water body drains. Read as bands, not spot heights (~2 m vertical accuracy)."
-        />
+        {REPORTS_ON ? (
+          <div className="absolute bottom-2 right-2 md:bottom-8 md:left-2.5 md:right-auto z-[1000] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-2.5 text-xs text-slate-700 dark:text-slate-300 max-w-[46vw] md:max-w-[240px] space-y-1.5">
+            {elevation.available && <ElevationBandsControl elevation={elevation} note={ELEVATION_NOTE} inline />}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={showReports} onChange={toggleReports} className="accent-sky-700" />
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ background: REPORTS_SWATCH }} />
+                <span>
+                  Citizen reports
+                  {showReports && reportsView && <span className="text-slate-400"> ({reportsView.count} in view)</span>}
+                </span>
+              </span>
+            </label>
+            {showReports && (
+              <div className="pl-6 space-y-1">
+                {reportsView && reportsView.groups.length > 0 && (
+                  <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-600 dark:text-slate-300">
+                    {reportsView.groups.map((g) => (
+                      <span key={g.key} className="inline-flex items-center gap-1">
+                        <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: g.color }} />
+                        {g.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[10px] leading-snug text-slate-500 dark:text-slate-400">
+                  {reportsView === null && "Zoom in to see them. "}
+                  Photos from residents, checked before publishing and placed to about 100 m. Tap water and water tests are not mapped.
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <ElevationBandsControl elevation={elevation} note={ELEVATION_NOTE} />
+        )}
         <div className={`absolute sm:bottom-4 z-[1000] transition-[bottom] duration-300 left-2 right-auto md:left-auto md:right-4 ${selected ? "bottom-[148px] md:bottom-4" : "bottom-2"}`}>
           <UnifiedLegend
             viewMode={viewMode}

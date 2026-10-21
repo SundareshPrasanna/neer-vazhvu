@@ -2,7 +2,8 @@ import { useState } from "react";
 import { layerKey } from "@/lib/basins/atlas-url-state";
 import type { BasinInventory, BasinManifest } from "@/lib/basins";
 
-export function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest; inventory: BasinInventory | null }) {
+/** `extraSources`: provenance for layers outside the manifest (citizen reports), listed after its credits. */
+export function DataOnThisMap({ manifest, inventory, extraSources }: { manifest: BasinManifest; inventory: BasinInventory | null; extraSources?: string[] }) {
   const [open, setOpen] = useState(false);
   if (!inventory) return null;
   const layersWithData = manifest.layers.filter((l) => inventory.families[l.family]);
@@ -53,7 +54,7 @@ export function DataOnThisMap({ manifest, inventory }: { manifest: BasinManifest
 
           <div className="pt-1 border-t border-slate-200 dark:border-slate-700">
             <div className="text-slate-600 dark:text-slate-300 font-medium mb-1">Sources</div>
-            {manifest.credits.map((c, i) => <div key={i} className="leading-snug">{c}</div>)}
+            {[...manifest.credits, ...(extraSources ?? [])].map((c, i) => <div key={i} className="leading-snug">{c}</div>)}
           </div>
         </div>
       )}

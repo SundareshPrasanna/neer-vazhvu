@@ -1,30 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { Check, MessageCircle, Share2 } from "lucide-react";
 
-const TEXT = "Report trash, sewage or unsafe water near you, privately, on Neer Vazhvu. Here is how it works:";
+import { useFlash } from "./action-feedback";
+import { btn } from "./ui";
+
+const TEXT = "Become a Neer Mitra: report trash, sewage or unsafe water near you, privately, on Neer Vazhvu. Here is how it works:";
 
 /** Share the guide: the phone's share sheet, WhatsApp, or a copied link. */
 export function ShareGuide() {
-  const [copied, setCopied] = useState(false);
-  const url = () => `${window.location.origin}/for-citizens#how-it-works`;
+  const [copied, flash] = useFlash<true>(2500);
   const share = async () => {
-    if (navigator.share) return navigator.share({ title: "Neer Vazhvu: for citizens", text: TEXT, url: url() }).catch(() => {});
-    await navigator.clipboard?.writeText(url()).catch(() => {});
-    setCopied(true);
+    const url = `${window.location.origin}/mitra#how-it-works`;
+    if (navigator.share) return navigator.share({ title: "Neer Mitra, on Neer Vazhvu", text: TEXT, url }).catch(() => {});
+    await navigator.clipboard?.writeText(url).catch(() => {});
+    flash(true);
   };
-  const button = "rounded-lg border border-cyan-700 px-3 py-1.5 text-xs font-semibold text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:bg-cyan-950";
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-2">
-      <button type="button" onClick={share} className={button}>
-        {copied ? "Link copied" : "Share this guide"}
+    <div className="flex flex-wrap items-center gap-2">
+      <button type="button" onClick={share} className={btn("secondary", "md")}>
+        {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Share2 className="h-4 w-4" aria-hidden="true" />}
+        {copied ? "Link copied" : "Share this page"}
       </button>
       <a
-        className={button}
+        className={btn("secondary", "md")}
         target="_blank"
         rel="noopener noreferrer"
-        href={`https://wa.me/?text=${encodeURIComponent(`${TEXT} https://neervazhvu.org/for-citizens#how-it-works`)}`}
+        href={`https://wa.me/?text=${encodeURIComponent(`${TEXT} https://neervazhvu.org/mitra#how-it-works`)}`}
       >
+        <MessageCircle className="h-4 w-4" aria-hidden="true" />
         Send on WhatsApp
       </a>
     </div>

@@ -7,5 +7,7 @@ export const metadata: Metadata = { title: "Review citizen reports | Neer Vazhvu
 
 export default function ReviewPage() {
   if (process.env.NEXT_PUBLIC_CITIZEN_REPORTS !== "on") notFound();
-  return <ReviewApp />;
+  return (
+    <ReviewApp />
+  );
 }

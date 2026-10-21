@@ -1,34 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { Check, ChevronDown, Clock, Download as DownloadIcon, ImageIcon } from "lucide-react";
 
+import { impactLine } from "@/lib/sightings/community";
+import type { MyGroup } from "@/lib/sightings/groups";
 import { nextCaseStatus, type CaseEvent } from "@/lib/sightings/status";
+import { isCommunityReport } from "@/lib/sightings/taxonomy";
 import type { OwnReport } from "@/lib/sightings/types";
+import { ActionButton, useFlash } from "./action-feedback";
+import { useMyGroups } from "./groups-panel";
 import { HandlerCard, NationalOnly } from "./handler-card";
-import { ReportCard, StatusChip, day } from "./report-card";
-import { shrinkPhoto } from "./use-citizen";
+import { NotifyToggle } from "./notify-toggle";
+import { OutboxBlock } from "./outbox-block";
+import { ReminderLink } from "./reminder";
+import { History, Readings, Status, day } from "./report-card";
+import { btn, enter, field, fieldBox, fileFocus, link, muted, rule, headingCls } from "./ui";
+import { shrinkPhoto, useCitizen } from "./use-citizen";
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 
-const REVIEW_LABEL: Record<string, string> = { received: "Received, being checked", needs_info: "Received, being checked", rejected: "Not published" };
-
 const ACTIONS: { event: CaseEvent; label: string }[] = [
   { event: "reported", label: "I reported it" },
-  { event: "authority_done", label: "They marked it done" },
+  { event: "authority_done", label: "Department says it's done" },
   { event: "fixed", label: "It is fixed" },
   { event: "still_there", label: "Still there" },
 ];
 
-function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: Fetch; onDone: () => void }) {
+/** Updates that save with one tap wait this long, so a wrong tap can be undone before it reaches the public record. */
+const UNDO_MS = 5000;
+
+/** Said beside the status once a change is saved. */
+const SAVED: Record<CaseEvent, string> = {
+  reported: "Saved",
+  authority_done: "Saved",
+  fixed: "Saved. Your photo is waiting for review",
+  still_there: "Saved",
+  closed: "Closed",
+  reopened: "Reopened",
+};
+
+function Update({ report, authFetch, onSaved }: { report: OwnReport; authFetch: Fetch; onSaved: (text: string) => void }) {
   const [open, setOpen] = useState<CaseEvent | null>(null);
+  const [pending, setPending] = useState<CaseEvent | null>(null);
+  const [queued, setQueued] = useState<CaseEvent | null>(null);
+  const waiting = useRef<CaseEvent | null>(null);
+  // Being checked: only "I reported it", so a reference from filing straight away is not lost.
+  const early = report.reviewStatus === "received";
   const [body, setBody] = useState(report.handler?.body ?? "");
   const [reference, setReference] = useState("");
-  const [photo, setPhoto] = useState<File | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [photo, setPhoto] = useState<{ file: File; url: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => () => void (photo && URL.revokeObjectURL(photo.url)), [photo]);
+
   const send = async (event: CaseEvent) => {
-    setBusy(true);
+    setPending(event);
     setError(null);
     const fd = new FormData();
     fd.append("event", event);
@@ -36,108 +64,204 @@ function Update({ report, authFetch, onDone }: { report: OwnReport; authFetch: F
       fd.append("authorityBody", body);
       if (reference.trim()) fd.append("reference", reference.trim());
     }
-    if (event === "fixed" && photo) fd.append("photos", photo);
+    if (event === "fixed" && photo) fd.append("photos", photo.file);
     const res = await authFetch(`/api/sightings/${report.id}/events`, { method: "POST", body: fd }).catch(() => null);
     const json = res ? await res.json().catch(() => ({})) : {};
-    setBusy(false);
+    setPending(null);
     if (!res?.ok) return setError(json.error ?? "Could not save. Please try again.");
     setOpen(null);
-    onDone();
+    onSaved(early ? "Saved. It shows as reported once published" : SAVED[event]);
   };
 
-  const allowed = ACTIONS.filter((a) => nextCaseStatus(a.event, report.caseStatus));
-  const field = "mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm dark:border-slate-600 dark:bg-slate-900";
+  // The latest send for the timer and for leaving the page mid-wait, which saves rather than drops the update.
+  const sendLatest = useRef(send);
+  useEffect(() => {
+    sendLatest.current = send;
+  });
+  useEffect(
+    () => () => {
+      if (waiting.current) void sendLatest.current(waiting.current);
+    },
+    [],
+  );
+  useEffect(() => {
+    if (!queued) return;
+    const t = setTimeout(() => {
+      waiting.current = null;
+      setQueued(null);
+      void sendLatest.current(queued);
+    }, UNDO_MS);
+    return () => clearTimeout(t);
+  }, [queued]);
+  const queue = (event: CaseEvent) => {
+    waiting.current = event;
+    setQueued(event);
+  };
+  const undo = () => {
+    waiting.current = null;
+    setQueued(null);
+  };
+
+  const allowed = early ? ACTIONS.filter((a) => a.event === "reported") : ACTIONS.filter((a) => nextCaseStatus(a.event, report.caseStatus));
+  if (allowed.length === 0) return null;
+  if (queued) {
+    return (
+      <p role="status" className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-800 dark:text-slate-200">
+        <span>{ACTIONS.find((a) => a.event === queued)?.label}: saving in a few seconds.</span>
+        <button type="button" onClick={undo} className={link}>
+          Undo
+        </button>
+      </p>
+    );
+  }
+  const panel = `space-y-4 rounded-xl bg-slate-50 p-4 sm:p-5 dark:bg-slate-900 ${enter}`;
   return (
-    <div className="mt-3 space-y-2">
+    <div className="space-y-3">
+      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">What has happened since?</p>
       <div className="flex flex-wrap gap-2">
         {allowed.map((a) => (
-          <button
+          <ActionButton
             key={a.event}
-            type="button"
-            onClick={() => (a.event === "authority_done" || a.event === "still_there" ? send(a.event) : setOpen(a.event))}
-            disabled={busy}
-            className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-700 hover:border-slate-500 dark:border-slate-600 dark:text-slate-300"
-          >
-            {a.label}
-          </button>
+            label={a.label}
+            busyLabel="Saving…"
+            busy={pending === a.event && !open}
+            disabled={pending != null}
+            pressed={a.event === "reported" || a.event === "fixed" ? open === a.event : undefined}
+            onClick={() => (a.event === "authority_done" || a.event === "still_there" ? queue(a.event) : setOpen(open === a.event ? null : a.event))}
+            className={btn("secondary", "md")}
+          />
         ))}
       </div>
       {open === "reported" && (
-        <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-          <label className="block text-xs text-slate-600 dark:text-slate-400">
+        <div className={panel}>
+          <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
             Reported to
-            <input value={body} onChange={(e) => setBody(e.target.value.slice(0, 160))} className={field} />
+            <input value={body} onChange={(e) => setBody(e.target.value.slice(0, 160))} className={`${field} mt-1.5`} />
           </label>
-          <label className="mt-2 block text-xs text-slate-600 dark:text-slate-400">
-            Reference or complaint number (only you and our reviewer see it)
-            <input value={reference} onChange={(e) => setReference(e.target.value.slice(0, 80))} className={field} />
+          <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
+            Reference or complaint number <span className={`font-normal ${muted}`}>Only you and our reviewer see it</span>
+            <input value={reference} onChange={(e) => setReference(e.target.value.slice(0, 80))} className={`${field} mt-1.5`} />
           </label>
-          <button type="button" disabled={busy || !body.trim()} onClick={() => send("reported")} className="mt-2 rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-            Save
-          </button>
+          <div className="flex gap-2">
+            <ActionButton label="Save" busyLabel="Saving…" busy={pending === "reported"} disabled={!body.trim()} onClick={() => send("reported")} className={btn("primary", "md")} />
+            <button type="button" onClick={() => setOpen(null)} className={btn("quiet", "md")}>
+              Cancel
+            </button>
+          </div>
         </div>
       )}
       {open === "fixed" && (
-        <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
-          <label className="block text-xs text-slate-600 dark:text-slate-400">
-            A photo of the same spot, now
-            <input type="file" accept="image/*" capture="environment" onChange={async (e) => setPhoto(e.target.files?.[0] ? await shrinkPhoto(e.target.files[0]) : null)} className="mt-1 block text-sm" />
-          </label>
-          <button type="button" disabled={busy || !photo} onClick={() => send("fixed")} className="mt-2 rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-            Save
-          </button>
+        <div className={panel}>
+          <div>
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">A photo of the same spot, now</p>
+            <p className={`text-sm ${muted}`}>Once checked, it is published beside your first photo.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            {photo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo.url} alt="The spot now" className="h-20 w-20 rounded-lg object-cover" />
+            )}
+            <label className={`${btn("secondary", "md")} ${fileFocus}`}>
+              {photo ? "Change photo" : "Add the photo"}
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  const file = await shrinkPhoto(f);
+                  setPhoto({ file, url: URL.createObjectURL(file) });
+                }}
+              />
+            </label>
+          </div>
+          <div className="flex gap-2">
+            <ActionButton label="Save" busyLabel="Saving…" busy={pending === "fixed"} disabled={!photo} onClick={() => send("fixed")} className={btn("primary", "md")} />
+            <button type="button" onClick={() => setOpen(null)} className={btn("quiet", "md")}>
+              Cancel
+            </button>
+          </div>
         </div>
       )}
-      {error && <p className="text-xs text-red-700 dark:text-red-400">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+      {!early && <ReminderLink />}
     </div>
   );
 }
 
-/** Delete the account; published reports stay unlinked unless the reporter removes them too. */
-function DeleteAccount({ authFetch, onDeleted }: { authFetch: Fetch; onDeleted: () => void }) {
-  const [open, setOpen] = useState(false);
-  const [removeAll, setRemoveAll] = useState(false);
+/** The group a community report shows, added or taken out afterwards. The report shows the group's name, never the sender's. */
+function SentWith({ report: r, groups, authFetch, onSaved }: { report: OwnReport; groups: MyGroup[]; authFetch: Fetch; onSaved: (text: string) => void }) {
+  const [name, setName] = useState(r.groupName);
+  const [choosing, setChoosing] = useState(false);
+  const [pick, setPick] = useState(groups[0]?.id ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const run = async () => {
+  const chosen = groups.some((g) => g.id === pick) ? pick : (groups[0]?.id ?? "");
+
+  const save = async (groupId: string | null) => {
     setBusy(true);
-    const res = await authFetch(`/api/sightings/mine${removeAll ? "?published=remove" : ""}`, { method: "DELETE" }).catch(() => null);
+    setError(null);
+    const res = await authFetch(`/api/sightings/${r.id}/group`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ groupId }) }).catch(() => null);
+    const json = res ? await res.json().catch(() => ({})) : {};
     setBusy(false);
-    if (!res?.ok) return setError("Could not delete. Please try again.");
-    onDeleted();
+    if (!res?.ok) return setError(json.error ?? (res ? "Could not save. Please try again." : "No connection. Please try again."));
+    setName(json.data?.groupName ?? null);
+    setChoosing(false);
+    onSaved("Saved");
   };
-  if (!open) {
-    return (
-      <button type="button" onClick={() => setOpen(true)} className="text-xs text-slate-500 underline underline-offset-2 dark:text-slate-400">
-        Delete my account
-      </button>
-    );
-  }
+
   return (
-    <div className="rounded-lg border border-red-200 p-3 text-sm dark:border-red-900">
-      <p className="text-slate-800 dark:text-slate-200">
-        This deletes your account and every report not yet published, with its photos. Published reports stay on the public record
-        with nothing linking them to you.
-      </p>
-      <label className="mt-2 flex items-center gap-2 text-slate-700 dark:text-slate-300">
-        <input type="checkbox" checked={removeAll} onChange={(e) => setRemoveAll(e.target.checked)} />
-        Remove my published reports too
-      </label>
-      <div className="mt-3 flex gap-2">
-        <button type="button" disabled={busy} onClick={run} className="rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-          Delete my account
+    <div>
+      <p className="mb-1.5 text-sm font-medium text-slate-900 dark:text-slate-100">Group</p>
+      {name ? (
+        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
+          <span className="text-slate-800 dark:text-slate-200">Sent with {name}</span>
+          <button type="button" disabled={busy} onClick={() => save(null)} className={`${link} disabled:opacity-45`}>
+            {busy ? "Removing…" : "Remove"}
+          </button>
+        </p>
+      ) : choosing ? (
+        <div className={`space-y-2 ${enter}`}>
+          <div className="flex flex-wrap gap-2">
+            <label className="sr-only" htmlFor={`group-${r.id}`}>
+              Group
+            </label>
+            <select id={`group-${r.id}`} value={chosen} onChange={(e) => setPick(e.target.value)} className={`${fieldBox} min-w-0 flex-1 basis-48 sm:max-w-xs`}>
+              {groups.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+            <ActionButton label="Add" busyLabel="Adding…" busy={busy} disabled={!chosen} onClick={() => save(chosen)} className={btn("primary", "md")} />
+            <button type="button" onClick={() => setChoosing(false)} disabled={busy} className={btn("quiet", "md")}>
+              Cancel
+            </button>
+          </div>
+          <p className={`text-sm ${muted}`}>The report will show the group&rsquo;s name, never yours.</p>
+        </div>
+      ) : (
+        <button type="button" onClick={() => setChoosing(true)} className={`text-sm ${link}`}>
+          Add to group
         </button>
-        <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs dark:border-slate-600">
-          Cancel
-        </button>
-      </div>
-      {error && <p className="mt-2 text-xs text-red-700 dark:text-red-400">{error}</p>}
+      )}
+      {error && (
+        <p role="alert" className="mt-1.5 text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
 const ACTIVE = new Set(["open", "reported", "authority_done"]);
 const STALE_DAYS = 14;
+const checking = (r: OwnReport) => r.reviewStatus === "received" || r.reviewStatus === "needs_info";
 
 /** An open report whose last update is over two weeks old asks the reporter to check it again. */
 const needsUpdate = (r: OwnReport) =>
@@ -145,16 +269,118 @@ const needsUpdate = (r: OwnReport) =>
   ACTIVE.has(r.caseStatus ?? "") &&
   Date.now() - new Date(r.events.at(-1)?.at ?? r.createdAt).getTime() > STALE_DAYS * 86_400_000;
 
-function Summary({ reports }: { reports: OwnReport[] }) {
-  const parts = [
-    [reports.filter((r) => r.reviewStatus === "received" || r.reviewStatus === "needs_info").length, "being checked"],
-    [reports.filter((r) => ACTIVE.has(r.caseStatus ?? "")).length, "open"],
-    [reports.filter((r) => r.caseStatus === "fixed").length, "fixed"],
-    [reports.filter(needsUpdate).length, "need your update"],
-  ] as const;
-  const shown = parts.filter(([n]) => n > 0);
-  if (shown.length === 0) return null;
-  return <p className="text-sm text-slate-700 dark:text-slate-300">{shown.map(([n, label]) => `${n} ${label}`).join(" · ")}</p>;
+function Row({
+  report: r,
+  groups,
+  authFetch,
+  saved,
+  onSaved,
+}: {
+  report: OwnReport;
+  groups: MyGroup[];
+  authFetch: Fetch;
+  saved: string | null;
+  onSaved: (text: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const approved = r.reviewStatus === "approved";
+  const handled = !!r.handler || r.nationalChannels.length > 0;
+  // Being checked or not yet reported: where to file. Being checked and handled: the reference can be saved already.
+  const routed = (r.caseStatus === "open" || checking(r)) && handled;
+  const updatable = approved || (r.reviewStatus === "received" && handled);
+  // A community report, by someone in an active group (or already sent with one, so it can be taken out).
+  const groupable = isCommunityReport(r.category) && (r.reviewStatus === "received" || approved) && (groups.length > 0 || !!r.groupName);
+  const hasMore = updatable || groupable || r.events.length > 1 || r.readings.length > 0;
+  const panel = `report-${r.id}`;
+  return (
+    <li className="py-5">
+      <div className="flex gap-4">
+        {r.photoUrls[0] ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={r.photoUrls[0]} alt="" className="h-20 w-20 shrink-0 rounded-lg object-cover sm:h-24 sm:w-24" loading="lazy" />
+        ) : (
+          <div className="grid h-20 w-20 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-400 sm:h-24 sm:w-24 dark:bg-slate-800">
+            <ImageIcon className="h-6 w-6" aria-hidden="true" />
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-semibold leading-snug text-slate-900 dark:text-slate-100">{r.label}</p>
+              <p className={`mt-0.5 text-sm ${muted}`}>
+                {[r.where, r.placeName, day(r.createdAt)].filter(Boolean).join(", ")}
+              </p>
+            </div>
+            {hasMore && (
+              <button type="button" aria-expanded={open} aria-controls={panel} onClick={() => setOpen(!open)} className={`${btn("quiet", "sm")} -mr-3 shrink-0`}>
+                <span className="hidden sm:inline">{updatable ? "Update" : "Details"}</span>
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+                <span className="sr-only sm:hidden">{updatable ? "Update" : "Details"}</span>
+              </button>
+            )}
+          </div>
+          <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+            {checking(r) ? (
+              <Status status="checking" label="Being checked" />
+            ) : r.reviewStatus === "rejected" ? (
+              <Status status="rejected" label="Not published" />
+            ) : (
+              r.caseStatus && <Status status={r.caseStatus} />
+            )}
+            {saved ? (
+              <span role="status" className={`inline-flex items-center gap-1 text-sm font-medium text-emerald-700 dark:text-emerald-400 ${enter}`}>
+                <Check className="h-4 w-4" aria-hidden="true" />
+                {saved}
+              </span>
+            ) : (
+              needsUpdate(r) && <span className="text-sm text-amber-800 dark:text-amber-300">No update for two weeks</span>
+            )}
+          </p>
+          {r.reviewStatus === "rejected" && r.rejectReason && <p className={`mt-1 text-sm ${muted}`}>{r.rejectReason}</p>}
+          {approved && r.placeHref && (
+            <Link href={r.placeHref} className={`mt-1.5 inline-block text-sm ${link}`}>
+              {r.placeHref.includes("layer=reports") ? "See it on the map" : "See where it appears"}
+            </Link>
+          )}
+        </div>
+      </div>
+      {open && (
+        <div id={panel} className={`mt-5 space-y-7 sm:pl-28 ${enter}`}>
+          {r.readings.length > 0 && <Readings readings={r.readings} source={r.waterSource} test={r.test} />}
+          {updatable && (
+            <Update
+              report={r}
+              authFetch={authFetch}
+              onSaved={(text) => {
+                setOpen(false);
+                onSaved(text);
+              }}
+            />
+          )}
+          {routed && (r.handler ? <HandlerCard handler={r.handler} national={r.nationalChannels} /> : <NationalOnly national={r.nationalChannels} />)}
+          {r.references.length > 0 && (
+            <div>
+              <p className="mb-1.5 text-sm font-medium text-slate-900 dark:text-slate-100">Your references</p>
+              <ul className={`space-y-1 text-sm ${muted}`}>
+                {r.references.map((x, i) => (
+                  <li key={i} className="tabular-nums">
+                    {day(x.at)}: {x.authorityBody} ref. {x.reference}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {r.events.length > 0 && (
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-900 dark:text-slate-100">History</p>
+              <History events={r.events} />
+            </div>
+          )}
+          {groupable && <SentWith report={r} groups={groups} authFetch={authFetch} onSaved={onSaved} />}
+        </div>
+      )}
+    </li>
+  );
 }
 
 const csvCell = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
@@ -174,6 +400,12 @@ function Download({ reports }: { reports: OwnReport[] }) {
       status: r.caseStatus ?? "",
       waterSource: r.waterSource ?? "",
       readings: r.readings.map((x) => x.text).join("; "),
+      testedWith: r.testMeta?.instrument ?? "",
+      filtered: r.testMeta?.filtered ?? "",
+      calibrated: r.testMeta?.calibrated ?? "",
+      pumpRanFirst: r.testMeta?.flushed == null ? "" : r.testMeta.flushed ? "yes" : "no",
+      borewellDepthFt: r.testMeta?.depthFt ?? "",
+      meterModel: r.testMeta?.model ?? "",
       references: r.references.map((x) => `${x.authorityBody ?? ""} ${x.reference}`.trim()).join("; "),
       events: r.events.map((e) => `${e.at.slice(0, 10)} ${e.event}`).join("; "),
     }));
@@ -188,63 +420,164 @@ function Download({ reports }: { reports: OwnReport[] }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-  const link = "text-xs text-slate-500 underline underline-offset-2 dark:text-slate-400";
   return (
-    <p className="text-xs text-slate-500 dark:text-slate-400">
-      Download my data:{" "}
-      <button type="button" onClick={() => save("csv")} className={link}>
-        CSV
-      </button>{" "}
-      ·{" "}
-      <button type="button" onClick={() => save("json")} className={link}>
-        JSON
-      </button>
+    <p className={`flex items-center gap-2 text-sm ${muted}`}>
+      <DownloadIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <span>
+        Download your reports:{" "}
+        <button type="button" onClick={() => save("csv")} className={link}>
+          CSV
+        </button>{" "}
+        or{" "}
+        <button type="button" onClick={() => save("json")} className={link}>
+          JSON
+        </button>
+      </span>
     </p>
   );
 }
 
-/** The reporter's own reports, with the updates they can make. */
-export function MyReports({ reports, authFetch, onChange, onDeleted }: { reports: OwnReport[]; authFetch: Fetch; onChange: () => void; onDeleted: () => void }) {
+type Followed = { target: string; label: string; href: string | null };
+
+/** The places this person follows (from report cards), each with "Stop following". Nothing until they follow one. */
+function FollowedPlaces({ authFetch, className }: { authFetch: Fetch; className?: string }) {
+  const [places, setPlaces] = useState<Followed[] | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    authFetch("/api/sightings/follows")
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((j) => live && setPlaces(Array.isArray(j?.data) ? j.data : []))
+      .catch(() => live && setPlaces([]));
+    return () => {
+      live = false;
+    };
+  }, [authFetch]);
+  if (!places?.length) return null;
+  const stop = async (target: string) => {
+    setBusy(target);
+    setError(null);
+    const res = await authFetch("/api/sightings/follows", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ target }) }).catch(() => null);
+    setBusy(null);
+    if (!res?.ok) return setError("Could not stop following. Please try again.");
+    setPlaces((all) => all && all.filter((p) => p.target !== target));
+  };
   return (
-    <div className="space-y-3">
-      {reports.length === 0 ? <p className="text-sm text-slate-600 dark:text-slate-400">No reports yet.</p> : <Summary reports={reports} />}
-      {reports.map((r) => (
-        <ReportCard key={r.id} report={r}>
-          {needsUpdate(r) && (
-            <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-xs text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-              No update for over two weeks. Is it still there, or fixed?
-            </p>
-          )}
-          {r.reviewStatus !== "approved" && (
-            <div className="mt-2">
-              <StatusChip status={r.reviewStatus === "rejected" ? "closed" : "open"} label={REVIEW_LABEL[r.reviewStatus]} />
-              {r.rejectReason && <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">{r.rejectReason}</p>}
+    <div className={className}>
+      <p className="mb-1.5 text-sm font-medium text-slate-900 dark:text-slate-100">Places you follow</p>
+      <ul className="space-y-1.5 text-sm">
+        {places.map((p) => (
+          <li key={p.target} className="flex items-baseline justify-between gap-3">
+            {p.href ? (
+              <Link href={p.href} className={`min-w-0 ${link}`}>
+                {p.label}
+              </Link>
+            ) : (
+              <span className="min-w-0 text-slate-800 dark:text-slate-200">{p.label}</span>
+            )}
+            <button type="button" disabled={busy === p.target} onClick={() => stop(p.target)} className={`shrink-0 text-xs ${link} disabled:opacity-45`}>
+              {busy === p.target ? "Stopping…" : "Stop following"}
+            </button>
+          </li>
+        ))}
+      </ul>
+      {error && (
+        <p role="alert" className="mt-1.5 text-sm font-medium text-red-700 dark:text-red-400">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** The reporter's own reports: what needs their update first, each with its status and what they can do next. */
+export function MyReports({ reports, authFetch, onChange, onNew }: { reports: OwnReport[] | null; authFetch: Fetch; onChange: () => void; onNew: () => void }) {
+  const [saved, flash] = useFlash<{ id: string; text: string }>();
+  // Active groups the person is in, for "Add to group" on their community reports.
+  const citizen = useCitizen();
+  const { data: myGroups } = useMyGroups(citizen);
+  const groups = myGroups?.groups.filter((g) => g.status === "approved") ?? [];
+  // Reports saved on this phone while offline, above everything else.
+  const outbox = <OutboxBlock owner={citizen.session?.user.id ?? null} authFetch={authFetch} onChange={onChange} />;
+  if (!reports) {
+    return (
+      <div className="space-y-6">
+        {outbox}
+        <div className="h-24 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800" />
+      </div>
+    );
+  }
+  if (reports.length === 0) {
+    return (
+      <div className="max-w-md space-y-4 py-4">
+        {outbox}
+        <h2 className={`${headingCls} text-2xl sm:text-3xl`}>Nothing sent yet</h2>
+        <p className={muted}>Your reports will show here, with what happened to each one.</p>
+        <button type="button" onClick={onNew} className={btn("primary")}>
+          Make a report
+        </button>
+        <FollowedPlaces authFetch={authFetch} className="pt-4" />
+      </div>
+    );
+  }
+  const due = reports.filter(needsUpdate).length;
+  const figures: [number, string][] = [
+    [reports.filter(checking).length, "Being checked"],
+    [reports.filter((r) => ACTIVE.has(r.caseStatus ?? "")).length, "Open"],
+    [reports.filter((r) => r.caseStatus === "fixed").length, "Fixed"],
+  ];
+  // Private: only the reporter sees what their reports drew.
+  const impact = impactLine(
+    reports.reduce((n, r) => n + r.seenCount, 0),
+    reports.reduce((n, r) => n + r.thanksCount, 0),
+  );
+  // Stable: needs-your-update first, otherwise newest first as sent.
+  const sorted = [...reports].sort((a, b) => Number(needsUpdate(b)) - Number(needsUpdate(a)));
+  return (
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-16">
+      <aside className="space-y-5 lg:order-last lg:sticky lg:top-24 lg:self-start">
+        <dl className={`grid grid-cols-3 gap-4 lg:grid-cols-1 lg:gap-0 lg:divide-y lg:border-y ${rule}`}>
+          {figures.map(([n, label]) => (
+            <div key={label} className="flex flex-col-reverse lg:flex-row lg:items-baseline lg:justify-between lg:py-3">
+              <dt className={`text-sm ${muted}`}>{label}</dt>
+              <dd className={`${headingCls} text-3xl tabular-nums lg:text-2xl`}>{n}</dd>
             </div>
-          )}
-          {r.references.length > 0 && (
-            <ul className="mt-2 text-xs text-slate-600 dark:text-slate-400">
-              {r.references.map((x, i) => (
-                <li key={i}>
-                  {day(x.at)}: {x.authorityBody} ref. {x.reference}
-                </li>
-              ))}
-            </ul>
-          )}
-          {r.reviewStatus === "approved" && (
-            <>
-              {r.caseStatus === "open" && (r.handler || r.nationalChannels.length > 0) && (
-                <div className="mt-3">
-                  {r.handler ? <HandlerCard handler={r.handler} national={r.nationalChannels} /> : <NationalOnly national={r.nationalChannels} />}
-                </div>
-              )}
-              <Update report={r} authFetch={authFetch} onDone={onChange} />
-            </>
-          )}
-        </ReportCard>
-      ))}
-      <div className="space-y-2 pt-4">
-        {reports.length > 0 && <Download reports={reports} />}
-        <DeleteAccount authFetch={authFetch} onDeleted={onDeleted} />
+          ))}
+        </dl>
+        {impact && <p className={`text-sm ${muted}`}>{impact}</p>}
+        {due > 0 && (
+          <p className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-300">
+            <Clock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            {due === 1 ? "One report needs" : `${due} reports need`} your update: is it still there, or fixed?
+          </p>
+        )}
+        <NotifyToggle authFetch={authFetch} />
+        <FollowedPlaces authFetch={authFetch} />
+        <div className="hidden lg:block">
+          <Download reports={reports} />
+        </div>
+      </aside>
+      <div className="space-y-6">
+        {outbox}
+        <ul className={`divide-y border-y ${rule}`}>
+          {sorted.map((r) => (
+            <Row
+              key={r.id}
+              report={r}
+              groups={groups}
+              authFetch={authFetch}
+              saved={saved?.id === r.id ? saved.text : null}
+              onSaved={(text) => {
+                flash({ id: r.id, text });
+                onChange();
+              }}
+            />
+          ))}
+        </ul>
+        <div className="mt-6 lg:hidden">
+          <Download reports={reports} />
+        </div>
       </div>
     </div>
   );

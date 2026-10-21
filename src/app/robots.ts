@@ -5,6 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Each department's private status link; the page also says noindex.
+      disallow: "/department/",
     },
     sitemap: "https://neervazhvu.org/sitemap.xml",
   };
