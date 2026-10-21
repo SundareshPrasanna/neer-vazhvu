@@ -46,7 +46,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from lib.tn_district_basin import NWDP, TN_ENVELOPE_READINGS, TN_ENVELOPE_SOURCES, TNGIS, TNSMART, DistrictBasinBuild, tn_envelope  # noqa: E402
+from lib.tn_district_basin import CAUVERY_PRS_2018, CAUVERY_PRS_2025, DistrictBasinBuild, NWDP, TNGIS, TNSMART, TN_ENVELOPE_READINGS, TN_ENVELOPE_SOURCES, tn_envelope  # noqa: E402
 
 BASIN_ID = "tiruchirappalli-rivers"
 GENERATED_FROM = Path(__file__).name
@@ -84,10 +84,16 @@ SUB_BASIN_KEY = {}  # sheds keep TNGIS's object_id keys (SB<object_id>), listed 
 TALUK_ALIASES = {"Tiruchirappalli - East": "THIRUCHIRAPALLI-EAST"}  # TNGIS taluk -> IN-GRES locationName where the spellings differ
 RIVER_ALIASES = {"cauvery": ("kaveri", "cauvery"), "kollidam": ("kollidam", "coleroon"), "kolaiyar": ("kolaiyar",), "ayyar": ("aiyar", "ayyar"), "vellar": ("vellar",), "ariyar": ("ariyar",), "koraiyar": ("koraiaru", "koraiyar")}  # OSM spellings folded to one river each (substring match, first hit wins)
 RIVER_NAMES = {"cauvery": "Cauvery", "kollidam": "Kollidam", "kolaiyar": "Kolaiyar", "ayyar": "Ayyar", "vellar": "Vellar", "ariyar": "Ariyar", "koraiyar": "Koraiyar"}  # river_id -> display name
-REPO_FAMILIES = ()
+REPO_FAMILIES = (
+    ("monitoring-points", "public/data/basins/cauvery-tn/wq-stations.geojson", "near", "TNPCB stretch-wise monthly water-quality reports, January to December 2023 (the last year published); classes are the worst monthly use-based class of 2023; station points are town centres, as ingested for the Cauvery (Tamil Nadu) basin", "cauvery-tn/wq-stations.geojson"),
+)
 
 # Build order: the inventory lists families in this order.
-STEPS = ("waterways", "reservoirs", "tanks", "industries", "estates", "quarries", "admin", "panchayats", "waterbodies", "watersheds",
+# CPCB's Cauvery stretch: both editions run along this district (the 2025 one is trimmed where it starts, at station 1320).
+PRS_EDITIONS = (CAUVERY_PRS_2018, CAUVERY_PRS_2025)
+PRS_OUTFALLS = ()  # (name, lat, lon, river_id, page, the plan's description), from TNPCB's 2019 Cauvery action plan
+
+STEPS = ("waterways", "cauvery-prs", "repo-families", "reservoirs", "tanks", "industries", "estates", "quarries", "admin", "panchayats", "waterbodies", "watersheds",
          "groundwater-wells", "canals", "gauging-stations")
 
 # Envelopes (scripts/nvdm_envelope_district_basin.py): the shared TN families.
