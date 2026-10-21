@@ -48,6 +48,8 @@ interface UnifiedMapProps {
   /** Receives the lost-bodies layer once fetched (null where the city has none). */
   onLostLayer?: (layer: GeoJSON.FeatureCollection | null) => void;
   focusCenter?: [number, number];
+  /** Opens this body's panel once the layer loads (`?body=<osm_id>`, e.g. from a shared report). */
+  openBodyId?: string | null;
   hiddenCategories?: Set<string>;
   // City-aware, and REQUIRED - see the note above the props.
   currentGeoJsonUrl: string;
@@ -106,6 +108,22 @@ function orphanRadius(areaHa: number | null | undefined): number {
   return r;
 }
 
+/** [west, south, east, north] of a geometry's coordinates, or null when it has none. */
+function boundsOf(g: GeoJSON.Geometry | null): [number, number, number, number] | null {
+  let b: [number, number, number, number] | null = null;
+  const walk = (c: unknown): void => {
+    if (!Array.isArray(c)) return;
+    if (typeof c[0] === "number" && typeof c[1] === "number") {
+      const [x, y] = c as [number, number];
+      b = b ? [Math.min(b[0], x), Math.min(b[1], y), Math.max(b[2], x), Math.max(b[3], y)] : [x, y, x, y];
+      return;
+    }
+    for (const k of c) walk(k);
+  };
+  if (g && "coordinates" in g) walk(g.coordinates);
+  return b;
+}
+
 export function UnifiedMap({
   viewMode,
   cityId,
@@ -115,6 +133,7 @@ export function UnifiedMap({
   onSelectLost,
   onLostLayer,
   focusCenter,
+  openBodyId,
   hiddenCategories,
   currentGeoJsonUrl,
   lostGeoJsonUrl,
@@ -244,6 +263,21 @@ export function UnifiedMap({
 
     return { censusMatchByOsmId: matchMap, unmatchedCensus: unmatched };
   }, [currentGeoJSON, censusData]);
+
+  // A link to one body opens its panel once, centred on the middle of its outline.
+  const openTarget = useMemo(() => {
+    const feat = openBodyId && currentGeoJSON ? currentGeoJSON.features.find((f) => String(f.properties?.osm_id) === openBodyId) : undefined;
+    const box = feat ? boundsOf(feat.geometry) : null;
+    if (!feat || !box) return null;
+    return { props: feat.properties as CurrentWaterBodyProperties, latlng: [(box[1] + box[3]) / 2, (box[0] + box[2]) / 2] as [number, number] };
+  }, [openBodyId, currentGeoJSON]);
+  const opened = useRef(false);
+  useEffect(() => {
+    if (!openTarget || opened.current) return;
+    opened.current = true;
+    const { props, latlng } = openTarget;
+    onSelectCurrent({ kind: "current", props, latlng, censusMatch: censusMatchByOsmId.get(props.osm_id), richBodyId: getRichBodyIdByOsmId(props.osm_id) ?? undefined });
+  }, [openTarget, censusMatchByOsmId, onSelectCurrent]);
 
   useEffect(() => {
     // Current OSM water-bodies geojson. Cities without one (no Bangalore
@@ -717,6 +751,7 @@ export function UnifiedMap({
       scrollWheelZoom={true}
     >
       {focusCenter && <FlyToCenter center={focusCenter} />}
+      {openTarget && !focusCenter && <FlyToCenter center={openTarget.latlng} />}
       {/* No FitToBounds here: the OSM water-body collection's extent
           includes far-flung outliers (Pulicat in the north for Chennai,
           Hesaraghatta in the west for Bengaluru) which pull the auto-fit

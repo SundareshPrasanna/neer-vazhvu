@@ -98,20 +98,21 @@
       "tier": 1,
       "detection": {
         "method": "link-set",
-        "linkPattern": "inline-files/.*(RWQ|GEMS|MINAR|Bore.?Well|CLASSIFICATION).*\\.pdf"
+        "linkPattern": "inline-files/.*(RWQ|GEMS|MINAR|Bore.?Well|CLASSIFICATION|Polluted(%20|\\s|_|-)?River).*\\.pdf"
       },
       "dependsOn": [
         "public/data/river-quality-bangalore.json"
       ],
       "refreshMethod": "manual PDF extraction",
-      "notes": "THE SECOND UPSTREAM of river-quality-bangalore.json. That file is a split-source case: its DO/BOD series come from CPCB NWMP (watched by cpcb-nwmp-annual) AND from KSPCB's own monthly water-quality reports, which were unwatched until 2026-07-26 - a KSPCB edition could change the numbers with no alert. Verified 2026-07-26: the page carries the RWQ_GEMS_MINAR period reports, bore-well series and quarterly CLASSIFICATION sheets under /sites/default/files/inline-files/. linkPattern is scoped to those families to keep site-wide boilerplate out.",
+      "notes": "THE SECOND UPSTREAM of river-quality-bangalore.json. That file is a split-source case: its DO/BOD series come from CPCB NWMP (watched by cpcb-nwmp-annual) AND from KSPCB's own monthly water-quality reports, which were unwatched until 2026-07-26 - a KSPCB edition could change the numbers with no alert. Verified 2026-07-26: the page carries the RWQ_GEMS_MINAR period reports, bore-well series and quarterly CLASSIFICATION sheets under /sites/default/files/inline-files/. linkPattern is scoped to those families to keep site-wide boilerplate out. 2026-10-20: linkPattern widened to the monthly polluted-river-stretch sheets, which print measured values (e.g. '14 Polluted River Stretches August-2026-1.pdf'); the classification sheets print class letters only.",
       "lastSeen": {
-        "linksHash": "5ff468a72a7a56b7",
+        "linksHash": "c42590e229f555a3",
         "links": [
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/1%20RWQ_GEMS_MINAR_April_20_to_jul_21.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/10%20RWQ_GEMS_MINAR_April_19_to_jan_2020.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/11%20RWQ_GEMS_MINAR_April_19_to_dec_2019.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/12%20RWQ_GEMS_MINAR_April_19_to_nov_2020.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/14%20Polluted%20River%20Stretches%20August-2026-1.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/14%20RWQ_GEMS_MINAR_April_19_to_March_2020.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/16%20RWQ_GEMS_MINAR_April_to_April_2019.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/17%20RWQ_GEMS_MINAR_April_to_March_2019.pdf",
@@ -127,6 +128,8 @@
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-DEC-2020%20BOREWELL.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/CLASSIFICATION-DEC-2020%20LAKERIVERS.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20-Jan-2023.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20August-2026.pdf",
+          "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20July-2026.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20for%20month%20July-2023_compressed.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20for%20month%20June-2023_compressed.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/Classification%20of%20NWMP.pdf",
@@ -144,7 +147,8 @@
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/borewell%20CLASSIFICATION-April%20to%20June-2021.pdf",
           "https://kspcb.karnataka.gov.in/sites/default/files/inline-files/classification_river_lake_sep-2022.pdf"
         ],
-        "acceptedOn": "2026-07-26"
+        "edition": "NWMP classification Apr-Aug 2026; polluted-stretch sheet Aug 2026",
+        "acceptedOn": "2026-10-20"
       }
     },
     {

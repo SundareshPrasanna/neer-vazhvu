@@ -39,10 +39,10 @@ const AFTER_NAV = [
 // Off until the reporting backend is provisioned (src/lib/sightings/auth.ts).
 const CITIZEN_REPORTS = process.env.NEXT_PUBLIC_CITIZEN_REPORTS === "on";
 
-function ForCitizensLink({ label, active }: { label: string; active: boolean }) {
+function MitraLink({ label, active }: { label: string; active: boolean }) {
   return (
     <Link
-      href="/for-citizens"
+      href="/mitra"
       aria-current={active ? "page" : undefined}
       className={cn(
         "inline-flex items-center px-2.5 sm:px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500",
@@ -272,7 +272,7 @@ function SiteHeader() {
                 gets the switcher, which lists districts as well as cities. */}
             <div className="flex items-center gap-1 sm:gap-2">
               {isAtlas && <CitySwitcher />}
-              {CITIZEN_REPORTS && <ForCitizensLink label={t("nav.for_citizens")} active={pathname === "/for-citizens"} />}
+              {CITIZEN_REPORTS && <MitraLink label={t("nav.neer_mitra")} active={pathname === "/mitra"} />}
               {/* The way in for organisations; hidden on that page itself, where it would only point back. */}
               {pathname !== "/for-organisations" && (
                 <Link
@@ -368,7 +368,7 @@ function SiteHeader() {
                 <NavLink key={item.href} href={cityHref} label={t(item.key)} active={pathname === cityHref} />
               );
             })}
-            {CITIZEN_REPORTS && <ForCitizensLink label={t("nav.for_citizens")} active={false} />}
+            {CITIZEN_REPORTS && <MitraLink label={t("nav.neer_mitra")} active={false} />}
             <CitySwitcher />
             <LanguageToggle />
             <ThemeToggle />
@@ -489,11 +489,11 @@ function SiteHeader() {
             })}
             {CITIZEN_REPORTS && (
               <Link
-                href="/for-citizens"
+                href="/mitra"
                 onClick={() => setMenuOpen(false)}
                 className="block px-4 py-3 rounded-md text-sm font-semibold text-cyan-800 dark:text-cyan-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                {t("nav.for_citizens")}
+                {t("nav.neer_mitra")}
               </Link>
             )}
           </div>

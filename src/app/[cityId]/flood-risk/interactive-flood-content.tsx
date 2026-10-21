@@ -159,10 +159,11 @@ function InteractiveFloodContentInner({ cityId }: { cityId: string }) {
 
         {viewMode === "sewerage" && (
           <>
-            <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-              <span className="font-semibold text-slate-900 dark:text-slate-100">13</span> {t("flood.stp_count")}
+            <span className="text-xs text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-900 dark:text-slate-100">1,031.80 MLD</span> {t("flood.stp_capacity_citywide")}
             </span>
-            <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
+            <span className="text-xs text-slate-600 dark:text-slate-400" title={t("flood.stp_capacity_source")}>
+              <span className="font-semibold text-slate-900 dark:text-slate-100">13</span> {t("flood.stp_count")},{" "}
               <span className="font-semibold text-slate-900 dark:text-slate-100">745 MLD</span> {t("flood.stp_capacity")}
             </span>
             <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">

@@ -101,8 +101,9 @@ export function buildLegendItems(layers: BasinLayer[], elevation?: { band: strin
  *  reader expanded it last time. */
 const LEGEND_OPEN_KEY = "nv-basin-legend-open";
 
-/** Dynamic legend: reflects what's currently visible on the map. */
-export function MapLegend({ layers, elevation, notes, raised }: { layers: BasinLayer[]; elevation?: { band: string; color: string }[]; notes?: string[]; raised?: boolean }) {
+/** Dynamic legend: reflects what's currently visible on the map. `extra` rows are drawn by
+ *  layers outside the manifest (citizen reports), after the manifest's own. */
+export function MapLegend({ layers, elevation, extra, notes, raised }: { layers: BasinLayer[]; elevation?: { band: string; color: string }[]; extra?: LegendItem[]; notes?: string[]; raised?: boolean }) {
   // Collapsed on first paint even when storage says open - the stored value is
   // applied in an effect so server and client render the same initial tree.
   const [open, setOpen] = useState(false);
@@ -116,7 +117,7 @@ export function MapLegend({ layers, elevation, notes, raised }: { layers: BasinL
     try { localStorage.setItem(LEGEND_OPEN_KEY, o ? "0" : "1"); } catch { /* fine */ }
     return !o;
   });
-  const items = buildLegendItems(layers, elevation);
+  const items = [...buildLegendItems(layers, elevation), ...(extra ?? [])];
   if (!items.length) return null;
   return (
     <div className={`absolute ${raised ? "bottom-[156px] md:bottom-3" : "bottom-3"} left-3 z-[800] bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-lg shadow text-[11px] max-w-[230px] transition-[bottom] duration-200`}>
