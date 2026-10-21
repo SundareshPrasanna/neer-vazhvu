@@ -267,6 +267,19 @@ is 1901 in the register and 1903 in the Supreme Court's judgment; Mansagar's bui
 area rest on a party's account and are labelled so; Sagar and Galta are held back (no official
 status found).
 
+### Satellite deep zoom (five bodies)
+
+Ramgarh, Man Sagar, Kanota, Nevta and Chandlai run through the shared rich-body
+pipeline (`src/lib/water-bodies/rich-bodies.json`): Landsat and Sentinel-2
+yearly images, JRC Global Surface Water 1984-2021, Dynamic World 2016-2026,
+Google Open Buildings and Overture footprints. Four outlines are OpenStreetMap's.
+OpenStreetMap maps only about 112 ha of Ramgarh, so its outline is the
+connected region where JRC saw water at least once in 1984-2021, 328 ha
+(`scripts/build_jrc_max_extent_outline.py`, `public/geojson/jaipur-jrc-max-extent.geojson`);
+CWC's register gives 1,035 ha at full supply, which the record never shows.
+Ramgarh's bed is labelled crops by Dynamic World's most common label in each
+year from 2022 to 2026 (64% to 93%), read from a per-year histogram.
+
 ## Wards and contacts
 
 The LSG notification of 16 September 2025 (Rajasthan Gazette Extraordinary Part 6(A), 20 September

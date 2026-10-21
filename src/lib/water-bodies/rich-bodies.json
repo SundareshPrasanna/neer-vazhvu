@@ -1541,6 +1541,299 @@
           "Of the 33 Open Buildings footprints inside the outline, 12 lie more than 30 m inside on ground Dynamic World labels water in 2025; they are more likely detections on water than buildings on land, so read the count inside the outline as a ceiling."
         ]
       }
+    },
+    "ramgarh": {
+      "osm_id": 126183859,
+      "name": "Ramgarh Dam",
+      "city_id": "jaipur",
+      "boundary_source": "JRC Global Surface Water's largest extent: the connected region where water was seen at least once in 1984-2021 (328 ha), around the dam on the Banganga at Jamwa Ramgarh. CWC's register gives the reservoir 1,035 ha at full supply, which the record never shows it reaching; OpenStreetMap maps about 112 ha (way 126183859). Once a source of Jaipur's drinking water.",
+      "boundary_source_label": "JRC Global Surface Water (largest extent)",
+      "buffer_legal_basis": "1 km context buffer (indicative, editorial). No legal buffer applies; the halo is cohort-standard.",
+      "timeline_events": [
+        {
+          "year": 1901,
+          "label": "CWC's National Register of Large Dams (2019) lists Ramgarh as completed in 1901 on the Banganga: 26 m high and 1,143 m long, 75 million cubic metres gross over 1,035 ha. The Supreme Court's 2017 judgment gives 1903.",
+          "label_short": "Dam completed (CWC register)"
+        },
+        {
+          "year": 1978,
+          "label": "Used for irrigation until 1978, and from then as a source of drinking water for Jaipur (Supreme Court of India, judgment of 9 November 2017).",
+          "label_short": "Becomes a city water source"
+        },
+        {
+          "year": 1997,
+          "label": "The satellite record shows water at some time in the year on 95% to 100% of the outline in 1995, 1996 and 1997, and on 12% to 29% in 2000 to 2006.",
+          "label_short": "Last full years in the record"
+        },
+        {
+          "year": 2011,
+          "label": "The Rajasthan High Court takes up the reservoir's catchment on its own motion (D.B. Civil Writ Petition 11153/2011).",
+          "label_short": "High Court takes up the catchment"
+        },
+        {
+          "year": 2026,
+          "label": "The Water Resources Department reports the dam empty on 8 October 2026, as on every report read from June 2022. On 30 July 2026 the High Court directs the department to remove anicuts that block the flow into the lake. Dynamic World's most common label across 2026 on the outline is crops (93%).",
+          "label_short": "Empty; High Court directions"
+        }
+      ],
+      "status_badges": [
+        {
+          "label": "Empty in every state report read, 2022-2026",
+          "tone": "amber"
+        },
+        {
+          "label": "Mostly crops on the bed, 2022-2026",
+          "tone": "slate"
+        },
+        {
+          "label": "High Court case since 2011",
+          "tone": "amber"
+        }
+      ],
+      "buffer_legally_mandated": false,
+      "data_sources": {
+        "boundary": [
+          {
+            "label": "Reservoir boundary",
+            "source": "JRC Global Surface Water v1.4, max_extent (1984-2021)",
+            "note": "Connected region of 30 m pixels where water was seen at least once, containing the main pool, 328 ha (scripts/build_jrc_max_extent_outline.py). CWC's register gives 1,035 ha at full supply; the satellite record never shows the reservoir that full, so the figures here describe the area it has actually held. OpenStreetMap maps about 112 ha.",
+            "link": "https://global-surface-water.appspot.com/",
+            "licence": "Copernicus free and open (Source: EC JRC/Google)"
+          },
+          {
+            "editorial_buffer": "Not legally mandated; cohort-standard radius. Covers the dam wall and the villages on the reservoir's edge."
+          }
+        ],
+        "caveats": [
+          "JRC has no usable images of the reservoir from 1984 to 1988, so those years read as no data, not as dry.",
+          "Dynamic World labels what covers the ground (crops, shrub, trees); it says nothing about who uses the land or its legal status.",
+          "Nothing in this panel measures water quality."
+        ]
+      }
+    },
+    "man-sagar": {
+      "osm_id": 2252564,
+      "name": "Man Sagar (Jal Mahal)",
+      "city_id": "jaipur",
+      "boundary_source": "OpenStreetMap community-mapped polygon (relation 2252564), about 109 ha, at the foot of the Nahargarh hills with the Jal Mahal palace in the water. The Water Resources Department gauges it as Mansagar (Jalmahal), 1.136 million cubic metres.",
+      "buffer_legal_basis": "1 km context buffer (indicative, editorial). No legal buffer applies; the halo is cohort-standard.",
+      "timeline_events": [
+        {
+          "year": 2002,
+          "label": "The Ministry of Environment approves the lake's restoration under the National Lake Conservation Plan on 5 September 2002, at Rs 24.72 crore with 70% from the Government of India; the Brahmapuri sewage plant is revamped and a tertiary plant built (Supreme Court judgment of 25 April 2014).",
+          "label_short": "Restoration approved (NLCP)"
+        },
+        {
+          "year": 2014,
+          "label": "On 25 April 2014 the Supreme Court limits the Jal Mahal precinct lease to 30 years from the judgment and returns 8.65 acres to the lake (Civil Appeal 4912/2014).",
+          "label_short": "Supreme Court on the lease"
+        },
+        {
+          "year": 2025,
+          "label": "On 28 February 2025 the Supreme Court records the lake as 'completely damaged' and asks NEERI to study it; the State's development plan waits on that report (Civil Appeal 6469/2024).",
+          "label_short": "NEERI study ordered"
+        }
+      ],
+      "status_badges": [
+        {
+          "label": "Open water all year",
+          "tone": "emerald"
+        },
+        {
+          "label": "Supreme Court: NEERI study ordered (2025)",
+          "tone": "amber"
+        },
+        {
+          "label": "Restored under NLCP from 2002",
+          "tone": "sky"
+        }
+      ],
+      "buffer_legally_mandated": false,
+      "data_sources": {
+        "boundary": [
+          {
+            "label": "Lake boundary",
+            "source": "OpenStreetMap relation 2252564",
+            "note": "OSM's trace of the water surface, about 109 ha. The development plan cited in the Supreme Court's 2014 judgment gives about 130 ha; that figure is a party's submission, not a finding.",
+            "link": "https://www.openstreetmap.org/relation/2252564",
+            "licence": "ODbL 1.0"
+          },
+          {
+            "editorial_buffer": "Not legally mandated; cohort-standard radius. Covers Amer Road, the Nahargarh slopes and the old city's northern edge."
+          }
+        ],
+        "caveats": [
+          "JRC finds water on 71% to 98% of the lake in every year from 1989 except 2002 (55%), and on 86% or more in every year since 2003; Dynamic World's most common label across each year from 2022 to 2026 is water on 98.6% to 99.0% of it.",
+          "Floating weed classifies as vegetation, so the water line reads open water, not lake area.",
+          "Nothing in this panel measures water quality; CPCB's Jal Mahal station (2944) is on the rivers page."
+        ]
+      }
+    },
+    "kanota": {
+      "osm_id": 386782981,
+      "name": "Kanota Dam",
+      "city_id": "jaipur",
+      "boundary_source": "OpenStreetMap community-mapped polygon (way 386782981), about 140 ha, the reservoir behind the dam on the Dhund east of the city.",
+      "buffer_legal_basis": "1 km context buffer (indicative, editorial). No legal buffer applies; the halo is cohort-standard.",
+      "timeline_events": [
+        {
+          "year": 2001,
+          "label": "CWC's National Register of Large Dams (2019) lists Kanota as completed in 2001 on the Dhund: 18.75 m high and 2,499 m long, 14.13 million cubic metres. The satellite record finds no water on the outline from 1989 to 1999 and water from 2000.",
+          "label_short": "Dam completed (CWC register)"
+        },
+        {
+          "year": 2013,
+          "label": "From 2013 to 2021 JRC finds water on the whole outline every year; Dynamic World's most common label across each year from 2022 to 2026 is water on 99.7% to 100%.",
+          "label_short": "Full every year from here"
+        },
+        {
+          "year": 2026,
+          "label": "The Water Resources Department reports the dam full on 8 October 2026: 14.13 million cubic metres, 100% of design.",
+          "label_short": "Full on 8 October"
+        }
+      ],
+      "status_badges": [
+        {
+          "label": "Built 2001: no water before it",
+          "tone": "slate"
+        },
+        {
+          "label": "Full in the state's 8 Oct 2026 report",
+          "tone": "emerald"
+        },
+        {
+          "label": "Halo built-up 10% to 22%, 2016-2026",
+          "tone": "slate"
+        }
+      ],
+      "buffer_legally_mandated": false,
+      "data_sources": {
+        "boundary": [
+          {
+            "label": "Reservoir boundary",
+            "source": "OpenStreetMap way 386782981",
+            "note": "OSM's trace of the reservoir, about 140 ha. The department and CWC publish volume, not area.",
+            "link": "https://www.openstreetmap.org/way/386782981",
+            "licence": "ODbL 1.0"
+          },
+          {
+            "editorial_buffer": "Not legally mandated; cohort-standard radius."
+          }
+        ],
+        "caveats": [
+          "An operated reservoir: its water line follows releases as well as the monsoon.",
+          "Nothing in this panel measures water quality."
+        ]
+      }
+    },
+    "nevta": {
+      "osm_id": 878392562,
+      "name": "Nevta Dam (Ramsagar)",
+      "city_id": "jaipur",
+      "boundary_source": "OpenStreetMap community-mapped polygon (way 878392562), about 136 ha, south-west of the city. The State Pollution Control Board describes it as fed from the Dravyavati through a diversion channel from the Gular dam (River Rejuvenation Committee report, December 2018).",
+      "buffer_legal_basis": "1 km context buffer (indicative, editorial). No legal buffer applies; the halo is cohort-standard.",
+      "timeline_events": [
+        {
+          "year": 2005,
+          "label": "Before 2005 JRC finds water at some time in the year on under a fifth of the outline in most years. From 2010 it finds water on 89% to 100% of it every year.",
+          "label_short": "Mostly dry, then mostly full"
+        },
+        {
+          "year": 2018,
+          "label": "The State Pollution Control Board reports a 51 sq km catchment and that the dam 'has not overflown in last 30 years' (December 2018).",
+          "label_short": "No overflow in 30 years (RSPCB)"
+        },
+        {
+          "year": 2026,
+          "label": "The Water Resources Department puts storage at 56.24% of design on 8 October 2026. Dynamic World's most common label across 2026 is water on 77.7% of the outline, against 95% to 98.5% in 2022 to 2025.",
+          "label_short": "56% on 8 October"
+        }
+      ],
+      "status_badges": [
+        {
+          "label": "Fed from the Dravyavati (RSPCB 2018)",
+          "tone": "sky"
+        },
+        {
+          "label": "56% full on 8 Oct 2026",
+          "tone": "sky"
+        },
+        {
+          "label": "Halo built-up 13% to 33%, 2016-2026",
+          "tone": "slate"
+        }
+      ],
+      "buffer_legally_mandated": false,
+      "data_sources": {
+        "boundary": [
+          {
+            "label": "Reservoir boundary",
+            "source": "OpenStreetMap way 878392562",
+            "note": "OSM's trace of the reservoir, about 136 ha. The dam is not in CWC's register of large dams; the department publishes its storage, not its area.",
+            "link": "https://www.openstreetmap.org/way/878392562",
+            "licence": "ODbL 1.0"
+          },
+          {
+            "editorial_buffer": "Not legally mandated; cohort-standard radius."
+          }
+        ],
+        "caveats": [
+          "The department's report prints the gauge as 0.00 beside a real storage figure from June 2025 to June 2026; only the storage is used.",
+          "CPCB's station 2952 is named for Newta dam, but its published coordinate sits at Kanota, so it is not placed here.",
+          "Nothing in this panel measures water quality."
+        ]
+      }
+    },
+    "chandlai": {
+      "osm_id": 481368169,
+      "name": "Chandlai Lake",
+      "city_id": "jaipur",
+      "boundary_source": "OpenStreetMap community-mapped polygon (way 481368169), about 122 ha, near Chaksu south of the city. The Water Resources Department gauges it in Jaipur district as Chandlai, 2.040 million cubic metres designed.",
+      "buffer_legal_basis": "1 km context buffer (indicative, editorial). No legal buffer applies; the halo is cohort-standard.",
+      "timeline_events": [
+        {
+          "year": 2004,
+          "label": "Before 2003 the satellite record shows water on the outline in some years and not others (1% to 88%). From 2004 JRC finds water on 95% or more of it in every year but 2007 (52%).",
+          "label_short": "Full most years from here"
+        },
+        {
+          "year": 2026,
+          "label": "Dynamic World's most common label across each year from 2022 to 2026 is water on 98.5% to 99.5% of the lake. The department's Jaipur-district Chandlai row reads 1.99 to 2.04 million cubic metres on every report read from June 2023, against 2.040 designed: a lake kept close to full.",
+          "label_short": "Close to full, 2022-2026"
+        }
+      ],
+      "status_badges": [
+        {
+          "label": "Full in nearly every year since 2004",
+          "tone": "emerald"
+        },
+        {
+          "label": "Two dams named Chandlai in the state report",
+          "tone": "amber"
+        },
+        {
+          "label": "Halo built-up 17% to 33%, 2016-2026",
+          "tone": "slate"
+        }
+      ],
+      "buffer_legally_mandated": false,
+      "data_sources": {
+        "boundary": [
+          {
+            "label": "Lake boundary",
+            "source": "OpenStreetMap way 481368169",
+            "note": "OSM's trace of the lake, about 122 ha. The department's report also lists a Chandlai in Tonk district (4.530 million cubic metres), a different dam.",
+            "link": "https://www.openstreetmap.org/way/481368169",
+            "licence": "ODbL 1.0"
+          },
+          {
+            "editorial_buffer": "Not legally mandated; cohort-standard radius."
+          }
+        ],
+        "caveats": [
+          "Nothing in this panel measures water quality."
+        ]
+      }
     }
   }
 }
