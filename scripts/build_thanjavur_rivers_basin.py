@@ -85,7 +85,14 @@ REPO_FAMILIES = (
 # Build order: the inventory lists families in this order.
 # CPCB's Cauvery stretch: both editions run along this district (the 2025 one is trimmed where it starts, at station 1320).
 PRS_EDITIONS = (CAUVERY_PRS_2018, CAUVERY_PRS_2025)
-PRS_OUTFALLS = ()  # (name, lat, lon, river_id, page, the plan's description), from TNPCB's 2019 Cauvery action plan
+# TNPCB's 2019 Cauvery action plan, p.194: (name, lat DMS, lon DMS, river_id, page, the plan's description). A third outfall
+# (behind the Government College Hostel, Padithurai, Thiruvaiyaru) is printed as 79º85'90.16''E 10º87'95''N, not a valid position.
+PRS_OUTFALLS = (
+    ("Thirukkattuppalli outfall", (10, 51, 30.86), (78, 57, 34.89), "cauvery", 194,
+     "Domestic sewage from Thirukkattuppalli town panchayat into the Cauvery, upstream of the regulator at Padithurai, as TNPCB's 2019 Cauvery action plan records it."),
+    ("Thiruvaiyaru outfall", (10, 52, 35.48), (79, 6, 36.40), "cauvery", 194,
+     "Domestic sewage from Thiruvaiyaru town panchayat into the Cauvery behind the ARK Complex, 15th Madapam Street, as TNPCB's 2019 Cauvery action plan records it."),
+)
 
 STEPS = ("waterways", "cauvery-prs", "repo-families", "tanks", "industries", "quarries", "admin", "panchayats", "waterbodies", "watersheds", "groundwater-wells", "canals",
          "gauging-stations")
